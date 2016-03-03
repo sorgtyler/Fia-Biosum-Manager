@@ -1,0 +1,915 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ADA81580-4647-44B1-B84E-7FF9BE0000B9}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>FIA_Biosum_Manager</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>FIA_Biosum_Manager</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>FIA_Biosum_Manager.frmMain</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Devart.Data, Version=5.0.938.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Devart\dotConnect\Oracle\Devart.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Devart.Data.Oracle, Version=8.3.146.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Devart\dotConnect\Oracle\Devart.Data.Oracle.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>system.web.services</Name>
+      <HintPath>..\..\..\..\..\windows\assembly\gac\system.web.services\1.0.5000.0__b03f5f7f11d50a3a\system.web.services.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <COMReference Include="Microsoft.Office.Interop.Access.Dao">
+      <Guid>{4AC9E1DA-5BAD-4AC7-86E3-24F4CDCECA28}</Guid>
+      <VersionMajor>12</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+    </COMReference>
+    <COMReference Include="SHDocVw">
+      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ado_core_tables.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ado_data_access.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="btnMainForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="dao_data_access.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="datasource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DbFileItem.cs" />
+    <Compile Include="delegate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="dsn_admin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="env.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="excel_latebinding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCollectionClone.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFCSTreeVolumeEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmGridView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmHaulCostCustom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLeft.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmProcessorScenario.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRunCoreScenario.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRxItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRxItemFvsCmdItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRxPackageItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCoreScenario.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmScanAndSynchronizeProjectRootFolderTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmScanAndSynchronizeProjectRootFolderTool.Designer.cs">
+      <DependentUpon>frmScanAndSynchronizeProjectRootFolderTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSqlBuilder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTechSupport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTherm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTreeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="fvs_input.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="generate_travel_times.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ListViewAlternateColors.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ListViewColumnSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ListViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="macrosubst.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="printing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project_properties_html_report.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Queries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ResizeFormUsingVisibleScrollBars.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="run_core_scenario.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="run_PostFvsForeFrcs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tables.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TableStructure.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="txtDollarsAndCents.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtNumeric.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="uc_biosum_id.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_contact_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_contact_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_datasource.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_datasource_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_db.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_filesize_monitor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_filesize_monitor.designer.cs">
+      <DependentUpon>uc_filesize_monitor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="uc_filter_rows_numeric_datatype.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_filter_rows_text_datatype.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_fvs_input.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_fvs_output.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_fvs_output_prepost_seqnum.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_fvs_output_prepost_seqnum.Designer.cs">
+      <DependentUpon>uc_fvs_output_prepost_seqnum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="uc_fvs_tree_spc_conversion.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_fvs_tree_spc_conversion_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_gis_psite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_gridview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_gridview_collection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="uc_plot_add_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_plot_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_plot_fvs_variant.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_plot_fvs_variant_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_plot_input.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_print_report_wizard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_opcost_settings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_opcost_settings.Designer.cs">
+      <DependentUpon>uc_processor_opcost_settings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="uc_processor_scenario_additional_harvest_cost_columns.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_additional_harvest_cost_columns.Designer.cs">
+      <DependentUpon>uc_processor_scenario_additional_harvest_cost_columns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="uc_processor_scenario_additional_harvest_cost_column_item.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_additional_harvest_cost_column_item.Designer.cs">
+      <DependentUpon>uc_processor_scenario_additional_harvest_cost_column_item.cs</DependentUpon>
+    </Compile>
+    <Compile Include="uc_processor_scenario_escalators.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_escalators_value.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_harvest_method.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_merch_chip_value.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_run.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_run.Designer.cs">
+      <DependentUpon>uc_processor_scenario_run.cs</DependentUpon>
+    </Compile>
+    <Compile Include="uc_processor_scenario_spc_dbh_group_value.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_tree_spc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_tree_spc_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_project.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_project_document_links.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_project_document_links_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_project_notes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_psite_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_fvscmd_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_fvscmd_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_harvest_cost_column_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_harvest_method.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_package_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_package_fvscmd_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_package_harvest_cost_column_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_rx_package_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_core_scenario_copy.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_core_scenario_copy.designer.cs">
+      <DependentUpon>uc_scenario_core_scenario_copy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="uc_scenario_costs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_datasource.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_ffe.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_filter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_fvs_prepost_optimization.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_fvs_prepost_variables_effective.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_fvs_prepost_variables_tiebreaker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_harvest_cost_column_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_harvest_cost_column_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_merge_tables.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_notes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_open.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_owner_groups.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_psite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_core_scenario_run.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_treatment_intensity.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_select_list_item.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_select_previous_expression.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_sql_builder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_sql_builder_new.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_table_exists_dialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_textbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_tree_diam_groups_edit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_tree_diam_groups_list.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_tree_spc_groups.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_processor_scenario_select.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_scenario_processor_scenario_select.Designer.cs">
+      <DependentUpon>uc_scenario_processor_scenario_select.cs</DependentUpon>
+    </Compile>
+    <Compile Include="utils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ValidateNumericValues.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="version_control.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="App.ico" />
+    <Content Include="table-alternate-row-color.bmp" />
+    <Content Include="table-row-color.bmp" />
+    <Content Include="table-select-row-icon.png" />
+    <EmbeddedResource Include="btnMainForm.resx">
+      <DependentUpon>btnMainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCollectionClone.resx">
+      <DependentUpon>frmCollectionClone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDialog.resx">
+      <DependentUpon>frmDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmFCSTreeVolumeEdit.resx">
+      <DependentUpon>frmFCSTreeVolumeEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmGridView.resx">
+      <DependentUpon>frmGridView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmHaulCostCustom.resx">
+      <DependentUpon>frmHaulCostCustom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmLeft.resx">
+      <DependentUpon>frmLeft.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmProcessorScenario.resx">
+      <DependentUpon>frmProcessorScenario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRunCoreScenario.resx">
+      <DependentUpon>frmRunCoreScenario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRxItem.resx">
+      <DependentUpon>frmRxItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRxItemFvsCmdItem.resx">
+      <DependentUpon>frmRxItemFvsCmdItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRxPackageItem.resx">
+      <DependentUpon>frmRxPackageItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCoreScenario.resx">
+      <DependentUpon>frmCoreScenario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmScanAndSynchronizeProjectRootFolderTool.resx">
+      <DependentUpon>frmScanAndSynchronizeProjectRootFolderTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSettings.resx">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSqlBuilder.resx">
+      <DependentUpon>frmSqlBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTechSupport.resx">
+      <DependentUpon>frmTechSupport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTherm.resx">
+      <DependentUpon>frmTherm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTreeView.resx">
+      <DependentUpon>frmTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtDollarsAndCents.resx">
+      <DependentUpon>txtDollarsAndCents.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtNumeric.resx">
+      <DependentUpon>txtNumeric.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_biosum_id.resx">
+      <DependentUpon>uc_biosum_id.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_contact_edit.resx">
+      <DependentUpon>uc_contact_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_contact_list.resx">
+      <DependentUpon>uc_contact_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_datasource.resx">
+      <DependentUpon>uc_datasource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_datasource_edit.resx">
+      <DependentUpon>uc_datasource_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_db.resx">
+      <DependentUpon>uc_db.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_filesize_monitor.resx">
+      <DependentUpon>uc_filesize_monitor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_filter_rows_numeric_datatype.resx">
+      <DependentUpon>uc_filter_rows_numeric_datatype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_filter_rows_text_datatype.resx">
+      <DependentUpon>uc_filter_rows_text_datatype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_fvs_input.resx">
+      <DependentUpon>uc_fvs_input.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_fvs_output.resx">
+      <DependentUpon>uc_fvs_output.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_fvs_output_prepost_seqnum.resx">
+      <DependentUpon>uc_fvs_output_prepost_seqnum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_fvs_tree_spc_conversion.resx">
+      <DependentUpon>uc_fvs_tree_spc_conversion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_fvs_tree_spc_conversion_edit.resx">
+      <DependentUpon>uc_fvs_tree_spc_conversion_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_gis_psite.resx">
+      <DependentUpon>uc_gis_psite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_gridview.resx">
+      <DependentUpon>uc_gridview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_plot_add_edit.resx">
+      <DependentUpon>uc_plot_add_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_plot_edit.resx">
+      <DependentUpon>uc_plot_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_plot_fvs_variant.resx">
+      <DependentUpon>uc_plot_fvs_variant.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_plot_fvs_variant_edit.resx">
+      <DependentUpon>uc_plot_fvs_variant_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_plot_input.resx">
+      <DependentUpon>uc_plot_input.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_print_report_wizard.resx">
+      <DependentUpon>uc_print_report_wizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_opcost_settings.resx">
+      <DependentUpon>uc_processor_opcost_settings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_additional_harvest_cost_columns.resx">
+      <DependentUpon>uc_processor_scenario_additional_harvest_cost_columns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_additional_harvest_cost_column_item.resx">
+      <DependentUpon>uc_processor_scenario_additional_harvest_cost_column_item.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_escalators.resx">
+      <DependentUpon>uc_processor_scenario_escalators.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_escalators_value.resx">
+      <DependentUpon>uc_processor_scenario_escalators_value.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_harvest_method.resx">
+      <DependentUpon>uc_processor_scenario_harvest_method.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_merch_chip_value.resx">
+      <DependentUpon>uc_processor_scenario_merch_chip_value.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_run.resx">
+      <DependentUpon>uc_processor_scenario_run.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_spc_dbh_group_value.resx">
+      <DependentUpon>uc_processor_scenario_spc_dbh_group_value.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_tree_spc.resx">
+      <DependentUpon>uc_processor_tree_spc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_tree_spc_edit.resx">
+      <DependentUpon>uc_processor_tree_spc_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_project.resx">
+      <DependentUpon>uc_project.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_project_document_links.resx">
+      <DependentUpon>uc_project_document_links.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_project_document_links_edit.resx">
+      <DependentUpon>uc_project_document_links_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_project_notes.resx">
+      <DependentUpon>uc_project_notes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_psite_list.resx">
+      <DependentUpon>uc_psite_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_edit.resx">
+      <DependentUpon>uc_rx_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_fvscmd_edit.resx">
+      <DependentUpon>uc_rx_fvscmd_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_fvscmd_list.resx">
+      <DependentUpon>uc_rx_fvscmd_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_harvest_cost_column_list.resx">
+      <DependentUpon>uc_rx_harvest_cost_column_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_harvest_method.resx">
+      <DependentUpon>uc_rx_harvest_method.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_list.resx">
+      <DependentUpon>uc_rx_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_package_edit.resx">
+      <DependentUpon>uc_rx_package_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_package_fvscmd_list.resx">
+      <DependentUpon>uc_rx_package_fvscmd_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_package_harvest_cost_column_list.resx">
+      <DependentUpon>uc_rx_package_harvest_cost_column_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_rx_package_list.resx">
+      <DependentUpon>uc_rx_package_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario.resx">
+      <DependentUpon>uc_scenario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_core_scenario_copy.resx">
+      <DependentUpon>uc_scenario_core_scenario_copy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_costs.resx">
+      <DependentUpon>uc_scenario_costs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_datasource.resx">
+      <DependentUpon>uc_scenario_datasource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_ffe.resx">
+      <DependentUpon>uc_scenario_ffe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_filter.resx">
+      <DependentUpon>uc_scenario_filter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_fvs_prepost_optimization.resx">
+      <DependentUpon>uc_scenario_fvs_prepost_optimization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_fvs_prepost_variables_effective.resx">
+      <DependentUpon>uc_scenario_fvs_prepost_variables_effective.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_fvs_prepost_variables_tiebreaker.resx">
+      <DependentUpon>uc_scenario_fvs_prepost_variables_tiebreaker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_harvest_cost_column_edit.resx">
+      <DependentUpon>uc_scenario_harvest_cost_column_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_harvest_cost_column_list.resx">
+      <DependentUpon>uc_scenario_harvest_cost_column_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_merge_tables.resx">
+      <DependentUpon>uc_scenario_merge_tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_notes.resx">
+      <DependentUpon>uc_scenario_notes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_open.resx">
+      <DependentUpon>uc_scenario_open.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_owner_groups.resx">
+      <DependentUpon>uc_scenario_owner_groups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_psite.af.resx">
+      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_psite.en-US.resx">
+      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_psite.en.resx">
+      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_psite.resx">
+      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_core_scenario_run.resx">
+      <DependentUpon>uc_core_scenario_run.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_treatment_intensity.resx">
+      <DependentUpon>uc_scenario_treatment_intensity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_select_list_item.resx">
+      <DependentUpon>uc_select_list_item.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_select_previous_expression.resx">
+      <DependentUpon>uc_select_previous_expression.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_sql_builder.resx">
+      <DependentUpon>uc_sql_builder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_table_exists_dialog.resx">
+      <DependentUpon>uc_table_exists_dialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_textbox.resx">
+      <DependentUpon>uc_textbox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_tree_diam_groups_edit.resx">
+      <DependentUpon>uc_tree_diam_groups_edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_tree_diam_groups_list.resx">
+      <DependentUpon>uc_tree_diam_groups_list.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_tree_spc_groups.resx">
+      <DependentUpon>uc_tree_spc_groups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_processor_scenario_select.resx">
+      <DependentUpon>uc_scenario_processor_scenario_select.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="Properties\licenses.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
