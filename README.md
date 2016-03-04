@@ -1,2 +1,2 @@
 # fia-biosum-manager
-User interface for Biosum
+User interface and majority of code for Biosum
