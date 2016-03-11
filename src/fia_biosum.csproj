@@ -905,7 +905,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
     <None Include="Properties\licenses.config" />
   </ItemGroup>
   <ItemGroup>
