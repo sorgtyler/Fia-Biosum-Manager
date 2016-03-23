@@ -18,6 +18,7 @@ namespace FIA_Biosum_Manager
 		private string m_strTempDbFile=frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir,"accdb");
 		private string m_strProjectVersion="1.0.0";
 		private string[] m_strProjectVersionArray=null;
+        private bool bProjectVersionArrayUsed = false;
 		private string _strProjDir="";
 		private FIA_Biosum_Manager.frmMain _oFrmMain=null;
 		string strUpdateSql="";
@@ -82,6 +83,12 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		public void PerformVersionCheck()
         {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//version_control.PerformVersionCheck \r\n");
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }
             frmMain.g_oFrmMain.ActivateStandByAnimation(
                 frmMain.g_oFrmMain.WindowState,
                 frmMain.g_oFrmMain.Left,
@@ -89,60 +96,127 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oFrmMain.Width,
                 frmMain.g_oFrmMain.Top);
             bool bPerformCheck = true;
-            string strProjVersionFile = this.ReferenceProjectDirectory + "\\application.version";
+            string strProjVersionFile = this.ReferenceProjectDirectory.Trim() + "\\application.version";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: strProjVersionFile=" + strProjVersionFile + "\r\n");
+
             m_strAppVerArray = frmMain.g_oUtils.ConvertListToArray(frmMain.g_strAppVer, ".");
             if (System.IO.File.Exists(strProjVersionFile))
             {
-                //Open the file in a stream reader.
-                System.IO.StreamReader s = new System.IO.StreamReader(strProjVersionFile);
-                //Split the first line into the columns       
-                string strProjVersion = s.ReadLine();
-                s.Close();
 
-                s = new System.IO.StreamReader(strProjVersionFile);
-                string strAppVersion = s.ReadLine();
-                s.Close();
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: open application version file\r\n");
+                try
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: instantiate streamreader and open file\r\n");
+                    //Open the file in a stream reader.
+                    System.IO.StreamReader s = new System.IO.StreamReader(strProjVersionFile);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  application version file opened with no errors\r\n");
 
-                if (strProjVersion.Trim() == frmMain.g_strAppVer.Trim())
-                {
-                    bPerformCheck = false;
-                }
-                else
-                {
-                    if (strProjVersion.Trim().Length > 0)
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  streamreader.ReadLine\r\n");
+                    //Split the first line into the columns       
+                    string strProjVersion = s.ReadLine();
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  streamreader.ReadLine successful\r\n");
+                    s.Close();
+                    s.Dispose();
+                    s = null;
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  streamreader close and dispose successful\r\n");
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  strProjVersion=" + strProjVersion + "\r\n");
+                    if (strProjVersion.Trim() == frmMain.g_strAppVer.Trim())
                     {
-                        this.m_strProjectVersion = strProjVersion.Trim();
-                        m_strProjectVersionArray = frmMain.g_oUtils.ConvertListToArray(m_strProjectVersion, ".");
+                        bPerformCheck = false;
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  bPerformCheck=false\r\n");
                     }
+                    else
+                    {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  bPerformCheck=true\r\n");
+
+                        if (strProjVersion.Trim().Length > 0)
+                        {
+                            this.m_strProjectVersion = strProjVersion.Trim();
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Convert " + m_strProjectVersion + " to an array\r\n");
+                            m_strProjectVersionArray = frmMain.g_oUtils.ConvertListToArray(m_strProjectVersion, ".");
+                            bProjectVersionArrayUsed = true;
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            {
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Conversion to array completed\r\n");
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: m_strProjectVersionArray[APP_VERSION_MAJOR]=" + m_strProjectVersionArray[APP_VERSION_MAJOR] + " m_strProjectVersionArray[APP_VERSION_MINOR1]=" + m_strProjectVersionArray[APP_VERSION_MINOR1] + " m_strProjectVersionArray[APP_VERSION_MINOR2]=" + m_strProjectVersionArray[APP_VERSION_MINOR2] + "\r\n");
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception err)
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: !!Error opening Application.Version File!! ERROR=" + err.Message + "r\n");
                 }
             }
             else
-                m_strProjectVersionArray = frmMain.g_oUtils.ConvertListToArray(m_strProjectVersion, ".");
-            if (m_strProjectVersionArray != null)
             {
-
-                //no database updates need to be made with these versions
-                if (frmMain.g_strAppVer == "5.1.2" && m_strProjectVersion == "5.1.1")
-                {
-                    UpdateProjectVersionFile(strProjVersionFile);
-                    bPerformCheck = false;
-                }
-                else if (frmMain.g_strAppVer == "5.0.5" && m_strProjectVersion == "5.0.4")
-                {
-
-                    UpdateProjectVersionFile(strProjVersionFile);
-                    bPerformCheck = false;
-
-                }
-                else if (frmMain.g_strAppVer == "5.1.0" && (m_strProjectVersion == "5.0.4" ||
-                                                            m_strProjectVersion == "5.0.5"))
-                {
-
-                    UpdateProjectVersionFile(strProjVersionFile);
-                    bPerformCheck = false;
-                }
-
+                m_strProjectVersionArray = frmMain.g_oUtils.ConvertListToArray(m_strProjectVersion, ".");
+                bProjectVersionArrayUsed = true;
             }
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Check m_strProjectVersionArray\r\n");
+
+            try
+            {
+                if (bProjectVersionArrayUsed)
+                {
+                    if (m_strProjectVersionArray != null)
+                    {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Project Version=" + m_strProjectVersion + " Application Version=" + frmMain.g_strAppVer + "\r\n");
+                        //no database updates need to be made with these versions
+                        if (frmMain.g_strAppVer == "5.1.2" && m_strProjectVersion == "5.1.1")
+                        {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression01\r\n");
+                            UpdateProjectVersionFile(strProjVersionFile);
+                            bPerformCheck = false;
+                        }
+                        else if (frmMain.g_strAppVer == "5.0.5" && m_strProjectVersion == "5.0.4")
+                        {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression02\r\n");
+
+                            UpdateProjectVersionFile(strProjVersionFile);
+                            bPerformCheck = false;
+
+                        }
+                        else if (frmMain.g_strAppVer == "5.1.0" && (m_strProjectVersion == "5.0.4" ||
+                                                                    m_strProjectVersion == "5.0.5"))
+                        {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression03\r\n");
+
+                            UpdateProjectVersionFile(strProjVersionFile);
+                            bPerformCheck = false;
+                        }
+
+                    }
+                }
+            }
+            catch (Exception error)
+            {
+                bPerformCheck = false;
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: !!Error opening Application.Version File!! ERROR=" + error.Message + "r\n");
+            }
+
             //check for partial update
             if (bPerformCheck)
             {
@@ -165,6 +239,9 @@ namespace FIA_Biosum_Manager
                                m_strProjectVersionArray[APP_VERSION_MINOR2] == "2" ||
                                m_strProjectVersionArray[APP_VERSION_MINOR2] == "3")))
                         {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression04\r\n");
+
                             //project version is 5.0.? or 5.1.0 to 5.1.3
                             UpdateFVSPlotVariantAssignmentsTable();
                             UpdateProjectVersionFile(strProjVersionFile);
@@ -172,6 +249,9 @@ namespace FIA_Biosum_Manager
                         }
                         else
                         {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression05\r\n");
+
                             UpdateProjectVersionFile(strProjVersionFile);
                             bPerformCheck = false;
                         }
@@ -189,6 +269,9 @@ namespace FIA_Biosum_Manager
                             ((Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) <= 5 &&
                              Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 2)))
                         {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression06\r\n");
+
                             UpgradeToPrePostSeqNumMatrix();
                             UpdateAuditDbFile_5_3_0();
                             UpdateDatasources_5_3_0();
@@ -217,68 +300,85 @@ namespace FIA_Biosum_Manager
                     }
                     else if (frmMain.g_strAppVer == "5.3.1" && m_strProjectVersion == "5.3.0")
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression07\r\n");
+
                                 UpdateProjectVersionFile(strProjVersionFile);
                                 bPerformCheck = false;
                     }
                     else if (frmMain.g_strAppVer == "5.3.2" && (m_strProjectVersion == "5.3.0" || m_strProjectVersion=="5.3.1"))
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression08\r\n");
+
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
                     else if ((frmMain.g_strAppVer == "5.4.0" || frmMain.g_strAppVer=="5.4.1") && (m_strProjectVersion=="5.3.2" || m_strProjectVersion == "5.3.0" || m_strProjectVersion == "5.3.1"))
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression09\r\n");
+
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
                     else if (frmMain.g_strAppVer == "5.4.1" && m_strProjectVersion == "5.4.0")
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression10\r\n");
+
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
                     else if (frmMain.g_strAppVer == "5.5.1" && m_strProjectVersion == "5.5.0")
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression11\r\n");
+
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
                     else if (frmMain.g_strAppVer == "5.5.2" && m_strProjectVersion == "5.5.1")
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression12\r\n");
+
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
                     else if (frmMain.g_strAppVer == "5.5.3" && (m_strProjectVersion == "5.5.2" || m_strProjectVersion=="5.5.1"))
                     {
-                        UpdateProjectVersionFile(strProjVersionFile);
-                        bPerformCheck = false;
-                    }
-                    else if (frmMain.g_strAppVer == "5.5.4" && (m_strProjectVersion == "5.5.3" || m_strProjectVersion == "5.5.2" || m_strProjectVersion=="5.5.1"))
-                    {
-                        UpdateProjectVersionFile(strProjVersionFile);
-                        bPerformCheck = false;
-                    }
-                    //GitHub test project
-                    else if (frmMain.g_strAppVer == "5.5.5" && (m_strProjectVersion == "5.5.4" || m_strProjectVersion == "5.5.3" || m_strProjectVersion == "5.5.2" || m_strProjectVersion == "5.5.1"))
-                    {
-                        UpdateProjectVersionFile(strProjVersionFile);
-                        bPerformCheck = false;
-                    }
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression13\r\n");
 
-                    else if ((frmMain.g_strAppVer == "5.5.0" || frmMain.g_strAppVer == "5.5.1" || frmMain.g_strAppVer == "5.5.2" || frmMain.g_strAppVer == "5.5.3" || frmMain.g_strAppVer == "5.5.4" || frmMain.g_strAppVer == "5.5.5") && (m_strProjectVersion == "5.4.0" || m_strProjectVersion == "5.4.1" || m_strProjectVersion == "5.4.2"))
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
+                    else if (frmMain.g_strAppVer == "5.5.6" &&  (frmMain.g_strAppVer=="5.5.5" || frmMain.g_strAppVer == "5.5.4" || m_strProjectVersion == "5.5.3" || m_strProjectVersion == "5.5.2" || m_strProjectVersion=="5.5.1"))
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression14\r\n");
+
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
+                    else if ((frmMain.g_strAppVer == "5.5.0" || frmMain.g_strAppVer=="5.5.1" || frmMain.g_strAppVer=="5.5.2" || frmMain.g_strAppVer=="5.5.3" || frmMain.g_strAppVer=="5.5.4" || frmMain.g_strAppVer=="5.5.5" || frmMain.g_strAppVer=="5.5.6") && (m_strProjectVersion == "5.4.0" || m_strProjectVersion == "5.4.1" || m_strProjectVersion == "5.4.2"))
+                    {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression15\r\n");
+
                         UpdateFVSPlotVariantAssignmentsTable();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    else if ((frmMain.g_strAppVer == "5.5.5" || frmMain.g_strAppVer == "5.5.4" || frmMain.g_strAppVer == "5.5.3" || frmMain.g_strAppVer == "5.5.2" || frmMain.g_strAppVer == "5.5.1") && m_strProjectVersion == "5.5.0")
+                    else if ((frmMain.g_strAppVer == "5.5.6" || frmMain.g_strAppVer == "5.5.5" || frmMain.g_strAppVer == "5.5.4" || frmMain.g_strAppVer == "5.5.3" || frmMain.g_strAppVer == "5.5.2" || frmMain.g_strAppVer == "5.5.1") && (m_strProjectVersion == "5.5.0" || m_strProjectVersion=="5.5.1" || m_strProjectVersion=="5.5.2" || m_strProjectVersion=="5.5.3" || m_strProjectVersion=="5.5.4" || m_strProjectVersion=="5.5.5"))
                     {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression16\r\n");
+
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    else if ((frmMain.g_strAppVer == "5.5.5" || frmMain.g_strAppVer == "5.5.4" || frmMain.g_strAppVer == "5.5.3" || frmMain.g_strAppVer == "5.5.2") && m_strProjectVersion == "5.5.1")
-                    {
-                        UpdateProjectVersionFile(strProjVersionFile);
-                        bPerformCheck = false;
-                    }
-                    
                    
                     
                 }
@@ -286,6 +386,9 @@ namespace FIA_Biosum_Manager
             }
             if (bPerformCheck)
             {
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: bPerformCheck=true\r\n");
+
 
                 string strInfo = frmMain.g_sbpInfo.Text;
                 frmMain.g_sbpInfo.Text = "Version Update: Checking Project Table...Stand by";
@@ -323,9 +426,19 @@ namespace FIA_Biosum_Manager
             }
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
 
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Leaving\r\n");
+
+
         }
         private void UpdateProjectVersionFile(string p_strProjectVersionFile)
         {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//version_control.UpdateProjectVersionFile \r\n");
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }
             if (System.IO.File.Exists(p_strProjectVersionFile))
                 System.IO.File.Delete(p_strProjectVersionFile);
             frmMain.g_oUtils.WriteText(p_strProjectVersionFile, frmMain.g_strAppVer);
