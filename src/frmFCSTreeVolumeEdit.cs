@@ -1565,6 +1565,7 @@ namespace FIA_Biosum_Manager
     private void btnLinkTableTest_Click(object sender, EventArgs e)
     {
         string strFile=frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir,"accdb");
+        
         string str = "ODBC\r\n-----------------\r\nData Source Name:FIA Biosum Oracle Services\r\nTNS Service Name:XE\r\nUser Id:fcs\r\nOracle Table Name:BIOSUM_VOLUME\r\nMS Access Table Link Name:fcs_biosum_volume\r\nConnection Status:";
         try
         {

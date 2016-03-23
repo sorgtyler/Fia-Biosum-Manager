@@ -177,6 +177,7 @@ namespace FIA_Biosum_Manager
         //debugging values
         public static bool g_bDebug=false;
         public static int g_intDebugLevel = 3;
+        
 
         //suppress table record counts
         public static bool g_bSuppressFVSInputTableRowCount = false;
@@ -189,7 +190,7 @@ namespace FIA_Biosum_Manager
         public const int PROJDIR = 0;
         public const int OLDPROJDIR = 1;
 
-		public static string g_strAppVer = "5.5.5";
+		public static string g_strAppVer = "5.5.6";
 		private System.Windows.Forms.MenuItem mnuSettings;
         private MenuItem mnuTools;
         private MenuItem mnuToolsFCS;
@@ -204,11 +205,12 @@ namespace FIA_Biosum_Manager
         static readonly object _locker = new object();
 
 
-		
 
-		
-		
 
+
+        
+               
+       
 
 		public frmMain()
 		{
@@ -217,7 +219,10 @@ namespace FIA_Biosum_Manager
 			//
            
 			InitializeComponent();
-           
+
+            
+
+
             this.m_oEnv = new env();
 			
 			//create and initialize project form
@@ -2717,7 +2722,7 @@ namespace FIA_Biosum_Manager
 		}
 		public void OpenProject(string strNewProjectDirectory, string strNewProjectFile)
 		{
-			
+            
 			//check to make sure this project is not already open
 			//lets see if this project is already open
 			utils p_oUtils = new utils();
@@ -2728,10 +2733,13 @@ namespace FIA_Biosum_Manager
 			}
 			p_oUtils = null;
 
+            
+
 			version_control oVersCtl = new version_control();
 			
 			if (this.frmProject.uc_project1.m_intError == 0  && m_ProjectOpen == false) 
 			{
+                frmProject.uc_project1.m_strDebugFile = frmMain.g_oEnv.strTempDir + @"\FIA_Biosum_DebugLog_" + this.frmProject.uc_project1.m_strNewProjectId.Trim() + "_" + String.Format("{0:yyyyMMdd}", DateTime.Now) + ".txt";
 				frmMain.g_sbpInfo.Text = "Loading Project...Stand By";
 				this.frmProject.uc_project1.m_strProjectDirectory = strNewProjectDirectory; 
 				this.frmProject.uc_project1.m_strProjectFile = strNewProjectFile; 
@@ -2745,6 +2753,22 @@ namespace FIA_Biosum_Manager
 				this.frmProject.uc_project1.txtShared.Text = this.frmProject.uc_project1.m_strNewShared;
 				this.frmProject.uc_project1.txtRootDirectory.Text = this.frmProject.uc_project1.m_strNewRootDirectory;
 				this.frmProject.uc_project1.m_strProjectId = this.frmProject.uc_project1.m_strNewProjectId;
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "=====================   Opening FIA BIOSUM Project   =====================\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "**Project Properties**\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Project ID:                 " + frmProject.uc_project1.txtProjectId.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Project Name:               " + frmProject.uc_project1.txtName.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Project Root Directory:     " + frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Project File:               " + frmProject.uc_project1.m_strProjectFile + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Project Date:               " + frmProject.uc_project1.txtDate.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Current Date/Time:          " + DateTime.Now.ToString() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Company:                    " + frmProject.uc_project1.txtCompany.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Shared:                     " + frmProject.uc_project1.txtShared.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "Description:                " + frmProject.uc_project1.txtDescription.Text.Trim() + "\r\n");
+                }
+
+
 				this.frmProject.uc_project1.SetProjectPathEnvironmentVariables();
 				if (frmProject.uc_project1.m_strAction != "NEW")
 				{
@@ -2752,6 +2776,8 @@ namespace FIA_Biosum_Manager
 					oVersCtl.ReferenceProjectDirectory=this.frmProject.uc_project1.m_strProjectDirectory;
 					oVersCtl.PerformVersionCheck();
 				}
+              
+
 				btnDB.ForeColor = Color.Red;
 				this.btnContacts.Enabled=true;
 				this.btnCoreAnalysis.Enabled = true;
@@ -2780,11 +2806,13 @@ namespace FIA_Biosum_Manager
 				this.mnuFileSaveProject.Enabled=true;
 				m_ProjectOpen = true;
 				this.recentfiles();
+
                 
 			}
 			else if (this.frmProject.uc_project1.m_intError == 0)
 			{
 				frmMain frmTemp = new frmMain();
+                frmTemp.frmProject.uc_project1.m_strDebugFile = frmMain.g_oEnv.strTempDir + @"\FIA_Biosum_DebugLog_" + this.frmProject.uc_project1.m_strNewProjectId.Trim() + "_" + String.Format("{0:yyyyMMdd}", DateTime.Now) + ".txt";
 				frmTemp.frmProject.uc_project1.m_strProjectDirectory = strNewProjectDirectory; 
 				frmTemp.frmProject.uc_project1.m_strProjectFile = strNewProjectFile; 
 				frmTemp.frmProject.uc_project1.lblTitle.Text = "Project Properties";
@@ -2797,6 +2825,22 @@ namespace FIA_Biosum_Manager
 				frmTemp.frmProject.uc_project1.txtShared.Text = this.frmProject.uc_project1.m_strNewShared;
 				frmTemp.frmProject.uc_project1.txtRootDirectory.Text = this.frmProject.uc_project1.m_strNewRootDirectory;
 				frmTemp.frmProject.uc_project1.m_strProjectId = this.frmProject.uc_project1.m_strNewProjectId;
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "=====================   Opening FIA BIOSUM Project   =====================\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "**Project Properties**\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Project ID:                 " + frmProject.uc_project1.txtProjectId.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Project Name:               " + frmProject.uc_project1.txtName.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Project Root Directory:     " + frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Project File:               " + frmProject.uc_project1.m_strProjectFile + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Project Date:               " + frmProject.uc_project1.txtDate.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Current Date/Time           " + DateTime.Now.ToString() + "\r\n") ;
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Company:                    " + frmProject.uc_project1.txtCompany.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Shared:                     " + frmProject.uc_project1.txtShared.Text.Trim() + "\r\n");
+                    frmMain.g_oUtils.WriteText(frmTemp.frmProject.uc_project1.m_strDebugFile, "Description:                " + frmProject.uc_project1.txtDescription.Text.Trim() + "\r\n");
+                }
+
 				frmTemp.frmProject.uc_project1.SetProjectPathEnvironmentVariables();
 				if (frmTemp.frmProject.uc_project1.m_strAction != "NEW")
 				{
@@ -2804,7 +2848,7 @@ namespace FIA_Biosum_Manager
 					oVersCtl.ReferenceProjectDirectory=frmTemp.frmProject.uc_project1.m_strProjectDirectory;
 					oVersCtl.PerformVersionCheck();
 				}
-
+              
 				btnDB.ForeColor = Color.Red;
 				frmTemp.btnContacts.Enabled=true;
 				frmTemp.btnCoreAnalysis.Enabled = true;
@@ -2876,6 +2920,12 @@ namespace FIA_Biosum_Manager
 		}
 		private void recentfiles()
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(this.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.recentfiles \r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }
 			string[]  strCurrentMenuItem = new string[5];
 			string[]  strNewMenuItem     = new string[5];
 			int intCount=0;
@@ -2989,47 +3039,97 @@ namespace FIA_Biosum_Manager
 			}
             sw.Close();
 			sw = null;
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.recentfiles: Leaving \r\n");
 		}
 
 		private void mnuFileRecentProjects1_Click(object sender, System.EventArgs e)
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(this.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects1_Click \r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }
 			this.frmProject.uc_project1.Open_Project_No_Dialog(this.mnuFileRecentProjects1.Text);
 			if (this.frmProject.uc_project1.m_intError==0) 
 				this.OpenProject(this.frmProject.uc_project1.m_strNewProjectDirectory,
 					             this.frmProject.uc_project1.m_strNewProjectFile);
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects1_Click: Leaving \r\n");
+               
+           
 			
 		}
 
 		private void mnuFileRecentProjects2_Click(object sender, System.EventArgs e)
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(this.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects2_Click \r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }
 			this.frmProject.uc_project1.Open_Project_No_Dialog(this.mnuFileRecentProjects2.Text);
 			if (this.frmProject.uc_project1.m_intError==0) 
 				this.OpenProject(this.frmProject.uc_project1.m_strNewProjectDirectory,
 					this.frmProject.uc_project1.m_strNewProjectFile);
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects2_Click: Leaving \r\n");
 		}
 
 		private void mnuFileRecentProjects3_Click(object sender, System.EventArgs e)
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(this.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects3_Click \r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }
 			this.frmProject.uc_project1.Open_Project_No_Dialog(this.mnuFileRecentProjects3.Text);
 			if (this.frmProject.uc_project1.m_intError==0) 
 				this.OpenProject(this.frmProject.uc_project1.m_strNewProjectDirectory,
 					this.frmProject.uc_project1.m_strNewProjectFile);
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects3_Click: Leaving \r\n");
 		}
 
 		private void mnuFileRecentProjects4_Click(object sender, System.EventArgs e)
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(this.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects4_Click \r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }   
 			this.frmProject.uc_project1.Open_Project_No_Dialog(this.mnuFileRecentProjects4.Text);
 			if (this.frmProject.uc_project1.m_intError==0) 
 				this.OpenProject(this.frmProject.uc_project1.m_strNewProjectDirectory,
 					this.frmProject.uc_project1.m_strNewProjectFile);
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects4_Click: Leaving \r\n");
 		}
 
 		private void mnuFileRecentProjects5_Click(object sender, System.EventArgs e)
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(this.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects5_Click \r\n");
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//\r\n");
+            }
 			this.frmProject.uc_project1.Open_Project_No_Dialog(this.mnuFileRecentProjects5.Text);
 			if (this.frmProject.uc_project1.m_intError==0) 
 				this.OpenProject(this.frmProject.uc_project1.m_strNewProjectDirectory,
 					this.frmProject.uc_project1.m_strNewProjectFile);
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(frmProject.uc_project1.m_strDebugFile, "//frmMain.mnuFileRecentProjects5_Click: Leaving \r\n");
 		}
 
 		private void mnuViewLinks_Click(object sender, System.EventArgs e)

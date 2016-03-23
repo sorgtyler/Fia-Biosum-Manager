@@ -884,6 +884,15 @@ namespace FIA_Biosum_Manager
 				this.m_ado.OpenConnection(this.m_strConn);
 
 				//load up the spcd conversion table into an array
+                /**************************************************************
+                 **Some FIA species are not recognized by FVS within the 
+                 **FVS variant context. FVS will automatically convert those
+                 **unrecognized species to either 298, 998 or other generic
+                 ***species. The tree species table provides a conversion matrix
+                 **to avoid FVS changing the species codes. FVS unrecognized
+                 **species can be converted to a species code within the 
+                 **family genus.
+                 **************************************************************/
 				this.m_ado.m_strSQL = "SELECT spcd,fvs_input_spcd,fvs_species " + 
 					"FROM " + this.m_strTreeSpcTable + " " + 
 					"WHERE trim(ucase(fvs_variant)) = '" + this.m_strVariant.Trim() + "';";
@@ -3408,7 +3417,7 @@ namespace FIA_Biosum_Manager
 					"(SELECT SUM(IIF(t.tpacurr IS NOT NULL AND t.dia IS NOT NULL," + 
 					"t.tpacurr * t.dia,0)) AS dividend," + 
 					"SUM(IIF(t.tpacurr IS NOT NULL and t.dia IS NOT NULL," + 
-					"t.dia,0)) as divisor," + 
+					"t.tpacurr,0)) as divisor," + 
 					"IIF(dividend > 0 AND divisor > 0," + 
 					"dividend / divisor,0) AS AvgDia " + 
 					"FROM " + this.TreeTable + " t " + 

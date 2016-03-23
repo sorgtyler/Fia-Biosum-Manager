@@ -27,6 +27,7 @@ namespace FIA_Biosum_Manager
 
 		//project variables
 		public bool boolProjectOpen = false;
+        public string m_strDebugFile = "";
 		//new project variables
 		public string m_strNewProjectFile = "";
 		public string m_strNewProjectDirectory = "";
@@ -38,6 +39,7 @@ namespace FIA_Biosum_Manager
         public string m_strNewShared="";
 		public string m_strNewRootDirectory="";
 		public string m_strNewProjectVersion="";
+        
 
 
 		//current open project
@@ -143,12 +145,14 @@ namespace FIA_Biosum_Manager
 			this.txtShared.Enabled=false;
 			m_oResizeForm.ScrollBarParentControl=panel1;
 
+            m_strDebugFile = frmMain.g_oEnv.strTempDir + @"\FIA_Biosum_DebugLog_" + String.Format("{0:yyyyMMdd}", DateTime.Now) + ".txt";
+
 
 		}
 
 		/// <summary> 
 		/// Clean up any resources being used.
-		/// </summary>
+		/// </summary>C:\FIA_BIOSUM\source\cs\fia_biosum\fia_biosum_manager\frmScenario.cs.bak
 		protected override void Dispose( bool disposing )
 		{
 			if( disposing )
@@ -162,14 +166,36 @@ namespace FIA_Biosum_Manager
 		}
 		public void OpenProjectTable(string strRootDir, string strFile)
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//uc_project.OpenProjectTable \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.OpenProjectTable: strRootDir=" + strRootDir + " strFile=" + strFile + "\r\n");
 			frmMain.g_sbpInfo.Text = "Loading Project...Stand By";
             this.m_intError = 0;
 			this.m_strError = "";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.OpenProjectTable: Instantiate ado_data_access \r\n");
+
 			ado_data_access p_ado = new ado_data_access();
 			
 			string strFullPath = strRootDir + "\\DB\\" + strFile;
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.OpenProjectTable: strFullPath=" + strFullPath + "\r\n");
+
 			string strConn=p_ado.getMDBConnString(strFullPath,"admin","");
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.OpenProjectTable: Open DBFile with Connection String=" + strConn + "\r\n");
+
 			p_ado.OpenConnection(strConn);
+
+           
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.OpenProjectTable: OpenConnection error Value=" + p_ado.m_intError.ToString() + "\r\n");
 			if (p_ado.m_intError==0)
 			{
 				try
@@ -215,6 +241,10 @@ namespace FIA_Biosum_Manager
 			else 
 			{
 				this.m_intError = p_ado.m_intError;
+                this.m_strError = p_ado.m_strError;
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.OpenProjectTable: !!Failed to open project file!! Error=" + m_strError + "\r\n");
+
 			}
             p_ado = null;
 			//m_strProjectId = this.txtProjectId.Text.ToString();  
@@ -233,7 +263,13 @@ namespace FIA_Biosum_Manager
 			frmMain.g_sbpInfo.Text = "Ready";
 		}
 		public void OpenUserConfigTable(string strDir, string strFile)
-		{
+       	{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//uc_project.OpenUserConfigTable \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
 			this.m_intError = 0;
 			this.m_strError = "";
 			ado_data_access p_ado = new ado_data_access();
@@ -241,7 +277,7 @@ namespace FIA_Biosum_Manager
 			string strFullPath = strDir + "\\" + strFile;
 			string strConn = p_ado.getMDBConnString(strFullPath,"admin","");
 			//string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-			p_ado.SqlQueryReader(strConn,"select * from user_config where '" + System.Environment.UserName.ToString().Trim() + "'");
+			p_ado.SqlQueryReader(strConn,"select * from user_config where trim(ucase(user_name)) = '" + System.Environment.UserName.ToString().Trim().ToUpper() + "'");
 		
 			if (p_ado.m_intError==0)
 			{
@@ -1931,7 +1967,12 @@ namespace FIA_Biosum_Manager
 		}
 		public  void Open_Project()
 		{
-			
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//uc_project.Open_Profect \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
 			//string  strTemp;
 			//int x;
 			this.m_strNewProjectFile = "";
@@ -1950,9 +1991,18 @@ namespace FIA_Biosum_Manager
 				{
 					this.m_strNewProjectFile = OpenFileDialog1.FileName.Substring(OpenFileDialog1.FileName.LastIndexOf("\\") + 1);
 					this.m_strNewProjectDirectory = OpenFileDialog1.FileName.Substring(0,OpenFileDialog1.FileName.LastIndexOf("\\") - 3);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.Open_Profect: Open Project Table \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.Open_Profect: strNewProjectDirectory=" + m_strNewProjectDirectory + " strNewProjectFile=" + m_strNewProjectFile + "\r\n");
+                    }
 					this.OpenProjectTable(this.m_strNewProjectDirectory, this.m_strNewProjectFile);
-					if (this.m_intError==0)
-						this.OpenUserConfigTable(this.m_strNewProjectDirectory + "\\db", this.m_strNewProjectFile);
+                    if (this.m_intError == 0)
+                        this.OpenUserConfigTable(this.m_strNewProjectDirectory + "\\db", this.m_strNewProjectFile);
+                    else
+                    {
+
+                    }
 
 
 				}
@@ -1968,7 +2018,12 @@ namespace FIA_Biosum_Manager
 
 		public  void Open_Project_No_Dialog(string strDirectoryAndFile)
 		{
-			
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//uc_project.Open_Profect_No_Dialog \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
 			
 			this.m_strNewProjectFile = "";
 			this.m_strNewProjectDirectory = "";
@@ -1981,10 +2036,17 @@ namespace FIA_Biosum_Manager
 			{
 				this.m_strNewProjectFile =   strDirectoryAndFile.Substring(strDirectoryAndFile.LastIndexOf("\\") + 1);    //OpenFileDialog1.FileName.Substring(OpenFileDialog1.FileName.LastIndexOf("\\") + 1);
 				this.m_strNewProjectDirectory = strDirectoryAndFile.Substring(0,strDirectoryAndFile.LastIndexOf("\\") - 3);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.Open_Profect_No_Dialog: Open Project Table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.Open_Profect_No_Dialog: strNewProjectDirectory=" + m_strNewProjectDirectory + " strNewProjectFile=" + m_strNewProjectFile + "\r\n");
+                }
+                    
+                
 				this.OpenProjectTable(this.m_strNewProjectDirectory, this.m_strNewProjectFile);
-				if (this.m_intError==0)
-				    this.OpenUserConfigTable(this.m_strNewProjectDirectory + "\\db", this.m_strNewProjectFile);
-
+                if (this.m_intError == 0)
+                    this.OpenUserConfigTable(this.m_strNewProjectDirectory + "\\db", this.m_strNewProjectFile);
+                
 			}
 			else 
 			{
@@ -1995,6 +2057,12 @@ namespace FIA_Biosum_Manager
 		}
 		private void txtProjectId_Leave(object sender, System.EventArgs e)
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//uc_project.txtProjectId_Leave \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
 			if (this.txtProjectId.Text.Length > 0 && txtProjectId.Enabled==true) 
 			{
 				this.txtProjectId.Text = this.txtProjectId.Text.Trim();
@@ -2013,6 +2081,8 @@ namespace FIA_Biosum_Manager
                         this.txtRootDirectory.Text = this.txtRootDirectory.Text.Trim() + "\\" + this.txtProjectId.Text.ToLower();
                 }
 			}
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.txtProjectId_Leave: txtProjectId.Text=" + txtProjectId.Text.Trim() + " txtRootDirectory.Text=" + txtRootDirectory.Text.Trim() + "\r\n");
 		}
 
 		private void grpboxProjectId_Enter(object sender, System.EventArgs e)
@@ -2424,6 +2494,12 @@ namespace FIA_Biosum_Manager
 		
 		public void SetProjectPathEnvironmentVariables()
 		{
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//uc_project.SetProjectPathEnvironmentVariables \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
             int x;
 			
 			string strFullPath = "";
@@ -2439,6 +2515,8 @@ namespace FIA_Biosum_Manager
             strProjDir = m_strProjectDirectory.Trim();
             strOldProjDir = this.txtRootDirectory.Text.Trim();
 
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Replace old project directory (" + strOldProjDir + ") with new project directory (" + strProjDir + ")\r\n");
             
 
             /**********************************************
@@ -2450,10 +2528,15 @@ namespace FIA_Biosum_Manager
             //
             strFullPath = strProjDir + "\\db\\" + this.m_strProjectFile;
             strConn = oAdo.getMDBConnString(strFullPath, "", "");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Open Connection to Project Dbfile " + strConn + ")\r\n");
             oAdo.OpenConnection(strConn);
             
             strSQL = "UPDATE project SET project_root_directory = '" + strProjDir + "' " +
                      "WHERE proj_id = '" + this.txtProjectId.Text.Trim() + "';";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Execute SQL \r\n" + strSQL + "\r\n");
+
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
 
             strSQL = "UPDATE datasource " + 
@@ -2461,6 +2544,10 @@ namespace FIA_Biosum_Manager
                                 "'" + strOldProjDir.Trim().ToLower() + "'," + 
                                 "'" + strProjDir.Trim().ToLower() + "')";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Execute SQL \r\n" + strSQL + "\r\n");
+
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
             //
             //CORE ANALYSIS SCENARIO DATA SOURCE
@@ -2469,16 +2556,23 @@ namespace FIA_Biosum_Manager
             if (System.IO.File.Exists(strFullPath))
             {
                 strConn = oAdo.getMDBConnString(strFullPath, "", "");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Open Connection to Core Analysis Scenario Dbfile " + strConn + ")\r\n");
+
                 oAdo.OpenConnection(strConn);
                 strSQL = "UPDATE scenario_datasource " +
                      "SET path = REPLACE(TRIM(LCASE(path))," +
                                 "'" + strOldProjDir.Trim().ToLower() + "'," +
                                 "'" + strProjDir.Trim().ToLower() + "')";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Execute SQL \r\n" + strSQL + "\r\n");
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
                 strSQL = "UPDATE scenario " +
                     "SET path = REPLACE(TRIM(LCASE(path))," +
                                "'" + strOldProjDir.Trim().ToLower() + "'," +
                                "'" + strProjDir.Trim().ToLower() + "')";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Execute SQL \r\n" + strSQL + "\r\n");
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
             }
@@ -2489,927 +2583,41 @@ namespace FIA_Biosum_Manager
             if (System.IO.File.Exists(strFullPath))
             {
                 strConn = oAdo.getMDBConnString(strFullPath, "", "");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Open Connection to Processor Scenario Dbfile " + strConn + ")\r\n");
                 oAdo.OpenConnection(strConn);
                 strSQL = "UPDATE scenario_datasource " +
                      "SET path = REPLACE(TRIM(LCASE(path))," +
                                 "'" + strOldProjDir.Trim().ToLower() + "'," +
                                 "'" + strProjDir.Trim().ToLower() + "')";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Execute SQL \r\n" + strSQL + "\r\n");
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
                 strSQL = "UPDATE scenario " +
                      "SET path = REPLACE(TRIM(LCASE(path))," +
                                 "'" + strOldProjDir.Trim().ToLower() + "'," +
                                 "'" + strProjDir.Trim().ToLower() + "')";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Execute SQL \r\n" + strSQL + "\r\n");
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
             }
 
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: frmMain.g_oUtils.getDriveLetter for project \r\n");
             m_strProjectDirectoryDrive = frmMain.g_oUtils.getDriveLetter(strProjDir);
 
             this.txtRootDirectory.Text = strProjDir;
-            
 
 
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Leaving \r\n");
 			
 		    oAdo = null;
 
 
  		}
 
-        public void SetProjectPathEnvironmentVariables_old()
-        {
-            int x;
-            int intATProjectRoot = 0;
-            int intLenProjectRoot = 0;
-            int intATDBProjectRoot = 0;
-            int intLenDBProjectRoot = 0;
-            string strFilePathRoot = "";
-            int intAT = 0;
-            int intLen = 0;
-            bool lRootDirectoryChange = false;
-            string str = "";
-            //string str2="";
-            string strFullPath = "";
-
-            string strConn = "";
-            string strSQL = "";
-            int intRow = 0;
-            string strOldProjDir = "";
-            string strProjDir = "";
-            string strSqlList = "";
-            string strPath = "";
-            string strSubdir = "";
-
-            frmMain.g_oGeneralMacroSubstitutionVariable_Collection.Item(frmMain.OLDPROJDIR).VariableSubstitutionString = this.txtRootDirectory.Text.Trim();
-            frmMain.g_oGeneralMacroSubstitutionVariable_Collection.Item(frmMain.PROJDIR).VariableSubstitutionString = this.m_strProjectDirectory.Trim();
-
-
-
-
-            /**********************************************
-			 **instantiate the ado_data_access class
-			 **********************************************/
-            ado_data_access p_ado = new ado_data_access();
-
-            /**********************************************************
-             **see if there is a drive letter in the project directory
-             **********************************************************/
-            intATProjectRoot = this.m_strProjectDirectory.IndexOf(":");
-            if (intATProjectRoot > 0)
-            {
-                /******************************************************
-                 **load the drive and root directory into variables
-                 ******************************************************/
-                this.m_strProjectDirectoryDrive =
-                    this.m_strProjectDirectory.Substring(intATProjectRoot - 1, 2);
-
-                /***************************************************************
-                 **load the length of the project root directory into a variable
-                 ***************************************************************/
-                intLenProjectRoot = this.m_strProjectDirectory.Length - intATProjectRoot - 1;
-
-                this.m_strProjectRootDirectory =
-                    this.m_strProjectDirectory.Substring(intATProjectRoot + 1, intLenProjectRoot);
-            }
-            else
-            {
-                /*****************************************************************
-                 **load the length of the project root directory into a variable
-                 *****************************************************************/
-                intLenProjectRoot = this.m_strProjectDirectory.Length;
-
-            }
-            /****************************************************************************
-             **load the project directory that is in the project database into a variable
-			 ****************************************************************************/
-            this.m_strDBProjectDirectory = this.txtRootDirectory.Text.Trim();
-
-            /********************************************************************
-             **see if there is a drive letter in the database project directory
-             ********************************************************************/
-            intATDBProjectRoot = this.m_strDBProjectDirectory.IndexOf(":");
-            if (intATDBProjectRoot > 0)
-            {
-                /******************************************************************
-                 **get the db project directory drive and root directory and length
-                 ******************************************************************/
-                this.m_strDBProjectDirectoryDrive =
-                    this.m_strDBProjectDirectory.Substring(intATDBProjectRoot - 1, 2);
-                intLenDBProjectRoot = this.m_strDBProjectDirectory.Length - intATDBProjectRoot - 1;
-                this.m_strDBProjectRootDirectory =
-                    this.m_strDBProjectDirectory.Substring(intATDBProjectRoot + 1, intLenDBProjectRoot);
-            }
-            else
-            {
-                /************************************************************
-                 **get the length of the db project root directory
-                 ************************************************************/
-                intLenDBProjectRoot = this.m_strDBProjectRootDirectory.Length;
-
-            }
-
-            /*********************************************************************
-			 **try to correct path differences between db path and actual path
-			 *********************************************************************/
-            //project directory
-            if (this.m_strProjectRootDirectory != this.m_strDBProjectRootDirectory)
-            {
-                /************************************************************
-                 **the current project root directory is different than the
-                 **project root directory in the database
-                 ************************************************************/
-                lRootDirectoryChange = true;
-
-                /********************************************************************
-                 **update the txtrootdirectory property text field with the current 
-                 **project directory
-                 ********************************************************************/
-                this.txtRootDirectory.Text = this.m_strProjectDirectory;
-            }
-            else
-            {
-                /***********************************************************************
-                 **check to see of the db root directory and the current root directory
-                 **are the same but the drive letters are different
-                 ***********************************************************************/
-                if (this.m_strDBProjectRootDirectory.Trim().ToUpper() == this.m_strProjectRootDirectory.Trim().ToUpper() &&
-                    this.m_strDBProjectDirectoryDrive.Trim().ToUpper() != this.m_strProjectDirectoryDrive.Trim().ToUpper())
-                {
-                    lRootDirectoryChange = true;
-                    this.txtRootDirectory.Text = this.m_strProjectDirectory;
-                }
-            }
-
-            /********************************************************************************
-             **update the project table, datasource, and scenario_datasource path information
-             ********************************************************************************/
-            if (lRootDirectoryChange == true)
-            {
-                /*******************************************************************
-                 **update the project root directory field in the project table
-                 *******************************************************************/
-                System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
-                strFullPath = this.m_strProjectDirectory.Trim() + "\\db\\" + this.m_strProjectFile;
-                strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-                strSQL = "UPDATE project SET project_root_directory = '" + this.txtRootDirectory.Text + "' " +
-                    " WHERE proj_id = '" + this.txtProjectId.Text.Trim() + "';";
-                p_ado.SqlNonQuery(strConn, strSQL);
-                oConn.Close();
-
-
-                //
-                //PROJECT DATASOURCE
-                //
-                /***********************************************************************
-                 **check project datasource and change the old project root directory
-                 **to the new project root directory
-                 ***********************************************************************/
-                strFullPath = this.m_strProjectDirectory.Trim() + "\\db\\" + this.m_strProjectFile;
-                strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-                strSQL = "SELECT  table_type, path FROM datasource";
-                p_ado.CreateDataSet(strConn, strSQL, "datasource");
-                if (p_ado.m_intError == 0)
-                {
-                    /******************************************************
-                     **check each record in the project datasource table
-                     *******************************************************/
-                    for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["datasource"].Rows.Count - 1; intRow++)
-                    {
-                        //get the current datasource directory path
-                        str = p_ado.m_DataSet.Tables["datasource"].Rows[intRow]["path"].ToString();
-                        //get the root directory without the drive letter
-                        if (str.Trim().Length > 0)
-                        {
-                            intAT = str.IndexOf(":");
-                            if (intAT > 0)
-                            {
-                                intLen = str.Length - intAT - 1;
-                                strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                            }
-                            else
-                            {
-                                strFilePathRoot = str;
-                                intLen = strFilePathRoot.Length;
-                            }
-                            //to determine substring operation check
-                            //to see whether the current root directory
-                            //is longer in length than the db project root directory
-                            if (intLen >= intLenDBProjectRoot)
-                            {
-                                if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                {
-                                    str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                    strFullPath = this.m_strProjectDirectory.Trim() + "\\db\\" + this.m_strProjectFile;
-                                    strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                    //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                    strSQL = "UPDATE datasource SET path = '" + str + "' " +
-                                        " WHERE trim(ucase(table_type)) = '" +
-                                        p_ado.m_DataSet.Tables["datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                    p_ado.SqlNonQuery(strConn, strSQL);
-                                }
-                                else
-                                {
-                                }
-                            }
-                            else
-                            {
-                                if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                {
-                                    str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                    strFullPath = this.m_strProjectDirectory.Trim() + "\\db\\" + this.m_strProjectFile;
-                                    strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                    //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                    strSQL = "UPDATE datasource SET path = '" + str + "' " +
-                                        " WHERE trim(ucase(table_type)) = '" +
-                                        p_ado.m_DataSet.Tables["datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                    p_ado.SqlNonQuery(strConn, strSQL);
-                                }
-                            }
-                        }
-
-                    }
-                }
-                p_ado.m_DataSet.Clear();
-                //
-                //CORE SCENARIO DATASOURCE
-                //
-                //check CORE SCENARIO DATASOURCE and change the old project root directory
-                //to the new project root directory
-                strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                if (System.IO.File.Exists(strFullPath))
-                {
-                    strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                    //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-                    strSQL = "SELECT scenario_id, table_type, path FROM scenario_datasource";
-                    p_ado.CreateDataSet(strConn, strSQL, "scenario_datasource");
-                    if (p_ado.m_intError == 0)
-                    {
-                        //check each record in the scenario_datasource table
-                        for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario_datasource"].Rows.Count - 1; intRow++)
-                        {
-                            str = p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["path"].ToString();
-                            if (str.Trim().Length > 0)
-                            {
-                                intAT = str.IndexOf(":");
-                                if (intAT > 0)
-                                {
-                                    intLen = str.Length - intAT - 1;
-                                    strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                }
-                                else
-                                {
-                                    strFilePathRoot = str;
-                                    intLen = strFilePathRoot.Length;
-                                }
-                                if (intLen >= intLenDBProjectRoot)
-                                {
-                                    if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                            " trim(ucase(table_type)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                    else
-                                    {
-                                    }
-                                }
-                                else
-                                {
-                                    if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                            " trim(ucase(table_type)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                    p_ado.m_DataSet.Clear();
-                    //update scenario paths
-                    strSQL = "SELECT scenario_id, path FROM scenario";
-                    p_ado.CreateDataSet(strConn, strSQL, "scenario");
-                    if (p_ado.m_intError == 0)
-                    {
-                        //check each record in the scenario_datasource table
-                        for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario"].Rows.Count - 1; intRow++)
-                        {
-                            str = p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["path"].ToString();
-                            if (str.Trim().Length > 0)
-                            {
-                                intAT = str.IndexOf(":");
-                                if (intAT > 0)
-                                {
-                                    intLen = str.Length - intAT - 1;
-                                    strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                }
-                                else
-                                {
-                                    strFilePathRoot = str;
-                                    intLen = strFilePathRoot.Length;
-                                }
-                                if (intLen >= intLenDBProjectRoot)
-                                {
-                                    if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                    else
-                                    {
-                                    }
-                                }
-                                else
-                                {
-                                    if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-                //
-                //PROCESSOR SCENARIO DATASOURCE
-                //
-                //check PROCESSOR SCENARIO DATASOURCE and change the old project root directory
-                //to the new project root directory
-                strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                if (System.IO.File.Exists(strFullPath))
-                {
-                    strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                    //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-                    strSQL = "SELECT scenario_id, table_type, path FROM scenario_datasource";
-                    p_ado.CreateDataSet(strConn, strSQL, "scenario_datasource");
-                    if (p_ado.m_intError == 0)
-                    {
-                        //check each record in the scenario_datasource table
-                        for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario_datasource"].Rows.Count - 1; intRow++)
-                        {
-                            str = p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["path"].ToString();
-                            if (str.Trim().Length > 0)
-                            {
-                                intAT = str.IndexOf(":");
-                                if (intAT > 0)
-                                {
-                                    intLen = str.Length - intAT - 1;
-                                    strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                }
-                                else
-                                {
-                                    strFilePathRoot = str;
-                                    intLen = strFilePathRoot.Length;
-                                }
-                                if (intLen >= intLenDBProjectRoot)
-                                {
-
-                                    if (strFilePathRoot.Trim().Length >= intLenDBProjectRoot &&
-                                        strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                            " trim(ucase(table_type)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                    else
-                                    {
-                                    }
-                                }
-                                else
-                                {
-                                    if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                            " trim(ucase(table_type)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                    p_ado.m_DataSet.Clear();
-                    //update scenario paths
-                    strSQL = "SELECT scenario_id, path FROM scenario";
-                    p_ado.CreateDataSet(strConn, strSQL, "scenario");
-                    if (p_ado.m_intError == 0)
-                    {
-                        //check each record in the scenario_datasource table
-                        for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario"].Rows.Count - 1; intRow++)
-                        {
-                            str = p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["path"].ToString();
-                            if (str.Trim().Length > 0)
-                            {
-                                intAT = str.IndexOf(":");
-                                if (intAT > 0)
-                                {
-                                    intLen = str.Length - intAT - 1;
-                                    strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                }
-                                else
-                                {
-                                    strFilePathRoot = str;
-                                    intLen = strFilePathRoot.Length;
-                                }
-                                if (intLen >= intLenDBProjectRoot)
-                                {
-                                    if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                    else
-                                    {
-                                    }
-                                }
-                                else
-                                {
-                                    if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                    {
-                                        str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                        strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                        strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                        strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                            " WHERE trim(ucase(scenario_id)) = '" +
-                                            p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                        p_ado.SqlNonQuery(strConn, strSQL);
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-
-            }
-            else
-            {
-                //
-                //CORE SCENARIO DATASOURCE
-                //
-                //scenario datasources where project path has not changed but need to check if scenario path is different
-                //check scenario datasource and change the old project root directory
-                //to the new project root directory
-                strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                if (System.IO.File.Exists(strFullPath))
-                {
-                    //if (System.IO.File.Exists(strFullPath.ToString().Trim())==false)
-                    //{
-                    //	VersionUpgradeCoreScenarioRuleDefinitionTables();
-                    //}
-                    strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-
-                    strSQL = "SELECT COUNT(*) FROM (" +
-                        "SELECT TOP 1 * FROM scenario_datasource " +
-                        "WHERE path IS NOT NULL AND " +
-                        "LEN(TRIM(path)) > 2 AND " +
-                        "MID(path,1,2) <> '" + this.m_strDBProjectDirectoryDrive.Trim() + "')";
-
-                    int intCount = (int)p_ado.getRecordCount(strConn, strSQL, "count");
-                    if (intCount > 0)
-                    {
-                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-                        strSQL = "SELECT scenario_id, table_type, path FROM scenario_datasource";
-                        p_ado.CreateDataSet(strConn, strSQL, "scenario_datasource");
-                        if (p_ado.m_intError == 0)
-                        {
-                            //check each record in the scenario_datasource table
-                            for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario_datasource"].Rows.Count - 1; intRow++)
-                            {
-                                str = p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["path"].ToString().Trim();
-                                if (str.Trim().Length > 0)
-                                {
-                                    intAT = str.IndexOf(":");
-                                    if (intAT > 0)
-                                    {
-                                        intLen = str.Length - intAT - 1;
-                                        strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                    }
-                                    else
-                                    {
-                                        strFilePathRoot = str;
-                                        intLen = strFilePathRoot.Length;
-                                    }
-                                    if (intLen >= intLenDBProjectRoot)
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                                " trim(ucase(table_type)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                        else
-                                        {
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                                " trim(ucase(table_type)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                        p_ado.m_DataSet.Clear();
-                        //update scenario paths
-                        strSQL = "SELECT scenario_id, path FROM scenario";
-                        p_ado.CreateDataSet(strConn, strSQL, "scenario");
-                        if (p_ado.m_intError == 0)
-                        {
-                            //check each record in the scenario_datasource table
-                            for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario"].Rows.Count - 1; intRow++)
-                            {
-                                str = p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["path"].ToString();
-                                if (str.Trim().Length > 0)
-                                {
-                                    intAT = str.IndexOf(":");
-                                    if (intAT > 0)
-                                    {
-                                        intLen = str.Length - intAT - 1;
-                                        strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                    }
-                                    else
-                                    {
-                                        strFilePathRoot = str;
-                                        intLen = strFilePathRoot.Length;
-                                    }
-                                    if (intLen >= intLenDBProjectRoot)
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                        else
-                                        {
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                }
-                //
-                //PROCESSOR SCENARIO DATASOURCE
-                //
-                //scenario datasources where project path has not changed but need to check if scenario path is different
-                //check scenario datasource and change the old project root directory
-                //to the new project root directory
-                strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_core_rule_definitions.mdb";
-                if (System.IO.File.Exists(strFullPath))
-                {
-                    //if (System.IO.File.Exists(strFullPath.ToString().Trim())==false)
-                    //{
-                    //	VersionUpgradeCoreScenarioRuleDefinitionTables();
-                    //}
-                    strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-
-                    strSQL = "SELECT COUNT(*) FROM (" +
-                        "SELECT TOP 1 * FROM scenario_datasource " +
-                        "WHERE path IS NOT NULL AND " +
-                        "LEN(TRIM(path)) > 2 AND " +
-                        "MID(path,1,2) <> '" + this.m_strDBProjectDirectoryDrive.Trim() + "')";
-
-                    int intCount = (int)p_ado.getRecordCount(strConn, strSQL, "count");
-                    if (intCount > 0)
-                    {
-                        //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-                        strSQL = "SELECT scenario_id, table_type, path FROM scenario_datasource";
-                        p_ado.CreateDataSet(strConn, strSQL, "scenario_datasource");
-                        if (p_ado.m_intError == 0)
-                        {
-                            //check each record in the scenario_datasource table
-                            for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario_datasource"].Rows.Count - 1; intRow++)
-                            {
-                                str = p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["path"].ToString().Trim();
-                                if (str.Trim().Length > 0)
-                                {
-                                    intAT = str.IndexOf(":");
-                                    if (intAT > 0)
-                                    {
-                                        intLen = str.Length - intAT - 1;
-                                        strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                    }
-                                    else
-                                    {
-                                        strFilePathRoot = str;
-                                        intLen = strFilePathRoot.Length;
-                                    }
-                                    if (intLen >= intLenDBProjectRoot)
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                                " trim(ucase(table_type)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                        else
-                                        {
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario_datasource SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "' and " +
-                                                " trim(ucase(table_type)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario_datasource"].Rows[intRow]["table_type"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                        p_ado.m_DataSet.Clear();
-                        //update scenario paths
-                        strSQL = "SELECT scenario_id, path FROM scenario";
-                        p_ado.CreateDataSet(strConn, strSQL, "scenario");
-                        if (p_ado.m_intError == 0)
-                        {
-                            //check each record in the scenario_datasource table
-                            for (intRow = 0; intRow <= p_ado.m_DataSet.Tables["scenario"].Rows.Count - 1; intRow++)
-                            {
-                                str = p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["path"].ToString();
-                                if (str.Trim().Length > 0)
-                                {
-                                    intAT = str.IndexOf(":");
-                                    if (intAT > 0)
-                                    {
-                                        intLen = str.Length - intAT - 1;
-                                        strFilePathRoot = str.Substring(intAT + 1, intLen);
-
-                                    }
-                                    else
-                                    {
-                                        strFilePathRoot = str;
-                                        intLen = strFilePathRoot.Length;
-                                    }
-                                    if (intLen >= intLenDBProjectRoot)
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper().Substring(0, intLenDBProjectRoot) == this.m_strDBProjectRootDirectory.Trim().ToUpper())
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                        else
-                                        {
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (strFilePathRoot.Trim().ToUpper() == this.m_strDBProjectRootDirectory.Trim().ToUpper().Substring(0, intLen))
-                                        {
-                                            str = this.m_strProjectDirectory + "\\" + strFilePathRoot.Substring(intLenDBProjectRoot + 1, strFilePathRoot.Length - intLenDBProjectRoot - 1);
-                                            strFullPath = this.m_strProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                                            strConn = p_ado.getMDBConnString(strFullPath, "admin", "");
-                                            //strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath + ";User Id=admin;Password=;";
-
-                                            strSQL = "UPDATE scenario SET path = '" + str + "' " +
-                                                " WHERE trim(ucase(scenario_id)) = '" +
-                                                p_ado.m_DataSet.Tables["scenario"].Rows[intRow]["scenario_id"].ToString().Trim().ToUpper() + "';";
-                                            p_ado.SqlNonQuery(strConn, strSQL);
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                }
-
-
-            }
-            if (this.txtPersonal.Text.Trim().Length > 0)
-            {
-                this.m_strDBPersonalDirectory = this.txtPersonal.Text;
-                intAT = this.m_strDBPersonalDirectory.IndexOf(":");
-                if (intAT > 0)
-                {
-                    this.m_strDBPersonalDirectoryDrive =
-                        this.m_strDBPersonalDirectory.Substring(intAT - 1, 2);
-                    intLen = this.m_strDBPersonalDirectory.Length - intAT - 1;
-                    this.m_strDBPersonalRootDirectory =
-                        this.m_strDBPersonalDirectory.Substring(intAT + 1, intLen);
-                }
-                else
-                {
-
-                }
-            }
-
-            if (this.txtShared.Text.Trim().Length > 0)
-            {
-                this.m_strDBSharedDirectory = this.txtShared.Text;
-                intAT = this.m_strDBSharedDirectory.IndexOf(":");
-                if (intAT > 0)
-                {
-                    this.m_strDBSharedDirectoryDrive =
-                        this.m_strDBSharedDirectory.Substring(intAT - 1, 2);
-                    intLen = this.m_strDBSharedDirectory.Length - intAT - 1;
-                    this.m_strDBSharedRootDirectory =
-                        this.m_strDBSharedDirectory.Substring(intAT + 1, intLen);
-                }
-                else
-                {
-
-                }
-
-
-
-
-
-
-
-                //shared directory
-                this.m_strSharedRootDirectory = this.m_strDBSharedRootDirectory;
-                this.m_strSharedDirectoryDrive = this.m_strDBSharedDirectoryDrive;
-                this.m_strSharedDirectory = this.m_strDBSharedDirectory;
-                if (this.m_strDBSharedRootDirectory.Length >= this.m_strProjectRootDirectory.Length)
-                {
-                    //see if the root directory is the same but the drive letter is different
-                    if (this.m_strDBSharedRootDirectory.Substring(0, this.m_strProjectRootDirectory.Length).Trim().ToUpper() ==
-                        this.m_strProjectRootDirectory.Trim().ToUpper() &&
-                        this.m_strDBSharedDirectoryDrive.Trim().ToUpper() !=
-                        this.m_strProjectDirectoryDrive.Trim().ToUpper())
-                    {
-                        this.m_strSharedDirectoryDrive = this.m_strProjectDirectoryDrive;
-                        this.m_strSharedRootDirectory = this.m_strDBSharedRootDirectory;
-                        this.m_strSharedDirectory = this.m_strSharedDirectoryDrive + this.m_strSharedRootDirectory;
-                        if (System.IO.File.Exists(this.m_strSharedDirectory + "\\project.mdb"))
-                        {
-                            this.txtShared.Text = this.m_strSharedDirectory;
-                            if (this.btnSave.Enabled == false) this.btnSave.Enabled = true;
-                        }
-
-                    }
-
-                }
-            }
-
-            //personal directory
-            if (this.txtPersonal.Text.Trim().Length > 0)
-            {
-                this.m_strPersonalRootDirectory = this.m_strDBPersonalRootDirectory;
-                this.m_strPersonalDirectoryDrive = this.m_strDBPersonalDirectoryDrive;
-                this.m_strPersonalDirectory = this.m_strDBPersonalDirectory;
-                if (this.m_strDBPersonalRootDirectory.Length >= this.m_strProjectRootDirectory.Length)
-                {
-                    //see if the root directory is the same but the drive letter is different
-                    if (this.m_strDBPersonalRootDirectory.Substring(0, this.m_strProjectRootDirectory.Length).Trim().ToUpper() ==
-                        this.m_strProjectRootDirectory.Trim().ToUpper() &&
-                        this.m_strDBPersonalDirectoryDrive.Trim().ToUpper() !=
-                        this.m_strProjectDirectoryDrive.Trim().ToUpper())
-                    {
-                        this.m_strPersonalDirectoryDrive = this.m_strProjectDirectoryDrive;
-                        this.m_strPersonalRootDirectory = this.m_strDBPersonalRootDirectory;
-                        this.m_strPersonalDirectory = this.m_strPersonalDirectoryDrive + this.m_strPersonalRootDirectory;
-                        this.txtPersonal.Text = this.m_strPersonalDirectory;
-                        if (this.btnSave.Enabled == false) this.btnSave.Enabled = true;
-                    }
-
-                }
-            }
-            p_ado = null;
-
-
-        }
 
 		
 	}
