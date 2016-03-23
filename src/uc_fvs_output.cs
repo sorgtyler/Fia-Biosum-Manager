@@ -2220,9 +2220,11 @@ namespace FIA_Biosum_Manager
                             //
                             //INSERT THE RECORDS BY CYCLE
                             //
-                            for (z = 0; z <= this.m_strRxCycleArray.Length - 1; z++)
+                            //for (z = 0; z <= this.m_strRxCycleArray.Length - 1; z++)
+                            for (z=1;z<=4;z++)
                             {
-                                strCycle = m_strRxCycleArray[z].Trim();
+                                //strCycle = m_strRxCycleArray[z].Trim();
+                                strCycle = z.ToString().Trim();
                                 switch (strCycle)
                                 {
                                     case "1":
