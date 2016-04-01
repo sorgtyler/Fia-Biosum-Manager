@@ -354,7 +354,7 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    else if (frmMain.g_strAppVer == "5.5.6" &&  (frmMain.g_strAppVer=="5.5.5" || frmMain.g_strAppVer == "5.5.4" || m_strProjectVersion == "5.5.3" || m_strProjectVersion == "5.5.2" || m_strProjectVersion=="5.5.1"))
+                    else if (frmMain.g_strAppVer == "5.5.7" && (frmMain.g_strAppVer == "5.5.6" || frmMain.g_strAppVer == "5.5.5" || frmMain.g_strAppVer == "5.5.4" || m_strProjectVersion == "5.5.3" || m_strProjectVersion == "5.5.2" || m_strProjectVersion == "5.5.1"))
                     {
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                             frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression14\r\n");
@@ -362,7 +362,7 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    else if ((frmMain.g_strAppVer == "5.5.0" || frmMain.g_strAppVer=="5.5.1" || frmMain.g_strAppVer=="5.5.2" || frmMain.g_strAppVer=="5.5.3" || frmMain.g_strAppVer=="5.5.4" || frmMain.g_strAppVer=="5.5.5" || frmMain.g_strAppVer=="5.5.6") && (m_strProjectVersion == "5.4.0" || m_strProjectVersion == "5.4.1" || m_strProjectVersion == "5.4.2"))
+                    else if ((frmMain.g_strAppVer == "5.5.0" || frmMain.g_strAppVer == "5.5.1" || frmMain.g_strAppVer == "5.5.2" || frmMain.g_strAppVer == "5.5.3" || frmMain.g_strAppVer == "5.5.4" || frmMain.g_strAppVer == "5.5.5" || frmMain.g_strAppVer == "5.5.6" || frmMain.g_strAppVer == "5.5.7") && (m_strProjectVersion == "5.4.0" || m_strProjectVersion == "5.4.1" || m_strProjectVersion == "5.4.2"))
                     {
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                             frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression15\r\n");
@@ -371,7 +371,7 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    else if ((frmMain.g_strAppVer == "5.5.6" || frmMain.g_strAppVer == "5.5.5" || frmMain.g_strAppVer == "5.5.4" || frmMain.g_strAppVer == "5.5.3" || frmMain.g_strAppVer == "5.5.2" || frmMain.g_strAppVer == "5.5.1") && (m_strProjectVersion == "5.5.0" || m_strProjectVersion=="5.5.1" || m_strProjectVersion=="5.5.2" || m_strProjectVersion=="5.5.3" || m_strProjectVersion=="5.5.4" || m_strProjectVersion=="5.5.5"))
+                    else if ((frmMain.g_strAppVer == "5.5.7" || frmMain.g_strAppVer == "5.5.6" || frmMain.g_strAppVer == "5.5.5" || frmMain.g_strAppVer == "5.5.4" || frmMain.g_strAppVer == "5.5.3" || frmMain.g_strAppVer == "5.5.2" || frmMain.g_strAppVer == "5.5.1") && (m_strProjectVersion == "5.5.0" || m_strProjectVersion == "5.5.1" || m_strProjectVersion == "5.5.2" || m_strProjectVersion == "5.5.3" || m_strProjectVersion == "5.5.4" || m_strProjectVersion == "5.5.5" || m_strProjectVersion == "5.5.6" || m_strProjectVersion == "5.5.7"))
                     {
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                             frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Expression16\r\n");
