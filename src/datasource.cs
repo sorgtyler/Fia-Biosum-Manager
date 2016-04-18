@@ -71,6 +71,7 @@ namespace FIA_Biosum_Manager
 															  "Processing Sites",
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
+                                                              "FIA Tree Macro Plot Breakpoint Diameter",
 															  "FRCS System Harvest Method",
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
@@ -79,6 +80,7 @@ namespace FIA_Biosum_Manager
 															  "Population Estimation Unit",
 															  "Population Stratum",
 															  "Population Plot Stratum Assignment",
+                                                              "BIOSUM Pop Stratum Adjustment Factors",
 															  "Site Tree"};
 
         public static string[] g_strCoreDatasourceTableTypesArray = {"Plot",
@@ -104,6 +106,7 @@ namespace FIA_Biosum_Manager
 															  "Processing Sites",
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
+                                                              "FIA Tree Macro Plot Breakpoint Diameter",
 															  "FRCS System Harvest Method",
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
@@ -112,6 +115,7 @@ namespace FIA_Biosum_Manager
 															  "Population Estimation Unit",
 															  "Population Stratum",
 															  "Population Plot Stratum Assignment",
+                                                              "BIOSUM Pop Stratum Adjustment Factors",
 															  "Site Tree"};
         public static string[] g_strProcessorDatasourceTableTypesArray = {"Plot",
 															  "Condition",
@@ -136,6 +140,7 @@ namespace FIA_Biosum_Manager
 															  "Processing Sites",
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
+                                                              "FIA Tree Macro Plot Breakpoint Diameter",
 															  "FRCS System Harvest Method",
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
@@ -144,6 +149,7 @@ namespace FIA_Biosum_Manager
 															  "Population Estimation Unit",
 															  "Population Stratum",
 															  "Population Plot Stratum Assignment",
+                                                              "BIOSUM Pop Stratum Adjustment Factors",
 															  "Site Tree"};
 		public static FIA_Biosum_Manager.SQLMacroSubstitutionVariableItem g_oCurrentSQLMacroSubstitutionVariableItem=
 			            new SQLMacroSubstitutionVariableItem();
@@ -1082,6 +1088,14 @@ namespace FIA_Biosum_Manager
 				case "TREE REGIONAL BIOMASS":
 					oItem.VariableName="TreeRegionalBiomassTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultTreeRegionalBiomassTableName;
+					break;
+                case "BIOSUM POP STRATUM ADJUSTMENT FACTORS":
+                    oItem.VariableName="BiosumPopStratumAdjustmentFactorTable";
+					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName;
+					break;
+                case "FIA TREE MACRO PLOT BREAKPOINT DIAMETER":
+                    oItem.VariableName = "TreeMacroPlotBreakPointDiameterTable";
+                    if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Reference.DefaultTreeMacroPlotBreakPointDiaTableName;
 					break;
 				case "POPULATION PLOT STRATUM ASSIGNMENT":
 					oItem.VariableName="PpsaTable";

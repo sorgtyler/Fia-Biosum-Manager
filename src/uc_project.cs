@@ -989,6 +989,8 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_species_groups");
 				//tree vol val species diam table
 				frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_vol_val_by_species_diam_groups");
+                //biosum pop stratum adjustment factors table
+                frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
 				//
 				//fvsmaster file
@@ -1430,6 +1432,13 @@ namespace FIA_Biosum_Manager
 						"'fiadb_fvs_variant');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('FIA Tree Macro Plot Breakpoint Diameter'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'ref_master.mdb'," +
+                        "'TreeMacroPlotBreakPointDia');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " + 
 						"('FRCS System Harvest Method'," + 
 						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
@@ -1489,6 +1498,14 @@ namespace FIA_Biosum_Manager
 						"'master.mdb'," + 
 						"'pop_plot_stratum_assgn');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
+
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('BIOSUM Pop Stratum Adjustment Factors'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'master.mdb'," +
+                        "'" + frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
 
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 						"('Site Tree'," + 

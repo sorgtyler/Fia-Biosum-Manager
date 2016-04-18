@@ -379,6 +379,16 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
+                    if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 && 
+                         Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 5) &&
+                         (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR])==5 &&
+                          Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <=5))
+                    {
+                        UpdateDatasources_5_6_0();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+
+                    }
                    
                     
                 }
@@ -1475,6 +1485,8 @@ namespace FIA_Biosum_Manager
                                 case "FVS EASTERN TREE SPECIES TRANSLATOR":
                                     frmMain.g_oTables.m_oReference.CreateFVSEasternSpeciesTranslatorTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Reference.DefaultFVSEasternTreeSpeciesTableName);
                                     break;
+                                
+
                                
 							}
 						}
@@ -3811,6 +3823,208 @@ namespace FIA_Biosum_Manager
             oAdo = null;
 
            
+        }
+        private void UpdateDatasources_5_6_0()
+        {
+            dao_data_access oDao = null;
+            string strSQL;
+            string strPath = "";
+            string strFile = "";
+            string strTable="";
+            System.Data.OleDb.OleDbConnection oMasterConn=null;
+            
+                
+
+            //
+            //MAIN PROJECT DATASOURCE
+            //
+            FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oDs.m_strDataSourceTableName = "datasource";
+            oDs.m_strScenarioId = "";
+            oDs.LoadTableColumnNamesAndDataTypes = false;
+            oDs.LoadTableRecordCount = false;
+            oDs.populate_datasource_array();
+            
+
+
+
+            ado_data_access oAdo = new ado_data_access();
+
+            //open the project db file
+            oAdo.OpenConnection(oAdo.getMDBConnString(ReferenceProjectDirectory.Trim() + "\\" +
+                frmMain.g_oTables.m_oProject.DefaultProjectTableDbFile, "", ""));
+            //
+            //BREAKPOINT DIAMETER DATASOURCE
+            //
+            if ((int)oAdo.getRecordCount(oAdo.m_OleDbConnection, "SELECT table_type FROM datasource WHERE TRIM(UCASE(table_type))='FIA TREE MACRO PLOT BREAKPOINT DIAMETER'", "DATASOURCE") == 0)
+            {
+                //append the new datasource
+                strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                           "('FIA Tree Macro Plot Breakpoint Diameter'," +
+                            "'" + ReferenceProjectDirectory.Trim() + "\\db'," +
+                           "'ref_master.mdb'," +
+                           "'TreeMacroPlotBreakPointDia');";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                //add the new reference table
+                oDao = new dao_data_access();
+                oDao.CreateTableLink(ReferenceProjectDirectory.Trim() + "\\db\\ref_master.mdb", "breakpointupdate_v560", frmMain.g_oEnv.strAppDir + "\\db\\ref_master.mdb", "TreeMacroPlotBreakPointDia");
+                strSQL = "SELECT * INTO TreeMacroPlotBreakPointDia FROM breakpointupdate_v560";
+                oDao.OpenDb(ReferenceProjectDirectory.Trim() + "\\db\\ref_master.mdb");
+                oDao.m_DaoDatabase.Execute(strSQL,null);
+                oDao.m_DaoDatabase.Execute("DROP TABLE breakpointupdate_v560",null);
+                oDao.m_DaoDatabase.Close();
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
+
+            //
+            //BIOSUM CALCULATED ADJUSTMENT FACTORS DATASOURCE
+            //
+            if ((int)oAdo.getRecordCount(oAdo.m_OleDbConnection, "SELECT table_type FROM datasource WHERE TRIM(UCASE(table_type))='BIOSUM POP STRATUM ADJUSTMENT FACTORS'", "DATASOURCE") == 0)
+            {
+                //append the new datasource
+                strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                           "('BIOSUM Pop Stratum Adjustment Factors'," +
+                            "'" + ReferenceProjectDirectory.Trim() + "\\db'," +
+                           "'master.mdb'," +
+                           "'" + frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName + "');";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                //create the new table
+                strPath = ReferenceProjectDirectory + "\\db\\master.mdb";
+                oMasterConn = new System.Data.OleDb.OleDbConnection();
+                oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
+                frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(oAdo, oMasterConn, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
+            }
+            strPath = "";
+            //
+            //ADD PLOT TABLE COLUMN MACRO_BREAKPOINT_DIA
+            //
+            strSQL = "SELECT * FROM datasource WHERE TRIM(UCASE(table_type)) = 'PLOT'";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                oAdo.m_OleDbDataReader.Read();
+                strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                strFile = oAdo.m_OleDbDataReader["file"].ToString().Trim();
+                strTable = oAdo.m_OleDbDataReader["table_name"].ToString().Trim();
+            }
+            oAdo.m_OleDbDataReader.Close();
+            if (strPath.Trim().Length > 0)
+            {
+                strPath = strPath + "\\" + strFile;
+                if (System.IO.File.Exists(strPath))
+                {
+                    if (oMasterConn == null) oMasterConn = new System.Data.OleDb.OleDbConnection();
+                    else
+                    {
+                        if (strPath.Trim().ToUpper() != oMasterConn.DataSource.Trim().ToUpper())
+                        {
+                            oAdo.CloseConnection(oMasterConn);
+                            oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
+
+                        }
+                    }
+                   
+                    if (oAdo.TableExist(oMasterConn,strTable) && !oAdo.ColumnExist(oMasterConn,strTable,"MACRO_BREAKPOINT_DIA"))
+                    {
+                        oAdo.AddColumn(oMasterConn, strTable, "macro_breakpoint_dia", "INTEGER","");
+                    }
+                    
+                }
+            }
+            strPath = ""; strFile = ""; strTable = "";
+            //
+            //ADD TREE TABLE COLUMN CONDPROP_SPECIFIC
+            //
+            strSQL = "SELECT * FROM datasource WHERE TRIM(UCASE(table_type)) = 'TREE'";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                oAdo.m_OleDbDataReader.Read();
+                strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                strFile = oAdo.m_OleDbDataReader["file"].ToString().Trim();
+                strTable = oAdo.m_OleDbDataReader["table_name"].ToString().Trim();
+            }
+            oAdo.m_OleDbDataReader.Close();
+            if (strPath.Trim().Length > 0)
+            {
+                strPath = strPath + "\\" + strFile;
+                if (System.IO.File.Exists(strPath))
+                {
+                    if (oMasterConn == null) oMasterConn = new System.Data.OleDb.OleDbConnection();
+                    else
+                    {
+                        if (strPath.Trim().ToUpper() != oMasterConn.DataSource.Trim().ToUpper())
+                        {
+                            oAdo.CloseConnection(oMasterConn);
+                            oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
+
+                        }
+                    }
+
+
+                    if (oAdo.TableExist(oMasterConn, strTable) && !oAdo.ColumnExist(oMasterConn, strTable, "CONDPROP_SPECIFIC"))
+                    {
+                        oAdo.AddColumn(oMasterConn, strTable, "condprop_specific", "DOUBLE", "");
+                    }
+
+                }
+            }
+            strPath = ""; strFile = ""; strTable = "";
+            //
+            //ADD COND TABLE COLUMNS MICRPROP_UNADJ, SUBPPROP_UNADJ, and MACRPROP_UNADJ
+            //
+            strSQL = "SELECT * FROM datasource WHERE TRIM(UCASE(table_type)) = 'CONDITION'";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                oAdo.m_OleDbDataReader.Read();
+                strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                strFile = oAdo.m_OleDbDataReader["file"].ToString().Trim();
+                strTable = oAdo.m_OleDbDataReader["table_name"].ToString().Trim();
+            }
+            oAdo.m_OleDbDataReader.Close();
+            if (strPath.Trim().Length > 0)
+            {
+                strPath = strPath + "\\" + strFile;
+                if (System.IO.File.Exists(strPath))
+                {
+                    if (oMasterConn == null) oMasterConn = new System.Data.OleDb.OleDbConnection();
+                    else
+                    {
+                        if (strPath.Trim().ToUpper() != oMasterConn.DataSource.Trim().ToUpper())
+                        {
+                            oAdo.CloseConnection(oMasterConn);
+                            oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
+
+                        }
+                    }
+
+
+                    if (oAdo.TableExist(oMasterConn, strTable))
+                    {
+                        if (!oAdo.ColumnExist(oMasterConn, strTable, "MICRPROP_UNADJ"))
+                            oAdo.AddColumn(oMasterConn, strTable, "micrprop_unadj", "DOUBLE", "");
+
+                        if (!oAdo.ColumnExist(oMasterConn, strTable, "SUBPPROP_UNADJ"))
+                            oAdo.AddColumn(oMasterConn, strTable, "subpprop_unadj", "DOUBLE", "");
+
+                        if (!oAdo.ColumnExist(oMasterConn, strTable, "MACRPROP_UNADJ"))
+                            oAdo.AddColumn(oMasterConn, strTable, "macrprop_unadj", "DOUBLE", "");
+                    }
+
+                }
+            }
+
+            if (oMasterConn != null && oMasterConn.State == System.Data.ConnectionState.Open)
+                oAdo.CloseConnection(oMasterConn);
+            
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+
+            oAdo = null;
+
+
         }
 
 

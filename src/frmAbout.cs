@@ -111,7 +111,7 @@ namespace FIA_Biosum_Manager
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(176, 22);
             this.lblVersion.TabIndex = 4;
-            this.lblVersion.Text = "Beta Version 5.5.7";
+            this.lblVersion.Text = "Beta Version 5.6.0";
             // 
             // lblDesc
             // 

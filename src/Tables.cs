@@ -2522,6 +2522,8 @@ namespace FIA_Biosum_Manager
 			public string DefaultPopPlotStratumAssgnTableName {get {return "pop_plot_stratum_assgn";}}
 			public string DefaultPopStratumTableDbFile {get {return @"db\master.mdb";}}
 			public string DefaultPopStratumTableName {get {return "pop_stratum";}}
+            public string DefaultBiosumPopStratumAdjustmentFactorsTableName { get { return "biosum_pop_stratum_adjustment_factors"; } }
+            public string DefaultBiosumPopStratumAdjustmentFactorsTableDbFile { get { return @"db\master.mdb"; } }
 			public string DefaultSiteTreeTableDbFile {get {return @"db\master.mdb";}}
 			public string DefaultSiteTreeTableName {get {return "sitetree";}}
 
@@ -2566,6 +2568,7 @@ namespace FIA_Biosum_Manager
 					"one_cond_yn CHAR(1)," + 
 					"lat DOUBLE," + 
 					"lon DOUBLE," + 
+                    "macro_breakpoint_dia INTEGER," + 
 					"merch_haul_cost_id LONG," + 
 					"merch_haul_cost_psite INTEGER," + 
 					"merch_haul_cpa_pt DOUBLE," + 
@@ -2645,6 +2648,9 @@ namespace FIA_Biosum_Manager
 					"ccf DOUBLE," + 
 					"topht DOUBLE," + 
 					"condprop_unadj DOUBLE," + 
+                    "micrprop_unadj DOUBLE," + 
+                    "subpprop_unadj DOUBLE," + 
+                    "macrprop_unadj DOUBLE," + 
 					"harvest_technique CHAR(30)," + 
 					"cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," + 
 					"cond_accessible_yn CHAR(1) DEFAULT 'Y'," + 
@@ -2728,7 +2734,8 @@ namespace FIA_Biosum_Manager
 					"fvs_dmg_sv2 CHAR(2)," + 
 					"fvs_dmg_ag3 CHAR(2)," + 
 					"fvs_dmg_sv3 CHAR(2)," + 
-                    "inc10yr INTEGER," + 
+                    "inc10yr INTEGER," +
+                    "condprop_specific DOUBLE," + 
 					"fvs_tree_id CHAR(10)," + 
 					"idb_alltree_id LONG," + 
 					"cn CHAR(34)," + 
@@ -2891,7 +2898,38 @@ namespace FIA_Biosum_Manager
 					"adj_factor_micr DECIMAL (5,4)," + 
 					"biosum_status_cd BYTE)";
 			}
-
+            public void CreateBiosumPopStratumAdjustmentFactorsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateBiosumPopStratumAdjustmentFactorsTableSQL(p_strTableName));
+                CreateBiosumPopStratumAdjustmentFactorsTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateBiosumPopStratumAdjustmentFactorsTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "rscd,evalid");
+            }
+            public string CreateBiosumPopStratumAdjustmentFactorsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "stratum_cn CHAR(34)," +
+                    "rscd DECIMAL (2,0)," +
+                    "evalid DECIMAL (6,0)," +
+                    "eval_descr CHAR(255)," + 
+                    "estn_unit LONG," +
+                    "estn_unit_descr CHAR(255)," + 
+                    "stratumcd LONG," +
+                    "p2pointcnt_man DECIMAL (12,0)," +
+                    "double_sampling INTEGER," +
+                    "stratum_area DOUBLE," + 
+                    "expns DOUBLE," +
+                    "biosum_adj_factor_macr DECIMAL (5,4)," +
+                    "biosum_adj_factor_subp DECIMAL (5,4)," +
+                    "biosum_adj_factor_micr DECIMAL (5,4)," +
+                    "biosum_adj_factor_cond DECIMAL (5,4)," +
+                    "adj_factor_macr DECIMAL (5,4)," +
+                    "adj_factor_subp DECIMAL (5,4)," +
+                    "adj_factor_micr DECIMAL (5,4)," +
+                    "biosum_status_cd BYTE)";
+            }
 		}
 		public class Processor
 		{
@@ -3810,7 +3848,9 @@ namespace FIA_Biosum_Manager
             static public string DefaultFVSWesternTreeSpeciesTableDbFile { get { return @"db\ref_master.mdb"; } }
             static public string DefaultFVSWesternTreeSpeciesTableName { get { return "FVS_WesternTreeSpeciesTranslator"; } }
             static public string DefaultFVSEasternTreeSpeciesTableDbFile { get { return @"db\ref_master.mdb"; } }
-            static public string DefaultFVSEasternTreeSpeciesTableName { get { return "FVS_EasternTreeSpeciesTranslator"; } } 
+            static public string DefaultFVSEasternTreeSpeciesTableName { get { return "FVS_EasternTreeSpeciesTranslator"; } }
+            static public string DefaultTreeMacroPlotBreakPointDiaTableDbFile { get { return @"db\ref_master.mdb"; } }
+            static public string DefaultTreeMacroPlotBreakPointDiaTableName { get { return "TreeMacroPlotBreakPointDia"; } }
 
 
 

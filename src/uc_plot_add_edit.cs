@@ -289,8 +289,9 @@ namespace FIA_Biosum_Manager
 					return;
 			    case DialogResult.Cancel:
 					return;
-			}  
-            
+			}
+            frmMain.g_oFrmMain.ActivateStandByAnimation(frmMain.g_oFrmMain.WindowState,
+                               this.Left, this.Height, this.Width, this.Top);
 			//instantiate the ado data access class
 			FIA_Biosum_Manager.ado_data_access  p_ado = new ado_data_access();
 
@@ -424,11 +425,12 @@ namespace FIA_Biosum_Manager
 					
 					p_ado.SqlNonQuery(strConn,strSQL);
 				}
+                frmMain.g_oFrmMain.DeactivateStandByAnimation();
 				MessageBox.Show("Done","DELETE ALL PLOT DATA",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.None);
 			}
 			else
 			{
-				
+                frmMain.g_oFrmMain.DeactivateStandByAnimation();
 				strSQL="Delete Failed - Could not locate these designated tables:\n";
 				if (intPlot==-1)
 					strSQL+= "Plot table\n";
