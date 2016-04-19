@@ -2963,12 +2963,12 @@ namespace FIA_Biosum_Manager
                            "SUM(b.[BC_Util_Logs_biomass_wt] + b.[CHIPS_Util_Logs_biomass_wt] " +
                            "+ b.[SMLOGS_Util_Logs_biomass_wt] + b.[LGLOGS_Util_Logs_biomass_wt] " +
                            "+ b.[SMLOGS_Util_Chips_biomass_wt] + b.[LGLOGS_Util_Chips_biomass_wt] " +
-                           "+ b.[SMLOGS_Util_Chips_merch_wt]) " +
+                           "+ b.[CHIPS_Util_Chips_biomass_wt]+ b.[SMLOGS_Util_Chips_merch_wt]) " +
                            "AS CHIP_WT_GT," +
                            "SUM(b.[BC_Util_Logs_biomass_vol] + b.[CHIPS_Util_Logs_biomass_vol] " +
                            "+ b.[SMLOGS_Util_Logs_biomass_vol] + b.[LGLOGS_Util_Logs_biomass_vol] " +
                            "+ b.[SMLOGS_Util_Chips_biomass_vol] + b.[LGLOGS_Util_Chips_biomass_vol] " +
-                           "+ b.[LGLOGS_Util_Chips_merch_vol]) " +
+                           "+ b.[CHIPS_Util_Chips_biomass_vol] + b.[LGLOGS_Util_Chips_merch_vol]) " +
                            "AS CHIP_VOL_CF," +
                            "SUM(b.[BC_NonUtil_Logs_merch_wt] + b.[CHIPS_NonUtil_Logs_merch_wt] " +
                            "+ b.[SMLOGS_NonUtil_Logs_merch_wt] + b.[LGLOGS_NonUtil_Logs_merch_wt] " +
