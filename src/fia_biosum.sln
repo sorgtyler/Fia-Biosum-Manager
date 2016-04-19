@@ -12,9 +12,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressBarBasic", "..\..\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressBarEx", "..\..\Progress-Bar-Ex\src\ProgressBarEx.csproj", "{AE94EA94-76A8-45C5-BA53-425D2FC435A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandByAnimation", "..\..\Stand-By-Animation\src\StandByAnimation.csproj", "{923640FA-97A2-4A4E-A7AE-02A0F4174986}"
-EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "fia_biosum_setup", "..\..\Fia_Biosum_Setup\src\fia_biosum_setup.vdproj", "{57DA4D9B-4736-41CE-BF80-B0773D824C43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandByAnimation", "..\..\Standby-Animation\src\StandByAnimation.csproj", "{923640FA-97A2-4A4E-A7AE-02A0F4174986}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,12 +58,6 @@ Global
 		{AE94EA94-76A8-45C5-BA53-425D2FC435A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE94EA94-76A8-45C5-BA53-425D2FC435A6}.Release|x86.ActiveCfg = Release|x86
 		{AE94EA94-76A8-45C5-BA53-425D2FC435A6}.Release|x86.Build.0 = Release|x86
-		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Release|Any CPU.Build.0 = Release|Any CPU
-		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Release|x86.ActiveCfg = Release|Any CPU
 		{57DA4D9B-4736-41CE-BF80-B0773D824C43}.Debug|Any CPU.ActiveCfg = Debug
 		{57DA4D9B-4736-41CE-BF80-B0773D824C43}.Debug|Any CPU.Build.0 = Debug
 		{57DA4D9B-4736-41CE-BF80-B0773D824C43}.Debug|x86.ActiveCfg = Debug
@@ -72,6 +66,12 @@ Global
 		{57DA4D9B-4736-41CE-BF80-B0773D824C43}.Release|Any CPU.Build.0 = Release
 		{57DA4D9B-4736-41CE-BF80-B0773D824C43}.Release|x86.ActiveCfg = Release
 		{57DA4D9B-4736-41CE-BF80-B0773D824C43}.Release|x86.Build.0 = Release
+		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Release|Any CPU.Build.0 = Release|Any CPU
+		{923640FA-97A2-4A4E-A7AE-02A0F4174986}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

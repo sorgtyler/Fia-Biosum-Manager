@@ -922,7 +922,7 @@
       <Project>{AE94EA94-76A8-45C5-BA53-425D2FC435A6}</Project>
       <Name>ProgressBarEx</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Stand-By-Animation\src\StandByAnimation.csproj">
+    <ProjectReference Include="..\..\Standby-Animation\src\StandByAnimation.csproj">
       <Project>{923640FA-97A2-4A4E-A7AE-02A0F4174986}</Project>
       <Name>StandByAnimation</Name>
     </ProjectReference>
