@@ -2620,6 +2620,23 @@ namespace FIA_Biosum_Manager
                     else
                     {
 
+                        /******************************************************************************
+                        **CHIPS: Set the chips Y/N flag depending if the diameters.dbh value falls 
+                        **between the user entered MinChipDBHLT40 and MinLogsDBH value and the diameters.dbh 
+                        **exceeds the minimum diameter for steep slopes 
+                        **Update value to "Y" in diameters table for Chips if DBH within min/max
+                        **for chip trees
+                        ******************************************************************************/
+                        strSql[x] = "UPDATE " + p_strDiametersTableName.Trim() + " " +
+                                    "SET Util_Chips_Bl = IIf(DBH=" + DiameterVariables.MinDiaChips.ToString().Trim() + " OR " +
+                                                            "DBH > " + DiameterVariables.MinDiaChips.ToString().Trim() + " AND " +
+                                                            "DBH > " + DiameterVariables.MinDiaSteepSlope.ToString().Trim() + " AND " +
+                                                            "DBH < " + DiameterVariables.MinDiaSmLogs.ToString().Trim() + ",'Y','N') " +
+                                    "WHERE species_group = " + strSpcGrp + " AND " +
+                                          "diam_group = " + strDbhGrp;
+                        x++;
+
+                        
                         if (strWoodBin == "M")
                         {
                             /*******************************************************************************
