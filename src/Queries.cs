@@ -1879,7 +1879,8 @@ namespace FIA_Biosum_Manager
                 string p_strFIADBPlotTable,
                 string p_strFIADBCondTable,
                 string p_strRsCd,
-                string p_strEvalId)
+                string p_strEvalId,
+                string p_strCondProp)
             {
                 string[] strSQL = new string[21];
 
@@ -1912,11 +1913,11 @@ namespace FIA_Biosum_Manager
 
                 //change hazardous condition to sampled
                 strSQL[3] = "UPDATE BIOSUM_COND SET cond_status_cd = 1 " +
-                            "WHERE COND_NONSAMPLE_REASN_CD = 3";
+                            "WHERE COND_NONSAMPLE_REASN_CD = 5";
 
                 //update condition satatus to NONSAMPLED if the condition proportion is less than .25
                 strSQL[4] = "UPDATE BIOSUM_COND SET cond_status_cd = 5 " +
-                            "WHERE cond_status_cd = 1 AND condprop_unadj < .25";
+                            "WHERE cond_status_cd = 1 AND condprop_unadj < ." + p_strCondProp;
 
                 //join pop_estn_unit,pop_stratum,pop_eval tables into biosum_eus_temp
                 strSQL[5] = "SELECT pe.rscd, pe.evalid,ps.estn_unit,ps.stratumcd," +

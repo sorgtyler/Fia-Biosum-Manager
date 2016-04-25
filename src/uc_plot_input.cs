@@ -232,6 +232,9 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnSiteTreeBrowse;
 		private System.Windows.Forms.TextBox txtSiteTree;
         private frmDialog _frmDialog = null;
+        private Label label2;
+        private ComboBox cmbCondPropPercent;
+        private Label label1;
 		
 
 		/// <summary> 
@@ -419,6 +422,9 @@ namespace FIA_Biosum_Manager
             this.btnFilterByPlotPrevious = new System.Windows.Forms.Button();
             this.btnFilterByPlotNext = new System.Windows.Forms.Button();
             this.btnFilterByPlotCancel = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cmbCondPropPercent = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxMDBFiadbInput.SuspendLayout();
             this.groupBox24.SuspendLayout();
@@ -1244,6 +1250,9 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label2);
+            this.groupBox7.Controls.Add(this.cmbCondPropPercent);
+            this.groupBox7.Controls.Add(this.label1);
             this.groupBox7.Controls.Add(this.chkNonForested);
             this.groupBox7.Controls.Add(this.chkForested);
             this.groupBox7.Controls.Add(this.btnFilterByFileBrowse);
@@ -1251,9 +1260,9 @@ namespace FIA_Biosum_Manager
             this.groupBox7.Controls.Add(this.rdoFilterByFile);
             this.groupBox7.Controls.Add(this.rdoFilterByMenu);
             this.groupBox7.Controls.Add(this.rdoFilterNone);
-            this.groupBox7.Location = new System.Drawing.Point(112, 64);
+            this.groupBox7.Location = new System.Drawing.Point(85, 64);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(464, 216);
+            this.groupBox7.Size = new System.Drawing.Size(519, 249);
             this.groupBox7.TabIndex = 1;
             this.groupBox7.TabStop = false;
             // 
@@ -1877,6 +1886,33 @@ namespace FIA_Biosum_Manager
             this.btnFilterByPlotCancel.Text = "Cancel";
             this.btnFilterByPlotCancel.Click += new System.EventHandler(this.btnFilterByPlotCancel_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 217);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(188, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Condition proportion percent  less than";
+            // 
+            // cmbCondPropPercent
+            // 
+            this.cmbCondPropPercent.FormattingEnabled = true;
+            this.cmbCondPropPercent.Location = new System.Drawing.Point(200, 214);
+            this.cmbCondPropPercent.Name = "cmbCondPropPercent";
+            this.cmbCondPropPercent.Size = new System.Drawing.Size(52, 21);
+            this.cmbCondPropPercent.TabIndex = 8;
+            this.cmbCondPropPercent.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbCondPropPercent_KeyPress);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(270, 217);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(191, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "to change from forested to nonsampled";
+            // 
             // uc_plot_input
             // 
             this.Controls.Add(this.groupBox1);
@@ -2085,15 +2121,18 @@ namespace FIA_Biosum_Manager
 			this.m_strTreeRegionalBiomassTxtInputFile = this.txtTreeRegionalBiomass.Text;
 			this.m_strSiteTreeTxtInputFile = this.txtSiteTree.Text;
 
-            
-			
 
+            for (int x = 1; x <= 99; x++)
+            {
+                cmbCondPropPercent.Items.Add(x.ToString().Trim());
+            }
+            cmbCondPropPercent.Text = "25";
 
 			
 
 
 		}
-		private void InitializeDatasource()
+        private void InitializeDatasource()
 		{
 			string strProjDir=frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
 			
@@ -6144,7 +6183,8 @@ namespace FIA_Biosum_Manager
                         "PLOT",
                         "COND",
                          m_strCurrFIADBRsCd,
-                         m_strCurrFIADBEvalId);
+                         m_strCurrFIADBEvalId,
+                         frmMain.g_oDelegate.GetControlPropertyValue(cmbCondPropPercent,"Text",false).ToString().Trim());
                     SetThermValue(m_frmTherm.progressBar1, "Value", 0);
                     this.SetLabelValue(m_frmTherm.lblMsg, "Text", "Calculate Adjustment Factors For RsCd=" + m_strCurrFIADBRsCd + " and EvalId=" + m_strCurrFIADBEvalId);
                     for (x = 0; x <= strSql.Length - 1; x++)
@@ -9144,6 +9184,7 @@ namespace FIA_Biosum_Manager
 			if (this.lstFilterByState.CheckedItems.Count==0) 
 			{
 				MessageBox.Show("Select At Least One State, County Item","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.Enabled = true;
 				return;
 			}
 			if (this.rdoFIADB.Checked==true && this.rdoText.Checked==true)
@@ -9732,6 +9773,7 @@ namespace FIA_Biosum_Manager
 			if (this.lstFilterByPlot.CheckedItems.Count==0) 
 			{
 				MessageBox.Show("Select At Least One State, County, Plot Item","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.Enabled = true;
 				return;
 			}
 			if (this.rdoFIADB.Checked==true && this.rdoText.Checked==true)
@@ -12612,6 +12654,11 @@ namespace FIA_Biosum_Manager
 			OpenFileDialog1 = null;
 		
 		}
+
+        private void cmbCondPropPercent_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
         /*
         public class FIADB_Adjustments
         {

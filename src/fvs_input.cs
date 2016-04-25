@@ -378,6 +378,7 @@ namespace FIA_Biosum_Manager
 					"FROM " + this.m_strCondTable + " c," + 
 					this.m_strPlotTable + " p " + 
 					"WHERE p.biosum_plot_id = c.biosum_plot_id AND " + 
+                    "c.landclcd=1 AND " + 
 					"ucase(trim(p.fvs_variant)) = '" + this.m_strVariant.Trim().ToUpper() + "';";
 
 
@@ -990,7 +991,7 @@ namespace FIA_Biosum_Manager
 
 						strSQLWhereExp = "WHERE ucase(trim(p.fvs_variant)) = '" + this.m_strVariant.Trim().ToUpper() + "' AND " + 
 							"p.biosum_plot_id = c.biosum_plot_id AND " + 
-							"t.biosum_cond_id = c.biosum_cond_id AND t.statuscd=1";
+							"t.biosum_cond_id = c.biosum_cond_id AND t.statuscd=1 AND c.landclcd=1";
 
 					}
 					else
@@ -1007,7 +1008,7 @@ namespace FIA_Biosum_Manager
 
 						strSQLWhereExp = "WHERE ucase(trim(p.fvs_variant)) = '" + this.m_strVariant.Trim().ToUpper() + "' AND " + 
 							"p.biosum_plot_id = c.biosum_plot_id AND " + 
-							"t.biosum_cond_id = c.biosum_cond_id AND t.statuscd <> 1";
+							"t.biosum_cond_id = c.biosum_cond_id AND t.statuscd <> 1 AND c.landclcd=1";
 					}
 					this.m_ado.m_strSQL += " " + strSQLWhereExp + " ORDER BY c.biosum_cond_id;";
 

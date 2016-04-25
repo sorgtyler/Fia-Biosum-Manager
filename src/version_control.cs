@@ -389,6 +389,18 @@ namespace FIA_Biosum_Manager
                         bPerformCheck = false;
 
                     }
+                    else if (bPerformCheck)
+                    {
+                        if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 && 
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 5) &&
+                            (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR])==5 &&
+                          Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) == 6))
+                        {
+                            UpdateProjectVersionFile(strProjVersionFile);
+                            bPerformCheck = false;
+                        }
+
+                    }
                    
                     
                 }
