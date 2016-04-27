@@ -4146,6 +4146,50 @@ namespace FIA_Biosum_Manager
 				return dblSI;
 			}
 
+            /// <summary>
+            /// This equation for Douglas Fir is from Brickell and Haig
+            ///-- Equations and computer subroutines for Estimating Site
+            ///-- Quality of Eight Rocky Mountain Species
+            ///-- Research Paper: INT-75  1970. SI is total age at 50 years
+            ///---Derived from Kurt's PL/SQL
+            /// </summary>
+            private double PSME11(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                double b;
+                int Total_Age = p_intSIDiaAge;
+                if (p_intSIDiaAge < 20)
+                {
+                    return dblSI;
+                }
+                else if (p_intSIDiaAge > 200)
+                {
+                    Total_Age = 200;
+                }
+                    else
+                {
+                    Total_Age = p_intSIDiaAge;
+                }
+
+                b = 40.984664 * (Math.Pow(Total_Age, -0.5) - Math.Pow(50, -0.5)) 
+                    + 4521.1527 * (Math.Pow(Total_Age, -2.5) - Math.Pow(50, -2.5)) 
+                    + 123059.38 * (Math.Pow(Total_Age, -3.5) - Math.Pow(50, -3.5)) 
+                    - 0.53328682E-08 * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4)) 
+                    + 0.37808033E-10 * (Math.Pow(Total_Age, 5) - Math.Pow(50, 5))
+                    + 216.64152 * p_intSIHtFt * (Math.Pow(Total_Age, -1.5) - Math.Pow(50, -1.5))
+                    - 158121.49 * p_intSIHtFt * (Math.Pow(Total_Age, -4) - Math.Pow(50, -4))
+                    + 1894030.8 * p_intSIHtFt * (Math.Pow(Total_Age, -5) - Math.Pow(50, -5))
+                    - 0.10230592E-09 * p_intSIHtFt * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4))
+                    - 6.0686119 * p_intSIHtFt * p_intSIHtFt * (Math.Pow(Total_Age, -2) - Math.Pow(50, -2))
+                    - 25351.090 * p_intSIHtFt * p_intSIHtFt * (Math.Pow(Total_Age, -5) - Math.Pow(50, -5))
+                    + 0.33512858E-04 * p_intSIHtFt * p_intSIHtFt * (Total_Age - 50) 
+                    + 0.17024711E-02 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, -1) - Math.Pow(50, -1))
+                    + 398.36720 * Math.Pow(p_intSIHtFt, 3) *(Math.Pow(Total_Age, -5) - Math.Pow(50, -5))
+                    - 0.88665409E-08 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, 1.5) - Math.Pow(50, 1.5))
+                    + 0.40019102E-14 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4));
+                return dblSI;
+            }
+
 
 		}
 
