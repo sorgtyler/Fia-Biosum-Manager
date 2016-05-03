@@ -1,0 +1,2232 @@
+PROCESSOR STEPS FOR CREATING FRCS/OPCOST INPUT
+-----------------------------------------------
+
+1. DIAMETER PROCESSING: CREATE LOWSLOPE DIAMETERS TABLE
+
+The DIAMETERS table is used to classify a tree by its 
+diameter as either BRUSH CUT, CHIPS, SMALL LOG or LARGE LOG and to 
+set flags to determine the utilization of the bole part of 
+the tree as merch log or chips. The classification assignments
+and flags are set based on user defined settings.
+  
+Each Species Group is processed separately in its
+own DiametersLowSlope table. Once processing is 
+complete, all the species group DiameterLowSlope 
+tables are appended to the main DiameterLowSlope table.
+Each diameter from minimum to maximum for that 
+species group is represented in these tables.
+Every 10th diameter has a row. In the example below, 
+DiametersLowSlope1 represents species group code 1. 
+
+NOTE: The _Bk,_Br,and _Bl are Y or N flag fields.
+_Bk (Bark), _Br (Branch), and Res_ (Residue) were never used
+by Bruce's Processor or Biosum Processor.  They were part
+of the ST_HARVEST system that Bruce used as a 
+template for Processor.I assume they were left
+in Processor for possible future use. 
+Consequently, only the _Bl columns
+are utilized in the Processor. 
+
+
+Example Below:
+//
+//RunScenario_CreateDiametersTable
+//
+CREATE TABLE DiametersLowSlope (
+	DBH Single, class text (10),
+  Util_Logs_Bk text (1),
+  Util_Chips_Bk text (1),
+  Res_Stmp_Bk text (1),
+  Res_Lnd_Bk text (1), 
+  Util_Logs_Br text (1),
+  Util_Chips_Br text (1),
+  Res_Stmp_Br text (1), 
+  Res_Lnd_Br text (1), 
+  Util_Logs_Bl text (1),
+  Util_Chips_Bl text (1),
+  Res_Stmp_Bl text (1),
+  Res_Lnd_Bl text (1),
+  NonUtil_Logs_Bl text (1),
+  NonUtil_Chips_Bl text (1),
+  diam_group short, 
+  species_group INTEGER) 
+ 
+CREATE TABLE DiametersLowSlope1 (DBH Single, class text (10), Util_Logs_Bk text (1), Util_Chips_Bk text (1),Res_Stmp_Bk text (1),Res_Lnd_Bk text (1), Util_Logs_Br text (1),Util_Chips_Br text (1),Res_Stmp_Br text (1), Res_Lnd_Br text (1), Util_Logs_Bl text (1), Util_Chips_Bl text (1),Res_Stmp_Bl text (1), Res_Lnd_Bl text (1),NonUtil_Logs_Bl text (1),NonUtil_Chips_Bl text (1),diam_group short, species_group INTEGER) 
+INSERT INTO DiametersLowSlope1 (DBH) SELECT ROUND(1,1) AS dbh 
+INSERT INTO DiametersLowSlope1 (DBH) SELECT ROUND(1.1,1) AS dbh 
+INSERT INTO DiametersLowSlope1 (DBH) SELECT ROUND(1.2,1) AS dbh 
+*keep repeating until maximum diameter row is inserted
+
+2. DIAMETER PROCESSING: ASSIGN A WOOD BIN CLASS DESIGNATION FOR EACH DIAMETER 
+   											REPRESENTED IN THE SPECIES GROUP DIAMETERSLOWSLOPE TABLE
+   
+Each diameter is assigned a wood bin class of either   
+LGLOGS,SMLOGS,CHIPS,BC (brush cut) based on user assigned
+diameter breakpoints.
+
+Example Below:
+UPDATE DiametersLowSlope1 d 
+SET d.class = IIF(d.DBH >= 20,'LGLOGS',
+							IIF(d.DBH >= 7 AND d.DBH < 20,'SMLOGS',
+							IIF(d.DBH >= 3 AND d.DBH < 7,'CHIPS',
+							IIF(d.DBH < 3,'BC',null)))) 
+
+The code example below demonstrates the integration of user variable input
+that results in the SQL listed directly above.
+m_oAdo.m_strSQL = "UPDATE " + strTempTable + " d " +
+                  "SET d.class = IIF(d.DBH >= " + DiameterVariables.MinDiaLgLogs.ToString() + ",'LGLOGS'," +
+                                "IIF(d.DBH >= " + DiameterVariables.MinDiaSmLogs.ToString() + " AND " +
+                                    "d.DBH < " + DiameterVariables.MinDiaLgLogs.ToString() + ",'SMLOGS'," +
+                                "IIF(d.DBH >= " + DiameterVariables.MinDiaChips.ToString() + " AND " +
+                                    "d.DBH < " + DiameterVariables.MinDiaSmLogs.ToString() + ",'CHIPS'," +
+                                "IIF(d.DBH < " + DiameterVariables.MinDiaChips.ToString() + ",'BC',null))))";							
+
+
+3. DIAMETER PROCESSING: INITIALIZE THE BOLE,BRANCH, AND BARK FLAGS FOR 
+	 											UTILIZED, NON-UTILIZED, RESIDUE WOOD.
+	 											ALSO, SET SPECIES GROUP.
+
+Example Below:
+	 
+UPDATE DiametersLowSlope1 SET  Util_Logs_Bk = 'N', 
+															 Util_Chips_Bk = 'N',
+															 Res_Stmp_Bk = 'N', 
+															 Res_Lnd_Bk = 'N', 
+															 Util_Logs_Br = 'N',
+															 Util_Chips_Br = 'N', 
+															 Res_Stmp_Br = 'N', 
+															 Res_Lnd_Br = 'N',
+															 Util_Logs_Bl = 'N', 
+															 Util_Chips_Bl = 'N', 
+															 Res_Stmp_Bl = 'N',
+															 Res_Lnd_Bl = 'N',
+															 NonUtil_Logs_Bl='N',
+															 NonUtil_Chips_Bl='N',
+															 Species_Group=1 	 
+
+4. DIAMETER PROCESSING: APPEND THE SPECIES GROUP DIAMETERSLOWSLOPE 
+	 											TABLE TO THE DIAMETERSLOWSLOPE TABLE
+	 
+Example Below:
+INSERT INTO DiametersLowSlope SELECT * FROM DiametersLowSlope1 	 
+
+5. DIAMETER PROCESSING: ASSIGN DIAMETER GROUP
+
+Each row in the DIAMETERSLOWSLOPE table is evaluated for 
+assigning a diameter group value. Diameter groups are 
+set by the user.
+
+Example of minimum and maximum diameter group assignments below:
+
+UPDATE DiametersLowSlope SET diam_group = 1 WHERE DBH=1   
+UPDATE DiametersLowSlope SET diam_group = 5 WHERE DBH=78.7 
+
+
+6. DIAMETER PROCESSING: GET THE USER DEFINED GROUPINGS AND BIN DESTINATION
+
+These values are user defined in the tree species 
+and diameter groupings screen in Processor. The 
+user has the option to divert all the wood for a particular
+species group and diameter to the chip bin. 
+
+Example Below:
+SELECT species_group,diam_group,wood_bin 
+FROM scenario_tree_species_diam_dollar_values 
+WHERE TRIM(UCASE(scenario_id))='FINAL' 
+
+7. DIAMETER PROCESSING: SET DIAMETER FLAGS
+The flags are set for each species and diameter groupings.
+
+
+Examples Below:
+UPDATE DiametersLowSlope SET Util_Chips_Bl =     IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N')              WHERE species_group = 4 AND diam_group = 1 
+UPDATE DiametersLowSlope SET Util_Chips_Bl =     IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Chips_Bl) WHERE species_group = 4 AND diam_group = 1 
+UPDATE DiametersLowSlope SET Util_Chips_Bl =     IIf(DBH = 20 OR DBH > 20,'Y',Util_Chips_Bl)            WHERE species_group = 4 AND diam_group = 1 
+UPDATE DiametersLowSlope SET NonUtil_Chips_Bl =  IIf(DBH <3,'Y','N')                                    WHERE species_group = 4 AND diam_group = 2 
+UPDATE DiametersLowSlope SET Util_Chips_Bl =     IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N')              WHERE species_group = 4 AND diam_group = 2 
+UPDATE DiametersLowSlope SET Util_Logs_Bl =      IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Logs_Bl)  WHERE species_group = 4 AND diam_group = 2 
+UPDATE DiametersLowSlope SET Util_Logs_Bl =      IIf(DBH = 20 OR DBH > 20,'Y',Util_Logs_Bl)             WHERE species_group = 4 AND diam_group = 2 
+UPDATE DiametersLowSlope SET NonUtil_Chips_Bl =  IIf(DBH <3,'Y','N')                                    WHERE species_group = 4 AND diam_group = 3 
+UPDATE DiametersLowSlope SET Util_Chips_Bl =     IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N')              WHERE species_group = 4 AND diam_group = 3 
+UPDATE DiametersLowSlope SET Util_Logs_Bl =      IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Logs_Bl)  WHERE species_group = 4 AND diam_group = 3 
+UPDATE DiametersLowSlope SET Util_Logs_Bl = 	 IIf(DBH = 20 OR DBH > 20,'Y',Util_Logs_Bl)             WHERE species_group = 4 AND diam_group = 3 
+UPDATE DiametersLowSlope SET NonUtil_Chips_Bl =  IIf(DBH <3,'Y','N')                                    WHERE species_group = 4 AND diam_group = 4 
+UPDATE DiametersLowSlope SET Util_Chips_Bl =     IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N')              WHERE species_group = 4 AND diam_group = 4 
+UPDATE DiametersLowSlope SET Util_Logs_Bl =      IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Logs_Bl)  WHERE species_group = 4 AND diam_group = 4 
+UPDATE DiametersLowSlope SET Util_Logs_Bl =      IIf(DBH = 20 OR DBH > 20,'Y',Util_Logs_Bl)             WHERE species_group = 4 AND diam_group = 4 
+UPDATE DiametersLowSlope SET NonUtil_Chips_Bl =  IIf(DBH <3,'Y','N')                                    WHERE species_group = 4 AND diam_group = 5 
+UPDATE DiametersLowSlope SET Util_Chips_Bl =     IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N')              WHERE species_group = 4 AND diam_group = 5 
+UPDATE DiametersLowSlope SET Util_Logs_Bl =      IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Logs_Bl)  WHERE species_group = 4 AND diam_group = 5 
+UPDATE DiametersLowSlope SET Util_Logs_Bl =  	 IIf(DBH = 20 OR DBH > 20,'Y',Util_Logs_Bl)             WHERE species_group = 4 AND diam_group = 5 
+
+The code below represents the SQL above.
+
+Code example below of flag setting for brush cutting based on user definitions:
+strWoodBin = Convert.ToString(m_oAdo.m_OleDbDataReader["wood_bin"]).Trim();
+strSpcGrp = Convert.ToString(m_oAdo.m_OleDbDataReader["species_group"]).Trim();
+strDbhGrp = Convert.ToString(m_oAdo.m_OleDbDataReader["diam_group"]).Trim();
+
+/******************************************************************************
+ **BRUSH CUT: Set the NonUtil_Chips_Bl Y/N flag depending if the diameter is 
+ **below minimum chips diameter
+ ******************************************************************************/
+strSql[x] = "UPDATE " + p_strDiametersTableName.Trim() + " " +
+            "SET NonUtil_Chips_Bl = IIf(DBH <" + DiameterVariables.MinDiaChips.ToString().Trim() + ",'Y','N') " +
+            "WHERE species_group = " + strSpcGrp + " AND " +
+                  "diam_group = " + strDbhGrp;
+                  
+Code example below of flag setting for chips:
+/******************************************************************************
+ **CHIPS: Set the chips Y/N flag depending if the diameters.dbh value falls 
+ **between the user entered MinChipDBHLT40 and MinLogsDBH value.
+ **Update value to "Y" in diameters table for Chips if DBH within min/max
+ **for chip trees
+ ******************************************************************************/
+strSql[x] = "UPDATE " + p_strDiametersTableName.Trim() + " " +
+            "SET Util_Chips_Bl = IIf(DBH=" + DiameterVariables.MinDiaChips.ToString().Trim() + " OR " +
+                                    "DBH > " + DiameterVariables.MinDiaChips.ToString().Trim() + " AND " +
+                                    "DBH < " + DiameterVariables.MinDiaSmLogs.ToString().Trim() + ",'Y','N') " +
+            "WHERE species_group = " + strSpcGrp + " AND " +
+                  "diam_group = " + strDbhGrp;   
+                  
+Code example below of flag setting for logs:
+/*******************************************************************************
+ **SMALL LOGS: Set the Logs Y/N flag depending if the diameters.dbh value falls
+ **between the user entered MinSmLogsDBH and MinLgLogsDBH
+ **update value to "Y" in diameters table for Logs if DBH within min/max 
+ **for small log trees
+ *******************************************************************************/
+strSql[x] = "UPDATE " + p_strDiametersTableName.Trim() + " " +
+            "SET Util_Logs_Bl = IIf(DBH = " + DiameterVariables.MinDiaSmLogs.ToString().Trim() + " OR " +
+                                   "DBH > " + DiameterVariables.MinDiaSmLogs.ToString().Trim() + " AND " +
+                                   "DBH < " + DiameterVariables.MinDiaLgLogs.ToString().Trim() + ",'Y',Util_Logs_Bl) " +
+            "WHERE species_group = " + strSpcGrp + " AND " +
+                  "diam_group = " + strDbhGrp;
+
+/*******************************************************************************
+ **LARGE LOGS: Set the Logs Y/N flag depending if the diameters.dbh value is 
+ **greater or equal to the user entered MinLgLogsDBH 
+ **update value to "Y" in diameters table for Logs if DBH within min/max 
+ **for large log trees
+ *******************************************************************************/
+strSql[x] = "UPDATE " + p_strDiametersTableName.Trim() + " " +
+            "SET Util_Logs_Bl = IIf(DBH = " + DiameterVariables.MinDiaLgLogs.ToString().Trim() + " OR " +
+                                   "DBH > " + DiameterVariables.MinDiaLgLogs.ToString().Trim() + ",'Y',Util_Logs_Bl) " +
+            "WHERE species_group = " + strSpcGrp + " AND " +
+                  "diam_group = " + strDbhGrp;   
+                  
+8. TREE PROCESSING: COPY FIA TREE DATA FOR SPECIFIED VARIANT
+
+Create a temp tree table containing just
+the fvs_tree_id, spcd and slope from the FIA tree table.  
+
+Example Below:
+SELECT t.fvs_tree_id,t.spcd, 
+IIF(c.slope IS NULL,0,c.slope) AS slope 
+INTO treetemp 
+FROM tree t,cond c 
+WHERE t.biosum_cond_id=c.biosum_cond_id AND mid(t.fvs_tree_id,1,2)='WS' 
+
+9. TREE PROCESSING: COPY FVS CUTLIST TREE DATA NOT FOUND
+										IN THE FIA TREE TABLE FOR SPECIFIED VARIANT.
+										(FVS CREATED TREE)
+										
+Create a temp tree table containing just
+the fvs_tree_id, spcd and slope from the FVS tree cutlist table
+for trees created by FVS. 										
+
+Example Below:
+SELECT z.fvs_tree_id,CINT(z.fvs_species) AS spcd, 
+IIF(c.slope IS NULL,0,c.slope) AS slope 
+INTO treetemp2 
+FROM fvs_tree_IN_WS_P001_TREE_CUTLIST z, cond c 
+WHERE z.rxpackage='001' AND 
+			z.biosum_cond_id=c.biosum_cond_id AND 
+			z.fvscreatedtree_YN='Y' AND 
+			mid(z.fvs_tree_id,1,2)='WS' 
+
+
+10. TREE PROCESSING: REPLACE NULL VALUES WITH ZERO
+
+Make sure every volume and biomass variable has a value.
+
+Example Below:
+UPDATE fvs_tree_IN_WS_P001_TREE_CUTLIST 
+SET volcfnet = IIF(volcfnet IS NULL,0,volcfnet),
+		volcfgrs = IIF(volcfgrs IS NULL,0,volcfgrs),
+		volcsgrs = IIF(volcsgrs IS NULL,0,volcsgrs),
+		drybiom  = IIF(drybiom IS NULL,0,drybiom),
+		drybiot  = IIF(drybiot IS NULL,0,drybiot) 
+
+11. TREE PROCESSING: APPEND FVS CUTLIST TREE DATA 
+										 TO THE TREEDATAINLOWSLOPE TABLE
+										 
+Append FVS CUTLIST tree data for each tree found 
+in the FIA tree table.										 
+										 
+Example Below:
+INSERT INTO TreeDataInLowSlope (
+	fvs_tree_id,
+	biosum_cond_id,
+	rxpackage,
+	rx,rxcycle,
+	spcd,
+	dia,
+	tpa,
+	merch_vol_cf,
+	merch_wt_gt,
+	chip_vol_cf,
+	chip_wt_gt,
+	residue_fraction,
+	slope,
+	species_group) 
+SELECT  DISTINCT 
+	t.fvs_tree_id,
+	t.biosum_cond_id,
+	t.rxpackage,
+	t.rx,
+	t.rxcycle,
+	z.spcd,
+	t.dbh AS dia,
+	t.tpa,
+	t.volcfnet * t.tpa AS merch_vol_cf,
+	(t.drybiom * t.tpa / s.Dry_to_Green)/2000 AS merch_wt_gt,
+	(t.drybiot * t.tpa) / (s.Od_Wgt) AS chip_vol_cf,
+	(t.drybiot * t.tpa / s.Dry_to_Green)/2000  AS chip_wt_gt,
+	IIF(t.drybiom > 0, 
+	    Round(((t.drybiot * t.tpa) - (t.drybiom * t.tpa)) / (t.drybiom * t.tpa) * 100,0),0) AS residue_fraction,
+	z.slope,
+	s.user_spc_group AS species_group 
+FROM fvs_tree_IN_WS_P001_TREE_CUTLIST t,tree_species s,treetemp z  
+WHERE t.rxpackage='001' AND 
+			t.fvscreatedtree_YN='N' AND 
+			t.fvs_tree_id=z.fvs_tree_id AND 
+			(z.spcd = s.spcd AND s.fvs_variant='WS' AND z.slope < 40) 	
+			
+12. TREE PROCESSING: APPEND FVS CUTLIST TREE DATA 
+										 TO THE TREEDATAINLOWSLOPE TABLE
+										 
+Append FVS CUTLIST tree data for each tree created
+by FVS.
+										 
+Example Below:
+INSERT INTO TreeDataInLowSlope (
+	fvs_tree_id,
+	biosum_cond_id,
+	rxpackage,
+	rx,rxcycle,
+	spcd,
+	dia,
+	tpa,
+	merch_vol_cf,
+	merch_wt_gt,
+	chip_vol_cf,
+	chip_wt_gt,
+	residue_fraction,
+	slope,
+	species_group) 
+SELECT  DISTINCT 
+	t.fvs_tree_id,
+	t.biosum_cond_id,
+	t.rxpackage,
+	t.rx,
+	t.rxcycle,
+	z.spcd,
+	t.dbh AS dia,
+	t.tpa,
+	t.volcfnet * t.tpa AS merch_vol_cf,
+	(t.drybiom * t.tpa / s.Dry_to_Green)/2000 AS merch_wt_gt,
+	(t.drybiot * t.tpa) / (s.Od_Wgt) AS chip_vol_cf,
+	(t.drybiot * t.tpa / s.Dry_to_Green)/2000  AS chip_wt_gt,
+	IIF(t.drybiom > 0, 
+	    Round(((t.drybiot * t.tpa) - (t.drybiom * t.tpa)) / (t.drybiom * t.tpa) * 100,0),0) AS residue_fraction,
+	z.slope,
+	s.user_spc_group AS species_group 
+FROM fvs_tree_IN_WS_P001_TREE_CUTLIST t,tree_species s,treetemp2 z  
+WHERE t.rxpackage='001' AND 
+			t.fvscreatedtree_YN='Y' AND 
+			t.fvs_tree_id=z.fvs_tree_id AND 
+			(z.spcd = s.spcd AND s.fvs_variant='WS' AND z.slope < 40) 				
+												 
+										 
+13. TREE PROCESSING: SET THE CHIP AND MERCH VALUES FOR EACH SPECIES/DIAMETER GROUPS
+
+Set the merch/chip values based on the users BIN designation
+for each SPECIES/DIAMETER groupings.  In step 12, the 
+chip_vol_cf contains the drybiot value so if the wood bin
+target is merch than subtract the merch value from the chips.
+chip_wt_gt is processed the same as chip_vol_cf except subtract
+the merch green ton weight. If the whole tree is being
+diverted to chips then initialize the merch volume and
+green ton weight values to zero. If the merch is 
+diverted to the chip BIN then set the merch_to_chipbin_YN
+column to 'Y'.
+
+Example Below:
+UPDATE TreeDataInLowSlope t 
+INNER JOIN scenario_tree_species_diam_dollar_values s 
+ON t.species_group = s.species_group AND 
+	 t.diam_group = s.diam_group 
+SET chip_vol_cf = IIF(s.wood_bin='M',chip_vol_cf - merch_vol_cf, chip_vol_cf),
+		chip_wt_gt =  IIF(s.wood_bin='M',chip_wt_gt - merch_wt_gt, chip_wt_gt),
+		merch_vol_cf = IIF(s.wood_bin='C',0,merch_vol_cf),
+		merch_wt_gt  = IIF(s.wood_bin='C',0,merch_wt_gt),
+		merch_to_chipbin_YN = IIF(s.wood_bin='C','Y','N') 
+WHERE TRIM(UCASE(s.scenario_id))='FINAL' 
+
+
+14. BIN PROCESSING: CREATE AND POPULATE THE BINS TABLE
+
+Each tree is appended to this table and its 
+BIN destination and properties are set by these column variables:
+
+	14a. Classify the tree as either Brush Cut, Chips, Small Log,
+	     or Large Log;
+	14b. Is the Bole utilized or not? If so, populate 
+	     the _util column(s), if not, populate the _nonutil columns(s);
+	14c. Provide to the BIN the tree's TPA, merch volume,
+			 chip volume, merch weight, chip weight, chip biomass weight
+			 and volume, and merch biomass weight and volume.
+
+The control source for BIN destination and tree utilization values is the 
+DIAMETERS table.
+
+
+Example Below:
+//
+//RunScenario_InitBinsTables
+//
+CREATE TABLE BinsLowSlope (
+FVS_TREE_ID TEXT (10),
+BIOSUM_COND_ID text (25),
+RXPACKAGE text (3),
+RX text (3),
+RXCYCLE text (1),
+species short,
+species_group short,
+DBH single,
+diam_group short,
+BC_Util_Logs_count short,
+BC_Util_Logs_TPA single,
+BC_Util_Logs_merch_vol single,
+BC_Util_Logs_merch_wt single,
+BC_Util_Logs_biomass_vol single,
+BC_Util_Logs_biomass_wt single,
+BC_Util_Chips_count integer,
+BC_Util_Chips_TPA single,
+BC_Util_Chips_merch_wt single,
+BC_Util_Chips_merch_vol single,
+BC_Util_Chips_biomass_wt single,
+BC_Util_Chips_biomass_vol single,
+BC_NonUtil_Logs_count short,
+BC_NonUtil_Logs_TPA single,
+BC_NonUtil_Logs_merch_vol single,
+BC_NonUtil_Logs_merch_wt single,
+BC_NonUtil_Logs_biomass_vol single,
+BC_NonUtil_Logs_biomass_wt single,
+BC_NonUtil_Chips_count integer,
+BC_NonUtil_Chips_TPA single,
+BC_NonUtil_Chips_merch_wt single,
+BC_NonUtil_Chips_merch_vol single,
+BC_NonUtil_Chips_biomass_wt single,
+BC_NonUtil_Chips_biomass_vol single,
+CHIPS_Util_Logs_count integer,
+CHIPS_Util_Logs_TPA single,
+CHIPS_Util_Chips_count integer,
+CHIPS_Util_Chips_TPA single,
+CHIPS_Util_Logs_merch_vol single,
+CHIPS_Util_Logs_merch_wt single,
+CHIPS_Util_logs_biomass_vol single,
+CHIPS_Util_logs_biomass_wt single,
+CHIPS_Util_Chips_merch_vol single,
+CHIPS_Util_Chips_merch_wt single,
+CHIPS_Util_Chips_biomass_vol single,
+CHIPS_Util_Chips_biomass_wt single,
+CHIPS_NonUtil_Logs_count integer,
+CHIPS_NonUtil_Logs_TPA single,
+CHIPS_NonUtil_Chips_count integer,
+CHIPS_NonUtil_Chips_TPA single,
+CHIPS_NonUtil_Logs_merch_vol single,
+CHIPS_NonUtil_Logs_merch_wt single,
+CHIPS_NonUtil_logs_biomass_vol single,
+CHIPS_NonUtil_logs_biomass_wt single,
+CHIPS_NonUtil_Chips_merch_vol single,
+CHIPS_NonUtil_Chips_merch_wt single,
+CHIPS_NonUtil_Chips_biomass_vol single,
+CHIPS_NonUtil_Chips_biomass_wt single,
+SMLOGS_Util_Logs_count integer,
+SMLOGS_Util_Logs_TPA single,
+SMLOGS_Util_Chips_count integer,
+SMLOGS_Util_Chips_TPA single,
+SMLOGS_Util_Logs_merch_vol single,
+SMLOGS_Util_Logs_merch_wt single,
+SMLOGS_Util_logs_biomass_vol single,
+SMLOGS_Util_logs_biomass_wt single,
+SMLOGS_Util_Chips_merch_vol single,
+SMLOGS_Util_Chips_merch_wt single,
+SMLOGS_Util_Chips_biomass_vol single,
+SMLOGS_Util_Chips_biomass_wt single,
+SMLOGS_NonUtil_Logs_count integer,
+SMLOGS_NonUtil_Logs_TPA single,
+SMLOGS_NonUtil_Chips_count integer,
+SMLOGS_NonUtil_Chips_TPA single,
+SMLOGS_NonUtil_Logs_merch_vol single,
+SMLOGS_NonUtil_Logs_merch_wt single,
+SMLOGS_NonUtil_logs_biomass_vol single,
+SMLOGS_NonUtil_logs_biomass_wt single,
+SMLOGS_NonUtil_Chips_merch_vol single,
+SMLOGS_NonUtil_Chips_merch_wt single,
+SMLOGS_NonUtil_Chips_biomass_vol single,
+SMLOGS_NonUtil_Chips_biomass_wt single,
+LGLOGS_Util_Logs_count integer,
+LGLOGS_Util_Logs_TPA single,
+LGLOGS_Util_Chips_count integer,
+LGLOGS_Util_Chips_TPA single,
+LGLOGS_Util_Logs_merch_vol single,
+LGLOGS_Util_Logs_merch_wt single,
+LGLOGS_Util_logs_biomass_vol single,
+LGLOGS_Util_logs_biomass_wt single,
+LGLOGS_Util_Chips_merch_vol single,
+LGLOGS_Util_Chips_merch_wt single,
+LGLOGS_Util_Chips_biomass_vol single,
+LGLOGS_Util_Chips_biomass_wt single,
+LGLOGS_NonUtil_Logs_count integer,
+LGLOGS_NonUtil_Logs_TPA single,
+LGLOGS_NonUtil_Chips_count integer,
+LGLOGS_NonUtil_Chips_TPA single,
+LGLOGS_NonUtil_Logs_merch_vol single,
+LGLOGS_NonUtil_Logs_merch_wt single,
+LGLOGS_NonUtil_logs_biomass_vol single,
+LGLOGS_NonUtil_logs_biomass_wt single,
+LGLOGS_NonUtil_Chips_merch_vol single,
+LGLOGS_NonUtil_Chips_merch_wt single,
+LGLOGS_NonUtil_Chips_biomass_vol single,
+LGLOGS_NonUtil_Chips_biomass_wt single) 
+INSERT INTO BinsLowSlope (
+ fvs_tree_id,
+ biosum_cond_id,
+ rxpackage,
+ rx,
+ rxcycle,
+ species,
+ species_group,
+ diam_group,
+ dbh) 
+SELECT 
+ fvs_tree_id,
+ biosum_cond_id,
+ rxpackage,
+ rx,
+ rxcycle,
+ spcd AS species,
+ species_group,
+ diam_group,
+ dia AS dbh 
+FROM TreeDataInLowSlope  
+
+
+15. BIN PROCESSING: UPDATE THE BINS TABLE 
+
+Initialize all values to zero.
+
+Example Below:
+
+UPDATE BinsLowSlope b SET b.BC_Util_Logs_count = 0,
+													b.BC_Util_Logs_TPA = 0,
+													b.BC_Util_Chips_count = 0,
+													b.BC_Util_Chips_TPA = 0,
+													b.BC_Util_Logs_merch_wt = 0,
+													b.BC_Util_Logs_merch_vol = 0,
+													b.BC_Util_Logs_biomass_wt = 0,
+													b.BC_Util_Logs_biomass_vol = 0,
+													b.BC_Util_Chips_merch_wt = 0,
+													b.BC_Util_Chips_merch_vol = 0,
+													b.BC_Util_Chips_biomass_wt = 0,
+													b.BC_Util_Chips_biomass_vol = 0,
+													b.BC_NonUtil_Logs_count = 0,
+													b.BC_NonUtil_Logs_TPA = 0,
+													b.BC_NonUtil_Chips_count = 0,
+													b.BC_NonUtil_Chips_TPA = 0,
+													b.BC_NonUtil_Logs_merch_wt = 0,
+													b.BC_NonUtil_Logs_merch_vol = 0,
+													b.BC_NonUtil_Logs_biomass_wt = 0,
+													b.BC_NonUtil_Logs_biomass_vol = 0,
+													b.BC_NonUtil_Chips_merch_wt = 0,
+													b.BC_NonUtil_Chips_merch_vol = 0,
+													b.BC_NonUtil_Chips_biomass_wt = 0,
+													b.BC_NonUtil_Chips_biomass_vol = 0 
+UPDATE BinsLowSlope b SET b.CHIPS_Util_Logs_count = 0,
+													b.CHIPS_Util_Logs_TPA = 0,
+													b.CHIPS_Util_Chips_count = 0,
+													b.CHIPS_Util_Chips_TPA = 0,
+													b.CHIPS_Util_Logs_merch_wt = 0,
+													b.CHIPS_Util_Logs_merch_vol = 0,
+													b.CHIPS_Util_Logs_biomass_wt = 0,
+													b.CHIPS_Util_Logs_biomass_vol = 0,
+													b.CHIPS_Util_Chips_merch_wt = 0,
+													b.CHIPS_Util_Chips_merch_vol = 0,
+													b.CHIPS_Util_Chips_biomass_wt = 0,
+													b.CHIPS_Util_Chips_biomass_vol = 0,
+													b.CHIPS_NonUtil_Logs_count = 0,
+													b.CHIPS_NonUtil_Logs_TPA = 0,
+													b.CHIPS_NonUtil_Chips_count = 0,
+													b.CHIPS_NonUtil_Chips_TPA = 0,
+													b.CHIPS_NonUtil_Logs_merch_wt = 0,
+													b.CHIPS_NonUtil_Logs_merch_vol = 0,
+													b.CHIPS_NonUtil_Logs_biomass_wt = 0,
+													b.CHIPS_NonUtil_Logs_biomass_vol = 0,
+													b.CHIPS_NonUtil_Chips_merch_wt = 0,
+													b.CHIPS_NonUtil_Chips_merch_vol = 0,
+													b.CHIPS_NonUtil_Chips_biomass_wt = 0,
+													b.CHIPS_NonUtil_Chips_biomass_vol = 0 
+UPDATE BinsLowSlope b SET b.SMLOGS_Util_Logs_count = 0,
+													b.SMLOGS_Util_Logs_TPA = 0,
+													b.SMLOGS_Util_Chips_count = 0,
+													b.SMLOGS_Util_Chips_TPA = 0,
+													b.SMLOGS_Util_Logs_merch_wt = 0,
+													b.SMLOGS_Util_Logs_merch_vol = 0,
+													b.SMLOGS_Util_Logs_biomass_wt = 0,
+													b.SMLOGS_Util_Logs_biomass_vol = 0,
+													b.SMLOGS_Util_Chips_merch_wt = 0,
+													b.SMLOGS_Util_Chips_merch_vol = 0,
+													b.SMLOGS_Util_Chips_biomass_wt = 0,
+													b.SMLOGS_Util_Chips_biomass_vol = 0,
+													b.SMLOGS_NonUtil_Logs_count = 0,
+													b.SMLOGS_NonUtil_Logs_TPA = 0,
+													b.SMLOGS_NonUtil_Chips_count = 0,
+													b.SMLOGS_NonUtil_Chips_TPA = 0,
+													b.SMLOGS_NonUtil_Logs_merch_wt = 0,
+													b.SMLOGS_NonUtil_Logs_merch_vol = 0,
+													b.SMLOGS_NonUtil_Logs_biomass_wt = 0,
+													b.SMLOGS_NonUtil_Logs_biomass_vol = 0,
+													b.SMLOGS_NonUtil_Chips_merch_wt = 0,
+													b.SMLOGS_NonUtil_Chips_merch_vol = 0,
+													b.SMLOGS_NonUtil_Chips_biomass_wt = 0,
+													b.SMLOGS_NonUtil_Chips_biomass_vol = 0 
+UPDATE BinsLowSlope b SET b.LGLOGS_Util_Logs_count = 0,
+													b.LGLOGS_Util_Logs_TPA = 0,
+													b.LGLOGS_Util_Chips_count = 0,
+													b.LGLOGS_Util_Chips_TPA = 0,
+													b.LGLOGS_Util_Logs_merch_wt = 0,
+													b.LGLOGS_Util_Logs_merch_vol = 0,
+													b.LGLOGS_Util_Logs_biomass_wt = 0,
+													b.LGLOGS_Util_Logs_biomass_vol = 0,
+													b.LGLOGS_Util_Chips_merch_wt = 0,
+													b.LGLOGS_Util_Chips_merch_vol = 0,
+													b.LGLOGS_Util_Chips_biomass_wt = 0,
+													b.LGLOGS_Util_Chips_biomass_vol = 0,
+													b.LGLOGS_NonUtil_Logs_count = 0,
+													b.LGLOGS_NonUtil_Logs_TPA = 0,
+													b.LGLOGS_NonUtil_Chips_count = 0,
+													b.LGLOGS_NonUtil_Chips_TPA = 0,
+													b.LGLOGS_NonUtil_Logs_merch_wt = 0,
+													b.LGLOGS_NonUtil_Logs_merch_vol = 0,
+													b.LGLOGS_NonUtil_Logs_biomass_wt = 0,
+													b.LGLOGS_NonUtil_Logs_biomass_vol = 0,
+													b.LGLOGS_NonUtil_Chips_merch_wt = 0,
+													b.LGLOGS_NonUtil_Chips_merch_vol = 0,
+													b.LGLOGS_NonUtil_Chips_biomass_wt = 0,
+													b.LGLOGS_NonUtil_Chips_biomass_vol = 0 
+													
+													
+16. BIN PROCESSING: UPDATE THE BIN TABLE
+
+Determine what part of the tree is contained
+in each BIN.
+Update the appropriate BIN for each tree. Join the 
+FVS tree data with the BINS and DIAMETERS 
+tables based on the species group and 
+diameter. The BC,CHIPS,SMLOGS,and LGLOGS BINS
+values are updated by which parts of the tree
+get deposited in the BIN. For example, if a tree whose 
+species and diameter fits into the small logs 
+class and the utilitized tree bole flag equals 'Y'
+then update the small logs utilized logs count by 1.
+
+Example Below:
+UPDATE DiametersLowSlope d 
+INNER JOIN (TreeDataInLowSlope t 
+INNER JOIN BinsLowSlope b 
+ON  (t.rxpackage = b.rxpackage AND 
+		 t.rx = b.rx AND 
+		 t.rxcycle = b.rxcycle AND 
+		 t.fvs_tree_id = b.fvs_tree_id)) 
+ON d.DBH = b.DBH AND 
+	 d.species_group=b.species_group 
+SET b.BC_Util_Logs_count = IIF(TRIM(d.class)='BC' And d.Util_Logs_Bl='Y',1,0),
+	  b.BC_Util_Logs_TPA = IIF(TRIM(d.class)='BC' And d.Util_Logs_Bl='Y',t.TPA,0),
+	  b.BC_Util_Chips_count = IIF(TRIM(d.class)='BC' And d.Util_Chips_Bl='Y',1,0),
+	  b.BC_Util_Chips_TPA = IIF(TRIM(d.class)='BC' And d.Util_Chips_Bl='Y',t.TPA,0),
+	  b.BC_Util_Logs_merch_wt = IIF(TRIM(d.class)='BC' And d.Util_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.BC_Util_Logs_merch_vol = IIF(TRIM(d.class)='BC' And d.Util_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.BC_Util_Logs_biomass_wt = IIF(TRIM(d.class)='BC' And d.Util_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.BC_Util_Logs_biomass_vol = IIF(TRIM(d.class)='BC' And d.Util_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.BC_Util_Chips_merch_wt = IIF(TRIM(d.class)='BC' And d.Util_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.BC_Util_Chips_merch_vol = IIF(TRIM(d.class)='BC' And d.Util_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.BC_Util_Chips_biomass_wt = IIF(TRIM(d.class)='BC' And d.Util_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.BC_Util_Chips_biomass_vol = IIF(TRIM(d.class)='BC' And d.Util_Chips_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.BC_NonUtil_Logs_count = IIF(TRIM(d.class)='BC' And d.NonUtil_Logs_Bl='Y',1,0),
+	  b.BC_NonUtil_Logs_TPA = IIF(TRIM(d.class)='BC' And d.NonUtil_Logs_Bl='Y',t.TPA,0),
+	  b.BC_NonUtil_Chips_count = IIF(TRIM(d.class)='BC' And d.NonUtil_Chips_Bl='Y',1,0),
+	  b.BC_NonUtil_Chips_TPA = IIF(TRIM(d.class)='BC' And d.NonUtil_Chips_Bl='Y',t.TPA,0),
+	  b.BC_NonUtil_Logs_merch_wt = IIF(TRIM(d.class)='BC' And d.NonUtil_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.BC_NonUtil_Logs_merch_vol = IIF(TRIM(d.class)='BC' And d.NonUtil_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.BC_NonUtil_Logs_biomass_wt = IIF(TRIM(d.class)='BC' And d.NonUtil_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.BC_NonUtil_Logs_biomass_vol = IIF(TRIM(d.class)='BC' And d.NonUtil_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.BC_NonUtil_Chips_merch_wt = IIF(TRIM(d.class)='BC' And d.NonUtil_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.BC_NonUtil_Chips_merch_vol = IIF(TRIM(d.class)='BC' And d.NonUtil_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.BC_NonUtil_Chips_biomass_wt = IIF(TRIM(d.class)='BC' And d.NonUtil_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.BC_NonUtil_Chips_biomass_vol = IIF(TRIM(d.class)='BC' And d.NonUtil_Chips_Bl='Y',t.[CHIP_VOL_CF],0)  
+
+UPDATE DiametersLowSlope d 
+INNER JOIN (TreeDataInLowSlope t 
+INNER JOIN BinsLowSlope b 
+ON  (t.rxpackage = b.rxpackage AND 
+		 t.rx = b.rx AND 
+		 t.rxcycle = b.rxcycle AND 
+		 t.fvs_tree_id = b.fvs_tree_id)) 
+ON d.DBH = b.DBH AND 
+	 d.species_group=b.species_group 
+SET b.CHIPS_Util_Logs_count = IIF(TRIM(d.class)='CHIPS' And d.Util_Logs_Bl='Y',1,0),
+		b.CHIPS_Util_Logs_TPA = IIF(TRIM(d.class)='CHIPS' And d.Util_Logs_Bl='Y',t.TPA,0),
+		b.CHIPS_Util_Chips_count = IIF(TRIM(d.class)='CHIPS' And d.Util_Chips_Bl='Y',1,0),
+		b.CHIPS_Util_Chips_TPA = IIF(TRIM(d.class)='CHIPS' And d.Util_Chips_Bl='Y',t.TPA,0),
+		b.CHIPS_Util_Logs_merch_wt = IIF(TRIM(d.class)='CHIPS' And d.Util_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+		b.CHIPS_Util_Logs_merch_vol = IIF(TRIM(d.class)='CHIPS' And d.Util_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+		b.CHIPS_Util_Logs_biomass_wt = IIF(TRIM(d.class)='CHIPS' And d.Util_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+		b.CHIPS_Util_Logs_biomass_vol = IIF(TRIM(d.class)='CHIPS' And d.Util_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+		b.CHIPS_Util_Chips_merch_wt = IIF(TRIM(d.class)='CHIPS' And d.Util_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+		b.CHIPS_Util_Chips_merch_vol = IIF(TRIM(d.class)='CHIPS' And d.Util_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+		b.CHIPS_Util_Chips_biomass_wt = IIF(TRIM(d.class)='CHIPS' And d.Util_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+		b.CHIPS_Util_Chips_biomass_vol = IIF(TRIM(d.class)='CHIPS' And d.Util_Chips_Bl='Y',t.[CHIP_VOL_CF],0),
+		b.CHIPS_NonUtil_Logs_count = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Logs_Bl='Y',1,0),
+		b.CHIPS_NonUtil_Logs_TPA = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Logs_Bl='Y',t.TPA,0),
+		b.CHIPS_NonUtil_Chips_count = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Chips_Bl='Y',1,0),
+		b.CHIPS_NonUtil_Chips_TPA = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Chips_Bl='Y',t.TPA,0),
+		b.CHIPS_NonUtil_Logs_merch_wt = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+		b.CHIPS_NonUtil_Logs_merch_vol = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+		b.CHIPS_NonUtil_Logs_biomass_wt = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+		b.CHIPS_NonUtil_Logs_biomass_vol = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+		b.CHIPS_NonUtil_Chips_merch_wt = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+		b.CHIPS_NonUtil_Chips_merch_vol = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+		b.CHIPS_NonUtil_Chips_biomass_wt = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+		b.CHIPS_NonUtil_Chips_biomass_vol = IIF(TRIM(d.class)='CHIPS' And d.NonUtil_Chips_Bl='Y',t.[CHIP_VOL_CF],0)      
+		
+UPDATE DiametersLowSlope d 
+INNER JOIN (TreeDataInLowSlope t 
+INNER JOIN BinsLowSlope b 
+ON  (t.rxpackage = b.rxpackage AND 
+		 t.rx = b.rx AND 
+		 t.rxcycle = b.rxcycle AND 
+		 t.fvs_tree_id = b.fvs_tree_id)) 
+ON d.DBH = b.DBH AND 
+   d.species_group=b.species_group 
+SET b.SMLOGS_Util_Logs_count = IIF(TRIM(d.class)='SMLOGS' And d.Util_Logs_Bl='Y',1,0),
+	  b.SMLOGS_Util_Logs_TPA = IIF(TRIM(d.class)='SMLOGS' And d.Util_Logs_Bl='Y',t.TPA,0),
+	  b.SMLOGS_Util_Chips_count = IIF(TRIM(d.class)='SMLOGS' And d.Util_Chips_Bl='Y',1,0),
+	  b.SMLOGS_Util_Chips_TPA = IIF(TRIM(d.class)='SMLOGS' And d.Util_Chips_Bl='Y',t.TPA,0),
+	  b.SMLOGS_Util_Logs_merch_wt = IIF(TRIM(d.class)='SMLOGS' And d.Util_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.SMLOGS_Util_Logs_merch_vol = IIF(TRIM(d.class)='SMLOGS' And d.Util_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.SMLOGS_Util_Logs_biomass_wt = IIF(TRIM(d.class)='SMLOGS' And d.Util_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.SMLOGS_Util_Logs_biomass_vol = IIF(TRIM(d.class)='SMLOGS' And d.Util_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.SMLOGS_Util_Chips_merch_wt = IIF(TRIM(d.class)='SMLOGS' And d.Util_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.SMLOGS_Util_Chips_merch_vol = IIF(TRIM(d.class)='SMLOGS' And d.Util_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.SMLOGS_Util_Chips_biomass_wt = IIF(TRIM(d.class)='SMLOGS' And d.Util_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.SMLOGS_Util_Chips_biomass_vol = IIF(TRIM(d.class)='SMLOGS' And d.Util_Chips_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.SMLOGS_NonUtil_Logs_count = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Logs_Bl='Y',1,0),
+	  b.SMLOGS_NonUtil_Logs_TPA = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Logs_Bl='Y',t.TPA,0),
+	  b.SMLOGS_NonUtil_Chips_count = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Chips_Bl='Y',1,0),
+	  b.SMLOGS_NonUtil_Chips_TPA = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Chips_Bl='Y',t.TPA,0),
+	  b.SMLOGS_NonUtil_Logs_merch_wt = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.SMLOGS_NonUtil_Logs_merch_vol = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.SMLOGS_NonUtil_Logs_biomass_wt = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.SMLOGS_NonUtil_Logs_biomass_vol = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.SMLOGS_NonUtil_Chips_merch_wt = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.SMLOGS_NonUtil_Chips_merch_vol = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.SMLOGS_NonUtil_Chips_biomass_wt = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.SMLOGS_NonUtil_Chips_biomass_vol = IIF(TRIM(d.class)='SMLOGS' And d.NonUtil_Chips_Bl='Y',t.[CHIP_VOL_CF],0)  
+	  
+UPDATE DiametersLowSlope d 
+INNER JOIN (TreeDataInLowSlope t 
+INNER JOIN BinsLowSlope b 
+ON  (t.rxpackage = b.rxpackage AND 
+		 t.rx = b.rx AND 
+		 t.rxcycle = b.rxcycle AND 
+		 t.fvs_tree_id = b.fvs_tree_id)) 
+ON d.DBH = b.DBH AND 
+   d.species_group=b.species_group 
+SET b.LGLOGS_Util_Logs_count = IIF(TRIM(d.class)='LGLOGS' And d.Util_Logs_Bl='Y',1,0),
+	  b.LGLOGS_Util_Logs_TPA = IIF(TRIM(d.class)='LGLOGS' And d.Util_Logs_Bl='Y',t.TPA,0),
+	  b.LGLOGS_Util_Chips_count = IIF(TRIM(d.class)='LGLOGS' And d.Util_Chips_Bl='Y',1,0),
+	  b.LGLOGS_Util_Chips_TPA = IIF(TRIM(d.class)='LGLOGS' And d.Util_Chips_Bl='Y',t.TPA,0),
+	  b.LGLOGS_Util_Logs_merch_wt = IIF(TRIM(d.class)='LGLOGS' And d.Util_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.LGLOGS_Util_Logs_merch_vol = IIF(TRIM(d.class)='LGLOGS' And d.Util_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.LGLOGS_Util_Logs_biomass_wt = IIF(TRIM(d.class)='LGLOGS' And d.Util_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.LGLOGS_Util_Logs_biomass_vol = IIF(TRIM(d.class)='LGLOGS' And d.Util_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.LGLOGS_Util_Chips_merch_wt = IIF(TRIM(d.class)='LGLOGS' And d.Util_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.LGLOGS_Util_Chips_merch_vol = IIF(TRIM(d.class)='LGLOGS' And d.Util_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.LGLOGS_Util_Chips_biomass_wt = IIF(TRIM(d.class)='LGLOGS' And d.Util_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.LGLOGS_Util_Chips_biomass_vol = IIF(TRIM(d.class)='LGLOGS' And d.Util_Chips_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.LGLOGS_NonUtil_Logs_count = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Logs_Bl='Y',1,0),
+	  b.LGLOGS_NonUtil_Logs_TPA = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Logs_Bl='Y',t.TPA,0),
+	  b.LGLOGS_NonUtil_Chips_count = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Chips_Bl='Y',1,0),
+	  b.LGLOGS_NonUtil_Chips_TPA = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Chips_Bl='Y',t.TPA,0),
+	  b.LGLOGS_NonUtil_Logs_merch_wt = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Logs_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.LGLOGS_NonUtil_Logs_merch_vol = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Logs_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.LGLOGS_NonUtil_Logs_biomass_wt = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Logs_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.LGLOGS_NonUtil_Logs_biomass_vol = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Logs_Bl='Y',t.[CHIP_VOL_CF],0),
+	  b.LGLOGS_NonUtil_Chips_merch_wt = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Chips_Bl='Y',t.[MERCH_WT_GT],0),
+	  b.LGLOGS_NonUtil_Chips_merch_vol = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Chips_Bl='Y',t.[MERCH_VOL_CF],0),
+	  b.LGLOGS_NonUtil_Chips_biomass_wt = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Chips_Bl='Y',t.[CHIP_WT_GT],0),
+	  b.LGLOGS_NonUtil_Chips_biomass_vol = IIF(TRIM(d.class)='LGLOGS' And d.NonUtil_Chips_Bl='Y',t.[CHIP_VOL_CF],0)  	  
+	  
+17. BIN PROCESSING: SUM THE BIN TABLE CONTAINING INDIVIDUAL TREES
+										BY STAND + RXPACKAGE + RX + RXCYCLE + SPECIES_GROUP + DIAM_GROUP
+										
+Example Below:
+SELECT BIOSUM_COND_ID,
+			 RXPACKAGE,
+			 RX,
+			 RXCYCLE,
+			 species_group,
+			 diam_group, 
+			 Sum(BC_Util_Logs_count) AS BC_Util_Logs_count,
+			 Sum(BC_Util_Logs_TPA) AS BC_Util_Logs_TPA,
+			 Sum(BC_Util_Logs_merch_wt) AS BC_Util_Logs_merch_wt,
+			 Sum(BC_Util_Logs_merch_vol) AS BC_Util_Logs_merch_vol,
+			 Sum(BC_Util_Logs_biomass_vol) AS BC_Util_Logs_biomass_vol,
+			 Sum(BC_Util_Logs_biomass_wt) AS BC_Util_Logs_biomass_wt,
+			 Sum(BC_Util_Chips_count) AS BC_Util_Chips_count,
+			 Sum(BC_Util_Chips_TPA) AS BC_Util_Chips_TPA,
+			 Sum(BC_Util_Chips_merch_wt) AS BC_Util_Chips_merch_wt,
+			 Sum(BC_Util_Chips_merch_vol) AS BC_Util_Chips_merch_vol,
+			 Sum(BC_Util_Chips_biomass_wt) AS BC_Util_Chips_biomass_wt,
+			 Sum(BC_Util_Chips_biomass_vol) AS BC_Util_Chips_biomass_vol,
+			 Sum(BC_NonUtil_Logs_count) AS BC_NonUtil_Logs_count,
+			 Sum(BC_NonUtil_Logs_TPA) AS BC_NonUtil_Logs_TPA,
+			 Sum(BC_NonUtil_Logs_merch_wt) AS BC_NonUtil_Logs_merch_wt,
+			 Sum(BC_NonUtil_Logs_merch_vol) AS BC_NonUtil_Logs_merch_vol,
+			 Sum(BC_NonUtil_Logs_biomass_vol) AS BC_NonUtil_Logs_biomass_vol,
+			 Sum(BC_NonUtil_Logs_biomass_wt) AS BC_NonUtil_Logs_biomass_wt,
+			 Sum(BC_NonUtil_Chips_count) AS BC_NonUtil_Chips_count,
+			 Sum(BC_NonUtil_Chips_TPA) AS BC_NonUtil_Chips_TPA,
+			 Sum(BC_NonUtil_Chips_merch_wt) AS BC_NonUtil_Chips_merch_wt,
+			 Sum(BC_NonUtil_Chips_merch_vol) AS BC_NonUtil_Chips_merch_vol,
+			 Sum(BC_NonUtil_Chips_biomass_wt) AS BC_NonUtil_Chips_biomass_wt,
+			 Sum(BC_NonUtil_Chips_biomass_vol) AS BC_NonUtil_Chips_biomass_vol,
+			 Sum(CHIPS_Util_Logs_count) AS CHIPS_Util_Logs_count,
+			 Sum(CHIPS_Util_Logs_TPA) AS CHIPS_Util_Logs_TPA,
+			 Sum(CHIPS_Util_Logs_merch_wt) AS CHIPS_Util_Logs_merch_wt,
+			 Sum(CHIPS_Util_Logs_merch_vol) AS CHIPS_Util_Logs_merch_vol,
+			 Sum(CHIPS_Util_Chips_count) AS CHIPS_Util_Chips_count,
+			 Sum(CHIPS_Util_Chips_TPA) AS CHIPS_Util_Chips_TPA,
+			 Sum(CHIPS_Util_Chips_merch_wt) AS CHIPS_Util_Chips_merch_wt,
+			 Sum(CHIPS_Util_Chips_merch_vol) AS CHIPS_Util_Chips_merch_vol,
+			 Sum(CHIPS_Util_Logs_biomass_wt) AS CHIPS_Util_Logs_biomass_wt,
+			 Sum(CHIPS_Util_Logs_biomass_vol) AS CHIPS_Util_Logs_biomass_vol,
+			 Sum(CHIPS_Util_Chips_biomass_wt) AS CHIPS_Util_Chips_biomass_wt,
+			 Sum(CHIPS_Util_Chips_biomass_vol) AS CHIPS_Util_Chips_biomass_vol,
+			 Sum(CHIPS_NonUtil_Logs_count) AS CHIPS_NonUtil_Logs_count,
+			 Sum(CHIPS_NonUtil_Logs_TPA) AS CHIPS_NonUtil_Logs_TPA,
+			 Sum(CHIPS_NonUtil_Logs_merch_wt) AS CHIPS_NonUtil_Logs_merch_wt,
+			 Sum(CHIPS_NonUtil_Logs_merch_vol) AS CHIPS_NonUtil_Logs_merch_vol,
+			 Sum(CHIPS_NonUtil_Chips_count) AS CHIPS_NonUtil_Chips_count,
+			 Sum(CHIPS_NonUtil_Chips_TPA) AS CHIPS_NonUtil_Chips_TPA,
+			 Sum(CHIPS_NonUtil_Chips_merch_wt) AS CHIPS_NonUtil_Chips_merch_wt,
+			 Sum(CHIPS_NonUtil_Chips_merch_vol) AS CHIPS_NonUtil_Chips_merch_vol,
+			 Sum(CHIPS_NonUtil_Logs_biomass_wt) AS CHIPS_NonUtil_Logs_biomass_wt,
+			 Sum(CHIPS_NonUtil_Logs_biomass_vol) AS CHIPS_NonUtil_Logs_biomass_vol,
+			 Sum(CHIPS_NonUtil_Chips_biomass_wt) AS CHIPS_NonUtil_Chips_biomass_wt,
+			 Sum(CHIPS_NonUtil_Chips_biomass_vol) AS CHIPS_NonUtil_Chips_biomass_vol,
+			 Sum(SMLOGS_Util_Logs_count) AS SMLOGS_Util_Logs_count,
+			 Sum(SMLOGS_Util_Logs_TPA) AS SMLOGS_Util_Logs_TPA,
+			 Sum(SMLOGS_Util_Logs_merch_wt) AS SMLOGS_Util_Logs_merch_wt,
+			 Sum(SMLOGS_Util_Logs_merch_vol) AS SMLOGS_Util_Logs_merch_vol,
+			 Sum(SMLOGS_Util_Logs_biomass_wt) AS SMLOGS_Util_Logs_biomass_wt,
+			 Sum(SMLOGS_Util_Logs_biomass_vol) AS SMLOGS_Util_Logs_biomass_vol,
+			 Sum(SMLOGS_Util_Chips_count) AS SMLOGS_Util_Chips_count,
+			 Sum(SMLOGS_Util_Chips_TPA) AS SMLOGS_Util_Chips_TPA,
+			 Sum(SMLOGS_Util_Chips_merch_wt) AS SMLOGS_Util_Chips_merch_wt,
+			 Sum(SMLOGS_Util_Chips_merch_vol) AS SMLOGS_Util_Chips_merch_vol,
+			 Sum(SMLOGS_Util_Chips_biomass_wt) AS SMLOGS_Util_Chips_biomass_wt,
+			 Sum(SMLOGS_Util_Chips_biomass_vol) AS SMLOGS_Util_Chips_biomass_vol,
+			 Sum(SMLOGS_NonUtil_Logs_count) AS SMLOGS_NonUtil_Logs_count,
+			 Sum(SMLOGS_NonUtil_Logs_TPA) AS SMLOGS_NonUtil_Logs_TPA,
+			 Sum(SMLOGS_NonUtil_Logs_merch_wt) AS SMLOGS_NonUtil_Logs_merch_wt,
+			 Sum(SMLOGS_NonUtil_Logs_merch_vol) AS SMLOGS_NonUtil_Logs_merch_vol,
+			 Sum(SMLOGS_NonUtil_Logs_biomass_wt) AS SMLOGS_NonUtil_Logs_biomass_wt,
+			 Sum(SMLOGS_NonUtil_Logs_biomass_vol) AS SMLOGS_NonUtil_Logs_biomass_vol,
+			 Sum(SMLOGS_NonUtil_Chips_count) AS SMLOGS_NonUtil_Chips_count,
+			 Sum(SMLOGS_NonUtil_Chips_TPA) AS SMLOGS_NonUtil_Chips_TPA,
+			 Sum(SMLOGS_NonUtil_Chips_merch_wt) AS SMLOGS_NonUtil_Chips_merch_wt,
+			 Sum(SMLOGS_NonUtil_Chips_merch_vol) AS SMLOGS_NonUtil_Chips_merch_vol,
+			 Sum(SMLOGS_NonUtil_Chips_biomass_wt) AS SMLOGS_NonUtil_Chips_biomass_wt,
+			 Sum(SMLOGS_NonUtil_Chips_biomass_vol) AS SMLOGS_NonUtil_Chips_biomass_vol,
+			 Sum(LGLOGS_Util_Logs_count) AS LGLOGS_Util_Logs_count, 
+			 Sum(LGLOGS_Util_Logs_TPA) AS LGLOGS_Util_Logs_TPA, 
+			 Sum(LGLOGS_Util_Logs_merch_wt) AS LGLOGS_Util_Logs_merch_wt,
+			 Sum(LGLOGS_Util_Logs_merch_vol) AS LGLOGS_Util_Logs_merch_vol,
+			 Sum(LGLOGS_Util_Logs_biomass_wt) AS LGLOGS_Util_Logs_biomass_wt,
+			 Sum(LGLOGS_Util_Logs_biomass_vol) AS LGLOGS_Util_Logs_biomass_vol,
+			 Sum(LGLOGS_Util_Chips_count) AS LGLOGS_Util_Chips_count,
+			 Sum(LGLOGS_Util_Chips_TPA) AS LGLOGS_Util_Chips_TPA,
+			 Sum(LGLOGS_Util_Chips_merch_wt) AS LGLOGS_Util_Chips_merch_wt,
+			 Sum(LGLOGS_Util_Chips_merch_vol) AS LGLOGS_Util_Chips_merch_vol,
+			 Sum(LGLOGS_Util_Chips_biomass_wt) AS LGLOGS_Util_Chips_biomass_wt,
+			 Sum(LGLOGS_Util_Chips_biomass_vol) AS LGLOGS_Util_Chips_biomass_vol,
+			 Sum(LGLOGS_NonUtil_Logs_count) AS LGLOGS_NonUtil_Logs_count,
+			 Sum(LGLOGS_NonUtil_Logs_TPA) AS LGLOGS_NonUtil_Logs_TPA,
+			 Sum(LGLOGS_NonUtil_Logs_merch_wt) AS LGLOGS_NonUtil_Logs_merch_wt,
+			 Sum(LGLOGS_NonUtil_Logs_merch_vol) AS LGLOGS_NonUtil_Logs_merch_vol,
+			 Sum(LGLOGS_NonUtil_Logs_biomass_wt) AS LGLOGS_NonUtil_Logs_biomass_wt,
+			 Sum(LGLOGS_NonUtil_Logs_biomass_vol) AS LGLOGS_NonUtil_Logs_biomass_vol,
+			 Sum(LGLOGS_NonUtil_Chips_count) AS LGLOGS_NonUtil_Chips_count,
+			 Sum(LGLOGS_NonUtil_Chips_TPA) AS LGLOGS_NonUtil_Chips_TPA,
+			 Sum(LGLOGS_NonUtil_Chips_merch_wt) AS LGLOGS_NonUtil_Chips_merch_wt,
+			 Sum(LGLOGS_NonUtil_Chips_merch_vol) AS LGLOGS_NonUtil_Chips_merch_vol,
+			 Sum(LGLOGS_NonUtil_Chips_biomass_wt) AS LGLOGS_NonUtil_Chips_biomass_wt,
+			 Sum(LGLOGS_NonUtil_Chips_biomass_vol) AS LGLOGS_NonUtil_Chips_biomass_vol
+INTO bin_sums_lowslope  
+FROM BinsLowSlope  
+GROUP BY BIOSUM_COND_ID, RXPACKAGE,RX,RXCYCLE, species_group, diam_group
+HAVING (((species_group) Is Not Null))  
+
+18. BIN PROCESSING: SUM THE BIN TABLE BY STAND + RXPACKAGE + RX + RXCYCLE
+										TO COME UP WITH THE TOTALS PER STAND AND TREATMENT
+
+Sum the bin_sums_lowslope table created in step 17 and 
+group by STAND + RXPACKAGE + RX + RXCYCLE
+										
+
+
+Example Below:
+
+SELECT BIOSUM_COND_ID,
+			 RXPACKAGE,
+			 RX,
+			 RXCYCLE,
+			 Sum(BC_Util_Logs_count) AS BC_Util_Logs_count,
+			 Sum(BC_Util_Logs_TPA) AS BC_Util_Logs_TPA,
+			 Sum(BC_Util_Logs_merch_wt) AS BC_Util_Logs_merch_wt,
+			 Sum(BC_Util_Logs_merch_vol) AS BC_Util_Logs_merch_vol,
+			 Sum(BC_Util_Logs_biomass_vol) AS BC_Util_Logs_biomass_vol,
+			 Sum(BC_Util_Logs_biomass_wt) AS BC_Util_Logs_biomass_wt,
+			 Sum(BC_Util_Chips_count) AS BC_Util_Chips_count,
+			 Sum(BC_Util_Chips_TPA) AS BC_Util_Chips_TPA,
+			 Sum(BC_Util_Chips_merch_wt) AS BC_Util_Chips_merch_wt,
+			 Sum(BC_Util_Chips_merch_vol) AS BC_Util_Chips_merch_vol,
+			 Sum(BC_Util_Chips_biomass_wt) AS BC_Util_Chips_biomass_wt,
+			 Sum(BC_Util_Chips_biomass_vol) AS BC_Util_Chips_biomass_vol,
+			 Sum(BC_NonUtil_Logs_count) AS BC_NonUtil_Logs_count,
+			 Sum(BC_NonUtil_Logs_TPA) AS BC_NonUtil_Logs_TPA,
+			 Sum(BC_NonUtil_Logs_merch_wt) AS BC_NonUtil_Logs_merch_wt,
+			 Sum(BC_NonUtil_Logs_merch_vol) AS BC_NonUtil_Logs_merch_vol,
+			 Sum(BC_NonUtil_Logs_biomass_vol) AS BC_NonUtil_Logs_biomass_vol,
+			 Sum(BC_NonUtil_Logs_biomass_wt) AS BC_NonUtil_Logs_biomass_wt,
+			 Sum(BC_NonUtil_Chips_count) AS BC_NonUtil_Chips_count,
+			 Sum(BC_NonUtil_Chips_TPA) AS BC_NonUtil_Chips_TPA,
+			 Sum(BC_NonUtil_Chips_merch_wt) AS BC_NonUtil_Chips_merch_wt,
+			 Sum(BC_NonUtil_Chips_merch_vol) AS BC_NonUtil_Chips_merch_vol,
+			 Sum(BC_NonUtil_Chips_biomass_wt) AS BC_NonUtil_Chips_biomass_wt,
+			 Sum(BC_NonUtil_Chips_biomass_vol) AS BC_NonUtil_Chips_biomass_vol,
+			 Sum(CHIPS_Util_Logs_count) AS CHIPS_Util_Logs_count,
+			 Sum(CHIPS_Util_Logs_TPA) AS CHIPS_Util_Logs_TPA,
+			 Sum(CHIPS_Util_Logs_merch_wt) AS CHIPS_Util_Logs_merch_wt,
+			 Sum(CHIPS_Util_Logs_merch_vol) AS CHIPS_Util_Logs_merch_vol,
+			 Sum(CHIPS_Util_Chips_count) AS CHIPS_Util_Chips_count,
+			 Sum(CHIPS_Util_Chips_TPA) AS CHIPS_Util_Chips_TPA,
+			 Sum(CHIPS_Util_Chips_merch_wt) AS CHIPS_Util_Chips_merch_wt,
+			 Sum(CHIPS_Util_Chips_merch_vol) AS CHIPS_Util_Chips_merch_vol,
+			 Sum(CHIPS_Util_Logs_biomass_wt) AS CHIPS_Util_Logs_biomass_wt,
+			 Sum(CHIPS_Util_Logs_biomass_vol) AS CHIPS_Util_Logs_biomass_vol,
+			 Sum(CHIPS_Util_Chips_biomass_wt) AS CHIPS_Util_Chips_biomass_wt,
+			 Sum(CHIPS_Util_Chips_biomass_vol) AS CHIPS_Util_Chips_biomass_vol,
+			 Sum(CHIPS_NonUtil_Logs_count) AS CHIPS_NonUtil_Logs_count,
+			 Sum(CHIPS_NonUtil_Logs_TPA) AS CHIPS_NonUtil_Logs_TPA,
+			 Sum(CHIPS_NonUtil_Logs_merch_wt) AS CHIPS_NonUtil_Logs_merch_wt,
+			 Sum(CHIPS_NonUtil_Logs_merch_vol) AS CHIPS_NonUtil_Logs_merch_vol,
+			 Sum(CHIPS_NonUtil_Chips_count) AS CHIPS_NonUtil_Chips_count,
+			 Sum(CHIPS_NonUtil_Chips_TPA) AS CHIPS_NonUtil_Chips_TPA,
+			 Sum(CHIPS_NonUtil_Chips_merch_wt) AS CHIPS_NonUtil_Chips_merch_wt,
+			 Sum(CHIPS_NonUtil_Chips_merch_vol) AS CHIPS_NonUtil_Chips_merch_vol,
+			 Sum(CHIPS_NonUtil_Logs_biomass_wt) AS CHIPS_NonUtil_Logs_biomass_wt,
+			 Sum(CHIPS_NonUtil_Logs_biomass_vol) AS CHIPS_NonUtil_Logs_biomass_vol,
+			 Sum(CHIPS_NonUtil_Chips_biomass_wt) AS CHIPS_NonUtil_Chips_biomass_wt,
+			 Sum(CHIPS_NonUtil_Chips_biomass_vol) AS CHIPS_NonUtil_Chips_biomass_vol,
+			 Sum(SMLOGS_Util_Logs_count) AS SMLOGS_Util_Logs_count,
+			 Sum(SMLOGS_Util_Logs_TPA) AS SMLOGS_Util_Logs_TPA,
+			 Sum(SMLOGS_Util_Logs_merch_wt) AS SMLOGS_Util_Logs_merch_wt,
+			 Sum(SMLOGS_Util_Logs_merch_vol) AS SMLOGS_Util_Logs_merch_vol,
+			 Sum(SMLOGS_Util_Logs_biomass_wt) AS SMLOGS_Util_Logs_biomass_wt,
+			 Sum(SMLOGS_Util_Logs_biomass_vol) AS SMLOGS_Util_Logs_biomass_vol,
+			 Sum(SMLOGS_Util_Chips_count) AS SMLOGS_Util_Chips_count,
+			 Sum(SMLOGS_Util_Chips_TPA) AS SMLOGS_Util_Chips_TPA,
+			 Sum(SMLOGS_Util_Chips_merch_wt) AS SMLOGS_Util_Chips_merch_wt,
+			 Sum(SMLOGS_Util_Chips_merch_vol) AS SMLOGS_Util_Chips_merch_vol,
+			 Sum(SMLOGS_Util_Chips_biomass_wt) AS SMLOGS_Util_Chips_biomass_wt,
+			 Sum(SMLOGS_Util_Chips_biomass_vol) AS SMLOGS_Util_Chips_biomass_vol,
+			 Sum(SMLOGS_NonUtil_Logs_count) AS SMLOGS_NonUtil_Logs_count,
+			 Sum(SMLOGS_NonUtil_Logs_TPA) AS SMLOGS_NonUtil_Logs_TPA,
+			 Sum(SMLOGS_NonUtil_Logs_merch_wt) AS SMLOGS_NonUtil_Logs_merch_wt,
+			 Sum(SMLOGS_NonUtil_Logs_merch_vol) AS SMLOGS_NonUtil_Logs_merch_vol,
+			 Sum(SMLOGS_NonUtil_Logs_biomass_wt) AS SMLOGS_NonUtil_Logs_biomass_wt,
+			 Sum(SMLOGS_NonUtil_Logs_biomass_vol) AS SMLOGS_NonUtil_Logs_biomass_vol,
+			 Sum(SMLOGS_NonUtil_Chips_count) AS SMLOGS_NonUtil_Chips_count,
+			 Sum(SMLOGS_NonUtil_Chips_TPA) AS SMLOGS_NonUtil_Chips_TPA,
+			 Sum(SMLOGS_NonUtil_Chips_merch_wt) AS SMLOGS_NonUtil_Chips_merch_wt,
+			 Sum(SMLOGS_NonUtil_Chips_merch_vol) AS SMLOGS_NonUtil_Chips_merch_vol,
+			 Sum(SMLOGS_NonUtil_Chips_biomass_wt) AS SMLOGS_NonUtil_Chips_biomass_wt,
+			 Sum(SMLOGS_NonUtil_Chips_biomass_vol) AS SMLOGS_NonUtil_Chips_biomass_vol,
+			 Sum(LGLOGS_Util_Logs_count) AS LGLOGS_Util_Logs_count, 
+			 Sum(LGLOGS_Util_Logs_TPA) AS LGLOGS_Util_Logs_TPA, 
+			 Sum(LGLOGS_Util_Logs_merch_wt) AS LGLOGS_Util_Logs_merch_wt,
+			 Sum(LGLOGS_Util_Logs_merch_vol) AS LGLOGS_Util_Logs_merch_vol,
+			 Sum(LGLOGS_Util_Logs_biomass_wt) AS LGLOGS_Util_Logs_biomass_wt,
+			 Sum(LGLOGS_Util_Logs_biomass_vol) AS LGLOGS_Util_Logs_biomass_vol,
+			 Sum(LGLOGS_Util_Chips_count) AS LGLOGS_Util_Chips_count,
+			 Sum(LGLOGS_Util_Chips_TPA) AS LGLOGS_Util_Chips_TPA,
+			 Sum(LGLOGS_Util_Chips_merch_wt) AS LGLOGS_Util_Chips_merch_wt,
+			 Sum(LGLOGS_Util_Chips_merch_vol) AS LGLOGS_Util_Chips_merch_vol,
+			 Sum(LGLOGS_Util_Chips_biomass_wt) AS LGLOGS_Util_Chips_biomass_wt,
+			 Sum(LGLOGS_Util_Chips_biomass_vol) AS LGLOGS_Util_Chips_biomass_vol,
+			 Sum(LGLOGS_NonUtil_Logs_count) AS LGLOGS_NonUtil_Logs_count,
+			 Sum(LGLOGS_NonUtil_Logs_TPA) AS LGLOGS_NonUtil_Logs_TPA,
+			 Sum(LGLOGS_NonUtil_Logs_merch_wt) AS LGLOGS_NonUtil_Logs_merch_wt,
+			 Sum(LGLOGS_NonUtil_Logs_merch_vol) AS LGLOGS_NonUtil_Logs_merch_vol,
+			 Sum(LGLOGS_NonUtil_Logs_biomass_wt) AS LGLOGS_NonUtil_Logs_biomass_wt,
+			 Sum(LGLOGS_NonUtil_Logs_biomass_vol) AS LGLOGS_NonUtil_Logs_biomass_vol,
+			 Sum(LGLOGS_NonUtil_Chips_count) AS LGLOGS_NonUtil_Chips_count,
+			 Sum(LGLOGS_NonUtil_Chips_TPA) AS LGLOGS_NonUtil_Chips_TPA,
+			 Sum(LGLOGS_NonUtil_Chips_merch_wt) AS LGLOGS_NonUtil_Chips_merch_wt,
+			 Sum(LGLOGS_NonUtil_Chips_merch_vol) AS LGLOGS_NonUtil_Chips_merch_vol,
+			 Sum(LGLOGS_NonUtil_Chips_biomass_wt) AS LGLOGS_NonUtil_Chips_biomass_wt,
+			 Sum(LGLOGS_NonUtil_Chips_biomass_vol) AS LGLOGS_NonUtil_Chips_biomass_vol
+INTO bin_totals_lowslope  
+FROM bin_sums_lowslope
+GROUP BY BIOSUM_COND_ID, RXPACKAGE,RX,RXCYCLE
+
+
+19. FRCS/OPCOST PROCESSING: INITIALIZE THE TABLE THAT IS USED
+													  FOR FRCS/OPCOST INPUT
+
+Example Below:
+CREATE TABLE bin_output_lowslope (
+	BIOSUM_COND_ID text (25),
+	RXPACKAGE text (3),
+	RX text (3),
+	RXCYCLE text (1),
+	elev short, 
+	slope short,
+	gis_yard_dist short,
+	[Harvesting system] text (50),
+	[CHIPS TPA] single,
+	[CHIPS Average Vol (ft3)] single,
+	[CHIPS Average Weight (tons)] single,
+	[CHIPS Average Density (lbs/ft3)] single,
+	[CHIPS Hwd Proportion] single,
+	[CHIPS Chip Fraction] single,
+	[CHIPS utilized logs (ft3)] single,
+	[CHIPS utilized chips (tons)] single,
+	[SMLOGS TPA] single,
+	[SMLOGS Average Vol (ft3)] single,
+	[SMLOGS Average Weight (tons)] single,
+	[SMLOGS Average Density (lbs/ft3)] single,
+	[SMLOGS Hwd Proportion] single,
+	[SMLOGS Chip Fraction] single,
+	[SMLOGS utilized logs (ft3)] single,
+	[SMLOGS utilized chips (tons)] single,
+	[LGLOGS TPA] single,
+	[LGLOGS Average Vol (ft3)] single,
+	[LGLOGS Average Weight (tons)] single,
+	[LGLOGS Average Density (lbs/ft3)] single,
+	[LGLOGS Hwd Proportion] single,
+	[LGLOGS Chip Fraction] single,
+	[LGLOGS utilized logs (ft3)] single,
+	[LGLOGS utilized chips (tons)] single,
+	[TOTAL TPA] single,
+	[TOTAL Average Vol (ft3)] single,
+	[TOTAL Average Weight (tons)] single,
+	[TOTAL Average Density (lbs/ft3)] single,
+	[TOTAL Hwd Proportion] single,
+	[TOTAL Chip Fraction] single,
+	[TOTAL utilized logs (ft3)] single,
+	[TOTAL utilized chips (tons)] single,
+	[BRUSH CUT utilized logs (ft3)] single,
+	[BRUSH CUT utilized chips (tons)] single,
+	[BRUSH CUT Residue at Stump Vol (ft3)] single,
+	[BRUSH CUT Residue at Landing Vol (ft3)] single,
+	[BRUSH CUT not utilized TPA] single,
+	[BRUSH CUT not utilized Average Vol (ft3)] single,
+	[BRUSH CUT not utilized Average Weight (tons)] single,
+	[BRUSH CUT not utilized Average Density (lbs/ft3)] single,
+	[BRUSH CUT not utilized Hwd Proportion] single,
+	[BRUSH CUT not utilized Chip Fraction] single,
+	[BRUSH CUT not utilized logs (ft3)] single,
+	[BRUSH CUT not utilized chips (tons)] single) 
+ 
+INSERT INTO bin_output_lowslope (
+	BIOSUM_COND_ID,
+	RXPACKAGE,RX,
+	RXCYCLE) 
+SELECT BIOSUM_COND_ID, 
+			 RXPACKAGE,
+			 RX,
+			 RXCYCLE 
+FROM bin_sums_lowslope 
+GROUP BY BIOSUM_COND_ID, RXPACKAGE, RX, RXCYCLE 
+
+20. FRCS/OPCOST PROCESSING: INITIALIZE YARDING DISTANCE,SLOPE AND ELEVATION
+
+Update the yarding distance, slope and elevation of each row.
+
+Example Below:
+UPDATE bin_output_lowslope o 
+INNER JOIN (plot p 
+INNER JOIN cond c 
+ON p.biosum_plot_id = c.biosum_plot_id)
+ON o.biosum_cond_id = c.biosum_cond_id 
+SET o.gis_yard_dist = IIF(p.gis_yard_dist IS NULL,1,p.gis_yard_dist),
+    o.elev = p.elev,
+    o.slope = IIF(c.slope IS NULL,0,c.slope) 
+
+21. FRCS/OPCOST PROCESSING: 
+
+Update the FRCS INPUT variables from the bin totals tables.
+NOTE: Explanation of each variable is below the SQL.
+
+Example Below:
+
+UPDATE (bin_output_lowslope o 
+INNER JOIN bin_totals_lowslope b 
+ON (o.biosum_cond_id = b.biosum_cond_id AND 
+		o.rxpackage = b.rxpackage AND 
+		o.rx = b.rx AND 
+		o.rxcycle = b.rxcycle)) 
+INNER JOIN hwd_bin_totals_lowslope h 
+ON (b.biosum_cond_id = h.biosum_cond_id AND 
+		b.rxpackage = h.rxpackage AND 
+		b.rx = h.rx AND b.rxcycle = h.rxcycle) 
+SET o.[CHIPS TPA] = b.CHIPS_Util_Chips_TPA + 
+										b.SMLOGS_Util_Chips_TPA + 
+										b.LGLOGS_Util_Chips_TPA,
+		o.[CHIPS Average Vol (ft3)] = IIF(b.CHIPS_Util_Chips_TPA + 
+																			b.SMLOGS_Util_Chips_TPA +
+																			b.LGLOGS_Util_Chips_TPA > 0,
+																				(b.CHIPS_Util_Chips_biomass_vol +
+																				 b.SMLOGS_Util_Chips_biomass_vol +
+																				 b.LGLOGS_Util_Chips_biomass_vol) / 
+																				(b.CHIPS_Util_Chips_TPA + 
+																				 b.SMLOGS_Util_Chips_TPA + 
+																				 b.LGLOGS_Util_Chips_TPA),0),
+	  o.[CHIPS Average Weight (tons)] = IIF(b.CHIPS_Util_Chips_TPA + 
+	                                        b.SMLOGS_Util_Chips_TPA + 
+	                                        b.LGLOGS_Util_Chips_TPA>0,
+	                                       (b.CHIPS_Util_Chips_biomass_wt + 
+	                                        b.SMLOGS_Util_Chips_biomass_wt + 
+	                                        b.LGLOGS_Util_Chips_biomass_wt) / 
+	                                       (b.CHIPS_Util_Chips_TPA + 
+	                                        b.SMLOGS_Util_Chips_TPA + 
+	                                        b.LGLOGS_Util_Chips_TPA),0),
+	  o.[CHIPS Average Density (lbs/ft3)] = IIF(b.CHIPS_Util_Chips_biomass_vol + 
+	  																					b.SMLOGS_Util_Chips_biomass_vol + 
+	  																					b.LGLOGS_Util_Chips_biomass_vol=0,0,
+	  																					((b.CHIPS_Util_Chips_biomass_wt + 
+	  																						b.SMLOGS_Util_Chips_biomass_wt + 
+	  																						b.LGLOGS_Util_Chips_biomass_wt)*2000) / 
+	  																					 (b.CHIPS_Util_Chips_biomass_vol + 
+	  																					  b.SMLOGS_Util_Chips_biomass_vol + 
+	  																					  b.LGLOGS_Util_Chips_biomass_vol)),
+	  o.[CHIPS Hwd Proportion] = IIF(b.CHIPS_Util_Chips_biomass_vol + 
+	                                 b.SMLOGS_Util_Chips_biomass_vol + 
+	                                 b.LGLOGS_Util_Chips_biomass_vol=0,0,
+	                                 (h.HWD_CHIPS_Util_Chips_biomass_vol + 
+	                                  h.HWD_SMLOGS_Util_Chips_biomass_vol + 
+	                                  h.HWD_LGLOGS_Util_Chips_biomass_vol) / 
+	                                  (b.CHIPS_Util_Chips_biomass_vol + 
+	                                   b.SMLOGS_Util_Chips_biomass_vol + 
+	                                   b.LGLOGS_Util_Chips_biomass_vol)),
+	  o.[CHIPS Chip Fraction] = IIf(o.[CHIPS Average Vol (ft3)]=0,0,100),
+	  o.[CHIPS utilized logs (ft3)] = b.CHIPS_Util_Logs_biomass_vol + 
+	  																b.SMLOGS_Util_Chips_biomass_vol + 
+	  																b.LGLOGS_Util_Chips_biomass_vol,
+	  o.[CHIPS utilized chips (tons)] = b.CHIPS_Util_Chips_biomass_wt + 
+	  																	b.SMLOGS_Util_Chips_biomass_wt + 
+	  																	b.LGLOGS_Util_Chips_biomass_wt,
+	  o.[SMLOGS TPA] = b.SMLOGS_Util_Logs_TPA + 
+	  								 b.SMLOGS_Util_Chips_TPA,
+	  o.[SMLOGS Average Vol (ft3)] = IIF(b.SMLOGS_Util_Logs_TPA + 
+	  																	 b.SMLOGS_Util_Chips_TPA=0,0,
+	  																	 (b.SMLOGS_Util_Logs_merch_vol + 
+	  																	 	b.SMLOGS_Util_Chips_merch_vol) / 
+	  																	 	(b.SMLOGS_Util_Logs_TPA + 
+	  																	 	 b.SMLOGS_Util_Chips_TPA)),
+	  o.[SMLOGS Average Weight (tons)] = IIF(b.SMLOGS_Util_Logs_TPA + 
+	  																			 b.SMLOGS_Util_Chips_TPA=0,0,
+	  																			 (b.SMLOGS_Util_Logs_merch_wt + 
+	  																			 	b.SMLOGS_Util_Chips_merch_wt) / 
+	  																			 (b.SMLOGS_Util_Logs_TPA + 
+	  																			 	b.SMLOGS_Util_Chips_TPA)),
+	  o.[SMLOGS Average Density (lbs/ft3)] = IIF(b.SMLOGS_Util_Logs_merch_vol + 
+	  																					 b.SMLOGS_Util_Chips_merch_vol=0,0,
+	  																					((b.SMLOGS_Util_Logs_merch_wt + 
+	  																					  b.SMLOGS_Util_Chips_merch_wt)*2000) / 
+	  																					 (b.SMLOGS_Util_Logs_merch_vol+b.SMLOGS_Util_Chips_merch_vol)),
+	  o.[SMLOGS Hwd Proportion] = IIF(b.SMLOGS_Util_Logs_merch_vol + 
+	  																b.SMLOGS_Util_Chips_merch_vol=0,0,
+	  																(h.HWD_SMLOGS_Util_Logs_merch_vol + 
+	  																 h.HWD_SMLOGS_Util_Chips_merch_vol) / 
+	  																 (b.SMLOGS_Util_Logs_merch_vol + 
+	  																  b.SMLOGS_Util_Chips_merch_vol)),
+	  o.[SMLOGS Chip Fraction] = 0,
+	  o.[SMLOGS utilized logs (ft3)] = b.SMLOGS_Util_Logs_merch_vol,
+	  o.[SMLOGS utilized chips (tons)] = b.SMLOGS_Util_Chips_biomass_wt + 
+	  																	 b.SMLOGS_Util_Chips_merch_wt,
+	  o.[LGLOGS TPA] = b.LGLOGS_Util_Logs_TPA +
+	                   b.LGLOGS_Util_Chips_TPA,
+	  o.[LGLOGS Average Vol (ft3)] = IIF(b.LGLOGS_Util_Logs_TPA + 
+	  																	 b.LGLOGS_Util_Chips_TPA=0,0,
+	  																	 (b.LGLOGS_Util_Logs_merch_vol + 
+	  																	  b.LGLOGS_Util_Chips_merch_vol) / 
+	  																	  (b.LGLOGS_Util_Logs_TPA + 
+	  																	   b.LGLOGS_Util_Chips_TPA)),
+	  o.[LGLOGS Average Weight (tons)] = IIF(b.LGLOGS_Util_Logs_TPA + 
+	                                         b.LGLOGS_Util_Chips_TPA=0,0,
+	                                         (b.LGLOGS_Util_Logs_merch_wt + 
+	                                          b.LGLOGS_Util_Chips_merch_wt) / 
+	                                          (b.LGLOGS_Util_Logs_TPA+b.LGLOGS_Util_Chips_TPA)),
+	  o.[LGLOGS Average Density (lbs/ft3)] =IIF(b.LGLOGS_Util_Logs_merch_vol + 
+	                                            b.LGLOGS_Util_Chips_merch_vol=0,0,
+	                                             ((b.LGLOGS_Util_Logs_merch_wt + 
+	                                               b.LGLOGS_Util_Chips_merch_wt)*2000) / 
+	                                               (b.LGLOGS_Util_Logs_merch_vol + 
+	                                                b.LGLOGS_Util_Chips_merch_vol)),
+	  o.[LGLOGS Hwd Proportion] =IIF(b.LGLOGS_Util_Logs_merch_vol + 
+	                                 b.LGLOGS_Util_Chips_merch_vol=0,0,
+	                                 (h.HWD_LGLOGS_Util_Logs_merch_vol + 
+	                                  h.HWD_LGLOGS_Util_Chips_merch_vol) / 
+	                                  (b.LGLOGS_Util_Logs_merch_vol + 
+	                                   b.LGLOGS_Util_Chips_merch_vol)),
+	  o.[LGLOGS Chip Fraction] = 0,
+	  o.[LGLOGS utilized logs (ft3)] = b.LGLOGS_Util_Logs_merch_vol,
+	  o.[LGLOGS utilized chips (tons)] = b.LGLOGS_Util_Chips_biomass_wt + 
+	  																	 b.LGLOGS_Util_Chips_merch_wt,
+	  o.[TOTAL TPA] = b.CHIPS_Util_Chips_TPA + 
+	  								b.SMLOGS_Util_Logs_TPA + 
+	  								b.LGLOGS_Util_Logs_TPA + 
+	  								b.SMLOGS_Util_Chips_TPA + 
+	  								b.LGLOGS_Util_Chips_TPA,
+	  o.[TOTAL Average Vol (ft3)] = IIF(b.CHIPS_Util_Chips_TPA + 
+	  																	b.SMLOGS_Util_Logs_TPA + 
+	  																	b.LGLOGS_Util_Logs_TPA + 
+	  																	b.SMLOGS_Util_Chips_TPA + 
+	  																	b.LGLOGS_Util_Chips_TPA=0,0,
+	  																	(b.CHIPS_Util_Chips_biomass_vol + 
+	  																	 b.SMLOGS_Util_Logs_merch_vol + 
+	  																	 b.LGLOGS_Util_Logs_merch_vol + 
+	  																	 b.SMLOGS_Util_Chips_merch_vol + 
+	  																	 b.LGLOGS_Util_Chips_merch_vol) / 
+	  																	 (b.CHIPS_Util_Chips_TPA+b.SMLOGS_Util_Logs_TPA + 
+	  																	  b.LGLOGS_Util_Logs_TPA+b.SMLOGS_Util_Chips_TPA + 
+	  																	  b.LGLOGS_Util_Chips_TPA)),
+	  o.[TOTAL Average Weight (tons)] = IIF(b.CHIPS_Util_Chips_TPA + 
+	  																			b.SMLOGS_Util_Logs_TPA + 
+	  																			b.LGLOGS_Util_Logs_TPA=0,0,
+	  																			(b.CHIPS_Util_Chips_biomass_wt + 
+	  																			 b.SMLOGS_Util_Logs_merch_wt + 
+	  																			 b.LGLOGS_Util_Logs_merch_wt) / 
+	  																			 (b.CHIPS_Util_Chips_TPA + 
+	  																			  b.SMLOGS_Util_Logs_TPA + 
+	  																			  b.LGLOGS_Util_Logs_TPA)),
+	  o.[TOTAL Average Density (lbs/ft3)] = IIF(b.CHIPS_Util_Chips_biomass_vol + 
+	  																				  b.SMLOGS_Util_Logs_merch_vol + 
+	  																				  b.LGLOGS_Util_Logs_merch_vol + 
+	  																				  b.SMLOGS_Util_Chips_merch_vol + 
+	  																				  b.LGLOGS_Util_Chips_merch_vol=0,0,
+	  																				  ((b.CHIPS_Util_Chips_biomass_wt + 
+	  																				    b.SMLOGS_Util_Logs_merch_wt + 
+	  																				    b.LGLOGS_Util_Logs_merch_wt + 
+	  																				    b.SMLOGS_Util_Chips_merch_wt + 
+	  																				    b.LGLOGS_Util_Chips_merch_wt)*2000) / 
+	  																				    (b.CHIPS_Util_Chips_biomass_vol + 
+	  																				     b.SMLOGS_Util_Logs_merch_vol + 
+	  																				     b.LGLOGS_Util_Logs_merch_vol + 
+	  																				     b.SMLOGS_Util_Chips_merch_vol + 
+	  																				     b.LGLOGS_Util_Chips_merch_vol)),
+    o.[TOTAL Hwd Proportion] = IIF(b.CHIPS_Util_Chips_biomass_vol + 
+    															 b.SMLOGS_Util_Logs_merch_vol + 
+    															 b.LGLOGS_Util_Logs_merch_vol + 
+    															 b.SMLOGS_Util_Chips_merch_vol + 
+    															 b.LGLOGS_Util_Chips_merch_vol=0,0,
+    															  (h.HWD_CHIPS_Util_Chips_biomass_vol + 
+    															   h.HWD_SMLOGS_Util_Logs_merch_vol + 
+    															   h.HWD_LGLOGS_Util_Logs_merch_vol + 
+    															   h.HWD_SMLOGS_Util_Chips_merch_vol + 
+    															   h.HWD_LGLOGS_Util_Chips_merch_vol) / 
+    															   (b.CHIPS_Util_Chips_biomass_vol + 
+    															    b.SMLOGS_Util_Logs_merch_vol + 
+    															    b.LGLOGS_Util_Logs_merch_vol + 
+    															    b.SMLOGS_Util_Chips_merch_vol + 
+    															    b.LGLOGS_Util_Chips_merch_vol)),
+    o.[TOTAL Chip Fraction] = 0,
+    o.[TOTAL utilized logs (ft3)] = b.SMLOGS_Util_Logs_merch_vol + 
+     																 b.LGLOGS_Util_Logs_merch_vol,
+    o.[TOTAL utilized chips (tons)] = b.CHIPS_Util_Chips_biomass_wt + 
+     																	 b.SMLOGS_Util_Chips_biomass_wt + 
+     																	 b.LGLOGS_Util_Chips_biomass_wt +
+     																	 b.SMLOGS_Util_Chips_merch_wt + 
+     																	 b.LGLOGS_Util_Chips_merch_wt,
+    o.[BRUSH CUT utilized logs (ft3)] = b.BC_Util_Logs_biomass_vol,
+    o.[BRUSH CUT utilized chips (tons)] = b.BC_Util_Chips_biomass_wt,
+    o.[BRUSH CUT not utilized TPA] = b.BC_NonUtil_Chips_TPA + 
+    																	b.BC_NonUtil_Logs_TPA,
+    o.[BRUSH CUT not utilized Average Vol (ft3)] = IIF(b.BC_NonUtil_Chips_TPA + 
+     																										b.BC_NonUtil_Logs_TPA > 0,
+     																				(b.BC_NonUtil_Chips_biomass_vol) / 
+     																				(b.BC_NonUtil_Chips_TPA + 
+     																				 b.BC_NonUtil_Logs_TPA),0),
+    o.[BRUSH CUT not utilized Average Weight (tons)] = IIF(b.BC_NonUtil_Chips_TPA + 
+     																												b.BC_NonUtil_Logs_TPA>0,
+     																				(b.BC_NonUtil_Chips_biomass_wt + 
+     																				 b.BC_NonUtil_Logs_biomass_wt) / 
+     																				(b.BC_NonUtil_Chips_TPA + 
+     																				 b.BC_NonUtil_Logs_TPA),0),
+    o.[BRUSH CUT not utilized Average Density (lbs/ft3)] = 
+      			IIF(b.BC_NonUtil_Chips_biomass_vol + 
+      					b.BC_NonUtil_Logs_biomass_vol=0,0,
+      				((b.BC_NonUtil_Chips_biomass_wt + 
+      					b.BC_NonUtil_Logs_biomass_wt)*2000) / 
+      					(b.BC_NonUtil_Chips_biomass_vol + 
+      					 b.BC_NonUtil_Logs_biomass_vol)),
+    o.[BRUSH CUT not utilized Hwd Proportion] = 
+     				IIF(b.BC_NonUtil_Chips_biomass_vol + 
+     						b.BC_NonUtil_Logs_biomass_vol=0,0,
+     						(h.HWD_BC_NonUtil_Chips_biomass_vol + 
+     						 h.HWD_BC_NonUtil_Logs_biomass_vol) / 
+     						 (b.BC_NonUtil_Chips_biomass_vol + 
+     						  b.BC_NonUtil_Logs_biomass_vol)),
+    o.[BRUSH CUT not utilized Chip Fraction] = 
+     			  IIf(o.[BRUSH CUT not utilized Average Vol (ft3)]=0,0,100),
+    o.[BRUSH CUT not utilized logs (ft3)] = b.BC_NonUtil_Logs_biomass_vol,
+    o.[BRUSH CUT not utilized chips (tons)] = b.BC_NonUtil_Chips_biomass_wt 
+     
+	
+	21a. o.[CHIPS TPA] = b.CHIPS_Util_Chips_TPA + 
+											 b.SMLOGS_Util_Chips_TPA + 
+											 b.LGLOGS_Util_Chips_TPA,
+			 
+			 Description: Sum all the wood products TPA's that were utilized as chips.
+			 
+	21b. o.[CHIPS Average Vol (ft3)] = IIF(b.CHIPS_Util_Chips_TPA + 
+																			b.SMLOGS_Util_Chips_TPA +
+																			b.LGLOGS_Util_Chips_TPA > 0,
+																				(b.CHIPS_Util_Chips_biomass_vol +
+																				 b.SMLOGS_Util_Chips_biomass_vol +
+																				 b.LGLOGS_Util_Chips_biomass_vol) / 
+																				(b.CHIPS_Util_Chips_TPA + 
+																				 b.SMLOGS_Util_Chips_TPA + 
+																				 b.LGLOGS_Util_Chips_TPA),0),
+  		 
+  		 Description: Get the average cubic foot volume for chips.	
+  		 
+  		 If Utilized Chips Trees Per Acre is greater than 0 then
+  		    o.[CHIPS Average Vol (ft3)] = 
+  		    	Sum the Utilized Chips Biomass Volume Per Cubic Foot from each BIN and 
+  		    	Divide by
+  		    	Summed Utilized Chips Trees Per Acre from each BIN
+  		 else
+  		 		o.[CHIPS Average Vol (ft3)] = 0
+  		 end if		
+  		 
+ 	21c. o.[CHIPS Average Weight (tons)] = IIF(b.CHIPS_Util_Chips_TPA + 
+	                                        b.SMLOGS_Util_Chips_TPA + 
+	                                        b.LGLOGS_Util_Chips_TPA>0,
+	                                       (b.CHIPS_Util_Chips_biomass_wt + 
+	                                        b.SMLOGS_Util_Chips_biomass_wt + 
+	                                        b.LGLOGS_Util_Chips_biomass_wt) / 
+	                                       (b.CHIPS_Util_Chips_TPA + 
+	                                        b.SMLOGS_Util_Chips_TPA + 
+	                                        b.LGLOGS_Util_Chips_TPA),0),																     
+	                                        
+			 Description: Get the average weight of chips in tons.
+			 
+			 If Utilized Chips Trees Per Acre is greater than 0 then
+			    o.[CHIPS Average Weight (tons)] = 
+			        SUM the biomass weight in tons of utilized chips from each BIN
+			        Divide By
+			        Summed Utilized Chips Trees Per Acre from each BIN
+			 else
+			 		o.[CHIPS Average Weight (tons)] = 0
+			 end if  
+			 
+	21d. o.[CHIPS Average Density (lbs/ft3)] = IIF(b.CHIPS_Util_Chips_biomass_vol + 
+	  																					b.SMLOGS_Util_Chips_biomass_vol + 
+	  																					b.LGLOGS_Util_Chips_biomass_vol=0,0,
+	  																					((b.CHIPS_Util_Chips_biomass_wt + 
+	  																						b.SMLOGS_Util_Chips_biomass_wt + 
+	  																						b.LGLOGS_Util_Chips_biomass_wt)*2000) / 
+	  																					 (b.CHIPS_Util_Chips_biomass_vol + 
+	  																					  b.SMLOGS_Util_Chips_biomass_vol + 
+	  																					  b.LGLOGS_Util_Chips_biomass_vol)),	
+	  	  
+	  	 Description: Get the average density of chips for pounds divided 
+	  	              by cubic foot volume.
+	  	  
+	  	 If Utilized Chips biomass volume is equals 0 then
+			   o.[CHIPS Average Density (lbs/ft3)] = 0
+			 else 
+			 		o.[CHIPS Average Density (lbs/ft3)] =
+			 			 SUM the biomass weight for utilized chips from each BIN and convert
+			 			 from tons to pounds
+			 			 Divide By
+			 			 Summed Utilized Chips biomass cubic foot volume from each BIN
+			 end if  	
+			 
+  21e. o.[CHIPS Hwd Proportion] = IIF(b.CHIPS_Util_Chips_biomass_vol + 
+	                                 b.SMLOGS_Util_Chips_biomass_vol + 
+	                                 b.LGLOGS_Util_Chips_biomass_vol=0,0,
+	                                 (h.HWD_CHIPS_Util_Chips_biomass_vol + 
+	                                  h.HWD_SMLOGS_Util_Chips_biomass_vol + 
+	                                  h.HWD_LGLOGS_Util_Chips_biomass_vol) / 
+	                                  (b.CHIPS_Util_Chips_biomass_vol + 
+	                                   b.SMLOGS_Util_Chips_biomass_vol + 
+	                                   b.LGLOGS_Util_Chips_biomass_vol)),		
+	                                   
+			 Description: Get the chips hardwood proportion for volume per cubic foot.
+			 
+			 If Utilized Chips biomass volume is equals 0 then
+			   o.[CHIPS Hwd Proportion] = 0
+			 else 
+			 	o.[CHIPS Hwd Proportion] = 
+			 			 SUM the hardwood biomass volume for utilized chips from each BIN
+			 			 Divide By
+			 			 Summed total utilized Chips biomass volume from each BIN
+			 end if  	 
+			 
+  21f. o.[CHIPS Chip Fraction] = IIf(o.[CHIPS Average Vol (ft3)]=0,0,100),
+  
+  		 Description: The ratio of Chips from Chips is always
+  		 							going to be 100 percent if there is a value.
+  		    					
+  		 If CHIPS BIN has no chips then
+  		   o.[CHIPS Chip Fraction]=0
+  		 else
+  			 o.[CHIPS Chip Fraction]=100
+  		 end if
+  
+  21g. o.[CHIPS utilized logs (ft3)] = b.CHIPS_Util_Logs_biomass_vol + 
+	  																   b.SMLOGS_Util_Chips_biomass_vol + 
+	  																   b.LGLOGS_Util_Chips_biomass_vol,	 
+  		 
+  		 Description: Sum together from each BIN all the logs biomass
+  		 						  cubic foot volume that are utilized as chips.   
+  		 						  
+  21h. o.[CHIPS utilized chips (tons)] = b.CHIPS_Util_Chips_biomass_wt + 
+	  																	b.SMLOGS_Util_Chips_biomass_wt + 
+	  																	b.LGLOGS_Util_Chips_biomass_wt,
+	  																	
+	     Description: Sum together from each BIN all the chip biomass 
+	     							weight.
+	     							
+	21i. o.[SMLOGS TPA] = b.SMLOGS_Util_Logs_TPA + 
+	  								 b.SMLOGS_Util_Chips_TPA,
+	  								 
+			 Description: Sum together the SMLOGS TPA.
+			 
+  21j. o.[SMLOGS Average Vol (ft3)] = IIF(b.SMLOGS_Util_Logs_TPA + 
+	  																	 b.SMLOGS_Util_Chips_TPA=0,0,
+	  																	 (b.SMLOGS_Util_Logs_merch_vol + 
+	  																	 	b.SMLOGS_Util_Chips_merch_vol) / 
+	  																	 	(b.SMLOGS_Util_Logs_TPA + 
+	  																	 	 b.SMLOGS_Util_Chips_TPA)),
+	  			
+	  	 Description: Get the average cubic foot volume for everything
+	  	              classified as SMLOGS.	
+
+ 				NOTE: SMLOGS_Util_Chips_merch_vol is small logs whose bole was
+	  	 	      utilized as chips because the user diverted the merch portion
+	  	 	      of the bole to be chipped. The SMLOG tree whose bole is 
+	  	 	      to be used as chips will still have a SMLOG harvest cost so need
+	  	 	      to include them in the equation. 	  	              
+  		 
+  		 If Utilized Small Logs Trees Per Acre is greater than 0 then
+  		    o.[SMLOGS Average Vol (ft3)] = 
+  		    	Sum the utilized Small Logs Biomass Volume Per Cubic Foot and 
+  		    	Divide by
+  		    	Summed Small Logs Trees Per Acre
+  		 else
+  		 		o.[SMLOGS Average Vol (ft3)] = 0
+  		 end if	
+  		 
+	21k. o.[SMLOGS Average Weight (tons)] = IIF(b.SMLOGS_Util_Logs_TPA + 
+	  																			 b.SMLOGS_Util_Chips_TPA=0,0,
+	  																			 (b.SMLOGS_Util_Logs_merch_wt + 
+	  																			 	b.SMLOGS_Util_Chips_merch_wt) / 
+	  																			 (b.SMLOGS_Util_Logs_TPA + 
+	  																			 	b.SMLOGS_Util_Chips_TPA)), 																	 	 		 	  								 			     									 						                                                              
+	  	
+	  	 Description: Get the average weight of SMLOGS in tons. 
+	  	 
+	  	 NOTE: SMLOGS_Util_Chips_merch_wt is small logs whose bole was
+	  	 	     utilized as chips because the user diverted the merch portion
+	  	 	     of the bole to be chipped. The SMLOG tree whose bole is 
+	  	 	     to be used as chips will still have a SMLOG harvest cost so need
+	  	 	     to include them in the equation. 
+			 
+			 If Utilized Small Log Trees Per Acre is greater than 0 then
+			    o.[SMLOGS Average Weight (tons)] = 
+			        SUM the utilized Small Logs merch weight in tons 
+			        Divide By
+			        Summed Utilized Small Logs Trees Per Acre
+			 else
+			 		o.[SMLOGS Average Weight (tons)] = 0
+			 end if  
+			 
+	21l. o.[SMLOGS Average Density (lbs/ft3)] = IIF(b.SMLOGS_Util_Logs_merch_vol + 
+	  																					 b.SMLOGS_Util_Chips_merch_vol=0,0,
+	  																					((b.SMLOGS_Util_Logs_merch_wt + 
+	  																					  b.SMLOGS_Util_Chips_merch_wt)*2000) / 
+	  																					 (b.SMLOGS_Util_Logs_merch_vol+b.SMLOGS_Util_Chips_merch_vol)), 
+
+			 Description: Get the average density of small logs for pounds divided 
+	  	              by cubic foot volume.
+	  	  
+	  	 If Utilized Small Logs merch volume equals 0 then
+			   o.[SMLOGS Average Density (lbs/ft3)] = 0
+			 else 
+			 		o.[SMLOGS Average Density (lbs/ft3)] =
+			 			 SUM the utilized small logs merch weight
+			 			 from tons to pounds
+			 			 Divide By
+			 			 Summed Utilized merch wood volume
+			 end if  		
+			 
+	21m. o.[SMLOGS Hwd Proportion] = IIF(b.SMLOGS_Util_Logs_merch_vol + 
+	  																b.SMLOGS_Util_Chips_merch_vol=0,0,
+	  																(h.HWD_SMLOGS_Util_Logs_merch_vol + 
+	  																 h.HWD_SMLOGS_Util_Chips_merch_vol) / 
+	  																 (b.SMLOGS_Util_Logs_merch_vol + 
+	  																  b.SMLOGS_Util_Chips_merch_vol)), 																					 
+	  																  
+			 Description: Get the ratio of small logs hardwood volume.
+			 
+			 If Utilized small logs merch volume equals 0 then
+			   o.[SMLOGS Hwd Proportion] = 0
+			 else 
+			 	o.[SMLOGS Hwd Proportion] = 
+			 			 SUM the utilized hardwood merch volume for small logs
+			 			 Divide By
+			 			 Summed total utilized small logs merch volume
+			 end if 
+			 
+  21n. o.[SMLOGS Chip Fraction] = 0  NOTE: CALCULATED LATER
+  
+  21o. o.[SMLOGS utilized logs (ft3)] = b.SMLOGS_Util_Logs_merch_vol,
+  			
+  21p. o.[SMLOGS utilized chips (tons)] = b.SMLOGS_Util_Chips_biomass_wt + 
+	  																	    b.SMLOGS_Util_Chips_merch_wt,
+  			
+  		 Description: Sum together small logs that are utilized as chips.
+  		 
+			 Control Source of b.SMLOGS_Util_Chips_merch_wt = IIF(TRIM(d.class)='SMLOGS' And 
+			 																									d.Util_Chips_Bl='Y',
+			 																									t.[MERCH_WT_GT],0), 
+       Control Source of b.SMLOGS_Util_Chips_biomass_wt = IIF(TRIM(d.class)='SMLOGS' And 
+       																									d.Util_Chips_Bl='Y',
+       																									t.[CHIP_WT_GT],0),		 																									 		 		  	 															  
+       
+       Example of flag setting for the Util_Chips_Bl column when diverting 
+       every tree within a species group from merch to chips:	
+       																							
+			 UPDATE DiametersLowSlope 
+			 SET NonUtil_Chips_Bl = IIf(DBH <3,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 1 
+ 
+ 			 UPDATE DiametersLowSlope 
+ 			 SET Util_Chips_Bl = IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N') 
+ 			 WHERE species_group = 5 AND diam_group = 1 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Chips_Bl)
+			 WHERE species_group = 5 AND diam_group = 1 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 20 OR DBH > 20,'Y',Util_Chips_Bl) 
+			 WHERE species_group = 5 AND diam_group = 1 
+
+			 UPDATE DiametersLowSlope 
+			 SET NonUtil_Chips_Bl = IIf(DBH <3,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 2 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 2 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Chips_Bl) 
+			 WHERE species_group = 5 AND diam_group = 2 
+
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 20 OR DBH > 20,'Y',Util_Chips_Bl) 
+			 WHERE species_group = 5 AND diam_group = 2 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET NonUtil_Chips_Bl = IIf(DBH <3,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 3 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 3 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Chips_Bl)
+			 WHERE species_group = 5 AND diam_group = 3 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 20 OR DBH > 20,'Y',Util_Chips_Bl) 
+			 WHERE species_group = 5 AND diam_group = 3 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET NonUtil_Chips_Bl = IIf(DBH <3,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 4 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N')
+			 WHERE species_group = 5 AND diam_group = 4 
+
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Chips_Bl)
+			 WHERE species_group = 5 AND diam_group = 4 
+
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 20 OR DBH > 20,'Y',Util_Chips_Bl) 
+			 WHERE species_group = 5 AND diam_group = 4 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET NonUtil_Chips_Bl = IIf(DBH <3,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 5 
+
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N') 
+			 WHERE species_group = 5 AND diam_group = 5 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Chips_Bl)
+			 WHERE species_group = 5 AND diam_group = 5 
+			 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 20 OR DBH > 20,'Y',Util_Chips_Bl) 
+			 WHERE species_group = 5 AND diam_group = 5 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET NonUtil_Chips_Bl = IIf(DBH <3,'Y','N') 
+			 WHERE species_group = 6 AND diam_group = 1 
+
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH=3 OR DBH > 3 AND DBH < 7,'Y','N')
+			 WHERE species_group = 6 AND diam_group = 1 
+ 
+			 UPDATE DiametersLowSlope 
+			 SET Util_Chips_Bl = IIf(DBH = 7 OR DBH > 7 AND DBH < 20,'Y',Util_Chips_Bl)
+			 WHERE species_group = 6 AND diam_group = 1 
+ 
+
+  21q. o.[LGLOGS TPA] = b.LGLOGS_Util_Logs_TPA + 
+	  								 b.LGLOGS_Util_Chips_TPA,
+	  								 
+			 Description: Sum together the LGLOGS TPA.
+			 
+  21r. o.[LGLOGS Average Vol (ft3)] = IIF(b.LGLOGS_Util_Logs_TPA + 
+	  																	 b.LGLOGS_Util_Chips_TPA=0,0,
+	  																	 (b.LGLOGS_Util_Logs_merch_vol + 
+	  																	 	b.LGLOGS_Util_Chips_merch_vol) / 
+	  																	 	(b.LGLOGS_Util_Logs_TPA + 
+	  																	 	 b.LGLOGS_Util_Chips_TPA)),
+	  			
+	  	 Description: Get the average cubic foot volume for everything
+	  	              classified as LGLOGS.	
+
+ 				NOTE: LGLOGS_Util_Chips_merch_vol is large logs whose bole was
+	  	 	      utilized as chips because the user diverted the merch portion
+	  	 	      of the bole to be chipped. The LGLOG tree whose bole is 
+	  	 	      to be used as chips will still have a LGLOG harvest cost so need
+	  	 	      to include them in the equation. 	  	              
+  		 
+  		 If Utilized large Logs Trees Per Acre is greater than 0 then
+  		    o.[LGLOGS Average Vol (ft3)] = 
+  		    	Sum the utilized large Logs Biomass Volume Per Cubic Foot and 
+  		    	Divide by
+  		    	Summed large Logs Trees Per Acre
+  		 else
+  		 		o.[LGLOGS Average Vol (ft3)] = 0
+  		 end if	
+  		 
+	21s. o.[LGLOGS Average Weight (tons)] = IIF(b.LGLOGS_Util_Logs_TPA + 
+	  																			 b.LGLOGS_Util_Chips_TPA=0,0,
+	  																			 (b.LGLOGS_Util_Logs_merch_wt + 
+	  																			 	b.LGLOGS_Util_Chips_merch_wt) / 
+	  																			 (b.LGLOGS_Util_Logs_TPA + 
+	  																			 	b.LGLOGS_Util_Chips_TPA)), 																	 	 		 	  								 			     									 						                                                              
+	  	
+	  	 Description: Get the average weight of LGLOGS in tons. 
+	  	 
+	  	 NOTE: LGLOGS_Util_Chips_merch_wt is large logs whose bole was
+	  	 	     utilized as chips because the user diverted the merch portion
+	  	 	     of the bole to be chipped. The LGLOG tree whose bole is 
+	  	 	     to be used as chips will still have a LGLOG harvest cost so need
+	  	 	     to include them in the equation. 
+			 
+			 If Utilized large Log Trees Per Acre is greater than 0 then
+			    o.[LGLOGS Average Weight (tons)] = 
+			        SUM the utilized large Logs merch weight in tons 
+			        Divide By
+			        Summed Utilized large Logs Trees Per Acre
+			 else
+			 		o.[LGLOGS Average Weight (tons)] = 0
+			 end if  
+			 
+	21t. o.[LGLOGS Average Density (lbs/ft3)] = IIF(b.LGLOGS_Util_Logs_merch_vol + 
+	  																					 b.LGLOGS_Util_Chips_merch_vol=0,0,
+	  																					((b.LGLOGS_Util_Logs_merch_wt + 
+	  																					  b.LGLOGS_Util_Chips_merch_wt)*2000) / 
+	  																					 (b.LGLOGS_Util_Logs_merch_vol+b.LGLOGS_Util_Chips_merch_vol)), 
+
+			 Description: Get the average density of large logs for pounds divided 
+	  	              by cubic foot volume.
+	  	  
+	  	 If Utilized large Logs merch volume equals 0 then
+			   o.[LGLOGS Average Density (lbs/ft3)] = 0
+			 else 
+			 		o.[LGLOGS Average Density (lbs/ft3)] =
+			 			 SUM the utilized large logs merch weight
+			 			 from tons to pounds
+			 			 Divide By
+			 			 Summed Utilized merch wood volume
+			 end if  		
+			 
+	21u. o.[LGLOGS Hwd Proportion] = IIF(b.LGLOGS_Util_Logs_merch_vol + 
+	  																b.LGLOGS_Util_Chips_merch_vol=0,0,
+	  																(h.HWD_LGLOGS_Util_Logs_merch_vol + 
+	  																 h.HWD_LGLOGS_Util_Chips_merch_vol) / 
+	  																 (b.LGLOGS_Util_Logs_merch_vol + 
+	  																  b.LGLOGS_Util_Chips_merch_vol)), 																					 
+	  																  
+			 Description: Get the ratio of large logs hardwood volume.
+			 
+			 If Utilized large logs merch volume equals 0 then
+			   o.[LGLOGS Hwd Proportion] = 0
+			 else 
+			 	o.[LGLOGS Hwd Proportion] = 
+			 			 SUM the utilized hardwood merch volume for large logs
+			 			 Divide By
+			 			 Summed total utilized large logs merch volume
+			 end if 
+			 
+  21v. o.[LGLOGS Chip Fraction] = 0   NOTE: CALCULATED LATER
+  
+  21w. o.[LGLOGS utilized logs (ft3)] = b.LGLOGS_Util_Logs_merch_vol,
+  			
+  21x. o.[LGLOGS utilized chips (tons)] = b.LGLOGS_Util_Chips_biomass_wt + 
+	  																	    b.LGLOGS_Util_Chips_merch_wt,
+  			
+  		 Description: Sum together large logs that are utilized as chips.
+  		 
+  		 
+22. TREE PROCESSING: SUM THE TREE AND BOLE BIOMASS FOR TREES CLASSIFIED
+										 AS EITHER SMALL LOGS OR LARGE LOGS AND GROUP BY
+ 										 STAND,TREATMENT AND CLASS
+ 											
+ 
+ Example Below:
+ SELECT t.biosum_cond_id, 
+ 				t.rxpackage, 
+ 				t.rx, 
+ 				t.rxcycle,
+ 				d.class,
+ 				SUM(ROUND(f.drybiot,0)) AS TreeBiomass,
+ 				SUM(ROUND(f.drybiom,0)) AS BoleBiomass 
+ INTO sumBiomassByLogSizeLowSlope 
+ FROM (TreeDataInLowSlope t 
+ INNER JOIN DiametersLowSlope d 
+ ON t.dia = d.DBH AND 
+ 		t.species_group=d.species_group) 
+ INNER JOIN fvs_tree_IN_WS_P001_TREE_CUTLIST f 
+ ON (t.fvs_tree_id = f.fvs_tree_id) 
+ GROUP BY t.biosum_cond_id, t.rxpackage,t.rx,t.rxcycle, d.class 
+ HAVING (((TRIM(d.class))='SMLOGS' OR (TRIM(d.class))='LGLOGS')) 
+  		 
+23. TREE PROCESSING: CALCULATE THE RATIO OF THE CHIPS BIOMASS TO
+										 THE MERCH BIOMASS FOR SMALL LOGS
+
+
+Example Below:
+UPDATE bin_output_lowslope o 
+INNER JOIN sumBiomassByLogSizeLowSlope s 
+ON  o.BIOSUM_COND_ID = s.biosum_cond_id AND 
+		o.rxpackage = s.rxpackage AND 
+		o.rx = s.rx AND 
+		o.rxcycle = s.rxcycle  
+SET o.[SMLOGS Chip Fraction] = 
+	  IF(s.BoleBiomass=0,0,ROUND((s.TreeBiomass-s.BoleBiomass)/s.BoleBiomass*100,0)) 
+WHERE (((TRIM(s.class))='SMLOGS'))       
+
+24. TREE PROCESSING: CALCULATE THE RATIO OF THE CHIPS BIOMASS TO
+										 THE MERCH BIOMASS FOR LARGE LOGS
+
+
+Example Below:
+UPDATE bin_output_lowslope o 
+INNER JOIN sumBiomassByLogSizeLowSlope s 
+ON  o.BIOSUM_COND_ID = s.biosum_cond_id AND 
+		o.rxpackage = s.rxpackage AND 
+		o.rx = s.rx AND 
+		o.rxcycle = s.rxcycle  
+SET o.[LGLOGS Chip Fraction] = 
+	  IF(s.BoleBiomass=0,0,ROUND((s.TreeBiomass-s.BoleBiomass)/s.BoleBiomass*100,0)) 
+WHERE (((TRIM(s.class))='LGLOGS'))  
+
+25. TREE PROCESSING: SUM THE TREE AND BOLE BIOMASS AND GROUP BY
+ 										 STAND,TREATMENT AND CLASS
+
+Example Below:
+SELECT t.biosum_cond_id, 
+			 t.rxpackage, 
+			 t.rx, 
+			 t.rxcycle,
+			 SUM(ROUND(f.drybiot,0)) AS TreeBiomass,
+			 SUM(ROUND(f.drybiom,0)) AS BoleBiomass 
+INTO sumBiomassByStandRxLowSlope 
+FROM (TreeDataInLowSlope t 
+INNER JOIN DiametersLowSlope d 
+ON t.dia = d.DBH AND 
+	 t.species_group=d.species_group)
+INNER JOIN fvs_tree_IN_WS_P001_TREE_CUTLIST f 
+ON (t.fvs_tree_id = f.fvs_tree_id) 
+GROUP BY t.biosum_cond_id, t.rxpackage,t.rx,t.rxcycle, d.class 
+
+26. FRCS/OPCOST PROCESSING: CALCULATE THE RATIO OF THE CHIPS BIOMASS TO
+										        THE MERCH BIOMASS FOR ALL WOODY MATERIAL
+
+Example Below:
+UPDATE bin_output_lowslope o 
+INNER JOIN sumBiomassByStandRxLowSlope s 
+ON  o.BIOSUM_COND_ID = s.biosum_cond_id AND 
+		o.rxpackage = s.rxpackage AND 
+		o.rx = s.rx AND 
+		o.rxcycle = s.rxcycle  
+SET o.[TOTAL Chip Fraction] = 
+    IIF(s.BoleBiomass=0,0,ROUND((s.TreeBiomass-s.BoleBiomass)/s.BoleBiomass*100,0)) 
+    
+    
+27. FRCS/OPCOST PROCESSING: UPDATE THE UTILIZED CHIPS IN TONS FOR SMALL LOGS,
+										        LARGE LOGS, AND ALL WOODY MATERIAL
+
+Example Below:
+UPDATE bin_output_lowslope o 
+SET o.[SMLOGS utilized chips (tons)] = 
+	IIF(o.[SMLOGS utilized chips (tons)] IS NOT NULL,
+		o.[SMLOGS utilized chips (tons)]*(o.[SMLOGS Chip Fraction]/100),0),
+o.[LGLOGS utilized chips (tons)] = 
+	IIF(o.[LGLOGS utilized chips (tons)] IS NOT NULL,
+	  o.[LGLOGS utilized chips (tons)]*(o.[LGLOGS Chip Fraction]/100),0),
+o.[TOTAL utilized chips (tons)] = 
+	IIF(o.[BRUSH CUT utilized chips (tons)] IS NOT NULL,
+	  o.[BRUSH CUT utilized chips (tons)]*(o.[TOTAL Chip Fraction]/100),0) 
+	  
+	  
+28. FRCS/OPCOST PROCESSING: MAKE SURE ALL INPUT HAS A VALUE
+
+Example Below:
+UPDATE bin_output_lowslope o 
+SET o.[CHIPS Average Vol (ft3)] = 
+  IIf(o.[CHIPS Average Vol (ft3)] Is Null,0,
+    o.[CHIPS Average Vol (ft3)]),
+o.[CHIPS Average Weight (tons)] = 
+  IIf(o.[CHIPS Average Weight (tons)] Is Null,0,
+    o.[CHIPS Average Weight (tons)]),
+o.[CHIPS Average Density (lbs/ft3)] = 
+  IIf(o.[CHIPS Average Density (lbs/ft3)] Is Null,0,
+    o.[CHIPS Average Density (lbs/ft3)]),
+o.[CHIPS Hwd Proportion] = 
+  IIf(o.[CHIPS Hwd Proportion] Is Null,0,
+    o.[CHIPS Hwd Proportion]),
+o.[SMLOGS Average Vol (ft3)] = 
+  IIf(o.[SMLOGS Average Vol (ft3)] Is Null,0,
+    o.[SMLOGS Average Vol (ft3)]),
+o.[SMLOGS Average Weight (tons)] = 
+  IIf(o.[SMLOGS Average Weight (tons)] Is Null,0,
+    o.[SMLOGS Average Weight (tons)]),
+o.[SMLOGS Average Density (lbs/ft3)] = 
+  IIf(o.[SMLOGS Average Density (lbs/ft3)] Is Null,0,
+    o.[SMLOGS Average Density (lbs/ft3)]),
+o.[SMLOGS Hwd Proportion] = 
+  IIf(o.[SMLOGS Hwd Proportion] Is Null,0,
+    o.[SMLOGS Hwd Proportion]),
+o.[LGLOGS Average Vol (ft3)] = 
+  IIf(o.[LGLOGS Average Vol (ft3)] Is Null,0,
+    o.[LGLOGS Average Vol (ft3)]),
+o.[LGLOGS Average Weight (tons)] = 
+  IIf(o.[LGLOGS Average Weight (tons)] Is Null,0,
+    o.[LGLOGS Average Weight (tons)]),
+o.[LGLOGS Average Density (lbs/ft3)] = 
+  IIf(o.[LGLOGS Average Density (lbs/ft3)] Is Null,0,
+    o.[LGLOGS Average Density (lbs/ft3)]),
+o.[LGLOGS Hwd Proportion] = 
+  IIf(o.[LGLOGS Hwd Proportion] Is Null,0,
+    o.[LGLOGS Hwd Proportion]),
+o.[TOTAL Average Vol (ft3)] = 
+  IIf(o.[TOTAL Average Vol (ft3)] Is Null,0,
+    o.[TOTAL Average Vol (ft3)]),
+o.[TOTAL Average Weight (tons)] = 
+  IIf(o.[TOTAL Average Weight (tons)] Is Null,0,
+    o.[TOTAL Average Weight (tons)]),
+o.[TOTAL Average Density (lbs/ft3)] =
+  IIf(o.[TOTAL Average Density (lbs/ft3)] Is Null,0,
+    o.[TOTAL Average Density (lbs/ft3)]),
+o.[TOTAL Hwd Proportion] = 
+  IIf(o.[TOTAL Hwd Proportion] Is Null,0,
+    o.[TOTAL Hwd Proportion]) 	
+    
+29. FRCS/OPCOST PROCESSING: UPDATE THE HARVEST METHOD COLUMN
+
+Example Below:
+
+UPDATE bin_output_lowslope SET [Harvesting system] = 'Ground-Based Mech WT'   
+
+
+30. TREEVOLVAL PROCESSING: INITIALIZE TABLE
+
+SUM the utilized and non-untilized merch cubic foot volume, 
+merch green ton weight,chip cubic foot chip volume, chip green ton weight
+and GROUP BY stand, treatment, diameter group, and species group
+
+Example Below:
+SELECT b.BIOSUM_COND_ID,
+			 b.RXPACKAGE,
+			 b.RX, 
+			 b.RXCYCLE, 
+			 b.species_group, 
+			 b.diam_group,
+			 SUM(b.[BC_Util_Logs_merch_wt] + 
+			 		 b.[CHIPS_Util_Logs_merch_wt] + 
+			 		 b.[SMLOGS_Util_Logs_merch_wt] + 
+			 		 b.[LGLOGS_Util_Logs_merch_wt] ) AS MERCH_WT_GT,
+			 SUM(b.[BC_Util_Logs_merch_vol] + 
+			 		 b.[CHIPS_Util_Logs_merch_vol] + 
+			 		 b.[SMLOGS_Util_Logs_merch_vol] + 
+			 		 b.[LGLOGS_Util_Logs_merch_vol] ) AS MERCH_VOL_CF,
+			 SUM(b.[BC_Util_Logs_biomass_wt] + 
+			 		 b.[CHIPS_Util_Logs_biomass_wt] + 
+			 		 b.[SMLOGS_Util_Logs_biomass_wt] + 
+			 		 b.[LGLOGS_Util_Logs_biomass_wt] + 
+			 		 b.[SMLOGS_Util_Chips_biomass_wt] + 
+			 		 b.[LGLOGS_Util_Chips_biomass_wt] + 
+			 		 b.[SMLOGS_Util_Chips_merch_wt]) AS CHIP_WT_GT,
+			 SUM(b.[BC_Util_Logs_biomass_vol] + 
+			 		 b.[CHIPS_Util_Logs_biomass_vol] + 
+			 		 b.[SMLOGS_Util_Logs_biomass_vol] + 
+			 		 b.[LGLOGS_Util_Logs_biomass_vol] + 
+			 		 b.[SMLOGS_Util_Chips_biomass_vol] + 
+			 		 b.[LGLOGS_Util_Chips_biomass_vol] + 
+			 		 b.[LGLOGS_Util_Chips_merch_vol]) AS CHIP_VOL_CF,
+			 SUM(b.[BC_NonUtil_Logs_merch_wt] + 
+			 		 b.[CHIPS_NonUtil_Logs_merch_wt] + 
+			 		 b.[SMLOGS_NonUtil_Logs_merch_wt] + 
+			 		 b.[LGLOGS_NonUtil_Logs_merch_wt] ) AS NOT_UTILIZED_MERCH_WT_GT,
+			 SUM(b.[BC_NonUtil_Logs_merch_vol] + 
+			 		 b.[CHIPS_NonUtil_Logs_merch_vol] + 
+			 		 b.[SMLOGS_NonUtil_Logs_merch_vol] + 
+			 		 b.[LGLOGS_NonUtil_Logs_merch_vol] ) AS NOT_UTILIZED_MERCH_VOL_CF,
+			 SUM(b.[BC_NonUtil_Logs_biomass_wt] + 
+			     b.[CHIPS_NonUtil_Logs_biomass_wt] + 
+			     b.[SMLOGS_NonUtil_Logs_biomass_wt] + 
+			     b.[LGLOGS_NonUtil_Logs_biomass_wt] + 
+			     b.[SMLOGS_NonUtil_Chips_biomass_wt] + 
+			     b.[LGLOGS_NonUtil_Chips_biomass_wt] + 
+			     b.[SMLOGS_NonUtil_Chips_merch_wt]) AS NOT_UTILIZED_CHIP_WT_GT,
+			 SUM(b.[BC_NonUtil_Logs_biomass_vol] + 
+			     b.[CHIPS_NonUtil_Logs_biomass_vol] + 
+			     b.[SMLOGS_NonUtil_Logs_biomass_vol] + 
+			     b.[LGLOGS_NonUtil_Logs_biomass_vol] + 
+			     b.[SMLOGS_NonUtil_Chips_biomass_vol] + 
+			     b.[LGLOGS_NonUtil_Chips_biomass_vol] + 
+			     b.[LGLOGS_NonUtil_Chips_merch_vol]) AS NOT_UTILIZED_CHIP_VOL_CF 
+INTO tree_vol_by_spc_grp_dbh_grp 
+FROM bin_sums_lowslope b 
+WHERE (((b.diam_group) Is Not Null)) 
+GROUP BY b.BIOSUM_COND_ID, b.rxpackage, b.RX, b.rxcycle, b.species_group, b.diam_group 
+
+31. TREEVOLVAL PROCESSING: REMOVE ROWS WITH NULL VALUES
+
+
+Example Below:
+
+INSERT INTO TreeVolValLowSlope (
+	biosum_cond_id,
+	rxpackage,
+	rx,
+	rxcycle,
+	species_group,
+	diam_group, 
+	merch_wt_gt,
+	merch_vol_cf, 
+	chip_wt_gt, 
+	chip_vol_cf,
+	DateTimeCreated) 
+SELECT DISTINCT 
+	t.BIOSUM_COND_ID, 
+	t.rxpackage,
+	t.rx,
+	t.rxcycle,
+	t.species_group,
+	t.diam_group,
+	t.MERCH_WT_GT,
+	t.MERCH_VOL_CF,
+	t.CHIP_WT_GT,
+	t.CHIP_VOL_CF,
+	'2015-05-29 07:29:55 AM' 
+FROM tree_vol_by_spc_grp_dbh_grp t 
+WHERE (((t.MERCH_WT_GT)<>0) OR 
+			 ((t.MERCH_VOL_CF)<>0) OR 
+			 ((t.CHIP_WT_GT)<>0) OR 
+			 ((t.CHIP_VOL_CF)<>0)) 
+			 
+32. TREEVOLVAL PROCESSING: APPLY ESCALATERS TO MERCH AND CHIP VALUES
+
+
+Example Below:
+UPDATE TreeVolValLowSlope t 
+INNER JOIN (scenario_tree_species_diam_dollar_values v 
+INNER JOIN scenario_cost_revenue_escalators e 
+ON v.scenario_id = e.scenario_id) 
+ON t.species_group = v.species_group AND 
+	 t.diam_group=v.diam_group 
+SET t.merch_val_dpa = 
+		  IIF(t.RXCycle='1',t.merch_vol_cf * v.merch_value,
+		  IIF(t.RXCycle='2',t.merch_vol_cf * (v.merch_value * e.EscalatorMerchWoodRevenue_Cycle2),
+		  IIF(t.RXCycle='3',t.merch_vol_cf * (v.merch_value * e.EscalatorMerchWoodRevenue_Cycle3),
+		  IIF(t.RXCycle='4',t.merch_vol_cf * (v.merch_value * e.EscalatorMerchWoodRevenue_Cycle4),
+	  	0)))),
+	  t.chip_mkt_val_pgt = 
+	  	IIF(t.RXCycle='1',v.chip_value,
+	  	IIF(t.RXCycle='2',(v.chip_value * e.EscalatorEnergyWoodRevenue_Cycle2),
+	  	IIF(t.RXCycle='3',(v.chip_value * e.EscalatorEnergyWoodRevenue_Cycle3),
+	  	IIF(t.RXCycle='4',(v.chip_value * e.EscalatorEnergyWoodRevenue_Cycle4),0)))),
+	  t.chip_val_dpa = 
+	  	IIF(t.RXCycle='1',t.chip_wt_gt * v.chip_value,
+	  	IIF(t.RXCycle='2',t.chip_wt_gt * (v.chip_value * e.EscalatorEnergyWoodRevenue_Cycle2),
+	  	IIF(t.RXCycle='3',t.chip_wt_gt * (v.chip_value * e.EscalatorEnergyWoodRevenue_Cycle3),
+	  	IIF(t.RXCycle='4',t.chip_wt_gt * (v.chip_value * e.EscalatorEnergyWoodRevenue_Cycle4),
+	  		0)))),
+	  merch_to_chipbin_YN = IIF(v.wood_bin='M','N','Y') 
+WHERE TRIM(UCASE(v.scenario_id))='FINAL' 			 
+
+
+33. TREEVOLVAL PROCESSING: NO NULLS
+
+
+Example Below:
+UPDATE TreeVolValLowSlope 
+	SET chip_val_dpa = IIF(chip_val_dpa IS NULL,0,chip_val_dpa),
+			merch_val_dpa = IIF(merch_val_dpa IS NULL,0,merch_val_dpa) 
+			
+34. FRCS/OPCOST PROCESSING: INITIALIZE OPCOST INPUT
+Create populate the OPCOST input table
+Example Below:
+SELECT o.biosum_cond_id + o.rxpackage + o.rx + o.rxcycle AS Stand,
+			 o.Slope AS [Percent Slope],
+			 o.gis_yard_dist AS [One-way Yarding Distance],
+			 Null AS [YearCostCalc],
+			 o.elev AS [Project Elevation],
+			 o.[Harvesting system] AS [Harvesting System],
+			 o.[CHIPS TPA] AS [Chip tree per acre],
+			 o.[CHIPS Chip Fraction] AS [Residue fraction for chip trees],
+			 o.[CHIPS Average Vol (ft3)] AS [Chip trees average volume(ft3)],
+			 o.[CHIPS Average Density (lbs/ft3)],
+			 o.[CHIPS Hwd Proportion],
+			 o.[SMLOGS TPA] AS [Small log trees per acre],
+			 o.[SMLOGS Chip Fraction] AS [Small log trees residue fraction],
+			 o.[SMLOGS Average Vol (ft3)] AS [Small log trees average volume(ft3)],
+			 o.[SMLOGS Average Density (lbs/ft3)] AS [Small log trees average density(lbs/ft3)],
+			 o.[SMLOGS Hwd Proportion] AS [Small log trees hardwood proportion],
+			 o.[LGLOGS TPA] AS [Large log trees per acre],
+			 o.[LGLOGS Chip Fraction] AS [Large log trees residue fraction],
+			 o.[LGLOGS Average Vol (ft3)] AS [Large log trees average vol(ft3)],
+			 o.[LGLOGS Average Density (lbs/ft3)] AS [Large log trees average density(lbs/ft3)],
+			 o.[LGLOGS Hwd Proportion] AS [Large log trees hardwood proportion],
+			 o.[BRUSH CUT not utilized TPA] AS BrushCutTPA,
+			 o.[BRUSH CUT not utilized Average Vol (ft3)] AS BrushCutAvgVol,
+			 Null AS BLANK3,
+			 Null AS BLANK4,
+			 Null AS BLANK5,
+			 Null AS [Costs per green ton],
+			 Null AS [Costs per cubic foot],
+			 Null AS [Costs per cubic foot1],
+			 o.rxpackage + o.rx + o.rxcycle AS RxPackage_Rx_RxCycle 
+INTO opcost_input FROM bin_output_lowslope o 
+
+35. FRCS/OPCOST PROCESSING: ENSURE YARDING DISTANCE HAS A VALUE
+
+Example Below:
+UPDATE opcost_input 
+SET [One-way Yarding Distance] = 1 WHERE [One-way Yarding Distance] < 1  			
+
+36. FRCS/OPCOST PROCESSING: DELETE ROWS THAT EXCEED YARDING DISTANCES
+														FOR LOW SLOPE AND STEEP SLOPE HARVEST 
+													  METHODS
+
+Example Below:
+DELETE [One-way Yarding Distance], [Harvesting System] 
+FROM [opcost_input] 
+WHERE ((([One-way Yarding Distance])>1300) AND 
+			(TRIM([Harvesting System]) IN ('Cable Manual WT/Log','Cable Manual WT','Cable Manual Log','Cable CTL'))) 
+
+DELETE [One-way Yarding Distance], [Harvesting System] 
+FROM [opcost_input] 
+WHERE ((([One-way Yarding Distance])>10000) AND 
+			(TRIM([Harvesting System]) IN ('Helicopter Manual WT','Helicopter CTL'))) 
+			
+			
+37. FRCS/OPCOST PROCESSING: COUNT THE NUMBER OF LOW-SLOPE RECORDS
+
+Example Below:
+SELECT COUNT(*) AS countLowSlope 
+FROM opcost_input i WHERE i.[Percent Slope] <= 40 	
+
+38. FRCS/OPCOST PROCESSING: CREATE THE AUDIT TABLE THAT SAVES THE 
+														OPCOST INPUT VALUES INTO COLUMN NAMES
+														THAT ARE EQUAL TO THE VARIABLE NAMES	
+														USED IN FRCS
+
+Example Below:
+SELECT IIF(i.stand IS NOT NULL AND LEN(TRIM(i.stand)) >= 25,
+			   MID(i.stand,1,25),i.stand) AS biosum_cond_id,
+			 MID(i.RxPackage_Rx_RxCycle,1,3) AS rxpackage,
+			 MID(i.RxPackage_Rx_RxCycle,4,3) AS rx,
+			 MID(i.RxPackage_Rx_RxCycle,7,1) AS rxcycle,
+			 i.[Harvesting System],
+			 IIF(i.[Chip tree per acre] IS NOT NULL,i.[chip tree per acre],0) AS RemovalsCT,
+			 IIF(i.[small log trees per acre] IS NOT NULL,i.[small log trees per acre],0) AS RemovalsSLT,
+			 IIF(i.[Large log trees per acre] IS NOT NULL,i.[Large log trees per acre],0) AS RemovalsLLT,
+			 RemovalsSLT + RemovalsLLT AS RemovalsALT,RemovalsCT + RemovalsSLT AS RemovalsST,
+			 RemovalsCT + RemovalsSLT + RemovalsLLT AS Removals,
+			 IIF(i.[Chip trees average volume(ft3)] IS NOT NULL,
+			 i.[Chip trees average volume(ft3)],0) AS TreeVolCT,
+			 IIF(i.[Large log trees average vol(ft3)] IS NOT NULL,
+			 i.[Large log trees average vol(ft3)],0) AS TreeVolLLT,
+			 IIF(i.[Small log trees average volume(ft3)] IS NOT NULL,
+			 		i.[Small log trees average volume(ft3)],0) AS TreeVolSLT,
+			 RemovalsCT * TreeVolCT AS VolPerAcreCT,
+			 RemovalsSLT * TreeVolSLT AS VolPerAcreSLT,
+			 RemovalsLLT * TreeVolLLT AS VolPerAcreLLT,
+			 VolPerAcreSLT + VolPerAcreLLT AS VolPerAcreALT,
+			 VolPerAcreCT + VolPerAcreSLT AS VolPerAcreST,
+			 (VolPerAcreCT + VolPerAcreSLT + VolPerAcreLLT) AS VolPerAcre,
+			 IIF(RemovalsST > 0,VolPerAcreST/RemovalsST,0) AS TreeVolST,
+			 IIF(RemovalsALT > 0,VolPerAcreALT/RemovalsALT,0) AS TreeVolALT,
+			 IIF(Removals > 0,VolPerAcre/Removals,0) AS TreeVol,
+			 i.[Percent Slope] AS Slope 
+INTO FrcsVariablesLowSlopeTable 
+FROM opcost_input i WHERE i.[Percent Slope] <= 40 	
+
+
+39. FRCS/OPCOST PROCESSING: GET THE DISTINCT HARVEST METHODS
+
+Example Below:
+SELECT DISTINCT i.[Harvesting System] 
+FROM opcost_input i WHERE i.[Percent Slope] <= 40 	
+
+40. FRCS/OPCOST PROCESSING: GET THE MAXIMUM VALUE FOR THE HARVEST SYSTEM
+
+The queries were done in order to write the max value
+in the FRCS data grid cell so that the input batch process would not
+fail due to exceeding the maximum value specified in the data grid cell.
+
+Example Below:
+SELECT ROUND(MAX(i.[Large log trees average vol(ft3)])) + 1 AS max_large_log_avg_vol_ft3 
+FROM opcost_input i 
+WHERE TRIM(i.[Harvesting system])='Ground-Based Mech WT' AND i.[Percent Slope] <= 40 
+
+SELECT 
+	ROUND(MAX(i.[Small log trees average volume(ft3)])) + 1 AS max_small_log_avg_vol_ft3 
+FROM opcost_input i 
+WHERE TRIM(i.[Harvesting system])='Ground-Based Mech WT' AND i.[Percent Slope] <= 40 
+
+SELECT ROUND(MAX(i.[Chip trees average volume(ft3)])) + 1 AS max_chips_avg_vol_ft3 
+FROM opcost_input i 
+WHERE TRIM(i.[Harvesting system])='Ground-Based Mech WT' AND i.[Percent Slope] <= 40 
+
+SELECT 
+	ROUND(MAX(IIf(i.[small log trees per acre] Is Not Null AND 
+								i.[large log trees per acre] Is Not Null AND 
+								i.[small log trees per acre] > 0,
+								 100*i.[large log trees per acre]
+								 /
+								 (i.[small log trees per acre]+
+								 	i.[large log trees per acre]),
+									IIF(i.[large log trees per acre] Is Not Null,100,100))))+1 
+							AS max_large_log_trees_as_percent_of_all_trees 
+FROM opcost_input i 
+WHERE TRIM(i.[Harvesting system])='Ground-Based Mech WT' AND i.[Percent Slope] <= 40 
+
+SELECT ROUND(MAX(f.[TreeVolALT])) + 1 AS max_vol_per_acre_of_all_log_trees 
+FROM FrcsVariablesLowSlopeTable f 
+WHERE TRIM(f.[Harvesting system])='Ground-Based Mech WT' 
+
+SELECT ROUND(MAX(f.[TreeVol])) + 1 AS max_vol_per_acre_of_all_trees 
+FROM FrcsVariablesLowSlopeTable f 
+WHERE TRIM(f.[Harvesting system])='Ground-Based Mech WT' 
+
+SELECT ROUND(MAX(i.[Large log trees per acre])) + 1 AS max_large_log_removed_per_acre
+FROM opcost_input i 
+WHERE TRIM(i.[Harvesting system])='Ground-Based Mech WT' AND i.[Percent Slope] <= 40 
+
+SELECT ROUND(MAX(i.[Percent Slope])) + 1 AS max_percent_slope
+FROM opcost_input i 
+WHERE TRIM(i.[Harvesting system])='Ground-Based Mech WT' AND i.[Percent Slope] <= 40 
+
+SELECT ROUND(MAX(i.[One-way Yarding Distance])) + 1 AS max_yarding_distance 
+FROM opcost_input i 
+WHERE TRIM(i.[Harvesting system])='Ground-Based Mech WT' AND i.[Percent Slope] <= 40 
+
+
+
+41. FRCS/OPCOST PROCESSING: ADD OPCOST SPECIFIC COLUMN
+
+Add the treatment year that is used by OPCOST to calculate time-related costs.
+
+Example Below:
+ALTER TABLE OPCOST_INPUT ALTER  COLUMN [YearCostCalc] INTEGER; 
+
+42. TREE PROCESSING: GET THE YEAR FOR EACH STAND AND TREATMENT
+
+Example Below:
+SELECT DISTINCT biosum_cond_id+rxpackage+rx+rxcycle AS STAND,RXYEAR 
+INTO temp_year 
+FROM fvs_tree_IN_WS_P001_TREE_CUTLIST 
+
+43. FRCS/OPCOST PROCESSING: UPDATE THE COLUMN ADDED IN STEP 41
+
+Example Below:
+UPDATE opcost_input a 
+INNER JOIN temp_year b 
+ON a.STAND=b.STAND 
+SET a.YearCostCalc=CINT(b.RXYEAR) 
+
+44. FRCS/OPCOST PROCESSING: PROCESS OPCOST OUTPUT
+
+Example Below:
+INSERT INTO HarvestCostsWorkTable (
+	biosum_cond_id,
+	RXPackage,
+	RX,
+	RXCycle,
+	harvest_cpa,
+	DateTimeCreated ) 
+SELECT MID(STAND,1,25) AS biosum_cond_id,
+			 MID(rxpackage_rx_rxcycle,1,3) AS RXPackage,
+			 MID(rxpackage_rx_rxcycle,4,3) AS RX,
+			 MID(rxpackage_rx_rxcycle,7,1) AS RXCycle,
+			 harvest_cpa, '2015-05-29 07:29:55 AM' AS DateTimeCreated 
+FROM OPCOST_output 
+
