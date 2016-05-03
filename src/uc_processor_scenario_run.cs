@@ -1985,6 +1985,13 @@ namespace FIA_Biosum_Manager
 
                     if (m_intError == 0)
                     {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Placeholder Records For Variant=" + strVariant + " and RxPackage=" + strRxPackage + " To Tree Vol Val Table...Stand By");
+                        RunScenario_AppendPlaceholdersToTreeVolValTable();
+                    }
+
+
+                    if (m_intError == 0)
+                    {
                         //update counts
                         intRowCount = 0;
                         if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "TreeVolValLowSlope"))
@@ -5265,6 +5272,82 @@ namespace FIA_Biosum_Manager
         private void chkFRCS_Click(object sender, EventArgs e)
         {
            chkOPCOST.Checked = !chkFRCS.Checked;
+        }
+
+        private void RunScenario_AppendPlaceholdersToTreeVolValTable()
+        {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_AppendPlaceholdersToTreeVolValTable\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+
+            string placeHolderColumnName = "place_holder";
+            // Add placeholder column if it doesn't exist in table
+            if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, placeHolderColumnName))
+            {
+                m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, placeHolderColumnName,"TEXT","");
+            }
+
+            if (m_oAdo.m_intError == 0)
+            {
+                // Set place_holder field to 'N' if it is null
+                m_oAdo.m_strSQL = "UPDATE " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
+                  "SET place_holder = IIF(place_holder IS NULL,'N',place_holder)";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+            }
+
+            if (m_oAdo.m_intError == 0)
+            {
+                // Query the conditions/rxpackage that have records in cycles 2,3, and 4 but not in cycle 1
+                m_oAdo.m_strSQL = "SELECT t.biosum_cond_id, t.rxpackage, t.rx " +
+                    "FROM " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " t " +
+                    "WHERE t.rxcycle in ('2','3','4') " +
+                    "AND NOT EXISTS (" +
+                    "SELECT t1.biosum_cond_id, t1.rxpackage " +
+                    "FROM " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " t1 " +
+                    "WHERE t1.rxcycle = '1' " +
+                    "AND t.biosum_cond_id = t1.biosum_cond_id " +
+                    "AND t.rxpackage = t1.rxpackage) " +
+                    "GROUP BY t.biosum_cond_id, t.rxpackage, t.rx";
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "END SQL " + System.DateTime.Now.ToString() + "\r\n");
+
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    //long count = 0;
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string cond_id = "";
+                        string rxpackage = "";
+                        string rx = "";
+                        if (m_oAdo.m_OleDbDataReader["biosum_cond_id"] != System.DBNull.Value)
+                            cond_id = m_oAdo.m_OleDbDataReader["biosum_cond_id"].ToString().Trim();
+                        if (m_oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
+                            rxpackage = m_oAdo.m_OleDbDataReader["rxpackage"].ToString().Trim();
+                        if (m_oAdo.m_OleDbDataReader["rx"] != System.DBNull.Value)
+                            rx = m_oAdo.m_OleDbDataReader["rx"].ToString().Trim();
+
+                        //count++;
+                        //Console.WriteLine("Condition -> " + cond_id);
+                    }
+                    //Console.WriteLine("Total records -> " + count);
+                }
+            }
+
+
+            m_intError = m_oAdo.m_intError;
+            m_strError = m_oAdo.m_strError;
+
+
+
         }
         
     }
