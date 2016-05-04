@@ -3094,6 +3094,9 @@ namespace FIA_Biosum_Manager
 					"merch_wt_gt DOUBLE," + 
 					"merch_val_dpa DOUBLE," + 
                     "merch_to_chipbin_YN CHAR(1) DEFAULT 'N'," +
+                    "bc_vol_cf DOUBLE," +
+                    "bc_wt_gt DOUBLE," +
+                    "place_holder CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
 			}
             public void CreateTreeVolValSpeciesDiamGroupsWorkTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
