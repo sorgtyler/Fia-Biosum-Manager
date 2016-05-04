@@ -5322,7 +5322,9 @@ namespace FIA_Biosum_Manager
 
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
-                    //long count = 0;
+                    long lngCount = 0;
+                    string strRxCycle = "1";
+                    int intPlaceholder = 0;
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         string cond_id = "";
@@ -5335,10 +5337,25 @@ namespace FIA_Biosum_Manager
                         if (m_oAdo.m_OleDbDataReader["rx"] != System.DBNull.Value)
                             rx = m_oAdo.m_OleDbDataReader["rx"].ToString().Trim();
 
-                        //count++;
+                        m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
+                            "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group, " +
+                            "merch_wt_gt, merch_val_dpa, merch_vol_cf, merch_to_chipbin_YN, " +
+                            "chip_wt_gt, chip_val_dpa, chip_vol_cf, DateTimeCreated, place_holder) " +
+                            "VALUES ('" + cond_id + "', '" + rxpackage + "', '" + rx + "', '" + strRxCycle + "', " +
+                            intPlaceholder + ", " + intPlaceholder + ", " +
+                            intPlaceholder + ", " + intPlaceholder + ", " + intPlaceholder + ", 'N', " +
+                            intPlaceholder + ", " + intPlaceholder + ", " + intPlaceholder + ", '" +
+                            m_strDateTimeCreated + "', 'Y')";
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n INSERT RECORD: " + System.DateTime.Now.ToString() + "\r\n");
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                        if (m_oAdo.m_intError != 0) break;
+                        lngCount++;
                         //Console.WriteLine("Condition -> " + cond_id);
                     }
-                    //Console.WriteLine("Total records -> " + count);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, " \r\n END INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
                 }
             }
 
