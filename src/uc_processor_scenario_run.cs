@@ -5283,23 +5283,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
-            string placeHolderColumnName = "place_holder";
-            // Add placeholder column if it doesn't exist in table
-            if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, placeHolderColumnName))
-            {
-                m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, placeHolderColumnName,"TEXT","");
-            }
-
-            if (m_oAdo.m_intError == 0)
-            {
-                // Set place_holder field to 'N' if it is null
-                m_oAdo.m_strSQL = "UPDATE " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
-                  "SET place_holder = IIF(place_holder IS NULL,'N',place_holder)";
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-
             if (m_oAdo.m_intError == 0)
             {
                 // Query the conditions/rxpackage that have records in cycles 2,3, and 4 but not in cycle 1
@@ -5324,7 +5307,9 @@ namespace FIA_Biosum_Manager
                 {
                     long lngCount = 0;
                     string strRxCycle = "1";
-                    int intPlaceholder = 0;
+                    int intGroupPlaceholder = 999;
+                    int intValuePlaceholder = 0;
+                    //For each condition id/rxPackage combination returned by the query above
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         string cond_id = "";
@@ -5337,15 +5322,17 @@ namespace FIA_Biosum_Manager
                         if (m_oAdo.m_OleDbDataReader["rx"] != System.DBNull.Value)
                             rx = m_oAdo.m_OleDbDataReader["rx"].ToString().Trim();
 
+                        //Insert a placeholder row with default values
                         m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
                             "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group, " +
                             "merch_wt_gt, merch_val_dpa, merch_vol_cf, merch_to_chipbin_YN, " +
-                            "chip_wt_gt, chip_val_dpa, chip_vol_cf, DateTimeCreated, place_holder) " +
+                            "chip_wt_gt, chip_val_dpa, chip_vol_cf, bc_vol_cf, bc_wt_gt, " +
+                            "DateTimeCreated, place_holder) " +
                             "VALUES ('" + cond_id + "', '" + rxpackage + "', '" + rx + "', '" + strRxCycle + "', " +
-                            intPlaceholder + ", " + intPlaceholder + ", " +
-                            intPlaceholder + ", " + intPlaceholder + ", " + intPlaceholder + ", 'N', " +
-                            intPlaceholder + ", " + intPlaceholder + ", " + intPlaceholder + ", '" +
-                            m_strDateTimeCreated + "', 'Y')";
+                            intGroupPlaceholder + ", " + intGroupPlaceholder + ", " +
+                            intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", 'N', " +
+                            intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + 
+                            ", '" + m_strDateTimeCreated + "', 'Y')";
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                             frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n INSERT RECORD: " + System.DateTime.Now.ToString() + "\r\n");
@@ -5362,9 +5349,6 @@ namespace FIA_Biosum_Manager
 
             m_intError = m_oAdo.m_intError;
             m_strError = m_oAdo.m_strError;
-
-
-
         }
         
     }

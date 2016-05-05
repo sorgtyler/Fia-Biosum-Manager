@@ -174,7 +174,6 @@ namespace FIA_Biosum_Manager
 
             try
             {
-                UpdateDatasources_5_6_2();
                 if (bProjectVersionArrayUsed)
                 {
                     if (m_strProjectVersionArray != null)
@@ -386,9 +385,20 @@ namespace FIA_Biosum_Manager
                           Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <=5))
                     {
                         UpdateDatasources_5_6_0();
+                        UpdateDatasources_5_6_2();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
 
+                    }
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                         Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 6 &&
+                         Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) > 1) &&
+                         (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                          Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 6))
+                    {
+                        UpdateDatasources_5_6_2();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
                     }
                     else if (bPerformCheck)
                     {
@@ -4073,15 +4083,31 @@ namespace FIA_Biosum_Manager
             }
 
             // Loop through the scenario_results.mdb looking for tree_vol_val_by_species_diam_groups table
+            string strPlaceholder = "place_holder";
+            string strBcVolCf = "bc_vol_cf";
+            string strBcWtGt = "bc_wt_gt";
             foreach (string strPath in lstScenarioDb)
             {
                 oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
-                if (oAdo.TableExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName,strPlaceholder))
                 {
-                    Console.WriteLine("Table exists!");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strPlaceholder, "CHAR", "1", "N");
+
+                    // Set place_holder field to 'N' for new column
+                    oAdo.m_strSQL = "UPDATE " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
+                        "SET place_holder = IIF(place_holder IS NULL,'N',place_holder)";
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcVolCf))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcVolCf, "DOUBLE", "");
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt, "DOUBLE", "");
                 }
             }
-
 
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
