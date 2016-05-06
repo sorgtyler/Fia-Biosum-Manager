@@ -1508,14 +1508,16 @@ namespace FIA_Biosum_Manager
 
                     
 
+                    //Here we set the maximum number of ticks on the progress bar
+                    //y cannot exceed theis max number
                     if (chkLowSlope.Checked && chkSteepSlope.Checked)
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 43);
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 45);
                     else
                     {
                         if (chkLowSlope.Checked)
-                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 26);
+                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 28);
                         else
-                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 27);
+                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 29);
 
                     }
                     //
@@ -1983,6 +1985,12 @@ namespace FIA_Biosum_Manager
                         RunScenario_AppendToTreeVolValAndHarvestCostsTable();
                     }
 
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+                    
                     if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Placeholder Records For Variant=" + strVariant + " and RxPackage=" + strRxPackage + " To Tree Vol Val Table...Stand By");

@@ -4088,6 +4088,7 @@ namespace FIA_Biosum_Manager
             string strBcWtGt = "bc_wt_gt";
             foreach (string strPath in lstScenarioDb)
             {
+                // Add columns to tree_vol_val_by_species_diam_groups table
                 oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
                 if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName,strPlaceholder))
                 {
@@ -4106,6 +4107,17 @@ namespace FIA_Biosum_Manager
                 if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt))
                 {
                     oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt, "DOUBLE", "");
+                }
+
+                // Add placeholder column to harvest_costs table
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, strPlaceholder))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, strPlaceholder, "CHAR", "1", "N");
+
+                    // Set place_holder field to 'N' for new column
+                    oAdo.m_strSQL = "UPDATE " + Tables.Processor.DefaultHarvestCostsTableName + " " +
+                        "SET place_holder = IIF(place_holder IS NULL,'N',place_holder)";
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
                 }
             }
 
