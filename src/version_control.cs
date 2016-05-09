@@ -385,18 +385,16 @@ namespace FIA_Biosum_Manager
                           Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <=5))
                     {
                         UpdateDatasources_5_6_0();
-                        UpdateDatasources_5_6_2();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
 
                     }
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
-                         Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 6 &&
-                         Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) > 1) &&
+                         Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6)  &&
                          (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
                           Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 6))
                     {
-                        UpdateDatasources_5_6_2();
+                        UpdateDatasources_5_7_0();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
@@ -4051,7 +4049,7 @@ namespace FIA_Biosum_Manager
         }
 
 
-        private void UpdateDatasources_5_6_2()
+        private void UpdateDatasources_5_7_0()
         {
             ado_data_access oAdo = new ado_data_access();
 
