@@ -3129,6 +3129,8 @@ namespace FIA_Biosum_Manager
                     "merch_wt_gt DOUBLE," +
                     "merch_val_dpa DOUBLE," +
                     "merch_to_chipbin_YN CHAR(1) DEFAULT 'N'," +
+                    "bc_wt_gt DOUBLE," +
+                    "bc_vol_cf DOUBLE," +
                     "DateTimeCreated CHAR(22))";
             }
 

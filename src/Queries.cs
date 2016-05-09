@@ -2988,7 +2988,11 @@ namespace FIA_Biosum_Manager
                            "+ b.[SMLOGS_NonUtil_Logs_biomass_vol] + b.[LGLOGS_NonUtil_Logs_biomass_vol] " +
                            "+ b.[SMLOGS_NonUtil_Chips_biomass_vol] + b.[LGLOGS_NonUtil_Chips_biomass_vol] " +
                            "+ b.[LGLOGS_NonUtil_Chips_merch_vol]) " +
-                           "AS NOT_UTILIZED_CHIP_VOL_CF " +
+                           "AS NOT_UTILIZED_CHIP_VOL_CF, " +
+                           "SUM(b.[BC_NonUtil_Chips_merch_wt] + b.[BC_NonUtil_Chips_biomass_wt]) " +
+                           "AS BC_WT_GT, " +
+                           "SUM(b.[BC_NonUtil_Chips_merch_vol] + b.[BC_NonUtil_Chips_biomass_vol]) " +
+                           "AS BC_VOL_CF " +
                            "INTO " + p_strIntoTableName + " " +
                            "FROM " + p_strBinSumTableName + " b " +
                            "WHERE (((b.diam_group) Is Not Null)) " +
@@ -3107,15 +3111,17 @@ namespace FIA_Biosum_Manager
                 return
                     "INSERT INTO " + p_strDestTable + " " +
                         "(biosum_cond_id,rxpackage,rx,rxcycle,species_group,diam_group, merch_wt_gt," +
-                         "merch_vol_cf, chip_wt_gt, chip_vol_cf,DateTimeCreated) " +
+                         "merch_vol_cf, chip_wt_gt, chip_vol_cf, bc_wt_gt, bc_vol_cf, DateTimeCreated) " +
                          "SELECT DISTINCT t.BIOSUM_COND_ID, t.rxpackage,t.rx,t.rxcycle," +
                                         "t.species_group,t.diam_group," +
                                         "t.MERCH_WT_GT,t.MERCH_VOL_CF," +
                                         "t.CHIP_WT_GT,t.CHIP_VOL_CF," +
+                                        "t.BC_WT_GT,t.BC_VOL_CF," +
                                         "'" + p_strDateTimeCreated + "' " + 
                          "FROM " + p_strSourceTable + " t " +
                          "WHERE (((t.MERCH_WT_GT)<>0) OR ((t.MERCH_VOL_CF)<>0) OR " +
-                                "((t.CHIP_WT_GT)<>0) OR ((t.CHIP_VOL_CF)<>0))";
+                                "((t.CHIP_WT_GT)<>0) OR ((t.CHIP_VOL_CF)<>0) OR " +
+                                "((t.BC_WT_GT)<>0) OR ((t.BC_VOL_CF)<>0))";
 
             }
             
