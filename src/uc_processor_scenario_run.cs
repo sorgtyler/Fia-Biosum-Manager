@@ -1990,16 +1990,18 @@ namespace FIA_Biosum_Manager
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     }
+        
+
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Placeholder Records For Variant=" + strVariant + " and RxPackage=" + strRxPackage + " To Tree Vol Val And Harvest Cost Tables...Stand By");
+                        RunScenario_AppendPlaceholdersToTreeVolValAndHarvestCostsTables();
+                    }
+
                     
                     if (m_intError == 0)
                     {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Placeholder Records For Variant=" + strVariant + " and RxPackage=" + strRxPackage + " To Tree Vol Val Table...Stand By");
-                        RunScenario_AppendPlaceholdersToTreeVolValTable();
-                    }
-
-
-                    if (m_intError == 0)
-                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Finalizing Processor Scenario Database Tables...Stand By");
                         //update counts
                         intRowCount = 0;
                         if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "TreeVolValLowSlope"))
@@ -5231,6 +5233,7 @@ namespace FIA_Biosum_Manager
 
 
         }
+
         private void RunScenario_Finished()
         {
             //if (m_oExcel.ExcelFileName.Trim().Length > 0) System.IO.File.Delete(m_oExcel.ExcelFileName);
@@ -5282,7 +5285,7 @@ namespace FIA_Biosum_Manager
            chkOPCOST.Checked = !chkFRCS.Checked;
         }
 
-        private void RunScenario_AppendPlaceholdersToTreeVolValTable()
+        private void RunScenario_AppendPlaceholdersToTreeVolValAndHarvestCostsTables()
         {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -5291,6 +5294,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
+            // TREE VOL VAL table
             if (m_oAdo.m_intError == 0)
             {
                 // Query the conditions/rxpackage that have records in cycles 2,3, and 4 but not in cycle 1
@@ -5340,6 +5344,66 @@ namespace FIA_Biosum_Manager
                             intGroupPlaceholder + ", " + intGroupPlaceholder + ", " +
                             intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", 'N', " +
                             intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + 
+                            ", '" + m_strDateTimeCreated + "', 'Y')";
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n INSERT RECORD: " + System.DateTime.Now.ToString() + "\r\n");
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                        if (m_oAdo.m_intError != 0) break;
+                        lngCount++;
+                        //Console.WriteLine("Condition -> " + cond_id);
+                    }
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, " \r\n END INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
+                }
+            }
+
+            // HARVEST COSTS table
+            if (m_oAdo.m_intError == 0)
+            {
+                // Query the conditions/rxpackage that have records in cycles 2,3, and 4 but not in cycle 1
+                m_oAdo.m_strSQL = "SELECT t.biosum_cond_id, t.rxpackage, t.rx " +
+                    "FROM " + Tables.Processor.DefaultHarvestCostsTableName + " t " +
+                    "WHERE t.rxcycle in ('2','3','4') " +
+                    "AND NOT EXISTS (" +
+                    "SELECT t1.biosum_cond_id, t1.rxpackage " +
+                    "FROM " + Tables.Processor.DefaultHarvestCostsTableName + " t1 " +
+                    "WHERE t1.rxcycle = '1' " +
+                    "AND t.biosum_cond_id = t1.biosum_cond_id " +
+                    "AND t.rxpackage = t1.rxpackage) " +
+                    "GROUP BY t.biosum_cond_id, t.rxpackage, t.rx";
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "END SQL " + System.DateTime.Now.ToString() + "\r\n");
+
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    long lngCount = 0;
+                    string strRxCycle = "1";
+                    int intValuePlaceholder = 0;
+                    //For each condition id/rxPackage combination returned by the query above
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string cond_id = "";
+                        string rxpackage = "";
+                        string rx = "";
+                        if (m_oAdo.m_OleDbDataReader["biosum_cond_id"] != System.DBNull.Value)
+                            cond_id = m_oAdo.m_OleDbDataReader["biosum_cond_id"].ToString().Trim();
+                        if (m_oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
+                            rxpackage = m_oAdo.m_OleDbDataReader["rxpackage"].ToString().Trim();
+                        if (m_oAdo.m_OleDbDataReader["rx"] != System.DBNull.Value)
+                            rx = m_oAdo.m_OleDbDataReader["rx"].ToString().Trim();
+
+                        //Insert a placeholder row with default values
+                        m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultHarvestCostsTableName + " " +
+                            "(biosum_cond_id, rxpackage, rx, rxcycle, " +
+                            "complete_cpa, harvest_cpa, water_barring_roads_cpa, brush_cutting_cpa, " +
+                            "DateTimeCreated, place_holder) " +
+                            "VALUES ('" + cond_id + "', '" + rxpackage + "', '" + rx + "', '" + strRxCycle + "', " +
+                            intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder +
                             ", '" + m_strDateTimeCreated + "', 'Y')";
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
