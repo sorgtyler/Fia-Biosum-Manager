@@ -4150,8 +4150,10 @@ namespace FIA_Biosum_Manager
             /// This equation for Douglas Fir is from Brickell and Haig
             ///-- Equations and computer subroutines for Estimating Site
             ///-- Quality of Eight Rocky Mountain Species
-            ///-- Research Paper: INT-75  1970. SI is total age at 50 years
+            ///-- Research Paper: INT-75  1970. p_intSIDiaAge is total age
             ///---Derived from Kurt's PL/SQL
+            ///<param name="p_intSIDiaAge"></param>
+            ///<param name="p_intSIHtFt"></param>
             /// </summary>
             private double PSME11(int p_intSIDiaAge, int p_intSIHtFt)
             {
@@ -4171,10 +4173,10 @@ namespace FIA_Biosum_Manager
                     Total_Age = p_intSIDiaAge;
                 }
 
-                b = 40.984664 * (Math.Pow(Total_Age, -0.5) - Math.Pow(50, -0.5)) 
-                    + 4521.1527 * (Math.Pow(Total_Age, -2.5) - Math.Pow(50, -2.5)) 
-                    + 123059.38 * (Math.Pow(Total_Age, -3.5) - Math.Pow(50, -3.5)) 
-                    - 0.53328682E-08 * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4)) 
+                b = 40.984664 * (Math.Pow(Total_Age, -0.5) - Math.Pow(50, -0.5))
+                    + 4521.1527 * (Math.Pow(Total_Age, -2.5) - Math.Pow(50, -2.5))
+                    + 123059.38 * (Math.Pow(Total_Age, -3.5) - Math.Pow(50, -3.5))
+                    - 0.53328682E-08 * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4))
                     + 0.37808033E-10 * (Math.Pow(Total_Age, 5) - Math.Pow(50, 5))
                     + 216.64152 * p_intSIHtFt * (Math.Pow(Total_Age, -1.5) - Math.Pow(50, -1.5))
                     - 158121.49 * p_intSIHtFt * (Math.Pow(Total_Age, -4) - Math.Pow(50, -4))
@@ -4182,15 +4184,59 @@ namespace FIA_Biosum_Manager
                     - 0.10230592E-09 * p_intSIHtFt * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4))
                     - 6.0686119 * p_intSIHtFt * p_intSIHtFt * (Math.Pow(Total_Age, -2) - Math.Pow(50, -2))
                     - 25351.090 * p_intSIHtFt * p_intSIHtFt * (Math.Pow(Total_Age, -5) - Math.Pow(50, -5))
-                    + 0.33512858E-04 * p_intSIHtFt * p_intSIHtFt * (Total_Age - 50) 
+                    + 0.33512858E-04 * p_intSIHtFt * p_intSIHtFt * (Total_Age - 50)
                     + 0.17024711E-02 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, -1) - Math.Pow(50, -1))
-                    + 398.36720 * Math.Pow(p_intSIHtFt, 3) *(Math.Pow(Total_Age, -5) - Math.Pow(50, -5))
+                    + 398.36720 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, -5) - Math.Pow(50, -5))
                     - 0.88665409E-08 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, 1.5) - Math.Pow(50, 1.5))
-                    + 0.40019102E-14 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4));
+                    + 0.40019102E-14 * Math.Pow(p_intSIHtFt, 3) * (Math.Pow(Total_Age, 4) - Math.Pow(50, 4))
+                    - 0.46929245E-08 * Math.Pow(p_intSIHtFt, 5) * (Math.Pow(Total_Age, -0.5) - Math.Pow(50, -0.5))
+                    - 0.16640659E-20 * Math.Pow(p_intSIHtFt, 5) * (Math.Pow(Total_Age, 4.5) - Math.Pow(50, 4.5));
+                dblSI = p_intSIHtFt + b;
+                if (dblSI < 10)
+                {
+                    dblSI = 10;
+                }
+                else if (dblSI > 110)
+                {
+                    dblSI = 110;
+                }
                 return dblSI;
             }
 
+            /// <summary>
+            /// SITE INDEX FOR LODGEPOLE PINE - Alexander, R. R., Trackle, D. and Dahms, W. G. 1967
+            /// Site indexes for lodgepole pine with corrections for stand density: methodology
+            /// USDA Forest Service, Res. Pap. RM-29
+            /// Site index at total age of 100
+            /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            /// </summary>
+            /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
+            /// <param name="p_intSIHtFt">Diameter of site tree</param>
+            /// <param name="p_dblAvgDbh">Average DBH per condition</param>
+            /// <param name="p_dblBasalArea">Basal area per acre for the condition</param>
+            /// <returns>Site Index at breast high age of 100</returns>
+            private double SI_LP5(int p_intSIDiaAge, int p_intSIHtFt, double p_dblBasalArea, double p_dblAvgDbh)
+            {
+                double dblSI = 0;
+                int Total_Age = p_intSIDiaAge;
+                if (Total_Age > 0)
+                {
+                    Total_Age = Total_Age + 12;
+                }
+                else
+                {
+                    return dblSI;
+                }
 
+                double dblCCF = 0;
+                if (p_dblAvgDbh > 0 && p_dblBasalArea > 0)
+                    dblCCF = 50.58 + 5.25 * (p_dblBasalArea / p_dblAvgDbh);
+                if (dblCCF > 125)
+                    dblCCF = dblCCF - 125;
+
+                dblSI = (p_intSIHtFt - 9.89331 + 0.19177 * Total_Age - 0.00124 * Math.Pow(Total_Age, 2)) / (-0.00082 * dblCCF + 0.01387 * Total_Age - 0.0000455 * Math.Pow(Total_Age, 2));
+                return dblSI;
+            }
 		}
 
 	}
