@@ -1,0 +1,128 @@
+NOTES
+-------
+GitHub issue #25: Throws exception when creating a new scenario with text in the description field
+
+Changed these 2 rows in uc_scenario_notes.cs 
+from
+string strProjDir = ((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory;
+string strScenarioDir = ((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + ScenarioType + "\\db";
+
+to
+string strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
+string strScenarioDir = strProjDir + "\\" + ScenarioType + "\\db";
+
+
+--------
+GitHub issue #19:
+
+Added new columns to TREE VOL VAL and HARVEST COSTS table for PLACEHOLDER records
+TREE_VOL_VAL: place_holder, BC_WT_GT, BC_VOL_CF, HARVEST COSTS: place_holder
+Append place holder records to both TREE VOL VAL and HARVEST COSTS tables during post-processing
+
+Sample query to select condition/packaages that need placeholder records:
+SELECT t.biosum_cond_id, t.rxpackage
+FROM tree_vol_val_by_species_diam_groups t
+WHERE t.rxcycle in ('2','3','4')
+AND NOT EXISTS (
+SELECT t1.biosum_cond_id, t1.rxpackage
+FROM tree_vol_val_by_species_diam_groups t1
+WHERE t1.rxcycle = '1'
+and t.biosum_cond_id = t1.biosum_cond_id
+and t.rxpackage = t1.rxpackage
+)
+group by t.biosum_cond_id, t.rxpackage
+
+
+Add placeholder records to tree_vol_val_by_species_diam_groups right before copying to TREE VOL VAL. Sample SQL:
+INSERT INTO tree_vol_val_by_species_diam_groups
+	(biosum_cond_id,
+	rxpackage,
+	rx,
+	rxcycle,
+	species_group,
+	diam_group, 
+	merch_wt_gt,
+merch_val_dpa, 
+	merch_vol_cf,
+merch_to_chipbin_YN, 
+	chip_wt_gt,
+chip_val_dpa, 
+	chip_vol_cf,
+	place_holder)
+VALUES
+('1200341050400100566820001',
+'001','100','1','0','0',
+0,0,0,'N',0,0,0,'Y'
+)
+
+--------
+GitHub issue #23:
+Add brush cut calculations to tree_vol_by_spc_grp_dbh_grp processing. This table is ultimately copied to TREE VOL VAL.
+Sample updated insert statement:
+
+SELECT b.BIOSUM_COND_ID,
+			 b.RXPACKAGE,
+			 b.RX, 
+			 b.RXCYCLE, 
+			 b.species_group, 
+			 b.diam_group,
+			 SUM(b.[BC_Util_Logs_merch_wt] + 
+			 		 b.[CHIPS_Util_Logs_merch_wt] + 
+			 		 b.[SMLOGS_Util_Logs_merch_wt] + 
+			 		 b.[LGLOGS_Util_Logs_merch_wt] ) AS MERCH_WT_GT,
+			 SUM(b.[BC_Util_Logs_merch_vol] + 
+			 		 b.[CHIPS_Util_Logs_merch_vol] + 
+			 		 b.[SMLOGS_Util_Logs_merch_vol] + 
+			 		 b.[LGLOGS_Util_Logs_merch_vol] ) AS MERCH_VOL_CF,
+			 SUM(b.[BC_Util_Logs_biomass_wt] + 
+			 		 b.[CHIPS_Util_Logs_biomass_wt] + 
+			 		 b.[SMLOGS_Util_Logs_biomass_wt] + 
+			 		 b.[LGLOGS_Util_Logs_biomass_wt] + 
+			 		 b.[SMLOGS_Util_Chips_biomass_wt] + 
+			 		 b.[LGLOGS_Util_Chips_biomass_wt] + 
+			 		 b.[SMLOGS_Util_Chips_merch_wt]) AS CHIP_WT_GT,
+			 SUM(b.[BC_Util_Logs_biomass_vol] + 
+			 		 b.[CHIPS_Util_Logs_biomass_vol] + 
+			 		 b.[SMLOGS_Util_Logs_biomass_vol] + 
+			 		 b.[LGLOGS_Util_Logs_biomass_vol] + 
+			 		 b.[SMLOGS_Util_Chips_biomass_vol] + 
+			 		 b.[LGLOGS_Util_Chips_biomass_vol] + 
+			 		 b.[LGLOGS_Util_Chips_merch_vol]) AS CHIP_VOL_CF,
+			 SUM(b.[BC_NonUtil_Logs_merch_wt] + 
+			 		 b.[CHIPS_NonUtil_Logs_merch_wt] + 
+			 		 b.[SMLOGS_NonUtil_Logs_merch_wt] + 
+			 		 b.[LGLOGS_NonUtil_Logs_merch_wt] ) AS NOT_UTILIZED_MERCH_WT_GT,
+			 SUM(b.[BC_NonUtil_Logs_merch_vol] + 
+			 		 b.[CHIPS_NonUtil_Logs_merch_vol] + 
+			 		 b.[SMLOGS_NonUtil_Logs_merch_vol] + 
+			 		 b.[LGLOGS_NonUtil_Logs_merch_vol] ) AS NOT_UTILIZED_MERCH_VOL_CF,
+			 SUM(b.[BC_NonUtil_Logs_biomass_wt] + 
+			     b.[CHIPS_NonUtil_Logs_biomass_wt] + 
+			     b.[SMLOGS_NonUtil_Logs_biomass_wt] + 
+			     b.[LGLOGS_NonUtil_Logs_biomass_wt] + 
+			     b.[SMLOGS_NonUtil_Chips_biomass_wt] + 
+			     b.[LGLOGS_NonUtil_Chips_biomass_wt] + 
+			     b.[SMLOGS_NonUtil_Chips_merch_wt]) AS NOT_UTILIZED_CHIP_WT_GT,
+			 SUM(b.[BC_NonUtil_Logs_biomass_vol] + 
+			     b.[CHIPS_NonUtil_Logs_biomass_vol] + 
+			     b.[SMLOGS_NonUtil_Logs_biomass_vol] + 
+			     b.[LGLOGS_NonUtil_Logs_biomass_vol] + 
+			     b.[SMLOGS_NonUtil_Chips_biomass_vol] + 
+			     b.[LGLOGS_NonUtil_Chips_biomass_vol] + 
+			     b.[LGLOGS_NonUtil_Chips_merch_vol]) AS NOT_UTILIZED_CHIP_VOL_CF,
+			 SUM(b.[BC_NonUtil_Chips_merch_wt] + b.[BC_NonUtil_Chips_biomass_wt]) AS BC_WT_GT, 
+			 SUM(b.[BC_NonUtil_Chips_merch_vol] + b.[BC_NonUtil_Chips_biomass_vol]) AS BC_VOL_CF  
+INTO tree_vol_by_spc_grp_dbh_grp 
+FROM bin_sums_lowslope b 
+WHERE (((b.diam_group) Is Not Null)) 
+GROUP BY b.BIOSUM_COND_ID, b.rxpackage, b.RX, b.rxcycle, b.species_group, b.diam_group 
+
+-----------
+
+
+
+
+
+
+
+ 
