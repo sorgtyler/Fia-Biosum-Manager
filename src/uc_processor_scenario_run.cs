@@ -2797,7 +2797,8 @@ namespace FIA_Biosum_Manager
                                                                   "volcfgrs = IIF(volcfgrs IS NULL,0,volcfgrs)," +
                                                                   "volcsgrs = IIF(volcsgrs IS NULL,0,volcsgrs)," +
                                                                   "drybiom  = IIF(drybiom IS NULL,0,drybiom)," +
-                                                                  "drybiot  = IIF(drybiot IS NULL,0,drybiot)";
+                                                                  "drybiot  = IIF(drybiot IS NULL,0,drybiot)," + 
+                                                                  "voltsgrs = IIF(voltsgrs IS NULL,0,voltsgrs)";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);

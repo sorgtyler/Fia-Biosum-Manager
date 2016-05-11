@@ -1624,7 +1624,7 @@ namespace FIA_Biosum_Manager
                     return "UPDATE " + p_strInputVolumesTable + " i " +
                                       "INNER JOIN " + p_strFIACondTable + " c " +
                                       "ON i.biosum_cond_id=c.biosum_cond_id " +
-                                      "SET i.vol_loc_grp=c.vol_loc_grp," + 
+                                      "SET i.vol_loc_grp=IIF(INSTR(1,c.vol_loc_grp,'22') > 0,'S26LEOR',c.vol_loc_grp)," + 
                                           "i.statuscd=IIF(i.statuscd IS NULL,1,i.statuscd)," +
                                           "i.cull=IIF(i.cull IS NULL,0,i.cull)," + 
                                           "i.roughcull=IIF(i.roughcull IS NULL,0,i.roughcull)," +
@@ -1752,7 +1752,8 @@ namespace FIA_Biosum_Manager
                                "f.volcfgrs=o.VOLCFGRS_CALC," +
                                "f.volcfnet=o.VOLCFNET_CALC," +
                                "f.drybiot=o.DRYBIOT_CALC," +
-                               "f.drybiom=o.DRYBIOM_CALC";
+                               "f.drybiom=o.DRYBIOM_CALC," + 
+                               "f.voltsgrs=o.VOLTSGRS_CALC" ;
                 }
                 
 
@@ -1993,22 +1994,22 @@ namespace FIA_Biosum_Manager
                                         "IIF(eus.LAND_ONLY='N'," +
                                         "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                         "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                            "SUM(c.macrprop_unadj) as biosum_adj_factor_macr," +
+                                            "SUM(c.macrprop_unadj) as pmh_macr," +
                                    "SUM(c.MICRPROP_UNADJ * " +
                                        "IIF(eus.LAND_ONLY='N'," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                           "SUM(c.micrprop_unadj) as biosum_adj_factor_micr," +
+                                           "SUM(c.micrprop_unadj) as pmh_micr," +
                                    "SUM(c.SUBPPROP_UNADJ * " +
                                        "IIF(eus.LAND_ONLY='N'," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                           "SUM(c.subpprop_unadj) as biosum_adj_factor_subp," +
+                                           "SUM(c.subpprop_unadj) as pmh_sub," +
                                    "SUM(c.CONDPROP_UNADJ * " +
                                        "IIF(eus.LAND_ONLY='N'," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                           "SUM(c.condprop_unadj) as biosum_adj_factor_cond " +
+                                           "SUM(c.condprop_unadj) as pmh_cond " +
                             "INTO BIOSUM_EUS_ACCESS " +
                             "FROM BIOSUM_COND c," +
                                  "BIOSUM_PPSA_TEMP ppsa," +
@@ -2072,8 +2073,8 @@ namespace FIA_Biosum_Manager
                                   "a.estn_unit,a.stratumcd," +
                                   "a.p2pointcnt_man,a.stratum_area," +
                                   "a.double_sampling," +
-                                  "a.biosum_adj_factor_macr,a.biosum_adj_factor_micr," +
-                                  "a.biosum_adj_factor_subp,a.biosum_adj_factor_cond," +
+                                  "a.pmh_macr,a.pmh_micr," +
+                                  "a.pmh_sub,a.pmh_cond," +
                                   "b.eval_descr,b.estn_unit_descr," +
                                   "b.adj_factor_macr, b.adj_factor_subp," +
                                   "b.adj_factor_micr, b.expns " +

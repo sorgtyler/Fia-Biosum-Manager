@@ -1,0 +1,13 @@
+NOTES
+-------
+GitHub issue #25: Throws exception when creating a new scenario with text in the description field
+
+Changed these 2 rows in uc_scenario_notes.cs 
+from
+string strProjDir = ((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory;
+string strScenarioDir = ((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + ScenarioType + "\\db";
+
+to
+string strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
+string strScenarioDir = strProjDir + "\\" + ScenarioType + "\\db";
+ 

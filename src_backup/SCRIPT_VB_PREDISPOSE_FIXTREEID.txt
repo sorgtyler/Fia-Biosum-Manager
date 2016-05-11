@@ -1,0 +1,96 @@
+'This proggram does the following:
+'  Modifies the tree_id column such as that the tree_id column values are a total of 7 characters.
+'  The first four character represent plot_id and the remaining three character represents tree_id
+'  If tree_id is less than three character long, a number of '0's are  concatenated to the left of tree_id.
+'  If plot_id is less than four character long, a number of '0's are concatenated to the left of plot_id.
+'  Finally, the inventory_year is set to a user defined value.
+
+Option Compare Database
+'@Requires - predipose.mdb or similar created by predispose.exe database containing FVS_TREEINIT table.
+'@Input - None
+'@Output - None
+'@Author - Benktesh Sharma
+'@Date - November 8, 2013
+
+'Instruction
+'Open Database for example, predispose.mdb
+'Go to Database tool and click Visual Basic
+'On Project Explorer right click and add a module
+'Select everything in this page and copy. You could Press 'CTRL+A' in this page, and Press 'CTRL+C'
+'Paste the codes into VB Module.
+'Save the module and give a name 'fixPredipose' or something you like.
+
+'Inside Sub fixPredipose(), comment FixTreeID() if the tree ids were already fixed.
+'Set InventoryYear will set the inventory to defined year.
+
+'Make a backup copy of the database file so that you can receover it later if something goes wrong your program terminates prematurely.
+'To run the program, make sure that 'General' is seleccted on the top left, and 'fixPredispose' is selected on the top right.
+'Click 'Run' or 'Green Arrow' button. If prompted, select fixPreispose in the dialog.
+'Advanced user can put a "'" in one of the following lines to enable/disable procedures.
+'For example, if you do not want to change the TreeID (such as it was already done and only
+'want to set the inventory year), adding an single quote in front of FixeTreeID (like 'FixTreeID)
+'would make FixTreeID procedure inactive
+    
+'For help, contact, benktesh@berkeley.edu or Tel: 510  473 2496
+
+Public Sub fixPredispose()
+    FixTreeID
+    SetInventoryYear (2007)
+End Sub
+
+Public Sub FixTreeID()
+    MsgBox ("I am called")
+    Dim db As DAO.Database
+    Dim td As DAO.TableDef
+    Dim strSQL As String
+    
+    Set db = CurrentDb
+    On Error Resume Next
+    DoCmd.SetWarnings True
+    
+    DoCmd.RunSQL ("ALTER TABLE FVS_TREEINIT ALTER COLUMN TREE_ID TEXT(255)")
+    DoCmd.RunSQL ("ALTER TABLE FVS_TREEINIT ALTER COLUMN PLOT_ID TEXT(255)")
+    DoCmd.RunSQL ("ALTER TABLE FVS_TREEINIT ALTER COLUMN SITEPREP INTEGER")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID =trim(Tree_ID)")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET PLOT_ID =trim(PLOT_ID)")
+    
+    DoCmd.Close acTable, FVS_TREEINIT, acSaveYes
+    
+    
+    'Length 1 for tree id
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '000' & PLOT_ID & '00' & TREE_ID WHERE LEN(PLOT_ID) = 1 and LEN(TREE_ID) = 1")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '00' & PLOT_ID & '00' & TREE_ID WHERE LEN(PLOT_ID) = 2 and LEN(TREE_ID) = 1")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '0' & PLOT_ID & '00' & TREE_ID WHERE LEN(PLOT_ID) = 3 and LEN(TREE_ID) = 1")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = PLOT_ID & '00' & TREE_ID WHERE LEN(PLOT_ID) = 4 and LEN(TREE_ID) = 1")
+    
+    'Lenght 2 for tree_id
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '000' & PLOT_ID & '0' & TREE_ID WHERE LEN(PLOT_ID) = 1 and LEN(TREE_ID) = 2")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '00' & PLOT_ID & '0' & TREE_ID WHERE LEN(PLOT_ID) = 2 and LEN(TREE_ID) = 2")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '0' & PLOT_ID & '0' & TREE_ID WHERE LEN(PLOT_ID) = 3 and LEN(TREE_ID) = 2")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = PLOT_ID & '0' & TREE_ID WHERE LEN(PLOT_ID) = 4 and LEN(TREE_ID) = 2")
+    
+    'Lenght 2 for tree_id
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '000' & PLOT_ID & TREE_ID WHERE LEN(PLOT_ID) = 1 and LEN(TREE_ID) = 3")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '00' & PLOT_ID & TREE_ID WHERE LEN(PLOT_ID) = 2 and LEN(TREE_ID) = 3")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = '0' & PLOT_ID & TREE_ID WHERE LEN(PLOT_ID) = 3 and LEN(TREE_ID) = 3")
+    DoCmd.RunSQL ("UPDATE FVS_TREEINIT SET TREE_ID = PLOT_ID & TREE_ID WHERE LEN(PLOT_ID) = 4 and LEN(TREE_ID) = 3")
+    
+     
+End Sub
+
+Public Sub SetInventoryYear(InventoryYear)
+
+    Dim db As DAO.Database
+    Dim td As DAO.TableDef
+    Dim strSQL As String
+    
+    Set db = CurrentDb
+    On Error Resume Next
+    DoCmd.SetWarnings True
+    
+    DoCmd.RunSQL ("Update FVS_StandInit Set Inv_Year = " & InventoryYear)
+
+End Sub
+
+
+
