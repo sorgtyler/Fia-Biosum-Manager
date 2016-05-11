@@ -4498,7 +4498,8 @@ namespace FIA_Biosum_Manager
                                                       "f.volcfgrs=t.volcfgrs," +
                                                       "f.volcfnet=t.volcfnet," +
                                                       "f.drybiot=t.drybiot," +
-                                                      "f.drybiom=t.drybiom " +
+                                                      "f.drybiom=t.drybiom," +
+                                                      "f.voltsgrs=t.voltsgrs " + 
                                                   "WHERE f.rxcycle='1' AND f.rxpackage='" + p_strPackage.Trim() + "'";
                                 if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                     this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
@@ -4709,7 +4710,8 @@ namespace FIA_Biosum_Manager
                                                           "volcfgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).VOLCFGRS.ToString().Trim() + "," +
                                                           "volcfnet=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).VOLCFNET.ToString().Trim() + "," +
                                                           "drybiot=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).DRYBIOT.ToString().Trim() + "," +
-                                                          "drybiom=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).DRYBIOM.ToString().Trim() + " " +
+                                                          "drybiom=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).DRYBIOM.ToString().Trim() + "," +
+                                                          "voltsgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).VOLTSGRS.ToString().Trim() + " " + 
                                                       "WHERE id=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).RecordId;
                                                     if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                                         this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");

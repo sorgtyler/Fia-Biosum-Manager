@@ -396,6 +396,13 @@ namespace FIA_Biosum_Manager
                             (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR])==5 &&
                           Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) == 6))
                         {
+                            if (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 2)
+                            {
+                                Update_5_6_2();
+
+                            }
+
+
                             UpdateProjectVersionFile(strProjVersionFile);
                             bPerformCheck = false;
                         }
@@ -4041,8 +4048,173 @@ namespace FIA_Biosum_Manager
 
 
 
+        /// <summary>
+        /// Change these column names in the biosum_pop_stratum_adjustment_factors table:
+        /// biosum_adj_factor_macr to pmh_macr
+        /// biosum_adj_factor_subp to pmh_sub
+        /// biosum_adj_factor_micr to pmh_micr
+        /// biosum_adj_factor_cond to pmh_cond
+        /// 
+        /// </summary>
+        private void Update_5_6_2()
+        {
+            int intTableType = -1;
+            string strSQL;
+            string strPath = "";
+            string strFile = "";
+            string strTable = "";
+            System.Data.OleDb.OleDbConnection oMasterConn = null;
 
 
+
+            //
+            //MAIN PROJECT DATASOURCE
+            //
+            FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oDs.m_strDataSourceTableName = "datasource";
+            oDs.m_strScenarioId = "";
+            oDs.LoadTableColumnNamesAndDataTypes = false;
+            oDs.LoadTableRecordCount = false;
+            oDs.populate_datasource_array();
+
+
+
+            
+            ado_data_access oAdo = new ado_data_access();
+
+            //open the project db file
+            oAdo.OpenConnection(oAdo.getMDBConnString(ReferenceProjectDirectory.Trim() + "\\" +
+                frmMain.g_oTables.m_oProject.DefaultProjectTableDbFile, "", ""));
+          
+            //
+            //BIOSUM CALCULATED ADJUSTMENT FACTORS DATASOURCE
+            //
+            intTableType = oDs.getDataSourceTableNameRow("BIOSUM POP STRATUM ADJUSTMENT FACTORS");
+            if (intTableType > -1)
+            {
+                //even though listed in datasource table, the file and table could possibly not exist
+                if (oDs.m_strDataSource[intTableType, Datasource.FILESTATUS] == "NF" ||
+                    oDs.m_strDataSource[intTableType, Datasource.TABLESTATUS] == "NF")
+                {
+                    //okay, recreate the table in the master.mdb and change datasource values
+                    
+                    //change datasource back to default values
+                    strSQL = "UPDATE datasource SET " +
+                                 "Path='" + ReferenceProjectDirectory.Trim() + "\\db'," +
+                                 "File='master.mdb'," +
+                                 "table_name='" + frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName + "' " +
+                             "WHERE TRIM(UCASE(table_type))='BIOSUM POP STRATUM ADJUSTMENT FACTORS'";
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                    //create the table
+                    strPath = ReferenceProjectDirectory.Trim() + "\\db\\master.mdb";
+                    oMasterConn = new System.Data.OleDb.OleDbConnection();
+                    oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
+                    frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(oAdo, oMasterConn, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
+
+
+                }
+                else
+                {
+                    //table found so check the column names
+                    //open connection to the db container
+                    oMasterConn = new System.Data.OleDb.OleDbConnection();
+                    strPath = oDs.m_strDataSource[intTableType,Datasource.PATH].Trim() + "\\" + oDs.m_strDataSource[intTableType,Datasource.MDBFILE].Trim();
+                    strTable = oDs.m_strDataSource[intTableType, Datasource.TABLE].Trim();
+                    oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
+                    //pmh_macr
+                    if (!oAdo.ColumnExist(oMasterConn, strTable, "pmh_macr"))
+                    {
+                        oAdo.AddColumn(oMasterConn, strTable, "pmh_macr", "DECIMAL", "5,4");
+                        //update with the old column name values
+                        if (oAdo.ColumnExist(oMasterConn, strTable, "biosum_adj_factor_macr"))
+                        {
+                            strSQL = "UPDATE " + strTable + " SET " +
+                                       "pmh_macr=IIF(biosum_adj_factor_macr IS NOT NULL,biosum_adj_factor_macr,null)";
+                            oAdo.SqlNonQuery(oMasterConn,strSQL);
+                            //drop the old column
+                            strSQL = "ALTER TABLE " + strTable + " DROP COLUMN biosum_adj_factor_macr";
+                            oAdo.SqlNonQuery(oMasterConn, strSQL);
+                        }
+                    }
+                    //pmh_sub
+                    if (!oAdo.ColumnExist(oMasterConn, strTable, "pmh_sub"))
+                    {
+                        oAdo.AddColumn(oMasterConn, strTable, "pmh_sub", "DECIMAL", "5,4");
+                        //update with the old column name values
+                        if (oAdo.ColumnExist(oMasterConn, strTable, "biosum_adj_factor_subp"))
+                        {
+                            strSQL = "UPDATE " + strTable + " SET " +
+                                       "pmh_sub=IIF(biosum_adj_factor_subp IS NOT NULL,biosum_adj_factor_subp,null)";
+                            oAdo.SqlNonQuery(oMasterConn, strSQL);
+                            //drop the old column
+                            strSQL = "ALTER TABLE " + strTable + " DROP COLUMN biosum_adj_factor_subp";
+                            oAdo.SqlNonQuery(oMasterConn, strSQL);
+                        }
+                    }
+                    //pmh_micr
+                    if (!oAdo.ColumnExist(oMasterConn, strTable, "pmh_micr"))
+                    {
+                        oAdo.AddColumn(oMasterConn, strTable, "pmh_micr", "DECIMAL", "5,4");
+                        //update with the old column name values
+                        if (oAdo.ColumnExist(oMasterConn, strTable, "biosum_adj_factor_micr"))
+                        {
+                            strSQL = "UPDATE " + strTable + " SET " +
+                                       "pmh_micr=IIF(biosum_adj_factor_micr IS NOT NULL,biosum_adj_factor_micr,null)";
+                            oAdo.SqlNonQuery(oMasterConn, strSQL);
+                            //drop the old column
+                            strSQL = "ALTER TABLE " + strTable + " DROP COLUMN biosum_adj_factor_micr";
+                            oAdo.SqlNonQuery(oMasterConn, strSQL);
+                        }
+                    }
+                    //pmh_cond
+                    if (!oAdo.ColumnExist(oMasterConn, strTable, "pmh_cond"))
+                    {
+                        oAdo.AddColumn(oMasterConn, strTable, "pmh_cond", "DECIMAL", "5,4");
+                        //update with the old column name values
+                        if (oAdo.ColumnExist(oMasterConn, strTable, "biosum_adj_factor_cond"))
+                        {
+                            strSQL = "UPDATE " + strTable + " SET " +
+                                       "pmh_cond=IIF(biosum_adj_factor_cond IS NOT NULL,biosum_adj_factor_cond,null)";
+                            oAdo.SqlNonQuery(oMasterConn, strSQL);
+                            //drop the old column
+                            strSQL = "ALTER TABLE " + strTable + " DROP COLUMN biosum_adj_factor_cond";
+                            oAdo.SqlNonQuery(oMasterConn, strSQL);
+                        }
+                    }
+
+
+                }
+
+            }
+            else
+            {
+                //does not exist
+                //append the new datasource
+                strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                            "('BIOSUM Pop Stratum Adjustment Factors'," +
+                            "'" + ReferenceProjectDirectory.Trim() + "\\db'," +
+                            "'master.mdb'," +
+                            "'" + frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName + "');";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                //create the new table
+                strPath = ReferenceProjectDirectory + "\\db\\master.mdb";
+                oMasterConn = new System.Data.OleDb.OleDbConnection();
+                oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
+                frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(oAdo, oMasterConn, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
+            }
+            
+           
+
+            if (oMasterConn != null && oMasterConn.State == System.Data.ConnectionState.Open)
+                oAdo.CloseConnection(oMasterConn);
+
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+
+            oAdo = null;
+
+
+        }
 
         public string ReferenceProjectDirectory
 		{

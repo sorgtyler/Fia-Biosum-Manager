@@ -1788,6 +1788,7 @@ namespace FIA_Biosum_Manager
 					"volcsgrs DOUBLE," + 
 					"drybiom DOUBLE," + 
 					"drybiot DOUBLE," + 
+                    "voltsgrs DOUBLE," + 
 					"fvs_tree_id CHAR(10)," + 
                     "FvsCreatedTree_YN CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
@@ -1905,6 +1906,7 @@ namespace FIA_Biosum_Manager
                     "volcsgrs DOUBLE," +
                     "drybiom DOUBLE," +
                     "drybiot DOUBLE," +
+                    "voltsgrs DOUBLE," + 
                     "fvs_tree_id CHAR(10))";
 
             }
@@ -1943,7 +1945,8 @@ namespace FIA_Biosum_Manager
                     "VOLCSGRS_CALC DOUBLE," + 
                     "VOLCFNET_CALC DOUBLE," + 
                     "DRYBIOM_CALC DOUBLE," + 
-                    "DRYBIOT_CALC DOUBLE)";
+                    "DRYBIOT_CALC DOUBLE," + 
+                    "VOLTSGRS_CALC DOUBLE)";
 
             }
 			//
@@ -2713,6 +2716,7 @@ namespace FIA_Biosum_Manager
 					"volcsgrs DOUBLE," + 
 					"volbfnet DOUBLE," + 
 					"volbfgrs DOUBLE," + 
+                    "voltsgrs DOUBLE," + 
 					"drybiot DOUBLE," + 
 					"drybiom DOUBLE," + 
 					"bhage INTEGER," + 
@@ -2921,10 +2925,10 @@ namespace FIA_Biosum_Manager
                     "double_sampling INTEGER," +
                     "stratum_area DOUBLE," + 
                     "expns DOUBLE," +
-                    "biosum_adj_factor_macr DECIMAL (5,4)," +
-                    "biosum_adj_factor_subp DECIMAL (5,4)," +
-                    "biosum_adj_factor_micr DECIMAL (5,4)," +
-                    "biosum_adj_factor_cond DECIMAL (5,4)," +
+                    "pmh_macr DECIMAL (5,4)," +
+                    "pmh_sub DECIMAL (5,4)," +
+                    "pmh_micr DECIMAL (5,4)," +
+                    "pmh_cond DECIMAL (5,4)," +
                     "adj_factor_macr DECIMAL (5,4)," +
                     "adj_factor_subp DECIMAL (5,4)," +
                     "adj_factor_micr DECIMAL (5,4)," +
