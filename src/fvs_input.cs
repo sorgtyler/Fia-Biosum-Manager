@@ -4239,6 +4239,21 @@ namespace FIA_Biosum_Manager
             }
 		}
 
+
+        /// <summary>
+        /// SITE INDEX FOR ASPEN - Edminister
+        /// Site Index Curves for Aspen in the Central Rocky Mountains
+        /// Research Note: RM-453
+        /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+        /// </summary>
+        /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
+        /// <param name="p_intSIHtFt">Diameter of site tree</param>
+
+        private double SI_AS1(int p_intSIDiaAge, int p_intSIHtFt)
+        {
+            return 0;
+        }
+
 	}
 	
 	
