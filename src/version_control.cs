@@ -379,31 +379,34 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 && 
+                    if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                          Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 5) &&
-                         (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR])==5 &&
-                          Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <=5))
+                         (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                          Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 5))
                     {
                         UpdateDatasources_5_6_0();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
 
                     }
-                    else if (bPerformCheck)
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6)  &&
+                           (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 6))
                     {
-                        if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 && 
-                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 5) &&
-                            (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR])==5 &&
-                          Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) == 6))
+                        if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 5) &&
+                            (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) == 6))
                         {
                             if (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 2)
                             {
                                 Update_5_6_2();
 
                             }
-                            if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 && 
+
+                            if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                                 Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) == 7))
-                               
                             {
                                 UpdateDatasources_5_7_0();
                                 Update_5_7_0();
@@ -412,11 +415,8 @@ namespace FIA_Biosum_Manager
                             UpdateProjectVersionFile(strProjVersionFile);
                             bPerformCheck = false;
                         }
-
-                    }
-                   
-                    
-                }
+                    }                   
+               }
                
             }
             if (bPerformCheck)
@@ -4052,8 +4052,6 @@ namespace FIA_Biosum_Manager
 
         }
 
-
-
         /// <summary>
         /// Change these column names in the biosum_pop_stratum_adjustment_factors table:
         /// biosum_adj_factor_macr to pmh_macr
@@ -4117,8 +4115,6 @@ namespace FIA_Biosum_Manager
                     oMasterConn = new System.Data.OleDb.OleDbConnection();
                     oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""), ref oMasterConn);
                     frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(oAdo, oMasterConn, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
-
-
                 }
                 else
                 {
@@ -4188,8 +4184,6 @@ namespace FIA_Biosum_Manager
                             oAdo.SqlNonQuery(oMasterConn, strSQL);
                         }
                     }
-
-
                 }
 
             }
