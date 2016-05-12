@@ -137,9 +137,9 @@ namespace FIA_Biosum_Manager
 		{
 			ado_data_access p_ado = new ado_data_access();
 			System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
-			string strProjDir = ((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory;
-			string strScenarioDir = ((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + ScenarioType + "\\db";
-			string strFile = "scenario_" + ScenarioType + "_rule_definitions.mdb"; //((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectFile;
+            string strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
+            string strScenarioDir = strProjDir + "\\" + ScenarioType + "\\db";
+            string strFile = "scenario_" + ScenarioType + "_rule_definitions.mdb"; //((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectFile;
 			StringBuilder strFullPath = new StringBuilder(strScenarioDir);
 			strFullPath.Append("\\");
 			strFullPath.Append(strFile);

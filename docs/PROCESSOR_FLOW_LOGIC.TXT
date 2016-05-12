@@ -1950,7 +1950,9 @@ SELECT b.BIOSUM_COND_ID,
 			     b.[LGLOGS_NonUtil_Logs_biomass_vol] + 
 			     b.[SMLOGS_NonUtil_Chips_biomass_vol] + 
 			     b.[LGLOGS_NonUtil_Chips_biomass_vol] + 
-			     b.[LGLOGS_NonUtil_Chips_merch_vol]) AS NOT_UTILIZED_CHIP_VOL_CF 
+			     b.[LGLOGS_NonUtil_Chips_merch_vol]) AS NOT_UTILIZED_CHIP_VOL_CF,
+			 SUM(b.[BC_NonUtil_Chips_merch_wt] + b.[BC_NonUtil_Chips_biomass_wt]) AS BC_WT_GT, 
+			 SUM(b.[BC_NonUtil_Chips_merch_vol] + b.[BC_NonUtil_Chips_biomass_vol]) AS BC_VOL_CF  
 INTO tree_vol_by_spc_grp_dbh_grp 
 FROM bin_sums_lowslope b 
 WHERE (((b.diam_group) Is Not Null)) 
@@ -1972,6 +1974,8 @@ INSERT INTO TreeVolValLowSlope (
 	merch_vol_cf, 
 	chip_wt_gt, 
 	chip_vol_cf,
+	bc_wt_gt, 
+	bc_vol_cf,
 	DateTimeCreated) 
 SELECT DISTINCT 
 	t.BIOSUM_COND_ID, 
@@ -1984,14 +1988,18 @@ SELECT DISTINCT
 	t.MERCH_VOL_CF,
 	t.CHIP_WT_GT,
 	t.CHIP_VOL_CF,
+	t.BC_WT_GT,
+	t.BC_VOL_CF
 	'2015-05-29 07:29:55 AM' 
 FROM tree_vol_by_spc_grp_dbh_grp t 
 WHERE (((t.MERCH_WT_GT)<>0) OR 
 			 ((t.MERCH_VOL_CF)<>0) OR 
 			 ((t.CHIP_WT_GT)<>0) OR 
-			 ((t.CHIP_VOL_CF)<>0)) 
+			 ((t.CHIP_VOL_CF)<>0)OR 
+			 ((t.BC_WT_GT)<>0) OR 
+			 ((t.BC_VOL_CF)<>0))  
 			 
-32. TREEVOLVAL PROCESSING: APPLY ESCALATERS TO MERCH AND CHIP VALUES
+32. TREEVOLVAL PROCESSING: APPLY ESCALATORS TO MERCH AND CHIP VALUES
 
 
 Example Below:
@@ -2229,4 +2237,30 @@ SELECT MID(STAND,1,25) AS biosum_cond_id,
 			 MID(rxpackage_rx_rxcycle,7,1) AS RXCycle,
 			 harvest_cpa, '2015-05-29 07:29:55 AM' AS DateTimeCreated 
 FROM OPCOST_output 
+
+45. TREEVOLVAL PROCESSING: ADD CYCLE 1 PLACEHOLDER RECORDS TO TREE VOL VAL AND HARVEST COSTS FOR CONDITION/PLOTS WITH ACTIVITY IN CYCLES 2, 3, OR 4
+
+Example Below to select conditions/plots requiring placeholders from TREE VOL VAL table:
+SELECT t.biosum_cond_id, t.rxpackage, t.rx FROM tree_vol_val_by_species_diam_groups t 
+WHERE t.rxcycle in ('2','3','4') 
+AND NOT EXISTS 
+(SELECT t1.biosum_cond_id, t1.rxpackage FROM tree_vol_val_by_species_diam_groups t1 WHERE t1.rxcycle = '1' 
+AND t.biosum_cond_id = t1.biosum_cond_id AND t.rxpackage = t1.rxpackage) 
+GROUP BY t.biosum_cond_id, t.rxpackage, t.rx
+
+Example Below inserting placeholder record:
+INSERT INTO tree_vol_val_by_species_diam_groups (biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group, merch_wt_gt, merch_val_dpa, merch_vol_cf, merch_to_chipbin_YN, chip_wt_gt, chip_val_dpa, chip_vol_cf, bc_vol_cf, bc_wt_gt, DateTimeCreated, place_holder) VALUES ('1200341050400100566820001', '001', '100', '1', 999, 999, 0, 0, 0, 'N', 0, 0, 0, 0, 0, '2016-05-09 04:23:45 PM', 'Y') 
+ INSERT RECORD: 5/9/2016 4:24:09 PM
+
+Example Below to select conditions/plots requiring placeholders from harvest costs table:
+SELECT t.biosum_cond_id, t.rxpackage, t.rx FROM harvest_costs t 
+WHERE t.rxcycle in ('2','3','4') 
+AND NOT EXISTS 
+(SELECT t1.biosum_cond_id, t1.rxpackage FROM harvest_costs t1 WHERE t1.rxcycle = '1' 
+AND t.biosum_cond_id = t1.biosum_cond_id AND t.rxpackage = t1.rxpackage) 
+GROUP BY t.biosum_cond_id, t.rxpackage, t.rx
+
+Example Below inserting placeholder record:
+INSERT INTO harvest_costs (biosum_cond_id, rxpackage, rx, rxcycle, complete_cpa, harvest_cpa, water_barring_roads_cpa, brush_cutting_cpa, DateTimeCreated, place_holder) 
+VALUES ('1200341050400100566820001', '001', '100', '1', 0, 0, 0, 0, '2016-05-09 04:23:45 PM', 'Y')
 

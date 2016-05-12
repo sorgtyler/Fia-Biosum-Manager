@@ -2652,6 +2652,18 @@ namespace FIA_Biosum_Manager
                             "ADD COLUMN " + p_strColumnName + " " + p_strDataType + " DEFAULT '" + p_strDefault + "'");
         } 
 
+        public void AddColumn(System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName, string p_strColumnName, string p_strDataType, string p_strSize, string p_strDefault)
+        {
+            if (p_strDefault.Trim().Length < 1) 
+                AddColumn(p_oConn, p_strTableName, p_strColumnName, p_strDataType, p_strSize);
+            else if (p_strDefault.Trim().Length > 0 && p_strSize.Trim().Length > 0)
+                SqlNonQuery(p_oConn, "ALTER TABLE " + p_strTableName + " " +
+                            "ADD COLUMN " + p_strColumnName + " " + p_strDataType + " (" + p_strSize + ") DEFAULT '" + p_strDefault + "'");
+            else if (p_strDefault.Trim().Length > 0 && p_strSize.Trim().Length < 1)
+                SqlNonQuery(p_oConn, "ALTER TABLE " + p_strTableName + " " +
+                            "ADD COLUMN " + p_strColumnName + " " + p_strDataType + " DEFAULT '" + p_strDefault + "'");
+        }
+
 		public bool ReconcileTableColumns(System.Data.OleDb.OleDbConnection p_oDestConn,
 			string p_strDestTable,
 			System.Data.OleDb.OleDbConnection p_oSourceConn,
