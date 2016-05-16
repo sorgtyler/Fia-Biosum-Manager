@@ -4237,22 +4237,24 @@ namespace FIA_Biosum_Manager
                 dblSI = (p_intSIHtFt - 9.89331 + 0.19177 * Total_Age - 0.00124 * Math.Pow(Total_Age, 2)) / (-0.00082 * dblCCF + 0.01387 * Total_Age - 0.0000455 * Math.Pow(Total_Age, 2));
                 return dblSI;
             }
+
+            /// <summary>
+            /// SITE INDEX FOR ASPEN - Edminister
+            /// Site Index Curves for Aspen in the Central Rocky Mountains
+            /// Research Note: RM-453
+            /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            /// Base age is 80 years
+            /// </summary>
+            /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
+            /// <param name="p_intSIHtFt">Diameter of site tree</param>
+
+            private double SI_AS1(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                dblSI = 4.5 + 0.48274 * (p_intSIHtFt - 4.5) * Math.Pow((1 - System.Math.Exp(-0.007719 * p_intSIDiaAge)), -0.93972);
+                return dblSI;
+            }
 		}
-
-
-        /// <summary>
-        /// SITE INDEX FOR ASPEN - Edminister
-        /// Site Index Curves for Aspen in the Central Rocky Mountains
-        /// Research Note: RM-453
-        /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
-        /// </summary>
-        /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
-        /// <param name="p_intSIHtFt">Diameter of site tree</param>
-
-        private double SI_AS1(int p_intSIDiaAge, int p_intSIHtFt)
-        {
-            return 0;
-        }
 
 	}
 	
