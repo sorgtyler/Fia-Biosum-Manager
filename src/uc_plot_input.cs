@@ -8165,7 +8165,6 @@ namespace FIA_Biosum_Manager
                    
 
                     //step 6 - insert records
-                    frmMain.g_oDelegate.SetStatusBarPanelTextValue(frmMain.g_sbpInfo.Parent, 1, "Prepare Tree Data For Oracle...Stand By");
                     strColumns = "STATECD,COUNTYCD,PLOT,INVYR,TREE,SPCD,DIA,HT," +
                                 "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,TRE_CN,CND_CN,PLT_CN,VOL_LOC_GRP";
 
