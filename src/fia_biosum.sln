@@ -21,7 +21,7 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "fia_biosum_setup", "..\..\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandByAnimation", "..\..\Standby-Animation\src\StandByAnimation.csproj", "{923640FA-97A2-4A4E-A7AE-02A0F4174986}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biosum_Manager_Test", "Biosum_Manager_Test\Biosum_Manager_Test.csproj", "{93387F0F-5633-433E-9D9C-7E596CBD2274}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biosum_Manager_Test", "..\..\Biosum_Manager_Test\src\Biosum_Manager_Test.csproj", "{93387F0F-5633-433E-9D9C-7E596CBD2274}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
