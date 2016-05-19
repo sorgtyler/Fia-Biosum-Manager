@@ -17,26 +17,28 @@ namespace FIA_Biosum_Manager
     const int COL_VOLCFNET = 2;
     const int COL_DRYBIOM = 3;
     const int COL_DRYBIOT = 4;
-    const int COL_ID = 5;
-    const int COL_STATE = 6;
-    const int COL_COUNTY = 7;
-    const int COL_PLOT = 8;
-    const int COL_FVSVARIANT = 9;
-    const int COL_INVYR = 10;
-    const int COL_TREEID = 11;
-    const int COL_VOLLOCGRP = 14;
-    const int COL_SPCD = 11;
-    const int COL_DBH = 12;
-    const int COL_HT = 13;
-    const int COL_ACTUALHT = 15;
-    const int COL_CR = 18;
-    const int COL_STATUSCD = 16;
-    const int COL_TREECLCD = 17;
-    const int COL_CULL = 19;
-    const int COL_ROUGHCULL = 20;
-    const int COL_TRECN = 22;
-    const int COL_PLTCN = 23;
-    const int COL_CNDCN = 24;
+    const int COL_VOLTSGRS = 5;
+    const int COL_ID = 6;
+    const int COL_STATE = 7;
+    const int COL_COUNTY = 8;
+    const int COL_PLOT = 9;
+    const int COL_FVSVARIANT =10;
+    const int COL_INVYR = 11;
+    const int COL_TREEID = 12;
+    const int COL_VOLLOCGRP = 15;
+    const int COL_SPCD = 12;
+    const int COL_DBH = 13;
+    const int COL_HT = 14;
+    const int COL_ACTUALHT = 16;
+    const int COL_CR = 19;
+    const int COL_STATUSCD = 17;
+    const int COL_TREECLCD = 18;
+    const int COL_CULL = 20;
+    const int COL_ROUGHCULL = 21;
+    const int COL_TRECN = 23;
+    const int COL_PLTCN = 24;
+    const int COL_CNDCN = 25;
+    
     private System.Windows.Forms.Button btnTreeVolBatch;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.GroupBox groupBox1;
@@ -114,6 +116,8 @@ namespace FIA_Biosum_Manager
     string m_strGridTableSource = "";
     static string m_strOldPerc = "0";
     private ProgressBarBasic.ProgressBarBasic progressBarBasic1;
+    private Label lblVOLTSGRS;
+    private Label label21;
 
     
 
@@ -292,6 +296,8 @@ namespace FIA_Biosum_Manager
             this.btnLoad = new System.Windows.Forms.Button();
             this.cmbDatasource = new System.Windows.Forms.ComboBox();
             this.btnLinkTableTest = new System.Windows.Forms.Button();
+            this.lblVOLTSGRS = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -398,6 +404,8 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.lblVOLTSGRS);
+            this.groupBox3.Controls.Add(this.label21);
             this.groupBox3.Controls.Add(this.lblDRYBIOM);
             this.groupBox3.Controls.Add(this.label20);
             this.groupBox3.Controls.Add(this.lblDRYBIOT);
@@ -494,6 +502,7 @@ namespace FIA_Biosum_Manager
             this.label17.Size = new System.Drawing.Size(65, 13);
             this.label17.TabIndex = 11;
             this.label17.Text = "VOLCSGRS";
+            this.label17.Click += new System.EventHandler(this.label17_Click);
             // 
             // lblVOLCFGRS
             // 
@@ -706,6 +715,7 @@ namespace FIA_Biosum_Manager
             this.txtStateCd.Name = "txtStateCd";
             this.txtStateCd.Size = new System.Drawing.Size(59, 20);
             this.txtStateCd.TabIndex = 7;
+            this.txtStateCd.TextChanged += new System.EventHandler(this.txtStateCd_TextChanged);
             // 
             // label2
             // 
@@ -804,6 +814,26 @@ namespace FIA_Biosum_Manager
             this.btnLinkTableTest.UseVisualStyleBackColor = true;
             this.btnLinkTableTest.Click += new System.EventHandler(this.btnLinkTableTest_Click);
             // 
+            // lblVOLTSGRS
+            // 
+            this.lblVOLTSGRS.BackColor = System.Drawing.Color.Beige;
+            this.lblVOLTSGRS.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblVOLTSGRS.Location = new System.Drawing.Point(152, 152);
+            this.lblVOLTSGRS.Name = "lblVOLTSGRS";
+            this.lblVOLTSGRS.Size = new System.Drawing.Size(142, 29);
+            this.lblVOLTSGRS.TabIndex = 22;
+            this.lblVOLTSGRS.Text = "0";
+            this.lblVOLTSGRS.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(192, 131);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(65, 13);
+            this.label21.TabIndex = 21;
+            this.label21.Text = "VOLTSGRS";
+            // 
             // frmFCSTreeVolumeEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -851,7 +881,7 @@ namespace FIA_Biosum_Manager
     private void btnTreeVolSingle_Click( object sender, EventArgs e )
     {
         lblDRYBIOM.Text = "0"; lblDRYBIOT.Text = "0"; lblVOLCFGRS.Text = "0";
-        lblVOLCFNET.Text = "0"; lblVOLCSGRS.Text = "0";
+        lblVOLCFNET.Text = "0"; lblVOLCSGRS.Text = "0"; lblVOLTSGRS.Text = "0";
 
       FIADB.Oracle.Services m_oOracleServices = new FIADB.Oracle.Services();
       m_oOracleServices.Start();
@@ -893,6 +923,7 @@ namespace FIA_Biosum_Manager
                       lblVOLCFGRS.Text = m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(0).VOLCFGRS.ToString().Trim();
                       lblVOLCSGRS.Text = m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(0).VOLCSGRS.ToString().Trim();
                       lblVOLCFNET.Text = m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(0).VOLCFNET.ToString().Trim();
+                      lblVOLTSGRS.Text = m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(0).VOLTSGRS.ToString().Trim();
 
                   }
                   else
@@ -902,6 +933,7 @@ namespace FIA_Biosum_Manager
                       lblVOLCFGRS.Text = "ERROR";
                       lblVOLCSGRS.Text = "ERROR";
                       lblVOLCFNET.Text = "ERROR";
+                      lblVOLTSGRS.Text = "ERROR";
                       MessageBox.Show(m_oOracleServices.m_strError, "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
                   }
               }
@@ -912,6 +944,7 @@ namespace FIA_Biosum_Manager
                   lblVOLCFGRS.Text = "ERROR";
                   lblVOLCSGRS.Text = "ERROR";
                   lblVOLCFNET.Text = "ERROR";
+                  lblVOLTSGRS.Text = "ERROR";
                   MessageBox.Show(m_oOracleServices.m_strError, "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
               }
           }
@@ -955,6 +988,12 @@ namespace FIA_Biosum_Manager
     }
     private void RunBatch_Main()
     {
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+        {
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//frmFCSTreeVolumeEdit.RunBatch_Main \r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//\r\n");
+        }
         string strWorkDbFile = "";
         string strConn = "";
         string strColumns = "";
@@ -967,6 +1006,7 @@ namespace FIA_Biosum_Manager
         int intRecordCount = 0;
         int intThermValue = 0;
         string strTable = "";
+
        
         dao_data_access oDao = new dao_data_access();
         System.Data.DataRow p_rowFound;
@@ -1053,6 +1093,8 @@ namespace FIA_Biosum_Manager
 
                 m_oAdo.m_strSQL = "INSERT INTO " + Tables.FVS.DefaultOracleInputFCSVolumesTable + " " +
                                  "(" + strColumns + ") SELECT " + strValues + " FROM " + strTable;
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             }
             else
@@ -1064,7 +1106,8 @@ namespace FIA_Biosum_Manager
             }
 
             m_oAdo.m_strSQL = "INSERT INTO fcs_biosum_volume (" + strColumns + ") SELECT " + strColumns + " FROM " + Tables.FVS.DefaultOracleInputFCSVolumesTable;
-
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             intThermValue++;
             UpdateThermPercent(0, intRecordCount + 8, intThermValue);
@@ -1133,6 +1176,11 @@ namespace FIA_Biosum_Manager
                                 p_rowFound["DRYBIOT"] = Convert.ToDouble(m_oAdo.m_OleDbDataReader["DRYBIOT_CALC"]);
                             else
                                 p_rowFound["DRYBIOT"] = DBNull.Value;
+
+                            if (m_oAdo.m_OleDbDataReader["VOLTSGRS_CALC"] != DBNull.Value)
+                                p_rowFound["VOLTSGRS"] = Convert.ToDouble(m_oAdo.m_OleDbDataReader["VOLTSGRS_CALC"]);
+                            else
+                                p_rowFound["VOLTSGRS"] = DBNull.Value;
                         }
                     }
                 }
@@ -1154,6 +1202,8 @@ namespace FIA_Biosum_Manager
         frmMain.g_oDelegate.CurrentThreadProcessDone = true;
         frmMain.g_oDelegate.m_oEventThreadStopped.Set();
         this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "---Leaving: frmFCSTreeVolumeEdit.RunBatch_Main \r\n");
 
     }
     private void RunBatch_Finished()
@@ -1215,6 +1265,12 @@ namespace FIA_Biosum_Manager
     }
     private void LoadFVSOutTrees(string p_strRxPackage)
     {
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+        {
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//frmFCSTreeVolumeEdit.LoadFVSOutTrees \r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//\r\n");
+        }
         frmMain.g_oFrmMain.ActivateStandByAnimation(
             this.WindowState,
             this.Left,
@@ -1244,6 +1300,8 @@ namespace FIA_Biosum_Manager
 
         m_oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.FVSOut_BuiltInputTableForVolumeCalculation_Step1(
             Tables.FVS.DefaultOracleInputVolumesTable, cmbDatasource.Text.Trim(),p_strRxPackage);
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
         m_oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.FVSOut_BuildInputTableForVolumeCalculation_Step2(
@@ -1251,16 +1309,22 @@ namespace FIA_Biosum_Manager
             m_oQueries.m_oFIAPlot.m_strTreeTable,
             m_oQueries.m_oFIAPlot.m_strPlotTable,
             m_oQueries.m_oFIAPlot.m_strCondTable);
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
         m_oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.FVSOut_BuildInputTableForVolumeCalculation_Step3(
             Tables.FVS.DefaultOracleInputVolumesTable,
             m_oQueries.m_oFIAPlot.m_strCondTable);
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
         m_oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.FVSOut_BuildInputTableForVolumeCalculation_Step4(
             "cull_work_table",
             Tables.FVS.DefaultOracleInputVolumesTable);
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
         m_oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.PNWRS.FVSOut_BuildInputTableForVolumeCalculation_Step5(
@@ -1271,11 +1335,15 @@ namespace FIA_Biosum_Manager
         m_oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.PNWRS.FVSOut_BuildInputTableForVolumeCalculation_Step6(
             "cull_work_table",
             Tables.FVS.DefaultOracleInputVolumesTable);
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
         m_oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.FVSOut_BuildInputTableForVolumeCalculation_Step7(
             Tables.FVS.DefaultOracleInputVolumesTable,
             Tables.FVS.DefaultOracleInputFCSVolumesTable);
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
 
@@ -1286,6 +1354,7 @@ namespace FIA_Biosum_Manager
                    "VOLCFNET," +
                    "DRYBIOM," +
                    "DRYBIOT," +
+                   "VOLTSGRS," + 
                    "id," +
                    "MID(biosum_cond_id, 6, 2 ) AS state," +
                    "MID(biosum_cond_id,12,3) AS county," +
@@ -1310,6 +1379,8 @@ namespace FIA_Biosum_Manager
         frmMain.g_oFrmMain.DeactivateStandByAnimation();
         frmMain.g_sbpInfo.Text = "Ready";
 
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,"---frmFCSTreeVolumeEdit.LoadFVSOutTrees \r\n");
 
 
 
@@ -1325,6 +1396,7 @@ namespace FIA_Biosum_Manager
                    "VOLCFNET," +
                    "DRYBIOM," +
                    "DRYBIOT," +
+                   "VOLTSGRS," + 
                    "id," +
                    "MID(biosum_cond_id, 6, 2 ) AS state," + 
                    "MID(biosum_cond_id,12,3) AS county," + 
@@ -1350,6 +1422,12 @@ namespace FIA_Biosum_Manager
 
     private void LoadTreeTable(string p_strFVSVariant)
     {
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+        {
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//frmFCSTreeVolumeEdit.LoadTreeTable \r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//\r\n");
+        }
         frmMain.g_oFrmMain.ActivateStandByAnimation(
           this.WindowState,
           this.Left,
@@ -1368,6 +1446,8 @@ namespace FIA_Biosum_Manager
 
             frmMain.g_sbpInfo.Text = "Loading Tree Table Data...Stand By";
             m_oAdo.m_strSQL = frmMain.g_oTables.m_oFvs.CreateOracleInputBiosumVolumesTableSQL("tree_work_table");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             m_oAdo.AddAutoNumber(m_oAdo.m_OleDbConnection, "tree_work_table", "id");
             //
@@ -1394,6 +1474,8 @@ namespace FIA_Biosum_Manager
                                    "p.fvs_variant='" + p_strFVSVariant + "' AND " + 
                                    "(p.InvYr IS NOT NULL OR p.MeasYear IS NOT NULL)";
 
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             //
             //update columns
@@ -1408,7 +1490,8 @@ namespace FIA_Biosum_Manager
                                            "IIF(roughcull IS NOT NULL, roughcull,0))) AS totalcull " +
                               "INTO cull_total_work_table " +
                               "FROM Tree_Work_Table";
-
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             m_oAdo.m_strSQL = "UPDATE Tree_Work_Table a " +
                             "INNER JOIN cull_total_work_table b " +
@@ -1418,7 +1501,8 @@ namespace FIA_Biosum_Manager
                             "IIF(a.StatusCd=2,3," +
                             "IIF(b.totalcull < 75,2," +
                             "IIF(roughcull > 37.5,3,4))))";
-            
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             m_oAdo.m_strSQL = "UPDATE tree_work_table  a " +
                                      "INNER JOIN cull_total_work_table b " +
@@ -1426,7 +1510,8 @@ namespace FIA_Biosum_Manager
                                      "SET a.treeclcd=" +
                                      "IIF(a.DecayCd > 1,4,IIF(a.dbh < 9 AND a.SpCd < 300,4,a.treeclcd)) " +
                                      "WHERE a.treeclcd=3 AND a.statuscd=2 AND a.SpCd NOT IN (62,65,66,106,133,138,304,321,322,475,756,758,990)";
-            
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_oAdo.m_strSQL + "\r\n\r\n");
             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
@@ -1445,6 +1530,7 @@ namespace FIA_Biosum_Manager
                    "VOLCFNET," +
                    "DRYBIOM," +
                    "DRYBIOT," +
+                   "VOLTSGRS," + 
                    "id," +
                    "MID(biosum_cond_id, 6, 2 ) AS state," +
                    "MID(biosum_cond_id,12,3) AS county," +
@@ -1468,6 +1554,8 @@ namespace FIA_Biosum_Manager
         m_strGridTableSource = "Tree_Work_Table";
         frmMain.g_oFrmMain.DeactivateStandByAnimation();
         frmMain.g_sbpInfo.Text = "Ready";
+        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "---Leaving: frmFCSTreeVolumeEdit.LoadTreeTable \r\n");
     }
 
 
@@ -1600,6 +1688,16 @@ namespace FIA_Biosum_Manager
         }
         
     
+    }
+
+    private void txtStateCd_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label17_Click(object sender, EventArgs e)
+    {
+
     }
   }
 }

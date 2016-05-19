@@ -1624,7 +1624,7 @@ namespace FIA_Biosum_Manager
                     return "UPDATE " + p_strInputVolumesTable + " i " +
                                       "INNER JOIN " + p_strFIACondTable + " c " +
                                       "ON i.biosum_cond_id=c.biosum_cond_id " +
-                                      "SET i.vol_loc_grp=c.vol_loc_grp," + 
+                                      "SET i.vol_loc_grp=IIF(INSTR(1,c.vol_loc_grp,'22') > 0,'S26LEOR',c.vol_loc_grp)," + 
                                           "i.statuscd=IIF(i.statuscd IS NULL,1,i.statuscd)," +
                                           "i.cull=IIF(i.cull IS NULL,0,i.cull)," + 
                                           "i.roughcull=IIF(i.roughcull IS NULL,0,i.roughcull)," +
@@ -1752,7 +1752,8 @@ namespace FIA_Biosum_Manager
                                "f.volcfgrs=o.VOLCFGRS_CALC," +
                                "f.volcfnet=o.VOLCFNET_CALC," +
                                "f.drybiot=o.DRYBIOT_CALC," +
-                               "f.drybiom=o.DRYBIOM_CALC";
+                               "f.drybiom=o.DRYBIOM_CALC," + 
+                               "f.voltsgrs=o.VOLTSGRS_CALC" ;
                 }
                 
 
@@ -1879,7 +1880,8 @@ namespace FIA_Biosum_Manager
                 string p_strFIADBPlotTable,
                 string p_strFIADBCondTable,
                 string p_strRsCd,
-                string p_strEvalId)
+                string p_strEvalId,
+                string p_strCondProp)
             {
                 string[] strSQL = new string[21];
 
@@ -1912,11 +1914,11 @@ namespace FIA_Biosum_Manager
 
                 //change hazardous condition to sampled
                 strSQL[3] = "UPDATE BIOSUM_COND SET cond_status_cd = 1 " +
-                            "WHERE COND_NONSAMPLE_REASN_CD = 3";
+                            "WHERE COND_NONSAMPLE_REASN_CD = 5";
 
                 //update condition satatus to NONSAMPLED if the condition proportion is less than .25
                 strSQL[4] = "UPDATE BIOSUM_COND SET cond_status_cd = 5 " +
-                            "WHERE cond_status_cd = 1 AND condprop_unadj < .25";
+                            "WHERE cond_status_cd = 1 AND condprop_unadj < ." + p_strCondProp;
 
                 //join pop_estn_unit,pop_stratum,pop_eval tables into biosum_eus_temp
                 strSQL[5] = "SELECT pe.rscd, pe.evalid,ps.estn_unit,ps.stratumcd," +
@@ -1992,22 +1994,22 @@ namespace FIA_Biosum_Manager
                                         "IIF(eus.LAND_ONLY='N'," +
                                         "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                         "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                            "SUM(c.macrprop_unadj) as biosum_adj_factor_macr," +
+                                            "SUM(c.macrprop_unadj) as pmh_macr," +
                                    "SUM(c.MICRPROP_UNADJ * " +
                                        "IIF(eus.LAND_ONLY='N'," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                           "SUM(c.micrprop_unadj) as biosum_adj_factor_micr," +
+                                           "SUM(c.micrprop_unadj) as pmh_micr," +
                                    "SUM(c.SUBPPROP_UNADJ * " +
                                        "IIF(eus.LAND_ONLY='N'," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                           "SUM(c.subpprop_unadj) as biosum_adj_factor_subp," +
+                                           "SUM(c.subpprop_unadj) as pmh_sub," +
                                    "SUM(c.CONDPROP_UNADJ * " +
                                        "IIF(eus.LAND_ONLY='N'," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3,4),1,0)," +
                                        "IIF(c.COND_STATUS_CD IN (1,2,3),1,0))) / " +
-                                           "SUM(c.condprop_unadj) as biosum_adj_factor_cond " +
+                                           "SUM(c.condprop_unadj) as pmh_cond " +
                             "INTO BIOSUM_EUS_ACCESS " +
                             "FROM BIOSUM_COND c," +
                                  "BIOSUM_PPSA_TEMP ppsa," +
@@ -2071,8 +2073,8 @@ namespace FIA_Biosum_Manager
                                   "a.estn_unit,a.stratumcd," +
                                   "a.p2pointcnt_man,a.stratum_area," +
                                   "a.double_sampling," +
-                                  "a.biosum_adj_factor_macr,a.biosum_adj_factor_micr," +
-                                  "a.biosum_adj_factor_subp,a.biosum_adj_factor_cond," +
+                                  "a.pmh_macr,a.pmh_micr," +
+                                  "a.pmh_sub,a.pmh_cond," +
                                   "b.eval_descr,b.estn_unit_descr," +
                                   "b.adj_factor_macr, b.adj_factor_subp," +
                                   "b.adj_factor_micr, b.expns " +
@@ -2987,7 +2989,11 @@ namespace FIA_Biosum_Manager
                            "+ b.[SMLOGS_NonUtil_Logs_biomass_vol] + b.[LGLOGS_NonUtil_Logs_biomass_vol] " +
                            "+ b.[SMLOGS_NonUtil_Chips_biomass_vol] + b.[LGLOGS_NonUtil_Chips_biomass_vol] " +
                            "+ b.[LGLOGS_NonUtil_Chips_merch_vol]) " +
-                           "AS NOT_UTILIZED_CHIP_VOL_CF " +
+                           "AS NOT_UTILIZED_CHIP_VOL_CF, " +
+                           "SUM(b.[BC_NonUtil_Chips_merch_wt] + b.[BC_NonUtil_Chips_biomass_wt]) " +
+                           "AS BC_WT_GT, " +
+                           "SUM(b.[BC_NonUtil_Chips_merch_vol] + b.[BC_NonUtil_Chips_biomass_vol]) " +
+                           "AS BC_VOL_CF " +
                            "INTO " + p_strIntoTableName + " " +
                            "FROM " + p_strBinSumTableName + " b " +
                            "WHERE (((b.diam_group) Is Not Null)) " +
@@ -3106,15 +3112,17 @@ namespace FIA_Biosum_Manager
                 return
                     "INSERT INTO " + p_strDestTable + " " +
                         "(biosum_cond_id,rxpackage,rx,rxcycle,species_group,diam_group, merch_wt_gt," +
-                         "merch_vol_cf, chip_wt_gt, chip_vol_cf,DateTimeCreated) " +
+                         "merch_vol_cf, chip_wt_gt, chip_vol_cf, bc_wt_gt, bc_vol_cf, DateTimeCreated) " +
                          "SELECT DISTINCT t.BIOSUM_COND_ID, t.rxpackage,t.rx,t.rxcycle," +
                                         "t.species_group,t.diam_group," +
                                         "t.MERCH_WT_GT,t.MERCH_VOL_CF," +
                                         "t.CHIP_WT_GT,t.CHIP_VOL_CF," +
+                                        "t.BC_WT_GT,t.BC_VOL_CF," +
                                         "'" + p_strDateTimeCreated + "' " + 
                          "FROM " + p_strSourceTable + " t " +
                          "WHERE (((t.MERCH_WT_GT)<>0) OR ((t.MERCH_VOL_CF)<>0) OR " +
-                                "((t.CHIP_WT_GT)<>0) OR ((t.CHIP_VOL_CF)<>0))";
+                                "((t.CHIP_WT_GT)<>0) OR ((t.CHIP_VOL_CF)<>0) OR " +
+                                "((t.BC_WT_GT)<>0) OR ((t.BC_VOL_CF)<>0))";
 
             }
             
