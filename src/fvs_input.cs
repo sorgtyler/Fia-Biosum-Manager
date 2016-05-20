@@ -2459,10 +2459,9 @@ namespace FIA_Biosum_Manager
 					"s.method," + 
 					"s.validcd " + 
 					"FROM " + this.SiteTreeTable + " s " + 
-					"WHERE s.biosum_plot_id = '" + this.BiosumPlotId + "' " + 
-					"AND (s.condlist IS NULL OR " + 
-					"INSTR('" + this.CondId + "',CSTR(condlist)) > 0)";
-				
+					"WHERE s.biosum_plot_id = '" + this.BiosumPlotId + "' " +
+                    "AND s.condid = " + this.CondId +
+                    "AND s.validcd <> 0";
 				x=Convert.ToInt32(_oAdo.getRecordCount(_oAdo.m_OleDbConnection,"SELECT COUNT(*) FROM (" + _oAdo.m_strSQL + ")","cond"));
 				if (x> 0)
 				{
@@ -4153,6 +4152,7 @@ namespace FIA_Biosum_Manager
             ///-- Quality of Eight Rocky Mountain Species
             ///-- Research Paper: INT-75  1970. p_intSIDiaAge is total age
             ///---Derived from Kurt's PL/SQL
+            ///OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
             ///<param name="p_intSIDiaAge"></param>
             ///<param name="p_intSIHtFt"></param>
             /// </summary>
@@ -4210,6 +4210,7 @@ namespace FIA_Biosum_Manager
             /// USDA Forest Service, Res. Pap. RM-29
             /// Site index at total age of 100
             /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
@@ -4245,6 +4246,7 @@ namespace FIA_Biosum_Manager
             /// Research Note: RM-453
             /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
             /// Base age is 80 years
+            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
