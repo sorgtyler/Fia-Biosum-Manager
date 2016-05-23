@@ -415,10 +415,20 @@ namespace FIA_Biosum_Manager
                             UpdateProjectVersionFile(strProjVersionFile);
                             bPerformCheck = false;
                         }
-                    }                   
+                    }
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6) &&
+                            (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) > 6))
+                    {
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
+                   
                }
                
             }
+
             if (bPerformCheck)
             {
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
