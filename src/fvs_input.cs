@@ -2908,10 +2908,10 @@ namespace FIA_Biosum_Manager
 						p_intSIFVSSpecies=202;
 					}
 					else if (p_intSISpCd==17 || 
-						p_intSISpCd==15)	  //Pacific silver fir and grand fir
+						p_intSISpCd==15)	  //grand fir and white fir
 					{
 						p_dblSiteIndex=ABGR1(p_intSIAgeDia, p_intSIHtFt);
-						p_intSIFVSSpecies=15;
+						p_intSIFVSSpecies=17;
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
@@ -4250,11 +4250,31 @@ namespace FIA_Biosum_Manager
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
-
             private double SI_AS1(int p_intSIDiaAge, int p_intSIHtFt)
             {
                 double dblSI = 0;
-                dblSI = 4.5 + 0.48274 * (p_intSIHtFt - 4.5) * Math.Pow((1 - System.Math.Exp(-0.007719 * p_intSIDiaAge)), -0.93972);
+                dblSI = 4.5 + 0.48274 * (p_intSIHtFt - 4.5) * Math.Pow((1 - Math.Exp(-0.007719 * p_intSIDiaAge)), -0.93972);
+                return dblSI;
+            }
+
+
+            /// <summary>
+            /// SITE INDEX FOR PONDEROSA PINE - MEYER
+		    /// Forest Service Inventory procedures for Eastern Washington,
+            /// (Approximates Meyer in USDA Tech. bull. 630)
+            /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            /// Base age is 100 years
+            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            /// </summary>
+            /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
+            /// <param name="p_intSIHtFt">Diameter of site tree</param>
+            private double SI_PP6(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                int Total_Age = p_intSIDiaAge;
+                if (Total_Age > 0) Total_Age = Total_Age + 9;
+                dblSI = (5.328 * (Math.Pow(Total_Age, -0.1)) - 2.378) * (p_intSIHtFt - 4.5) + 4.5;
+                dblSI = dblSI + 0.49;
                 return dblSI;
             }
 		}
