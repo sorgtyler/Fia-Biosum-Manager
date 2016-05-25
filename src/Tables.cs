@@ -2976,6 +2976,7 @@ namespace FIA_Biosum_Manager
                     "harvest_cpa_warning_msg CHAR(240)," +
                     "water_barring_roads_cpa DOUBLE," +
                     "brush_cutting_cpa DOUBLE," +
+                    "place_holder CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
 
 			}

@@ -2907,12 +2907,12 @@ namespace FIA_Biosum_Manager
 						p_dblSiteIndex=qPSME12(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies=202;
 					}
-					else if (p_intSISpCd==17 || 
-						p_intSISpCd==15)	  //Pacific silver fir and grand fir
-					{
-						p_dblSiteIndex=ABGR1(p_intSIAgeDia, p_intSIHtFt);
-						p_intSIFVSSpecies=15;
-					}
+                    else if (p_intSISpCd == 17 ||
+                             p_intSISpCd == 15) //grand fir and white fir
+                    {
+                        p_dblSiteIndex = ABGR1(p_intSIAgeDia, p_intSIHtFt);
+                        p_intSIFVSSpecies = 17;
+                    }
 					else if (p_intSISpCd==108) //lodgepole
 					{
 						getAvgDbhOnPlot(p_intSICondId);
