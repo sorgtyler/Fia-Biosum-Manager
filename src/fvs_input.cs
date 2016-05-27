@@ -4277,6 +4277,52 @@ namespace FIA_Biosum_Manager
                 dblSI = dblSI + 0.49;
                 return dblSI;
             }
+
+            /// <summary>
+            /// SITE INDEX FOR DOUGLAS-FIR - Monserud
+            /// Applying Height Growth and Site Index Curves for Inland DOUGLAS-FIR
+            /// Research Paper:  INT-347  1985
+            /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            /// Base age is 50 years
+            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+
+            /// </summary>
+            /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
+            /// <param name="p_intSIHtFt">Diameter of site tree</param>
+            /// <param name="p_strHabTypeCd">Habitat type code for condition</param>
+            /// @ToDo: Need to add ConditionClassBasalAreaPerAcre as a class-level variable so we can feed it to equation
+            private double SI_DF2(int p_intSIDiaAge, int p_intSIHtFt, string p_strHabTypeCd)
+            {
+                double dblSI = 0;
+                int intHabTypeCd = 0;
+                // habTypeCd is stored as text in the cond table; Safely try to parse to an int
+                bool isHabTypeAnInt = int.TryParse(p_strHabTypeCd, out intHabTypeCd);
+                if (!isHabTypeAnInt)
+                {
+                    // if habTypeCd is not an int, set it to the middle value
+                    intHabTypeCd = 500;
+                }
+                int intC1 = 0;
+                int intC2 = 0;
+                int intC3 = 0;
+                if (intHabTypeCd <= 400)
+                {
+                    intC1 = 1;
+                }
+                else if (intHabTypeCd < 530)
+                {
+                    intC2 = 1;
+                }
+                else if (intHabTypeCd >= 530)
+                {
+                    intC3 = 1;
+                }
+                double dblLog = (Math.Pow(Math.Log10(p_intSIDiaAge),2));
+                dblSI = (38.787 - (2.805 * dblLog) + (0.0216 * p_intSIDiaAge * Math.Log10(p_intSIDiaAge)) + (0.4948 * intC1 + 0.4305 * intC2 + 0.3964 * intC3) * p_intSIHtFt + (25.315 * intC1 + 28.415 * intC2 + 30.008 * intC3) * p_intSIDiaAge / p_intSIHtFt) + 4.5;
+                return dblSI;
+            }
+
+
 		}
 
 	}
