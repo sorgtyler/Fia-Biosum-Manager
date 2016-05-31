@@ -103,6 +103,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="ReachFramework" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -120,6 +123,7 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -137,6 +141,7 @@
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
     </COMReference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ado_core_tables.cs">
@@ -239,6 +244,7 @@
     <Compile Include="generate_travel_times.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Help.cs" />
     <Compile Include="ListViewAlternateColors.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -550,6 +556,7 @@
     <Compile Include="version_control.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="XPSDocumentViewer_xaml.cs" />
     <Content Include="App.ico" />
     <Content Include="SCRIPT_VB_PREDISPOSE_FIXTREEID.txt" />
     <Content Include="table-alternate-row-color.bmp" />
@@ -924,6 +931,12 @@
       <Project>{923640FA-97A2-4A4E-A7AE-02A0F4174986}</Project>
       <Name>StandByAnimation</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="XPSDocumentViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
