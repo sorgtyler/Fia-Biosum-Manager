@@ -81,6 +81,8 @@ namespace FIA_Biosum_Manager
 
         private FIA_Biosum_Manager.frmDialog m_frmDialog1;
 		private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultDatabaseXPSFile;
 
 		public FIA_Biosum_Manager.ResizeFormUsingVisibleScrollBars m_oResizeForm = new ResizeFormUsingVisibleScrollBars();
 		private System.Windows.Forms.Panel panel1;
@@ -116,6 +118,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnClose;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private Button btnProjectHelp;
 		
 
 		/// <summary> 
@@ -325,386 +328,397 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_project));
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.grpboxDescription = new System.Windows.Forms.GroupBox();
-			this.txtDescription = new System.Windows.Forms.TextBox();
-			this.grpboxCompany = new System.Windows.Forms.GroupBox();
-			this.txtCompany = new System.Windows.Forms.TextBox();
-			this.grpboxProjectId = new System.Windows.Forms.GroupBox();
-			this.txtProjectId = new System.Windows.Forms.TextBox();
-			this.grpboxCreated = new System.Windows.Forms.GroupBox();
-			this.txtDate = new System.Windows.Forms.TextBox();
-			this.lblDate = new System.Windows.Forms.Label();
-			this.txtName = new System.Windows.Forms.TextBox();
-			this.lblName = new System.Windows.Forms.Label();
-			this.grpboxProjectFiles = new System.Windows.Forms.GroupBox();
-			this.btnPersonalHelp = new System.Windows.Forms.Button();
-			this.btnPersonalDirectory = new System.Windows.Forms.Button();
-			this.lblLocal = new System.Windows.Forms.Label();
-			this.txtPersonal = new System.Windows.Forms.TextBox();
-			this.btnSharedHelp = new System.Windows.Forms.Button();
-			this.btnSharedDirectory = new System.Windows.Forms.Button();
-			this.lblShared = new System.Windows.Forms.Label();
-			this.btnRootDirectoryHelp = new System.Windows.Forms.Button();
-			this.btnRootDirectory = new System.Windows.Forms.Button();
-			this.lblRootDirectory = new System.Windows.Forms.Label();
-			this.txtRootDirectory = new System.Windows.Forms.TextBox();
-			this.txtShared = new System.Windows.Forms.TextBox();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.btnEdit = new System.Windows.Forms.Button();
-			this.btnSave = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.btnClose = new System.Windows.Forms.Button();
-			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-			this.panel1.SuspendLayout();
-			this.groupBox1.SuspendLayout();
-			this.grpboxDescription.SuspendLayout();
-			this.grpboxCompany.SuspendLayout();
-			this.grpboxProjectId.SuspendLayout();
-			this.grpboxCreated.SuspendLayout();
-			this.grpboxProjectFiles.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// panel1
-			// 
-			this.panel1.AutoScroll = true;
-			this.panel1.Controls.Add(this.groupBox1);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(672, 520);
-			this.panel1.TabIndex = 0;
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.grpboxDescription);
-			this.groupBox1.Controls.Add(this.grpboxCompany);
-			this.groupBox1.Controls.Add(this.grpboxProjectId);
-			this.groupBox1.Controls.Add(this.grpboxCreated);
-			this.groupBox1.Controls.Add(this.grpboxProjectFiles);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Controls.Add(this.btnEdit);
-			this.groupBox1.Controls.Add(this.btnSave);
-			this.groupBox1.Controls.Add(this.btnCancel);
-			this.groupBox1.Controls.Add(this.btnClose);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(672, 520);
-			this.groupBox1.TabIndex = 29;
-			this.groupBox1.TabStop = false;
-			// 
-			// grpboxDescription
-			// 
-			this.grpboxDescription.Controls.Add(this.txtDescription);
-			this.grpboxDescription.Enabled = false;
-			this.grpboxDescription.Location = new System.Drawing.Point(8, 151);
-			this.grpboxDescription.Name = "grpboxDescription";
-			this.grpboxDescription.Size = new System.Drawing.Size(640, 121);
-			this.grpboxDescription.TabIndex = 28;
-			this.grpboxDescription.TabStop = false;
-			this.grpboxDescription.Text = "Project Description";
-			// 
-			// txtDescription
-			// 
-			this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtDescription.Location = new System.Drawing.Point(16, 16);
-			this.txtDescription.Multiline = true;
-			this.txtDescription.Name = "txtDescription";
-			this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.txtDescription.Size = new System.Drawing.Size(624, 96);
-			this.txtDescription.TabIndex = 0;
-			this.txtDescription.Text = "";
-			// 
-			// grpboxCompany
-			// 
-			this.grpboxCompany.Controls.Add(this.txtCompany);
-			this.grpboxCompany.Enabled = false;
-			this.grpboxCompany.Location = new System.Drawing.Point(8, 97);
-			this.grpboxCompany.Name = "grpboxCompany";
-			this.grpboxCompany.Size = new System.Drawing.Size(640, 48);
-			this.grpboxCompany.TabIndex = 27;
-			this.grpboxCompany.TabStop = false;
-			this.grpboxCompany.Text = "Company";
-			// 
-			// txtCompany
-			// 
-			this.txtCompany.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtCompany.Location = new System.Drawing.Point(8, 14);
-			this.txtCompany.MaxLength = 100;
-			this.txtCompany.Name = "txtCompany";
-			this.txtCompany.Size = new System.Drawing.Size(624, 23);
-			this.txtCompany.TabIndex = 0;
-			this.txtCompany.Text = "";
-			// 
-			// grpboxProjectId
-			// 
-			this.grpboxProjectId.Controls.Add(this.txtProjectId);
-			this.grpboxProjectId.Enabled = false;
-			this.grpboxProjectId.Location = new System.Drawing.Point(8, 42);
-			this.grpboxProjectId.Name = "grpboxProjectId";
-			this.grpboxProjectId.Size = new System.Drawing.Size(184, 48);
-			this.grpboxProjectId.TabIndex = 0;
-			this.grpboxProjectId.TabStop = false;
-			this.grpboxProjectId.Text = "Project Id";
-			// 
-			// txtProjectId
-			// 
-			this.txtProjectId.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtProjectId.Location = new System.Drawing.Point(8, 16);
-			this.txtProjectId.MaxLength = 20;
-			this.txtProjectId.Name = "txtProjectId";
-			this.txtProjectId.Size = new System.Drawing.Size(166, 23);
-			this.txtProjectId.TabIndex = 0;
-			this.txtProjectId.Text = "";
-			this.txtProjectId.Leave += new System.EventHandler(this.txtProjectId_Leave);
-			// 
-			// grpboxCreated
-			// 
-			this.grpboxCreated.Controls.Add(this.txtDate);
-			this.grpboxCreated.Controls.Add(this.lblDate);
-			this.grpboxCreated.Controls.Add(this.txtName);
-			this.grpboxCreated.Controls.Add(this.lblName);
-			this.grpboxCreated.Enabled = false;
-			this.grpboxCreated.Location = new System.Drawing.Point(200, 42);
-			this.grpboxCreated.Name = "grpboxCreated";
-			this.grpboxCreated.Size = new System.Drawing.Size(450, 48);
-			this.grpboxCreated.TabIndex = 1;
-			this.grpboxCreated.TabStop = false;
-			this.grpboxCreated.Text = "Created";
-			// 
-			// txtDate
-			// 
-			this.txtDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtDate.Location = new System.Drawing.Point(296, 16);
-			this.txtDate.MaxLength = 8;
-			this.txtDate.Name = "txtDate";
-			this.txtDate.Size = new System.Drawing.Size(144, 23);
-			this.txtDate.TabIndex = 3;
-			this.txtDate.Text = "";
-			// 
-			// lblDate
-			// 
-			this.lblDate.Location = new System.Drawing.Point(264, 21);
-			this.lblDate.Name = "lblDate";
-			this.lblDate.Size = new System.Drawing.Size(32, 16);
-			this.lblDate.TabIndex = 2;
-			this.lblDate.Text = "Date";
-			// 
-			// txtName
-			// 
-			this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtName.Location = new System.Drawing.Point(42, 15);
-			this.txtName.MaxLength = 30;
-			this.txtName.Name = "txtName";
-			this.txtName.Size = new System.Drawing.Size(222, 23);
-			this.txtName.TabIndex = 1;
-			this.txtName.Text = "";
-			// 
-			// lblName
-			// 
-			this.lblName.Location = new System.Drawing.Point(7, 21);
-			this.lblName.Name = "lblName";
-			this.lblName.Size = new System.Drawing.Size(40, 16);
-			this.lblName.TabIndex = 0;
-			this.lblName.Text = "Name";
-			// 
-			// grpboxProjectFiles
-			// 
-			this.grpboxProjectFiles.Controls.Add(this.btnPersonalHelp);
-			this.grpboxProjectFiles.Controls.Add(this.btnPersonalDirectory);
-			this.grpboxProjectFiles.Controls.Add(this.lblLocal);
-			this.grpboxProjectFiles.Controls.Add(this.txtPersonal);
-			this.grpboxProjectFiles.Controls.Add(this.btnSharedHelp);
-			this.grpboxProjectFiles.Controls.Add(this.btnSharedDirectory);
-			this.grpboxProjectFiles.Controls.Add(this.lblShared);
-			this.grpboxProjectFiles.Controls.Add(this.btnRootDirectoryHelp);
-			this.grpboxProjectFiles.Controls.Add(this.btnRootDirectory);
-			this.grpboxProjectFiles.Controls.Add(this.lblRootDirectory);
-			this.grpboxProjectFiles.Controls.Add(this.txtRootDirectory);
-			this.grpboxProjectFiles.Controls.Add(this.txtShared);
-			this.grpboxProjectFiles.Location = new System.Drawing.Point(8, 280);
-			this.grpboxProjectFiles.Name = "grpboxProjectFiles";
-			this.grpboxProjectFiles.Size = new System.Drawing.Size(640, 152);
-			this.grpboxProjectFiles.TabIndex = 29;
-			this.grpboxProjectFiles.TabStop = false;
-			this.grpboxProjectFiles.Text = "Project Files";
-			// 
-			// btnPersonalHelp
-			// 
-			this.btnPersonalHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnPersonalHelp.Image")));
-			this.btnPersonalHelp.Location = new System.Drawing.Point(600, 112);
-			this.btnPersonalHelp.Name = "btnPersonalHelp";
-			this.btnPersonalHelp.Size = new System.Drawing.Size(32, 32);
-			this.btnPersonalHelp.TabIndex = 11;
-			// 
-			// btnPersonalDirectory
-			// 
-			this.btnPersonalDirectory.Enabled = false;
-			this.btnPersonalDirectory.Image = ((System.Drawing.Image)(resources.GetObject("btnPersonalDirectory.Image")));
-			this.btnPersonalDirectory.Location = new System.Drawing.Point(561, 112);
-			this.btnPersonalDirectory.Name = "btnPersonalDirectory";
-			this.btnPersonalDirectory.Size = new System.Drawing.Size(32, 32);
-			this.btnPersonalDirectory.TabIndex = 10;
-			this.btnPersonalDirectory.Click += new System.EventHandler(this.btnPersonalDirectory_Click);
-			// 
-			// lblLocal
-			// 
-			this.lblLocal.Location = new System.Drawing.Point(16, 90);
-			this.lblLocal.Name = "lblLocal";
-			this.lblLocal.Size = new System.Drawing.Size(80, 53);
-			this.lblLocal.TabIndex = 9;
-			this.lblLocal.Text = "Personal Notes And Document Links Directory";
-			// 
-			// txtPersonal
-			// 
-			this.txtPersonal.Enabled = false;
-			this.txtPersonal.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtPersonal.ForeColor = System.Drawing.SystemColors.WindowFrame;
-			this.txtPersonal.Location = new System.Drawing.Point(112, 116);
-			this.txtPersonal.Name = "txtPersonal";
-			this.txtPersonal.Size = new System.Drawing.Size(416, 23);
-			this.txtPersonal.TabIndex = 8;
-			this.txtPersonal.Text = "";
-			// 
-			// btnSharedHelp
-			// 
-			this.btnSharedHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnSharedHelp.Image")));
-			this.btnSharedHelp.Location = new System.Drawing.Point(601, 44);
-			this.btnSharedHelp.Name = "btnSharedHelp";
-			this.btnSharedHelp.Size = new System.Drawing.Size(32, 32);
-			this.btnSharedHelp.TabIndex = 7;
-			// 
-			// btnSharedDirectory
-			// 
-			this.btnSharedDirectory.Enabled = false;
-			this.btnSharedDirectory.Image = ((System.Drawing.Image)(resources.GetObject("btnSharedDirectory.Image")));
-			this.btnSharedDirectory.Location = new System.Drawing.Point(561, 44);
-			this.btnSharedDirectory.Name = "btnSharedDirectory";
-			this.btnSharedDirectory.Size = new System.Drawing.Size(32, 32);
-			this.btnSharedDirectory.TabIndex = 6;
-			this.btnSharedDirectory.Click += new System.EventHandler(this.btnSharedDirectory_Click);
-			// 
-			// lblShared
-			// 
-			this.lblShared.Location = new System.Drawing.Point(16, 44);
-			this.lblShared.Name = "lblShared";
-			this.lblShared.Size = new System.Drawing.Size(80, 40);
-			this.lblShared.TabIndex = 4;
-			this.lblShared.Text = "Shared Notes And Document Links Directory";
-			// 
-			// btnRootDirectoryHelp
-			// 
-			this.btnRootDirectoryHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnRootDirectoryHelp.Image")));
-			this.btnRootDirectoryHelp.Location = new System.Drawing.Point(601, 10);
-			this.btnRootDirectoryHelp.Name = "btnRootDirectoryHelp";
-			this.btnRootDirectoryHelp.Size = new System.Drawing.Size(32, 32);
-			this.btnRootDirectoryHelp.TabIndex = 3;
-			// 
-			// btnRootDirectory
-			// 
-			this.btnRootDirectory.Enabled = false;
-			this.btnRootDirectory.Image = ((System.Drawing.Image)(resources.GetObject("btnRootDirectory.Image")));
-			this.btnRootDirectory.Location = new System.Drawing.Point(561, 10);
-			this.btnRootDirectory.Name = "btnRootDirectory";
-			this.btnRootDirectory.Size = new System.Drawing.Size(32, 32);
-			this.btnRootDirectory.TabIndex = 2;
-			this.btnRootDirectory.Click += new System.EventHandler(this.btnRootDirectory_Click);
-			// 
-			// lblRootDirectory
-			// 
-			this.lblRootDirectory.Location = new System.Drawing.Point(16, 19);
-			this.lblRootDirectory.Name = "lblRootDirectory";
-			this.lblRootDirectory.Size = new System.Drawing.Size(88, 16);
-			this.lblRootDirectory.TabIndex = 0;
-			this.lblRootDirectory.Text = "Project Directory";
-			// 
-			// txtRootDirectory
-			// 
-			this.txtRootDirectory.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.txtRootDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtRootDirectory.Location = new System.Drawing.Point(113, 16);
-			this.txtRootDirectory.Name = "txtRootDirectory";
-			this.txtRootDirectory.Size = new System.Drawing.Size(416, 23);
-			this.txtRootDirectory.TabIndex = 0;
-			this.txtRootDirectory.Text = "";
-			// 
-			// txtShared
-			// 
-			this.txtShared.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtShared.ForeColor = System.Drawing.SystemColors.WindowFrame;
-			this.txtShared.Location = new System.Drawing.Point(112, 48);
-			this.txtShared.Name = "txtShared";
-			this.txtShared.Size = new System.Drawing.Size(416, 23);
-			this.txtShared.TabIndex = 0;
-			this.txtShared.Text = "";
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(8, 16);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Size = new System.Drawing.Size(500, 24);
-			this.lblTitle.TabIndex = 26;
-			this.lblTitle.Text = "Open Or Create A Project";
-			// 
-			// btnEdit
-			// 
-			this.btnEdit.Location = new System.Drawing.Point(208, 440);
-			this.btnEdit.Name = "btnEdit";
-			this.btnEdit.Size = new System.Drawing.Size(96, 32);
-			this.btnEdit.TabIndex = 7;
-			this.btnEdit.Text = "Edit";
-			this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
-			// 
-			// btnSave
-			// 
-			this.btnSave.Enabled = false;
-			this.btnSave.Location = new System.Drawing.Point(304, 440);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(96, 32);
-			this.btnSave.TabIndex = 5;
-			this.btnSave.Text = "Save";
-			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Enabled = false;
-			this.btnCancel.Location = new System.Drawing.Point(400, 440);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(96, 32);
-			this.btnCancel.TabIndex = 6;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// btnClose
-			// 
-			this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnClose.Location = new System.Drawing.Point(560, 480);
-			this.btnClose.Name = "btnClose";
-			this.btnClose.Size = new System.Drawing.Size(96, 32);
-			this.btnClose.TabIndex = 8;
-			this.btnClose.Text = "Close";
-			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-			// 
-			// uc_project
-			// 
-			this.Controls.Add(this.panel1);
-			this.Name = "uc_project";
-			this.Size = new System.Drawing.Size(672, 520);
-			this.Resize += new System.EventHandler(this.uc_project_Resize);
-			this.panel1.ResumeLayout(false);
-			this.groupBox1.ResumeLayout(false);
-			this.grpboxDescription.ResumeLayout(false);
-			this.grpboxCompany.ResumeLayout(false);
-			this.grpboxProjectId.ResumeLayout(false);
-			this.grpboxCreated.ResumeLayout(false);
-			this.grpboxProjectFiles.ResumeLayout(false);
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_project));
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnProjectHelp = new System.Windows.Forms.Button();
+            this.grpboxDescription = new System.Windows.Forms.GroupBox();
+            this.txtDescription = new System.Windows.Forms.TextBox();
+            this.grpboxCompany = new System.Windows.Forms.GroupBox();
+            this.txtCompany = new System.Windows.Forms.TextBox();
+            this.grpboxProjectId = new System.Windows.Forms.GroupBox();
+            this.txtProjectId = new System.Windows.Forms.TextBox();
+            this.grpboxCreated = new System.Windows.Forms.GroupBox();
+            this.txtDate = new System.Windows.Forms.TextBox();
+            this.lblDate = new System.Windows.Forms.Label();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.lblName = new System.Windows.Forms.Label();
+            this.grpboxProjectFiles = new System.Windows.Forms.GroupBox();
+            this.btnPersonalHelp = new System.Windows.Forms.Button();
+            this.btnPersonalDirectory = new System.Windows.Forms.Button();
+            this.lblLocal = new System.Windows.Forms.Label();
+            this.txtPersonal = new System.Windows.Forms.TextBox();
+            this.btnSharedHelp = new System.Windows.Forms.Button();
+            this.btnSharedDirectory = new System.Windows.Forms.Button();
+            this.lblShared = new System.Windows.Forms.Label();
+            this.btnRootDirectoryHelp = new System.Windows.Forms.Button();
+            this.btnRootDirectory = new System.Windows.Forms.Button();
+            this.lblRootDirectory = new System.Windows.Forms.Label();
+            this.txtRootDirectory = new System.Windows.Forms.TextBox();
+            this.txtShared = new System.Windows.Forms.TextBox();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.panel1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.grpboxDescription.SuspendLayout();
+            this.grpboxCompany.SuspendLayout();
+            this.grpboxProjectId.SuspendLayout();
+            this.grpboxCreated.SuspendLayout();
+            this.grpboxProjectFiles.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.groupBox1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(672, 520);
+            this.panel1.TabIndex = 0;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnProjectHelp);
+            this.groupBox1.Controls.Add(this.grpboxDescription);
+            this.groupBox1.Controls.Add(this.grpboxCompany);
+            this.groupBox1.Controls.Add(this.grpboxProjectId);
+            this.groupBox1.Controls.Add(this.grpboxCreated);
+            this.groupBox1.Controls.Add(this.grpboxProjectFiles);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Controls.Add(this.btnEdit);
+            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.btnClose);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(672, 520);
+            this.groupBox1.TabIndex = 29;
+            this.groupBox1.TabStop = false;
+            // 
+            // btnProjectHelp
+            // 
+            this.btnProjectHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnProjectHelp.Image")));
+            this.btnProjectHelp.Location = new System.Drawing.Point(8, 8);
+            this.btnProjectHelp.Name = "btnProjectHelp";
+            this.btnProjectHelp.Size = new System.Drawing.Size(32, 32);
+            this.btnProjectHelp.TabIndex = 30;
+            this.btnProjectHelp.Click += new System.EventHandler(this.btnProjectHelp_Click);
+            // 
+            // grpboxDescription
+            // 
+            this.grpboxDescription.Controls.Add(this.txtDescription);
+            this.grpboxDescription.Enabled = false;
+            this.grpboxDescription.Location = new System.Drawing.Point(8, 151);
+            this.grpboxDescription.Name = "grpboxDescription";
+            this.grpboxDescription.Size = new System.Drawing.Size(640, 121);
+            this.grpboxDescription.TabIndex = 28;
+            this.grpboxDescription.TabStop = false;
+            this.grpboxDescription.Text = "Project Description";
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDescription.Location = new System.Drawing.Point(16, 16);
+            this.txtDescription.Multiline = true;
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtDescription.Size = new System.Drawing.Size(624, 96);
+            this.txtDescription.TabIndex = 0;
+            // 
+            // grpboxCompany
+            // 
+            this.grpboxCompany.Controls.Add(this.txtCompany);
+            this.grpboxCompany.Enabled = false;
+            this.grpboxCompany.Location = new System.Drawing.Point(8, 97);
+            this.grpboxCompany.Name = "grpboxCompany";
+            this.grpboxCompany.Size = new System.Drawing.Size(640, 48);
+            this.grpboxCompany.TabIndex = 27;
+            this.grpboxCompany.TabStop = false;
+            this.grpboxCompany.Text = "Company";
+            // 
+            // txtCompany
+            // 
+            this.txtCompany.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCompany.Location = new System.Drawing.Point(8, 14);
+            this.txtCompany.MaxLength = 100;
+            this.txtCompany.Name = "txtCompany";
+            this.txtCompany.Size = new System.Drawing.Size(624, 23);
+            this.txtCompany.TabIndex = 0;
+            // 
+            // grpboxProjectId
+            // 
+            this.grpboxProjectId.Controls.Add(this.txtProjectId);
+            this.grpboxProjectId.Enabled = false;
+            this.grpboxProjectId.Location = new System.Drawing.Point(8, 42);
+            this.grpboxProjectId.Name = "grpboxProjectId";
+            this.grpboxProjectId.Size = new System.Drawing.Size(184, 48);
+            this.grpboxProjectId.TabIndex = 0;
+            this.grpboxProjectId.TabStop = false;
+            this.grpboxProjectId.Text = "Project Id";
+            // 
+            // txtProjectId
+            // 
+            this.txtProjectId.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtProjectId.Location = new System.Drawing.Point(8, 16);
+            this.txtProjectId.MaxLength = 20;
+            this.txtProjectId.Name = "txtProjectId";
+            this.txtProjectId.Size = new System.Drawing.Size(166, 23);
+            this.txtProjectId.TabIndex = 0;
+            this.txtProjectId.Leave += new System.EventHandler(this.txtProjectId_Leave);
+            // 
+            // grpboxCreated
+            // 
+            this.grpboxCreated.Controls.Add(this.txtDate);
+            this.grpboxCreated.Controls.Add(this.lblDate);
+            this.grpboxCreated.Controls.Add(this.txtName);
+            this.grpboxCreated.Controls.Add(this.lblName);
+            this.grpboxCreated.Enabled = false;
+            this.grpboxCreated.Location = new System.Drawing.Point(200, 42);
+            this.grpboxCreated.Name = "grpboxCreated";
+            this.grpboxCreated.Size = new System.Drawing.Size(450, 48);
+            this.grpboxCreated.TabIndex = 1;
+            this.grpboxCreated.TabStop = false;
+            this.grpboxCreated.Text = "Created";
+            // 
+            // txtDate
+            // 
+            this.txtDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDate.Location = new System.Drawing.Point(296, 16);
+            this.txtDate.MaxLength = 8;
+            this.txtDate.Name = "txtDate";
+            this.txtDate.Size = new System.Drawing.Size(144, 23);
+            this.txtDate.TabIndex = 3;
+            // 
+            // lblDate
+            // 
+            this.lblDate.Location = new System.Drawing.Point(264, 21);
+            this.lblDate.Name = "lblDate";
+            this.lblDate.Size = new System.Drawing.Size(32, 16);
+            this.lblDate.TabIndex = 2;
+            this.lblDate.Text = "Date";
+            // 
+            // txtName
+            // 
+            this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtName.Location = new System.Drawing.Point(42, 15);
+            this.txtName.MaxLength = 30;
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(222, 23);
+            this.txtName.TabIndex = 1;
+            // 
+            // lblName
+            // 
+            this.lblName.Location = new System.Drawing.Point(7, 21);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(40, 16);
+            this.lblName.TabIndex = 0;
+            this.lblName.Text = "Name";
+            // 
+            // grpboxProjectFiles
+            // 
+            this.grpboxProjectFiles.Controls.Add(this.btnPersonalHelp);
+            this.grpboxProjectFiles.Controls.Add(this.btnPersonalDirectory);
+            this.grpboxProjectFiles.Controls.Add(this.lblLocal);
+            this.grpboxProjectFiles.Controls.Add(this.txtPersonal);
+            this.grpboxProjectFiles.Controls.Add(this.btnSharedHelp);
+            this.grpboxProjectFiles.Controls.Add(this.btnSharedDirectory);
+            this.grpboxProjectFiles.Controls.Add(this.lblShared);
+            this.grpboxProjectFiles.Controls.Add(this.btnRootDirectoryHelp);
+            this.grpboxProjectFiles.Controls.Add(this.btnRootDirectory);
+            this.grpboxProjectFiles.Controls.Add(this.lblRootDirectory);
+            this.grpboxProjectFiles.Controls.Add(this.txtRootDirectory);
+            this.grpboxProjectFiles.Controls.Add(this.txtShared);
+            this.grpboxProjectFiles.Location = new System.Drawing.Point(8, 280);
+            this.grpboxProjectFiles.Name = "grpboxProjectFiles";
+            this.grpboxProjectFiles.Size = new System.Drawing.Size(640, 152);
+            this.grpboxProjectFiles.TabIndex = 29;
+            this.grpboxProjectFiles.TabStop = false;
+            this.grpboxProjectFiles.Text = "Project Files";
+            // 
+            // btnPersonalHelp
+            // 
+            this.btnPersonalHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnPersonalHelp.Image")));
+            this.btnPersonalHelp.Location = new System.Drawing.Point(600, 112);
+            this.btnPersonalHelp.Name = "btnPersonalHelp";
+            this.btnPersonalHelp.Size = new System.Drawing.Size(32, 32);
+            this.btnPersonalHelp.TabIndex = 11;
+            this.btnPersonalHelp.Visible = false;
+            // 
+            // btnPersonalDirectory
+            // 
+            this.btnPersonalDirectory.Enabled = false;
+            this.btnPersonalDirectory.Image = ((System.Drawing.Image)(resources.GetObject("btnPersonalDirectory.Image")));
+            this.btnPersonalDirectory.Location = new System.Drawing.Point(561, 112);
+            this.btnPersonalDirectory.Name = "btnPersonalDirectory";
+            this.btnPersonalDirectory.Size = new System.Drawing.Size(32, 32);
+            this.btnPersonalDirectory.TabIndex = 10;
+            this.btnPersonalDirectory.Click += new System.EventHandler(this.btnPersonalDirectory_Click);
+            // 
+            // lblLocal
+            // 
+            this.lblLocal.Location = new System.Drawing.Point(16, 90);
+            this.lblLocal.Name = "lblLocal";
+            this.lblLocal.Size = new System.Drawing.Size(80, 53);
+            this.lblLocal.TabIndex = 9;
+            this.lblLocal.Text = "Personal Notes And Document Links Directory";
+            // 
+            // txtPersonal
+            // 
+            this.txtPersonal.Enabled = false;
+            this.txtPersonal.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPersonal.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.txtPersonal.Location = new System.Drawing.Point(112, 116);
+            this.txtPersonal.Name = "txtPersonal";
+            this.txtPersonal.Size = new System.Drawing.Size(416, 23);
+            this.txtPersonal.TabIndex = 8;
+            // 
+            // btnSharedHelp
+            // 
+            this.btnSharedHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnSharedHelp.Image")));
+            this.btnSharedHelp.Location = new System.Drawing.Point(601, 44);
+            this.btnSharedHelp.Name = "btnSharedHelp";
+            this.btnSharedHelp.Size = new System.Drawing.Size(32, 32);
+            this.btnSharedHelp.TabIndex = 7;
+            this.btnSharedHelp.Visible = false;
+            // 
+            // btnSharedDirectory
+            // 
+            this.btnSharedDirectory.Enabled = false;
+            this.btnSharedDirectory.Image = ((System.Drawing.Image)(resources.GetObject("btnSharedDirectory.Image")));
+            this.btnSharedDirectory.Location = new System.Drawing.Point(561, 44);
+            this.btnSharedDirectory.Name = "btnSharedDirectory";
+            this.btnSharedDirectory.Size = new System.Drawing.Size(32, 32);
+            this.btnSharedDirectory.TabIndex = 6;
+            this.btnSharedDirectory.Click += new System.EventHandler(this.btnSharedDirectory_Click);
+            // 
+            // lblShared
+            // 
+            this.lblShared.Location = new System.Drawing.Point(16, 44);
+            this.lblShared.Name = "lblShared";
+            this.lblShared.Size = new System.Drawing.Size(80, 40);
+            this.lblShared.TabIndex = 4;
+            this.lblShared.Text = "Shared Notes And Document Links Directory";
+            // 
+            // btnRootDirectoryHelp
+            // 
+            this.btnRootDirectoryHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnRootDirectoryHelp.Image")));
+            this.btnRootDirectoryHelp.Location = new System.Drawing.Point(601, 10);
+            this.btnRootDirectoryHelp.Name = "btnRootDirectoryHelp";
+            this.btnRootDirectoryHelp.Size = new System.Drawing.Size(32, 32);
+            this.btnRootDirectoryHelp.TabIndex = 3;
+            this.btnRootDirectoryHelp.Visible = false;
+            // 
+            // btnRootDirectory
+            // 
+            this.btnRootDirectory.Enabled = false;
+            this.btnRootDirectory.Image = ((System.Drawing.Image)(resources.GetObject("btnRootDirectory.Image")));
+            this.btnRootDirectory.Location = new System.Drawing.Point(561, 10);
+            this.btnRootDirectory.Name = "btnRootDirectory";
+            this.btnRootDirectory.Size = new System.Drawing.Size(32, 32);
+            this.btnRootDirectory.TabIndex = 2;
+            this.btnRootDirectory.Click += new System.EventHandler(this.btnRootDirectory_Click);
+            // 
+            // lblRootDirectory
+            // 
+            this.lblRootDirectory.Location = new System.Drawing.Point(16, 19);
+            this.lblRootDirectory.Name = "lblRootDirectory";
+            this.lblRootDirectory.Size = new System.Drawing.Size(88, 16);
+            this.lblRootDirectory.TabIndex = 0;
+            this.lblRootDirectory.Text = "Project Directory";
+            // 
+            // txtRootDirectory
+            // 
+            this.txtRootDirectory.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.txtRootDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtRootDirectory.Location = new System.Drawing.Point(113, 16);
+            this.txtRootDirectory.Name = "txtRootDirectory";
+            this.txtRootDirectory.Size = new System.Drawing.Size(416, 23);
+            this.txtRootDirectory.TabIndex = 0;
+            // 
+            // txtShared
+            // 
+            this.txtShared.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtShared.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.txtShared.Location = new System.Drawing.Point(112, 48);
+            this.txtShared.Name = "txtShared";
+            this.txtShared.Size = new System.Drawing.Size(416, 23);
+            this.txtShared.TabIndex = 0;
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(41, 16);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(500, 24);
+            this.lblTitle.TabIndex = 26;
+            this.lblTitle.Text = "Open Or Create A Project";
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Location = new System.Drawing.Point(208, 440);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(96, 32);
+            this.btnEdit.TabIndex = 7;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Enabled = false;
+            this.btnSave.Location = new System.Drawing.Point(304, 440);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(96, 32);
+            this.btnSave.TabIndex = 5;
+            this.btnSave.Text = "Save";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Enabled = false;
+            this.btnCancel.Location = new System.Drawing.Point(400, 440);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(96, 32);
+            this.btnCancel.TabIndex = 6;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(560, 480);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(96, 32);
+            this.btnClose.TabIndex = 8;
+            this.btnClose.Text = "Close";
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // uc_project
+            // 
+            this.Controls.Add(this.panel1);
+            this.Name = "uc_project";
+            this.Size = new System.Drawing.Size(672, 520);
+            this.Resize += new System.EventHandler(this.uc_project_Resize);
+            this.panel1.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.grpboxDescription.ResumeLayout(false);
+            this.grpboxDescription.PerformLayout();
+            this.grpboxCompany.ResumeLayout(false);
+            this.grpboxCompany.PerformLayout();
+            this.grpboxProjectId.ResumeLayout(false);
+            this.grpboxProjectId.PerformLayout();
+            this.grpboxCreated.ResumeLayout(false);
+            this.grpboxCreated.PerformLayout();
+            this.grpboxProjectFiles.ResumeLayout(false);
+            this.grpboxProjectFiles.PerformLayout();
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -2634,6 +2648,16 @@ namespace FIA_Biosum_Manager
 
 
  		}
+
+        private void btnProjectHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "NEWPROJECT", "NEWPROJECT" });
+        }
+
 
 
 		
