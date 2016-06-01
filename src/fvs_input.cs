@@ -4340,6 +4340,25 @@ namespace FIA_Biosum_Manager
                 return dblSI;
             }
 
+            /// <summary>
+            ///--- SITE INDEX RED ALDER - Harrington
+		    ///    Height Growth and Site Index Curves for Red Alder
+		    ///    Research Paper:  PNW-358 1986 p.5
+            /// ---Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            ///OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            ///<param name="p_intSIDiaAge"></param>
+            ///<param name="p_intSIHtFt"></param>
+            /// </summary>
+            private double SI_RA1(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                double a = 54.185 - 4.61694 * p_intSIDiaAge + 0.11065 * Math.Pow(p_intSIDiaAge, 2) - 0.0007633 * Math.Pow(p_intSIDiaAge, 3);
+                double b = 1.25934 - (0.012989) * p_intSIDiaAge + 3.522 * Math.Pow((1.0 / p_intSIDiaAge), 3);
+                dblSI = a + b * p_intSIHtFt;
+                dblSI = dblSI + 0.49;
+                return dblSI;
+            }
+
 
 		}
 
