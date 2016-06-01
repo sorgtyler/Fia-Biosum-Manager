@@ -4290,7 +4290,7 @@ namespace FIA_Biosum_Manager
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
             /// <param name="p_strHabTypeCd">Habitat type code for condition</param>
-            /// @ToDo: Need to add ConditionClassBasalAreaPerAcre as a class-level variable so we can feed it to equation
+            /// @ToDo: Need to add ConditionClassHabTypeCd as a class-level variable so we can feed it to equation
             private double SI_DF2(int p_intSIDiaAge, int p_intSIHtFt, string p_strHabTypeCd)
             {
                 double dblSI = 0;
@@ -4319,6 +4319,24 @@ namespace FIA_Biosum_Manager
                 }
                 double dblLog = (Math.Pow(Math.Log10(p_intSIDiaAge),2));
                 dblSI = (38.787 - (2.805 * dblLog) + (0.0216 * p_intSIDiaAge * Math.Log10(p_intSIDiaAge)) + (0.4948 * intC1 + 0.4305 * intC2 + 0.3964 * intC3) * p_intSIHtFt + (25.315 * intC1 + 28.415 * intC2 + 30.008 * intC3) * p_intSIDiaAge / p_intSIHtFt) + 4.5;
+                return dblSI;
+            }
+
+            /// <summary>
+            /// This equation for Interior Western Red Cedar is from Hegyi and others
+            /// Site Index Equations and curves for the Major Tree Species in B.C.
+            /// -- B.C. Min of Forest Inventory Report 189(1) Nov 1979, Rev Sept 1981, p.6
+            /// -- Site index at total tree age of 100 -- Equation #272
+            /// ---Derived from Kurt's PL/SQL
+            ///OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            ///<param name="p_intSIDiaAge"></param>
+            ///<param name="p_intSIHtFt"></param>
+            /// </summary>
+            private double THPL03(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                // PL/SQL:  HT/(1.3283*(1-EXP(-0.0174*AGE))**1.4711);
+                dblSI = p_intSIHtFt/(1.3283 * Math.Pow(1 - Math.Exp(-0.0174*p_intSIDiaAge), 1.4711));
                 return dblSI;
             }
 
