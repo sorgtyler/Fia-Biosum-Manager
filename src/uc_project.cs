@@ -117,8 +117,8 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Button btnClose;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private Button btnProjectHelp;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button btnHelp;
 		
 
 		/// <summary> 
@@ -331,7 +331,7 @@ namespace FIA_Biosum_Manager
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_project));
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnProjectHelp = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.grpboxDescription = new System.Windows.Forms.GroupBox();
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.grpboxCompany = new System.Windows.Forms.GroupBox();
@@ -361,6 +361,7 @@ namespace FIA_Biosum_Manager
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.panel1.SuspendLayout();
@@ -384,7 +385,7 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnProjectHelp);
+            this.groupBox1.Controls.Add(this.btnHelp);
             this.groupBox1.Controls.Add(this.grpboxDescription);
             this.groupBox1.Controls.Add(this.grpboxCompany);
             this.groupBox1.Controls.Add(this.grpboxProjectId);
@@ -395,6 +396,7 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.btnClose);
+            this.groupBox1.Controls.Add(this.btnHelp);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -402,14 +404,15 @@ namespace FIA_Biosum_Manager
             this.groupBox1.TabIndex = 29;
             this.groupBox1.TabStop = false;
             // 
-            // btnProjectHelp
+            // btnHelp
             // 
-            this.btnProjectHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnProjectHelp.Image")));
-            this.btnProjectHelp.Location = new System.Drawing.Point(8, 8);
-            this.btnProjectHelp.Name = "btnProjectHelp";
-            this.btnProjectHelp.Size = new System.Drawing.Size(32, 32);
-            this.btnProjectHelp.TabIndex = 30;
-            this.btnProjectHelp.Click += new System.EventHandler(this.btnProjectHelp_Click);
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(112, 440);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 31;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // grpboxDescription
             // 
@@ -655,7 +658,7 @@ namespace FIA_Biosum_Manager
             // 
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.ForeColor = System.Drawing.Color.Green;
-            this.lblTitle.Location = new System.Drawing.Point(41, 16);
+            this.lblTitle.Location = new System.Drawing.Point(8, 16);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(500, 24);
             this.lblTitle.TabIndex = 26;
@@ -2197,6 +2200,8 @@ namespace FIA_Biosum_Manager
 			this.btnSave.Left = this.btnCancel.Left - this.btnCancel.Width;
 			this.btnEdit.Top = this.btnCancel.Top;
 			this.btnEdit.Left = this.btnSave.Left - this.btnSave.Width;
+            this.btnHelp.Top = this.btnCancel.Top;
+            this.btnHelp.Left = this.btnEdit.Left - this.btnEdit.Width;
 
 		}
 
@@ -2649,7 +2654,7 @@ namespace FIA_Biosum_Manager
 
  		}
 
-        private void btnProjectHelp_Click(object sender, EventArgs e)
+        private void btnHelp_Click(object sender, EventArgs e)
         {
             if (m_oHelp == null)
             {
