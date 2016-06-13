@@ -17,24 +17,7 @@ namespace FIA_Biosum_Manager
 	public class uc_plot_input : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
-		public System.Windows.Forms.Label lblTitle;
-		private System.Windows.Forms.GroupBox grpboxInvType;
-		private System.Windows.Forms.RadioButton rdoFIADB;
-		private System.Windows.Forms.RadioButton rdoIDB;
-		private System.Windows.Forms.Button btnInvTypeHelp;
-		private System.Windows.Forms.Button btnInvTypePrevious;
-		private System.Windows.Forms.Button btnInvTypeNext;
-		private System.Windows.Forms.Button btnInvTypeCancel;
-		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.TextBox txtPlot;
-		private System.Windows.Forms.Button btnPlotBrowse;
-		private System.Windows.Forms.GroupBox groupBox4;
-		private System.Windows.Forms.Button btnCondBrowse;
-		private System.Windows.Forms.TextBox txtCond;
-		private System.Windows.Forms.GroupBox groupBox5;
-		private System.Windows.Forms.Button btnTreeBrowse;
-		private System.Windows.Forms.TextBox txtTree;
+        public System.Windows.Forms.Label lblTitle;
 		private System.Windows.Forms.RadioButton rdoFilterNone;
 		private System.Windows.Forms.RadioButton rdoFilterByMenu;
 		private System.Windows.Forms.RadioButton rdoFilterByFile;
@@ -64,8 +47,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnFilterByStatePrevious;
 		private System.Windows.Forms.Button btnFilterByStateNext;
 		private System.Windows.Forms.Button btnFilterByStateCancel;
-		private System.Windows.Forms.Button btnFilterFinish;
-		private System.Windows.Forms.Button btnInvTypeFinish;
+        private System.Windows.Forms.Button btnFilterFinish;
 		private System.Windows.Forms.GroupBox grpboxFilterByState;
 		private string m_strPlotTxtInputFile;
 		private string m_strCondTxtInputFile;
@@ -120,16 +102,7 @@ namespace FIA_Biosum_Manager
 		private string m_strPlotIdList="";
 		private System.Windows.Forms.GroupBox groupBox7;
 		private System.Windows.Forms.CheckBox chkForested;
-		private System.Windows.Forms.CheckBox chkNonForested;
-		private System.Windows.Forms.RadioButton rdoAccess;
-		private System.Windows.Forms.RadioButton rdoText;
-		private System.Windows.Forms.GroupBox grpInputDataSourceType;
-		private System.Windows.Forms.GroupBox grpboxFIADBTxtInput;
-		private System.Windows.Forms.Button btnFIADBTxtInputFinish;
-		private System.Windows.Forms.Button btnFIADBTxtInputHelp;
-		private System.Windows.Forms.Button btnFIADBTxtInputPrevious;
-		private System.Windows.Forms.Button btnFIADBTxtInputNext;
-		private System.Windows.Forms.Button btnFIADBTxtInputCancel;
+        private System.Windows.Forms.CheckBox chkNonForested;
 		private bool m_bAllCountiesSelected=true;
 		private bool m_bAllPlotsSelected=true;
 		private string m_strStateCountySQL;
@@ -170,22 +143,7 @@ namespace FIA_Biosum_Manager
 		private int m_intAddedCondRows=0;
 		private int m_intAddedTreeRows=0;
 		private int m_intAddedSiteTreeRows=0;
-		private int m_intAddedTreeRegionalBiomassRows=0;
-		private System.Windows.Forms.GroupBox groupBox6;
-		private System.Windows.Forms.Button btnTreeRegionalBiomassBrowse;
-		private System.Windows.Forms.TextBox txtTreeRegionalBiomass;
-		private System.Windows.Forms.GroupBox groupBox11;
-		private System.Windows.Forms.Button btnPopEvalBrowse;
-		private System.Windows.Forms.TextBox txtPopEval;
-		private System.Windows.Forms.GroupBox groupBox12;
-		private System.Windows.Forms.Button btnPopStratumBrowse;
-		private System.Windows.Forms.TextBox txtPopStratum;
-		private System.Windows.Forms.GroupBox groupBox13;
-		private System.Windows.Forms.Button btnPpsaBrowse;
-		private System.Windows.Forms.TextBox txtPpsa;
-		private System.Windows.Forms.GroupBox groupBox14;
-		private System.Windows.Forms.Button btnPopEstUnitBrowse;
-		private System.Windows.Forms.TextBox txtPopEstUnit;
+        private int m_intAddedTreeRegionalBiomassRows = 0;
 		private System.Windows.Forms.GroupBox grpboxFIADBInv;
 		private System.Windows.Forms.Button btnFIADBInvAppend;
 		private System.Windows.Forms.ListView lstFIADBInv;
@@ -227,10 +185,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox groupBox25;
 		private System.Windows.Forms.TextBox txtMDBSiteTreeTable;
 		private System.Windows.Forms.Button btnMDBSiteTreeBrowse;
-		private System.Windows.Forms.TextBox txtMDBSiteTree;
-		private System.Windows.Forms.GroupBox groupBox26;
-		private System.Windows.Forms.Button btnSiteTreeBrowse;
-		private System.Windows.Forms.TextBox txtSiteTree;
+        private System.Windows.Forms.TextBox txtMDBSiteTree;
         private frmDialog _frmDialog = null;
         private Label label2;
         private ComboBox cmbCondPropPercent;
@@ -360,6 +315,9 @@ namespace FIA_Biosum_Manager
             this.btnFilterNext = new System.Windows.Forms.Button();
             this.btnFilterCancel = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cmbCondPropPercent = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.chkNonForested = new System.Windows.Forms.CheckBox();
             this.chkForested = new System.Windows.Forms.CheckBox();
             this.btnFilterByFileBrowse = new System.Windows.Forms.Button();
@@ -367,51 +325,6 @@ namespace FIA_Biosum_Manager
             this.rdoFilterByFile = new System.Windows.Forms.RadioButton();
             this.rdoFilterByMenu = new System.Windows.Forms.RadioButton();
             this.rdoFilterNone = new System.Windows.Forms.RadioButton();
-            this.grpboxFIADBTxtInput = new System.Windows.Forms.GroupBox();
-            this.groupBox26 = new System.Windows.Forms.GroupBox();
-            this.btnSiteTreeBrowse = new System.Windows.Forms.Button();
-            this.txtSiteTree = new System.Windows.Forms.TextBox();
-            this.groupBox14 = new System.Windows.Forms.GroupBox();
-            this.btnPopEstUnitBrowse = new System.Windows.Forms.Button();
-            this.txtPopEstUnit = new System.Windows.Forms.TextBox();
-            this.groupBox13 = new System.Windows.Forms.GroupBox();
-            this.btnPpsaBrowse = new System.Windows.Forms.Button();
-            this.txtPpsa = new System.Windows.Forms.TextBox();
-            this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.btnPopStratumBrowse = new System.Windows.Forms.Button();
-            this.txtPopStratum = new System.Windows.Forms.TextBox();
-            this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.btnPopEvalBrowse = new System.Windows.Forms.Button();
-            this.txtPopEval = new System.Windows.Forms.TextBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.btnTreeRegionalBiomassBrowse = new System.Windows.Forms.Button();
-            this.txtTreeRegionalBiomass = new System.Windows.Forms.TextBox();
-            this.btnFIADBTxtInputFinish = new System.Windows.Forms.Button();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.btnTreeBrowse = new System.Windows.Forms.Button();
-            this.txtTree = new System.Windows.Forms.TextBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.btnCondBrowse = new System.Windows.Forms.Button();
-            this.txtCond = new System.Windows.Forms.TextBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btnPlotBrowse = new System.Windows.Forms.Button();
-            this.txtPlot = new System.Windows.Forms.TextBox();
-            this.btnFIADBTxtInputHelp = new System.Windows.Forms.Button();
-            this.btnFIADBTxtInputPrevious = new System.Windows.Forms.Button();
-            this.btnFIADBTxtInputNext = new System.Windows.Forms.Button();
-            this.btnFIADBTxtInputCancel = new System.Windows.Forms.Button();
-            this.grpboxInvType = new System.Windows.Forms.GroupBox();
-            this.btnInvTypeFinish = new System.Windows.Forms.Button();
-            this.btnInvTypeHelp = new System.Windows.Forms.Button();
-            this.btnInvTypePrevious = new System.Windows.Forms.Button();
-            this.btnInvTypeNext = new System.Windows.Forms.Button();
-            this.btnInvTypeCancel = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.grpInputDataSourceType = new System.Windows.Forms.GroupBox();
-            this.rdoText = new System.Windows.Forms.RadioButton();
-            this.rdoAccess = new System.Windows.Forms.RadioButton();
-            this.rdoFIADB = new System.Windows.Forms.RadioButton();
-            this.rdoIDB = new System.Windows.Forms.RadioButton();
             this.lblTitle = new System.Windows.Forms.Label();
             this.grpboxFilterByPlot = new System.Windows.Forms.GroupBox();
             this.btnFilterByPlotFinish = new System.Windows.Forms.Button();
@@ -422,9 +335,6 @@ namespace FIA_Biosum_Manager
             this.btnFilterByPlotPrevious = new System.Windows.Forms.Button();
             this.btnFilterByPlotNext = new System.Windows.Forms.Button();
             this.btnFilterByPlotCancel = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.cmbCondPropPercent = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxMDBFiadbInput.SuspendLayout();
             this.groupBox24.SuspendLayout();
@@ -447,19 +357,6 @@ namespace FIA_Biosum_Manager
             this.grpboxFilterByState.SuspendLayout();
             this.grpboxFilter.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.grpboxFIADBTxtInput.SuspendLayout();
-            this.groupBox26.SuspendLayout();
-            this.groupBox14.SuspendLayout();
-            this.groupBox13.SuspendLayout();
-            this.groupBox12.SuspendLayout();
-            this.groupBox11.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.grpboxInvType.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.grpInputDataSourceType.SuspendLayout();
             this.grpboxFilterByPlot.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -471,14 +368,12 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Controls.Add(this.grpboxMDBInput);
             this.groupBox1.Controls.Add(this.grpboxFilterByState);
             this.groupBox1.Controls.Add(this.grpboxFilter);
-            this.groupBox1.Controls.Add(this.grpboxFIADBTxtInput);
-            this.groupBox1.Controls.Add(this.grpboxInvType);
             this.groupBox1.Controls.Add(this.lblTitle);
             this.groupBox1.Controls.Add(this.grpboxFilterByPlot);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(704, 3500);
+            this.groupBox1.Size = new System.Drawing.Size(704, 2700);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -499,7 +394,7 @@ namespace FIA_Biosum_Manager
             this.grpboxMDBFiadbInput.Controls.Add(this.btnMDBFiadbInputPrev);
             this.grpboxMDBFiadbInput.Controls.Add(this.btnMDBFiadbInputNext);
             this.grpboxMDBFiadbInput.Controls.Add(this.btnMDBFiadbInputCancel);
-            this.grpboxMDBFiadbInput.Location = new System.Drawing.Point(16, 3028);
+            this.grpboxMDBFiadbInput.Location = new System.Drawing.Point(15, 56);
             this.grpboxMDBFiadbInput.Name = "grpboxMDBFiadbInput";
             this.grpboxMDBFiadbInput.Size = new System.Drawing.Size(672, 360);
             this.grpboxMDBFiadbInput.TabIndex = 35;
@@ -740,7 +635,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFIADBInv.Controls.Add(this.btnFIADBInvPrevious);
             this.grpboxFIADBInv.Controls.Add(this.btnFIADBInvNext);
             this.grpboxFIADBInv.Controls.Add(this.btnFIADBInvCancel);
-            this.grpboxFIADBInv.Location = new System.Drawing.Point(16, 2660);
+            this.grpboxFIADBInv.Location = new System.Drawing.Point(16, 2284);
             this.grpboxFIADBInv.Name = "grpboxFIADBInv";
             this.grpboxFIADBInv.Size = new System.Drawing.Size(672, 360);
             this.grpboxFIADBInv.TabIndex = 34;
@@ -815,7 +710,7 @@ namespace FIA_Biosum_Manager
             this.grpboxIDBInv.Controls.Add(this.btnIDBInvPrevious);
             this.grpboxIDBInv.Controls.Add(this.btnIDBInvNext);
             this.grpboxIDBInv.Controls.Add(this.btnIDBInvCancel);
-            this.grpboxIDBInv.Location = new System.Drawing.Point(16, 2284);
+            this.grpboxIDBInv.Location = new System.Drawing.Point(16, 1916);
             this.grpboxIDBInv.Name = "grpboxIDBInv";
             this.grpboxIDBInv.Size = new System.Drawing.Size(672, 360);
             this.grpboxIDBInv.TabIndex = 33;
@@ -893,7 +788,7 @@ namespace FIA_Biosum_Manager
             this.grpboxMDBInput.Controls.Add(this.btnMDBInputPrevious);
             this.grpboxMDBInput.Controls.Add(this.btnMDBInputNext);
             this.grpboxMDBInput.Controls.Add(this.btnMDBInputCancel);
-            this.grpboxMDBInput.Location = new System.Drawing.Point(16, 1916);
+            this.grpboxMDBInput.Location = new System.Drawing.Point(16, 1540);
             this.grpboxMDBInput.Name = "grpboxMDBInput";
             this.grpboxMDBInput.Size = new System.Drawing.Size(672, 360);
             this.grpboxMDBInput.TabIndex = 0;
@@ -1103,7 +998,8 @@ namespace FIA_Biosum_Manager
             this.grpboxFilterByState.Controls.Add(this.btnFilterByStatePrevious);
             this.grpboxFilterByState.Controls.Add(this.btnFilterByStateNext);
             this.grpboxFilterByState.Controls.Add(this.btnFilterByStateCancel);
-            this.grpboxFilterByState.Location = new System.Drawing.Point(16, 1164);
+            this.grpboxFilterByState.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.grpboxFilterByState.Location = new System.Drawing.Point(16, 796);
             this.grpboxFilterByState.Name = "grpboxFilterByState";
             this.grpboxFilterByState.Size = new System.Drawing.Size(672, 360);
             this.grpboxFilterByState.TabIndex = 31;
@@ -1195,7 +1091,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFilter.Controls.Add(this.btnFilterNext);
             this.grpboxFilter.Controls.Add(this.btnFilterCancel);
             this.grpboxFilter.Controls.Add(this.groupBox7);
-            this.grpboxFilter.Location = new System.Drawing.Point(16, 796);
+            this.grpboxFilter.Location = new System.Drawing.Point(16, 424);
             this.grpboxFilter.Name = "grpboxFilter";
             this.grpboxFilter.Size = new System.Drawing.Size(672, 360);
             this.grpboxFilter.TabIndex = 30;
@@ -1265,6 +1161,33 @@ namespace FIA_Biosum_Manager
             this.groupBox7.Size = new System.Drawing.Size(519, 249);
             this.groupBox7.TabIndex = 1;
             this.groupBox7.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(270, 217);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(191, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "to change from forested to nonsampled";
+            // 
+            // cmbCondPropPercent
+            // 
+            this.cmbCondPropPercent.FormattingEnabled = true;
+            this.cmbCondPropPercent.Location = new System.Drawing.Point(200, 214);
+            this.cmbCondPropPercent.Name = "cmbCondPropPercent";
+            this.cmbCondPropPercent.Size = new System.Drawing.Size(52, 21);
+            this.cmbCondPropPercent.TabIndex = 8;
+            this.cmbCondPropPercent.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbCondPropPercent_KeyPress);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 217);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(188, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Condition proportion percent  less than";
             // 
             // chkNonForested
             // 
@@ -1336,450 +1259,6 @@ namespace FIA_Biosum_Manager
             this.rdoFilterNone.Text = "Input All Plots";
             this.rdoFilterNone.Click += new System.EventHandler(this.rdoFilterNone_Click);
             // 
-            // grpboxFIADBTxtInput
-            // 
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox26);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox14);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox13);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox12);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox11);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox6);
-            this.grpboxFIADBTxtInput.Controls.Add(this.btnFIADBTxtInputFinish);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox5);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox4);
-            this.grpboxFIADBTxtInput.Controls.Add(this.groupBox2);
-            this.grpboxFIADBTxtInput.Controls.Add(this.btnFIADBTxtInputHelp);
-            this.grpboxFIADBTxtInput.Controls.Add(this.btnFIADBTxtInputPrevious);
-            this.grpboxFIADBTxtInput.Controls.Add(this.btnFIADBTxtInputNext);
-            this.grpboxFIADBTxtInput.Controls.Add(this.btnFIADBTxtInputCancel);
-            this.grpboxFIADBTxtInput.Location = new System.Drawing.Point(16, 424);
-            this.grpboxFIADBTxtInput.Name = "grpboxFIADBTxtInput";
-            this.grpboxFIADBTxtInput.Size = new System.Drawing.Size(672, 360);
-            this.grpboxFIADBTxtInput.TabIndex = 29;
-            this.grpboxFIADBTxtInput.TabStop = false;
-            this.grpboxFIADBTxtInput.Text = "FIADB Text Input";
-            // 
-            // groupBox26
-            // 
-            this.groupBox26.Controls.Add(this.btnSiteTreeBrowse);
-            this.groupBox26.Controls.Add(this.txtSiteTree);
-            this.groupBox26.Location = new System.Drawing.Point(24, 269);
-            this.groupBox26.Name = "groupBox26";
-            this.groupBox26.Size = new System.Drawing.Size(313, 56);
-            this.groupBox26.TabIndex = 42;
-            this.groupBox26.TabStop = false;
-            this.groupBox26.Text = "Site Tree Data";
-            // 
-            // btnSiteTreeBrowse
-            // 
-            this.btnSiteTreeBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnSiteTreeBrowse.Image")));
-            this.btnSiteTreeBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnSiteTreeBrowse.Name = "btnSiteTreeBrowse";
-            this.btnSiteTreeBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnSiteTreeBrowse.TabIndex = 1;
-            this.btnSiteTreeBrowse.Click += new System.EventHandler(this.btnSiteTreeBrowse_Click);
-            // 
-            // txtSiteTree
-            // 
-            this.txtSiteTree.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSiteTree.Location = new System.Drawing.Point(17, 19);
-            this.txtSiteTree.Name = "txtSiteTree";
-            this.txtSiteTree.Size = new System.Drawing.Size(247, 26);
-            this.txtSiteTree.TabIndex = 0;
-            // 
-            // groupBox14
-            // 
-            this.groupBox14.Controls.Add(this.btnPopEstUnitBrowse);
-            this.groupBox14.Controls.Add(this.txtPopEstUnit);
-            this.groupBox14.Location = new System.Drawing.Point(344, 81);
-            this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(313, 56);
-            this.groupBox14.TabIndex = 41;
-            this.groupBox14.TabStop = false;
-            this.groupBox14.Text = "Population Estimation Unit";
-            // 
-            // btnPopEstUnitBrowse
-            // 
-            this.btnPopEstUnitBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnPopEstUnitBrowse.Image")));
-            this.btnPopEstUnitBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnPopEstUnitBrowse.Name = "btnPopEstUnitBrowse";
-            this.btnPopEstUnitBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnPopEstUnitBrowse.TabIndex = 1;
-            this.btnPopEstUnitBrowse.Click += new System.EventHandler(this.btnPopEstUnitBrowse_Click);
-            // 
-            // txtPopEstUnit
-            // 
-            this.txtPopEstUnit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPopEstUnit.Location = new System.Drawing.Point(17, 19);
-            this.txtPopEstUnit.Name = "txtPopEstUnit";
-            this.txtPopEstUnit.Size = new System.Drawing.Size(247, 26);
-            this.txtPopEstUnit.TabIndex = 0;
-            // 
-            // groupBox13
-            // 
-            this.groupBox13.Controls.Add(this.btnPpsaBrowse);
-            this.groupBox13.Controls.Add(this.txtPpsa);
-            this.groupBox13.Location = new System.Drawing.Point(344, 207);
-            this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(313, 56);
-            this.groupBox13.TabIndex = 40;
-            this.groupBox13.TabStop = false;
-            this.groupBox13.Text = "Population Plot Stratum Assignment";
-            // 
-            // btnPpsaBrowse
-            // 
-            this.btnPpsaBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnPpsaBrowse.Image")));
-            this.btnPpsaBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnPpsaBrowse.Name = "btnPpsaBrowse";
-            this.btnPpsaBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnPpsaBrowse.TabIndex = 1;
-            this.btnPpsaBrowse.Click += new System.EventHandler(this.btnPpsaBrowse_Click);
-            // 
-            // txtPpsa
-            // 
-            this.txtPpsa.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPpsa.Location = new System.Drawing.Point(17, 19);
-            this.txtPpsa.Name = "txtPpsa";
-            this.txtPpsa.Size = new System.Drawing.Size(247, 26);
-            this.txtPpsa.TabIndex = 0;
-            // 
-            // groupBox12
-            // 
-            this.groupBox12.Controls.Add(this.btnPopStratumBrowse);
-            this.groupBox12.Controls.Add(this.txtPopStratum);
-            this.groupBox12.Location = new System.Drawing.Point(344, 143);
-            this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(313, 56);
-            this.groupBox12.TabIndex = 39;
-            this.groupBox12.TabStop = false;
-            this.groupBox12.Text = "Population Stratum";
-            // 
-            // btnPopStratumBrowse
-            // 
-            this.btnPopStratumBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnPopStratumBrowse.Image")));
-            this.btnPopStratumBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnPopStratumBrowse.Name = "btnPopStratumBrowse";
-            this.btnPopStratumBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnPopStratumBrowse.TabIndex = 1;
-            this.btnPopStratumBrowse.Click += new System.EventHandler(this.btnPopStratumBrowse_Click);
-            // 
-            // txtPopStratum
-            // 
-            this.txtPopStratum.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPopStratum.Location = new System.Drawing.Point(17, 19);
-            this.txtPopStratum.Name = "txtPopStratum";
-            this.txtPopStratum.Size = new System.Drawing.Size(247, 26);
-            this.txtPopStratum.TabIndex = 0;
-            // 
-            // groupBox11
-            // 
-            this.groupBox11.Controls.Add(this.btnPopEvalBrowse);
-            this.groupBox11.Controls.Add(this.txtPopEval);
-            this.groupBox11.Location = new System.Drawing.Point(344, 19);
-            this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(313, 56);
-            this.groupBox11.TabIndex = 38;
-            this.groupBox11.TabStop = false;
-            this.groupBox11.Text = "Population Evaluation";
-            // 
-            // btnPopEvalBrowse
-            // 
-            this.btnPopEvalBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnPopEvalBrowse.Image")));
-            this.btnPopEvalBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnPopEvalBrowse.Name = "btnPopEvalBrowse";
-            this.btnPopEvalBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnPopEvalBrowse.TabIndex = 1;
-            this.btnPopEvalBrowse.Click += new System.EventHandler(this.btnPopEvalBrowse_Click);
-            // 
-            // txtPopEval
-            // 
-            this.txtPopEval.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPopEval.Location = new System.Drawing.Point(17, 19);
-            this.txtPopEval.Name = "txtPopEval";
-            this.txtPopEval.Size = new System.Drawing.Size(247, 26);
-            this.txtPopEval.TabIndex = 0;
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.btnTreeRegionalBiomassBrowse);
-            this.groupBox6.Controls.Add(this.txtTreeRegionalBiomass);
-            this.groupBox6.Location = new System.Drawing.Point(23, 207);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(313, 56);
-            this.groupBox6.TabIndex = 37;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Tree Regional Biomass Data";
-            // 
-            // btnTreeRegionalBiomassBrowse
-            // 
-            this.btnTreeRegionalBiomassBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnTreeRegionalBiomassBrowse.Image")));
-            this.btnTreeRegionalBiomassBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnTreeRegionalBiomassBrowse.Name = "btnTreeRegionalBiomassBrowse";
-            this.btnTreeRegionalBiomassBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnTreeRegionalBiomassBrowse.TabIndex = 1;
-            this.btnTreeRegionalBiomassBrowse.Click += new System.EventHandler(this.btnTreeRegionalBiomassBrowse_Click);
-            // 
-            // txtTreeRegionalBiomass
-            // 
-            this.txtTreeRegionalBiomass.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTreeRegionalBiomass.Location = new System.Drawing.Point(17, 19);
-            this.txtTreeRegionalBiomass.Name = "txtTreeRegionalBiomass";
-            this.txtTreeRegionalBiomass.Size = new System.Drawing.Size(247, 26);
-            this.txtTreeRegionalBiomass.TabIndex = 0;
-            // 
-            // btnFIADBTxtInputFinish
-            // 
-            this.btnFIADBTxtInputFinish.Enabled = false;
-            this.btnFIADBTxtInputFinish.Location = new System.Drawing.Point(584, 326);
-            this.btnFIADBTxtInputFinish.Name = "btnFIADBTxtInputFinish";
-            this.btnFIADBTxtInputFinish.Size = new System.Drawing.Size(72, 24);
-            this.btnFIADBTxtInputFinish.TabIndex = 36;
-            this.btnFIADBTxtInputFinish.Text = "Append";
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.btnTreeBrowse);
-            this.groupBox5.Controls.Add(this.txtTree);
-            this.groupBox5.Location = new System.Drawing.Point(24, 143);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(312, 56);
-            this.groupBox5.TabIndex = 30;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Tree Data";
-            // 
-            // btnTreeBrowse
-            // 
-            this.btnTreeBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnTreeBrowse.Image")));
-            this.btnTreeBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnTreeBrowse.Name = "btnTreeBrowse";
-            this.btnTreeBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnTreeBrowse.TabIndex = 1;
-            this.btnTreeBrowse.Click += new System.EventHandler(this.btnTreeBrowse_Click);
-            // 
-            // txtTree
-            // 
-            this.txtTree.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTree.Location = new System.Drawing.Point(17, 19);
-            this.txtTree.Name = "txtTree";
-            this.txtTree.Size = new System.Drawing.Size(247, 26);
-            this.txtTree.TabIndex = 0;
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.btnCondBrowse);
-            this.groupBox4.Controls.Add(this.txtCond);
-            this.groupBox4.Location = new System.Drawing.Point(24, 80);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(312, 57);
-            this.groupBox4.TabIndex = 29;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Condition Data";
-            // 
-            // btnCondBrowse
-            // 
-            this.btnCondBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnCondBrowse.Image")));
-            this.btnCondBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnCondBrowse.Name = "btnCondBrowse";
-            this.btnCondBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnCondBrowse.TabIndex = 1;
-            this.btnCondBrowse.Click += new System.EventHandler(this.btnCondBrowse_Click);
-            // 
-            // txtCond
-            // 
-            this.txtCond.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCond.Location = new System.Drawing.Point(17, 20);
-            this.txtCond.Name = "txtCond";
-            this.txtCond.Size = new System.Drawing.Size(247, 26);
-            this.txtCond.TabIndex = 0;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.btnPlotBrowse);
-            this.groupBox2.Controls.Add(this.txtPlot);
-            this.groupBox2.Location = new System.Drawing.Point(24, 17);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(312, 58);
-            this.groupBox2.TabIndex = 28;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Plot Data";
-            // 
-            // btnPlotBrowse
-            // 
-            this.btnPlotBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnPlotBrowse.Image")));
-            this.btnPlotBrowse.Location = new System.Drawing.Point(272, 16);
-            this.btnPlotBrowse.Name = "btnPlotBrowse";
-            this.btnPlotBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnPlotBrowse.TabIndex = 1;
-            this.btnPlotBrowse.Click += new System.EventHandler(this.btnPlotBrowse_Click);
-            // 
-            // txtPlot
-            // 
-            this.txtPlot.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPlot.Location = new System.Drawing.Point(17, 20);
-            this.txtPlot.Name = "txtPlot";
-            this.txtPlot.Size = new System.Drawing.Size(247, 26);
-            this.txtPlot.TabIndex = 0;
-            // 
-            // btnFIADBTxtInputHelp
-            // 
-            this.btnFIADBTxtInputHelp.Location = new System.Drawing.Point(24, 326);
-            this.btnFIADBTxtInputHelp.Name = "btnFIADBTxtInputHelp";
-            this.btnFIADBTxtInputHelp.Size = new System.Drawing.Size(64, 24);
-            this.btnFIADBTxtInputHelp.TabIndex = 27;
-            this.btnFIADBTxtInputHelp.Text = "Help";
-            // 
-            // btnFIADBTxtInputPrevious
-            // 
-            this.btnFIADBTxtInputPrevious.Enabled = false;
-            this.btnFIADBTxtInputPrevious.Location = new System.Drawing.Point(424, 326);
-            this.btnFIADBTxtInputPrevious.Name = "btnFIADBTxtInputPrevious";
-            this.btnFIADBTxtInputPrevious.Size = new System.Drawing.Size(72, 24);
-            this.btnFIADBTxtInputPrevious.TabIndex = 26;
-            this.btnFIADBTxtInputPrevious.Text = "< Previous";
-            this.btnFIADBTxtInputPrevious.Click += new System.EventHandler(this.btnFIADBTxtInputPrevious_Click);
-            // 
-            // btnFIADBTxtInputNext
-            // 
-            this.btnFIADBTxtInputNext.Location = new System.Drawing.Point(496, 326);
-            this.btnFIADBTxtInputNext.Name = "btnFIADBTxtInputNext";
-            this.btnFIADBTxtInputNext.Size = new System.Drawing.Size(72, 24);
-            this.btnFIADBTxtInputNext.TabIndex = 25;
-            this.btnFIADBTxtInputNext.Text = "Next >";
-            this.btnFIADBTxtInputNext.Click += new System.EventHandler(this.btnFIADBTxtInputNext_Click);
-            // 
-            // btnFIADBTxtInputCancel
-            // 
-            this.btnFIADBTxtInputCancel.Location = new System.Drawing.Point(336, 326);
-            this.btnFIADBTxtInputCancel.Name = "btnFIADBTxtInputCancel";
-            this.btnFIADBTxtInputCancel.Size = new System.Drawing.Size(64, 24);
-            this.btnFIADBTxtInputCancel.TabIndex = 24;
-            this.btnFIADBTxtInputCancel.Text = "Cancel";
-            this.btnFIADBTxtInputCancel.Click += new System.EventHandler(this.btnFIADBTxtInputCancel_Click);
-            // 
-            // grpboxInvType
-            // 
-            this.grpboxInvType.Controls.Add(this.btnInvTypeFinish);
-            this.grpboxInvType.Controls.Add(this.btnInvTypeHelp);
-            this.grpboxInvType.Controls.Add(this.btnInvTypePrevious);
-            this.grpboxInvType.Controls.Add(this.btnInvTypeNext);
-            this.grpboxInvType.Controls.Add(this.btnInvTypeCancel);
-            this.grpboxInvType.Controls.Add(this.groupBox3);
-            this.grpboxInvType.Location = new System.Drawing.Point(16, 56);
-            this.grpboxInvType.Name = "grpboxInvType";
-            this.grpboxInvType.Size = new System.Drawing.Size(672, 360);
-            this.grpboxInvType.TabIndex = 28;
-            this.grpboxInvType.TabStop = false;
-            this.grpboxInvType.Text = "Inventory Type";
-            // 
-            // btnInvTypeFinish
-            // 
-            this.btnInvTypeFinish.Enabled = false;
-            this.btnInvTypeFinish.Location = new System.Drawing.Point(584, 327);
-            this.btnInvTypeFinish.Name = "btnInvTypeFinish";
-            this.btnInvTypeFinish.Size = new System.Drawing.Size(72, 24);
-            this.btnInvTypeFinish.TabIndex = 37;
-            this.btnInvTypeFinish.Text = "Append";
-            // 
-            // btnInvTypeHelp
-            // 
-            this.btnInvTypeHelp.Location = new System.Drawing.Point(16, 327);
-            this.btnInvTypeHelp.Name = "btnInvTypeHelp";
-            this.btnInvTypeHelp.Size = new System.Drawing.Size(64, 24);
-            this.btnInvTypeHelp.TabIndex = 23;
-            this.btnInvTypeHelp.Text = "Help";
-            // 
-            // btnInvTypePrevious
-            // 
-            this.btnInvTypePrevious.Enabled = false;
-            this.btnInvTypePrevious.Location = new System.Drawing.Point(424, 327);
-            this.btnInvTypePrevious.Name = "btnInvTypePrevious";
-            this.btnInvTypePrevious.Size = new System.Drawing.Size(72, 24);
-            this.btnInvTypePrevious.TabIndex = 22;
-            this.btnInvTypePrevious.Text = "< Previous";
-            // 
-            // btnInvTypeNext
-            // 
-            this.btnInvTypeNext.Location = new System.Drawing.Point(496, 327);
-            this.btnInvTypeNext.Name = "btnInvTypeNext";
-            this.btnInvTypeNext.Size = new System.Drawing.Size(72, 24);
-            this.btnInvTypeNext.TabIndex = 21;
-            this.btnInvTypeNext.Text = "Next >";
-            this.btnInvTypeNext.Click += new System.EventHandler(this.btnInvTypeNext_Click);
-            // 
-            // btnInvTypeCancel
-            // 
-            this.btnInvTypeCancel.Location = new System.Drawing.Point(336, 327);
-            this.btnInvTypeCancel.Name = "btnInvTypeCancel";
-            this.btnInvTypeCancel.Size = new System.Drawing.Size(64, 24);
-            this.btnInvTypeCancel.TabIndex = 20;
-            this.btnInvTypeCancel.Text = "Cancel";
-            this.btnInvTypeCancel.Click += new System.EventHandler(this.btnInvTypeCancel_Click);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.grpInputDataSourceType);
-            this.groupBox3.Controls.Add(this.rdoFIADB);
-            this.groupBox3.Controls.Add(this.rdoIDB);
-            this.groupBox3.Location = new System.Drawing.Point(108, 59);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(464, 192);
-            this.groupBox3.TabIndex = 2;
-            this.groupBox3.TabStop = false;
-            // 
-            // grpInputDataSourceType
-            // 
-            this.grpInputDataSourceType.Controls.Add(this.rdoText);
-            this.grpInputDataSourceType.Controls.Add(this.rdoAccess);
-            this.grpInputDataSourceType.Location = new System.Drawing.Point(248, 24);
-            this.grpInputDataSourceType.Name = "grpInputDataSourceType";
-            this.grpInputDataSourceType.Size = new System.Drawing.Size(200, 80);
-            this.grpInputDataSourceType.TabIndex = 2;
-            this.grpInputDataSourceType.TabStop = false;
-            this.grpInputDataSourceType.Text = "Input Data Source Type";
-            // 
-            // rdoText
-            // 
-            this.rdoText.Location = new System.Drawing.Point(8, 48);
-            this.rdoText.Name = "rdoText";
-            this.rdoText.Size = new System.Drawing.Size(184, 24);
-            this.rdoText.TabIndex = 1;
-            this.rdoText.Text = "FIADB Text Files (*.csv)";
-            this.rdoText.Visible = false;
-            // 
-            // rdoAccess
-            // 
-            this.rdoAccess.Checked = true;
-            this.rdoAccess.Location = new System.Drawing.Point(8, 16);
-            this.rdoAccess.Name = "rdoAccess";
-            this.rdoAccess.Size = new System.Drawing.Size(168, 24);
-            this.rdoAccess.TabIndex = 0;
-            this.rdoAccess.TabStop = true;
-            this.rdoAccess.Text = "Access Tables";
-            // 
-            // rdoFIADB
-            // 
-            this.rdoFIADB.Checked = true;
-            this.rdoFIADB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFIADB.Location = new System.Drawing.Point(56, 48);
-            this.rdoFIADB.Name = "rdoFIADB";
-            this.rdoFIADB.Size = new System.Drawing.Size(160, 32);
-            this.rdoFIADB.TabIndex = 0;
-            this.rdoFIADB.TabStop = true;
-            this.rdoFIADB.Text = "FIADB Data";
-            this.rdoFIADB.Click += new System.EventHandler(this.rdoFIADB_Click);
-            // 
-            // rdoIDB
-            // 
-            this.rdoIDB.Enabled = false;
-            this.rdoIDB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoIDB.Location = new System.Drawing.Point(56, 128);
-            this.rdoIDB.Name = "rdoIDB";
-            this.rdoIDB.Size = new System.Drawing.Size(144, 32);
-            this.rdoIDB.TabIndex = 1;
-            this.rdoIDB.Text = "PNW IDB Data";
-            this.rdoIDB.Visible = false;
-            this.rdoIDB.Click += new System.EventHandler(this.rdoIDB_Click);
-            // 
             // lblTitle
             // 
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
@@ -1801,7 +1280,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFilterByPlot.Controls.Add(this.btnFilterByPlotPrevious);
             this.grpboxFilterByPlot.Controls.Add(this.btnFilterByPlotNext);
             this.grpboxFilterByPlot.Controls.Add(this.btnFilterByPlotCancel);
-            this.grpboxFilterByPlot.Location = new System.Drawing.Point(16, 1540);
+            this.grpboxFilterByPlot.Location = new System.Drawing.Point(16, 1164);
             this.grpboxFilterByPlot.Name = "grpboxFilterByPlot";
             this.grpboxFilterByPlot.Size = new System.Drawing.Size(672, 360);
             this.grpboxFilterByPlot.TabIndex = 32;
@@ -1886,38 +1365,11 @@ namespace FIA_Biosum_Manager
             this.btnFilterByPlotCancel.Text = "Cancel";
             this.btnFilterByPlotCancel.Click += new System.EventHandler(this.btnFilterByPlotCancel_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 217);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(188, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Condition proportion percent  less than";
-            // 
-            // cmbCondPropPercent
-            // 
-            this.cmbCondPropPercent.FormattingEnabled = true;
-            this.cmbCondPropPercent.Location = new System.Drawing.Point(200, 214);
-            this.cmbCondPropPercent.Name = "cmbCondPropPercent";
-            this.cmbCondPropPercent.Size = new System.Drawing.Size(52, 21);
-            this.cmbCondPropPercent.TabIndex = 8;
-            this.cmbCondPropPercent.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbCondPropPercent_KeyPress);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(270, 217);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(191, 13);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "to change from forested to nonsampled";
-            // 
             // uc_plot_input
             // 
             this.Controls.Add(this.groupBox1);
             this.Name = "uc_plot_input";
-            this.Size = new System.Drawing.Size(704, 3500);
+            this.Size = new System.Drawing.Size(704, 2700);
             this.groupBox1.ResumeLayout(false);
             this.grpboxMDBFiadbInput.ResumeLayout(false);
             this.groupBox24.ResumeLayout(false);
@@ -1946,28 +1398,6 @@ namespace FIA_Biosum_Manager
             this.grpboxFilter.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.grpboxFIADBTxtInput.ResumeLayout(false);
-            this.groupBox26.ResumeLayout(false);
-            this.groupBox26.PerformLayout();
-            this.groupBox14.ResumeLayout(false);
-            this.groupBox14.PerformLayout();
-            this.groupBox13.ResumeLayout(false);
-            this.groupBox13.PerformLayout();
-            this.groupBox12.ResumeLayout(false);
-            this.groupBox12.PerformLayout();
-            this.groupBox11.ResumeLayout(false);
-            this.groupBox11.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.grpboxInvType.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.grpInputDataSourceType.ResumeLayout(false);
             this.grpboxFilterByPlot.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -1981,98 +1411,87 @@ namespace FIA_Biosum_Manager
 		private void Initialize()
 		{
 			this.m_DialogWd = this.Width + 10;
-			this.m_DialogHt = this.groupBox1.Top + this.grpboxInvType.Top + this.grpboxInvType.Height + 100 ;
+			this.m_DialogHt = this.groupBox1.Top + this.grpboxMDBFiadbInput.Top + this.grpboxMDBFiadbInput.Height + 100 ;
 
 		
 					
-			this.grpboxFilterByState.Left = this.grpboxInvType.Left;
-			this.grpboxFilterByState.Width = this.grpboxInvType.Width;
-			this.grpboxFilterByState.Height = this.grpboxInvType.Height;
-			this.grpboxFilterByState.Top = this.grpboxInvType.Top;
-			this.btnFilterByStateHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnFilterByStateCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnFilterByStatePrevious.Location = this.btnInvTypePrevious.Location;
-			this.btnFilterByStateNext.Location = this.btnInvTypeNext.Location;
-			this.btnFilterByStateFinish.Location = this.btnInvTypeFinish.Location;
+			this.grpboxFilterByState.Left = this.grpboxMDBFiadbInput.Left;
+			this.grpboxFilterByState.Width = this.grpboxMDBFiadbInput.Width;
+			this.grpboxFilterByState.Height = this.grpboxMDBFiadbInput.Height;
+			this.grpboxFilterByState.Top = this.grpboxMDBFiadbInput.Top;
+            this.btnFilterByStateHelp.Location = this.btnMDBFiadbInputHelp.Location;
+            this.btnFilterByStateCancel.Location = this.btnMDBFiadbInputCancel.Location;
+            this.btnFilterByStatePrevious.Location = this.btnMDBFiadbInputPrev.Location;
+			this.btnFilterByStateNext.Location = this.btnMDBFiadbInputNext.Location;
+			this.btnFilterByStateFinish.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxFilterByState.Visible=false;	
 
-			this.grpboxFIADBTxtInput.Left = this.grpboxInvType.Left;
-			this.grpboxFIADBTxtInput.Width = this.grpboxInvType.Width;
-			this.grpboxFIADBTxtInput.Height = this.grpboxInvType.Height;
-			this.grpboxFIADBTxtInput.Top = this.grpboxInvType.Top;
-			this.btnFIADBTxtInputHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnFIADBTxtInputCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnFIADBTxtInputPrevious.Location = this.btnInvTypePrevious.Location;
-			this.btnFIADBTxtInputNext.Location = this.btnInvTypeNext.Location;
-			this.btnFIADBTxtInputFinish.Location = this.btnInvTypeFinish.Location;
-			this.grpboxFIADBTxtInput.Visible=false;	
-
-			this.grpboxFilter.Left = this.grpboxInvType.Left;
-			this.grpboxFilter.Width = this.grpboxInvType.Width;
-			this.grpboxFilter.Height = this.grpboxInvType.Height;
-			this.grpboxFilter.Top = this.grpboxInvType.Top;
-			this.btnFilterHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnFilterCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnFilterPrevious.Location = this.btnInvTypePrevious.Location;
-			this.btnFilterNext.Location = this.btnInvTypeNext.Location;
-			this.btnFilterFinish.Location = this.btnInvTypeFinish.Location;
+			this.grpboxFilter.Left = this.grpboxMDBFiadbInput.Left;
+			this.grpboxFilter.Width = this.grpboxMDBFiadbInput.Width;
+			this.grpboxFilter.Height = this.grpboxMDBFiadbInput.Height;
+			this.grpboxFilter.Top = this.grpboxMDBFiadbInput.Top;
+			this.btnFilterHelp.Location = this.btnMDBFiadbInputHelp.Location;
+			this.btnFilterCancel.Location = this.btnMDBFiadbInputCancel.Location;
+			this.btnFilterPrevious.Location = this.btnMDBFiadbInputPrev.Location;
+			this.btnFilterNext.Location = this.btnMDBFiadbInputNext.Location;
+			this.btnFilterFinish.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxFilter.Visible=false;	
 
-			this.grpboxFilterByPlot.Left = this.grpboxInvType.Left;
-			this.grpboxFilterByPlot.Width = this.grpboxInvType.Width;
-			this.grpboxFilterByPlot.Height = this.grpboxInvType.Height;
-			this.grpboxFilterByPlot.Top = this.grpboxInvType.Top;
-			this.btnFilterByPlotHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnFilterByPlotCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnFilterByPlotPrevious.Location = this.btnInvTypePrevious.Location;
-			this.btnFilterByPlotNext.Location = this.btnInvTypeNext.Location;
-			this.btnFilterByPlotFinish.Location = this.btnInvTypeFinish.Location;
+			this.grpboxFilterByPlot.Left = this.grpboxMDBFiadbInput.Left;
+			this.grpboxFilterByPlot.Width = this.grpboxMDBFiadbInput.Width;
+			this.grpboxFilterByPlot.Height = this.grpboxMDBFiadbInput.Height;
+			this.grpboxFilterByPlot.Top = this.grpboxMDBFiadbInput.Top;
+			this.btnFilterByPlotHelp.Location = this.btnMDBFiadbInputHelp.Location;
+			this.btnFilterByPlotCancel.Location = this.btnMDBFiadbInputCancel.Location;
+			this.btnFilterByPlotPrevious.Location = this.btnMDBFiadbInputPrev.Location;
+			this.btnFilterByPlotNext.Location = this.btnMDBFiadbInputNext.Location;
+			this.btnFilterByPlotFinish.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxFilterByPlot.Visible=false;
 
 
-			this.grpboxMDBInput.Left = this.grpboxInvType.Left;
-			this.grpboxMDBInput.Width = this.grpboxInvType.Width;
-			this.grpboxMDBInput.Height = this.grpboxInvType.Height;
-			this.grpboxMDBInput.Top = this.grpboxInvType.Top;
-			this.btnMDBInputHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnMDBInputCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnMDBInputPrevious.Location = this.btnInvTypePrevious.Location;
-			this.btnMDBInputNext.Location = this.btnInvTypeNext.Location;
-			this.btnMDBInputFinish.Location = this.btnInvTypeFinish.Location;
+			this.grpboxMDBInput.Left = this.grpboxMDBFiadbInput.Left;
+			this.grpboxMDBInput.Width = this.grpboxMDBFiadbInput.Width;
+			this.grpboxMDBInput.Height = this.grpboxMDBFiadbInput.Height;
+			this.grpboxMDBInput.Top = this.grpboxMDBFiadbInput.Top;
+			this.btnMDBInputHelp.Location = this.btnMDBFiadbInputHelp.Location;
+			this.btnMDBInputCancel.Location = this.btnMDBFiadbInputCancel.Location;
+			this.btnMDBInputPrevious.Location = this.btnMDBFiadbInputPrev.Location;
+			this.btnMDBInputNext.Location = this.btnMDBFiadbInputNext.Location;
+			this.btnMDBInputFinish.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxMDBInput.Visible=false;	
 
-			this.grpboxIDBInv.Left = this.grpboxInvType.Left;
-			this.grpboxIDBInv.Width = this.grpboxInvType.Width;
-			this.grpboxIDBInv.Height = this.grpboxInvType.Height;
-			this.grpboxIDBInv.Top = this.grpboxInvType.Top;
-			this.btnIDBInvHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnIDBInvCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnIDBInvPrevious.Location = this.btnInvTypePrevious.Location;
-			this.btnIDBInvNext.Location = this.btnInvTypeNext.Location;
-			this.btnIDBInvAppend.Location = this.btnInvTypeFinish.Location;
+			this.grpboxIDBInv.Left = this.grpboxMDBFiadbInput.Left;
+			this.grpboxIDBInv.Width = this.grpboxMDBFiadbInput.Width;
+			this.grpboxIDBInv.Height = this.grpboxMDBFiadbInput.Height;
+			this.grpboxIDBInv.Top = this.grpboxMDBFiadbInput.Top;
+			this.btnIDBInvHelp.Location = this.btnMDBFiadbInputHelp.Location;
+			this.btnIDBInvCancel.Location = this.btnMDBFiadbInputCancel.Location;
+			this.btnIDBInvPrevious.Location = this.btnMDBFiadbInputPrev.Location;
+			this.btnIDBInvNext.Location = this.btnMDBFiadbInputNext.Location;
+			this.btnIDBInvAppend.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxIDBInv.Visible=false;	
 
-			this.grpboxFIADBInv.Left = this.grpboxInvType.Left;
-			this.grpboxFIADBInv.Width = this.grpboxInvType.Width;
-			this.grpboxFIADBInv.Height = this.grpboxInvType.Height;
-			this.grpboxFIADBInv.Top = this.grpboxInvType.Top;
-			this.btnFIADBInvHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnFIADBInvCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnFIADBInvPrevious.Location = this.btnInvTypePrevious.Location;
-			this.btnFIADBInvNext.Location = this.btnInvTypeNext.Location;
-			this.btnFIADBInvAppend.Location = this.btnInvTypeFinish.Location;
+			this.grpboxFIADBInv.Left = this.grpboxMDBFiadbInput.Left;
+			this.grpboxFIADBInv.Width = this.grpboxMDBFiadbInput.Width;
+			this.grpboxFIADBInv.Height = this.grpboxMDBFiadbInput.Height;
+			this.grpboxFIADBInv.Top = this.grpboxMDBFiadbInput.Top;
+			this.btnFIADBInvHelp.Location = this.btnMDBFiadbInputHelp.Location;
+			this.btnFIADBInvCancel.Location = this.btnMDBFiadbInputCancel.Location;
+			this.btnFIADBInvPrevious.Location = this.btnMDBFiadbInputPrev.Location;
+			this.btnFIADBInvNext.Location = this.btnMDBFiadbInputNext.Location;
+			this.btnFIADBInvAppend.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxFIADBInv.Visible=false;	
 
 
-			this.grpboxMDBFiadbInput.Left = this.grpboxInvType.Left;
-			this.grpboxMDBFiadbInput.Width = this.grpboxInvType.Width;
-			this.grpboxMDBFiadbInput.Height = this.grpboxInvType.Height;
-			this.grpboxMDBFiadbInput.Top = this.grpboxInvType.Top;
-			this.btnMDBFiadbInputHelp.Location = this.btnInvTypeHelp.Location;
-			this.btnMDBFiadbInputCancel.Location = this.btnInvTypeCancel.Location;
-			this.btnMDBFiadbInputPrev.Location = this.btnInvTypePrevious.Location;
-			this.btnMDBFiadbInputNext.Location = this.btnInvTypeNext.Location;
-			this.btnMDBFiadbInputFinish.Location = this.btnInvTypeFinish.Location;
+			this.grpboxMDBFiadbInput.Left = this.grpboxMDBFiadbInput.Left;
+			this.grpboxMDBFiadbInput.Width = this.grpboxMDBFiadbInput.Width;
+			this.grpboxMDBFiadbInput.Height = this.grpboxMDBFiadbInput.Height;
+			this.grpboxMDBFiadbInput.Top = this.grpboxMDBFiadbInput.Top;
+			this.btnMDBFiadbInputHelp.Location = this.btnMDBFiadbInputHelp.Location;
+			this.btnMDBFiadbInputCancel.Location = this.btnMDBFiadbInputCancel.Location;
+			this.btnMDBFiadbInputPrev.Location = this.btnMDBFiadbInputPrev.Location;
+			this.btnMDBFiadbInputNext.Location = this.btnMDBFiadbInputNext.Location;
+			this.btnMDBFiadbInputFinish.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxMDBFiadbInput.Visible=false;	
 
 
@@ -2163,41 +1582,6 @@ namespace FIA_Biosum_Manager
 			((frmDialog)this.ParentForm).Close();
 		}
 
-		private void btnInvTypeNext_Click(object sender, System.EventArgs e)
-		{
-			if (this.m_oDatasource==null) this.InitializeDatasource();
-
-			this.grpboxInvType.Visible=false;
-			if (this.rdoFIADB.Checked==true) 
-			{
-				this.m_strIDBInv="";
-				if (this.rdoText.Checked==true)
-				{
-					this.grpboxFIADBTxtInput.Visible=true;
-					this.btnFIADBTxtInputPrevious.Enabled=true;
-				}
-				else if (this.rdoAccess.Checked==true)
-				{
-					this.grpboxMDBFiadbInput.Visible=true;
-					this.btnMDBFiadbInputPrev.Enabled=true;
-					this.btnMDBInputPrevious.Enabled=true;
-				}
-			}
-			else
-			{
-				this.grpboxMDBInput.Text = "IDB Access MDB Input";
-				this.grpboxMDBInput.Visible=true;
-				this.btnMDBInputPrevious.Enabled=true;
-
-			}
-		}
-
-		private void btnFIADBTxtInputPrevious_Click(object sender, System.EventArgs e)
-		{
-			this.grpboxFIADBTxtInput.Visible=false;
-			this.grpboxInvType.Visible=true;
-		}
-
 		private void btnFIADBTxtInputCancel_Click(object sender, System.EventArgs e)
 		{
 			((frmDialog)this.ParentForm).Close();
@@ -2273,74 +1657,20 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void btnFIADBTxtInputNext_Click(object sender, System.EventArgs e)
-		{
-			if (this.txtPlot.Text.Trim().Length == 0 ||
-				this.txtCond.Text.Trim().Length == 0 || 
-				this.txtTree.Text.Trim().Length == 0 ||
-				this.txtTreeRegionalBiomass.Text.Trim().Length == 0 ||
-				this.txtPpsa.Text.Trim().Length == 0 ||
-				this.txtPopStratum.Text.Trim().Length == 0 || 
-				this.txtPopEval.Text.Trim().Length == 0 || 
-				this.txtPopEstUnit.Text.Trim().Length ==0 ||
-				this.txtSiteTree.Text.Trim().Length==0)
-			{
-				MessageBox.Show("Required Data Input Missing");
-			}
-			else
-			{
-				if (this.rdoFilterByFile.Checked) this.btnFilterNext.Enabled=false;
-				else this.btnFilterNext.Enabled=true;
-				this.grpboxFIADBTxtInput.Visible=false;
-				this.grpboxFilter.Visible=true;
-				
-			}
-		}
-
 		private void btnFilterPrevious_Click(object sender, System.EventArgs e)
 		{
 			this.grpboxFilter.Visible=false;
-			if (this.rdoFIADB.Checked==true)
-			{
-				if (this.rdoText.Checked == true)
-				{
-					this.grpboxFIADBTxtInput.Visible=true;
-				}
-				else
-				{
-					this.grpboxMDBFiadbInput.Visible=true;
-				}
-			}
-			else
-			{
-				this.grpboxMDBInput.Visible=true;
-			}
-			
+			this.grpboxMDBInput.Visible=true;
 		}
 
 		private void rdoFilterByFile_Click(object sender, System.EventArgs e)
 		{
-			//if (rdoFilterByFile.Checked==true) 
-			//{
-			if (this.rdoIDB.Checked)
-			{
-				this.btnFilterFinish.Enabled=true;
-				this.chkForested.Enabled=false;
-				this.chkNonForested.Enabled=false;
-				this.btnFilterNext.Enabled=false;
-				this.txtFilterByFile.Enabled=true;
-				this.btnFilterByFileBrowse.Enabled=true;
-			}
-			else
-			{
 				this.btnFilterFinish.Enabled=false;
 				this.chkForested.Enabled=false;
 				this.chkNonForested.Enabled=false;
 				this.btnFilterNext.Enabled=true;
 				this.txtFilterByFile.Enabled=true;
 				this.btnFilterByFileBrowse.Enabled=true;
-			}
-			//}
 		}
 
 		private void rdoFilterByMenu_Click(object sender, System.EventArgs e)
@@ -8447,23 +7777,6 @@ namespace FIA_Biosum_Manager
 			}
 		}
 
-		private void rdoIDB_Click(object sender, System.EventArgs e)
-		{
-			if (rdoIDB.Checked==true)
-			{
-				this.grpInputDataSourceType.Enabled=false;
-			}
-		}
-
-		private void rdoFIADB_Click(object sender, System.EventArgs e)
-		{
-			if (rdoFIADB.Checked==true)
-			{
-				this.grpInputDataSourceType.Enabled=true;
-			}
-
-		}
-
 		private void btnFilterNext_Click(object sender, System.EventArgs e)
 		{
 			if (this.rdoFIADB.Checked==true)
@@ -11983,7 +11296,9 @@ namespace FIA_Biosum_Manager
 
 		private void btnMDBFiadbInputNext_Click(object sender, System.EventArgs e)
 		{
-			if (this.cmbFiadbPopEvalTable.Text.Trim().Length == 0 ||
+            if (this.m_oDatasource == null) this.InitializeDatasource();
+            
+            if (this.cmbFiadbPopEvalTable.Text.Trim().Length == 0 ||
 				this.cmbFiadbCondTable.Text.Trim().Length == 0 ||
 				this.cmbFiadbPlotTable.Text.Trim().Length == 0 ||
 				this.cmbFiadbPopEstUnitTable.Text.Trim().Length == 0 ||
