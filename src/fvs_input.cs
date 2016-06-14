@@ -3413,10 +3413,10 @@ namespace FIA_Biosum_Manager
 				this.ConditionClassAverageDia=0;
 
 				_oAdo.m_strSQL = "SELECT AvgDia " + 
-					"FROM " + 
-					"(SELECT SUM(IIF(t.tpacurr IS NOT NULL AND t.dia IS NOT NULL," + 
-					"t.tpacurr * t.dia,0)) AS dividend," + 
-					"SUM(IIF(t.tpacurr IS NOT NULL and t.dia IS NOT NULL," + 
+					"FROM " +
+                    "(SELECT SUM(IIF(t.tpacurr IS NOT NULL AND t.dia IS NOT NULL AND t.dia >= 1," + 
+					"t.tpacurr * t.dia,0)) AS dividend," +
+                    "SUM(IIF(t.tpacurr IS NOT NULL and t.dia IS NOT NULL AND t.dia >= 1," + 
 					"t.tpacurr,0)) as divisor," + 
 					"IIF(dividend > 0 AND divisor > 0," + 
 					"dividend / divisor,0) AS AvgDia " + 
