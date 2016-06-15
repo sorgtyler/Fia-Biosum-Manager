@@ -7610,8 +7610,8 @@ namespace FIA_Biosum_Manager
 						"SELECT a.biosum_cond_id, b.tottemp AS ba_ft2_ac " + 
 						"FROM " + this.m_strCondTable + " a, " +  
 						"(SELECT biosum_cond_id, SUM((.005454154 * dia^2)  * tpacurr)  AS tottemp " + 
-						 "FROM " + this.m_strTreeTable + " " +
-                         "WHERE biosum_status_cd=9  AND statuscd=1 AND dia >= 1 " + 
+						 "FROM " + this.m_strTreeTable + " " + 
+						 "WHERE biosum_status_cd=9  AND statuscd=1 " + 
 						 "GROUP BY biosum_cond_id)  b " + 
 						"WHERE a.biosum_cond_id = b.biosum_cond_id ";
 
@@ -7653,8 +7653,8 @@ namespace FIA_Biosum_Manager
 						"FROM " + this.m_strCondTable + " a, " +  
 						"(SELECT biosum_cond_id, SUM((.005454154 * dia^2)  * tpacurr)  AS tottemp " + 
 						"FROM " + this.m_strTreeTable + " " + 
-						"WHERE biosum_status_cd=9 AND " +
-                              "spcd < 300 AND statuscd=1 AND dia >= 1 " + 
+						"WHERE biosum_status_cd=9 AND " + 
+						      "spcd < 300 AND statuscd=1 " + 
 						"GROUP BY biosum_cond_id)  b " + 
 						"WHERE a.biosum_cond_id = b.biosum_cond_id ";
 
@@ -7695,8 +7695,8 @@ namespace FIA_Biosum_Manager
 						"FROM " + this.m_strCondTable + " a, " +  
 						"(SELECT biosum_cond_id, SUM((.005454154 * dia^2)  * tpacurr)  AS tottemp " + 
 						"FROM " + this.m_strTreeTable + " " + 
-						"WHERE biosum_status_cd=9 AND " +
-                        "spcd > 299 AND statuscd=1 AND dia >= 1 " + 
+						"WHERE biosum_status_cd=9 AND " + 
+						"spcd > 299 AND statuscd=1 " + 
 						"GROUP BY biosum_cond_id)  b " + 
 						"WHERE a.biosum_cond_id = b.biosum_cond_id ";
 
