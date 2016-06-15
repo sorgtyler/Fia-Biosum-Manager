@@ -2406,9 +2406,10 @@ namespace FIA_Biosum_Manager
 				if (p_oRow["condid"] == System.DBNull.Value)
 					this.CondId="";
 				else this.CondId=Convert.ToString(p_oRow["condid"]).Trim();
-				//tree basal area per acre on the condition
-				if (p_oRow["ba_ft2_ac"] != System.DBNull.Value)
-					this.ConditionClassBasalAreaPerAcre=Convert.ToDouble(p_oRow["ba_ft2_ac"]);
+				//15-JUN-2015: We now calculate this in a function rather than populate from COND table so we can control the parameters
+                //tree basal area per acre on the condition
+                //if (p_oRow["ba_ft2_ac"] != System.DBNull.Value)
+                //    this.ConditionClassBasalAreaPerAcre=Convert.ToDouble(p_oRow["ba_ft2_ac"]);
 
 				getSiteIndex();
 			}
@@ -2643,7 +2644,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -2742,7 +2743,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -2815,7 +2816,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -2915,7 +2916,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -3032,7 +3033,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -3142,7 +3143,7 @@ namespace FIA_Biosum_Manager
 					{
 						//Whitebark pine, knobcone pine, lodgepole pine,
 						//Coulter pine, Limber pine, Western juniper
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -3407,31 +3408,50 @@ namespace FIA_Biosum_Manager
 				dblSI = a + b * (p_intSIHtFt - 4.5) + 4.5;
 				return dblSI;
 			}
-			private void getAvgDbhOnPlot(int p_intCondId)
-			{
+
+			///<summary>Some site index equations require the Canopy Crown Factor (CCF)
+            ///which is a function of avg dbh and basal area per plot. This function queries
+            ///the TREE table to calculate these two factors for a given condition.
+            ///This function needs to be called prior to running an equation that uses CCF
+            ///</summary>
+            ///<param name="p_intCondId">The id of the condition</param>  
+            private void getAvgDbhAndBasalArea(int p_intCondId)
+            {
 
 				this.ConditionClassAverageDia=0;
+                this.ConditionClassBasalAreaPerAcre = 0;
 
-				_oAdo.m_strSQL = "SELECT AvgDia " + 
-					"FROM " +
-                    "(SELECT SUM(IIF(t.tpacurr IS NOT NULL AND t.dia IS NOT NULL AND t.statuscd=1 AND t.dia >= 1," + 
-					"t.tpacurr * t.dia,0)) AS dividend," +
-                    "SUM(IIF(t.tpacurr IS NOT NULL and t.dia IS NOT NULL AND t.statuscd=1 AND t.dia >= 1," + 
-					"t.tpacurr,0)) as divisor," + 
-					"IIF(dividend > 0 AND divisor > 0," + 
-					"dividend / divisor,0) AS AvgDia " + 
-					"FROM " + this.TreeTable + " t " + 
-					"WHERE biosum_cond_id = '" + 
-					this.BiosumPlotId + Convert.ToString(p_intCondId).Trim() + "' " + 
-					"AND t.statuscd=1)";
+                string strSQL = "SELECT t.tpacurr, t.dia " +
+                "FROM " + this.TreeTable + " t " +
+                "WHERE t.biosum_cond_id = '" +
+                this.BiosumPlotId + Convert.ToString(p_intCondId).Trim() +
+                "' AND t.statuscd=1 AND t.tpacurr IS NOT NULL and t.dia IS NOT NULL AND t.dia >= 1";
 
-				
+                _oAdo.SqlQueryReader(_oAdo.m_OleDbConnection, strSQL);
 
-				this.ConditionClassAverageDia = _oAdo.getSingleDoubleValueFromSQLQuery(
-					_oAdo.m_OleDbConnection,_oAdo.m_strSQL,"temp");
+                //Variables to accumulate the data from the tree table
+                double dblCount = 0;
+                double dblDia = 0;
+                double dblBasalArea = 0;
+                if (_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (_oAdo.m_OleDbDataReader.Read())
+                    {
+                        double tempTpa = Convert.ToDouble(_oAdo.m_OleDbDataReader["tpacurr"]);
+                        double tempDia = Convert.ToDouble(_oAdo.m_OleDbDataReader["dia"]);
+                        dblCount = dblCount + tempTpa;
+                        dblDia = dblDia + tempDia * tempTpa;
+                        dblBasalArea = dblBasalArea + (Math.Pow(tempDia, 2) * 0.00545415) * tempTpa;
+                    }
+                }
 
-
+                if (dblCount > 0)
+                {
+                    this.ConditionClassAverageDia = dblDia / dblCount;
+                }
+                this.ConditionClassBasalAreaPerAcre = dblBasalArea;
 			}
+
 			/// <summary>
 			///-- SITE INDEX FOR LOGDGEPOLE PINE - DAHMS
 			///-- Gross Yield of Central Oregon Lodgepole Pine
