@@ -1118,6 +1118,13 @@ namespace FIA_Biosum_Manager
                 strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_PREDISPOSE_FIXTREEID.txt";
                 System.IO.File.Copy(strSourceFile, strDestFile, true);
 
+                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
+                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_AddSeedlings.txt";
+                System.IO.File.Copy(strSourceFile, strDestFile, true);
+
+                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
+                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_DeleteSeedlings.txt";
+                System.IO.File.Copy(strSourceFile, strDestFile, true);
 
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\biosum_processor.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.mdb";
