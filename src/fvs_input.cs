@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Collections;
 using System.ComponentModel;
-
+using System.Collections.Generic;
 
 
 namespace FIA_Biosum_Manager
@@ -34,6 +34,11 @@ namespace FIA_Biosum_Manager
 		private System.Data.DataTable m_dt;
 		private string m_strFVSTreeIdIDBWorkTable;
 		private string m_strFVSTreeIdFIAWorkTable;
+
+        // Constants for site index equation table
+        const String SI_DELIM = "|";
+        const String SI_EMPTY = "@";
+
 		/*******************************************************
 		 **RECORD TYPE A
 		 *******************************************************/
@@ -365,16 +370,14 @@ namespace FIA_Biosum_Manager
 				oSiteIndex.SiteTreeTable = this.m_strSiteTreeTable;
 				oSiteIndex.TreeSpeciesTable = this.m_strTreeSpcTable;
 				oSiteIndex.FVSTreeSpeciesTable = this.m_strFVSTreeSpcTable;
-
-
-				
+                oSiteIndex.SiteIndexEquations = LoadSiteIndexEquations(this.m_strVariant.Trim().ToUpper());
 
 				this.m_ado.m_strSQL = "SELECT p.biosum_plot_id, c.biosum_cond_id, p.statecd ," + 
 					"p.countycd, p.plot, p.fvs_variant, p.measyear," + 
 					"c.adforcd,p.elev,c.condid, c.habtypcd1," + 
 					"c.stdage,c.slope,c.aspect,c.ground_land_class_pnw," + 
 					"c.sisp,p.lat,p.lon,p.idb_plot_id,c.adforcd,c.habtypcd1, " +
-					"p.elev,c.landclcd,c.ba_ft2_ac " + 
+                    "p.elev,c.landclcd,c.ba_ft2_ac,c.habtypcd1 " + 
 					"FROM " + this.m_strCondTable + " c," + 
 					this.m_strPlotTable + " p " + 
 					"WHERE p.biosum_plot_id = c.biosum_plot_id AND " + 
@@ -2278,6 +2281,10 @@ namespace FIA_Biosum_Manager
 			string _strSiteIndexSpecies="";
 			string _strSiteIndex="";
 			string _strSiteIndexSpeciesAlphaCode="";
+            string _strCCHabitatTypeCd;
+            IDictionary<String, String> _dictSiteIdxEq;
+            string _strSiDelim;
+            string _strSiEmpty;
 			
 			bool _bProcess=true;
 
@@ -2380,6 +2387,17 @@ namespace FIA_Biosum_Manager
 				get {return _dblCCAvgDia;}
 				set {_dblCCAvgDia=value;}
 			}
+            public string ConditionClassHabitatTypeCd
+            {
+                get { return _strCCHabitatTypeCd; }
+                set { _strCCHabitatTypeCd = value; }
+            }
+            public IDictionary<String, String> SiteIndexEquations
+            {
+                get { return _dictSiteIdxEq; }
+                set { _dictSiteIdxEq = value; }
+            }
+ 
 			public void getSiteIndex(System.Data.DataRow p_oRow)
 			{
 				//biosum plot id
@@ -2406,6 +2424,11 @@ namespace FIA_Biosum_Manager
 				if (p_oRow["condid"] == System.DBNull.Value)
 					this.CondId="";
 				else this.CondId=Convert.ToString(p_oRow["condid"]).Trim();
+                //habitat type code
+                if (p_oRow["habtypcd1"] == System.DBNull.Value)
+                    this.ConditionClassHabitatTypeCd = "";
+                else this.ConditionClassHabitatTypeCd = Convert.ToString(p_oRow["habtypcd1"]).Trim();
+
 				//15-JUN-2015: We now calculate this in a function rather than populate from COND table so we can control the parameters
                 //tree basal area per acre on the condition
                 //if (p_oRow["ba_ft2_ac"] != System.DBNull.Value)
@@ -3198,6 +3221,66 @@ namespace FIA_Biosum_Manager
 						p_intSIFVSSpecies=999;
 					}
 				}
+
+                // Variants for ID and MT that were implemented using a site
+                // index equation database
+                if (this.FVSVariant == "CI" || this.FVSVariant == "EM"
+                    || this.FVSVariant == "IE" || this.FVSVariant == "TT")
+                {
+                    // The compound key for the dictionary is the variant + species code
+                    string strKey = this.FVSVariant + SI_DELIM + p_intSISpCd;
+                    // Initialize values to blank in case the key is not found
+                    string strEquation = "";
+                    string strSlfSpCd = "";
+                    string strRegion = "";
+                    if (_dictSiteIdxEq.ContainsKey(strKey))
+                    {
+                        // If the key is found extract the values from the delimited string
+                        string[] arrValues = _dictSiteIdxEq[strKey].Split(Convert.ToChar(SI_DELIM));
+                        strEquation = arrValues[0];
+                        strSlfSpCd = arrValues[1];
+                        strRegion = arrValues[2];
+                    }
+                    // Reset site index and species code, in case they aren't found in database
+                    p_dblSiteIndex = 0;
+                    p_intSIFVSSpecies = 999;
+                    // Calculate the site index for the equation from the database
+                    switch (strEquation)
+                    {
+                        case "ABGR1":
+                            p_dblSiteIndex = ABGR1(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "LAOC1_OR":
+                            p_dblSiteIndex = LAOC1_OR(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "PIEN3":
+                            p_dblSiteIndex = PIEN3(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "PSME11":
+                            p_dblSiteIndex = PSME11(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "SI_AS1":
+                            p_dblSiteIndex = SI_AS1(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "SI_DF2":
+                            p_dblSiteIndex = SI_DF2(p_intSIAgeDia, p_intSIHtFt, this.ConditionClassHabitatTypeCd);
+                            break;
+                        case "SI_LP5":
+                            getAvgDbhAndBasalArea(p_intSICondId);
+                            p_dblSiteIndex = SI_LP5(p_intSIAgeDia, p_intSIHtFt, this.ConditionClassBasalAreaPerAcre,
+                                this.ConditionClassAverageDia);
+                            break;
+                        case "SI_PP6":
+                            p_dblSiteIndex = SI_PP6(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        default:
+                            break;
+                    }
+                    // If the species should be consolidated under another species, remap it here
+                    int intSpCd = -1;
+                    bool boolSlfSpecies = Int32.TryParse(strSlfSpCd, out intSpCd);
+                    if (boolSlfSpecies) p_intSIFVSSpecies = intSpCd;
+                }
 
 					
 
@@ -4382,6 +4465,52 @@ namespace FIA_Biosum_Manager
 
 		}
 
+        private IDictionary<String, String> LoadSiteIndexEquations(string strVariant)
+        {
+            //instantiate the dictionary so we can add equation records
+            IDictionary<String, String> _dictSiteIdxEq = new Dictionary<String, String>();
+            ado_data_access oAdo = new ado_data_access();
+            //create env object so we can get the appDir
+            env pEnv = new env();
+            //open the project db file; db name is hard-coded
+            oAdo.OpenConnection(oAdo.getMDBConnString(pEnv.strAppDir + "\\db\\ref_master.mdb", "", ""));
+            string strSQL = "select * from site_index_equations where FVS_VARIANT = '" + strVariant + "'";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    if (oAdo.m_OleDbDataReader["FVS_VARIANT"] == System.DBNull.Value ||
+                        oAdo.m_OleDbDataReader["FIA_SPCD"] == System.DBNull.Value ||
+                        oAdo.m_OleDbDataReader["EQUATION"] == System.DBNull.Value)
+                    {
+                        //If either variant, spcd, or equation is null, we don't add because we can't use
+                    }
+                    else
+                    {
+                        string strFvsVariant = Convert.ToString(oAdo.m_OleDbDataReader["FVS_VARIANT"]);
+                        string strFiaSpCd = Convert.ToString(oAdo.m_OleDbDataReader["FIA_SPCD"]);
+                        string strRegion = SI_EMPTY;
+                        if (oAdo.m_OleDbDataReader["REGION"] != System.DBNull.Value)
+                        {
+                            strRegion = Convert.ToString(oAdo.m_OleDbDataReader["REGION"]);
+                        }
+                        string strSlfSpcd = SI_EMPTY;
+                        if (oAdo.m_OleDbDataReader["SLF_SPCD"] != System.DBNull.Value)
+                        {
+                            strSlfSpcd = Convert.ToString(oAdo.m_OleDbDataReader["SLF_SPCD"]);
+                        }
+                        string strEquation = Convert.ToString(oAdo.m_OleDbDataReader["EQUATION"]);
+                        string strValue = strEquation + SI_DELIM + strSlfSpcd + SI_DELIM + strRegion;
+                        _dictSiteIdxEq.Add(strFvsVariant + SI_DELIM + strFiaSpCd, strValue);
+                    }
+                }
+            }
+            // Always close the connection
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo = null;
+            return _dictSiteIdxEq;
+        }
 	}
 	
 	
