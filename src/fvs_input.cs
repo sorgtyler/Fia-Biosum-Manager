@@ -2451,6 +2451,7 @@ namespace FIA_Biosum_Manager
 				int intCurAgeDia;
 				int intCondId;
 				bool bFound;
+                int intSiTree;
 
 				//These arrays contain the values of all the site index trees on the plot
 				int[] intSIFVSSpecies;
@@ -2466,7 +2467,8 @@ namespace FIA_Biosum_Manager
 
 
 				if (StateCd=="41" || StateCd=="6" ||
-					StateCd=="53")
+					StateCd=="53" || StateCd=="16" ||
+                    StateCd=="30")
 				{
 				}
 				else return;
@@ -2481,7 +2483,8 @@ namespace FIA_Biosum_Manager
 					"s.agedia," + 
 					"s.subp," + 
 					"s.method," + 
-					"s.validcd " + 
+					"s.validcd, " +
+                    "s.sitree " +
 					"FROM " + this.SiteTreeTable + " s " + 
 					"WHERE s.biosum_plot_id = '" + this.BiosumPlotId + "' " +
                     "AND s.condid = " + this.CondId +
@@ -2504,6 +2507,7 @@ namespace FIA_Biosum_Manager
 							intCurAgeDia = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["agedia"]);
 							intCurHtFt = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["ht"]);
 							intCondId = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["condid"]);
+                            intSiTree = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["sitree"]);
 
 							//***************************************************
 							//**if no age then bypass site index tree
@@ -2514,7 +2518,8 @@ namespace FIA_Biosum_Manager
 									intCurAgeDia, 
 									intCurHtFt,
 									ref intCurSIFVSSpecies,
-									ref dblSiteIndex);
+									ref dblSiteIndex,
+                                    intSiTree);
 								//*************************************************
 								//**lets find the current SI species in the array
 								//*************************************************
@@ -2622,7 +2627,8 @@ namespace FIA_Biosum_Manager
 				int p_intSIAgeDia,
 				int p_intSIHtFt,
 				ref int p_intSIFVSSpecies,
-				ref double p_dblSiteIndex)
+				ref double p_dblSiteIndex,
+                int p_intSiTree)
 			{
 				
 				
@@ -3243,7 +3249,8 @@ namespace FIA_Biosum_Manager
                     }
                     // Reset site index and species code, in case they aren't found in database
                     p_dblSiteIndex = 0;
-                    p_intSIFVSSpecies = 999;
+                    // Return the numeric FVS-FIA species code; 
+                    p_intSIFVSSpecies = p_intSISpCd;
                     // Calculate the site index for the equation from the database
                     switch (strEquation)
                     {
@@ -3261,6 +3268,11 @@ namespace FIA_Biosum_Manager
                             break;
                         case "SI_AS1":
                             p_dblSiteIndex = SI_AS1(p_intSIAgeDia, p_intSIHtFt);
+                            // substitute FIA site index if 0 returned; Uses same site index equation
+                            if (p_dblSiteIndex == 0)
+                            {
+                                p_dblSiteIndex = Convert.ToDouble(p_intSiTree);
+                            }
                             break;
                         case "SI_DF2":
                             p_dblSiteIndex = SI_DF2(p_intSIAgeDia, p_intSIHtFt, this.ConditionClassHabitatTypeCd);
@@ -3274,9 +3286,10 @@ namespace FIA_Biosum_Manager
                             p_dblSiteIndex = SI_PP6(p_intSIAgeDia, p_intSIHtFt);
                             break;
                         default:
+                            p_intSIFVSSpecies = 999;
                             break;
                     }
-                    // If the species should be consolidated under another species, remap it here
+                    // If there is a cross-reference slf species code use it, otherwise use input species code
                     int intSpCd = -1;
                     bool boolSlfSpecies = Int32.TryParse(strSlfSpCd, out intSpCd);
                     if (boolSlfSpecies) p_intSIFVSSpecies = intSpCd;
@@ -4255,7 +4268,7 @@ namespace FIA_Biosum_Manager
             ///-- Quality of Eight Rocky Mountain Species
             ///-- Research Paper: INT-75  1970. p_intSIDiaAge is total age
             ///---Derived from Kurt's PL/SQL
-            ///OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            ///---Curves validated by jsfried
             ///<param name="p_intSIDiaAge"></param>
             ///<param name="p_intSIHtFt"></param>
             /// </summary>
@@ -4313,7 +4326,7 @@ namespace FIA_Biosum_Manager
             /// USDA Forest Service, Res. Pap. RM-29
             /// Site index at total age of 100
             /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
-            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            /// Curves validated by jsfried
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
@@ -4349,7 +4362,7 @@ namespace FIA_Biosum_Manager
             /// Research Note: RM-453
             /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
             /// Base age is 80 years
-            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            /// Curves validated by jsfried
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
@@ -4367,7 +4380,7 @@ namespace FIA_Biosum_Manager
             /// (Approximates Meyer in USDA Tech. bull. 630)
             /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
             /// Base age is 100 years
-            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            /// Site index curves validated by jsfried
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
@@ -4375,6 +4388,7 @@ namespace FIA_Biosum_Manager
             {
                 double dblSI = 0;
                 int Total_Age = p_intSIDiaAge;
+                // Adjustment because this equation uses total tree age
                 if (Total_Age > 0) Total_Age = Total_Age + 9;
                 dblSI = (5.328 * (Math.Pow(Total_Age, -0.1)) - 2.378) * (p_intSIHtFt - 4.5) + 4.5;
                 dblSI = dblSI + 0.49;
@@ -4385,15 +4399,14 @@ namespace FIA_Biosum_Manager
             /// SITE INDEX FOR DOUGLAS-FIR - Monserud
             /// Applying Height Growth and Site Index Curves for Inland DOUGLAS-FIR
             /// Research Paper:  INT-347  1985
-            /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            /// Derived from Kurt's PL/SQL
             /// Base age is 50 years
-            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            /// site index curves validated by jsfried
 
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
             /// <param name="p_strHabTypeCd">Habitat type code for condition</param>
-            /// @ToDo: Need to add ConditionClassHabTypeCd as a class-level variable so we can feed it to equation
             private double SI_DF2(int p_intSIDiaAge, int p_intSIHtFt, string p_strHabTypeCd)
             {
                 double dblSI = 0;
@@ -4405,23 +4418,26 @@ namespace FIA_Biosum_Manager
                     // if habTypeCd is not an int, set it to the middle value
                     intHabTypeCd = 500;
                 }
-                int intC1 = 0;
-                int intC2 = 0;
-                int intC3 = 0;
+                double dblC1 = 0;
+                double dblC2 = 0;
+                double dblC3 = 0;
                 if (intHabTypeCd <= 400)
                 {
-                    intC1 = 1;
+                    dblC1 = 1.0;
                 }
                 else if (intHabTypeCd < 530)
                 {
-                    intC2 = 1;
+                    dblC2 = 1.0;
                 }
                 else if (intHabTypeCd >= 530)
                 {
-                    intC3 = 1;
+                    dblC3 = 1.0;
                 }
-                double dblLog = (Math.Pow(Math.Log10(p_intSIDiaAge),2));
-                dblSI = (38.787 - (2.805 * dblLog) + (0.0216 * p_intSIDiaAge * Math.Log10(p_intSIDiaAge)) + (0.4948 * intC1 + 0.4305 * intC2 + 0.3964 * intC3) * p_intSIHtFt + (25.315 * intC1 + 28.415 * intC2 + 30.008 * intC3) * p_intSIDiaAge / p_intSIHtFt) + 4.5;
+                dblSI = (38.787-(2.805 * (Math.Log(p_intSIDiaAge) * Math.Log(p_intSIDiaAge))) +
+                        (0.0216 * p_intSIDiaAge * Math.Log(p_intSIDiaAge)) +
+                        (0.4948 * dblC1 + 0.4305 * dblC2 + 0.3964 * dblC3) * p_intSIHtFt +
+                        (25.315 * dblC1 + 28.415 * dblC2 + 30.008 * dblC3) * p_intSIHtFt / p_intSIDiaAge) + 4.5;
+
                 return dblSI;
             }
 
