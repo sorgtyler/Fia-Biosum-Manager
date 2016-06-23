@@ -34,6 +34,7 @@ namespace FIA_Biosum_Manager
 		private System.Data.DataTable m_dt;
 		private string m_strFVSTreeIdIDBWorkTable;
 		private string m_strFVSTreeIdFIAWorkTable;
+        private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_fvs_input_debug.txt";
 
         // Constants for site index equation table
         const String SI_DELIM = "|";
@@ -311,7 +312,10 @@ namespace FIA_Biosum_Manager
 		}
 		public void Start(string p_strFVSInDir,string p_strVariant)
 		{
-			this.m_intError=0;
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
+            
+            this.m_intError=0;
 			this.m_strInDir = p_strFVSInDir.Trim() + "\\" + p_strVariant.Trim();
 			this.m_strVariant = p_strVariant.Trim();
 			CheckDir();
@@ -324,6 +328,10 @@ namespace FIA_Biosum_Manager
 			CreateSLF();
 			if (this.m_intError !=0) return;
 			CreateFVS();
+
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
+
 		}
 		private void CreateLOC()
 		{
@@ -371,6 +379,7 @@ namespace FIA_Biosum_Manager
 				oSiteIndex.TreeSpeciesTable = this.m_strTreeSpcTable;
 				oSiteIndex.FVSTreeSpeciesTable = this.m_strFVSTreeSpcTable;
                 oSiteIndex.SiteIndexEquations = LoadSiteIndexEquations(this.m_strVariant.Trim().ToUpper());
+                oSiteIndex.DebugFile = this.m_strDebugFile;
 
 				this.m_ado.m_strSQL = "SELECT p.biosum_plot_id, c.biosum_cond_id, p.statecd ," + 
 					"p.countycd, p.plot, p.fvs_variant, p.measyear," + 
@@ -2283,8 +2292,7 @@ namespace FIA_Biosum_Manager
 			string _strSiteIndexSpeciesAlphaCode="";
             string _strCCHabitatTypeCd;
             IDictionary<String, String> _dictSiteIdxEq;
-            string _strSiDelim;
-            string _strSiEmpty;
+            string _strDebugFile;
 			
 			bool _bProcess=true;
 
@@ -2394,8 +2402,11 @@ namespace FIA_Biosum_Manager
             }
             public IDictionary<String, String> SiteIndexEquations
             {
-                get { return _dictSiteIdxEq; }
                 set { _dictSiteIdxEq = value; }
+            }
+            public string DebugFile
+            {
+                set { _strDebugFile = value; }
             }
  
 			public void getSiteIndex(System.Data.DataRow p_oRow)
@@ -2466,7 +2477,8 @@ namespace FIA_Biosum_Manager
 				double dblSiteIndex=0;
 
 
-				if (StateCd=="41" || StateCd=="6" ||
+				//calculate site index for OR, WA, CA, ID, and MT
+                if (StateCd=="41" || StateCd=="6" ||
 					StateCd=="53" || StateCd=="16" ||
                     StateCd=="30")
 				{
@@ -2520,6 +2532,25 @@ namespace FIA_Biosum_Manager
 									ref intCurSIFVSSpecies,
 									ref dblSiteIndex,
                                     intSiTree);
+                                //*************************************************
+                                //**if the site index = 0, write it to the log, we want to know
+                                //**how often this occurs
+                                //*************************************************
+                                if (dblSiteIndex == 0)
+                                {
+                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    {
+                                        string logEntry = "//variant: " + this.FVSVariant +
+                                                          " plot id: " + this.BiosumPlotId +
+                                                          " cond id: " + this.CondId +
+                                                          " spec cd: " + intCurSIFVSSpecies + "\r\n";
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "\r\n//\r\n");
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "//Site_Index_getSiteIndex\r\n");
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "//Site index equation returned 0    \r\n");
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, logEntry);
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "//\r\n");
+                                    }
+                                }
 								//*************************************************
 								//**lets find the current SI species in the array
 								//*************************************************
