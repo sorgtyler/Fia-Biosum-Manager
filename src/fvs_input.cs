@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Collections;
 using System.ComponentModel;
-
+using System.Collections.Generic;
 
 
 namespace FIA_Biosum_Manager
@@ -34,6 +34,12 @@ namespace FIA_Biosum_Manager
 		private System.Data.DataTable m_dt;
 		private string m_strFVSTreeIdIDBWorkTable;
 		private string m_strFVSTreeIdFIAWorkTable;
+        private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_fvs_input_debug.txt";
+
+        // Constants for site index equation table
+        const String SI_DELIM = "|";
+        const String SI_EMPTY = "@";
+
 		/*******************************************************
 		 **RECORD TYPE A
 		 *******************************************************/
@@ -306,7 +312,10 @@ namespace FIA_Biosum_Manager
 		}
 		public void Start(string p_strFVSInDir,string p_strVariant)
 		{
-			this.m_intError=0;
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
+            
+            this.m_intError=0;
 			this.m_strInDir = p_strFVSInDir.Trim() + "\\" + p_strVariant.Trim();
 			this.m_strVariant = p_strVariant.Trim();
 			CheckDir();
@@ -319,6 +328,10 @@ namespace FIA_Biosum_Manager
 			CreateSLF();
 			if (this.m_intError !=0) return;
 			CreateFVS();
+
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
+
 		}
 		private void CreateLOC()
 		{
@@ -365,16 +378,15 @@ namespace FIA_Biosum_Manager
 				oSiteIndex.SiteTreeTable = this.m_strSiteTreeTable;
 				oSiteIndex.TreeSpeciesTable = this.m_strTreeSpcTable;
 				oSiteIndex.FVSTreeSpeciesTable = this.m_strFVSTreeSpcTable;
-
-
-				
+                oSiteIndex.SiteIndexEquations = LoadSiteIndexEquations(this.m_strVariant.Trim().ToUpper());
+                oSiteIndex.DebugFile = this.m_strDebugFile;
 
 				this.m_ado.m_strSQL = "SELECT p.biosum_plot_id, c.biosum_cond_id, p.statecd ," + 
 					"p.countycd, p.plot, p.fvs_variant, p.measyear," + 
 					"c.adforcd,p.elev,c.condid, c.habtypcd1," + 
 					"c.stdage,c.slope,c.aspect,c.ground_land_class_pnw," + 
 					"c.sisp,p.lat,p.lon,p.idb_plot_id,c.adforcd,c.habtypcd1, " +
-					"p.elev,c.landclcd,c.ba_ft2_ac " + 
+                    "p.elev,c.landclcd,c.ba_ft2_ac,c.habtypcd1 " + 
 					"FROM " + this.m_strCondTable + " c," + 
 					this.m_strPlotTable + " p " + 
 					"WHERE p.biosum_plot_id = c.biosum_plot_id AND " + 
@@ -2278,6 +2290,9 @@ namespace FIA_Biosum_Manager
 			string _strSiteIndexSpecies="";
 			string _strSiteIndex="";
 			string _strSiteIndexSpeciesAlphaCode="";
+            string _strCCHabitatTypeCd;
+            IDictionary<String, String> _dictSiteIdxEq;
+            string _strDebugFile;
 			
 			bool _bProcess=true;
 
@@ -2380,6 +2395,20 @@ namespace FIA_Biosum_Manager
 				get {return _dblCCAvgDia;}
 				set {_dblCCAvgDia=value;}
 			}
+            public string ConditionClassHabitatTypeCd
+            {
+                get { return _strCCHabitatTypeCd; }
+                set { _strCCHabitatTypeCd = value; }
+            }
+            public IDictionary<String, String> SiteIndexEquations
+            {
+                set { _dictSiteIdxEq = value; }
+            }
+            public string DebugFile
+            {
+                set { _strDebugFile = value; }
+            }
+ 
 			public void getSiteIndex(System.Data.DataRow p_oRow)
 			{
 				//biosum plot id
@@ -2406,9 +2435,15 @@ namespace FIA_Biosum_Manager
 				if (p_oRow["condid"] == System.DBNull.Value)
 					this.CondId="";
 				else this.CondId=Convert.ToString(p_oRow["condid"]).Trim();
-				//tree basal area per acre on the condition
-				if (p_oRow["ba_ft2_ac"] != System.DBNull.Value)
-					this.ConditionClassBasalAreaPerAcre=Convert.ToDouble(p_oRow["ba_ft2_ac"]);
+                //habitat type code
+                if (p_oRow["habtypcd1"] == System.DBNull.Value)
+                    this.ConditionClassHabitatTypeCd = "";
+                else this.ConditionClassHabitatTypeCd = Convert.ToString(p_oRow["habtypcd1"]).Trim();
+
+				//15-JUN-2015: We now calculate this in a function rather than populate from COND table so we can control the parameters
+                //tree basal area per acre on the condition
+                //if (p_oRow["ba_ft2_ac"] != System.DBNull.Value)
+                //    this.ConditionClassBasalAreaPerAcre=Convert.ToDouble(p_oRow["ba_ft2_ac"]);
 
 				getSiteIndex();
 			}
@@ -2427,6 +2462,7 @@ namespace FIA_Biosum_Manager
 				int intCurAgeDia;
 				int intCondId;
 				bool bFound;
+                int intSiTree;
 
 				//These arrays contain the values of all the site index trees on the plot
 				int[] intSIFVSSpecies;
@@ -2441,8 +2477,10 @@ namespace FIA_Biosum_Manager
 				double dblSiteIndex=0;
 
 
-				if (StateCd=="41" || StateCd=="6" ||
-					StateCd=="53")
+				//calculate site index for OR, WA, CA, ID, and MT
+                if (StateCd=="41" || StateCd=="6" ||
+					StateCd=="53" || StateCd=="16" ||
+                    StateCd=="30")
 				{
 				}
 				else return;
@@ -2457,7 +2495,8 @@ namespace FIA_Biosum_Manager
 					"s.agedia," + 
 					"s.subp," + 
 					"s.method," + 
-					"s.validcd " + 
+					"s.validcd, " +
+                    "s.sitree " +
 					"FROM " + this.SiteTreeTable + " s " + 
 					"WHERE s.biosum_plot_id = '" + this.BiosumPlotId + "' " +
                     "AND s.condid = " + this.CondId +
@@ -2480,6 +2519,7 @@ namespace FIA_Biosum_Manager
 							intCurAgeDia = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["agedia"]);
 							intCurHtFt = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["ht"]);
 							intCondId = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["condid"]);
+                            intSiTree = Convert.ToInt32(_oAdo.m_DataSet.Tables["GetSiteIndex"].Rows[y]["sitree"]);
 
 							//***************************************************
 							//**if no age then bypass site index tree
@@ -2490,7 +2530,27 @@ namespace FIA_Biosum_Manager
 									intCurAgeDia, 
 									intCurHtFt,
 									ref intCurSIFVSSpecies,
-									ref dblSiteIndex);
+									ref dblSiteIndex,
+                                    intSiTree);
+                                //*************************************************
+                                //**if the site index = 0, write it to the log, we want to know
+                                //**how often this occurs
+                                //*************************************************
+                                if (dblSiteIndex == 0)
+                                {
+                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    {
+                                        string logEntry = "//variant: " + this.FVSVariant +
+                                                          " plot id: " + this.BiosumPlotId +
+                                                          " cond id: " + this.CondId +
+                                                          " spec cd: " + intCurSIFVSSpecies + "\r\n";
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "\r\n//\r\n");
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "//Site_Index_getSiteIndex\r\n");
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "//Site index equation returned 0    \r\n");
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, logEntry);
+                                        frmMain.g_oUtils.WriteText(_strDebugFile, "//\r\n");
+                                    }
+                                }
 								//*************************************************
 								//**lets find the current SI species in the array
 								//*************************************************
@@ -2598,7 +2658,8 @@ namespace FIA_Biosum_Manager
 				int p_intSIAgeDia,
 				int p_intSIHtFt,
 				ref int p_intSIFVSSpecies,
-				ref double p_dblSiteIndex)
+				ref double p_dblSiteIndex,
+                int p_intSiTree)
 			{
 				
 				
@@ -2643,7 +2704,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -2742,7 +2803,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -2815,7 +2876,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -2909,13 +2970,13 @@ namespace FIA_Biosum_Manager
 					}
                     else if (p_intSISpCd == 17 ||
                              p_intSISpCd == 15) //grand fir and white fir
-                    {
+					{
                         p_dblSiteIndex = ABGR1(p_intSIAgeDia, p_intSIHtFt);
                         p_intSIFVSSpecies = 17;
-                    }
+					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -3032,7 +3093,7 @@ namespace FIA_Biosum_Manager
 					}
 					else if (p_intSISpCd==108) //lodgepole
 					{
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -3142,7 +3203,7 @@ namespace FIA_Biosum_Manager
 					{
 						//Whitebark pine, knobcone pine, lodgepole pine,
 						//Coulter pine, Limber pine, Western juniper
-						getAvgDbhOnPlot(p_intSICondId);
+						getAvgDbhAndBasalArea(p_intSICondId);
 						p_dblSiteIndex = zPICO3(p_intSIAgeDia,
 							p_intSIHtFt,
 							this.ConditionClassBasalAreaPerAcre,
@@ -3197,6 +3258,73 @@ namespace FIA_Biosum_Manager
 						p_intSIFVSSpecies=999;
 					}
 				}
+
+                // Variants for ID and MT that were implemented using a site
+                // index equation database
+                if (this.FVSVariant == "CI" || this.FVSVariant == "EM"
+                    || this.FVSVariant == "IE" || this.FVSVariant == "TT")
+                {
+                    // The compound key for the dictionary is the variant + species code
+                    string strKey = this.FVSVariant + SI_DELIM + p_intSISpCd;
+                    // Initialize values to blank in case the key is not found
+                    string strEquation = "";
+                    string strSlfSpCd = "";
+                    string strRegion = "";
+                    if (_dictSiteIdxEq.ContainsKey(strKey))
+                    {
+                        // If the key is found extract the values from the delimited string
+                        string[] arrValues = _dictSiteIdxEq[strKey].Split(Convert.ToChar(SI_DELIM));
+                        strEquation = arrValues[0];
+                        strSlfSpCd = arrValues[1];
+                        strRegion = arrValues[2];
+                    }
+                    // Reset site index and species code, in case they aren't found in database
+                    p_dblSiteIndex = 0;
+                    // Return the numeric FVS-FIA species code; 
+                    p_intSIFVSSpecies = p_intSISpCd;
+                    // Calculate the site index for the equation from the database
+                    switch (strEquation)
+                    {
+                        case "ABGR1":
+                            p_dblSiteIndex = ABGR1(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "LAOC1_OR":
+                            p_dblSiteIndex = LAOC1_OR(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "PIEN3":
+                            p_dblSiteIndex = PIEN3(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "PSME11":
+                            p_dblSiteIndex = PSME11(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        case "SI_AS1":
+                            p_dblSiteIndex = SI_AS1(p_intSIAgeDia, p_intSIHtFt);
+                            // substitute FIA site index if 0 returned; Uses same site index equation
+                            if (p_dblSiteIndex == 0)
+                            {
+                                p_dblSiteIndex = Convert.ToDouble(p_intSiTree);
+                            }
+                            break;
+                        case "SI_DF2":
+                            p_dblSiteIndex = SI_DF2(p_intSIAgeDia, p_intSIHtFt, this.ConditionClassHabitatTypeCd);
+                            break;
+                        case "SI_LP5":
+                            getAvgDbhAndBasalArea(p_intSICondId);
+                            p_dblSiteIndex = SI_LP5(p_intSIAgeDia, p_intSIHtFt, this.ConditionClassBasalAreaPerAcre,
+                                this.ConditionClassAverageDia);
+                            break;
+                        case "SI_PP6":
+                            p_dblSiteIndex = SI_PP6(p_intSIAgeDia, p_intSIHtFt);
+                            break;
+                        default:
+                            p_intSIFVSSpecies = 999;
+                            break;
+                    }
+                    // If there is a cross-reference slf species code use it, otherwise use input species code
+                    int intSpCd = -1;
+                    bool boolSlfSpecies = Int32.TryParse(strSlfSpCd, out intSpCd);
+                    if (boolSlfSpecies) p_intSIFVSSpecies = intSpCd;
+                }
 
 					
 
@@ -3407,31 +3535,50 @@ namespace FIA_Biosum_Manager
 				dblSI = a + b * (p_intSIHtFt - 4.5) + 4.5;
 				return dblSI;
 			}
-			private void getAvgDbhOnPlot(int p_intCondId)
-			{
+
+			///<summary>Some site index equations require the Canopy Crown Factor (CCF)
+            ///which is a function of avg dbh and basal area per plot. This function queries
+            ///the TREE table to calculate these two factors for a given condition.
+            ///This function needs to be called prior to running an equation that uses CCF
+            ///</summary>
+            ///<param name="p_intCondId">The id of the condition</param>  
+            private void getAvgDbhAndBasalArea(int p_intCondId)
+            {
 
 				this.ConditionClassAverageDia=0;
+                this.ConditionClassBasalAreaPerAcre = 0;
 
-				_oAdo.m_strSQL = "SELECT AvgDia " + 
-					"FROM " +
-                    "(SELECT SUM(IIF(t.tpacurr IS NOT NULL AND t.dia IS NOT NULL AND t.statuscd=1 AND t.dia >= 1," + 
-					"t.tpacurr * t.dia,0)) AS dividend," +
-                    "SUM(IIF(t.tpacurr IS NOT NULL and t.dia IS NOT NULL AND t.statuscd=1 AND t.dia >= 1," + 
-					"t.tpacurr,0)) as divisor," + 
-					"IIF(dividend > 0 AND divisor > 0," + 
-					"dividend / divisor,0) AS AvgDia " + 
-					"FROM " + this.TreeTable + " t " + 
-					"WHERE biosum_cond_id = '" + 
-					this.BiosumPlotId + Convert.ToString(p_intCondId).Trim() + "' " + 
-					"AND t.statuscd=1)";
+                string strSQL = "SELECT t.tpacurr, t.dia " +
+                "FROM " + this.TreeTable + " t " +
+                "WHERE t.biosum_cond_id = '" +
+                this.BiosumPlotId + Convert.ToString(p_intCondId).Trim() +
+                "' AND t.statuscd=1 AND t.tpacurr IS NOT NULL and t.dia IS NOT NULL AND t.dia >= 1";
 
-				
+                _oAdo.SqlQueryReader(_oAdo.m_OleDbConnection, strSQL);
 
-				this.ConditionClassAverageDia = _oAdo.getSingleDoubleValueFromSQLQuery(
-					_oAdo.m_OleDbConnection,_oAdo.m_strSQL,"temp");
+                //Variables to accumulate the data from the tree table
+                double dblCount = 0;
+                double dblDia = 0;
+                double dblBasalArea = 0;
+                if (_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (_oAdo.m_OleDbDataReader.Read())
+                    {
+                        double tempTpa = Convert.ToDouble(_oAdo.m_OleDbDataReader["tpacurr"]);
+                        double tempDia = Convert.ToDouble(_oAdo.m_OleDbDataReader["dia"]);
+                        dblCount = dblCount + tempTpa;
+                        dblDia = dblDia + tempDia * tempTpa;
+                        dblBasalArea = dblBasalArea + (Math.Pow(tempDia, 2) * 0.00545415) * tempTpa;
+                    }
+                }
 
-
+                if (dblCount > 0)
+                {
+                    this.ConditionClassAverageDia = dblDia / dblCount;
+                }
+                this.ConditionClassBasalAreaPerAcre = dblBasalArea;
 			}
+
 			/// <summary>
 			///-- SITE INDEX FOR LOGDGEPOLE PINE - DAHMS
 			///-- Gross Yield of Central Oregon Lodgepole Pine
@@ -4152,7 +4299,7 @@ namespace FIA_Biosum_Manager
             ///-- Quality of Eight Rocky Mountain Species
             ///-- Research Paper: INT-75  1970. p_intSIDiaAge is total age
             ///---Derived from Kurt's PL/SQL
-            ///OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            ///---Curves validated by jsfried
             ///<param name="p_intSIDiaAge"></param>
             ///<param name="p_intSIHtFt"></param>
             /// </summary>
@@ -4210,7 +4357,7 @@ namespace FIA_Biosum_Manager
             /// USDA Forest Service, Res. Pap. RM-29
             /// Site index at total age of 100
             /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
-            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            /// Curves validated by jsfried
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
@@ -4246,19 +4393,171 @@ namespace FIA_Biosum_Manager
             /// Research Note: RM-453
             /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
             /// Base age is 80 years
-            /// OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            /// Curves validated by jsfried
             /// </summary>
             /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
             /// <param name="p_intSIHtFt">Diameter of site tree</param>
-
             private double SI_AS1(int p_intSIDiaAge, int p_intSIHtFt)
             {
                 double dblSI = 0;
-                dblSI = 4.5 + 0.48274 * (p_intSIHtFt - 4.5) * Math.Pow((1 - System.Math.Exp(-0.007719 * p_intSIDiaAge)), -0.93972);
+                dblSI = 4.5 + 0.48274 * (p_intSIHtFt - 4.5) * Math.Pow((1 - Math.Exp(-0.007719 * p_intSIDiaAge)), -0.93972);
                 return dblSI;
             }
+
+
+            /// <summary>
+            /// SITE INDEX FOR PONDEROSA PINE - MEYER
+		    /// Forest Service Inventory procedures for Eastern Washington,
+            /// (Approximates Meyer in USDA Tech. bull. 630)
+            /// Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            /// Base age is 100 years
+            /// Site index curves validated by jsfried
+            /// </summary>
+            /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
+            /// <param name="p_intSIHtFt">Diameter of site tree</param>
+            private double SI_PP6(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                int Total_Age = p_intSIDiaAge;
+                // Adjustment because this equation uses total tree age
+                if (Total_Age > 0) Total_Age = Total_Age + 9;
+                dblSI = (5.328 * (Math.Pow(Total_Age, -0.1)) - 2.378) * (p_intSIHtFt - 4.5) + 4.5;
+                dblSI = dblSI + 0.49;
+                return dblSI;
+            }
+
+            /// <summary>
+            /// SITE INDEX FOR DOUGLAS-FIR - Monserud
+            /// Applying Height Growth and Site Index Curves for Inland DOUGLAS-FIR
+            /// Research Paper:  INT-347  1985
+            /// Derived from Kurt's PL/SQL
+            /// Base age is 50 years
+            /// site index curves validated by jsfried
+
+            /// </summary>
+            /// <param name="p_intSIDiaAge">Age of site tree (Ring count at breast height)</param>
+            /// <param name="p_intSIHtFt">Diameter of site tree</param>
+            /// <param name="p_strHabTypeCd">Habitat type code for condition</param>
+            private double SI_DF2(int p_intSIDiaAge, int p_intSIHtFt, string p_strHabTypeCd)
+            {
+                double dblSI = 0;
+                int intHabTypeCd = 0;
+                // habTypeCd is stored as text in the cond table; Safely try to parse to an int
+                bool isHabTypeAnInt = int.TryParse(p_strHabTypeCd, out intHabTypeCd);
+                if (!isHabTypeAnInt)
+                {
+                    // if habTypeCd is not an int, set it to the middle value
+                    intHabTypeCd = 500;
+                }
+                double dblC1 = 0;
+                double dblC2 = 0;
+                double dblC3 = 0;
+                if (intHabTypeCd <= 400)
+                {
+                    dblC1 = 1.0;
+                }
+                else if (intHabTypeCd < 530)
+                {
+                    dblC2 = 1.0;
+                }
+                else if (intHabTypeCd >= 530)
+                {
+                    dblC3 = 1.0;
+                }
+                dblSI = (38.787-(2.805 * (Math.Log(p_intSIDiaAge) * Math.Log(p_intSIDiaAge))) +
+                        (0.0216 * p_intSIDiaAge * Math.Log(p_intSIDiaAge)) +
+                        (0.4948 * dblC1 + 0.4305 * dblC2 + 0.3964 * dblC3) * p_intSIHtFt +
+                        (25.315 * dblC1 + 28.415 * dblC2 + 30.008 * dblC3) * p_intSIHtFt / p_intSIDiaAge) + 4.5;
+
+                return dblSI;
+            }
+
+            /// <summary>
+            /// This equation for Interior Western Red Cedar is from Hegyi and others
+            /// Site Index Equations and curves for the Major Tree Species in B.C.
+            /// -- B.C. Min of Forest Inventory Report 189(1) Nov 1979, Rev Sept 1981, p.6
+            /// -- Site index at total tree age of 100 -- Equation #272
+            /// ---Derived from Kurt's PL/SQL
+            ///OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            ///<param name="p_intSIDiaAge"></param>
+            ///<param name="p_intSIHtFt"></param>
+            /// </summary>
+            private double THPL03(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                // PL/SQL:  HT/(1.3283*(1-EXP(-0.0174*AGE))**1.4711);
+                dblSI = p_intSIHtFt/(1.3283 * Math.Pow(1 - Math.Exp(-0.0174*p_intSIDiaAge), 1.4711));
+                return dblSI;
+            }
+
+            /// <summary>
+            ///--- SITE INDEX RED ALDER - Harrington
+		    ///    Height Growth and Site Index Curves for Red Alder
+		    ///    Research Paper:  PNW-358 1986 p.5
+            /// ---Derived from VBA source code by Don Vandendriese for FIA2FVS from RMRS
+            ///OUTPUT HAS NOT BEEN VALIDATED; METHOD NOT CURRENTLY IN USE
+            ///<param name="p_intSIDiaAge"></param>
+            ///<param name="p_intSIHtFt"></param>
+            /// </summary>
+            private double SI_RA1(int p_intSIDiaAge, int p_intSIHtFt)
+            {
+                double dblSI = 0;
+                double a = 54.185 - 4.61694 * p_intSIDiaAge + 0.11065 * Math.Pow(p_intSIDiaAge, 2) - 0.0007633 * Math.Pow(p_intSIDiaAge, 3);
+                double b = 1.25934 - (0.012989) * p_intSIDiaAge + 3.522 * Math.Pow((1.0 / p_intSIDiaAge), 3);
+                dblSI = a + b * p_intSIHtFt;
+                dblSI = dblSI + 0.49;
+                return dblSI;
+            }
+
+
 		}
 
+        private IDictionary<String, String> LoadSiteIndexEquations(string strVariant)
+        {
+            //instantiate the dictionary so we can add equation records
+            IDictionary<String, String> _dictSiteIdxEq = new Dictionary<String, String>();
+            ado_data_access oAdo = new ado_data_access();
+            //create env object so we can get the appDir
+            env pEnv = new env();
+            //open the project db file; db name is hard-coded
+            oAdo.OpenConnection(oAdo.getMDBConnString(pEnv.strAppDir + "\\db\\ref_master.mdb", "", ""));
+            string strSQL = "select * from site_index_equations where FVS_VARIANT = '" + strVariant + "'";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    if (oAdo.m_OleDbDataReader["FVS_VARIANT"] == System.DBNull.Value ||
+                        oAdo.m_OleDbDataReader["FIA_SPCD"] == System.DBNull.Value ||
+                        oAdo.m_OleDbDataReader["EQUATION"] == System.DBNull.Value)
+                    {
+                        //If either variant, spcd, or equation is null, we don't add because we can't use
+                    }
+                    else
+                    {
+                        string strFvsVariant = Convert.ToString(oAdo.m_OleDbDataReader["FVS_VARIANT"]);
+                        string strFiaSpCd = Convert.ToString(oAdo.m_OleDbDataReader["FIA_SPCD"]);
+                        string strRegion = SI_EMPTY;
+                        if (oAdo.m_OleDbDataReader["REGION"] != System.DBNull.Value)
+                        {
+                            strRegion = Convert.ToString(oAdo.m_OleDbDataReader["REGION"]);
+                        }
+                        string strSlfSpcd = SI_EMPTY;
+                        if (oAdo.m_OleDbDataReader["SLF_SPCD"] != System.DBNull.Value)
+                        {
+                            strSlfSpcd = Convert.ToString(oAdo.m_OleDbDataReader["SLF_SPCD"]);
+                        }
+                        string strEquation = Convert.ToString(oAdo.m_OleDbDataReader["EQUATION"]);
+                        string strValue = strEquation + SI_DELIM + strSlfSpcd + SI_DELIM + strRegion;
+                        _dictSiteIdxEq.Add(strFvsVariant + SI_DELIM + strFiaSpCd, strValue);
+                    }
+                }
+            }
+            // Always close the connection
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo = null;
+            return _dictSiteIdxEq;
+        }
 	}
 	
 	
