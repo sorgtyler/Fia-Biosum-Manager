@@ -210,10 +210,11 @@ namespace FIA_Biosum_Manager
 
 					p_ado.m_OleDbDataReader.Read();
 					m_strNewProjectId=p_ado.m_OleDbDataReader["proj_id"].ToString();
-                    m_strNewName=p_ado.m_OleDbDataReader["created_by"].ToString();
+                    // Adding trim function to created_by and other optional fields to remove extra spaces
+                    m_strNewName=p_ado.m_OleDbDataReader["created_by"].ToString().Trim();
 				    m_strNewDate=p_ado.m_OleDbDataReader["created_date"].ToString();
-		            m_strNewCompany=p_ado.m_OleDbDataReader["company"].ToString();
-		            m_strNewDescription=p_ado.m_OleDbDataReader["description"].ToString();
+		            m_strNewCompany=p_ado.m_OleDbDataReader["company"].ToString().Trim();
+		            m_strNewDescription=p_ado.m_OleDbDataReader["description"].ToString().Trim();
                     m_strNewShared=p_ado.m_OleDbDataReader["shared_file"].ToString();
 		            m_strNewRootDirectory=p_ado.m_OleDbDataReader["project_root_directory"].ToString();
                     
