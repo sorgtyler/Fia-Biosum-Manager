@@ -149,7 +149,6 @@ namespace FIA_Biosum_Manager
             xpsDocumentViewer.Top = frmMain.g_oFrmMain.Top;
             xpsDocumentViewer.Height = frmMain.g_oFrmMain.ClientSize.Height;
             xpsDocumentViewer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            xpsDocumentViewer.Topmost = true;
             xpsDocumentViewer.IsEnabled = true;
             xpsDocumentViewer.Visibility = Visibility.Visible;
 
