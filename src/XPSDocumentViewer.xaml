@@ -7,11 +7,23 @@
         Width="800">
     <NavigationWindow.Content>
         <Grid>
-            <DocumentViewer x:Name="xpsViewer1" >
-                <FixedDocument>
+                <DocumentViewer x:Name="xpsViewer1"  FontSize="12">
+                   
+                    <DocumentViewer.Resources>
+                        <Style TargetType="ContentControl">
+                            <Style.Triggers>
+                                <Trigger Property="Name" Value="PART_FindToolBarHost">
+                                    <!--<Setter Property="Visibility" Value="Collapsed" />-->
+                                    <Setter Property="IsEnabled" Value="True" />
 
-                </FixedDocument>
-            </DocumentViewer>
+
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DocumentViewer.Resources>
+                    <FixedDocument>
+                    </FixedDocument>
+                </DocumentViewer>
         </Grid>
     </NavigationWindow.Content>
 

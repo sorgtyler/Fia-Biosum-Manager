@@ -5,6 +5,14 @@ using System.Text;
 using System.Windows.Xps.Packaging;
 using System.Windows;
 using System.Data;
+using System.Reflection;
+using System.Windows.Controls;
+using MS.Internal.PresentationUI;
+using System.IO.Packaging;
+using MS.Internal.Documents.Application;
+using System.Threading;
+using System.Windows.Threading;
+
 
 namespace FIA_Biosum_Manager
 {
@@ -12,9 +20,12 @@ namespace FIA_Biosum_Manager
     {
         private System.Data.DataSet m_dsHelp;
         private System.Data.DataTable m_dtHelp;
-        XPSDocumentViewer xpsDocumentViewer = null;
+        private Thread m_oHelpThread=null;
+        public XPSDocumentViewer xpsDocumentViewer = null;
+        System.Windows.Xps.Packaging.XpsDocument m_oXpsDocument = null;
 
         private int m_intCurrentPageNumber=-1;
+        FrameworkElement fe;
 
         public const int COL_DEFAULT_HELP_PARENT = 0;
         public const int COL_DEFAULT_HELP_CHILD = 1;
@@ -70,10 +81,140 @@ namespace FIA_Biosum_Manager
             }
 
         }
-        
+       /// <summary>
+       /// Look up the item page number from the primary key values and
+       /// create a new instance of the help document viewer
+       /// </summary>
+       /// <param name="p_strPrimaryKeyValues"></param>
         public void ShowHelp(string[] p_strPrimaryKeyValues)
         {
+            //shutdown the current document viewer and thread
+            if (xpsDocumentViewer != null)
+            {
+                ShutdownThread();
+            }
 
+            //load the PageNumber variable from the key values
+            GetItemPageNumber(p_strPrimaryKeyValues);
+
+            //start a new thread containing the document viewer
+            m_oHelpThread = new Thread(new ThreadStart(this.ShowHelp));
+            m_oHelpThread.IsBackground = true;
+            m_oHelpThread.SetApartmentState(System.Threading.ApartmentState.STA);
+            m_oHelpThread.Start();
+
+            
+            
+        }
+        /// <summary>
+        /// Close the document viewer and thread
+        /// </summary>
+        private void ShutdownThread()
+        {
+            if (xpsDocumentViewer != null)
+            {
+
+                xpsDocumentViewer.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)delegate()
+                {
+                    xpsDocumentViewer.Close();
+                });
+
+                xpsDocumentViewer = null;
+            }
+            if (m_oHelpThread.IsAlive) m_oHelpThread.Abort();
+            
+        }
+        /// <summary>
+        /// Create a new instance of the document viewer, open the xps document, and navigate to the 
+        /// designated page.
+        /// </summary>
+        private void ShowHelp()
+        {
+
+            
+            xpsDocumentViewer = new XPSDocumentViewer();
+            
+            System.Windows.Xps.Packaging.XpsDocument xpsDoc = new System.Windows.Xps.Packaging.XpsDocument(_env.strAppDir + "\\Help\\" + _strXPSFile, System.IO.FileAccess.Read);
+            xpsDocumentViewer.xpsViewer1.Document = xpsDoc.GetFixedDocumentSequence();
+            xpsDocumentViewer.ReferenceHelp = this;
+           
+            
+            
+            m_intCurrentPageNumber = PageNumber;
+            System.Windows.Documents.DocumentPage oPage = xpsDocumentViewer.xpsViewer1.Document.DocumentPaginator.GetPage(PageNumber);
+           
+            xpsDocumentViewer.xpsViewer1.GoToPage(PageNumber);
+            
+            xpsDocumentViewer.WindowState = WindowState.Normal;
+            xpsDocumentViewer.Top = frmMain.g_oFrmMain.Top;
+            xpsDocumentViewer.Height = frmMain.g_oFrmMain.ClientSize.Height;
+            xpsDocumentViewer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            xpsDocumentViewer.Topmost = true;
+            xpsDocumentViewer.IsEnabled = true;
+            xpsDocumentViewer.Visibility = Visibility.Visible;
+
+            m_oXpsDocument = xpsDoc;
+            xpsDocumentViewer.ShowDialog();
+
+            
+           
+        }
+        /// <summary>
+        /// navigate to the designated page
+        /// </summary>
+        /// <param name="p_intPageNumber"></param>
+        public void GoToPage(int p_intPageNumber)
+        {
+            PageNumber = p_intPageNumber;
+            GoToPage();
+           
+        }
+        /// <summary>
+        /// Navigate to the current page number. If the document is already open then
+        /// just navigate to the page. If the document viewer is not currently
+        /// instantiated then create a new document viewer in its own thread
+        /// </summary>
+        public void GoToPage()
+        {
+            m_intCurrentPageNumber = PageNumber;
+            if (xpsDocumentViewer != null)
+            {
+                xpsDocumentViewer.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)delegate()
+                {
+                    xpsDocumentViewer.xpsViewer1.GoToPage(PageNumber);
+                    if (xpsDocumentViewer.WindowState == WindowState.Minimized)
+                        xpsDocumentViewer.WindowState = WindowState.Normal;
+                });
+
+            }
+            else
+            {
+                m_oHelpThread = new Thread(new ThreadStart(this.ShowHelp));
+                m_oHelpThread.IsBackground = true;
+                m_oHelpThread.SetApartmentState(System.Threading.ApartmentState.STA);
+                m_oHelpThread.Start();
+            }
+
+           
+            
+        }
+        public void GoToPage(string[] p_strPrimaryKeyValues)
+        {
+            GetItemPageNumber(p_strPrimaryKeyValues);
+            if (PageNumber > 0)
+            {
+                GoToPage();
+            }
+
+        }
+        /// <summary>
+        /// Load the PageNumber property with the page number 
+        /// assigned to the passed parameter
+        /// </summary>
+        /// <param name="p_strPrimaryKeyValues"></param>
+        private void GetItemPageNumber(string[] p_strPrimaryKeyValues)
+        {
+            PageNumber = -1;
             System.Object[] oSearch = new Object[PrimaryKeyColumns.Length];
             for (int x = 0; x <= PrimaryKeyColumns.Length - 1; x++)
             {
@@ -85,37 +226,11 @@ namespace FIA_Biosum_Manager
             {
                 PageNumber = Convert.ToInt32(oRow["PAGENUMBER"]);
             }
-            ShowHelp();
 
         }
-        public void ShowHelp()
-        {
-            if (xpsDocumentViewer != null)
-            {
-                xpsDocumentViewer.Close();
-                xpsDocumentViewer = null;
-            }
-           
-            xpsDocumentViewer = new XPSDocumentViewer();
-            System.Windows.Xps.Packaging.XpsDocument xpsDoc = new System.Windows.Xps.Packaging.XpsDocument(_env.strAppDir + "\\Help\\" + _strXPSFile, System.IO.FileAccess.Read);
-            xpsDocumentViewer.xpsViewer1.Document = xpsDoc.GetFixedDocumentSequence();
 
+       
             
-            
-            
-            m_intCurrentPageNumber = PageNumber;
-            System.Windows.Documents.DocumentPage oPage = xpsDocumentViewer.xpsViewer1.Document.DocumentPaginator.GetPage(PageNumber);
-            FrameworkElement fe = oPage.Visual as FrameworkElement;
-            fe.BringIntoView();
-
-            xpsDocumentViewer.WindowState = WindowState.Normal;
-            xpsDocumentViewer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            xpsDocumentViewer.Topmost = true;
-            xpsDocumentViewer.IsEnabled = true;
-            xpsDocumentViewer.Show();
-           
-        }
-
         private int _intPageNumber=0;
         public int PageNumber
         {
