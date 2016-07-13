@@ -2209,21 +2209,24 @@ namespace FIA_Biosum_Manager
 			dao_data_access oDao = new dao_data_access();
 			//string strTreeListDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim()  + "\\fvs\\data\\TreeLists";
 			string strTreeListLinkTableName="";
-			for (int x=0;x<=strVariantsArray.Length-1;x++)
-			{
-                string strTreeListDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\data\\" + strVariantsArray[x].Trim() + "\\BiosumCalc";
-                for (int y = 0; y <= oRxPackageItemCollection.Count - 1; y++)
+            if (strVariantsArray != null && strVariantsArray[0] != null)
+            {
+                for (int x = 0; x <= strVariantsArray.Length - 1; x++)
                 {
-                   
-                    strTreeListLinkTableName = strVariantsArray[x].Trim() + "_P" + oRxPackageItemCollection.Item(y).RxPackageId +  "_TREE_CUTLIST";
-
-                    if (System.IO.File.Exists(strTreeListDir + "\\" + strTreeListLinkTableName.Trim() + ".MDB"))
+                    string strTreeListDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\data\\" + strVariantsArray[x].Trim() + "\\BiosumCalc";
+                    for (int y = 0; y <= oRxPackageItemCollection.Count - 1; y++)
                     {
-                        oDao.CreateTableLink(p_strDbFile, "fvs_tree_IN_" + strTreeListLinkTableName.Trim(), strTreeListDir + "\\" + strTreeListLinkTableName.Trim() + ".MDB", "fvs_tree", true);
+
+                        strTreeListLinkTableName = strVariantsArray[x].Trim() + "_P" + oRxPackageItemCollection.Item(y).RxPackageId + "_TREE_CUTLIST";
+
+                        if (System.IO.File.Exists(strTreeListDir + "\\" + strTreeListLinkTableName.Trim() + ".MDB"))
+                        {
+                            oDao.CreateTableLink(p_strDbFile, "fvs_tree_IN_" + strTreeListLinkTableName.Trim(), strTreeListDir + "\\" + strTreeListLinkTableName.Trim() + ".MDB", "fvs_tree", true);
+                        }
                     }
+
                 }
-			
-			}
+            }
             oDao.m_DaoWorkspace.Close();
             oRxPackageItemCollection.Clear();
             oRxPackageItemCollection = null;

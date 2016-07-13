@@ -19,6 +19,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label lblDesc;
 		private System.Windows.Forms.GroupBox grpboxOwner;
 		public System.Windows.Forms.GroupBox grpboxDesc;
+        private Label LblReleaseDate;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -33,6 +34,10 @@ namespace FIA_Biosum_Manager
 
             this.lblVersion.Text = "Beta Version " + frmMain.g_strAppVer;
 
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(assembly.Location);
+            DateTime lastModified = fileInfo.LastWriteTime;
+            this.LblReleaseDate.Text = "Release date: " + lastModified.ToString("MMMM dd, yyyy");
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
@@ -69,6 +74,7 @@ namespace FIA_Biosum_Manager
             this.btnOK = new System.Windows.Forms.Button();
             this.grpboxOwner = new System.Windows.Forms.GroupBox();
             this.grpboxDesc = new System.Windows.Forms.GroupBox();
+            this.LblReleaseDate = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpboxOwner.SuspendLayout();
             this.grpboxDesc.SuspendLayout();
@@ -111,7 +117,7 @@ namespace FIA_Biosum_Manager
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(176, 22);
             this.lblVersion.TabIndex = 4;
-            this.lblVersion.Text = "Beta Version 5.7.2";
+            this.lblVersion.Text = "Beta Version 5.7.4";
             // 
             // lblDesc
             // 
@@ -150,11 +156,21 @@ namespace FIA_Biosum_Manager
             this.grpboxDesc.TabStop = false;
             this.grpboxDesc.Text = "Description";
             // 
+            // LblReleaseDate
+            // 
+            this.LblReleaseDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LblReleaseDate.Location = new System.Drawing.Point(144, 154);
+            this.LblReleaseDate.Name = "LblReleaseDate";
+            this.LblReleaseDate.Size = new System.Drawing.Size(176, 17);
+            this.LblReleaseDate.TabIndex = 10;
+            this.LblReleaseDate.Text = "Release date";
+            // 
             // frmAbout
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.ClientSize = new System.Drawing.Size(480, 372);
+            this.Controls.Add(this.LblReleaseDate);
             this.Controls.Add(this.grpboxDesc);
             this.Controls.Add(this.grpboxOwner);
             this.Controls.Add(this.btnOK);

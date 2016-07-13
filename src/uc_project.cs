@@ -210,10 +210,11 @@ namespace FIA_Biosum_Manager
 
 					p_ado.m_OleDbDataReader.Read();
 					m_strNewProjectId=p_ado.m_OleDbDataReader["proj_id"].ToString();
-                    m_strNewName=p_ado.m_OleDbDataReader["created_by"].ToString();
+                    // Adding trim function to created_by and other optional fields to remove extra spaces
+                    m_strNewName=p_ado.m_OleDbDataReader["created_by"].ToString().Trim();
 				    m_strNewDate=p_ado.m_OleDbDataReader["created_date"].ToString();
-		            m_strNewCompany=p_ado.m_OleDbDataReader["company"].ToString();
-		            m_strNewDescription=p_ado.m_OleDbDataReader["description"].ToString();
+		            m_strNewCompany=p_ado.m_OleDbDataReader["company"].ToString().Trim();
+		            m_strNewDescription=p_ado.m_OleDbDataReader["description"].ToString().Trim();
                     m_strNewShared=p_ado.m_OleDbDataReader["shared_file"].ToString();
 		            m_strNewRootDirectory=p_ado.m_OleDbDataReader["project_root_directory"].ToString();
                     
@@ -331,7 +332,6 @@ namespace FIA_Biosum_Manager
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_project));
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnHelp = new System.Windows.Forms.Button();
             this.grpboxDescription = new System.Windows.Forms.GroupBox();
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.grpboxCompany = new System.Windows.Forms.GroupBox();
@@ -385,7 +385,6 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnHelp);
             this.groupBox1.Controls.Add(this.grpboxDescription);
             this.groupBox1.Controls.Add(this.grpboxCompany);
             this.groupBox1.Controls.Add(this.grpboxProjectId);
@@ -403,16 +402,6 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Size = new System.Drawing.Size(672, 520);
             this.groupBox1.TabIndex = 29;
             this.groupBox1.TabStop = false;
-            // 
-            // btnHelp
-            // 
-            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.btnHelp.Location = new System.Drawing.Point(112, 440);
-            this.btnHelp.Name = "btnHelp";
-            this.btnHelp.Size = new System.Drawing.Size(96, 32);
-            this.btnHelp.TabIndex = 31;
-            this.btnHelp.Text = "Help";
-            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // grpboxDescription
             // 
@@ -702,6 +691,16 @@ namespace FIA_Biosum_Manager
             this.btnClose.TabIndex = 8;
             this.btnClose.Text = "Close";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(112, 440);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 31;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // uc_project
             // 
@@ -1118,6 +1117,13 @@ namespace FIA_Biosum_Manager
                 strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_PREDISPOSE_FIXTREEID.txt";
                 System.IO.File.Copy(strSourceFile, strDestFile, true);
 
+                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
+                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_AddSeedlings.txt";
+                System.IO.File.Copy(strSourceFile, strDestFile, true);
+
+                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
+                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_DeleteSeedlings.txt";
+                System.IO.File.Copy(strSourceFile, strDestFile, true);
 
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\biosum_processor.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.mdb";
@@ -2661,6 +2667,11 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "NEWPROJECT", "NEWPROJECT" });
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            m_oHelp.GoToPage(2);
         }
 
 

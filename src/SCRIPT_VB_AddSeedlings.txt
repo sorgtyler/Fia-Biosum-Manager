@@ -1,0 +1,139 @@
+Option Compare Database
+
+
+'This program adds seedling records into tree table. The new records will have values that ends with an 's' in the CN field of Tree table.
+'@Requires - FIADB access database containing TREE, SEEDLING, REGIONAL_TREE_BIOMASS tables.
+'@Input - None
+'@Output - None (except some prompt message)
+'@Author - Benktesh Sharma
+'@Contact Email - benktesh@berkeley.edu
+'@Contact Tel  -  510 473 2496
+'@Date - November 8, 2013
+
+'Instruction
+'Open Database such as or CA.mdb
+'Go to Database tool and click Visual Basic
+'On Project Explorer right click and add a module
+'Select everything in this page and copy. You could Press 'CTRL+A' in this page, and Press 'CTRL+C'
+'Paste the codes into VB Module.
+'Save the module and give a name 'AddSeedling' or something you like.
+
+'If you see table TREE missing, then make a copy of TREE_ORIGINAL and rename it to TREE and rerun the program
+'Make a backup copy of the database file so that you can receover it later if something goes wrong your program terminates prematurely.
+'To runt the program, click 'Run' or 'Green Arrow' button. If prompted, select addSeedling in the dialog.
+'For help, contact authord.
+
+'The process logs are printed in immediate window. If you do not see one, press CTRL+G'
+
+
+
+Public Sub AddSeedling()
+    Dim db As DAO.Database
+    Dim td As DAO.TableDef
+    Dim strSQL As String
+    
+    Set db = CurrentDb
+    On Error Resume Next
+    DoCmd.SetWarnings False
+    
+    '**Create table tree from backuptree in case previous run did not succeed
+    DoCmd.RunSQL ("DELETE FROM TREE WHERE CN like '*s'") 'Delete anyseedling from the table from previous run
+    
+    
+    '**Close all the open tables in database so that sql's can be run
+    closeOpenTable 'Call procedure to close all the open tables.
+    
+    '**Make copies of tables
+    CopyTable ("SEEDLING")
+    CopyTable ("TREE")
+    
+    '**Delete Everythign from CPTREE
+    DoCmd.RunSQL ("DELETE FROM CPTREE")
+    
+    'Modify the CN of SEELING by adding 's' at the end so that we know that record represent seedling when we insert that into TREE
+    strSQL = "Update CPSEEDLING Set CN = CN & 's'"
+    DoCmd.RunSQL (strSQL)
+    Debug.Print ("Updated CNs in CPSEEDLING such that CN values end with an s")
+            
+    '**Update the marker id to 2014
+    strSQL = "Update CPSEEDLING Set MARKER = '2014';"
+    DoCmd.RunSQL (strSQL)
+    Debug.Print ("Updated Marker to 2014 in CPSEEDLING")
+        
+    '**Insert all the seedlings into CPTREE
+    strSQL = "INSERT INTO CPTREE (CN, PLT_CN, CONDID, INVYR, STATECD, UNITCD, COUNTYCD, PLOT, SUBP, SPCD, SPGRPCD, STOCKING, TPA_UNADJ, CYCLE, SUBCYCLE, MARKER) " & _
+             "SELECT CN , PLT_CN, CONDID, INVYR, STATECD, UNITCD, COUNTYCD, PLOT, SUBP, SPCD, SPGRPCD, STOCKING, TPA_UNADJ, Cycle, SUBCYCLE, MARKER FROM CPSEEDLING"
+    DoCmd.RunSQL (strSQL)
+    Debug.Print ("Inserted Seedlings from CPSEEDLING into CPTREE")
+    
+    '**Save space, delete the CPSEEDLING
+    'DoCmd.RunSQL ("DROP TABLE CPSEEDLING")
+    
+    '** Update Diameter and Status code for newly added rows from CPTREE
+    strSQL = "Update CPTREE SET DIA = 0.5, STATUSCD = 1 WHERE MARKER = '2014';"
+    DoCmd.RunSQL (strSQL)
+    Debug.Print ("Diameter of seedlings in CPTREE is set to 0.5")
+    
+    '**Assign treeid to all the seedlings in CPTREE
+    'Here we will make unique seedling id in the format 5,###,### (i.e. "500",CONDID, SUBPLOTID,SPCIESCODE).
+    'If the species code is of two digit, we add additional zero in the beginning. This will ensure that tree ids are unique for each subplot.
+    'Two sqls are used to generate tree ids i.e., one for trees with species code < 100 and another for trees with species code >= 100.
+    
+    strSQL = "UPDATE CPTREE Set Tree = CDbl('500' & CONDID & SUBP & '0' & SPCD) WHERE (SPCD<100 AND MARKER='2014');"
+    DoCmd.RunSQL (strSQL)
+    
+    strSQL = "UPDATE CPTREE Set Tree = CDbl('500' & CONDID & SUBP & SPCD) WHERE (SPCD >= 100 AND MARKER='2014');"
+    DoCmd.RunSQL (strSQL)
+    Debug.Print ("Unique Tree IDs for seedlings are created")
+    
+    
+    '**Update regional_biomass_table to add TREE.CN.
+    DoCmd.RunSQL ("DELETE FROM TREE_REGIONAL_BIOMASS WHERE TRE_CN like '*s';") 'We delete any thing from previous run. The query will fail if no record exists. But the program will run.
+    strSQL = "INSERT INTO TREE_REGIONAL_BIOMASS (TRE_CN, STATECD, REGIONAL_DRYBIOM, REGIONAL_DRYBIOT ) SELECT CN, STATECD, 0 as REGIONAL_DRYBIOM, 0 as REGIONAL_DRYBIOT FROM CPTREE WHERE CN like '*s';"
+    DoCmd.RunSQL (strSQL)
+    Debug.Print ("TREE_REGIONAL_BIOMASS table updated by adding seedling records")
+    
+        
+    '**Clean up. Clean up, everybody, Clean up.
+    DoCmd.RunSQL ("ALTER TABLE CPTREE DROP MARKER") 'Drop the marker column
+    DoCmd.RunSQL ("INSERT INTO TREE SELECT * FROM CPTREE")
+
+    'DoCmd.RunSQL ("DROP TABLE CPTREE")
+    
+    Debug.Print ("Process Completed")
+    MsgBox ("Perhaps, after you are done running biosum, you may want to manually delete table tree and rename table original to TREE")
+    
+    
+End Sub
+
+Public Function CopyTable(tblName)
+    Dim newTableName As String
+    newTable = "CP" & tblName
+    Set db = CurrentDb
+    On Error Resume Next
+    DoCmd.SetWarnings False
+    Set td = db.TableDefs(tblName)
+    If Err.Number = 0 Then
+        DoCmd.RunSQL ("Drop Table " & newTable)
+        Err.Clear
+    End If
+    DoCmd.RunSQL ("Select * INTO " & newTable & " FROM " & tblName & ";")
+    DoCmd.RunSQL ("ALTER TABLE " & newTable & " ADD MARKER TEXT")
+    Debug.Print ("Created " & newTable & ", a copy of " & tblName & " and Added a Marker Column")
+End Function
+
+'This procedure closes all the open tables.
+Public Sub closeOpenTable()
+    Dim tbl As DAO.TableDef
+    DoCmd.SetWarnings False
+    For Each tbl In CurrentDb.TableDefs
+        On Error Resume Next
+        DoCmd.Close acTable, tbl.name, acSaveYes
+    Next
+    
+End Sub
+
+
+
+
+
