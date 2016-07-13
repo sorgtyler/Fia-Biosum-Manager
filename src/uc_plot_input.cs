@@ -125,12 +125,6 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.TextBox txtMDBCondTable;
 		private System.Windows.Forms.TextBox txtMDBTreeTable;
 		private System.Windows.Forms.TextBox txtMDBPlot;
-		private System.Windows.Forms.Button btnMDBInputHelp;
-		private System.Windows.Forms.Button btnMDBInputPrevious;
-		private System.Windows.Forms.Button btnMDBInputNext;
-		private System.Windows.Forms.Button btnMDBInputCancel;
-		private System.Windows.Forms.GroupBox grpboxMDBInput;
-		private System.Windows.Forms.Button btnMDBInputFinish;
 		private System.Windows.Forms.Button btnIDBInvAppend;
 		private System.Windows.Forms.ListView lstIDBInv;
 		private System.Windows.Forms.Button btnIDBInvHelp;
@@ -277,12 +271,10 @@ namespace FIA_Biosum_Manager
             this.btnIDBInvPrevious = new System.Windows.Forms.Button();
             this.btnIDBInvNext = new System.Windows.Forms.Button();
             this.btnIDBInvCancel = new System.Windows.Forms.Button();
-            this.grpboxMDBInput = new System.Windows.Forms.GroupBox();
             this.groupBox25 = new System.Windows.Forms.GroupBox();
             this.txtMDBSiteTreeTable = new System.Windows.Forms.TextBox();
             this.btnMDBSiteTreeBrowse = new System.Windows.Forms.Button();
             this.txtMDBSiteTree = new System.Windows.Forms.TextBox();
-            this.btnMDBInputFinish = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.txtMDBTreeTable = new System.Windows.Forms.TextBox();
             this.btnMDBTreeBrowse = new System.Windows.Forms.Button();
@@ -295,10 +287,6 @@ namespace FIA_Biosum_Manager
             this.txtMDBPlotTable = new System.Windows.Forms.TextBox();
             this.btnMDBPlotBrowse = new System.Windows.Forms.Button();
             this.txtMDBPlot = new System.Windows.Forms.TextBox();
-            this.btnMDBInputHelp = new System.Windows.Forms.Button();
-            this.btnMDBInputPrevious = new System.Windows.Forms.Button();
-            this.btnMDBInputNext = new System.Windows.Forms.Button();
-            this.btnMDBInputCancel = new System.Windows.Forms.Button();
             this.grpboxFilterByState = new System.Windows.Forms.GroupBox();
             this.btnFilterByStateFinish = new System.Windows.Forms.Button();
             this.btnFilterByStateUnselect = new System.Windows.Forms.Button();
@@ -349,7 +337,6 @@ namespace FIA_Biosum_Manager
             this.groupBox22.SuspendLayout();
             this.grpboxFIADBInv.SuspendLayout();
             this.grpboxIDBInv.SuspendLayout();
-            this.grpboxMDBInput.SuspendLayout();
             this.groupBox25.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -365,7 +352,6 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Controls.Add(this.grpboxMDBFiadbInput);
             this.groupBox1.Controls.Add(this.grpboxFIADBInv);
             this.groupBox1.Controls.Add(this.grpboxIDBInv);
-            this.groupBox1.Controls.Add(this.grpboxMDBInput);
             this.groupBox1.Controls.Add(this.grpboxFilterByState);
             this.groupBox1.Controls.Add(this.grpboxFilter);
             this.groupBox1.Controls.Add(this.lblTitle);
@@ -607,7 +593,7 @@ namespace FIA_Biosum_Manager
             this.btnMDBFiadbInputPrev.Size = new System.Drawing.Size(72, 24);
             this.btnMDBFiadbInputPrev.TabIndex = 5;
             this.btnMDBFiadbInputPrev.Text = "< Previous";
-            this.btnMDBFiadbInputPrev.Click += new System.EventHandler(this.btnMDBFiadbInputPrev_Click);
+            this.btnMDBFiadbInputPrev.TabStop = false;
             // 
             // btnMDBFiadbInputNext
             // 
@@ -776,24 +762,7 @@ namespace FIA_Biosum_Manager
             this.btnIDBInvCancel.TabIndex = 20;
             this.btnIDBInvCancel.Text = "Cancel";
             this.btnIDBInvCancel.Click += new System.EventHandler(this.btnIDBInvCancel_Click);
-            // 
-            // grpboxMDBInput
-            // 
-            this.grpboxMDBInput.Controls.Add(this.groupBox25);
-            this.grpboxMDBInput.Controls.Add(this.btnMDBInputFinish);
-            this.grpboxMDBInput.Controls.Add(this.groupBox8);
-            this.grpboxMDBInput.Controls.Add(this.groupBox9);
-            this.grpboxMDBInput.Controls.Add(this.groupBox10);
-            this.grpboxMDBInput.Controls.Add(this.btnMDBInputHelp);
-            this.grpboxMDBInput.Controls.Add(this.btnMDBInputPrevious);
-            this.grpboxMDBInput.Controls.Add(this.btnMDBInputNext);
-            this.grpboxMDBInput.Controls.Add(this.btnMDBInputCancel);
-            this.grpboxMDBInput.Location = new System.Drawing.Point(16, 1540);
-            this.grpboxMDBInput.Name = "grpboxMDBInput";
-            this.grpboxMDBInput.Size = new System.Drawing.Size(672, 360);
-            this.grpboxMDBInput.TabIndex = 0;
-            this.grpboxMDBInput.TabStop = false;
-            this.grpboxMDBInput.Text = "FIADB Microsoft Access Database File Input";
+
             // 
             // groupBox25
             // 
@@ -831,15 +800,7 @@ namespace FIA_Biosum_Manager
             this.txtMDBSiteTree.Name = "txtMDBSiteTree";
             this.txtMDBSiteTree.Size = new System.Drawing.Size(383, 26);
             this.txtMDBSiteTree.TabIndex = 0;
-            // 
-            // btnMDBInputFinish
-            // 
-            this.btnMDBInputFinish.Enabled = false;
-            this.btnMDBInputFinish.Location = new System.Drawing.Point(584, 326);
-            this.btnMDBInputFinish.Name = "btnMDBInputFinish";
-            this.btnMDBInputFinish.Size = new System.Drawing.Size(72, 24);
-            this.btnMDBInputFinish.TabIndex = 7;
-            this.btnMDBInputFinish.Text = "Append";
+
             // 
             // groupBox8
             // 
@@ -951,42 +912,7 @@ namespace FIA_Biosum_Manager
             this.txtMDBPlot.Name = "txtMDBPlot";
             this.txtMDBPlot.Size = new System.Drawing.Size(383, 26);
             this.txtMDBPlot.TabIndex = 0;
-            // 
-            // btnMDBInputHelp
-            // 
-            this.btnMDBInputHelp.Location = new System.Drawing.Point(24, 326);
-            this.btnMDBInputHelp.Name = "btnMDBInputHelp";
-            this.btnMDBInputHelp.Size = new System.Drawing.Size(64, 24);
-            this.btnMDBInputHelp.TabIndex = 3;
-            this.btnMDBInputHelp.Text = "Help";
-            // 
-            // btnMDBInputPrevious
-            // 
-            this.btnMDBInputPrevious.Enabled = false;
-            this.btnMDBInputPrevious.Location = new System.Drawing.Point(424, 326);
-            this.btnMDBInputPrevious.Name = "btnMDBInputPrevious";
-            this.btnMDBInputPrevious.Size = new System.Drawing.Size(72, 24);
-            this.btnMDBInputPrevious.TabIndex = 5;
-            this.btnMDBInputPrevious.Text = "< Previous";
-            this.btnMDBInputPrevious.Click += new System.EventHandler(this.btnMDBInputPrevious_Click);
-            // 
-            // btnMDBInputNext
-            // 
-            this.btnMDBInputNext.Location = new System.Drawing.Point(496, 326);
-            this.btnMDBInputNext.Name = "btnMDBInputNext";
-            this.btnMDBInputNext.Size = new System.Drawing.Size(72, 24);
-            this.btnMDBInputNext.TabIndex = 6;
-            this.btnMDBInputNext.Text = "Next >";
-            this.btnMDBInputNext.Click += new System.EventHandler(this.btnMDBInputNext_Click);
-            // 
-            // btnMDBInputCancel
-            // 
-            this.btnMDBInputCancel.Location = new System.Drawing.Point(336, 326);
-            this.btnMDBInputCancel.Name = "btnMDBInputCancel";
-            this.btnMDBInputCancel.Size = new System.Drawing.Size(64, 24);
-            this.btnMDBInputCancel.TabIndex = 4;
-            this.btnMDBInputCancel.Text = "Cancel";
-            this.btnMDBInputCancel.Click += new System.EventHandler(this.btnMDBInputCancel_Click);
+
             // 
             // grpboxFilterByState
             // 
@@ -1385,7 +1311,6 @@ namespace FIA_Biosum_Manager
             this.groupBox22.ResumeLayout(false);
             this.grpboxFIADBInv.ResumeLayout(false);
             this.grpboxIDBInv.ResumeLayout(false);
-            this.grpboxMDBInput.ResumeLayout(false);
             this.groupBox25.ResumeLayout(false);
             this.groupBox25.PerformLayout();
             this.groupBox8.ResumeLayout(false);
@@ -1447,18 +1372,6 @@ namespace FIA_Biosum_Manager
 			this.btnFilterByPlotNext.Location = this.btnMDBFiadbInputNext.Location;
 			this.btnFilterByPlotFinish.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxFilterByPlot.Visible=false;
-
-
-			this.grpboxMDBInput.Left = this.grpboxMDBFiadbInput.Left;
-			this.grpboxMDBInput.Width = this.grpboxMDBFiadbInput.Width;
-			this.grpboxMDBInput.Height = this.grpboxMDBFiadbInput.Height;
-			this.grpboxMDBInput.Top = this.grpboxMDBFiadbInput.Top;
-			this.btnMDBInputHelp.Location = this.btnMDBFiadbInputHelp.Location;
-			this.btnMDBInputCancel.Location = this.btnMDBFiadbInputCancel.Location;
-			this.btnMDBInputPrevious.Location = this.btnMDBFiadbInputPrev.Location;
-			this.btnMDBInputNext.Location = this.btnMDBFiadbInputNext.Location;
-			this.btnMDBInputFinish.Location = this.btnMDBFiadbInputFinish.Location;
-			this.grpboxMDBInput.Visible=false;	
 
 			this.grpboxIDBInv.Left = this.grpboxMDBFiadbInput.Left;
 			this.grpboxIDBInv.Width = this.grpboxMDBFiadbInput.Width;
@@ -1636,31 +1549,10 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void btnTreeBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Tree Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strTreeTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtTree.Text = this.m_strTreeTxtInputFile;
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
-
-		}
-
 		private void btnFilterPrevious_Click(object sender, System.EventArgs e)
 		{
 			this.grpboxFilter.Visible=false;
-			this.grpboxMDBInput.Visible=true;
+            this.grpboxMDBFiadbInput.Visible = true;
 		}
 
 		private void rdoFilterByFile_Click(object sender, System.EventArgs e)
@@ -1724,81 +1616,29 @@ namespace FIA_Biosum_Manager
 			this.m_strStateCountyPlotSQL="";
 			this.m_strStateCountySQL="";
 			this.m_intError=0;
-			if (this.rdoFIADB.Checked==true && this.rdoText.Checked==true)
-			{
-				if (this.rdoFilterNone.Checked==true) 
-				{
-                    LoadTxtPlotCondTreeData_Start();
 
-				}
-				else if (this.rdoFilterByFile.Checked==true)
-				{
-					if (System.IO.File.Exists(this.txtFilterByFile.Text.Trim()) == true)
-					{
-						this.m_strPlotIdList = this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", "," , false);
-						if (this.m_intError==0)
-						{
-                            LoadTxtPlotCondTreeData_Start();
-							
-						}
-					}
-					else
-					{
-						MessageBox.Show("!!" + this.txtFilterByFile.Text.Trim() + " could not be found!!","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-					}
-				}
-			}
-			else if (this.rdoFIADB.Checked==true && this.rdoAccess.Checked==true)
-			{
-
-                CalculateAdjustments_Start();
-                if (m_intError == 0)
+            CalculateAdjustments_Start();
+            if (m_intError == 0)
+            {
+                if (this.rdoFilterNone.Checked == true)
                 {
-                    if (this.rdoFilterNone.Checked == true)
+                    LoadMDBPlotCondTreeData_Start();
+                }
+                else if (this.rdoFilterByFile.Checked == true)
+                {
+                    if (System.IO.File.Exists(this.txtFilterByFile.Text.Trim()) == true)
                     {
-                        LoadMDBPlotCondTreeData_Start();
+                        this.m_strPlotIdList = this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", ",", false);
+                        if (this.m_intError == 0)
+                        {
+                            this.LoadMDBPlotCondTreeData_Start();
+                        }
                     }
-                    else if (this.rdoFilterByFile.Checked == true)
+                    else
                     {
-                        if (System.IO.File.Exists(this.txtFilterByFile.Text.Trim()) == true)
-                        {
-                            this.m_strPlotIdList = this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", ",", false);
-                            if (this.m_intError == 0)
-                            {
-                                this.LoadMDBPlotCondTreeData_Start();
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("!!" + this.txtFilterByFile.Text.Trim() + " could not be found!!", "Add Plot Data", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-                        }
+                        MessageBox.Show("!!" + this.txtFilterByFile.Text.Trim() + " could not be found!!", "Add Plot Data", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                     }
                 }
-			}
-			else
-			{
-				if (this.rdoFilterNone.Checked==true) 
-				{
-					
-                    this.LoadIDBPlotCondTreeData_Start();
-				}
-				else if (this.rdoFilterByFile.Checked==true)
-				{
-					if (System.IO.File.Exists(this.txtFilterByFile.Text.Trim()) == true)
-					{
-						this.m_strPlotIdList = this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", "," ,true);
-						if (this.m_intError==0)
-						{
-							
-                            this.LoadIDBPlotCondTreeData_Start();
-						}
-					}
-					else
-					{
-						MessageBox.Show("!!" + this.txtFilterByFile.Text.Trim() + " could not be found!!","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-					}
-				}
-
 			}
 		}
         private void LoadTxtPlotCondTreeData_Process()
@@ -7780,64 +7620,17 @@ namespace FIA_Biosum_Manager
 
 		private void btnFilterNext_Click(object sender, System.EventArgs e)
 		{
-			if (this.rdoFIADB.Checked==true)
-			{
-				//
-				//see if text file input
-				//
 				
-				if (this.rdoAccess.Checked)
-				{
-					if (this.LoadMDBFiadbPopEvalTable() && m_intError==0)
-					{	
-						this.m_strLoadedPopEvalInputTable=this.cmbFiadbPopEvalTable.Text;
-						this.FIADBLoadInv();
+		    if (this.LoadMDBFiadbPopEvalTable() && m_intError==0)
+			{	
+			    this.m_strLoadedPopEvalInputTable=this.cmbFiadbPopEvalTable.Text;
+				this.FIADBLoadInv();
 						
-					}
-					else if (m_intError==0)
-					{
-					
-					}
-				}
-				else
-				{
-					//see if current pop eval id text file is loaded
-					if (this.m_strPopEvalTxtInputFile.Trim().ToUpper() !=
-						this.m_strLoadedPopEvalTxtInputFile.Trim().ToUpper())
-					{
-						//input the pop eval table to 
-						//identify inventories 
-						this.m_strTableType="POPULATION EVALUATION";
-						this.m_strCurrentTxtInputFile = this.txtPopEval.Text;
-						this.StartTherm("1","Add Population Evaluation Data");
-						this.thdProcessRecords = new Thread(new ThreadStart(this.txtFileInputPopFiles));
-						this.thdProcessRecords.IsBackground = true;
-						this.thdProcessRecords.Start();
-						while (thdProcessRecords.IsAlive)
-						{
-							thdProcessRecords.Join(1000);
-							System.Windows.Forms.Application.DoEvents();
+			}
 
-						}
-						thdProcessRecords=null;
-						this.m_frmTherm.Close();
-						this.m_frmTherm = null;
-						if (m_intError==0)
-						{
-							this.m_strLoadedPopEvalTxtInputFile=this.m_strCurrentTxtInputFile;
-							FIADBLoadInv();
-						}
-					}
-						
-					else
-					{
-					
-					
-					}
-				}
-				if (this.m_intError==0)
-				{
-					if (this.rdoFilterByMenu.Checked==true)
+			if (this.m_intError==0)
+			{
+			    if (this.rdoFilterByMenu.Checked==true)
 					{
 						this.btnFIADBInvAppend.Enabled=false;
 						this.btnFIADBInvNext.Enabled=true;
@@ -7849,39 +7642,10 @@ namespace FIA_Biosum_Manager
 					}
 					this.grpboxFIADBInv.Visible=true;
 					this.grpboxFilter.Visible=false;
-				}
-				
-				//}
-				//
-				//see if MSAccess input
-				//
 			}
-			else if (this.rdoAccess.Checked)
-			{
-			}
-
-
 			
-			if (this.rdoIDB.Checked==true)
-			{
-				if (this.rdoFilterByMenu.Checked==true)
-				{
-					this.btnIDBInvAppend.Enabled=false;
-					this.btnIDBInvNext.Enabled=true;
-				}
-				else
-				{
-					this.btnIDBInvAppend.Enabled=true;
-					this.btnIDBInvNext.Enabled=false;
-				}
-				this.idbLoadInv();
-				if (this.m_intError==0)
-				{
-					this.grpboxIDBInv.Visible=true;
-					this.grpboxFilter.Visible=false;
-				}
-			}
 		}
+
 		private void txtFileInputStateCounty()
 		{
 			//see if we have already loaded the list box with the current inventory
@@ -8497,16 +8261,9 @@ namespace FIA_Biosum_Manager
 
 		private void btnFilterByStatePrevious_Click(object sender, System.EventArgs e)
 		{
-			if (this.rdoFIADB.Checked==true && (this.rdoText.Checked==true || this.rdoAccess.Checked==true))
-			{
-				this.grpboxFilter.Visible=true;
-				this.grpboxFilterByState.Visible=false;
-			}
-			else if (this.rdoIDB.Checked==true)
-			{
-				this.grpboxIDBInv.Visible=true;
-				this.grpboxFilterByState.Visible=false;
-			}
+			this.grpboxFilter.Visible=true;
+			this.grpboxFilterByState.Visible=false;
+
 		}
 
 		private void btnFilterByStateCancel_Click(object sender, System.EventArgs e)
@@ -8516,40 +8273,18 @@ namespace FIA_Biosum_Manager
 
 		private void btnFilterByStateNext_Click(object sender, System.EventArgs e)
 		{
-			if (this.rdoFIADB.Checked==true && this.rdoText.Checked==true)
+		    this.mdbInputPlot();
+			if (this.m_intError==0)
 			{
-				this.txtFileInputPlot();
-				if (this.m_intError == 0)
-				{
-					this.grpboxFilterByPlot.Visible=true;
-					this.grpboxFilterByState.Visible=false;
-				}
-				
-			}
-			else if ((this.rdoFIADB.Checked==true && this.rdoAccess.Checked==true) || this.rdoIDB.Checked==true)
-			{
-				this.mdbInputPlot();
-				if (this.m_intError==0)
-				{
-					this.grpboxFilterByPlot.Visible=true;
-					this.grpboxFilterByState.Visible=false;
-				}
-			}   
+				this.grpboxFilterByPlot.Visible=true;
+				this.grpboxFilterByState.Visible=false;
+			} 
 		}
 
 		private void btnFilterByPlotPrevious_Click(object sender, System.EventArgs e)
 		{
-			if (this.rdoFIADB.Checked==true && (this.rdoText.Checked==true || this.rdoAccess.Checked==true))
-			{
-				this.grpboxFilterByPlot.Visible = false;
-				this.grpboxFilterByState.Visible=true;
-
-			}
-			else if (this.rdoIDB.Checked==true)
-			{
-				this.grpboxFilterByPlot.Visible = false;
-				this.grpboxFilterByState.Visible=true;
-			}
+			this.grpboxFilterByPlot.Visible = false;
+			this.grpboxFilterByState.Visible=true;
 		}
 
 		private void btnFilterByPlotCancel_Click(object sender, System.EventArgs e)
@@ -8606,46 +8341,19 @@ namespace FIA_Biosum_Manager
                 this.Enabled = true;
 				return;
 			}
-			if (this.rdoFIADB.Checked==true && this.rdoText.Checked==true)
-			{
-				if (this.chkForested.Checked && this.chkNonForested.Checked)
-					this.BuildFilterByStateCountyString("statecd","countycd",true);
-				else
-					this.BuildFilterByStateCountyString("ppsa.statecd","ppsa.countycd",true);
-
-				if (this.m_intError==0)
-				{
-
-                    LoadTxtPlotCondTreeData_Start();
-				}
-			}
-			else if (this.rdoFIADB.Checked==true && this.rdoAccess.Checked==true)
-			{
-                CalculateAdjustments_Start();
-                if (m_intError == 0)
+            CalculateAdjustments_Start();
+            if (m_intError == 0)
+            {
+                if (this.chkForested.Checked && this.chkNonForested.Checked)
+                    this.BuildFilterByStateCountyString("statecd", "countycd", true);
+                else
+                    this.BuildFilterByStateCountyString("ppsa.statecd", "ppsa.countycd", true);
+                if (this.m_intError == 0)
                 {
-                    if (this.chkForested.Checked && this.chkNonForested.Checked)
-                        this.BuildFilterByStateCountyString("statecd", "countycd", true);
-                    else
-                        this.BuildFilterByStateCountyString("ppsa.statecd", "ppsa.countycd", true);
-                    if (this.m_intError == 0)
-                    {
 
-                        this.LoadMDBPlotCondTreeData_Start();
-                    }
+                    this.LoadMDBPlotCondTreeData_Start();
                 }
-
-			}
-			else if (this.rdoIDB.Checked==true)
-			{
-				this.BuildFilterByStateCountyString("statecd","countycd",false);
-				if (this.m_intError==0)
-				{
-                    this.LoadIDBPlotCondTreeData_Start();
-				}
-			}
-           
-		
+            }	
 		}
 		private void BuildFilterByStateCountyString(string strStateFieldAlias,string strCountyFieldAlias,bool bStringDataType)
 		{
@@ -9195,51 +8903,21 @@ namespace FIA_Biosum_Manager
                 this.Enabled = true;
 				return;
 			}
-			if (this.rdoFIADB.Checked==true && this.rdoText.Checked==true)
-			{
-
-				this.BuildFilterByPlotString("ppsa.statecd","ppsa.countycd","ppsa.plot",true);
-				if (this.m_intError==0)
-				{
-
-                    LoadTxtPlotCondTreeData_Start();
-				}
-			}
-			else if (this.rdoFIADB.Checked==true && this.rdoAccess.Checked==true)
-			{
-                CalculateAdjustments_Start();
-                if (m_intError == 0)
+            CalculateAdjustments_Start();
+            if (m_intError == 0)
+            {
+                this.BuildFilterByPlotString("ppsa.statecd", "ppsa.countycd", "ppsa.plot", false);
+                if (this.m_intError == 0)
                 {
-                    this.BuildFilterByPlotString("ppsa.statecd", "ppsa.countycd", "ppsa.plot", false);
-                    if (this.m_intError == 0)
-                    {
 
-                        this.LoadMDBPlotCondTreeData_Start();
-                    }
+                    this.LoadMDBPlotCondTreeData_Start();
                 }
-			}
-			else if (this.rdoIDB.Checked==true)
-			{
-				this.BuildFilterByPlotString("statecd","countycd","plot",false);
-				if (this.m_intError==0)
-				{
-                    this.LoadIDBPlotCondTreeData_Start();
-				}
-			}
-			//((frmDialog)this.ParentForm).MinimizeMainForm=false;
-			//this.Enabled=true;
-		
+            }	
 		}
 
 		private void btnMDBInputCancel_Click(object sender, System.EventArgs e)
 		{
 			((frmDialog)this.ParentForm).Close();
-		}
-
-		private void btnMDBInputPrevious_Click(object sender, System.EventArgs e)
-		{
-			this.grpboxMDBInput.Visible=false;
-			this.grpboxInvType.Visible=true;
 		}
 
 		private void btnMDBPlotBrowse_Click(object sender, System.EventArgs e)
@@ -9264,71 +8942,6 @@ namespace FIA_Biosum_Manager
 				"Select Tree Table",
 				ref this.txtMDBTree,
 				ref this.txtMDBTreeTable);
-		}
-
-		private void btnMDBInputNext_Click(object sender, System.EventArgs e)
-		{
-			if (this.txtMDBPlot.Text.Trim().Length == 0)
-			{
-				MessageBox.Show("Select A Plot MDB File And Table","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				return;
-			}
-			if (this.txtMDBCond.Text.Trim().Length == 0)
-			{
-				MessageBox.Show("Select A Cond MDB File And Table","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				return;
-			}
-			if (this.txtMDBTree.Text.Trim().Length == 0)
-			{
-				MessageBox.Show("Select A Tree MDB File And Table","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				return;
-			}
-			if (this.rdoFIADB.Checked==true)
-			{
-				if (this.rdoFilterNone.Checked==true)
-				{
-					this.btnFilterNext.Enabled=false;
-					this.btnFilterFinish.Enabled=true;
-				}
-				else if (this.rdoFilterByMenu.Checked==true)
-				{
-					this.btnFilterNext.Enabled=true;
-					this.btnFilterFinish.Enabled=false;
-                  
-				}
-				else
-				{
-					this.btnFilterNext.Enabled=false;
-					this.btnFilterFinish.Enabled=true;
-				}
-				this.rdoFilterByFile.Text = "Filter By File (Text File Containing Plot_CN numbers)";
-			}
-			else
-			{
-				if (this.rdoFilterByFile.Checked==true) 
-				{
-					this.btnFilterNext.Enabled=false;
-					this.btnFilterFinish.Enabled=true;
-				}
-				else if (this.rdoFilterByMenu.Checked==true)
-				{
-					this.btnFilterNext.Enabled=true;
-					this.btnFilterFinish.Enabled=false;
-                  
-				}
-				else
-				{
-					this.btnFilterNext.Enabled=true;
-					this.btnFilterFinish.Enabled=false;
-				}
-				this.rdoFilterByFile.Text = "Filter By File (Text File Containing idb_plot_id numbers)";
-			}
-
-			this.grpboxFilter.Visible=true;
-			this.grpboxMDBInput.Visible=false;
-
-
-
 		}
 
 		private void btnIDBInvPrevious_Click(object sender, System.EventArgs e)
@@ -10848,53 +10461,28 @@ namespace FIA_Biosum_Manager
 			this.Enabled=false;
 			if (this.lstFIADBInv.SelectedItems.Count > 0)
 			{
-				if (this.rdoAccess.Checked)
-				{
-                    this.CalculateAdjustments_Start();
-                    if (m_intError == 0)
+                this.CalculateAdjustments_Start();
+                if (m_intError == 0)
+                {
+                    this.LoadMDBFiadbPopFiles();
+                    this.m_strLoadedPopEstUnitTxtInputFile = "";
+                    this.m_strLoadedPopEvalTxtInputFile = "";
+                    this.m_strLoadedPopStratumTxtInputFile = "";
+                    this.m_strLoadedPpsaTxtInputFile = "";
+                    if (this.rdoFilterNone.Checked && m_intError == 0)
                     {
-                        if (m_intError == 0)
-                        {
-                            this.LoadMDBFiadbPopFiles();
-                        }
-                        this.m_strLoadedPopEstUnitTxtInputFile = "";
-                        this.m_strLoadedPopEvalTxtInputFile = "";
-                        this.m_strLoadedPopStratumTxtInputFile = "";
-                        this.m_strLoadedPpsaTxtInputFile = "";
-                        if (this.rdoFilterNone.Checked && m_intError == 0)
-                        {
 
+                        this.LoadMDBPlotCondTreeData_Start();
+
+                    }
+                    else if (this.rdoFilterByFile.Checked && m_intError == 0)
+                    {
+                        this.m_strPlotIdList = this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", ",", false);
+                        if (this.m_intError == 0)
                             this.LoadMDBPlotCondTreeData_Start();
 
-                        }
-                        else if (this.rdoFilterByFile.Checked && m_intError == 0)
-                        {
-                            this.m_strPlotIdList = this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", ",", false);
-                            if (this.m_intError == 0)
-                                this.LoadMDBPlotCondTreeData_Start();
-
-                        }
                     }
-					
-
-				}
-				else
-				{
-					LoadTxtPopFiles();
-					if (this.rdoFilterNone.Checked && m_intError==0)
-					{
-
-                        LoadTxtPlotCondTreeData_Start();
-					}
-					else if (this.rdoFilterByFile.Checked && m_intError==0)
-					{
-						this.m_strPlotIdList = this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", "," , false);
-						if (this.m_intError==0)
-                            LoadTxtPlotCondTreeData_Start();
-
-					}
-				}
-				
+                }
 
 			}
 			else
@@ -11192,12 +10780,6 @@ namespace FIA_Biosum_Manager
 		private void lstFilterByState_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
 		{
 			this.m_bLoadStateCountyPlotList=true;
-		}
-
-		private void btnMDBFiadbInputPrev_Click(object sender, System.EventArgs e)
-		{
-			this.grpboxMDBFiadbInput.Visible=false;
-			this.grpboxInvType.Visible=true;
 		}
 
 		private void btnboxMDBFiadbInputFile_Click(object sender, System.EventArgs e)
