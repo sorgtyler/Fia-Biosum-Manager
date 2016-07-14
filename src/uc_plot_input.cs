@@ -1432,38 +1432,14 @@ namespace FIA_Biosum_Manager
 			this.m_dtPlot.Columns.Add("countycd",typeof(string));
 			this.m_dtPlot.Columns.Add("plot",typeof(string));
 
-
-			this.txtPlot.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_PLOT.CSV";
-			this.txtPopEstUnit.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_POP_ESTN_UNIT.CSV";
-			this.txtPopEval.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_POP_EVAL.CSV";
-			this.txtPopStratum.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_POP_STRATUM.CSV";
-			this.txtPpsa.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_POP_PLOT_STRATUM_ASSGN.CSV";
-			this.txtTree.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_TREE.CSV";
-			this.txtTreeRegionalBiomass.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_TREE_REGIONAL_BIOMASS.CSV";
-			this.txtCond.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_COND.CSV";
-			this.txtSiteTree.Text = @"C:\FIA_Biosum\FIADB_DATA\Oregon\OR_SITETREE.CSV";
-
-			this.m_strCondTxtInputFile = this.txtCond.Text;
-			this.m_strPlotTxtInputFile = this.txtPlot.Text;
-			this.m_strPopEstUnitTxtInputFile = this.txtPopEstUnit.Text;
-			this.m_strPopEvalTxtInputFile=this.txtPopEval.Text;
-			this.m_strPopStratumTxtInputFile=this.txtPopStratum.Text;
-			this.m_strPpsaTxtInputFile = this.txtPpsa.Text;
-			this.m_strTreeTxtInputFile = this.txtTree.Text;
-			this.m_strTreeRegionalBiomassTxtInputFile = this.txtTreeRegionalBiomass.Text;
-			this.m_strSiteTreeTxtInputFile = this.txtSiteTree.Text;
-
-
             for (int x = 1; x <= 99; x++)
             {
                 cmbCondPropPercent.Items.Add(x.ToString().Trim());
             }
             cmbCondPropPercent.Text = "25";
 
-			
-
-
 		}
+
         private void InitializeDatasource()
 		{
 			string strProjDir=frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
@@ -1527,28 +1503,6 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void btnCondBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Condition Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strCondTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtCond.Text = this.m_strCondTxtInputFile;
-                   
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
-
-		}
-
 		private void btnFilterPrevious_Click(object sender, System.EventArgs e)
 		{
 			this.grpboxFilter.Visible=false;
@@ -1581,29 +1535,13 @@ namespace FIA_Biosum_Manager
 
 		private void rdoFilterNone_Click(object sender, System.EventArgs e)
 		{
-			//if (rdoFilterByFile.Checked==false && this.txtFilterByFile.Enabled==true) 
-			//{
-			if (this.rdoIDB.Checked==false)
-			{
-				this.btnFilterFinish.Enabled=false;
-				this.chkForested.Enabled=true;
-				this.chkNonForested.Enabled=true;
-				this.btnFilterNext.Enabled=true;
-				this.txtFilterByFile.Enabled=false;
-				this.btnFilterByFileBrowse.Enabled=false;
-			}
-			else
-			{
-				this.btnFilterFinish.Enabled=false;
-				this.chkForested.Enabled=true;
-				this.chkNonForested.Enabled=true;
-				this.btnFilterNext.Enabled=true;
-				this.txtFilterByFile.Enabled=false;
-				this.btnFilterByFileBrowse.Enabled=false;
 
-			}
-			//}
-
+			this.btnFilterFinish.Enabled=false;
+			this.chkForested.Enabled=true;
+			this.chkNonForested.Enabled=true;
+			this.btnFilterNext.Enabled=true;
+			this.txtFilterByFile.Enabled=false;
+			this.btnFilterByFileBrowse.Enabled=false;
 		}
 
 		private void btnFilterCancel_Click(object sender, System.EventArgs e)
@@ -1640,888 +1578,6 @@ namespace FIA_Biosum_Manager
                     }
                 }
 			}
-		}
-        private void LoadTxtPlotCondTreeData_Process()
-		{
-            frmMain.g_oDelegate.CurrentThreadProcessStarted = true;
-			this.m_intError=0;
-			string strFields="";
-			string strCondFields="";
-			string strTreeFields="";
-			string strTreeRegBioFields="";
-			string strSiteTreeFields="";
-			int intAddedPlotRows=0;
-			int intAddedCondRows=0;
-			int intAddedTreeRows=0;
-			int intAddedTreeRegBioRows=0;
-			int intAddedSiteTreeRows=0;
-			int x=0;
-			string[,] strPlotArray;
-			const int PLT_CN = 0;
-			const int BIOSUM_PLOT_ID = 1;
-
-			System.Data.DataTable dtTreeCN = new DataTable("TreeCN");
-			dtTreeCN.Columns.Add("tre_cn",typeof(string));
-			// 1 column in the Primary Key.
-			DataColumn[] colTreePk = new DataColumn[1];
-			colTreePk[0] =dtTreeCN.Columns["tre_cn"];
-			dtTreeCN.PrimaryKey=colTreePk;
-			string strCol;
-			int intRecordCount=0;
-					
-
-              
-			try
-			{
-				//instatiate the oledb data access class
-				this.m_ado = new ado_data_access();
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Maximum", 6);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg2, "Text", "Overall Progress");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Visible", true);    
-				    
-				//create a temporary mdb file with links to all the project tables
-				this.m_strTempMDBFile = m_oDatasource.CreateMDBAndTableDataSourceLinks();
-
-				//get a connection string for the temp mdb file
-				this.m_strTempMDBFileConn = this.m_ado.getMDBConnString(this.m_strTempMDBFile,"","");
-
-				//create a new connection
-				this.m_connTempMDBFile = new System.Data.OleDb.OleDbConnection();
-
-				//open the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-
-				//deleting previous data
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", 5);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Deleting Previous Data");
-                frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-				this.m_ado.SqlNonQuery(this.m_connTempMDBFile,"DELETE FROM " + this.m_strPlotTable + " WHERE biosum_status_cd=9");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 1);
-				this.m_ado.SqlNonQuery(this.m_connTempMDBFile,"DELETE FROM " + this.m_strCondTable + " WHERE biosum_status_cd=9");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 2);
-				this.m_ado.SqlNonQuery(this.m_connTempMDBFile,"DELETE FROM " + this.m_strTreeTable + " WHERE biosum_status_cd=9");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 3);
-				this.m_ado.SqlNonQuery(this.m_connTempMDBFile,"DELETE FROM " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd=9");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 4);
-				this.m_ado.SqlNonQuery(this.m_connTempMDBFile,"DELETE FROM " + this.m_strSiteTreeTable + " WHERE biosum_status_cd=9");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 5);
-
-
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", 3);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 1);
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				//plot table schema
-				System.Data.DataTable p_dtPlotSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strPlotTable);
-				strFields = "";
-				for (x=0; x<=p_dtPlotSchema.Rows.Count-1;x++)
-				{
-					strCol = p_dtPlotSchema.Rows[x]["columnname"].ToString().Trim();
-					
-					if (strFields.Trim().Length == 0)
-					{
-						strFields = strCol;
-					}
-					else
-					{	
-						strFields += "," + strCol;
-					}
-				}
-				System.Data.DataRow oRow = p_dtPlotSchema.NewRow();
-				oRow[0] = "cycle";
-				oRow[5] = "System.Int32";
-				p_dtPlotSchema.Rows.Add(oRow);
-
-				oRow = p_dtPlotSchema.NewRow();
-				oRow[0] = "subcycle";
-				oRow[5] = "System.Int32";
-				p_dtPlotSchema.Rows.Add(oRow);
-
-				oRow = p_dtPlotSchema.NewRow();
-				oRow[0] = "plot_status_cd";
-				oRow[5] = "System.Int32";
-				p_dtPlotSchema.Rows.Add(oRow);
-				
-
-				string[] strPlotColumns = new string[p_dtPlotSchema.Rows.Count];
-				string[] strPlotStringDataTypeYN = new string[p_dtPlotSchema.Rows.Count];
-
-				for (x=0;x<=p_dtPlotSchema.Rows.Count-1;x++)
-				{
-					strPlotColumns[x] = p_dtPlotSchema.Rows[x][0].ToString().Trim();
-					strPlotStringDataTypeYN[x] = m_ado.getIsTheFieldAStringDataType(p_dtPlotSchema.Rows[x][5].ToString());
-				}
-
-				//condition table schema
-				System.Data.DataTable p_dtCondSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strCondTable);
-				strCondFields = "";
-				for (x=0; x<=p_dtCondSchema.Rows.Count-1;x++)
-				{
-					strCol = p_dtCondSchema.Rows[x]["columnname"].ToString().Trim();
-					
-					if (strCondFields.Trim().Length == 0)
-					{
-						strCondFields = strCol;
-					}
-					else
-					{	
-						strCondFields += "," + strCol;
-					}
-				}
-				oRow = p_dtCondSchema.NewRow();
-				oRow["columnname"] = "cond_status_cd";
-				oRow["datatype"] = "System.Int32";
-				p_dtCondSchema.Rows.Add(oRow);
-				oRow = p_dtCondSchema.NewRow();
-				oRow["columnname"] = "plt_cn";
-				oRow["datatype"] = "System.String";
-				oRow["columnsize"] = 34;
-				oRow["AllowDbNull"] = true;
-				p_dtCondSchema.Rows.Add(oRow);
-
-				string[] strCondColumns = new string[p_dtCondSchema.Rows.Count];
-				string[] strCondStringDataTypeYN = new string[p_dtCondSchema.Rows.Count];
-				for (x=0;x<=p_dtCondSchema.Rows.Count-1;x++)
-				{
-					strCondColumns[x] = p_dtCondSchema.Rows[x][0].ToString().Trim();
-					strCondStringDataTypeYN[x] = m_ado.getIsTheFieldAStringDataType(p_dtCondSchema.Rows[x][5].ToString());
-				}
-
-				//tree table schema
-				System.Data.DataTable p_dtTreeSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strTreeTable);
-				strTreeFields = "";
-				for (x=0; x<=p_dtTreeSchema.Rows.Count-1;x++)
-				{
-					strCol = p_dtTreeSchema.Rows[x]["columnname"].ToString().Trim();
-					
-					if (strTreeFields.Trim().Length == 0)
-					{
-						strTreeFields = strCol;
-					}
-					else
-					{	
-						strTreeFields += "," + strCol;
-					}
-				}
-				oRow = p_dtTreeSchema.NewRow();
-				oRow["columnname"] = "plt_cn";
-				oRow["datatype"] = "System.String";
-				oRow["columnsize"] = 34;
-				oRow["AllowDbNull"] = true;
-				p_dtTreeSchema.Rows.Add(oRow);
-
-				string[] strTreeColumns = new string[p_dtTreeSchema.Rows.Count];
-				string[] strTreeStringDataTypeYN = new string[p_dtTreeSchema.Rows.Count];
-				for (x=0;x<=p_dtTreeSchema.Rows.Count-1;x++)
-				{
-					strTreeColumns[x] = p_dtTreeSchema.Rows[x][0].ToString().Trim();
-					strTreeStringDataTypeYN[x] = m_ado.getIsTheFieldAStringDataType(p_dtTreeSchema.Rows[x][5].ToString());
-				}
-
-				//tree regional biomass table
-				System.Data.DataTable p_dtTreeRegBioSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strTreeRegionalBiomassTable);
-				strTreeRegBioFields = "";
-				for (x=0; x<=p_dtTreeRegBioSchema.Rows.Count-1;x++)
-				{
-					strCol = p_dtTreeRegBioSchema.Rows[x]["columnname"].ToString().Trim();
-					
-					if (strTreeRegBioFields.Trim().Length == 0)
-					{
-						strTreeRegBioFields = strCol;
-					}
-					else
-					{	
-						strTreeRegBioFields += "," + strCol;
-					}
-				}
-
-				string[] strTreeRegBioColumns = new string[p_dtTreeRegBioSchema.Rows.Count];
-				string[] strTreeRegBioStringDataTypeYN = new string[p_dtTreeRegBioSchema.Rows.Count];
-				for (x=0;x<=p_dtTreeRegBioSchema.Rows.Count-1;x++)
-				{
-					strTreeRegBioColumns[x] = p_dtTreeRegBioSchema.Rows[x][0].ToString().Trim();
-					strTreeRegBioStringDataTypeYN[x] = m_ado.getIsTheFieldAStringDataType(p_dtTreeRegBioSchema.Rows[x][5].ToString());
-				}
-
-				//site tree table schema
-				System.Data.DataTable p_dtSiteTreeSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strSiteTreeTable);
-				strSiteTreeFields = "";
-				for (x=0; x<=p_dtSiteTreeSchema.Rows.Count-1;x++)
-				{
-					strCol = p_dtSiteTreeSchema.Rows[x]["columnname"].ToString().Trim();
-					
-					if (strSiteTreeFields.Trim().Length == 0)
-					{
-						strSiteTreeFields = strCol;
-					}
-					else
-					{	
-						strSiteTreeFields += "," + strCol;
-					}
-				}
-				oRow = p_dtSiteTreeSchema.NewRow();
-				oRow["columnname"] = "plt_cn";
-				oRow["datatype"] = "System.String";
-				oRow["columnsize"] = 34;
-				oRow["AllowDbNull"] = true;
-				p_dtSiteTreeSchema.Rows.Add(oRow);
-
-				string[] strSiteTreeColumns = new string[p_dtSiteTreeSchema.Rows.Count];
-				string[] strSiteTreeStringDataTypeYN = new string[p_dtSiteTreeSchema.Rows.Count];
-				for (x=0;x<=p_dtSiteTreeSchema.Rows.Count-1;x++)
-				{
-					strSiteTreeColumns[x] = p_dtSiteTreeSchema.Rows[x][0].ToString().Trim();
-					strSiteTreeStringDataTypeYN[x] = m_ado.getIsTheFieldAStringDataType(p_dtSiteTreeSchema.Rows[x][5].ToString());
-				}
-
-
-
-				this.m_strSQL = "SELECT biosum_cond_id, qmd_tot_cm,hwd_qmd_tot_cm," + 
-					"swd_qmd_tot_cm,tpacurr,hwd_tpacurr,swd_tpacurr,ba_ft2_ac," +  
-					"hwd_ba_ft2_ac,swd_ba_ft2_ac,vol_ac_grs_stem_ttl_ft3," +
-					"hwd_vol_ac_grs_stem_ttl_ft3,swd_vol_ac_grs_stem_ttl_ft3," +
-					"vol_ac_grs_ft3, hwd_vol_ac_grs_ft3," + 
-					"swd_vol_ac_grs_ft3,volcsgrs," +
-					"hwd_volcsgrs, swd_volcsgrs " + 
-					"FROM " + this.m_strCondTable.Trim() + ";";
-
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				System.Data.DataTable p_dtCondWorkTable = this.m_ado.getTableSchema(this.m_connTempMDBFile,this.m_strSQL);
-
-
-				this.m_strSQL = "SELECT biosum_plot_id, statecd as cond_ttl " + 
-					"FROM " + this.m_strPlotTable.Trim() + ";";
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				System.Data.DataTable p_dtPlotWorkTable = this.m_ado.getTableSchema(this.m_connTempMDBFile,this.m_strSQL);
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 2);
-			
-
-				//close the connection to the temp mdb file
-				this.m_connTempMDBFile.Close();
-
-				/*****************************************************************
-				 **create the table structure of the plot table and give it 
-				 **the name of plot_input
-				 *****************************************************************/
-				dao_data_access p_dao = new dao_data_access();
-				//plot table schema
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"plot_input",p_dtPlotSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPlotSchema.Dispose();
-					return;
-				}
-				//condition table schema
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"cond_input",p_dtCondSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPlotSchema.Dispose();
-					p_dtCondSchema.Dispose();
-					return;
-				}
-				//tree table schema
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"tree_input",p_dtTreeSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPlotSchema.Dispose();
-					p_dtCondSchema.Dispose();
-					p_dtTreeSchema.Dispose();
-					return;
-				}
-				//tree regional biomass table schema
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"treeRegBio_input",p_dtTreeRegBioSchema ,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPlotSchema.Dispose();
-					p_dtCondSchema.Dispose();
-					p_dtTreeSchema.Dispose();
-					p_dtTreeRegBioSchema.Dispose();
-					return;
-				}
-				//site tree table schema
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"site_tree_input",p_dtSiteTreeSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPlotSchema.Dispose();
-					p_dtCondSchema.Dispose();
-					p_dtTreeSchema.Dispose();
-					p_dtTreeRegBioSchema.Dispose();
-					p_dtSiteTreeSchema.Dispose();
-					return;
-				}
-
-
-
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"cond_column_updates_work_table",p_dtCondWorkTable,true);
-
-				p_dtCondWorkTable.Clear();
-				p_dtCondWorkTable = null;
-
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"plot_column_updates_work_table",p_dtPlotWorkTable,true);
-
-				p_dtPlotWorkTable.Clear();
-				p_dtPlotWorkTable = null;
-
-
-				p_dao=null;
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 3);
-
-
-				//reopen the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 1);
-
-				if (this.m_intError==0)
-				{
-
-					//----------------PLOT DATA---------------//
-					try
-					{
-						intAddedPlotRows=0;
-
-						//see if user wanted to filter by file containing plot CN numbers
-						if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.RadioButton)rdoFilterByFile,"Checked",false)
-                             == true && m_strPlotIdList.Trim().Length > 0)
-						{
-							string strDelimiter=",";
-							string[] strPlotIdArray = m_strPlotIdList.Split(strDelimiter.ToCharArray());
-							this.m_ado.m_strSQL = "SELECT CN INTO input_cn FROM " + this.m_strPlotTable + " WHERE 1=2";
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-							for (x=0;x<=strPlotIdArray.Length-1;x++)
-							{
-								if (strPlotIdArray[x] != null && strPlotIdArray[x].Trim().Length > 0)
-								{
-									this.m_ado.m_strSQL = "INSERT INTO input_cn (CN) VALUES ("+ strPlotIdArray[x].Trim() + ")";  
-									this.m_ado.SqlNonQuery(this.m_connTempMDBFile,m_ado.m_strSQL);
-								}
-							}
-							this.m_ado.m_strSQL = "SELECT DISTINCT a.plt_cn INTO ppsa_plt_cn_work_table " + 
-								"FROM " + this.m_strPpsaTable + " a,input_cn b " + 
-								"WHERE TRIM(a.plt_cn)=TRIM(b.CN) AND " + 
-								"a.rscd=" + this.m_strCurrFIADBRsCd + " AND " + 
-								"a.evalid=" + this.m_strCurrFIADBEvalId + " AND " + 
-								"a.biosum_status_cd=9";
-
-						}
-						else
-						{
-				
-
-							//copy the plot records from the ppsa table for the user selected evaluation
-							this.m_ado.m_strSQL = "SELECT DISTINCT plt_cn INTO ppsa_plt_cn_work_table FROM " + this.m_strPpsaTable + " " + 
-								"WHERE rscd=" + this.m_strCurrFIADBRsCd + " AND " + 
-								"evalid=" + this.m_strCurrFIADBEvalId + " AND " + 
-								"biosum_status_cd=9";
-						}
-				
-				
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-
-						intRecordCount = Convert.ToInt32(this.m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM ppsa_plt_cn_work_table","ppsa_plt_cn_work_table"));
-
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", intRecordCount);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Processing Plot Records");
-
-
-						//insert plot text file data into the plot_input table
-						this.txtInsertFIADBDataMartDelimitedText(this.m_connTempMDBFile,
-							this.txtPlot.Text.Trim(),
-							"ppsa_plt_cn_work_table",
-							"plt_cn",
-							"plot_input",
-							strPlotColumns,
-							strPlotStringDataTypeYN,true);
-						
-						if (m_intError==0 && m_ado.m_intError==0)
-						{
-
-							//filter plot records that are part of the evaluation based on user 
-							//forested,non-forested,state,county, plot selections
-							this.m_ado.m_strSQL = "SELECT p.* INTO plot_input_work_table FROM plot_input p," + 
-								"ppsa_plt_cn_work_table ppsa " + 
-								"WHERE trim(p.cn)=trim(ppsa.plt_cn)";
-
-							if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.RadioButton)rdoFilterByMenu,"Checked",false)
-                                ==true && this.m_strStateCountySQL.Trim().Length > 0)
-							{
-								this.BuildFilterByStateCountyString("p.statecd","p.countycd",false);
-								this.m_ado.m_strSQL = this.m_ado.m_strSQL + " AND " + this.m_strStateCountySQL;
-							}
-							else if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.RadioButton)rdoFilterByMenu,"Checked",false)
-                                ==true && this.m_strStateCountyPlotSQL.Trim().Length > 0)
-							{
-								this.BuildFilterByPlotString("p.statecd","p.countycd","p.plot",false);
-								this.m_ado.m_strSQL = this.m_ado.m_strSQL + " AND " + this.m_strStateCountyPlotSQL;
-							}
-
-							if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.RadioButton)rdoFilterNone,"Checked",false)
-                                ==true || 
-								(bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.RadioButton)rdoFilterByMenu,"Checked",false)
-                                ==true)
-							{
-
-								if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox)chkForested,"Checked",false)
-                                    ==true &&
-									(bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox)chkNonForested,"Checked",false)
-                                    ==false)								
-								{
-									this.m_ado.m_strSQL = this.m_ado.m_strSQL + " AND p.plot_status_cd=1";
-								}
-                                else if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox)chkForested, "Checked", false)
-                                    == false &&
-                                    (bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox)chkNonForested, "Checked", false)
-                                    == true)
-								{
-									this.m_ado.m_strSQL = this.m_ado.m_strSQL + " AND p.plot_status_cd<>1";
-								}
-							}
-
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-
-							if (m_intError==0 && m_ado.m_intError==0)
-							{
-								intRecordCount = Convert.ToInt32(this.m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM plot_input_work_table","plot_input_work_table"));
-
-								strPlotArray = new string[intRecordCount,2];
-
-								this.m_ado.m_strSQL="SELECT * FROM plot_input_work_table";
-
-								this.m_ado.SqlQueryReader(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-								if (m_ado.m_OleDbDataReader.HasRows)
-								{
-									x=0;
-									while (m_ado.m_OleDbDataReader.Read())
-									{
-					    
-										strPlotArray[x,PLT_CN]=m_ado.m_OleDbDataReader["cn"].ToString().Trim();
-										strPlotArray[x,BIOSUM_PLOT_ID] = this.CreateBiosumPlotId(m_ado.m_OleDbDataReader);
-										x++;
-									}
-								}
-								m_ado.m_OleDbDataReader.Close();
-
-								//add biosum_plot_id
-								for (x=0;x<=strPlotArray.Length / 2 -1;x++)
-								{
-									this.m_ado.m_strSQL = "UPDATE plot_input_work_table SET biosum_plot_id = '" + 
-										strPlotArray[x,BIOSUM_PLOT_ID].Trim() + "' " + 
-										"WHERE TRIM(CN) = '" + strPlotArray[x,PLT_CN].Trim() + "'";
-									this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-								}
-
-								//update misc plot columns
-								this.m_ado.m_strSQL = "UPDATE plot_input_work_table " + 
-									"SET gis_protected_area_yn=IIF(gis_protected_area_yn IS NULL,'N',gis_protected_area_yn)," + 
-									"gis_roadless_yn=IIF(gis_roadless_yn IS NULL,'N',gis_roadless_yn)," + 
-									"all_cond_not_accessible_yn=IIF(all_cond_not_accessible_yn IS NULL,'N',all_cond_not_accessible_yn)," + 
-									"plot_accessible_yn=IIF(plot_accessible_yn IS NULL,'Y',plot_accessible_yn)," + 
-									"biosum_status_cd=IIF(biosum_status_cd IS NULL,9,biosum_status_cd)," + 
-									"gis_status_id=IIF(gis_status_id IS NULL,1,gis_status_id)";
-								this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-
-								//insert the plot work table records into the production plot table
-								this.m_ado.m_strSQL = "INSERT INTO " + this.m_strPlotTable + " " + 
-									"(" + strFields + ") " + 
-									"SELECT " + strFields + " FROM plot_input_work_table";
-								this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-								intAddedPlotRows=Convert.ToInt32(m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM " + this.m_strPlotTable + " WHERE biosum_status_cd=9",this.m_strPlotTable));
-							}
-						
-						}
-					}
-					catch (Exception err_plot)
-					{
-						m_intError=-1;
-						MessageBox.Show(err_plot.Message);
-					}
-				}
-
-				
-				//-------------------CONDITION DATA------------------//
-				if (this.m_intError==0 && intAddedPlotRows > 0)
-				{
-					try
-					{
-						intAddedCondRows=0;
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", intRecordCount*2);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Processing Condition Records");
-
-						//insert plot text file data into the plot_input table
-						this.txtInsertFIADBDataMartDelimitedText(this.m_connTempMDBFile,
-							this.txtCond.Text.Trim(),
-							"plot_input_work_table",
-							"cn",
-							"cond_input",
-							strCondColumns,
-							strCondStringDataTypeYN,false);
-
-						if (this.m_intError==0)
-						{
-							//add biosum_plot_id
-							this.m_ado.m_strSQL = "UPDATE cond_input a INNER JOIN " + this.m_strPlotTable + " b " + 
-								"ON TRIM(a.plt_cn)=TRIM(b.cn) " + 
-								"SET a.biosum_plot_id = b.biosum_plot_id, " +
-								"a.biosum_cond_id=  b.biosum_plot_id + trim(cstr(a.condid)), " +
-								"a.landclcd=a.cond_status_cd," + 
-								"a.cond_too_far_steep_yn=IIF(a.cond_too_far_steep_yn IS NULL,'N',a.cond_too_far_steep_yn)," + 
-								"a.cond_accessible_yn=IIF(a.cond_accessible_yn IS NULL,'Y',a.cond_accessible_yn)," + 
-								"a.biosum_status_cd=9";
-									 
-
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-
-							if (this.m_intError==0 && this.m_ado.m_intError==0)
-							{
-
-								//insert the condition work table records into the condition production table
-								this.m_ado.m_strSQL = "INSERT INTO " + this.m_strCondTable + " " + 
-									"(" + strCondFields + ") " + 
-									"SELECT " + strCondFields + " FROM cond_input";
-								this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-								intAddedCondRows=Convert.ToInt32(m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM " + this.m_strCondTable + " WHERE biosum_status_cd=9",this.m_strCondTable));
-							}
-						}
-					}
-					catch (Exception err_cond)
-					{
-						m_intError=-1;
-						MessageBox.Show(err_cond.Message);
-
-					}
-
-
-				}
-
-				//-------------------TREE DATA------------------//
-				if (this.m_ado.m_intError == 0 && intAddedPlotRows > 0)
-				{
-					try
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", (intRecordCount * 2) * 20);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 3);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Processing Tree Table");
-						intAddedTreeRows=0;
-					
-					
-						this.txtInsertFIADBDataMartDelimitedText(this.m_connTempMDBFile,
-							this.txtTree.Text.Trim(),
-							"plot_input_work_table",
-							"cn",
-							"tree_input",
-							strTreeColumns,
-							strTreeStringDataTypeYN,false);
-
-						if (this.m_intError==0 && this.m_ado.m_intError==0)
-						{
-							//update columns
-
-							//add biosum_cond_id
-							this.m_ado.m_strSQL = "UPDATE tree_input a INNER JOIN " + this.m_strPlotTable + " b " + 
-								"ON TRIM(a.plt_cn)=TRIM(b.cn) " + 
-								"SET a.biosum_cond_id=  b.biosum_plot_id + trim(cstr(a.condid)), " +
-								" a.cullbf = IIF(a.cullbf IS NULL,IIF(a.cull IS NOT NULL AND a.roughcull IS NOT NULL,a.cull+a.roughcull," + 
-								"IIF(a.cull IS NOT NULL,a.cull,IIF(a.roughcull IS NOT NULL,a.roughcull,0))) ,a.cullbf), " + 
-								"a.biosum_status_cd=9";
-									 
-
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-							if (this.m_intError==0 && this.m_ado.m_intError==0)
-							{
-
-								//insert the tree work table records into the tree production table
-								this.m_ado.m_strSQL = "INSERT INTO " + this.m_strTreeTable + " " + 
-									"(" + strTreeFields + ") " + 
-									"SELECT " + strTreeFields + " FROM tree_input";
-								this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-							}
-
-
-
-
-							if (this.m_intError==0 && this.m_ado.m_intError==0)
-								intAddedTreeRows=Convert.ToInt32(m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM " + this.m_strTreeTable + " WHERE biosum_status_cd=9",this.m_strTreeTable));
-                        
-						}
-					}
-					catch (Exception err_tree)
-					{
-						m_intError=-1;
-						MessageBox.Show(err_tree.Message);
-					}
-						                                       
-						                                       
-				}
-
-				//-------------------TREE REGIONAL BIOMASS DATA------------------//
-				if (this.m_intError== 0 && 
-					this.m_ado.m_intError == 0 && 
-					intAddedPlotRows > 0)
-				{
-					try
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", intAddedTreeRows);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 4);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Tree Regional Biomass Table");
-						intAddedTreeRegBioRows=0;
-
-						this.txtInsertFIADBDataMartDelimitedText(this.m_connTempMDBFile,
-							this.txtTreeRegionalBiomass.Text.Trim(),
-							"tree_input",
-							"cn",
-							"treeRegBio_input",
-							strTreeRegBioColumns,
-							strTreeRegBioStringDataTypeYN,true);
-
-						if (this.m_intError== 0 && 
-							this.m_ado.m_intError == 0)
-						{
-
-							//update biosum_status_cd
-							this.m_ado.m_strSQL = "UPDATE treeRegBio_input " + 
-								"SET biosum_status_cd=9";
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-
-							if (this.m_intError==0 && this.m_ado.m_intError==0)
-							{
-								//insert the tree work table records into the tree production table
-								this.m_ado.m_strSQL = "INSERT INTO " + this.m_strTreeRegionalBiomassTable + " " + 
-									"(" + strTreeRegBioFields + ") " + 
-									"SELECT " + strTreeRegBioFields + " FROM treeRegBio_input";
-								this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-							}
-						}
-						if (this.m_intError== 0 && 
-							this.m_ado.m_intError == 0)
-							intAddedTreeRegBioRows=Convert.ToInt32(m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd=9",this.m_strTreeRegionalBiomassTable));
-					}
-					catch (Exception err_treeregbio)
-					{
-						m_intError=-1;
-						MessageBox.Show(err_treeregbio.Message);
-					}
-
-				}
-				
-				//-------------------SITE TREE DATA------------------//
-				if (this.m_ado.m_intError == 0 && intAddedPlotRows > 0)
-				{
-					try
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", (intRecordCount * 2) * 2);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 5);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Processing Site Tree Table");
-						intAddedSiteTreeRows=0;
-					
-					
-						this.txtInsertFIADBDataMartDelimitedText(this.m_connTempMDBFile,
-							this.txtSiteTree.Text.Trim(),
-							"plot_input_work_table",
-							"cn",
-							"site_tree_input",
-							strSiteTreeColumns,
-							strSiteTreeStringDataTypeYN,false);
-
-						if (this.m_intError==0 && this.m_ado.m_intError==0)
-						{
-							//update columns
-
-							//add biosum_plot_id
-							this.m_ado.m_strSQL = "UPDATE site_tree_input a INNER JOIN " + this.m_strPlotTable + " b " + 
-								"ON TRIM(a.plt_cn)=TRIM(b.cn) " + 
-								"SET a.biosum_plot_id= b.biosum_plot_id, " +
-								"a.biosum_status_cd=9";
-									 
-
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-							if (this.m_intError==0 && this.m_ado.m_intError==0)
-							{
-
-								//insert the site tree work table records into the site tree production table
-								this.m_ado.m_strSQL = "INSERT INTO " + this.m_strSiteTreeTable + " " + 
-									"(" + strSiteTreeFields + ") " + 
-									"SELECT " + strSiteTreeFields + " FROM site_tree_input";
-								this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_ado.m_strSQL);
-							}
-
-
-
-
-							if (this.m_intError==0 && this.m_ado.m_intError==0)
-								intAddedSiteTreeRows=Convert.ToInt32(m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM " + this.m_strSiteTreeTable + " WHERE biosum_status_cd=9",this.m_strSiteTreeTable));
-                        
-						}
-					}
-					catch (Exception err_tree)
-					{
-						m_intError=-1;
-						MessageBox.Show(err_tree.Message);
-					}
-						                                       
-						                                       
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 6);
-				if (this.m_ado.m_intError==0 && this.m_intError == 0 && (intAddedPlotRows > 0 || intAddedCondRows > 0 || intAddedTreeRows > 0 || intAddedTreeRegBioRows > 0))
-				{
-					this.UpdateColumns(this.m_ado);
-					if (this.m_intError==0)
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Label)m_frmTherm.lblMsg, "Text", "Done");
-                        frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Refresh");
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1,"Maximum",false));
-						this.m_strSQL = " UPDATE " + this.m_strPlotTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strCondTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strTreeTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strPopEvalTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strTreeRegionalBiomassTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strPopStratumTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strPpsaTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strPopEstUnitTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = " UPDATE " + this.m_strSiteTreeTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Button)m_frmTherm.btnCancel, "Visible", false);
-													
-
-						MessageBox.Show("Successfully Appended \n" + 
-							intAddedPlotRows.ToString().Trim() + " Plot Records \n" + 
-							intAddedCondRows.ToString().Trim() + " Condition Records \n" + 
-							intAddedTreeRows.ToString().Trim() + " Tree Records \n" + 
-							intAddedTreeRegBioRows.ToString().Trim() + " Tree Regional Biomass Records \n" + 
-							intAddedSiteTreeRows.ToString().Trim() + " Site Tree Records","Add Plot Data");
-
-							
-
-					}
-					else
-					{
-						//error occurred in the updatecolumns so delete the records
-						this.m_strSQL = "DELETE FROM " + this.m_strPlotTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						//delete added cond records since error occured
-						this.m_strSQL = "DELETE FROM " + this.m_strCondTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						//delete added cond records since error occured
-						this.m_strSQL = "DELETE FROM " + this.m_strTreeTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						//delete added cond records since error occured
-						this.m_strSQL = "DELETE FROM " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = "DELETE FROM " + this.m_strPopEvalTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = "DELETE FROM " + this.m_strPopStratumTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = "DELETE FROM " + this.m_strPpsaTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = "DELETE FROM " + this.m_strPopEstUnitTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						this.m_strSQL = "DELETE FROM " + this.m_strSiteTreeTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-						MessageBox.Show("!!Error Occured Adding Plot Records: 0 Records Added!!","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-
-					}
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar2, "Maximum", false));
-
-				this.m_connTempMDBFile.Close();
-				while (m_connTempMDBFile.State != System.Data.ConnectionState.Closed)
-					System.Threading.Thread.Sleep(1000);
-				this.m_ado.m_DataSet.Clear();
-				this.m_ado.m_DataSet.Dispose();
-				this.m_ado=null;
-				
-				//((frmDialog)this.ParentForm).m_frmMain.Visible=true;
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)ReferenceFormDialog, "Visible", true);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)ReferenceFormDialog, "Enabled", true);
-
-
-
-
-                LoadMDBPlotCondTreeData_Finish();
-			}
-			
-			catch (Exception error) //(System.Threading.ThreadInterruptedException e)
-			{
-				//MessageBox.Show(error.Message);
-				//MessageBox.Show("Threading Interruption Error " + e.Message.ToString());
-			}
-			finally
-			{
-				if (this.m_connTempMDBFile != null)
-				{
-					if (this.m_connTempMDBFile.State == System.Data.ConnectionState.Open)
-					{
-						this.m_connTempMDBFile.Close();
-						while (this.m_connTempMDBFile.State != System.Data.ConnectionState.Closed)
-							System.Threading.Thread.Sleep(1000);
-						this.m_connTempMDBFile=null;
-					}
-				}
-				if (m_ado != null)
-				{
-					if (m_ado.m_DataSet != null)
-					{
-						this.m_ado.m_DataSet.Clear();
-						this.m_ado.m_DataSet.Dispose();
-					}
-					this.m_ado = null;
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)ReferenceFormDialog, "Enabled", true);
-                if (this.m_frmTherm != null)
-                {
-                    frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", false);
-                }
-
-
-                LoadMDBPlotCondTreeData_Finish();
-			}
-			
 		}
 
 		private void txtInsertFIADBDataMartDelimitedText(System.Data.OleDb.OleDbConnection p_oConn,
@@ -4819,26 +3875,15 @@ namespace FIA_Biosum_Manager
 			string strForestBlm="";
 
 			//inventory id
-			if (this.rdoFIADB.Checked==true)
+            strBiosumPlotId = "1";
+			if (p_dr["measyear"] != System.DBNull.Value &&
+				p_dr["measyear"].ToString().Trim().Length > 0)
 			{
-				strBiosumPlotId = "1";
-				if (p_dr["measyear"] != System.DBNull.Value &&
-					p_dr["measyear"].ToString().Trim().Length > 0)
-				{
-					strInvId = p_dr["measyear"].ToString().Trim();
-				}
-				else
-				{
-					strInvId = "9999";
-				}
+				strInvId = p_dr["measyear"].ToString().Trim();
 			}
-			else if (this.rdoIDB.Checked==true)
+			else
 			{
-				strBiosumPlotId = "2";
-				//idb inventory
-				if (strInvId.Trim().Length == 0) strInvId = "9999";
-				
-               
+				strInvId = "9999";
 			}
 
 			strBiosumPlotId = strBiosumPlotId + strInvId;
@@ -4866,15 +3911,12 @@ namespace FIA_Biosum_Manager
 			}
 
 			//cycle
-			if (this.rdoFIADB.Checked==true)
+			if (p_dr["cycle"] != System.DBNull.Value &&
+				p_dr["cycle"].ToString().Trim().Length > 0)
 			{
-				if (p_dr["cycle"] != System.DBNull.Value &&
-					p_dr["cycle"].ToString().Trim().Length > 0)
-				{
-					strCycle = p_dr["cycle"].ToString().Trim();
-				}
-				
+				strCycle = p_dr["cycle"].ToString().Trim();
 			}
+				
 			switch (strCycle.Trim().Length)
 			{
 				case 0:
@@ -4889,15 +3931,12 @@ namespace FIA_Biosum_Manager
 			}
 
 			//subcycle
-			if (this.rdoFIADB.Checked==true)
+			if (p_dr["subcycle"] != System.DBNull.Value &&
+				p_dr["subcycle"].ToString().Trim().Length > 0)
 			{
-				if (p_dr["subcycle"] != System.DBNull.Value &&
-					p_dr["subcycle"].ToString().Trim().Length > 0)
-				{
-					strSubCycle = p_dr["subcycle"].ToString().Trim();
-				}
-				
+				strSubCycle = p_dr["subcycle"].ToString().Trim();
 			}
+				
 			switch (strSubCycle.Trim().Length)
 			{
 				case 0:
@@ -4975,20 +4014,7 @@ namespace FIA_Biosum_Manager
 
 			
 			//forest or blm district - need value for pnw idb unique key value
-			if (this.rdoFIADB.Checked==true)
-			{
-				strForestBlm="000";
-			}
-			else if (this.rdoIDB.Checked==true)
-			{
-				if (p_dr["forest_or_blm_district"] != System.DBNull.Value &&
-					p_dr["forest_or_blm_district"].ToString().Trim().Length > 0)
-				{
-					strForestBlm = p_dr["forest_or_blm_district"].ToString().Trim();
-				}
-              
-			}
-
+		    strForestBlm="000";
 
 			switch (strForestBlm.Trim().Length)
 			{
@@ -5007,7 +4033,8 @@ namespace FIA_Biosum_Manager
 			}
 			return strBiosumPlotId;
 		}
-		private string CreateBiosumPlotId(System.Data.OleDb.OleDbDataReader p_dr)
+		
+        private string CreateBiosumPlotId(System.Data.OleDb.OleDbDataReader p_dr)
 		{
 			string strBiosumPlotId="";
 			string strInvId ="";
@@ -5020,26 +4047,15 @@ namespace FIA_Biosum_Manager
 
 			
 			//inventory id
-			if (this.rdoFIADB.Checked==true)
+			strBiosumPlotId = "1";
+			if (p_dr["measyear"] != System.DBNull.Value &&
+				p_dr["measyear"].ToString().Trim().Length > 0)
 			{
-				strBiosumPlotId = "1";
-				if (p_dr["measyear"] != System.DBNull.Value &&
-					p_dr["measyear"].ToString().Trim().Length > 0)
-				{
-					strInvId = p_dr["measyear"].ToString().Trim();
-				}
-				else
-				{
-					strInvId = "9999";
-				}
+				strInvId = p_dr["measyear"].ToString().Trim();
 			}
-			else if (this.rdoIDB.Checked==true)
+			else
 			{
-				strBiosumPlotId = "2";
-				//idb inventory
-				if (strInvId.Trim().Length == 0) strInvId = "9999";
-				
-               
+				strInvId = "9999";
 			}
 
 			strBiosumPlotId = strBiosumPlotId + strInvId;
@@ -5067,15 +4083,12 @@ namespace FIA_Biosum_Manager
 			}
 
 			//cycle
-			if (this.rdoFIADB.Checked==true)
+			if (p_dr["cycle"] != System.DBNull.Value &&
+				p_dr["cycle"].ToString().Trim().Length > 0)
 			{
-				if (p_dr["cycle"] != System.DBNull.Value &&
-					p_dr["cycle"].ToString().Trim().Length > 0)
-				{
-					strCycle = p_dr["cycle"].ToString().Trim();
-				}
-				
+				strCycle = p_dr["cycle"].ToString().Trim();
 			}
+				
 			switch (strCycle.Trim().Length)
 			{
 				case 0:
@@ -5090,15 +4103,12 @@ namespace FIA_Biosum_Manager
 			}
 
 			//subcycle
-			if (this.rdoFIADB.Checked==true)
+			if (p_dr["subcycle"] != System.DBNull.Value &&
+				p_dr["subcycle"].ToString().Trim().Length > 0)
 			{
-				if (p_dr["subcycle"] != System.DBNull.Value &&
-					p_dr["subcycle"].ToString().Trim().Length > 0)
-				{
-					strSubCycle = p_dr["subcycle"].ToString().Trim();
-				}
-				
+				strSubCycle = p_dr["subcycle"].ToString().Trim();
 			}
+				
 			switch (strSubCycle.Trim().Length)
 			{
 				case 0:
@@ -5176,20 +4186,7 @@ namespace FIA_Biosum_Manager
 
 			
 			//forest or blm district - need value for pnw idb unique key value
-			if (this.rdoFIADB.Checked==true)
-			{
-				strForestBlm="000";
-			}
-			else if (this.rdoIDB.Checked==true)
-			{
-				if (p_dr["forest_or_blm_district"] != System.DBNull.Value &&
-					p_dr["forest_or_blm_district"].ToString().Trim().Length > 0)
-				{
-					strForestBlm = p_dr["forest_or_blm_district"].ToString().Trim();
-				}
-              
-			}
-
+		    strForestBlm="000";
 
 			switch (strForestBlm.Trim().Length)
 			{
@@ -7594,14 +6591,7 @@ namespace FIA_Biosum_Manager
 		{
 			
 			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			if (this.rdoFIADB.Checked==true)
-			{
-				OpenFileDialog1.Title = "Text File With PLOT_CN data";
-			}
-			else
-			{
-				OpenFileDialog1.Title = "Text File With IDB_PLOT_ID data";
-			}
+			OpenFileDialog1.Title = "Text File With PLOT_CN data";
 			OpenFileDialog1.Filter = "Text File (*.TXT;*.DAT) |*.txt;*.dat";
 			DialogResult result =  OpenFileDialog1.ShowDialog();
 			if (result == DialogResult.OK) 
@@ -7944,47 +6934,25 @@ namespace FIA_Biosum_Manager
 			string strMDBFile;
 			string strTable;
 			string strConn;
-			if (this.rdoFIADB.Checked==false)
-			{
-				strMDBFile = this.txtMDBPlot.Text.Trim();
-				strTable = this.txtMDBPlotTable.Text.Trim();
-				strConn = p_ado.getMDBConnString(strMDBFile,"","");
-			}
-			else
-			{
-				strMDBFile = this.txtMDBFiadbInputFile.Text.Trim();
-				strTable = this.cmbFiadbPpsaTable.Text.Trim();
-				strConn = p_ado.getMDBConnString(strMDBFile,"","");
-			}
 
+			strMDBFile = this.txtMDBFiadbInputFile.Text.Trim();
+			strTable = this.cmbFiadbPpsaTable.Text.Trim();
+			strConn = p_ado.getMDBConnString(strMDBFile,"","");
 
-			
-			
 
 
 			if (this.chkNonForested.Checked == true && this.chkForested.Checked==true)
 			{
-				if (rdoFIADB.Checked)
-				{
+
 					p_ado.m_strSQL = "SELECT statecd,countycd " + 
 						"FROM " + strTable +  " " + 
 						"WHERE RSCD = " + this.m_strCurrFIADBRsCd + " AND " + 
 						"EVALID = " + this.m_strCurrFIADBEvalId + " " +  
 						"GROUP BY statecd,countycd;";
-					
-				}
-				else
-				{
-					p_ado.m_strSQL = "SELECT statecd,countycd " + 
-						"FROM " + strTable + " " + 
-						"WHERE mid(biosum_plot_id,2,4) = '" + this.m_strIDBInv.Trim() + "' " + 
-						"GROUP BY statecd,countycd;";
-				}
 			}
 			else if (this.chkForested.Checked==true)
 			{
-				if (rdoFIADB.Checked)
-				{
+
 					p_ado.m_strSQL = "SELECT ppsa.statecd,ppsa.countycd " + 
 						"FROM " + strTable +  " ppsa " + 
 						"INNER JOIN " + this.cmbFiadbPlotTable.Text.Trim() + " p " + 
@@ -7994,21 +6962,10 @@ namespace FIA_Biosum_Manager
 						"p.plot_status_cd=1 " + 
 						"GROUP BY ppsa.statecd,ppsa.countycd;";
 
-				}
-				else
-				{
-					p_ado.m_strSQL = "SELECT statecd,countycd " + 
-						"FROM " + strTable + " " + 
-						"WHERE plot_status_cd = 1 AND " + 
-						"mid(biosum_plot_id,2,4) = '" + this.m_strIDBInv.Trim() + "' " + 
-						"GROUP BY statecd,countycd;";
-
-				}
 			}
 			else if (this.chkNonForested.Checked==true)
 			{
-				if (rdoFIADB.Checked)
-				{
+
 					p_ado.m_strSQL = "SELECT ppsa.statecd,ppsa.countycd " + 
 						"FROM " + strTable +  " ppsa " + 
 						"INNER JOIN " + this.cmbFiadbPlotTable.Text.Trim() + " p " + 
@@ -8017,15 +6974,6 @@ namespace FIA_Biosum_Manager
 						"ppsa.EVALID = " + this.m_strCurrFIADBEvalId + " AND " +  
 						"p.plot_status_cd<>1 " + 
 						"GROUP BY ppsa.statecd,ppsa.countycd;";
-				}
-				else
-				{
-					p_ado.m_strSQL = "SELECT statecd,countycd " + 
-						"FROM " + strTable + " " + 
-						"WHERE plot_status_cd <> 1 AND " + 
-						"mid(biosum_plot_id,2,4) = '" + this.m_strIDBInv.Trim() + "' " + 
-						"GROUP BY statecd,countycd;";
-				}
 			}
 			else
 			{
@@ -8115,50 +7063,24 @@ namespace FIA_Biosum_Manager
 			string strMDBFile;
 			string strTable;
 			string strConn;
-			if (this.rdoFIADB.Checked==false)
-			{
-				strMDBFile = this.txtMDBPlot.Text.Trim();
-				strTable = this.txtMDBPlotTable.Text.Trim();
-				strConn = p_ado.getMDBConnString(strMDBFile,"","");
-			}
-			else
-			{
-				strMDBFile = this.txtMDBFiadbInputFile.Text.Trim();
-				strTable = this.cmbFiadbPpsaTable.Text.Trim();
-				strConn = p_ado.getMDBConnString(strMDBFile,"","");
-			}
+
+			strMDBFile = this.txtMDBFiadbInputFile.Text.Trim();
+			strTable = this.cmbFiadbPpsaTable.Text.Trim();
+			strConn = p_ado.getMDBConnString(strMDBFile,"","");
 
 			if (this.chkNonForested.Checked == true && this.chkForested.Checked==true)
 			{
 				this.BuildFilterByStateCountyString("statecd","countycd",false);
-				if (this.rdoFIADB.Checked==false)
-				{
-					p_ado.m_strSQL = "SELECT statecd,countycd,plot " + 
-						"FROM " + strTable +  " " + 
-						"WHERE " + this.m_strStateCountySQL.Trim() + " " + 
-						"GROUP BY statecd,countycd,plot;";
-				}
-				else
-				{
+
 					p_ado.m_strSQL = "SELECT statecd,countycd,plot " + 
 						"FROM " + strTable +  " " + 
 						"WHERE RSCD = " + this.m_strCurrFIADBRsCd + " AND " + 
 						"EVALID = " + this.m_strCurrFIADBEvalId + " AND " + this.m_strStateCountySQL.Trim() + " " + 
 						"GROUP BY statecd,countycd,plot;";
-				}
 			}
 			else if (this.chkForested.Checked==true)
 			{
-				if (this.rdoFIADB.Checked==false)
-				{
-					this.BuildFilterByStateCountyString("statecd","countycd",false);
-					p_ado.m_strSQL = "SELECT statecd,countycd,plot " + 
-						"FROM " + strTable + " " + 
-						"WHERE plot_status_cd = 1 AND " + this.m_strStateCountySQL.Trim() + " " + 
-						"GROUP BY statecd,countycd,plot;";
-				}
-				else
-				{
+
 					this.BuildFilterByStateCountyString("ppsa.statecd","ppsa.countycd",false);
 					p_ado.m_strSQL = "SELECT ppsa.statecd,ppsa.countycd,ppsa.plot " + 
 						"FROM " + strTable +  " ppsa " + 
@@ -8168,20 +7090,10 @@ namespace FIA_Biosum_Manager
 						"ppsa.EVALID = " + this.m_strCurrFIADBEvalId + " AND " +  
 						"p.plot_status_cd=1 AND " + this.m_strStateCountySQL.Trim() + " " +
 						"GROUP BY ppsa.statecd,ppsa.countycd,ppsa.plot;";
-				}
 			}
 			else if (this.chkNonForested.Checked==true)
 			{
-				if (this.rdoFIADB.Checked==false)
-				{
-					this.BuildFilterByStateCountyString("statecd","countycd",false);
-					p_ado.m_strSQL = "SELECT statecd,countycd,plot " + 
-						"FROM " + strPlot + " " + 
-						"WHERE plot_status_cd <> 1 AND " + this.m_strStateCountySQL.Trim() + " " +
-						"GROUP BY statecd,countycd,plot;";
-				}
-				else
-				{
+
 					this.BuildFilterByStateCountyString("ppsa.statecd","ppsa.countycd",false);
 					p_ado.m_strSQL = "SELECT ppsa.statecd,ppsa.countycd,ppsa.plot " + 
 						"FROM " + strTable +  " ppsa " + 
@@ -8191,12 +7103,10 @@ namespace FIA_Biosum_Manager
 						"ppsa.EVALID = " + this.m_strCurrFIADBEvalId + " AND " +  
 						"p.plot_status_cd<>1 AND " + this.m_strStateCountySQL.Trim() + " " +
 						"GROUP BY ppsa.statecd,ppsa.countycd,ppsa.plot;";
-				}
 			}
 			else
 			{
 				this.m_intError=-1;
-
 			}
 
             
@@ -10508,80 +9418,30 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.lstFIADBInv.SelectedItems.Count > 0)
 			{
-				if (this.rdoAccess.Checked)
+			    if (this.m_strLoadedPopEstUnitInputTable.Trim().ToUpper() !=
+					this.cmbFiadbPopEstUnitTable.Text.Trim().ToUpper() ||
+					this.m_strLoadedPopStratumInputTable.Trim().ToUpper() !=
+					this.cmbFiadbPopStratumTable.Text.Trim().ToUpper() ||
+					this.m_strLoadedPpsaInputTable.Trim().ToUpper() !=
+					this.cmbFiadbPpsaTable.Text.Trim().ToUpper() ||
+					this.m_strLoadedFIADBEvalId.Trim() != 
+					this.m_strCurrFIADBEvalId.Trim() ||
+					this.m_strLoadedFIADBRsCd.Trim() !=
+					this.m_strCurrFIADBRsCd.Trim() ||
+					this.m_strLoadedFiadbInputFile.Trim().ToUpper() != 
+					this.txtMDBFiadbInputFile.Text.Trim().ToUpper())
 				{
-					if (this.m_strLoadedPopEstUnitInputTable.Trim().ToUpper() !=
-						this.cmbFiadbPopEstUnitTable.Text.Trim().ToUpper() ||
-						this.m_strLoadedPopStratumInputTable.Trim().ToUpper() !=
-						this.cmbFiadbPopStratumTable.Text.Trim().ToUpper() ||
-						this.m_strLoadedPpsaInputTable.Trim().ToUpper() !=
-						this.cmbFiadbPpsaTable.Text.Trim().ToUpper() ||
-						this.m_strLoadedFIADBEvalId.Trim() != 
-						this.m_strCurrFIADBEvalId.Trim() ||
-						this.m_strLoadedFIADBRsCd.Trim() !=
-						this.m_strCurrFIADBRsCd.Trim() ||
-						this.m_strLoadedFiadbInputFile.Trim().ToUpper() != 
-						this.txtMDBFiadbInputFile.Text.Trim().ToUpper())
-					{
-						this.LoadMDBFiadbPopFiles();
-					}
+					this.LoadMDBFiadbPopFiles();
+				}
 				
 
-					if (m_intError==0)
-					{
-						this.mdbInputStateCounty();
-						this.grpboxFilterByState.Visible=true;
-						this.lstFilterByState.Refresh();
-						this.grpboxFIADBInv.Visible=false;
-
-						//if (this.rdoFIADB.Checked==true && 
-						//	this.rdoText.Checked==true && 
-						//	this.rdoText.Enabled==true &&
-						//	this.rdoFilterByMenu.Checked==true)
-						//{
-						//	this.txtFileInputStateCounty();
-						//	this.grpboxFilterByState.Visible=true;
-						//	this.lstFilterByState.Refresh();
-						//	this.grpboxFIADBInv.Visible=false;
-
-						//}
-					}
-				}
-				else
+				if (m_intError==0)
 				{
-					//check if there have been any changes
-					if (this.m_strLoadedPopEstUnitTxtInputFile.Trim().ToUpper() !=
-						this.txtPopEstUnit.Text.Trim().ToUpper() ||
-						this.m_strLoadedPopStratumTxtInputFile.Trim().ToUpper() !=
-						this.txtPopStratum.Text.Trim().ToUpper() ||
-						this.m_strLoadedPpsaTxtInputFile.Trim().ToUpper() !=
-						this.txtPpsa.Text.Trim().ToUpper() ||
-						this.m_strLoadedFIADBEvalId.Trim() != 
-						this.m_strCurrFIADBEvalId.Trim() ||
-						this.m_strLoadedFIADBRsCd.Trim() !=
-						this.m_strCurrFIADBRsCd.Trim())
-					{
-						LoadTxtPopFiles();
-
-					}
-				
-
-					if (m_intError==0)
-					{
-						if (this.rdoFIADB.Checked==true && 
-							this.rdoText.Checked==true && 
-							this.rdoText.Enabled==true &&
-							this.rdoFilterByMenu.Checked==true)
-						{
-							this.txtFileInputStateCounty();
-							this.grpboxFilterByState.Visible=true;
-							this.lstFilterByState.Refresh();
-							this.grpboxFIADBInv.Visible=false;
-
-						}
-					}
+					this.mdbInputStateCounty();
+					this.grpboxFilterByState.Visible=true;
+					this.lstFilterByState.Refresh();
+					this.grpboxFIADBInv.Visible=false;
 				}
-
 			}
 			else
 			{
@@ -10661,10 +9521,7 @@ namespace FIA_Biosum_Manager
 			this.m_strCurrentProcess="";
 
 		}
-		private void LoadTxtPlotCondTreeData()
-		{
 
-		}
         private void CalculateAdjustments_Start()
         {
             frmMain.g_oDelegate.InitializeThreadEvents();
@@ -10685,21 +9542,6 @@ namespace FIA_Biosum_Manager
                 System.Windows.Forms.Application.DoEvents();
 
             }
-        }
-        private void LoadTxtPlotCondTreeData_Start()
-        {
-            frmMain.g_oDelegate.InitializeThreadEvents();
-            frmMain.g_oDelegate.m_oEventStopThread.Reset();
-            frmMain.g_oDelegate.m_oEventThreadStopped.Reset();
-            frmMain.g_oDelegate.CurrentThreadProcessAborted = false;
-            frmMain.g_oDelegate.CurrentThreadProcessDone = false;
-            frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
-            this.m_strCurrentProcess = "txtFileInput";
-            this.StartTherm("2", "Add Text File Plot,Cond,Site Tree, & Tree Table Data");
-            frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(LoadTxtPlotCondTreeData_Process));
-            frmMain.g_oDelegate.m_oThread.IsBackground = true;
-            frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
-            frmMain.g_oDelegate.m_oThread.Start();
         }
 
         private void LoadMDBPlotCondTreeData_Start()
