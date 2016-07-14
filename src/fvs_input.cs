@@ -3015,7 +3015,15 @@ namespace FIA_Biosum_Manager
 				//
 				if (this.FVSVariant=="NC")
 				{
-					if (p_intSISpCd==202 || p_intSISpCd==211) //Douglas-fir
+					if (p_intSISpCd==202 || //Douglas-fir
+                        p_intSISpCd==211 || //other softwoods
+                        p_intSISpCd==98  ||
+                        p_intSISpCd==103 ||
+                        p_intSISpCd==127 ||
+                        p_intSISpCd==201 ||
+                        p_intSISpCd==264 ||
+                        p_intSISpCd==263 || //Douglas-fir
+                        p_intSISpCd==41)    
 					{
 						p_dblSiteIndex = qPSME1(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies=202;
@@ -3023,7 +3031,8 @@ namespace FIA_Biosum_Manager
 					else if (p_intSISpCd==20 ||
 						p_intSISpCd==21 ||
 						p_intSISpCd==15 ||
-						p_intSISpCd==81)  //red firs, white fir, incense cedar
+						p_intSISpCd==81 ||
+                        p_intSISpCd==17)  //red firs, white firs, incense cedar
 					{
 						p_dblSiteIndex = zABCO2(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies=15;
@@ -3043,8 +3052,13 @@ namespace FIA_Biosum_Manager
 						p_dblSiteIndex = zLIDE1(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies=631;
 					}
-					else if (p_intSISpCd==117 || 
-						p_intSISpCd==122)	//Sugar pine, Ponderosa pine
+					else if (p_intSISpCd==117 ||    //Sugar pine 
+                             p_intSISpCd==122 ||    //Ponderosa pine
+                             p_intSISpCd==116 ||
+                             p_intSISpCd==124 ||
+                             p_intSISpCd==108 ||    //Ponderosa pine
+                             p_intSISpCd==119)      //Sugar pine     	    
+                             
 					{
 						p_dblSiteIndex = zPIPO8(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies= 122;
@@ -3115,6 +3129,14 @@ namespace FIA_Biosum_Manager
 						p_dblSiteIndex = PIPO3(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies=122;
 					}
+                    else if (p_intSISpCd == 64)  //western juniper
+                    {
+                        getAvgDbhAndBasalArea(p_intSICondId);
+                        p_dblSiteIndex = SI_LP5(p_intSIAgeDia, p_intSIHtFt, 
+                            this.ConditionClassBasalAreaPerAcre, 
+                            this.ConditionClassAverageDia);
+                        p_intSIFVSSpecies = 64;
+                    }
 					else
 					{
 						p_dblSiteIndex = 0;
@@ -3127,51 +3149,118 @@ namespace FIA_Biosum_Manager
 				if (this.FVSVariant=="WS")
 				{
 					//Adjustment factors of Dunning by species are from FVS Wessin documentation
-					if (p_intSISpCd==119)		//Western white pine
+                    //Dunning adjustment factors also listed on table 3.4.1.2 in FVS WS Variant Overview from 11/2015
+                    if (p_intSISpCd == 119)		//Western white pine
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
-					else if (p_intSISpCd==117) //Sugar pine
+                        p_intSIFVSSpecies = 119;
+                    }
+                    else if (p_intSISpCd == 117) //Sugar pine
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
-					else if (p_intSISpCd==202) //Douglas-fir
+                        p_intSIFVSSpecies = 117;
+                    }
+                    else if (p_intSISpCd == 202) //Douglas-fir
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt);
-					else if (p_intSISpCd==15)  //White fir
+                        p_intSIFVSSpecies = 202;
+                    }
+                    else if (p_intSISpCd == 15)  //White fir
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt);
-					else if (p_intSISpCd==212)  //Giant sequoia
+                        p_intSIFVSSpecies = 15;
+                    }
+                    else if (p_intSISpCd == 212)  //Giant sequoia
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt);
-					else if (p_intSISpCd==81)   //Incense cedar
+                        p_intSIFVSSpecies = 212;
+                    }
+                    else if (p_intSISpCd == 81)   //Incense cedar
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.76;
-					else if (p_intSISpCd==116)   //Jeffrey Pine
+                        p_intSIFVSSpecies = 81;
+                    }
+                    else if (p_intSISpCd == 116)   //Jeffrey Pine
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt);
-					else if (p_intSISpCd==122)   //Ponderosa Pine
+                        p_intSIFVSSpecies = 116;
+                    }
+                    else if (p_intSISpCd == 122)   //Ponderosa Pine
+                    {
 						p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt);
-					else if (p_intSISpCd==818)  //Black oak
+                        p_intSIFVSSpecies = 122;
+                    }
+                    else if (p_intSISpCd == 64)   //Western Juniper
 					{
-						p_dblSiteIndex = qPSME1(p_intSIAgeDia, p_intSIHtFt); //uses King's Douglas-fir
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 64;
+                    }
+                    else if (p_intSISpCd == 101)   //whitebark pine
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 101;
+                    }
+                    else if (p_intSISpCd == 108)   //lodgepole pine
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 108;
+                    }
+                    else if (p_intSISpCd == 109)   //coulter pine
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 109;
+                    }
+                    else if (p_intSISpCd == 113)   //limber pine
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 113;
+                    }
+                    else if (p_intSISpCd == 120)   //bishop pine
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 120;
+                    }
+                    else if (p_intSISpCd == 127)   //California foothill pine
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 127;
+                    }
+                    else if (p_intSISpCd == 201)   //bigcone Douglas-fir
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt);
+                        p_intSIFVSSpecies = 201;
+                    }
+                    else if (p_intSISpCd == 264)   //mountain hemlock
+                    {
+                        p_dblSiteIndex = zDunning(p_intSIAgeDia, p_intSIHtFt) * 0.9;
+                        p_intSIFVSSpecies = 264;
+                    }
+                    else if (p_intSISpCd == 818)  //Black oak
+                    {
+                        p_dblSiteIndex = this.qPSME1(p_intSIAgeDia, p_intSIHtFt); //uses King's Douglas-fir
 						p_intSIFVSSpecies = 202;
 					}
-					else if (p_intSISpCd==20)  //red fir
+                    else if (p_intSISpCd == 20)  //red fir
 					{
-						p_dblSiteIndex = this.zABMA2(p_intSIAgeDia, p_intSIHtFt); 
+                        p_dblSiteIndex = this.zABMA2(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies = 20;
 					}
-					else if (p_intSISpCd==631)  //tan oak
+                    else if (p_intSISpCd == 631)  //tan oak
 					{
-						p_dblSiteIndex = this.qPSME1(p_intSIAgeDia, p_intSIHtFt); 
+                        p_dblSiteIndex = this.qPSME1(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies = 202;
 					}
+                    else if (p_intSISpCd == 103)  //knobcone pine to great basin bristlecone pine
+                    {                             //KP maps to GB for this variant according to FVS
+                        p_dblSiteIndex = this.PIEN3(p_intSIAgeDia, p_intSIHtFt);
+                        p_intSIFVSSpecies = 103;
+                    }
 					else
 					{
 						p_dblSiteIndex = 0;
-						p_intSIFVSSpecies=999;
+                        p_intSIFVSSpecies = 999;
 					}
-					if (p_intSISpCd==119 || p_intSISpCd==117 ||
-						p_intSISpCd==202 || p_intSISpCd==15  || 
-						p_intSISpCd==212 || p_intSISpCd==81  ||
-						p_intSISpCd==116 || p_intSISpCd==122)
-					{
-						p_intSIFVSSpecies = 0;
 					}
-
-				}
 
 				if (this.FVSVariant=="CA")
 				{
@@ -3182,11 +3271,12 @@ namespace FIA_Biosum_Manager
 						p_intSISpCd==242 ||  p_intSISpCd==15 ||
 						p_intSISpCd==202 ||  p_intSISpCd==263 ||
 						p_intSISpCd==117 ||  p_intSISpCd==92  ||
-						p_intSISpCd==212)
+                        p_intSISpCd==212 ||  p_intSISpCd==120 ||
+                        p_intSISpCd==17)
 					{
 						//Port Orford cedar, incense cedar, western redcedar, 
 						//white-fir, Douglas-fir, western hemlock
-						//sugar pine (!), brewer spruce, giant sequoia
+                        //sugar pine (!), brewer spruce, giant sequoia, bishop pine
 
 						p_dblSiteIndex = zPSME14(p_intSIAgeDia, p_intSIHtFt);
 						p_intSIFVSSpecies = 202;

@@ -160,7 +160,7 @@ namespace FIA_Biosum_Manager
             this.grpboxYardDist.Size = new System.Drawing.Size(417, 93);
             this.grpboxYardDist.TabIndex = 12;
             this.grpboxYardDist.TabStop = false;
-            this.grpboxYardDist.Text = "Maximum Yarding Distance Allowed (Meters)";
+            this.grpboxYardDist.Text = "Maximum Yarding Distance Allowed (Feet)";
             // 
             // btnYardDistDefault
             // 

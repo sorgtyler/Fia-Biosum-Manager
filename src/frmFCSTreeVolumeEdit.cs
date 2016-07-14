@@ -171,15 +171,18 @@ namespace FIA_Biosum_Manager
               //
               string strVariantsList = m_oRxTools.GetListOfFVSVariantsInPlotTable(m_oAdo, m_oAdo.m_OleDbConnection, m_oQueries.m_oFIAPlot.m_strPlotTable);
               string[] strVariantsArray = frmMain.g_oUtils.ConvertListToArray(strVariantsList, ",");
-              //find the variants that have tree cut list tables
-              for (x = 0; x <= strVariantsArray.Length - 1; x++)
+              if (strVariantsArray != null && strVariantsArray[0] != null)
               {
-                  for (y = 0; y <= oRxPackageItemCollection.Count - 1; y++)
+                  //find the variants that have tree cut list tables
+                  for (x = 0; x <= strVariantsArray.Length - 1; x++)
                   {
-                      strTableName = "fvs_tree_IN_" + strVariantsArray[x].Trim() + "_P" + oRxPackageItemCollection.Item(y).RxPackageId + "_TREE_CUTLIST";
-                      if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTableName))
+                      for (y = 0; y <= oRxPackageItemCollection.Count - 1; y++)
                       {
-                          strFVSTreeTableLinkNameList = strFVSTreeTableLinkNameList + strTableName + ",";
+                          strTableName = "fvs_tree_IN_" + strVariantsArray[x].Trim() + "_P" + oRxPackageItemCollection.Item(y).RxPackageId + "_TREE_CUTLIST";
+                          if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTableName))
+                          {
+                              strFVSTreeTableLinkNameList = strFVSTreeTableLinkNameList + strTableName + ",";
+                          }
                       }
                   }
               }
@@ -1233,28 +1236,42 @@ namespace FIA_Biosum_Manager
         if (cmbDatasource.Text.Trim().ToUpper() == "TREE SAMPLE") LoadTreeSample();
         else if (cmbDatasource.Text.Trim().ToUpper() == "TREE TABLE")
         {
-            FIA_Biosum_Manager.frmDialog oDlg = new frmDialog();
+            
            
-            oDlg.uc_select_list_item1.lblTitle.Text = "FVS Variant";
-            oDlg.uc_select_list_item1.listBox1.Sorted = true;
-            oDlg.uc_select_list_item1.lblMsg.Hide();
             if (m_oAdo.m_OleDbConnection == null)
                 m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDBFile, "", ""));
 
-            oDlg.uc_select_list_item1.loadvalues(m_oAdo, m_oAdo.m_OleDbConnection,
-                                            "SELECT DISTINCT fvs_variant FROM " + m_oQueries.m_oFIAPlot.m_strPlotTable, "fvs_variant");
-            oDlg.uc_select_list_item1.Show();
+            m_oAdo.m_strSQL = "SELECT fvs_variant FROM " +  m_oQueries.m_oFIAPlot.m_strPlotTable + " " + 
+                              "WHERE fvs_variant IS NOT NULL AND LEN(TRIM(fvs_variant)) > 0";
 
-            DialogResult result = oDlg.ShowDialog();
-            if (result == DialogResult.OK)
+            if ((int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "fva_variant") > 0)
             {
-                if (oDlg.uc_select_list_item1.listBox1.SelectedItems.Count > 0)
+                FIA_Biosum_Manager.frmDialog oDlg = new frmDialog();
+
+                oDlg.uc_select_list_item1.lblTitle.Text = "FVS Variant";
+                oDlg.uc_select_list_item1.listBox1.Sorted = true;
+                oDlg.uc_select_list_item1.lblMsg.Hide();
+
+
+                oDlg.uc_select_list_item1.loadvalues(m_oAdo, m_oAdo.m_OleDbConnection,
+                                                "SELECT DISTINCT fvs_variant FROM " + m_oQueries.m_oFIAPlot.m_strPlotTable, "fvs_variant");
+                oDlg.uc_select_list_item1.Show();
+
+                DialogResult result = oDlg.ShowDialog();
+                if (result == DialogResult.OK)
                 {
-                    LoadTreeTable(oDlg.uc_select_list_item1.listBox1.SelectedItems[0].ToString().Trim());
+                    if (oDlg.uc_select_list_item1.listBox1.SelectedItems.Count > 0)
+                    {
+                        LoadTreeTable(oDlg.uc_select_list_item1.listBox1.SelectedItems[0].ToString().Trim());
+                    }
                 }
+                oDlg.Dispose();
+                oDlg = null;
             }
-            oDlg.Dispose();
-            oDlg = null;
+            else
+            {
+                LoadTreeTable("");
+            }
         }
         else
         {
@@ -1471,7 +1488,7 @@ namespace FIA_Biosum_Manager
                                        m_oQueries.m_oFIAPlot.m_strPlotTable + " p " + 
                              "WHERE c.biosum_cond_id = t.biosum_cond_id AND " + 
                                    "p.biosum_plot_id = c.biosum_plot_id AND " + 
-                                   "p.fvs_variant='" + p_strFVSVariant + "' AND " + 
+                                   "(p.fvs_variant IS NULL OR p.fvs_variant='" + p_strFVSVariant + "') AND " + 
                                    "(p.InvYr IS NOT NULL OR p.MeasYear IS NOT NULL)";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)

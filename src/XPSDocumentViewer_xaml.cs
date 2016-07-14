@@ -26,8 +26,18 @@ namespace FIA_Biosum_Manager
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Hide();
-            e.Cancel = true;
+           
+            if (ReferenceHelp != null) ReferenceHelp.xpsDocumentViewer = null;
+           
         }
+
+        private Help _ReferenceHelp = null;
+        public Help ReferenceHelp
+        {
+            get { return _ReferenceHelp; }
+            set { _ReferenceHelp = value; }
+        }
+        
+
     }
 }
