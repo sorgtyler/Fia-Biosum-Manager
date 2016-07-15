@@ -184,6 +184,10 @@ namespace FIA_Biosum_Manager
         private Label label2;
         private ComboBox cmbCondPropPercent;
         private Label label1;
+
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultDatabaseXPSFile;
 		
 
 		/// <summary> 
@@ -271,22 +275,6 @@ namespace FIA_Biosum_Manager
             this.btnIDBInvPrevious = new System.Windows.Forms.Button();
             this.btnIDBInvNext = new System.Windows.Forms.Button();
             this.btnIDBInvCancel = new System.Windows.Forms.Button();
-            this.groupBox25 = new System.Windows.Forms.GroupBox();
-            this.txtMDBSiteTreeTable = new System.Windows.Forms.TextBox();
-            this.btnMDBSiteTreeBrowse = new System.Windows.Forms.Button();
-            this.txtMDBSiteTree = new System.Windows.Forms.TextBox();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.txtMDBTreeTable = new System.Windows.Forms.TextBox();
-            this.btnMDBTreeBrowse = new System.Windows.Forms.Button();
-            this.txtMDBTree = new System.Windows.Forms.TextBox();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.txtMDBCondTable = new System.Windows.Forms.TextBox();
-            this.btnMDBCondBrowse = new System.Windows.Forms.Button();
-            this.txtMDBCond = new System.Windows.Forms.TextBox();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
-            this.txtMDBPlotTable = new System.Windows.Forms.TextBox();
-            this.btnMDBPlotBrowse = new System.Windows.Forms.Button();
-            this.txtMDBPlot = new System.Windows.Forms.TextBox();
             this.grpboxFilterByState = new System.Windows.Forms.GroupBox();
             this.btnFilterByStateFinish = new System.Windows.Forms.Button();
             this.btnFilterByStateUnselect = new System.Windows.Forms.Button();
@@ -323,6 +311,22 @@ namespace FIA_Biosum_Manager
             this.btnFilterByPlotPrevious = new System.Windows.Forms.Button();
             this.btnFilterByPlotNext = new System.Windows.Forms.Button();
             this.btnFilterByPlotCancel = new System.Windows.Forms.Button();
+            this.groupBox25 = new System.Windows.Forms.GroupBox();
+            this.txtMDBSiteTreeTable = new System.Windows.Forms.TextBox();
+            this.btnMDBSiteTreeBrowse = new System.Windows.Forms.Button();
+            this.txtMDBSiteTree = new System.Windows.Forms.TextBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.txtMDBTreeTable = new System.Windows.Forms.TextBox();
+            this.btnMDBTreeBrowse = new System.Windows.Forms.Button();
+            this.txtMDBTree = new System.Windows.Forms.TextBox();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.txtMDBCondTable = new System.Windows.Forms.TextBox();
+            this.btnMDBCondBrowse = new System.Windows.Forms.Button();
+            this.txtMDBCond = new System.Windows.Forms.TextBox();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.txtMDBPlotTable = new System.Windows.Forms.TextBox();
+            this.btnMDBPlotBrowse = new System.Windows.Forms.Button();
+            this.txtMDBPlot = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.grpboxMDBFiadbInput.SuspendLayout();
             this.groupBox24.SuspendLayout();
@@ -337,14 +341,14 @@ namespace FIA_Biosum_Manager
             this.groupBox22.SuspendLayout();
             this.grpboxFIADBInv.SuspendLayout();
             this.grpboxIDBInv.SuspendLayout();
-            this.groupBox25.SuspendLayout();
-            this.groupBox8.SuspendLayout();
-            this.groupBox9.SuspendLayout();
-            this.groupBox10.SuspendLayout();
             this.grpboxFilterByState.SuspendLayout();
             this.grpboxFilter.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.grpboxFilterByPlot.SuspendLayout();
+            this.groupBox25.SuspendLayout();
+            this.groupBox8.SuspendLayout();
+            this.groupBox9.SuspendLayout();
+            this.groupBox10.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -579,11 +583,13 @@ namespace FIA_Biosum_Manager
             // 
             // btnMDBFiadbInputHelp
             // 
+            this.btnMDBFiadbInputHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnMDBFiadbInputHelp.Location = new System.Drawing.Point(24, 326);
             this.btnMDBFiadbInputHelp.Name = "btnMDBFiadbInputHelp";
             this.btnMDBFiadbInputHelp.Size = new System.Drawing.Size(64, 24);
             this.btnMDBFiadbInputHelp.TabIndex = 3;
             this.btnMDBFiadbInputHelp.Text = "Help";
+            this.btnMDBFiadbInputHelp.Click += new System.EventHandler(this.btnMDBFiadbInputHelp_Click);
             // 
             // btnMDBFiadbInputPrev
             // 
@@ -592,8 +598,8 @@ namespace FIA_Biosum_Manager
             this.btnMDBFiadbInputPrev.Name = "btnMDBFiadbInputPrev";
             this.btnMDBFiadbInputPrev.Size = new System.Drawing.Size(72, 24);
             this.btnMDBFiadbInputPrev.TabIndex = 5;
-            this.btnMDBFiadbInputPrev.Text = "< Previous";
             this.btnMDBFiadbInputPrev.TabStop = false;
+            this.btnMDBFiadbInputPrev.Text = "< Previous";
             // 
             // btnMDBFiadbInputNext
             // 
@@ -762,157 +768,6 @@ namespace FIA_Biosum_Manager
             this.btnIDBInvCancel.TabIndex = 20;
             this.btnIDBInvCancel.Text = "Cancel";
             this.btnIDBInvCancel.Click += new System.EventHandler(this.btnIDBInvCancel_Click);
-
-            // 
-            // groupBox25
-            // 
-            this.groupBox25.Controls.Add(this.txtMDBSiteTreeTable);
-            this.groupBox25.Controls.Add(this.btnMDBSiteTreeBrowse);
-            this.groupBox25.Controls.Add(this.txtMDBSiteTree);
-            this.groupBox25.Location = new System.Drawing.Point(24, 248);
-            this.groupBox25.Name = "groupBox25";
-            this.groupBox25.Size = new System.Drawing.Size(624, 73);
-            this.groupBox25.TabIndex = 31;
-            this.groupBox25.TabStop = false;
-            this.groupBox25.Text = "Site Tree Data";
-            // 
-            // txtMDBSiteTreeTable
-            // 
-            this.txtMDBSiteTreeTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBSiteTreeTable.Location = new System.Drawing.Point(408, 27);
-            this.txtMDBSiteTreeTable.Name = "txtMDBSiteTreeTable";
-            this.txtMDBSiteTreeTable.Size = new System.Drawing.Size(152, 26);
-            this.txtMDBSiteTreeTable.TabIndex = 1;
-            // 
-            // btnMDBSiteTreeBrowse
-            // 
-            this.btnMDBSiteTreeBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBSiteTreeBrowse.Image")));
-            this.btnMDBSiteTreeBrowse.Location = new System.Drawing.Point(573, 23);
-            this.btnMDBSiteTreeBrowse.Name = "btnMDBSiteTreeBrowse";
-            this.btnMDBSiteTreeBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnMDBSiteTreeBrowse.TabIndex = 2;
-            this.btnMDBSiteTreeBrowse.Click += new System.EventHandler(this.btnMDBSiteTreeBrowse_Click);
-            // 
-            // txtMDBSiteTree
-            // 
-            this.txtMDBSiteTree.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBSiteTree.Location = new System.Drawing.Point(17, 27);
-            this.txtMDBSiteTree.Name = "txtMDBSiteTree";
-            this.txtMDBSiteTree.Size = new System.Drawing.Size(383, 26);
-            this.txtMDBSiteTree.TabIndex = 0;
-
-            // 
-            // groupBox8
-            // 
-            this.groupBox8.Controls.Add(this.txtMDBTreeTable);
-            this.groupBox8.Controls.Add(this.btnMDBTreeBrowse);
-            this.groupBox8.Controls.Add(this.txtMDBTree);
-            this.groupBox8.Location = new System.Drawing.Point(24, 167);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(624, 73);
-            this.groupBox8.TabIndex = 30;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Tree Data";
-            // 
-            // txtMDBTreeTable
-            // 
-            this.txtMDBTreeTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBTreeTable.Location = new System.Drawing.Point(408, 27);
-            this.txtMDBTreeTable.Name = "txtMDBTreeTable";
-            this.txtMDBTreeTable.Size = new System.Drawing.Size(152, 26);
-            this.txtMDBTreeTable.TabIndex = 1;
-            // 
-            // btnMDBTreeBrowse
-            // 
-            this.btnMDBTreeBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBTreeBrowse.Image")));
-            this.btnMDBTreeBrowse.Location = new System.Drawing.Point(573, 23);
-            this.btnMDBTreeBrowse.Name = "btnMDBTreeBrowse";
-            this.btnMDBTreeBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnMDBTreeBrowse.TabIndex = 2;
-            this.btnMDBTreeBrowse.Click += new System.EventHandler(this.btnMDBTreeBrowse_Click);
-            // 
-            // txtMDBTree
-            // 
-            this.txtMDBTree.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBTree.Location = new System.Drawing.Point(17, 27);
-            this.txtMDBTree.Name = "txtMDBTree";
-            this.txtMDBTree.Size = new System.Drawing.Size(383, 26);
-            this.txtMDBTree.TabIndex = 0;
-            // 
-            // groupBox9
-            // 
-            this.groupBox9.Controls.Add(this.txtMDBCondTable);
-            this.groupBox9.Controls.Add(this.btnMDBCondBrowse);
-            this.groupBox9.Controls.Add(this.txtMDBCond);
-            this.groupBox9.Location = new System.Drawing.Point(24, 95);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(624, 65);
-            this.groupBox9.TabIndex = 29;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Condition Data";
-            // 
-            // txtMDBCondTable
-            // 
-            this.txtMDBCondTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBCondTable.Location = new System.Drawing.Point(408, 24);
-            this.txtMDBCondTable.Name = "txtMDBCondTable";
-            this.txtMDBCondTable.Size = new System.Drawing.Size(152, 26);
-            this.txtMDBCondTable.TabIndex = 1;
-            // 
-            // btnMDBCondBrowse
-            // 
-            this.btnMDBCondBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBCondBrowse.Image")));
-            this.btnMDBCondBrowse.Location = new System.Drawing.Point(573, 18);
-            this.btnMDBCondBrowse.Name = "btnMDBCondBrowse";
-            this.btnMDBCondBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnMDBCondBrowse.TabIndex = 2;
-            this.btnMDBCondBrowse.Click += new System.EventHandler(this.btnMDBCondBrowse_Click);
-            // 
-            // txtMDBCond
-            // 
-            this.txtMDBCond.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBCond.Location = new System.Drawing.Point(17, 24);
-            this.txtMDBCond.Name = "txtMDBCond";
-            this.txtMDBCond.Size = new System.Drawing.Size(383, 26);
-            this.txtMDBCond.TabIndex = 0;
-            // 
-            // groupBox10
-            // 
-            this.groupBox10.Controls.Add(this.txtMDBPlotTable);
-            this.groupBox10.Controls.Add(this.btnMDBPlotBrowse);
-            this.groupBox10.Controls.Add(this.txtMDBPlot);
-            this.groupBox10.Location = new System.Drawing.Point(24, 22);
-            this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(624, 66);
-            this.groupBox10.TabIndex = 28;
-            this.groupBox10.TabStop = false;
-            this.groupBox10.Text = "Plot Data";
-            // 
-            // txtMDBPlotTable
-            // 
-            this.txtMDBPlotTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBPlotTable.Location = new System.Drawing.Point(408, 26);
-            this.txtMDBPlotTable.Name = "txtMDBPlotTable";
-            this.txtMDBPlotTable.Size = new System.Drawing.Size(152, 26);
-            this.txtMDBPlotTable.TabIndex = 1;
-            // 
-            // btnMDBPlotBrowse
-            // 
-            this.btnMDBPlotBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBPlotBrowse.Image")));
-            this.btnMDBPlotBrowse.Location = new System.Drawing.Point(573, 22);
-            this.btnMDBPlotBrowse.Name = "btnMDBPlotBrowse";
-            this.btnMDBPlotBrowse.Size = new System.Drawing.Size(32, 32);
-            this.btnMDBPlotBrowse.TabIndex = 2;
-            this.btnMDBPlotBrowse.Click += new System.EventHandler(this.btnMDBPlotBrowse_Click);
-            // 
-            // txtMDBPlot
-            // 
-            this.txtMDBPlot.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMDBPlot.Location = new System.Drawing.Point(17, 26);
-            this.txtMDBPlot.Name = "txtMDBPlot";
-            this.txtMDBPlot.Size = new System.Drawing.Size(383, 26);
-            this.txtMDBPlot.TabIndex = 0;
-
             // 
             // grpboxFilterByState
             // 
@@ -1036,11 +891,13 @@ namespace FIA_Biosum_Manager
             // 
             // btnFilterHelp
             // 
+            this.btnFilterHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnFilterHelp.Location = new System.Drawing.Point(16, 326);
             this.btnFilterHelp.Name = "btnFilterHelp";
             this.btnFilterHelp.Size = new System.Drawing.Size(64, 24);
             this.btnFilterHelp.TabIndex = 2;
             this.btnFilterHelp.Text = "Help";
+            this.btnFilterHelp.Click += new System.EventHandler(this.btnFilterHelp_Click);
             // 
             // btnFilterPrevious
             // 
@@ -1082,7 +939,7 @@ namespace FIA_Biosum_Manager
             this.groupBox7.Controls.Add(this.rdoFilterByFile);
             this.groupBox7.Controls.Add(this.rdoFilterByMenu);
             this.groupBox7.Controls.Add(this.rdoFilterNone);
-            this.groupBox7.Location = new System.Drawing.Point(85, 64);
+            this.groupBox7.Location = new System.Drawing.Point(85, 59);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(519, 249);
             this.groupBox7.TabIndex = 1;
@@ -1119,7 +976,7 @@ namespace FIA_Biosum_Manager
             // 
             this.chkNonForested.Checked = true;
             this.chkNonForested.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkNonForested.Location = new System.Drawing.Point(128, 96);
+            this.chkNonForested.Location = new System.Drawing.Point(133, 167);
             this.chkNonForested.Name = "chkNonForested";
             this.chkNonForested.Size = new System.Drawing.Size(112, 16);
             this.chkNonForested.TabIndex = 6;
@@ -1129,7 +986,7 @@ namespace FIA_Biosum_Manager
             // 
             this.chkForested.Checked = true;
             this.chkForested.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkForested.Location = new System.Drawing.Point(56, 96);
+            this.chkForested.Location = new System.Drawing.Point(61, 167);
             this.chkForested.Name = "chkForested";
             this.chkForested.Size = new System.Drawing.Size(72, 16);
             this.chkForested.TabIndex = 5;
@@ -1139,7 +996,7 @@ namespace FIA_Biosum_Manager
             // 
             this.btnFilterByFileBrowse.Enabled = false;
             this.btnFilterByFileBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnFilterByFileBrowse.Image")));
-            this.btnFilterByFileBrowse.Location = new System.Drawing.Point(408, 168);
+            this.btnFilterByFileBrowse.Location = new System.Drawing.Point(408, 127);
             this.btnFilterByFileBrowse.Name = "btnFilterByFileBrowse";
             this.btnFilterByFileBrowse.Size = new System.Drawing.Size(32, 32);
             this.btnFilterByFileBrowse.TabIndex = 4;
@@ -1148,7 +1005,7 @@ namespace FIA_Biosum_Manager
             // txtFilterByFile
             // 
             this.txtFilterByFile.Enabled = false;
-            this.txtFilterByFile.Location = new System.Drawing.Point(64, 173);
+            this.txtFilterByFile.Location = new System.Drawing.Point(64, 132);
             this.txtFilterByFile.Name = "txtFilterByFile";
             this.txtFilterByFile.Size = new System.Drawing.Size(328, 20);
             this.txtFilterByFile.TabIndex = 3;
@@ -1156,11 +1013,12 @@ namespace FIA_Biosum_Manager
             // rdoFilterByFile
             // 
             this.rdoFilterByFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFilterByFile.Location = new System.Drawing.Point(40, 129);
+            this.rdoFilterByFile.Location = new System.Drawing.Point(40, 88);
             this.rdoFilterByFile.Name = "rdoFilterByFile";
             this.rdoFilterByFile.Size = new System.Drawing.Size(400, 32);
             this.rdoFilterByFile.TabIndex = 2;
             this.rdoFilterByFile.Text = "Filter By File (Text File Containing Plot_CN numbers)";
+            this.rdoFilterByFile.CheckedChanged += new System.EventHandler(this.rdoFilterByFile_CheckedChanged);
             this.rdoFilterByFile.Click += new System.EventHandler(this.rdoFilterByFile_Click);
             // 
             // rdoFilterByMenu
@@ -1291,6 +1149,154 @@ namespace FIA_Biosum_Manager
             this.btnFilterByPlotCancel.Text = "Cancel";
             this.btnFilterByPlotCancel.Click += new System.EventHandler(this.btnFilterByPlotCancel_Click);
             // 
+            // groupBox25
+            // 
+            this.groupBox25.Controls.Add(this.txtMDBSiteTreeTable);
+            this.groupBox25.Controls.Add(this.btnMDBSiteTreeBrowse);
+            this.groupBox25.Controls.Add(this.txtMDBSiteTree);
+            this.groupBox25.Location = new System.Drawing.Point(24, 248);
+            this.groupBox25.Name = "groupBox25";
+            this.groupBox25.Size = new System.Drawing.Size(624, 73);
+            this.groupBox25.TabIndex = 31;
+            this.groupBox25.TabStop = false;
+            this.groupBox25.Text = "Site Tree Data";
+            // 
+            // txtMDBSiteTreeTable
+            // 
+            this.txtMDBSiteTreeTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBSiteTreeTable.Location = new System.Drawing.Point(408, 27);
+            this.txtMDBSiteTreeTable.Name = "txtMDBSiteTreeTable";
+            this.txtMDBSiteTreeTable.Size = new System.Drawing.Size(152, 26);
+            this.txtMDBSiteTreeTable.TabIndex = 1;
+            // 
+            // btnMDBSiteTreeBrowse
+            // 
+            this.btnMDBSiteTreeBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBSiteTreeBrowse.Image")));
+            this.btnMDBSiteTreeBrowse.Location = new System.Drawing.Point(573, 23);
+            this.btnMDBSiteTreeBrowse.Name = "btnMDBSiteTreeBrowse";
+            this.btnMDBSiteTreeBrowse.Size = new System.Drawing.Size(32, 32);
+            this.btnMDBSiteTreeBrowse.TabIndex = 2;
+            this.btnMDBSiteTreeBrowse.Click += new System.EventHandler(this.btnMDBSiteTreeBrowse_Click);
+            // 
+            // txtMDBSiteTree
+            // 
+            this.txtMDBSiteTree.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBSiteTree.Location = new System.Drawing.Point(17, 27);
+            this.txtMDBSiteTree.Name = "txtMDBSiteTree";
+            this.txtMDBSiteTree.Size = new System.Drawing.Size(383, 26);
+            this.txtMDBSiteTree.TabIndex = 0;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.txtMDBTreeTable);
+            this.groupBox8.Controls.Add(this.btnMDBTreeBrowse);
+            this.groupBox8.Controls.Add(this.txtMDBTree);
+            this.groupBox8.Location = new System.Drawing.Point(24, 167);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(624, 73);
+            this.groupBox8.TabIndex = 30;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Tree Data";
+            // 
+            // txtMDBTreeTable
+            // 
+            this.txtMDBTreeTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBTreeTable.Location = new System.Drawing.Point(408, 27);
+            this.txtMDBTreeTable.Name = "txtMDBTreeTable";
+            this.txtMDBTreeTable.Size = new System.Drawing.Size(152, 26);
+            this.txtMDBTreeTable.TabIndex = 1;
+            // 
+            // btnMDBTreeBrowse
+            // 
+            this.btnMDBTreeBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBTreeBrowse.Image")));
+            this.btnMDBTreeBrowse.Location = new System.Drawing.Point(573, 23);
+            this.btnMDBTreeBrowse.Name = "btnMDBTreeBrowse";
+            this.btnMDBTreeBrowse.Size = new System.Drawing.Size(32, 32);
+            this.btnMDBTreeBrowse.TabIndex = 2;
+            this.btnMDBTreeBrowse.Click += new System.EventHandler(this.btnMDBTreeBrowse_Click);
+            // 
+            // txtMDBTree
+            // 
+            this.txtMDBTree.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBTree.Location = new System.Drawing.Point(17, 27);
+            this.txtMDBTree.Name = "txtMDBTree";
+            this.txtMDBTree.Size = new System.Drawing.Size(383, 26);
+            this.txtMDBTree.TabIndex = 0;
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.txtMDBCondTable);
+            this.groupBox9.Controls.Add(this.btnMDBCondBrowse);
+            this.groupBox9.Controls.Add(this.txtMDBCond);
+            this.groupBox9.Location = new System.Drawing.Point(24, 95);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(624, 65);
+            this.groupBox9.TabIndex = 29;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Condition Data";
+            // 
+            // txtMDBCondTable
+            // 
+            this.txtMDBCondTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBCondTable.Location = new System.Drawing.Point(408, 24);
+            this.txtMDBCondTable.Name = "txtMDBCondTable";
+            this.txtMDBCondTable.Size = new System.Drawing.Size(152, 26);
+            this.txtMDBCondTable.TabIndex = 1;
+            // 
+            // btnMDBCondBrowse
+            // 
+            this.btnMDBCondBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBCondBrowse.Image")));
+            this.btnMDBCondBrowse.Location = new System.Drawing.Point(573, 18);
+            this.btnMDBCondBrowse.Name = "btnMDBCondBrowse";
+            this.btnMDBCondBrowse.Size = new System.Drawing.Size(32, 32);
+            this.btnMDBCondBrowse.TabIndex = 2;
+            this.btnMDBCondBrowse.Click += new System.EventHandler(this.btnMDBCondBrowse_Click);
+            // 
+            // txtMDBCond
+            // 
+            this.txtMDBCond.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBCond.Location = new System.Drawing.Point(17, 24);
+            this.txtMDBCond.Name = "txtMDBCond";
+            this.txtMDBCond.Size = new System.Drawing.Size(383, 26);
+            this.txtMDBCond.TabIndex = 0;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.txtMDBPlotTable);
+            this.groupBox10.Controls.Add(this.btnMDBPlotBrowse);
+            this.groupBox10.Controls.Add(this.txtMDBPlot);
+            this.groupBox10.Location = new System.Drawing.Point(24, 22);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(624, 66);
+            this.groupBox10.TabIndex = 28;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Plot Data";
+            // 
+            // txtMDBPlotTable
+            // 
+            this.txtMDBPlotTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBPlotTable.Location = new System.Drawing.Point(408, 26);
+            this.txtMDBPlotTable.Name = "txtMDBPlotTable";
+            this.txtMDBPlotTable.Size = new System.Drawing.Size(152, 26);
+            this.txtMDBPlotTable.TabIndex = 1;
+            // 
+            // btnMDBPlotBrowse
+            // 
+            this.btnMDBPlotBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnMDBPlotBrowse.Image")));
+            this.btnMDBPlotBrowse.Location = new System.Drawing.Point(573, 22);
+            this.btnMDBPlotBrowse.Name = "btnMDBPlotBrowse";
+            this.btnMDBPlotBrowse.Size = new System.Drawing.Size(32, 32);
+            this.btnMDBPlotBrowse.TabIndex = 2;
+            this.btnMDBPlotBrowse.Click += new System.EventHandler(this.btnMDBPlotBrowse_Click);
+            // 
+            // txtMDBPlot
+            // 
+            this.txtMDBPlot.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMDBPlot.Location = new System.Drawing.Point(17, 26);
+            this.txtMDBPlot.Name = "txtMDBPlot";
+            this.txtMDBPlot.Size = new System.Drawing.Size(383, 26);
+            this.txtMDBPlot.TabIndex = 0;
+            // 
             // uc_plot_input
             // 
             this.Controls.Add(this.groupBox1);
@@ -1311,6 +1317,11 @@ namespace FIA_Biosum_Manager
             this.groupBox22.ResumeLayout(false);
             this.grpboxFIADBInv.ResumeLayout(false);
             this.grpboxIDBInv.ResumeLayout(false);
+            this.grpboxFilterByState.ResumeLayout(false);
+            this.grpboxFilter.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
+            this.grpboxFilterByPlot.ResumeLayout(false);
             this.groupBox25.ResumeLayout(false);
             this.groupBox25.PerformLayout();
             this.groupBox8.ResumeLayout(false);
@@ -1319,11 +1330,6 @@ namespace FIA_Biosum_Manager
             this.groupBox9.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
-            this.grpboxFilterByState.ResumeLayout(false);
-            this.grpboxFilter.ResumeLayout(false);
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
-            this.grpboxFilterByPlot.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -1395,19 +1401,6 @@ namespace FIA_Biosum_Manager
 			this.btnFIADBInvAppend.Location = this.btnMDBFiadbInputFinish.Location;
 			this.grpboxFIADBInv.Visible=false;	
 
-
-			this.grpboxMDBFiadbInput.Left = this.grpboxMDBFiadbInput.Left;
-			this.grpboxMDBFiadbInput.Width = this.grpboxMDBFiadbInput.Width;
-			this.grpboxMDBFiadbInput.Height = this.grpboxMDBFiadbInput.Height;
-			this.grpboxMDBFiadbInput.Top = this.grpboxMDBFiadbInput.Top;
-			this.btnMDBFiadbInputHelp.Location = this.btnMDBFiadbInputHelp.Location;
-			this.btnMDBFiadbInputCancel.Location = this.btnMDBFiadbInputCancel.Location;
-			this.btnMDBFiadbInputPrev.Location = this.btnMDBFiadbInputPrev.Location;
-			this.btnMDBFiadbInputNext.Location = this.btnMDBFiadbInputNext.Location;
-			this.btnMDBFiadbInputFinish.Location = this.btnMDBFiadbInputFinish.Location;
-			this.grpboxMDBFiadbInput.Visible=false;	
-
-
 			this.lstFilterByState.Clear();
 			this.lstFilterByState.Columns.Add(" ", 100, HorizontalAlignment.Center); 
 			this.lstFilterByState.Columns.Add("State", 100, HorizontalAlignment.Left);
@@ -1437,6 +1430,8 @@ namespace FIA_Biosum_Manager
                 cmbCondPropPercent.Items.Add(x.ToString().Trim());
             }
             cmbCondPropPercent.Text = "25";
+
+            this.m_oEnv = new env();
 
 		}
 
@@ -1474,33 +1469,6 @@ namespace FIA_Biosum_Manager
 		private void btnFIADBTxtInputCancel_Click(object sender, System.EventArgs e)
 		{
 			((frmDialog)this.ParentForm).Close();
-		}
-
-		private void btnPlotBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Plot Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strPlotTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtPlot.Text = this.m_strPlotTxtInputFile;
-					//					this.m_strNewProjectFile = OpenFileDialog1.FileName.Substring(OpenFileDialog1.FileName.LastIndexOf("\\") + 1);
-					//					this.m_strNewProjectDirectory = OpenFileDialog1.FileName.Substring(0,OpenFileDialog1.FileName.LastIndexOf("\\") - 3);
-					//					this.OpenProjectTable(this.m_strNewProjectDirectory, this.m_strNewProjectFile);
-					//					if (this.m_intError==0)
-					//						this.OpenUserConfigTable(this.m_strNewProjectDirectory + "\\db", this.m_strNewProjectFile);
-				}
-			}
-			else 
-			{
-				//				this.m_intError = -1;
-			}
-			OpenFileDialog1 = null;
-
 		}
 
 		private void btnFilterPrevious_Click(object sender, System.EventArgs e)
@@ -1578,2289 +1546,6 @@ namespace FIA_Biosum_Manager
                     }
                 }
 			}
-		}
-
-		private void txtInsertFIADBDataMartDelimitedText(System.Data.OleDb.OleDbConnection p_oConn,
-			string p_strSourceTextFile,
-			string p_strPltCnTable,
-			string p_strKeyPlotCnColumn,
-			string p_strDestinationTable,
-			string[] p_strDestinationTableColumnsArray,
-			string[] p_strDestinationTableColumnsStringDataTypeYNArray,
-			bool p_bExitOnProgressBarMax)
-			                                         
-		{   
-			//The DataSet to Return
-			//DataSet result = new DataSet();
-			this.m_intError=0;
-			int i = 0;
-			int x;
-			int y;
-			int z;
-			int intPos;
-			string strCommaDelimiter=",";
-			string strValuesList="";
-			string strColumnsList="";
-			int intPlotCNPointer=-1;
-			int intCNPointer=-1;
-			int intTreeCNPointer=-1;
-			bool bAddRow=false;
-			string strLine="";
-			int intAddCount=0;
-			int intCount=0;
-            string strMsg = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Label)this.m_frmTherm.lblMsg, "Text", false);
-
-			try
-			{
-				//Open the file in a stream reader.
-				System.IO.StreamReader s = new System.IO.StreamReader(p_strSourceTextFile);
-        
-				//Split the first line into the columns       
-				string[] columns = s.ReadLine().Split(strCommaDelimiter.ToCharArray());
-
-
-
-				//remove any unwanted characters from the column name
-				for (x=0;x<=columns.Length-1;x++)
-				{
-					columns[x] = columns[x].Replace("#","");
-					columns[x] = columns[x].Replace("'","");
-					columns[x] = columns[x].Replace("&","");
-					columns[x] = columns[x].Replace("\"","");
-					if (columns[x].Trim().ToUpper()=="CN") intCNPointer=x;
-					else if (columns[x].Trim().ToUpper() == "PLT_CN") intPlotCNPointer=x;
-					else if (columns[x].Trim().ToUpper() == "TRE_CN") intTreeCNPointer=x;
-				}
-
-				while ((strLine = s.ReadLine()) != null)
-				{
-					intCount++;
-					
-					if (strLine.Trim().Length > 0)
-					{
-						bAddRow=false;
-						strValuesList="";
-						strColumnsList="";
-						string[] items = strLine.Split(strCommaDelimiter.ToCharArray());
-						//There could be occurances of the delimiter in a text string.
-						//If there are then the length of the items array will be 
-						//greater than the number of table columns.
-						if (items.Length != columns.Length)
-						{
-							intPos=0;
-							//load each column value in the row individually
-							//reformat the row and put it in strRow
-							string strRow="";
-							string strDelimiter="#";
-							for (i=0;i<= columns.Length - 1;i++)
-							{
-								string strBuildColumnString="";
-								for (x=intPos;x<=strLine.Length-1;x++)
-								{
-									//check if we are at the end of the row
-									if (x == strLine.Length - 1)
-									{
-										if (strBuildColumnString.Trim().Length > 0)
-										{
-											strRow = strRow + strBuildColumnString + strDelimiter;
-										}
-										else
-										{
-											strRow = strRow + " " + strDelimiter;
-										}
-									}
-										
-									else 
-										
-									{
-										//check for starting double quote
-										if (strLine.Substring(x,1)=="\"")
-										{
-											if (strBuildColumnString.Trim().Length == 0)
-											{
-												//check for null value
-												if (strLine.Substring(x,2)=="\"\"")
-												{
-													strRow = strRow + " " + strDelimiter;
-													intPos = x+1;
-													//find the delimiter
-													for (z=intPos;z<=strLine.Length-1;z++)
-													{
-														if (strLine.Substring(z,strCommaDelimiter.Length)==strCommaDelimiter)
-														{
-															intPos=z;
-															break;
-														}
-													}
-												}
-												else if (strLine.Substring(x,2)=="\"" + ",")
-												{
-													strRow = strRow + " " + strDelimiter;
-													intPos = x+1;
-												}
-												else
-												{
-											
-											
-													x=x+1;
-													//another check for null value
-													//if (r.Substring(x+1,1) != "\"")
-													//{
-													//MessageBox.Show(r.Substring(x+1,1));
-													//check for the ending double quote
-													strBuildColumnString=strLine.Substring(x,strLine.Length - x);
-													z = strBuildColumnString.IndexOf("\"",2);
-													if (strBuildColumnString.Trim() == "\"\"")
-													{
-														//no value
-														strBuildColumnString=" ";
-														z = strLine.IndexOf("\"",x);
-
-													}
-													else
-													{
-														strBuildColumnString=strBuildColumnString.Substring(0,z);
-														z = strLine.IndexOf("\"",x+1);
-													}
-													//MessageBox.Show(strBuildColumnString + " " + strBuildColumnString.Length.ToString());
-											
-													//finished with the column
-													strRow=strRow + strBuildColumnString + strDelimiter;
-													//find where the next delimiter is
-													intPos = strLine.IndexOf(strCommaDelimiter,z);
-													//}
-													//else
-													//{
-													//null value
-													//	strRow = strRow + " " + strDelimiter;
-													//	intPos = x+1;
-													//}
-												}
-												break;
-
-											}
-										}
-										else if (strLine.Substring(x,strCommaDelimiter.Length) == strCommaDelimiter)
-										{
-											if (strBuildColumnString.Trim().Length ==0)
-											{
-												//check for a null value
-												if (strLine.Substring(x+1,strCommaDelimiter.Length)==strCommaDelimiter)
-												{
-													strRow = strRow + " " + strDelimiter;
-													intPos=x+1;
-													break;
-												}
-											}
-											else
-											{
-												strRow=strRow + strBuildColumnString + strDelimiter;
-												intPos=x;
-												break;
-											}
-										}
-										else
-										{
-									
-											strBuildColumnString=strBuildColumnString + strLine.Substring(x,1);
-										}
-									}
-									
-								}
-
-							}
-							if (strRow.Trim().Length > 0) strRow=strRow.Substring(0,strRow.Length - strDelimiter.Length);
-							
-							//Split the row at the delimiter.
-							string[] items2 = strRow.Split(strDelimiter.ToCharArray());
-
-							//lets see if this is a valid Plot CN number
-							if (p_strPltCnTable != null && p_strPltCnTable.Length > 0)
-							{
-								int intCnColumn=0;
-								if (intPlotCNPointer >= 0)
-								{
-									intCnColumn = intPlotCNPointer;
-								}
-								else if (intTreeCNPointer >= 0)
-								{
-									intCnColumn = intTreeCNPointer;
-								}
-								else
-								{
-									intCnColumn= intCNPointer;
-								}
-								if (Convert.ToInt32(this.m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM " + p_strPltCnTable + " WHERE trim(" + p_strKeyPlotCnColumn + ")='" + items2[intCnColumn].Trim() + "'",p_strPltCnTable)) > 0) bAddRow=true;
-							}
-							else
-							{
-								bAddRow=true;
-							}
-							if (bAddRow)
-							{
-								for (y=0;y<=p_strDestinationTableColumnsArray.Length-1;y++)
-								{
-									for (x=0;x<=columns[x].Length - 1;x++)
-									{
-										if (p_strDestinationTableColumnsArray[y].Trim().ToUpper()==
-											columns[x].Trim().ToUpper())
-										{
-											strColumnsList = strColumnsList + columns[x] + ",";
-											if (p_strDestinationTableColumnsStringDataTypeYNArray[y]=="Y")
-											{
-												strValuesList = strValuesList + "'" + items2[x] + "',";
-											}
-											else
-											{
-												if (items2[x].Trim().Length == 0)
-													strValuesList = strValuesList + "null,";
-												else strValuesList = strValuesList + items2[x] + ",";
-											}
-										}
-									}
-								}
-
-							}
-
-      							
-						}
-						else
-						{
-							//remove unwanted characters
-							for (x=0;x<=items.Length-1;x++)
-							{
-								//double and single quotations
-								items[x] = items[x].Replace("\"","");
-								items[x] = items[x].Replace("'","");
-							}
-							//lets see if this is a valid Plot CN number
-								
-							//lets see if this is a valid Plot CN number
-							if (p_strPltCnTable != null && p_strPltCnTable.Length > 0)
-							{
-								int intCnColumn=0;
-								if (intPlotCNPointer >= 0)
-								{
-									intCnColumn = intPlotCNPointer;
-								}
-								else if (intTreeCNPointer >= 0)
-								{
-									intCnColumn = intTreeCNPointer;
-								}
-								else
-								{
-									intCnColumn= intCNPointer;
-								}
-								if (Convert.ToInt32(this.m_ado.getRecordCount(this.m_connTempMDBFile,"SELECT COUNT(*) FROM " + p_strPltCnTable + " WHERE trim(" + p_strKeyPlotCnColumn + ")='" + items[intCnColumn].Trim() + "'",p_strPltCnTable)) > 0)
-									bAddRow=true;
-								
-							}
-							else bAddRow=true;
-							if (bAddRow)
-							{
-								for (y=0;y<=p_strDestinationTableColumnsArray.Length-1;y++)
-								{
-									for (x=0;x<=columns.Length - 1;x++)
-									{
-										if (p_strDestinationTableColumnsArray[y].Trim().ToUpper()==
-											columns[x].Trim().ToUpper())
-										{
-											strColumnsList = strColumnsList + columns[x] + ",";
-											if (p_strDestinationTableColumnsStringDataTypeYNArray[y]=="Y")
-											{
-												strValuesList = strValuesList + "'" + items[x] + "',";
-											}
-											else
-											{
-												if (items[x].Trim().Length == 0)
-													strValuesList = strValuesList + "null,";
-												else strValuesList = strValuesList + items[x] + ",";
-											}
-										}
-									}
-								}
-							}
-						}
-						if (bAddRow)
-						{
-							strValuesList = strValuesList.Substring(0,strValuesList.Length - 1);
-							strColumnsList = strColumnsList.Substring(0,strColumnsList.Length - 1);
-							this.m_ado.m_strSQL = "INSERT INTO " + p_strDestinationTable + " " + 
-								"(" + strColumnsList + ") VALUES "  + 
-								"(" + strValuesList + ")";
-							this.m_ado.SqlNonQuery(p_oConn,this.m_ado.m_strSQL);
-							intAddCount=intAddCount+1;
-							if (intAddCount < (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1,"Maximum",false))
-                                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1,"Value",(int)intAddCount);
-							if (p_bExitOnProgressBarMax)
-								if (intAddCount==(int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1,"Maximum",false)) break;
-							
-						}
-					}
-                    frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Label)m_frmTherm.lblMsg, "Text", strMsg + " Text Line:" + intCount.ToString().Trim() + " Table Rows Added:" + intAddCount.ToString().Trim());
-                    frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Label)m_frmTherm.lblMsg, "Refresh");
-
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-				
-			}
-			catch (Exception caught)
-			{
-
-				this.m_intError=-1;
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:ConvertDelimitedTextToDataTable  \n" + 
-					"Err Msg - " + caught.Message.ToString().Trim(),
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-			}
-			if (m_intError==0) 
-			{
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Label)m_frmTherm.lblMsg, "Text", strMsg + "End Of File. Total Records Added To Table:" + intAddCount.ToString());
-                frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Refresh");
-			}
-		
-		}
-
-
-		private void txtFileInputPopEval()
-		{
-			//variables used to match up the biosum table columns with the 
-			//fiadb txtfile table column names
-			int intFIADBColumn=0;
-			int intBiosumColumn=0;
-
-			string strValue="";
-			string strFields="";
-			string strValues="";
-			int intAddedRows=0;
-			bool bAddRow=true;
-			int x=0;
-			System.Data.DataTable p_dtPopEvalChanges;
-			System.Data.DataRow[] p_PopEvalNewRows;
-			string[,] strPopEvalList;
-			const int POPEVAL_CN = 0;
-			string strPlotEvalCn="";
-			int[] intCol;
-			
-              
-			try
-			{
-				//instatiate the oledb data access class
-				this.m_ado = new ado_data_access();
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Adding Pop Eval Records");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", 6);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Visible", true);
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Creating Datasource Links");
-                    
-				//get all the project datasources
-				FIA_Biosum_Manager.Datasource p_datasource = new Datasource(((frmDialog)this.ParentForm).m_frmMain.frmProject.uc_project1.txtRootDirectory.Text.ToString().Trim());
-
-				//create a temporary mdb file with links to all the project tables
-				this.m_strTempMDBFile = p_datasource.CreateMDBAndTableDataSourceLinks();
-
-				//get a connection string for the temp mdb file
-				this.m_strTempMDBFileConn = this.m_ado.getMDBConnString(this.m_strTempMDBFile,"","");
-
-				//get the plot, cond, and tree table names
-				this.m_strPopEvalTable = p_datasource.getValidDataSourceTableName("POPULATION EVALUATION");
-
-				//remove any entries that have a biosum_status_code of 9
-				this.m_ado.SqlNonQuery(this.m_strTempMDBFileConn,"DELETE FROM " + this.m_strPopEvalTable + "  WHERE biosum_status_cd = 9;");
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 1);
-				   					
-				//create a new connection
-				this.m_connTempMDBFile = new System.Data.OleDb.OleDbConnection();
-
-				//open the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				System.Data.DataTable p_dtPopEvalSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strPopEvalTable);
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 2);
-                			
-
-				//close the connection to the temp mdb file
-				this.m_connTempMDBFile.Close();
-
-				/*****************************************************************
-				 **create the table structure of the pop eval table and give it 
-				 **the name of popstratum_input
-				 *****************************************************************/
-				dao_data_access p_dao = new dao_data_access();
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"popstratum_input",p_dtPopEvalSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPopEvalSchema.Dispose();
-					return;
-				}
-
-				p_dao=null;
-
-				//reopen the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-                   
-				//initialize the transaction object with the temporary connection
-				System.Data.OleDb.OleDbTransaction p_trans = this.m_connTempMDBFile.BeginTransaction();
-
-				FIA_Biosum_Manager.env p_env = new env();
-				System.Data.DataRow p_row;
-				this.m_ado.m_DataSet = new DataSet("FIADB");
-				this.m_ado.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 1);
-				
-
-				//----------------pop eval DATA---------------//
-				//load the text file into an adodot net datasource table
-				this.m_ado.ConvertDelimitedTextToDataTable(this.m_ado.m_DataSet,this.txtPopEval.Text.Trim(),"fiadb_popeval",",");
-
-				if (this.m_ado.m_intError==0)
-				{
-					try
-					{
-						strPopEvalList = new string[this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows.Count,1];
-						for (x=0;x<=this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows.Count-1;x++)
-						{
-							strPopEvalList[x,POPEVAL_CN]="";
-
-						}
-
-						if (this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows.Count > 0)
-						{
-								
-								 
-							this.m_ado.AddSQLQueryToDataSet(this.m_connTempMDBFile,ref this.m_ado.m_OleDbDataAdapter,ref this.m_ado.m_DataSet,ref p_trans, "select * from " + this.m_strPopEvalTable,this.m_strPopEvalTable);
-								
-							strFields = "";
-							strValues = "";
-							//Build the pop eval insert sql
-							for (x=0; x<=p_dtPopEvalSchema.Rows.Count-1;x++)
-							{
-								if (strFields.Trim().Length == 0)
-								{
-									strFields = "(";
-								}
-								else
-								{	
-									strFields = strFields + "," ;
-								}
-								strFields = strFields + p_dtPopEvalSchema.Rows[x]["columnname"].ToString().Trim();
-								if (strValues.Trim().Length == 0)
-								{
-									strValues = "(";
-								}
-								else
-								{	
-									strValues = strValues + ",";
-								}
-								strValues = strValues + "?";
-
-							}
-							strFields = strFields + ")";
-							strValues = strValues + ");";
-							//create an insert command 
-							this.m_ado.m_OleDbDataAdapter.InsertCommand = this.m_connTempMDBFile.CreateCommand();
-							//bind the transaction object to the insert command
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.Transaction = p_trans;
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.CommandText = 
-								"INSERT INTO " + this.m_strPopEvalTable + " "  + strFields + " VALUES " + strValues;
-							//define field datatypes for the data adapter
-							for (x=0; x<=p_dtPopEvalSchema.Rows.Count-1;x++)
-							{
-								strFields=p_dtPopEvalSchema.Rows[x]["columnname"].ToString().Trim();
-								switch (p_dtPopEvalSchema.Rows[x]["datatype"].ToString().Trim())
-								{
-									case "System.String" :
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.VarWChar,
-											0,
-											strFields);
-										break;
-									case "System.Double":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Double,
-											0,
-											strFields);
-										break;
-									case "System.Boolean":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Boolean,
-											0,
-											strFields);
-										break;
-									case "System.DateTime":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.DBTimeStamp,
-											0,
-											strFields);
-										break;
-									case "System.Decimal":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Decimal,
-											0,
-											strFields);
-										break;
-									case "System.Int16":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Int32":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Integer,
-											0,
-											strFields);
-										break;
-									case "System.Int64":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.BigInt,
-											0,
-											strFields);
-										break;
-									case "System.SByte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Byte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.TinyInt,
-											0,
-											strFields);
-										break;
-									case "System.Single":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Single,
-											0,
-											strFields);
-										break;
-									default:
-										MessageBox.Show(this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].Columns[x].DataType.FullName.ToString().Trim());
-										break;
-								}
-									
-							}
-								
-							intCol = new int[this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].Columns.Count];
-
-							//match up the biosum columns with the fiadb columns
-							for (intBiosumColumn = 0; intBiosumColumn <= this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].Columns.Count-1;intBiosumColumn++)
-							{
-								intCol[intBiosumColumn]=-1;
-								for (intFIADBColumn = 0; intFIADBColumn <= this.m_ado.m_DataSet.Tables["fiadb_popeval"].Columns.Count-1;intFIADBColumn++)
-								{
-									if (this.m_ado.m_DataSet.Tables["fiadb_popeval"].Columns[intFIADBColumn].ColumnName.Trim().ToUpper() == 
-										this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].Columns[intBiosumColumn].ColumnName.Trim().ToUpper())
-									{
-										intCol[intBiosumColumn] = intFIADBColumn;
-									}
-
-								}
-							}
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Pop Eval Table: Compiling New Pop Eval Rows");
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-
-							
-							//load up each row in the FIADB plot input table
-							for (x = 0; x<=this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows.Count-1;x++)
-							{
-								bAddRow=true;
-								//make sure the row is not null values
-								if (this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows[x][0] != System.DBNull.Value &&
-									this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows[x][0].ToString().Trim().Length > 0)
-								{
-									
-									p_row = this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].NewRow();
-									for (intBiosumColumn = 0; intBiosumColumn <= intCol.Length-1; intBiosumColumn++)
-									{
-										if (intCol[intBiosumColumn] != -1)
-										{
-											strValue = this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows[x][intCol[intBiosumColumn]].ToString().Trim();
-											if (strValue.Trim().Length > 0)
-											{
-												switch (this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim())
-												{
-													case "System.String" :
-														p_row[intBiosumColumn] = strValue.Replace("\"","");
-														break;
-													case "System.Double":
-														p_row[intBiosumColumn] = Convert.ToDouble(strValue);
-														break;
-													case "System.Boolean":
-														p_row[intBiosumColumn] = Convert.ToBoolean(strValue);
-														break;
-													case "System.DateTime":
-														p_row[intBiosumColumn] = Convert.ToDateTime(strValue);
-														break;
-													case "System.Decimal":
-														p_row[intBiosumColumn] = Convert.ToDecimal(strValue);
-														break;
-													case "System.Int16":
-														p_row[intBiosumColumn] = Convert.ToInt16(strValue);
-														break;
-													case "System.Int32":
-														p_row[intBiosumColumn] = Convert.ToInt32(strValue);
-														break;
-													case "System.Int64":
-														p_row[intBiosumColumn] = Convert.ToInt64(strValue);
-														break;
-													case "System.SByte":
-														p_row[intBiosumColumn] = Convert.ToSByte(strValue);
-
-														break;
-													case "System.Single":
-														p_row[intBiosumColumn] = Convert.ToSingle(strValue);
-														break;
-
-													default:
-														MessageBox.Show(this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim());
-														break;
-												}
-											}
-										}
-										System.Windows.Forms.Application.DoEvents();
-										if (this.m_frmTherm.AbortProcess == true) break;
-									}
-									if (this.m_frmTherm.AbortProcess == false)
-									{
-											
-										//get the plt_cn value
-										strPlotEvalCn = this.m_ado.m_DataSet.Tables["fiadb_popeval"].Rows[x]["cn"].ToString().Trim();
-										strPlotEvalCn = strPlotEvalCn.Replace("\"","");
-										//if (strPlotEvalCn.Trim() == "17546689010497")
-										//	MessageBox.Show("here it is");
-
-										//see if user has a list to filter the plots to process
-										if (this.m_strPlotIdList.Trim().Length > 0 )
-										{
-											if (this.m_strPlotIdList.IndexOf("'" + strPlotEvalCn.Trim() + "'") < 0)
-											{
-												bAddRow=false;
-											}
-										}
-										if (bAddRow==true)
-										{
-											if (p_row["biosum_status_cd"] == System.DBNull.Value) 
-												p_row["biosum_status_cd"] = 9;		
-											strPopEvalList[intAddedRows,POPEVAL_CN]=strPlotEvalCn.Trim();
-											this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].Rows.Add(p_row);
-											intAddedRows++;
-											
-										}
-									}
-								}
-							
-							}
-						}
-						else
-						{
-							MessageBox.Show("!!No Pop Eval Records In The FIADB Pop Eval Input Table!!");
-						}
-					}
-					catch (Exception caught)
-					{
-						this.m_intError=-1;
-						MessageBox.Show(caught.Message);
-					}
-					//keep processing the records if there was no error and there were plot records added
-					if (this.m_intError==0 && intAddedRows > 0 && this.m_frmTherm.AbortProcess == false)
-					{
-						try
-						{
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Pop Eval Table: Finishing New Pop Eval Rows...Stand By");
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                            p_dtPopEvalChanges = this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].GetChanges();
-								
-							p_PopEvalNewRows = p_dtPopEvalChanges.Select(null,null, DataViewRowState.Added);
-							if (p_dtPopEvalChanges.HasErrors)
-							{
-								this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].RejectChanges();
-								this.m_intError=-1;
-							}
-							else
-							{
-								this.m_ado.m_OleDbDataAdapter.Update(p_PopEvalNewRows);
-								this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].AcceptChanges();
-							}
-						}
-						catch (Exception caught)
-						{
-							this.m_intError=-1;
-							this.m_ado.m_DataSet.Tables[this.m_strPopEvalTable].RejectChanges();
-							//rollback the transaction to the original records 
-							p_trans.Rollback();
-							MessageBox.Show(caught.Message);
-						}
-					}
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 4);
-								
-				if (this.m_frmTherm.AbortProcess==false && this.m_intError == 0 && (intAddedRows > 0))
-				{
-					try
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 1);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Committing The Data...Stand by");
-                        frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-						p_trans.Commit(); 
-
-					}
-					catch //(Exception caught)
-					{
-						p_trans.Rollback();
-						this.m_intError=-1;
-					}
-
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 5);
-				if (this.m_frmTherm.AbortProcess == true &&  (intAddedRows > 0))
-				{
-					p_trans.Rollback();
-				
-				}
-				else
-				{
-					if (this.m_frmTherm.AbortProcess==false && this.m_ado.m_intError==0 && this.m_intError == 0 && (intAddedRows > 0))
-					{
-						p_trans = null;
-
-						if (this.m_intError==0)
-						{
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Done");
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-						}
-						else
-						{
-							//error occurred in the updatecolumns so delete the records
-							this.m_strSQL = "DELETE FROM " + this.m_strPopEvalTable + " WHERE biosum_status_cd = 9;";
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-							MessageBox.Show("!!Error Occured Adding Pop Eval Records: 0 Records Added!!","Add Pop Eval Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-						}
-					}
-
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-                frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Close");
-				this.m_frmTherm = null;
-				p_dtPopEvalChanges = null;
-				p_PopEvalNewRows = null;
-				this.m_ado.m_DataSet.Clear();
-				this.m_ado.m_DataSet.Dispose();
-				this.m_ado = null;
-				((frmDialog)this.ParentForm).Enabled=true;
-
-			}
-			
-			catch //(System.Threading.ThreadInterruptedException e)
-			{
-				//MessageBox.Show("Threading Interruption Error " + e.Message.ToString());
-			}
-		
-
-
-		}
-		private void txtFileInputPopStratum()
-		{
-			//variables used to match up the biosum table columns with the 
-			//fiadb txtfile table column names
-			int intFIADBColumn=0;
-			int intBiosumColumn=0;
-
-			string strValue="";
-			string strFields="";
-			string strValues="";
-			int intAddedRows=0;
-			bool bAddRow=true;
-			int x=0;
-			System.Data.DataTable p_dtChanges;
-			System.Data.DataRow[] p_dtNewRows;
-			string[,] strList;
-			const int CN = 0;
-			string strCn="";
-			int[] intCol;
-			
-
-			try
-			{
-				//instatiate the oledb data access class
-				this.m_ado = new ado_data_access();
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", 6);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Text", "Adding Pop Stratum Records");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Creating Datasource Links");
-				    
-				//get all the project datasources
-				FIA_Biosum_Manager.Datasource p_datasource = new Datasource(((frmDialog)this.ParentForm).m_frmMain.frmProject.uc_project1.txtRootDirectory.Text.ToString().Trim());
-
-				//create a temporary mdb file with links to all the project tables
-				this.m_strTempMDBFile = p_datasource.CreateMDBAndTableDataSourceLinks();
-
-				//get a connection string for the temp mdb file
-				this.m_strTempMDBFileConn = this.m_ado.getMDBConnString(this.m_strTempMDBFile,"","");
-
-				//get the plot, cond, and tree table names
-				this.m_strPopStratumTable = p_datasource.getValidDataSourceTableName("POPULATION STRATUM");
-
-				//remove any entries that have a biosum_status_code of 9
-				this.m_ado.SqlNonQuery(this.m_strTempMDBFileConn,"DELETE FROM " + this.m_strPopStratumTable + "  WHERE biosum_status_cd = 9;");
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 1);
-   					
-				//create a new connection
-				this.m_connTempMDBFile = new System.Data.OleDb.OleDbConnection();
-
-				//open the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				System.Data.DataTable p_dtPopStratumSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strPopStratumTable);
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 2);
-			
-
-				//close the connection to the temp mdb file
-				this.m_connTempMDBFile.Close();
-
-				/*****************************************************************
-				 **create the table structure of the pop eval table and give it 
-				 **the name of popstratum_input
-				 *****************************************************************/
-				dao_data_access p_dao = new dao_data_access();
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"popstratum_input",p_dtPopStratumSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPopStratumSchema.Dispose();
-					return;
-				}
-
-				p_dao=null;
-
-				//reopen the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-                   
-				//initialize the transaction object with the temporary connection
-				System.Data.OleDb.OleDbTransaction p_trans = this.m_connTempMDBFile.BeginTransaction();
-
-				FIA_Biosum_Manager.env p_env = new env();
-				System.Data.DataRow p_row;
-				this.m_ado.m_DataSet = new DataSet("FIADB");
-				this.m_ado.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 1);
-
-				//----------------pop stratum DATA---------------//
-				//load the text file into an adodot net datasource table
-				this.m_ado.ConvertDelimitedTextToDataTable(this.m_ado.m_DataSet,this.txtPopStratum.Text.Trim(),"fiadb_popstratum",",");
-
-				if (this.m_ado.m_intError==0)
-				{
-					try
-					{
-						strList = new string[this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows.Count,1];
-						for (x=0;x<=this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows.Count-1;x++)
-						{
-							strList[x,CN]="";
-
-						}
-
-						if (this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows.Count > 0)
-						{
-								
-								 
-							this.m_ado.AddSQLQueryToDataSet(this.m_connTempMDBFile,ref this.m_ado.m_OleDbDataAdapter,ref this.m_ado.m_DataSet,ref p_trans, "select * from " + this.m_strPopStratumTable,this.m_strPopStratumTable);
-								
-							strFields = "";
-							strValues = "";
-							//Build the pop eval insert sql
-							for (x=0; x<=p_dtPopStratumSchema.Rows.Count-1;x++)
-							{
-								if (strFields.Trim().Length == 0)
-								{
-									strFields = "(";
-								}
-								else
-								{	
-									strFields = strFields + "," ;
-								}
-								strFields = strFields + p_dtPopStratumSchema.Rows[x]["columnname"].ToString().Trim();
-								if (strValues.Trim().Length == 0)
-								{
-									strValues = "(";
-								}
-								else
-								{	
-									strValues = strValues + ",";
-								}
-								strValues = strValues + "?";
-
-							}
-							strFields = strFields + ")";
-							strValues = strValues + ");";
-							//create an insert command 
-							this.m_ado.m_OleDbDataAdapter.InsertCommand = this.m_connTempMDBFile.CreateCommand();
-							//bind the transaction object to the insert command
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.Transaction = p_trans;
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.CommandText = 
-								"INSERT INTO " + this.m_strPopStratumTable + " "  + strFields + " VALUES " + strValues;
-							//define field datatypes for the data adapter
-							for (x=0; x<=p_dtPopStratumSchema.Rows.Count-1;x++)
-							{
-								strFields=p_dtPopStratumSchema.Rows[x]["columnname"].ToString().Trim();
-								switch (p_dtPopStratumSchema.Rows[x]["datatype"].ToString().Trim())
-								{
-									case "System.String" :
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.VarWChar,
-											0,
-											strFields);
-										break;
-									case "System.Double":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Double,
-											0,
-											strFields);
-										break;
-									case "System.Boolean":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Boolean,
-											0,
-											strFields);
-										break;
-									case "System.DateTime":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.DBTimeStamp,
-											0,
-											strFields);
-										break;
-									case "System.Decimal":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Decimal,
-											0,
-											strFields);
-										break;
-									case "System.Int16":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Int32":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Integer,
-											0,
-											strFields);
-										break;
-									case "System.Int64":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.BigInt,
-											0,
-											strFields);
-										break;
-									case "System.SByte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Byte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.TinyInt,
-											0,
-											strFields);
-										break;
-									case "System.Single":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Single,
-											0,
-											strFields);
-										break;
-									default:
-										MessageBox.Show(this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].Columns[x].DataType.FullName.ToString().Trim());
-										break;
-								}
-									
-							}
-								
-							intCol = new int[this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].Columns.Count];
-
-							//match up the biosum columns with the fiadb columns
-							for (intBiosumColumn = 0; intBiosumColumn <= this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].Columns.Count-1;intBiosumColumn++)
-							{
-								intCol[intBiosumColumn]=-1;
-								for (intFIADBColumn = 0; intFIADBColumn <= this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Columns.Count-1;intFIADBColumn++)
-								{
-									if (this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Columns[intFIADBColumn].ColumnName.Trim().ToUpper() == 
-										this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].Columns[intBiosumColumn].ColumnName.Trim().ToUpper())
-									{
-										intCol[intBiosumColumn] = intFIADBColumn;
-									}
-
-								}
-							}
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Pop Stratum Table: Compiling New Pop Statum Rows");
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Visible", true);
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-							//load up each row in the FIADB plot input table
-							for (x = 0; x<=this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows.Count-1;x++)
-							{
-								bAddRow=true;
-								//make sure the row is not null values
-								if (this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x][0] != System.DBNull.Value &&
-									this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x][0].ToString().Trim().Length > 0)
-								{
-									
-									p_row = this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].NewRow();
-									for (intBiosumColumn = 0; intBiosumColumn <= intCol.Length-1; intBiosumColumn++)
-									{
-										if (intCol[intBiosumColumn] != -1)
-										{
-											strValue = this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x][intCol[intBiosumColumn]].ToString().Trim();
-											if (strValue.Trim().Length > 0)
-											{
-												switch (this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim())
-												{
-													case "System.String" :
-														p_row[intBiosumColumn] = strValue.Replace("\"","");
-														break;
-													case "System.Double":
-														p_row[intBiosumColumn] = Convert.ToDouble(strValue);
-														break;
-													case "System.Boolean":
-														p_row[intBiosumColumn] = Convert.ToBoolean(strValue);
-														break;
-													case "System.DateTime":
-														p_row[intBiosumColumn] = Convert.ToDateTime(strValue);
-														break;
-													case "System.Decimal":
-														p_row[intBiosumColumn] = Convert.ToDecimal(strValue);
-														break;
-													case "System.Int16":
-														p_row[intBiosumColumn] = Convert.ToInt16(strValue);
-														break;
-													case "System.Int32":
-														p_row[intBiosumColumn] = Convert.ToInt32(strValue);
-														break;
-													case "System.Int64":
-														p_row[intBiosumColumn] = Convert.ToInt64(strValue);
-														break;
-													case "System.SByte":
-														p_row[intBiosumColumn] = Convert.ToSByte(strValue);
-
-														break;
-													case "System.Single":
-														p_row[intBiosumColumn] = Convert.ToSingle(strValue);
-														break;
-
-													default:
-														MessageBox.Show(this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim());
-														break;
-												}
-											}
-										}
-										System.Windows.Forms.Application.DoEvents();
-										if (this.m_frmTherm.AbortProcess == true) break;
-									}
-									if (this.m_frmTherm.AbortProcess == false)
-									{
-											
-										//get the plt_cn value
-										strCn = this.m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x]["cn"].ToString().Trim();
-										strCn = strCn.Replace("\"","");
-
-										//see if user has a list to filter the plots to process
-										if (this.m_strPlotIdList.Trim().Length > 0 )
-										{
-											if (this.m_strPlotIdList.IndexOf("'" + strCn.Trim() + "'") < 0)
-											{
-												bAddRow=false;
-											}
-										}
-										
-										//check rscd and evalid
-										if (m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x]["rscd"] != System.DBNull.Value &&
-											m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x]["evalid"] != System.DBNull.Value)
-										{
-											if (Convert.ToString(m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x]["rscd"]).Trim() != this.m_strCurrFIADBRsCd.Trim() ||
-												Convert.ToString(m_ado.m_DataSet.Tables["fiadb_popstratum"].Rows[x]["evalid"]).Trim() != this.m_strCurrFIADBEvalId.Trim())
-											{
-												bAddRow=false;
-											}
-
-
-										}
-										if (bAddRow==true)
-										{
-											if (p_row["biosum_status_cd"] == System.DBNull.Value) 
-												p_row["biosum_status_cd"] = 9;		
-											strList[intAddedRows,CN]=strCn.Trim();
-											this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].Rows.Add(p_row);
-											intAddedRows++;
-											
-										}
-									}
-								}
-							
-							}
-						}
-						else
-						{
-							MessageBox.Show("!!No Pop Eval Records In The FIADB Pop Eval Input Table!!");
-						}
-					}
-					catch (Exception caught)
-					{
-						this.m_intError=-1;
-						MessageBox.Show(caught.Message);
-					}
-					//keep processing the records if there was no error and there were plot records added
-					if (this.m_intError==0 && intAddedRows > 0 && this.m_frmTherm.AbortProcess == false)
-					{
-						try
-						{
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Pop Eval Table: Finishing New Pop Eval Rows...Stand By");
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                            p_dtChanges = this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].GetChanges();
-								
-							p_dtNewRows = p_dtChanges.Select(null,null, DataViewRowState.Added);
-							if (p_dtChanges.HasErrors)
-							{
-								this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].RejectChanges();
-								this.m_intError=-1;
-							}
-							else
-							{
-								this.m_ado.m_OleDbDataAdapter.Update(p_dtNewRows);
-								this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].AcceptChanges();
-							}
-						}
-						catch (Exception caught)
-						{
-							this.m_intError=-1;
-							this.m_ado.m_DataSet.Tables[this.m_strPopStratumTable].RejectChanges();
-							//rollback the transaction to the original records 
-							p_trans.Rollback();
-							MessageBox.Show(caught.Message);
-						}
-					}
-				}
-				
-				this.m_frmTherm.progressBar1.Value=4;
-				
-				if (this.m_frmTherm.AbortProcess==false && this.m_intError == 0 && (intAddedRows > 0))
-				{
-					try
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Committing The Data...Stand by");
-                        frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-						p_trans.Commit(); 
-
-					}
-					catch //(Exception caught)
-					{
-						p_trans.Rollback();
-						this.m_intError=-1;
-					}
-
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 5);
-				if (this.m_frmTherm.AbortProcess == true &&  (intAddedRows > 0))
-				{
-					p_trans.Rollback();
-				
-				}
-				else
-				{
-					if (this.m_frmTherm.AbortProcess==false && this.m_ado.m_intError==0 && this.m_intError == 0 && (intAddedRows > 0))
-					{
-						p_trans = null;
-
-						if (this.m_intError==0)
-						{
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Done");
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-						}
-						else
-						{
-							//error occurred in the updatecolumns so delete the records
-							this.m_strSQL = "DELETE FROM " + this.m_strPopStratumTable + " WHERE biosum_status_cd = 9;";
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-							MessageBox.Show("!!Error Occured Adding Pop Eval Records: 0 Records Added!!","Add Pop Eval Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-						}
-					}
-
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-                frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Close");
-				this.m_frmTherm = null;
-				p_dtChanges = null;
-				p_dtNewRows = null;
-				this.m_ado.m_DataSet.Clear();
-				this.m_ado.m_DataSet.Dispose();
-				this.m_ado = null;
-				((frmDialog)this.ParentForm).Enabled=true;
-
-			}
-			
-			catch //(System.Threading.ThreadInterruptedException e)
-			{
-				//MessageBox.Show("Threading Interruption Error " + e.Message.ToString());
-			}
-		
-
-
-		}
-		private void txtFileInputPopEstUnit()
-		{
-			//variables used to match up the biosum table columns with the 
-			//fiadb txtfile table column names
-			int intFIADBColumn=0;
-			int intBiosumColumn=0;
-
-			string strValue="";
-			string strFields="";
-			string strValues="";
-			int intAddedRows=0;
-			bool bAddRow=true;
-			int x=0;
-			System.Data.DataTable p_dtChanges;
-			System.Data.DataRow[] p_dtNewRows;
-			string[,] strList;
-			const int CN = 0;
-			string strCn="";
-			int[] intCol;
-			
-
-			try
-			{
-				//instatiate the oledb data access class
-				this.m_ado = new ado_data_access();
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", 6);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Creating Datasource Links");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Text", "Adding Pop Estimation Unit Records");
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
-
-                    
-				//get all the project datasources
-				FIA_Biosum_Manager.Datasource p_datasource = new Datasource(((frmDialog)this.ParentForm).m_frmMain.frmProject.uc_project1.txtRootDirectory.Text.ToString().Trim());
-
-				//create a temporary mdb file with links to all the project tables
-				this.m_strTempMDBFile = p_datasource.CreateMDBAndTableDataSourceLinks();
-
-				//get a connection string for the temp mdb file
-				this.m_strTempMDBFileConn = this.m_ado.getMDBConnString(this.m_strTempMDBFile,"","");
-
-				//get the plot, cond, and tree table names
-				m_strPopEstUnitTable = p_datasource.getValidDataSourceTableName("POPULATION ESTIMATION UNIT");
-
-				//remove any entries that have a biosum_status_code of 9
-				this.m_ado.SqlNonQuery(this.m_strTempMDBFileConn,"DELETE FROM " + this.m_strPopEstUnitTable + "  WHERE biosum_status_cd = 9;");
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 1);
-   					
-				//create a new connection
-				this.m_connTempMDBFile = new System.Data.OleDb.OleDbConnection();
-
-				//open the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				System.Data.DataTable p_dtPopEstUnitSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strPopEstUnitTable);
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 2);
-			
-
-				//close the connection to the temp mdb file
-				this.m_connTempMDBFile.Close();
-
-				/*****************************************************************
-				 **create the table structure of the pop eval table and give it 
-				 **the name of popestunit_input
-				 *****************************************************************/
-				dao_data_access p_dao = new dao_data_access();
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"popestunit_input",p_dtPopEstUnitSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPopEstUnitSchema.Dispose();
-					return;
-				}
-
-				p_dao=null;
-
-				//reopen the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-                   
-				//initialize the transaction object with the temporary connection
-				System.Data.OleDb.OleDbTransaction p_trans = this.m_connTempMDBFile.BeginTransaction();
-
-				FIA_Biosum_Manager.env p_env = new env();
-				System.Data.DataRow p_row;
-				this.m_ado.m_DataSet = new DataSet("FIADB");
-				this.m_ado.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 1);
-
-				//----------------pop stratum DATA---------------//
-				//load the text file into an adodot net datasource table
-				this.m_ado.ConvertDelimitedTextToDataTable(this.m_ado.m_DataSet,this.txtPopStratum.Text.Trim(),"fiadb_popestunit",",");
-
-				if (this.m_ado.m_intError==0)
-				{
-					try
-					{
-						strList = new string[this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows.Count,1];
-						for (x=0;x<=this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows.Count-1;x++)
-						{
-							strList[x,CN]="";
-
-						}
-
-						if (this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows.Count > 0)
-						{
-								
-								 
-							this.m_ado.AddSQLQueryToDataSet(this.m_connTempMDBFile,ref this.m_ado.m_OleDbDataAdapter,ref this.m_ado.m_DataSet,ref p_trans, "select * from " + this.m_strPopEstUnitTable,this.m_strPopEstUnitTable);
-								
-							strFields = "";
-							strValues = "";
-							//Build the pop eval insert sql
-							for (x=0; x<=p_dtPopEstUnitSchema.Rows.Count-1;x++)
-							{
-								if (strFields.Trim().Length == 0)
-								{
-									strFields = "(";
-								}
-								else
-								{	
-									strFields = strFields + "," ;
-								}
-								strFields = strFields + p_dtPopEstUnitSchema.Rows[x]["columnname"].ToString().Trim();
-								if (strValues.Trim().Length == 0)
-								{
-									strValues = "(";
-								}
-								else
-								{	
-									strValues = strValues + ",";
-								}
-								strValues = strValues + "?";
-
-							}
-							strFields = strFields + ")";
-							strValues = strValues + ");";
-							//create an insert command 
-							this.m_ado.m_OleDbDataAdapter.InsertCommand = this.m_connTempMDBFile.CreateCommand();
-							//bind the transaction object to the insert command
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.Transaction = p_trans;
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.CommandText = 
-								"INSERT INTO " + this.m_strPopEstUnitTable + " "  + strFields + " VALUES " + strValues;
-							//define field datatypes for the data adapter
-							for (x=0; x<=p_dtPopEstUnitSchema.Rows.Count-1;x++)
-							{
-								strFields=p_dtPopEstUnitSchema.Rows[x]["columnname"].ToString().Trim();
-								switch (p_dtPopEstUnitSchema.Rows[x]["datatype"].ToString().Trim())
-								{
-									case "System.String" :
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.VarWChar,
-											0,
-											strFields);
-										break;
-									case "System.Double":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Double,
-											0,
-											strFields);
-										break;
-									case "System.Boolean":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Boolean,
-											0,
-											strFields);
-										break;
-									case "System.DateTime":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.DBTimeStamp,
-											0,
-											strFields);
-										break;
-									case "System.Decimal":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Decimal,
-											0,
-											strFields);
-										break;
-									case "System.Int16":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Int32":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Integer,
-											0,
-											strFields);
-										break;
-									case "System.Int64":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.BigInt,
-											0,
-											strFields);
-										break;
-									case "System.SByte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Byte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.TinyInt,
-											0,
-											strFields);
-										break;
-									case "System.Single":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Single,
-											0,
-											strFields);
-										break;
-									default:
-										MessageBox.Show(this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].Columns[x].DataType.FullName.ToString().Trim());
-										break;
-								}
-									
-							}
-								
-							intCol = new int[this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].Columns.Count];
-
-							//match up the biosum columns with the fiadb columns
-							for (intBiosumColumn = 0; intBiosumColumn <= this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].Columns.Count-1;intBiosumColumn++)
-							{
-								intCol[intBiosumColumn]=-1;
-								for (intFIADBColumn = 0; intFIADBColumn <= this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Columns.Count-1;intFIADBColumn++)
-								{
-									if (this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Columns[intFIADBColumn].ColumnName.Trim().ToUpper() == 
-										this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].Columns[intBiosumColumn].ColumnName.Trim().ToUpper())
-									{
-										intCol[intBiosumColumn] = intFIADBColumn;
-									}
-
-								}
-							}
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Pop Stratum Table: Compiling New Pop Statum Rows");
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-							
-							//load up each row in the FIADB plot input table
-							for (x = 0; x<=this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows.Count-1;x++)
-							{
-								bAddRow=true;
-								//make sure the row is not null values
-								if (this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x][0] != System.DBNull.Value &&
-									this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x][0].ToString().Trim().Length > 0)
-								{
-									
-									p_row = this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].NewRow();
-									for (intBiosumColumn = 0; intBiosumColumn <= intCol.Length-1; intBiosumColumn++)
-									{
-										if (intCol[intBiosumColumn] != -1)
-										{
-											strValue = this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x][intCol[intBiosumColumn]].ToString().Trim();
-											if (strValue.Trim().Length > 0)
-											{
-												switch (this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim())
-												{
-													case "System.String" :
-														p_row[intBiosumColumn] = strValue.Replace("\"","");
-														break;
-													case "System.Double":
-														p_row[intBiosumColumn] = Convert.ToDouble(strValue);
-														break;
-													case "System.Boolean":
-														p_row[intBiosumColumn] = Convert.ToBoolean(strValue);
-														break;
-													case "System.DateTime":
-														p_row[intBiosumColumn] = Convert.ToDateTime(strValue);
-														break;
-													case "System.Decimal":
-														p_row[intBiosumColumn] = Convert.ToDecimal(strValue);
-														break;
-													case "System.Int16":
-														p_row[intBiosumColumn] = Convert.ToInt16(strValue);
-														break;
-													case "System.Int32":
-														p_row[intBiosumColumn] = Convert.ToInt32(strValue);
-														break;
-													case "System.Int64":
-														p_row[intBiosumColumn] = Convert.ToInt64(strValue);
-														break;
-													case "System.SByte":
-														p_row[intBiosumColumn] = Convert.ToSByte(strValue);
-
-														break;
-													case "System.Single":
-														p_row[intBiosumColumn] = Convert.ToSingle(strValue);
-														break;
-
-													default:
-														MessageBox.Show(this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim());
-														break;
-												}
-											}
-										}
-										System.Windows.Forms.Application.DoEvents();
-										if (this.m_frmTherm.AbortProcess == true) break;
-									}
-									if (this.m_frmTherm.AbortProcess == false)
-									{
-											
-										//get the plt_cn value
-										strCn = this.m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x]["cn"].ToString().Trim();
-										strCn = strCn.Replace("\"","");
-
-										//see if user has a list to filter the plots to process
-										if (this.m_strPlotIdList.Trim().Length > 0 )
-										{
-											if (this.m_strPlotIdList.IndexOf("'" + strCn.Trim() + "'") < 0)
-											{
-												bAddRow=false;
-											}
-										}
-										
-										//check rscd and evalid
-										if (m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x]["rscd"] != System.DBNull.Value &&
-											m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x]["evalid"] != System.DBNull.Value)
-										{
-											if (Convert.ToString(m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x]["rscd"]).Trim() != this.m_strCurrFIADBRsCd.Trim() ||
-												Convert.ToString(m_ado.m_DataSet.Tables["fiadb_popestunit"].Rows[x]["evalid"]).Trim() != this.m_strCurrFIADBEvalId.Trim())
-											{
-												bAddRow=false;
-											}
-
-
-										}
-										if (bAddRow==true)
-										{
-											if (p_row["biosum_status_cd"] == System.DBNull.Value) 
-												p_row["biosum_status_cd"] = 9;		
-											strList[intAddedRows,CN]=strCn.Trim();
-											this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].Rows.Add(p_row);
-											intAddedRows++;
-											
-										}
-									}
-								}
-							
-							}
-						}
-						else
-						{
-							MessageBox.Show("!!No Pop Eval Records In The FIADB Pop Eval Input Table!!");
-						}
-					}
-					catch (Exception caught)
-					{
-						this.m_intError=-1;
-						MessageBox.Show(caught.Message);
-					}
-					//keep processing the records if there was no error and there were plot records added
-					if (this.m_intError==0 && intAddedRows > 0 && this.m_frmTherm.AbortProcess == false)
-					{
-						try
-						{
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Pop Eval Table: Finishing New Pop Eval Rows...Stand By");
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-							
-							p_dtChanges = this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].GetChanges();
-								
-							p_dtNewRows = p_dtChanges.Select(null,null, DataViewRowState.Added);
-							if (p_dtChanges.HasErrors)
-							{
-								this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].RejectChanges();
-								this.m_intError=-1;
-							}
-							else
-							{
-								this.m_ado.m_OleDbDataAdapter.Update(p_dtNewRows);
-								this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].AcceptChanges();
-							}
-						}
-						catch (Exception caught)
-						{
-							this.m_intError=-1;
-							this.m_ado.m_DataSet.Tables[this.m_strPopEstUnitTable].RejectChanges();
-							//rollback the transaction to the original records 
-							p_trans.Rollback();
-							MessageBox.Show(caught.Message);
-						}
-					}
-				}
-
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 4);
-				
-				
-				if (this.m_frmTherm.AbortProcess==false && this.m_intError == 0 && (intAddedRows > 0))
-				{
-					try
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar2, "Value", 2);
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Committing The Data...Stand by");
-                        frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-						p_trans.Commit(); 
-
-					}
-					catch //(Exception caught)
-					{
-						p_trans.Rollback();
-						this.m_intError=-1;
-					}
-
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 5);
-				if (this.m_frmTherm.AbortProcess == true &&  (intAddedRows > 0))
-				{
-					p_trans.Rollback();
-				
-				}
-				else
-				{
-					if (this.m_frmTherm.AbortProcess==false && this.m_ado.m_intError==0 && this.m_intError == 0 && (intAddedRows > 0))
-					{
-						p_trans = null;
-
-						if (this.m_intError==0)
-						{
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Done");
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-						}
-						else
-						{
-							//error occurred in the updatecolumns so delete the records
-							this.m_strSQL = "DELETE FROM " + this.m_strPopEstUnitTable + " WHERE biosum_status_cd = 9;";
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-							MessageBox.Show("!!Error Occured Adding Pop Eval Records: 0 Records Added!!","Add Pop Estimation Unit Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-						}
-					}
-
-				}
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1, "Maximum", false));
-                frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Close");
-				this.m_frmTherm = null;
-				p_dtChanges = null;
-				p_dtNewRows = null;
-				this.m_ado.m_DataSet.Clear();
-				this.m_ado.m_DataSet.Dispose();
-				this.m_ado = null;
-				((frmDialog)this.ParentForm).Enabled=true;
-
-			}
-			
-			catch //(System.Threading.ThreadInterruptedException e)
-			{
-				//MessageBox.Show("Threading Interruption Error " + e.Message.ToString());
-			}
-		
-
-
-		}
-
-		private void txtFileInputPopFiles()
-		{
-			//variables used to match up the biosum table columns with the 
-			//fiadb txtfile table column names
-
-			int intFIADBColumn=0;
-			int intBiosumColumn=0;
-			string strTable="";
-			string strValue="";
-			string strFields="";
-			string strValues="";
-			int intAddedRows=0;
-			bool bAddRow=true;
-			int x=0;
-			System.Data.DataTable p_dtChanges;
-			System.Data.DataRow[] p_dtNewRows;
-			string[,] strList;
-			const int CN = 0;
-			string strCn="";
-			int[] intCol;
-		    string  strRound;
-
-			this.m_bLoadStateCountyList=true;
-			this.m_bLoadStateCountyPlotList=true;
-						
-			
-
-			try
-			{
-				this.m_intError=0;
-				//get all the project datasources
-				//FIA_Biosum_Manager.Datasource m_oDataSource = new Datasource(((frmDialog)this.ParentForm).m_frmMain.frmProject.uc_project1.txtRootDirectory.Text.ToString().Trim());
-				//get the table name
-				strTable = this.m_oDatasource.getValidDataSourceTableName(this.m_strTableType);
-
-
-				//instatiate the oledb data access class
-				this.m_ado = new ado_data_access();
-
-				
-
-				//create a temporary mdb file with links to all the project tables
-				this.m_strTempMDBFile = m_oDatasource.CreateMDBAndTableDataSourceLinks();
-
-				//get a connection string for the temp mdb file
-				this.m_strTempMDBFileConn = this.m_ado.getMDBConnString(this.m_strTempMDBFile,"","");
-
-				//remove any entries that have a biosum_status_code of 9
-				this.m_ado.SqlNonQuery(this.m_strTempMDBFileConn,"DELETE FROM " + strTable + "  WHERE biosum_status_cd = 9;");
-
-				if (this.m_strTableType.Trim().ToUpper() == "POPULATION EVALUATION")
-                    frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 1);
-   					
-				//create a new connection
-				this.m_connTempMDBFile = new System.Data.OleDb.OleDbConnection();
-
-				//open the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				System.Data.DataTable p_dtPopTableSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + strTable);
-
-				if (this.m_strTableType.Trim().ToUpper() == "POPULATION EVALUATION")
-                    frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", 2);
-			
-
-				//close the connection to the temp mdb file
-				this.m_connTempMDBFile.Close();
-
-				/*****************************************************************
-				 **create the table structure of the pop eval table and give it 
-				 **the name of poptable_input
-				 *****************************************************************/
-				dao_data_access p_dao = new dao_data_access();
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"poptable_input",p_dtPopTableSchema,true);
-				if (p_dao.m_intError!=0)
-				{
-					this.m_intError=p_dao.m_intError;
-					p_dao=null;
-					p_dtPopTableSchema.Dispose();
-					return;
-				}
-				p_dao=null;
-
-				//reopen the connection to the temp mdb file 
-				this.m_ado.OpenConnection(this.m_strTempMDBFileConn,ref this.m_connTempMDBFile);
-                   
-				//initialize the transaction object with the temporary connection
-				System.Data.OleDb.OleDbTransaction p_trans = this.m_connTempMDBFile.BeginTransaction();
-
-				FIA_Biosum_Manager.env p_env = new env();
-				System.Data.DataRow p_row;
-				this.m_ado.m_DataSet = new DataSet("FIADB");
-				this.m_ado.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-				
-
-				//----------------pop stratum DATA---------------//
-				//load the text file into an adodot net datasource table
-				this.m_ado.ConvertDelimitedTextToDataTable(this.m_ado.m_DataSet,m_strCurrentTxtInputFile.Trim(),"fiadb_poptable",",");
-
-				if (this.m_ado.m_intError==0)
-				{
-					try
-					{
-						strList = new string[this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows.Count,1];
-						for (x=0;x<=this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows.Count-1;x++)
-						{
-							strList[x,CN]="";
-
-						}
-
-						if (this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows.Count > 0)
-						{
-								
-								 
-							this.m_ado.AddSQLQueryToDataSet(this.m_connTempMDBFile,ref this.m_ado.m_OleDbDataAdapter,ref this.m_ado.m_DataSet,ref p_trans, "select * from " + strTable,strTable);
-								
-							strFields = "";
-							strValues = "";
-							//Build the pop eval insert sql
-							for (x=0; x<=p_dtPopTableSchema.Rows.Count-1;x++)
-							{
-								if (strFields.Trim().Length == 0)
-								{
-									strFields = "(";
-								}
-								else
-								{	
-									strFields = strFields + "," ;
-								}
-								strFields = strFields + p_dtPopTableSchema.Rows[x]["columnname"].ToString().Trim();
-								if (strValues.Trim().Length == 0)
-								{
-									strValues = "(";
-								}
-								else
-								{	
-									strValues = strValues + ",";
-								}
-								strValues = strValues + "?";
-
-							}
-							strFields = strFields + ")";
-							strValues = strValues + ");";
-							//create an insert command 
-							this.m_ado.m_OleDbDataAdapter.InsertCommand = this.m_connTempMDBFile.CreateCommand();
-							//bind the transaction object to the insert command
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.Transaction = p_trans;
-							this.m_ado.m_OleDbDataAdapter.InsertCommand.CommandText = 
-								"INSERT INTO " + strTable + " "  + strFields + " VALUES " + strValues;
-							//define field datatypes for the data adapter
-							for (x=0; x<=p_dtPopTableSchema.Rows.Count-1;x++)
-							{
-								
-								strFields=p_dtPopTableSchema.Rows[x]["columnname"].ToString().Trim();
-								switch (p_dtPopTableSchema.Rows[x]["datatype"].ToString().Trim())
-								{
-									case "System.String" :
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.VarWChar,
-											0,
-											strFields);
-										break;
-									case "System.Double":
-										
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Double,
-											0,
-											strFields);
-										break;
-									case "System.Boolean":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Boolean,
-											0,
-											strFields);
-										break;
-									case "System.DateTime":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.DBTimeStamp,
-											0,
-											strFields);
-										break;
-									case "System.Decimal":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Decimal,
-											0,
-											strFields);
-										break;
-									case "System.Int16":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Int32":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Integer,
-											0,
-											strFields);
-										break;
-									case "System.Int64":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.BigInt,
-											0,
-											strFields);
-										break;
-									case "System.SByte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.SmallInt,
-											0,
-											strFields);
-										break;
-									case "System.Byte":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.TinyInt,
-											0,
-											strFields);
-										break;
-									case "System.Single":
-										this.m_ado.m_OleDbDataAdapter.InsertCommand.Parameters.Add
-											(strFields, 
-											System.Data.OleDb.OleDbType.Single,
-											0,
-											strFields);
-										break;
-									default:
-										MessageBox.Show(this.m_ado.m_DataSet.Tables[strTable].Columns[x].DataType.FullName.ToString().Trim());
-										break;
-								}
-									
-							}
-								
-							intCol = new int[this.m_ado.m_DataSet.Tables[strTable].Columns.Count];
-
-							//match up the biosum columns with the fiadb columns
-							for (intBiosumColumn = 0; intBiosumColumn <= this.m_ado.m_DataSet.Tables[strTable].Columns.Count-1;intBiosumColumn++)
-							{
-								intCol[intBiosumColumn]=-1;
-								for (intFIADBColumn = 0; intFIADBColumn <= this.m_ado.m_DataSet.Tables["fiadb_poptable"].Columns.Count-1;intFIADBColumn++)
-								{
-									if (this.m_ado.m_DataSet.Tables["fiadb_poptable"].Columns[intFIADBColumn].ColumnName.Trim().ToUpper() == 
-										this.m_ado.m_DataSet.Tables[strTable].Columns[intBiosumColumn].ColumnName.Trim().ToUpper())
-									{
-										intCol[intBiosumColumn] = intFIADBColumn;
-									}
-
-								}
-							}
-
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Minimum", 0);
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Maximum", (int)this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows.Count - 1);
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", strTable + " Table: Compiling New Rows");
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-
-							//load up each row in the FIADB plot input table
-							for (x = 0; x<=this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows.Count-1;x++)
-							{
-                                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.progressBar1, "Value", (int)x);
-								bAddRow=true;
-								//make sure the row is not null values
-								if (this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][0] != System.DBNull.Value &&
-									this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][0].ToString().Trim().Length > 0)
-								{
-									
-									p_row = this.m_ado.m_DataSet.Tables[strTable].NewRow();
-									for (intBiosumColumn = 0; intBiosumColumn <= intCol.Length-1; intBiosumColumn++)
-									{
-										if (intCol[intBiosumColumn] != -1)
-										{
-											strRound="";
-											switch (this.m_ado.m_DataSet.Tables[strTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim())
-											{
-												case "System.Double":
-													strRound="double";
-													break;
-												case "System.Decimal":
-													strRound="decimal";
-													break;
-												
-											}
-											if (this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][intCol[intBiosumColumn]]!= System.DBNull.Value)
-											{
-												if (strRound.Length > 0)
-												{
-													/************************************************************************************
-													 *the code below fixes a scientfic notation error from the CSV files that are input.*
-													 *If the data type is decimal or double the input data can be represented with      *
-													 *scientific notation. If the scientific notation is defined as E00 then an error   *
-													 *exception occurs. The fix is to replace E00 with nothing.                         *
-													 ************************************************************************************/
-													this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][intCol[intBiosumColumn]]=this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][intCol[intBiosumColumn]].ToString().Replace("E00","");
-													if (strRound=="double")
-													{
-														strValue = Convert.ToString(Math.Round(Convert.ToDouble(this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][intCol[intBiosumColumn]]),14)).Trim();
-													}
-													else
-													{
-														strValue = Convert.ToString(Math.Round(Convert.ToDecimal(this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][intCol[intBiosumColumn]]),14)).Trim();
-													}
-
-												}
-												else
-												{
-													strValue = this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x][intCol[intBiosumColumn]].ToString().Trim();
-												}
-											}
-											else strValue="";
-											if (strValue.Trim().Length > 0)
-											{
-												switch (this.m_ado.m_DataSet.Tables[strTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim())
-												{
-													case "System.String" :
-														p_row[intBiosumColumn] = strValue.Replace("\"","");
-														break;
-													case "System.Double":
-														p_row[intBiosumColumn] = Convert.ToDouble(strValue);
-														break;
-													case "System.Boolean":
-														p_row[intBiosumColumn] = Convert.ToBoolean(strValue);
-														break;
-													case "System.DateTime":
-														p_row[intBiosumColumn] = Convert.ToDateTime(strValue);
-														break;
-													case "System.Decimal":
-														p_row[intBiosumColumn] = Convert.ToDecimal(strValue);
-														break;
-													case "System.Int16":
-														p_row[intBiosumColumn] = Convert.ToInt16(strValue);
-														break;
-													case "System.Int32":
-														p_row[intBiosumColumn] = Convert.ToInt32(strValue);
-														break;
-													case "System.Int64":
-														p_row[intBiosumColumn] = Convert.ToInt64(strValue);
-														break;
-													case "System.SByte":
-														p_row[intBiosumColumn] = Convert.ToSByte(strValue);
-
-														break;
-													case "System.Single":
-														p_row[intBiosumColumn] = Convert.ToSingle(strValue);
-														break;
-
-													default:
-														MessageBox.Show(this.m_ado.m_DataSet.Tables[strTable].Columns[intBiosumColumn].DataType.FullName.ToString().Trim());
-														break;
-												}
-											}
-										}
-										System.Windows.Forms.Application.DoEvents();
-										if (this.m_frmTherm.AbortProcess == true) break;
-									}
-									if (this.m_frmTherm.AbortProcess == false)
-									{
-											
-										//get the plt_cn value
-										strCn = this.m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x]["cn"].ToString().Trim();
-										strCn = strCn.Replace("\"","");
-
-										//see if user has a list to filter the plots to process
-										if (this.m_strPlotIdList.Trim().Length > 0 )
-										{
-											if (this.m_strPlotIdList.IndexOf("'" + strCn.Trim() + "'") < 0)
-											{
-												bAddRow=false;
-											}
-										}
-										
-										if (this.m_strTableType.Trim().ToUpper() != "POPULATION EVALUATION")
-										{
-											//check rscd and evalid
-											if (m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x]["rscd"] != System.DBNull.Value &&
-												m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x]["evalid"] != System.DBNull.Value)
-											{
-												if (Convert.ToString(m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x]["rscd"]).Trim() != this.m_strCurrFIADBRsCd.Trim() ||
-													Convert.ToString(m_ado.m_DataSet.Tables["fiadb_poptable"].Rows[x]["evalid"]).Trim() != this.m_strCurrFIADBEvalId.Trim())
-												{
-													bAddRow=false;
-												}
-
-
-											}
-										}
-										if (bAddRow==true)
-										{
-											if (p_row["biosum_status_cd"] == System.DBNull.Value) 
-												p_row["biosum_status_cd"] = 9;		
-											strList[intAddedRows,CN]=strCn.Trim();
-											this.m_ado.m_DataSet.Tables[strTable].Rows.Add(p_row);
-											intAddedRows++;
-											
-										}
-										else
-										{
-											p_row.Delete();
-										}
-									}
-								}
-							
-							}
-						}
-						else
-						{
-							MessageBox.Show("!!No Pop Eval Records In The FIADB Pop Eval Input Table!!");
-						}
-					}
-					catch (Exception caught)
-					{
-						this.m_intError=-1;
-						MessageBox.Show(caught.Message);
-					}
-					//keep processing the records if there was no error and there were plot records added
-					if (this.m_intError==0 && intAddedRows > 0 && this.m_frmTherm.AbortProcess == false)
-					{
-						try
-						{
-
-							//if (this.m_strTableType.Trim().ToUpper() == "POPULATION EVALUATION")
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", strTable + " Table: Finishing New Rows...Stand By");
-								
-							//else
-							//	this.m_frmTherm.lblMsg2.Text=strTable + " Table: Finishing New Rows...Stand By";
-
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-							p_dtChanges = this.m_ado.m_DataSet.Tables[strTable].GetChanges();
-								
-							p_dtNewRows = p_dtChanges.Select(null,null, DataViewRowState.Added);
-							if (p_dtChanges.HasErrors)
-							{
-								this.m_ado.m_DataSet.Tables[strTable].RejectChanges();
-								this.m_intError=-1;
-							}
-							else
-							{
-								this.m_ado.m_OleDbDataAdapter.Update(p_dtNewRows);
-								this.m_ado.m_DataSet.Tables[strTable].AcceptChanges();
-							}
-						}
-						catch (Exception caught)
-						{
-							this.m_intError=-1;
-							this.m_ado.m_DataSet.Tables[strTable].RejectChanges();
-							//rollback the transaction to the original records 
-							p_trans.Rollback();
-							MessageBox.Show(caught.Message);
-						}
-					}
-				}
-				
-				if (this.m_frmTherm.AbortProcess==false && this.m_intError == 0 && (intAddedRows > 0))
-				{
-					try
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Committing The Data...Stand by");
-
-                        frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-						p_trans.Commit(); 
-
-					}
-					catch //(Exception caught)
-					{
-						p_trans.Rollback();
-						this.m_intError=-1;
-					}
-
-				}
-				
-				if (this.m_frmTherm.AbortProcess == true &&  (intAddedRows > 0))
-				{
-					p_trans.Rollback();
-				
-				}
-				else
-				{
-					if (this.m_frmTherm.AbortProcess==false && this.m_ado.m_intError==0 && this.m_intError == 0 && (intAddedRows > 0))
-					{
-						p_trans = null;
-						
-						if (this.m_intError==0)
-						{
-                            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)this.m_frmTherm.lblMsg, "Text", "Done");
-                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-
-						}
-						else
-						{
-							//error occurred in the updatecolumns so delete the records
-							this.m_strSQL = "DELETE FROM " + strTable + " WHERE biosum_status_cd = 9;";
-							this.m_ado.SqlNonQuery(this.m_connTempMDBFile,this.m_strSQL);
-							MessageBox.Show("!!Error Occured Adding Pop Eval Records: 0 Records Added!!","Add Pop Estimation Unit Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-						}
-					}
-
-				}
-				
-				p_dtChanges = null;
-				p_dtNewRows = null;
-				this.m_ado.m_DataSet.Clear();
-				this.m_ado.m_DataSet.Dispose();
-				this.m_ado = null;
-
-				((frmDialog)this.ParentForm).Enabled=true;
-				
-
-			}
-			
-			catch //(System.Threading.ThreadInterruptedException e)
-			{
-				//MessageBox.Show("Threading Interruption Error " + e.Message.ToString());
-			}
-		
-
-
 		}
 
 		private string CreateBiosumPlotId(System.Data.DataRow p_dr)
@@ -5327,18 +3012,13 @@ namespace FIA_Biosum_Manager
 			//----------------------COND COLUMN UPDATES-----------------------//
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//----------------------COND AND TREE COLUMN UPDATES-----------------------//\r\n");
-			if (Checked(rdoFIADB))
-			{
+               
                 SetThermValue(m_frmTherm.progressBar1,"Maximum",41);
                 SetThermValue(m_frmTherm.progressBar1, "Minimum", 0);
                 SetThermValue(m_frmTherm.progressBar1, "Value", 0);
                 
-
-
-				if (Checked(rdoFIADB))
-				{
-                    SetLabelValue(m_frmTherm.lblMsg,"Text","Updating Condition Proportion Column...Stand By");
-					frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
+                SetLabelValue(m_frmTherm.lblMsg,"Text","Updating Condition Proportion Column...Stand By");
+			    frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
 					//update the condition proportion column
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
 									 "INNER JOIN ((" + this.m_strPpsaTable + " ppsa " + 
@@ -5496,7 +3176,6 @@ namespace FIA_Biosum_Manager
 					p_ado.SqlNonQuery(this.m_connTempMDBFile,p_ado.m_strSQL);
 
 
-				}
                 SetLabelValue(m_frmTherm.lblMsg,"Text", "Updating Condition Table Columns...Stand By");
                 frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
 
@@ -6390,7 +4069,7 @@ namespace FIA_Biosum_Manager
                 SetThermValue(m_frmTherm.progressBar1, "Value", 41);
   
 
-			}
+
        
 			
 
@@ -6406,31 +4085,7 @@ namespace FIA_Biosum_Manager
 
             if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 			{
-				/********************************************
-				 **update gis_status_id for idb records
-				 ********************************************/
-				if (Checked(rdoIDB)==true)
-				{
-					p_ado.m_strSQL = "UPDATE " + this.m_strPlotTable + " p " + 
-						             " SET p.gis_status_id = 1 " + 
-						             " WHERE biosum_status_cd = 9;";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_ado.m_strSQL + "\r\n");
-					p_ado.SqlNonQuery(this.m_connTempMDBFile,p_ado.m_strSQL);
 
-					/**************************************************
-					**update plot_accessible_yn
-					***************************************************/
-					p_ado.m_strSQL = "UPDATE " + this.m_strPlotTable + " p " + 
-						             " SET p.plot_accessible_yn = 'Y', " +
-						                  "p.gis_protected_area_yn = 'N'," + 
-						                  "p.gis_roadless_yn = 'N'," + 
-						                  "p.all_cond_not_accessible_yn='N' " + 
-						             " WHERE biosum_status_cd = 9;";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_ado.m_strSQL + "\r\n");
-					p_ado.SqlNonQuery(this.m_connTempMDBFile,p_ado.m_strSQL);
-				}
 				/********************************************
 				 **update the plot half state field
 				 ********************************************/
@@ -6634,281 +4289,6 @@ namespace FIA_Biosum_Manager
 					this.grpboxFilter.Visible=false;
 			}
 			
-		}
-
-		private void txtFileInputStateCounty()
-		{
-			//see if we have already loaded the list box with the current inventory
-			if (this.m_bLoadStateCountyList==false && this.lstFilterByState.Items.Count > 0) return;
-
-			string strState="";
-			string strCounty="";
-			string strPlot="";
-			string strCn="";
-			int intAddedPlotRows=0;
-			bool bAddRow=true;
-			int x=0;
-			
-			int intPlotStatusCd=0;
-			string strKey;
-			System.Data.DataRow  p_rowFound;
-			System.Data.DataRow  p_rowAdd;
-			System.Data.DataRow  p_rowAdd2;
-               
-			
-			//instatiate the oledb data access class
-			this.m_ado = new ado_data_access();
-
-			//load up the current population plot stratum assignment plots for the selected evaluation
-			System.Data.DataTable dtPlotCN = new DataTable("PlotCN");
-			dtPlotCN.Columns.Add("plt_cn",typeof(string));
-			// two columns in the Primary Key.
-			DataColumn[] colPk = new DataColumn[1];
-			colPk[0] =dtPlotCN.Columns["plt_cn"];
-            dtPlotCN.PrimaryKey=colPk;
-			this.m_ado.SqlQueryReader(this.m_strTempMDBFileConn,"SELECT DISTINCT plt_cn FROM " + this.m_strPpsaTable + " " + 
-															    "WHERE rscd=" + this.m_strCurrFIADBRsCd + " AND " + 
-																	   "evalid=" + this.m_strCurrFIADBEvalId + " AND " + 
-																		"biosum_status_cd=9");
-			if (this.m_ado.m_OleDbDataReader.HasRows)
-			{
-				while (this.m_ado.m_OleDbDataReader.Read())
-				{
-					if (this.m_ado.m_OleDbDataReader["plt_cn"] != System.DBNull.Value)
-					{
-						strCn = Convert.ToString(this.m_ado.m_OleDbDataReader["plt_cn"]);
-						if (strCn.Trim().Length > 0)
-						{
-							p_rowAdd = dtPlotCN.NewRow();
-							p_rowAdd["plt_cn"] = strCn.Trim();
-							dtPlotCN.Rows.Add(p_rowAdd);	
-						}
-					}
-				}
-			}
-			this.m_ado.m_OleDbDataReader.Close();
-				    
-
-			this.m_dtStateCounty.Clear();        
-			this.lstFilterByState.Clear();
-			this.lstFilterByState.Columns.Add(" ", 100, HorizontalAlignment.Center); 
-			this.lstFilterByState.Columns.Add("State", 100, HorizontalAlignment.Left);
-			this.lstFilterByState.Columns.Add("County", 100, HorizontalAlignment.Left);
-
-			this.m_strStateCountyPlotSQL="";
-			this.m_strStateCountySQL="";
-			this.m_intError=0;
-
-			
-			this.m_frmTherm = new frmTherm();
-			this.m_frmTherm.btnCancel.Click += new System.EventHandler(this.ThermCancel);
-			this.m_frmTherm.Text = "Load State, County, Plot Menus";
-			this.m_frmTherm.Visible=false;
-			this.m_frmTherm.btnCancel.Visible=true;
-			this.m_frmTherm.lblMsg.Visible=true;
-			this.m_frmTherm.progressBar1.Minimum=0;
-			this.m_frmTherm.progressBar1.Visible=true;
-			this.m_frmTherm.progressBar1.Maximum = 10;
-			this.m_frmTherm.AbortProcess = false;
-			this.m_frmTherm.Refresh();
-			this.m_frmTherm.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			((frmDialog)this.ParentForm).Enabled=false;
-					
-
-			FIA_Biosum_Manager.env p_env = new env();
-			this.m_ado.m_DataSet = new DataSet("FIADB");
-			this.m_ado.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-
-			//----------------PLOT DATA---------------//
-			this.m_ado.ConvertDelimitedTextToDataTable(this.m_ado.m_DataSet,this.txtPlot.Text.Trim(),"fiadb_plot",",");
-			if (this.m_ado.m_intError==0)
-			{
-				try
-				{
-					if (this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows.Count > 0)
-					{
-								
-						this.m_frmTherm.progressBar1.Minimum=0;
-						this.m_frmTherm.progressBar1.Maximum = this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows.Count-1;
-						this.m_frmTherm.lblMsg.Text="Plot Table: State, County, Plot Records";
-						this.m_frmTherm.Visible=true;
-						this.m_frmTherm.Refresh();
-						//load up each row in the FIADB plot input table
-						for (x = 0; x<=this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows.Count-1;x++)
-						{
-							strState="";
-							strCounty="";
-							strPlot="";
-							strCn="";
-							bAddRow=true;
-							this.m_frmTherm.progressBar1.Value=x;
-							//make sure the row is not null values
-							if (this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x][0] != System.DBNull.Value &&
-								this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x][0].ToString().Trim().Length > 0)
-							{
-								strCn   = this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x]["cn"].ToString().Trim();
-								//lookup the cn in the ppsa table
-								strKey = strCn;
-								System.Object[] p_searchCN = new Object[1];
-								p_searchCN[0] = strCn.Trim();
-								p_rowFound = dtPlotCN.Rows.Find(p_searchCN);
-								if (p_rowFound != null)
-								{
-									strState= this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x]["statecd"].ToString();
-									strCounty = this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x]["countycd"].ToString();
-									strPlot = this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x]["plot"].ToString().Trim();
-								
-
-									if (this.rdoFilterNone.Checked==true || 
-										this.rdoFilterByMenu.Checked==true)
-									{
-										intPlotStatusCd=1;
-										if (this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x]["plot_status_cd"] != System.DBNull.Value)
-										{
-											intPlotStatusCd=Convert.ToInt32(this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x]["plot_status_cd"]);
-										}
-
-										if (this.chkForested.Checked==true &&
-											this.chkNonForested.Checked==false)								
-										{
-											if (this.m_ado.m_DataSet.Tables["fiadb_plot"].Rows[x]["plot_status_cd"] != System.DBNull.Value)
-											{
-												if (intPlotStatusCd != 1) 
-												{
-													bAddRow=false;
-												}
-											}
-										}
-										else if (this.chkForested.Checked==false &&
-											this.chkNonForested.Checked==true)
-										{
-											if (intPlotStatusCd == 1)
-											{
-												bAddRow=false;
-											}
-										}
-									}
-
-									if (bAddRow==true)
-									{
-										strKey = strState + strCounty;
-										//see if the state and county have been loaded already
-										System.Object[] p_search = new Object[2];
-										p_search[0] = strState.Trim();
-										p_search[1] = strCounty.Trim();
-
-										p_rowFound = this.m_dtStateCounty.Rows.Find(p_search);
-										if (p_rowFound == null)
-										{
-											//save the state,county combination
-											p_rowAdd = this.m_dtStateCounty.NewRow();
-											p_rowAdd["statecd"] = strState.Trim();
-											p_rowAdd["countycd"] = strCounty.Trim();
-											this.m_dtStateCounty.Rows.Add(p_rowAdd);
-											this.lstFilterByState.BeginUpdate();
-											System.Windows.Forms.ListViewItem listItem = new ListViewItem();
-											listItem.Checked=false;
-											listItem.SubItems.Add(strState);
-											listItem.SubItems.Add(strCounty);
-											this.lstFilterByState.Items.Add(listItem);
-											this.lstFilterByState.EndUpdate();
-										}
-										p_rowAdd2 = this.m_dtPlot.NewRow();
-										p_rowAdd2["statecd"] = strState.Trim();
-										p_rowAdd2["countycd"] = strCounty.Trim();
-										p_rowAdd2["plot"] = strPlot;
-										this.m_dtPlot.Rows.Add(p_rowAdd2);
-										intAddedPlotRows++;
-									}
-								}
-								
-								System.Windows.Forms.Application.DoEvents();
-								if (this.m_frmTherm.AbortProcess == true) break;
-								
-							}
-							
-						}
-						if (intAddedPlotRows == 0 && this.m_frmTherm.AbortProcess==false)
-						{
-							this.m_intError=-1;
-							MessageBox.Show("!!No Plots Loaded To Get State, County, Plot Information!!","Load State, County, Plot Menus");
-						}
-					}
-					else
-					{
-						this.m_intError=-1;
-						MessageBox.Show("!!No Plot Records In The FIADB Plot Input Table!!");
-					}
-				}
-				catch (Exception caught)
-				{
-					this.m_intError=-1;
-					MessageBox.Show(caught.Message);
-				}
-			}
-			
-			if (this.m_intError==0) this.m_bLoadStateCountyList=false;
-			
-			this.m_frmTherm.Close();
-			this.m_frmTherm = null;
-			dtPlotCN.Clear();
-			dtPlotCN.Dispose();
-			dtPlotCN=null;
-			((frmDialog)this.ParentForm).Enabled=true;
-		}
-		private void txtFileInputPlot()
-		{
-			//see if already loaded
-			if (this.m_bLoadStateCountyPlotList==false && this.lstFilterByPlot.Items.Count > 0) return;
-
-			this.m_intError=0;
-			
-			string strState="";
-			string strCounty="";
-			string strPlot="";
-			this.m_intError=0;
-			System.Data.DataRow[] p_rows;
-			this.lstFilterByPlot.Clear();
-			this.lstFilterByPlot.Columns.Add(" ", 50, HorizontalAlignment.Center); 
-			this.lstFilterByPlot.Columns.Add("State", 75, HorizontalAlignment.Left);
-			this.lstFilterByPlot.Columns.Add("County", 75, HorizontalAlignment.Left);
-			this.lstFilterByPlot.Columns.Add("Plot", 100, HorizontalAlignment.Left);
-
-			for (int x=0;x<=this.lstFilterByState.Items.Count-1;x++)
-			{
-				if (this.lstFilterByState.Items[x].Checked==true)
-				{
-					strState = this.lstFilterByState.Items[x].SubItems[1].Text.Trim();
-					strCounty = this.lstFilterByState.Items[x].SubItems[2].Text.Trim();
-					p_rows = this.m_dtPlot.Select("trim(statecd) = '" + strState.Trim()  + "' and trim(countycd) = '" + strCounty.Trim() + "'");
-					if (p_rows != null)
-					{
-						for (int y=0; y <= p_rows.Length-1;y++)
-						{
-							strPlot = p_rows[y]["plot"].ToString().Trim();
-							this.lstFilterByPlot.BeginUpdate();
-							System.Windows.Forms.ListViewItem listItem = new ListViewItem();
-							listItem.Checked=false;
-							listItem.SubItems.Add(strState);
-							listItem.SubItems.Add(strCounty);
-							listItem.SubItems.Add(strPlot);
-							this.lstFilterByPlot.Items.Add(listItem);
-							this.lstFilterByPlot.EndUpdate();
-						}
-						
-					}
-                    
-				}
-			}
-			if (strPlot.Trim().Length ==0)
-			{
-				this.m_intError=-1;
-				MessageBox.Show("Select A State And County","Add Plot Data", System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-			}
-			if (this.m_intError==0) this.m_bLoadStateCountyPlotList=false;
-
-
-
 		}
 
 		private void mdbInputStateCounty()
@@ -7472,24 +4852,7 @@ namespace FIA_Biosum_Manager
 			{
 				if (bStringDataType==false)
 				{
-					if (rdoFIADB.Checked)
-					{
-						this.m_strStateCountySQL = "(" + strStateFieldAlias + " IN (" + strStateList + "))";
-					}
-					else
-					{
-						if (this.m_strIDBInv.Trim().Length == 0)
-						{
-							this.m_strStateCountySQL = "(" + strStateFieldAlias + " IN (" + strStateList + "))";
-						}
-						else
-						{
-							this.m_strStateCountySQL = "(MID(biosum_plot_id,2,4)='" + 
-								this.m_strIDBInv.Trim() + "' AND " + 
-								strStateFieldAlias + " IN (" + strStateList + ") AND " + 
-								"(plot NOT BETWEEN 99000 AND 99999))";
-						}
-					}
+				    this.m_strStateCountySQL = "(" + strStateFieldAlias + " IN (" + strStateList + "))";
 				}
 				else
 				{
@@ -7498,26 +4861,7 @@ namespace FIA_Biosum_Manager
 			}
 			else
 			{
-				if (rdoFIADB.Checked)
-				{
-					this.m_strStateCountySQL = "(" + this.m_strStateCountySQL + ")";
-				}
-				else
-				{
-			
-					if (this.m_strIDBInv.Trim().Length == 0)
-					{
-						this.m_strStateCountySQL = "(" + this.m_strStateCountySQL + ")";
-					}
-					else
-					{
-						this.m_strStateCountySQL = "(MID(biosum_plot_id,2,4)='" + 
-							this.m_strIDBInv.Trim() + "' AND " + this.m_strStateCountySQL + " AND " + 
-							"(plot NOT BETWEEN 99000 AND 99999))";
-
-					}
-				}
-				
+			    this.m_strStateCountySQL = "(" + this.m_strStateCountySQL + ")";
 			}
 		}
 		private void BuildFilterByPlotString(string strStateFieldAlias,string strCountyFieldAlias,string strPlotFieldAlias, bool bStringDataType)
@@ -9198,57 +6542,7 @@ namespace FIA_Biosum_Manager
 						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
 					}
 				}
-				if ((bool)frmMain.g_oDelegate.GetControlPropertyValue(
-                      (System.Windows.Forms.RadioButton)rdoFIADB,"Checked",false) && 
-                      (this.m_strCurrentProcess=="txtFileInputPopFiles" || 
-					   this.m_strCurrentProcess=="mdbFiadbInputPopTables"))
-				{
-					
-					int intAddedPopEvalRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strPopEvalTable + " WHERE biosum_status_cd=9",this.m_strPopEvalTable);
-					if (intAddedPopEvalRows > 0)
-					{
-					
-						//delete added tree records since error occured
-						this.m_strSQL = "DELETE FROM " + this.m_strPopEvalTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-						this.m_strLoadedPopEvalTxtInputFile="";
-					
 
-					}
-					int intAddedPopStratumRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strPopStratumTable + " WHERE biosum_status_cd=9",this.m_strPopStratumTable);
-					if (intAddedPopStratumRows > 0)
-					{
-					
-						//delete added tree records since error occured
-						this.m_strSQL = "DELETE FROM " + m_strPopStratumTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-						this.m_strLoadedPopStratumTxtInputFile="";
-					
-
-					}
-
-					int intAddedPopEstUnitRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strPopEstUnitTable + " WHERE biosum_status_cd=9",this.m_strPopEstUnitTable);
-					if (intAddedPopEstUnitRows > 0)
-					{
-					
-						//delete added tree records since error occured
-						this.m_strSQL = "DELETE FROM " + m_strPopEstUnitTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-						this.m_strLoadedPopEstUnitTxtInputFile="";
-					
-
-					}
-					int intAddedPpsaRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strPpsaTable + " WHERE biosum_status_cd=9",this.m_strPpsaTable);
-					if (intAddedPpsaRows > 0)
-					{
-					
-						//delete added tree records since error occured
-						this.m_strSQL = "DELETE FROM " + this.m_strPpsaTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-						this.m_strLoadedPpsaTxtInputFile="";
-					}
-					
-				}
 				MessageBox.Show("!!User Canceled Adding Plot Records: 0 Records Added!!","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
 				frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm,"Visible",false);
 				//((frmDialog)this.ParentForm).m_frmMain.Visible=true;
@@ -9262,106 +6556,6 @@ namespace FIA_Biosum_Manager
 			{
 			}
 
-		}
-
-		private void btnTreeRegionalBiomassBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Tree Regional Biomass Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					m_strTreeRegionalBiomassTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtTreeRegionalBiomass.Text = m_strTreeRegionalBiomassTxtInputFile;
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
-		}
-
-		private void btnPopEvalBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Population Evaluation Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strPopEvalTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtPopEval.Text = this.m_strPopEvalTxtInputFile;
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
-		}
-
-		private void btnPopEstUnitBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Population Estimation Unit Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strPopEstUnitTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtPopEstUnit.Text = this.m_strPopEstUnitTxtInputFile;
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
-		}
-
-		private void btnPopStratumBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Population Stratum Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strPopStratumTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtPopStratum.Text = this.m_strPopStratumTxtInputFile;
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
-		}
-
-		private void btnPpsaBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Population Plot Stratum Assignment Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strPpsaTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtPpsa.Text = this.m_strPpsaTxtInputFile;
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
 		}
 
 		private void btnFIADBInvAppend_Click(object sender, System.EventArgs e)
@@ -9447,78 +6641,6 @@ namespace FIA_Biosum_Manager
 			{
 				MessageBox.Show("Select an FIADB population evaluation","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
 			}
-
-		}
-		private void LoadTxtPopFiles()
-		{
-			this.m_strCurrentProcess="txtFileInputPopFiles";
-			this.m_bLoadStateCountyList=true;
-			this.m_bLoadStateCountyPlotList=true;
-
-			this.StartTherm("2","Add Text File Pop Table Data");
-			this.m_frmTherm.progressBar2.Maximum=3;
-			this.m_frmTherm.progressBar2.Minimum=0;
-			this.m_frmTherm.progressBar2.Value=0;
-			this.m_frmTherm.lblMsg2.Text = "Overall Progress";
-			this.m_strTableType="POPULATION STRATUM";
-			this.m_strCurrentTxtInputFile = this.txtPopStratum.Text;
-			this.thdProcessRecords = new Thread(new ThreadStart(this.txtFileInputPopFiles));
-			this.thdProcessRecords.IsBackground = true;
-			this.thdProcessRecords.Start();
-			while (thdProcessRecords.IsAlive)
-			{
-				thdProcessRecords.Join(1000);
-				System.Windows.Forms.Application.DoEvents();
-
-			}
-			this.m_frmTherm.progressBar2.Value=1;
-			thdProcessRecords=null;
-			if (m_intError==0)
-			{
-				this.m_strLoadedPopStratumTxtInputFile = this.m_strCurrentTxtInputFile;
-				this.m_strTableType="POPULATION ESTIMATION UNIT";
-				this.m_frmTherm.lblMsg.Text = "pop estimation unit table";
-				this.m_strCurrentTxtInputFile = this.txtPopEstUnit.Text;
-				this.thdProcessRecords = new Thread(new ThreadStart(this.txtFileInputPopFiles));
-				this.thdProcessRecords.IsBackground = true;
-				this.thdProcessRecords.Start();
-				while (thdProcessRecords.IsAlive)
-				{
-					thdProcessRecords.Join(1000);
-					System.Windows.Forms.Application.DoEvents();
-
-				}
-				thdProcessRecords=null;
-
-			}
-			this.m_frmTherm.progressBar2.Value=2;
-			if (m_intError==0)
-			{
-				this.m_strLoadedPopEstUnitTxtInputFile = this.m_strCurrentTxtInputFile;
-				this.m_strTableType="POPULATION PLOT STRATUM ASSIGNMENT";
-				this.m_frmTherm.lblMsg.Text = "ppsa table";
-				this.m_strCurrentTxtInputFile = this.txtPpsa.Text;
-				this.thdProcessRecords = new Thread(new ThreadStart(this.txtFileInputPopFiles));
-				this.thdProcessRecords.IsBackground = true;
-				this.thdProcessRecords.Start();
-				while (thdProcessRecords.IsAlive)
-				{
-					thdProcessRecords.Join(1000);
-					System.Windows.Forms.Application.DoEvents();
-
-				}
-				thdProcessRecords=null;
-
-			}
-			if (this.m_intError==0)
-			{
-				this.m_strLoadedPpsaTxtInputFile=this.m_strCurrentTxtInputFile;
-			}
-			this.m_frmTherm.progressBar2.Value=this.m_frmTherm.progressBar2.Maximum;
-			System.Threading.Thread.Sleep(2000);
-			this.m_frmTherm.Close();
-			this.m_frmTherm = null;
-			this.m_strCurrentProcess="";
 
 		}
 
@@ -10479,31 +7601,36 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void btnSiteTreeBrowse_Click(object sender, System.EventArgs e)
-		{
-			OpenFileDialog OpenFileDialog1 = new OpenFileDialog();
-			OpenFileDialog1.Title = "FIADB Site Tree Table Data";
-			OpenFileDialog1.Filter = "Comma Delimited Text File (*.CSV;*.TXT;*.DAT) |*.csv;*.txt;*.dat";
-			DialogResult result =  OpenFileDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (OpenFileDialog1.FileName.Trim().Length > 0) 
-				{
-					this.m_strSiteTreeTxtInputFile = OpenFileDialog1.FileName.Trim();
-					this.txtSiteTree.Text = this.m_strSiteTreeTxtInputFile;
-				}
-			}
-			else 
-			{
-			}
-			OpenFileDialog1 = null;
-		
-		}
-
         private void cmbCondPropPercent_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
         }
+
+        private void rdoFilterByFile_CheckedChanged(object sender, EventArgs e)
+        {
+            //Disable Forested/Non-Forested filters if filtering by file
+            chkNonForested.Enabled = !rdoFilterByFile.Checked;
+            chkForested.Enabled = !rdoFilterByFile.Checked;
+        }
+
+        private void btnMDBFiadbInputHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "PLOTDATA1", "PLOTDATA1" });
+        }
+
+        private void btnFilterHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "PLOTDATA2", "PLOTDATA2" });
+        }
+
         /*
         public class FIADB_Adjustments
         {
