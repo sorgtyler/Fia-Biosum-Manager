@@ -4433,14 +4433,9 @@ namespace FIA_Biosum_Manager
 
 			FIA_Biosum_Manager.ado_data_access p_ado = new ado_data_access();
 
-			
-			string strMDBFile;
-			string strTable;
-			string strConn;
-
-			strMDBFile = this.txtMDBFiadbInputFile.Text.Trim();
-			strTable = this.cmbFiadbPpsaTable.Text.Trim();
-			strConn = p_ado.getMDBConnString(strMDBFile,"","");
+            string strMDBFile = this.txtMDBFiadbInputFile.Text.Trim();
+            string strTable = this.cmbFiadbPpsaTable.Text.Trim();
+            string strConn = p_ado.getMDBConnString(strMDBFile, "", "");
 
 			if (this.chkNonForested.Checked == true && this.chkForested.Checked==true)
 			{
@@ -6837,7 +6832,6 @@ namespace FIA_Biosum_Manager
 
 		private void btnMDBFiadbInputNext_Click(object sender, System.EventArgs e)
 		{
-            if (this.m_oDatasource == null) this.InitializeDatasource();
             
             if (this.cmbFiadbPopEvalTable.Text.Trim().Length == 0 ||
 				this.cmbFiadbCondTable.Text.Trim().Length == 0 ||
