@@ -566,6 +566,9 @@
             // 
             // cmbPOST4
             // 
+            this.cmbPOST4.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPOST4.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPOST4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPOST4.FormattingEnabled = true;
             this.cmbPOST4.Location = new System.Drawing.Point(663, 253);
             this.cmbPOST4.Name = "cmbPOST4";
@@ -575,6 +578,9 @@
             // 
             // cmbPRE4
             // 
+            this.cmbPRE4.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPRE4.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPRE4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPRE4.FormattingEnabled = true;
             this.cmbPRE4.Location = new System.Drawing.Point(388, 252);
             this.cmbPRE4.Name = "cmbPRE4";
@@ -585,6 +591,9 @@
             // 
             // cmbPOST3
             // 
+            this.cmbPOST3.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPOST3.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPOST3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPOST3.FormattingEnabled = true;
             this.cmbPOST3.Location = new System.Drawing.Point(663, 214);
             this.cmbPOST3.Name = "cmbPOST3";
@@ -594,6 +603,9 @@
             // 
             // cmbPRE3
             // 
+            this.cmbPRE3.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPRE3.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPRE3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPRE3.FormattingEnabled = true;
             this.cmbPRE3.Location = new System.Drawing.Point(388, 213);
             this.cmbPRE3.Name = "cmbPRE3";
@@ -604,6 +616,9 @@
             // 
             // cmbPOST2
             // 
+            this.cmbPOST2.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPOST2.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPOST2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPOST2.FormattingEnabled = true;
             this.cmbPOST2.Location = new System.Drawing.Point(663, 177);
             this.cmbPOST2.Name = "cmbPOST2";
@@ -613,6 +628,9 @@
             // 
             // cmbPRE2
             // 
+            this.cmbPRE2.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPRE2.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPRE2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPRE2.FormattingEnabled = true;
             this.cmbPRE2.Location = new System.Drawing.Point(388, 176);
             this.cmbPRE2.Name = "cmbPRE2";
@@ -623,6 +641,9 @@
             // 
             // cmbPOST1
             // 
+            this.cmbPOST1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPOST1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPOST1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPOST1.FormattingEnabled = true;
             this.cmbPOST1.Location = new System.Drawing.Point(663, 139);
             this.cmbPOST1.Name = "cmbPOST1";
@@ -632,6 +653,9 @@
             // 
             // cmbPRE1
             // 
+            this.cmbPRE1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cmbPRE1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cmbPRE1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPRE1.FormattingEnabled = true;
             this.cmbPRE1.Location = new System.Drawing.Point(388, 138);
             this.cmbPRE1.Name = "cmbPRE1";
