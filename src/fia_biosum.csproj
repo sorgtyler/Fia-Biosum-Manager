@@ -264,6 +264,7 @@
     <Compile Include="printing.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="processor.cs" />
     <Compile Include="project_properties_html_report.cs">
       <SubType>Code</SubType>
     </Compile>
