@@ -96,6 +96,11 @@ namespace FIA_Biosum_Manager
         
         private void loadTrees(string p_strVariant, string p_strRxPackage)
         {
+            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
+            //Load species groups into reference dictionary
+            IDictionary<string, int> dictSpeciesGroups = loadSpeciesGroups(p_strVariant);
+
+            
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
@@ -139,11 +144,13 @@ namespace FIA_Biosum_Manager
                 }
 
                 //Query TREE table to get original FIA species codes
-                //@ToDo: For now loading the whole TREE table since I can't think of a more efficient way short of asking
-                //for all the condition ID's
-                strSQL = "SELECT t.fvs_tree_id, t.spcd " +
-                        "FROM tree t " +
-                        "WHERE mid(t.fvs_tree_id,1,2)='" + p_strVariant + "' ";
+                strSQL = "SELECT DISTINCT t.fvs_tree_id, t.spcd " +
+                        "FROM tree t, " + strTableName + " z " +
+                        "WHERE t.fvs_tree_id = z.fvs_tree_id " +
+                        "AND z.rxpackage='" + p_strRxPackage + "' " +
+                        "AND mid(t.fvs_tree_id,1,2)='" + p_strVariant + "' " +
+                        "GROUP BY t.fvs_tree_id, t.spcd";
+
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -161,16 +168,135 @@ namespace FIA_Biosum_Manager
                         {
                             nextTree.SpCd = dictSpCd[nextTree.FvsTreeId];
                         }
-                    }
+                        // set species group from species group dictionary
+                        nextTree.SpeciesGroup = dictSpeciesGroups[nextTree.SpCd];
 
+                        // set diameter group from diameter group dictionary
+                        foreach (treeDiamGroup nextGroup in listDiamGroups)
+                        {
+                            if (nextTree.Dbh >= nextGroup.MinDiam &&
+                                nextTree.Dbh <= nextGroup.MaxDiam)
+                            {
+                                nextTree.DiamGroup = nextGroup.DiamGroup;
+                                break;
+                            }
+                        }
+                        //if (nextTree.DiamGroup < 1)
+                        //{
+                        //    System.Windows.MessageBox.Show("missing diam group");
+                        //}
+                    }
                 }
-                
-                //@ToDo: Don't forget to close the connection!!!
                 System.Windows.MessageBox.Show(m_trees.Count + " trees");
             }
-
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
         }
 
+        private List<treeDiamGroup> loadTreeDiamGroups()
+        {
+            List<treeDiamGroup> listDiamGroups = new List<treeDiamGroup>();
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT * FROM tree_diam_groups";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        int intDiamGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["diam_group"]);
+                        double dblMinDiam = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_diam"]);
+                        double dblMaxDiam = Convert.ToDouble(m_oAdo.m_OleDbDataReader["max_diam"]);
+                        listDiamGroups.Add(new treeDiamGroup(intDiamGroup, dblMinDiam, dblMaxDiam));
+                    }
+                }
+            }
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return listDiamGroups;
+        }
+
+        private IDictionary<String, int> loadSpeciesGroups(string p_strVariant)
+        {
+            IDictionary<String, int> dictSpeciesGroups = new Dictionary<String, int>();
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP FROM tree_species " +
+                                "WHERE FVS_VARIANT = '" + p_strVariant + "' " +
+                                "AND SPCD IS NOT NULL " +
+                                "AND USER_SPC_GROUP IS NOT NULL " +
+                                "GROUP BY SPCD, USER_SPC_GROUP";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strSpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["SPCD"]).Trim();
+                        int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["USER_SPC_GROUP"]);
+                        dictSpeciesGroups.Add(strSpCd, intSpcGroup);
+                    }
+                }
+            }
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return dictSpeciesGroups;
+        }
+
+        ///<summary>
+        /// Loads scenario_tree_species_diam_dollar_values into a reference dictionary
+        /// The composite key is intDiamGroup + "|" + intSpcGroup
+        /// The value is a speciesDiamValue object
+        ///</summary> 
+        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario)
+        {
+            IDictionary<String, speciesDiamValue> dictSpeciesDiamValues = new Dictionary<String, speciesDiamValue>();
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT * FROM scenario_tree_species_diam_dollar_values " +
+                                "WHERE scenario_id = '" + p_scenario + "'";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["species_group"]);
+                        int intDiamGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["diam_group"]);
+                        string strWoodBin = Convert.ToString(m_oAdo.m_OleDbDataReader["wood_bin"]).Trim();
+                        double dblMerchValue = Convert.ToDouble(m_oAdo.m_OleDbDataReader["merch_value"]);
+                        double dblChipValue = Convert.ToDouble(m_oAdo.m_OleDbDataReader["chip_value"]);
+                        string strKey = intDiamGroup + "|" + intSpcGroup;
+                        dictSpeciesDiamValues.Add(strKey, new speciesDiamValue(intDiamGroup, intSpcGroup,
+                            strWoodBin, dblMerchValue, dblChipValue));
+                    }
+                }
+            }
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return dictSpeciesDiamValues;
+        }
+
+        enum OpCostTreeType
+        {
+            None,
+            BC,
+            CT,
+            SL,
+            LL
+        };
+        
         ///<summary>
         ///Represents a tree in the fvs cutlist
         ///</summary>
@@ -190,6 +316,12 @@ namespace FIA_Biosum_Manager
             string _strSpcd;
             bool _boolFvsCreatedTree;
             string _strFvsTreeId;
+            OpCostTreeType _TreeType;
+            int _intSpeciesGroup;
+            int _intDiamGroup;
+            bool _boolIsNonCommercial;
+            double _dblMerchValue;
+            double _dblChipValue;
 
             string _strDebugFile;
 
@@ -267,6 +399,102 @@ namespace FIA_Biosum_Manager
             {
                 get { return _strFvsTreeId; }
                 set { _strFvsTreeId = value; }
+            }
+            public OpCostTreeType TreeType
+            {
+                get { return _TreeType; }
+                set { _TreeType = value; }
+            }
+            public int SpeciesGroup
+            {
+                get { return _intSpeciesGroup; }
+                set { _intSpeciesGroup = value; }
+            }
+            public int DiamGroup
+            {
+                get { return _intDiamGroup; }
+                set { _intDiamGroup = value; }
+            }
+            public bool IsNonCommercial
+            {
+                get { return _boolIsNonCommercial; }
+                set { _boolIsNonCommercial = value; }
+            }
+            public double MerchValue
+            {
+                get { return _dblMerchValue; }
+                set { _dblMerchValue = value; }
+            }
+            public double ChipValue
+            {
+                get { return _dblChipValue; }
+                set { _dblChipValue = value; }
+            }
+        }
+
+        private class treeDiamGroup
+        {
+            int _intDiamGroup;
+            double _dblMinDiam;
+            double _dblMaxDiam;
+
+            public treeDiamGroup(int diamGroup, double dblMinDiam, double dblMaxDiam)
+			{
+                _intDiamGroup = diamGroup;
+                _dblMinDiam = dblMinDiam;
+                _dblMaxDiam = dblMaxDiam;
+			}
+
+            public int DiamGroup
+            {
+                get { return _intDiamGroup; }
+            }
+            public double MinDiam
+            {
+                get { return _dblMinDiam; }
+            }
+            public double MaxDiam
+            {
+                get { return _dblMaxDiam; }
+            }
+        }
+
+        private class speciesDiamValue
+        {
+            int _intSpeciesGroup;
+            int _intDiamGroup;
+            string _strWoodBin;
+            double _dblMerchValue;
+            double _dblChipValue;
+
+            public speciesDiamValue(int diamGroup, int speciesGroup, string woodBin, double merchValue, double chipValue)
+			{
+                _intDiamGroup = diamGroup;
+                _intSpeciesGroup = speciesGroup;
+                _strWoodBin = woodBin;
+                _dblMerchValue = merchValue;
+                _dblChipValue = chipValue;
+			}
+
+            public int DiamGroup
+            {
+                get { return _intDiamGroup; }
+            }
+            public int SpeciesGroup
+            {
+                get { return _intSpeciesGroup; }
+            }
+            public string WoodBin
+            {
+                get { return _strWoodBin; }
+            }
+            public double MerchValue
+            {
+                get { return _dblMerchValue; }
+            }
+            public double ChipValue
+            {
+                get { return _dblChipValue; }
             }
         }
     }
