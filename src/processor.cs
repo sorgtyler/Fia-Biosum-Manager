@@ -14,10 +14,16 @@ namespace FIA_Biosum_Manager
         RxTools m_oRxTools = new RxTools();
         //@ToDo: this will come from the UI
         private string _strScenarioId = "scenario1";
-        private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_fvs_input_debug.txt";
+        private string m_strDebugFile = "";
         private ado_data_access m_oAdo;
         private List<tree> m_trees;
+        private diameterVariables m_diamVariables;
 
+        public processor(string strDebugFile)
+        {
+            m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\" + strDebugFile;
+        }
+        
         public void init()
         {
             //
@@ -99,6 +105,10 @@ namespace FIA_Biosum_Manager
             List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
             //Load species groups into reference dictionary
             IDictionary<string, int> dictSpeciesGroups = loadSpeciesGroups(p_strVariant);
+            //Load species diam values into reference dictionary
+            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(_strScenarioId);
+            //Load diameter variables into reference object
+            m_diamVariables = loadDiameterVariables(_strScenarioId);
 
             
             m_oAdo = new ado_data_access();
@@ -171,7 +181,7 @@ namespace FIA_Biosum_Manager
                         // set species group from species group dictionary
                         nextTree.SpeciesGroup = dictSpeciesGroups[nextTree.SpCd];
 
-                        // set diameter group from diameter group dictionary
+                        // set diameter group from diameter group list
                         foreach (treeDiamGroup nextGroup in listDiamGroups)
                         {
                             if (nextTree.Dbh >= nextGroup.MinDiam &&
@@ -181,6 +191,34 @@ namespace FIA_Biosum_Manager
                                 break;
                             }
                         }
+
+                        // set values from scenario_tree_species_diam_dollar_values
+                        string strSpeciesDiamKey = nextTree.DiamGroup + "|" + nextTree.SpeciesGroup;
+                        speciesDiamValue treeSpeciesDiam = null;
+                        if (dictSpeciesDiamValues.TryGetValue(strSpeciesDiamKey, out treeSpeciesDiam))
+                        {
+                            nextTree.MerchValue = treeSpeciesDiam.MerchValue;
+                            nextTree.ChipValue = treeSpeciesDiam.ChipValue;
+                            switch (treeSpeciesDiam.WoodBin)
+                            {
+                                case "M":
+                                    nextTree.IsNonCommercial = false;
+                                    break;
+                                case "C":
+                                    nextTree.IsNonCommercial = true;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Missing species diam values for diamGroup|speciesGroup " + 
+                                    strSpeciesDiamKey + " - " + System.DateTime.Now.ToString() + "\r\n");
+                        }
+
+                        //Assign OpCostTreeType
+                        nextTree.TreeType = chooseOpCostTreeType(nextTree);
+
                         //if (nextTree.DiamGroup < 1)
                         //{
                         //    System.Windows.MessageBox.Show("missing diam group");
@@ -279,6 +317,7 @@ namespace FIA_Biosum_Manager
                         dictSpeciesDiamValues.Add(strKey, new speciesDiamValue(intDiamGroup, intSpcGroup,
                             strWoodBin, dblMerchValue, dblChipValue));
                     }
+                    //Console.WriteLine("DiamValues: " + dictSpeciesDiamValues.Keys.Count);
                 }
             }
             // Always close the connection
@@ -286,6 +325,61 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
 
             return dictSpeciesDiamValues;
+        }
+
+        private diameterVariables loadDiameterVariables(string p_scenario)
+        {
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            diameterVariables returnVariables = null;
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT * FROM scenario_harvest_method " +
+                                "WHERE scenario_id = '" + p_scenario + "'";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    // We should only have one record
+                    m_oAdo.m_OleDbDataReader.Read();
+                    int intMinChipDbh = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_chip_dbh"]);
+                    int intMinSmallLogDbh = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_sm_log_dbh"]);
+                    int intMinLgLogDbh = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_lg_log_dbh"]);
+                    int intMinSlopePct = Convert.ToInt32(m_oAdo.m_OleDbDataReader["SteepSlope"]);
+                    int intMinDbhSteepSlope = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
+
+                    returnVariables = new diameterVariables(intMinChipDbh, intMinSmallLogDbh, intMinLgLogDbh,
+                        intMinSlopePct, intMinDbhSteepSlope);
+
+                    //Console.WriteLine("DiamValues: " + dictSpeciesDiamValues.Keys.Count);
+                }
+            }
+
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return returnVariables;
+        }
+        
+        private OpCostTreeType chooseOpCostTreeType(tree p_tree)
+        {
+            OpCostTreeType returnType = OpCostTreeType.None;
+            if (p_tree.Dbh < m_diamVariables.MinChipDbh)
+            {
+                returnType = OpCostTreeType.BC;
+//else if tree.slope >= DiameterVariables. SteepSlopePercent and tree.dbh < DiameterVariables. MinDiaSteepSlope
+//tree.opCostTreeType = BC
+//else if tree.isNonCommercial = true then
+//tree.opCostTreeType = CT
+//else if tree.dbh >= DiameterVariables.MinDiaChips and tree.dbh < DiameterVariables.MinDiaSmLogs then 
+//tree.opCostTreeType = CT
+//else if tree.dbh >= DiameterVariables.MinDiaSmLogs and tree.dbh < DiameterVariables.MinDiaLgLogs then
+//tree.opCostTreeType = ST
+//else if tree.dbh >= DiameterVariables.MinDiaLgLogs then
+//    tree.opCostTreeType = LT
+            }
+
+            return returnType;
         }
 
         enum OpCostTreeType
@@ -495,6 +589,46 @@ namespace FIA_Biosum_Manager
             public double ChipValue
             {
                 get { return _dblChipValue; }
+            }
+        }
+
+        private class diameterVariables
+        {
+            int _intMinSmallLogDbh;
+            int _intMinLargeLogDbh;
+            int _intMinChipDbh;
+            int _intSteepSlopePct;
+            int _intMinDbhSteepSlope;
+
+            public diameterVariables(int minChipDbh, int minSmallLogDbh, int minLargeLogDbh, int steepSlopePct,
+                                     int minDbhSteepSlope)
+            {
+                _intMinSmallLogDbh = minSmallLogDbh;
+                _intMinLargeLogDbh = minLargeLogDbh;
+                _intMinChipDbh = minChipDbh;
+                _intSteepSlopePct = steepSlopePct;
+                _intMinDbhSteepSlope = minDbhSteepSlope;
+            }
+
+            public int MinChipDbh
+            {
+                get { return _intMinChipDbh; }
+            }
+            public int MinSmallLogDbh
+            {
+                get { return _intMinSmallLogDbh; }
+            }
+            public int MinLargeLogDbh
+            {
+                get { return _intMinLargeLogDbh; }
+            }
+            public int SteepSlopePct
+            {
+                get { return _intSteepSlopePct; }
+            }
+            public int MinDbhSteepSlope
+            {
+                get { return _intMinDbhSteepSlope; }
             }
         }
     }
