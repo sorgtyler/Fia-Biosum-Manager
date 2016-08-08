@@ -24,7 +24,7 @@ namespace FIA_Biosum_Manager
         public XPSDocumentViewer xpsDocumentViewer = null;
         System.Windows.Xps.Packaging.XpsDocument m_oXpsDocument = null;
 
-        private int m_intCurrentPageNumber=-1;
+        public int m_intCurrentPageNumber=-1;
         FrameworkElement fe;
 
         public const int COL_DEFAULT_HELP_PARENT = 0;
@@ -133,11 +133,11 @@ namespace FIA_Biosum_Manager
 
             
             xpsDocumentViewer = new XPSDocumentViewer();
-            
+           
             System.Windows.Xps.Packaging.XpsDocument xpsDoc = new System.Windows.Xps.Packaging.XpsDocument(_env.strAppDir + "\\Help\\" + _strXPSFile, System.IO.FileAccess.Read);
             xpsDocumentViewer.xpsViewer1.Document = xpsDoc.GetFixedDocumentSequence();
             xpsDocumentViewer.ReferenceHelp = this;
-           
+
             
             
             m_intCurrentPageNumber = PageNumber;
@@ -151,8 +151,11 @@ namespace FIA_Biosum_Manager
             xpsDocumentViewer.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             xpsDocumentViewer.IsEnabled = true;
             xpsDocumentViewer.Visibility = Visibility.Visible;
-
+            
             m_oXpsDocument = xpsDoc;
+            
+           
+
             xpsDocumentViewer.ShowDialog();
 
             
