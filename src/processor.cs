@@ -341,14 +341,14 @@ namespace FIA_Biosum_Manager
                 {
                     // We should only have one record
                     m_oAdo.m_OleDbDataReader.Read();
-                    int intMinChipDbh = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_chip_dbh"]);
-                    int intMinSmallLogDbh = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_sm_log_dbh"]);
-                    int intMinLgLogDbh = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_lg_log_dbh"]);
+                    double dblMinChipDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_chip_dbh"]);
+                    double dblMinSmallLogDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_sm_log_dbh"]);
+                    double dblMinLgLogDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_lg_log_dbh"]);
                     int intMinSlopePct = Convert.ToInt32(m_oAdo.m_OleDbDataReader["SteepSlope"]);
-                    int intMinDbhSteepSlope = Convert.ToInt32(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
+                    double dblMinDbhSteepSlope = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
 
-                    returnVariables = new diameterVariables(intMinChipDbh, intMinSmallLogDbh, intMinLgLogDbh,
-                        intMinSlopePct, intMinDbhSteepSlope);
+                    returnVariables = new diameterVariables(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
+                        intMinSlopePct, dblMinDbhSteepSlope);
 
                     //Console.WriteLine("DiamValues: " + dictSpeciesDiamValues.Keys.Count);
                 }
@@ -594,41 +594,41 @@ namespace FIA_Biosum_Manager
 
         private class diameterVariables
         {
-            int _intMinSmallLogDbh;
-            int _intMinLargeLogDbh;
-            int _intMinChipDbh;
+            double _dblMinSmallLogDbh;
+            double _dblMinLargeLogDbh;
+            double _dblMinChipDbh;
             int _intSteepSlopePct;
-            int _intMinDbhSteepSlope;
+            double _dblMinDbhSteepSlope;
 
-            public diameterVariables(int minChipDbh, int minSmallLogDbh, int minLargeLogDbh, int steepSlopePct,
-                                     int minDbhSteepSlope)
+            public diameterVariables(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
+                                     double minDbhSteepSlope)
             {
-                _intMinSmallLogDbh = minSmallLogDbh;
-                _intMinLargeLogDbh = minLargeLogDbh;
-                _intMinChipDbh = minChipDbh;
+                _dblMinSmallLogDbh = minSmallLogDbh;
+                _dblMinLargeLogDbh = minLargeLogDbh;
+                _dblMinChipDbh = minChipDbh;
                 _intSteepSlopePct = steepSlopePct;
-                _intMinDbhSteepSlope = minDbhSteepSlope;
+                _dblMinDbhSteepSlope = minDbhSteepSlope;
             }
 
-            public int MinChipDbh
+            public double MinChipDbh
             {
-                get { return _intMinChipDbh; }
+                get { return _dblMinChipDbh; }
             }
-            public int MinSmallLogDbh
+            public double MinSmallLogDbh
             {
-                get { return _intMinSmallLogDbh; }
+                get { return _dblMinSmallLogDbh; }
             }
-            public int MinLargeLogDbh
+            public double MinLargeLogDbh
             {
-                get { return _intMinLargeLogDbh; }
+                get { return _dblMinLargeLogDbh; }
             }
             public int SteepSlopePct
             {
                 get { return _intSteepSlopePct; }
             }
-            public int MinDbhSteepSlope
+            public double MinDbhSteepSlope
             {
-                get { return _intMinDbhSteepSlope; }
+                get { return _dblMinDbhSteepSlope; }
             }
         }
     }
