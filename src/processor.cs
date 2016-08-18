@@ -14,6 +14,7 @@ namespace FIA_Biosum_Manager
         RxTools m_oRxTools = new RxTools();
         //@ToDo: this will come from the UI
         private string _strScenarioId = "scenario1";
+        private string _strOpcostTableName = "OPCOST_INPUT_NEW";
         private string m_strDebugFile = "";
         private ado_data_access m_oAdo;
         private List<tree> m_trees;
@@ -102,6 +103,7 @@ namespace FIA_Biosum_Manager
         
         private void loadTrees(string p_strVariant, string p_strRxPackage)
         {
+            //Load diameter groups into reference list
             List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
             //Load species groups into reference dictionary
             IDictionary<string, int> dictSpeciesGroups = loadSpeciesGroups(p_strVariant);
@@ -109,6 +111,9 @@ namespace FIA_Biosum_Manager
             IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(_strScenarioId);
             //Load diameter variables into reference object
             m_diamVariables = loadDiameterVariables(_strScenarioId);
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_diamVariables.ToString() + "\r\n");
+
 
             
             m_oAdo = new ado_data_access();
@@ -119,10 +124,11 @@ namespace FIA_Biosum_Manager
                 string strSQL = "SELECT z.biosum_cond_id, z.rxCycle, z.rx, z.rxYear, " +
                                 "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
                                 "z.fvs_tree_id, z.fvs_species, " +
-                                "c.slope " +
-                                  "FROM " + strTableName + " z, cond c " +
+                                "c.slope, p.elev, p.gis_yard_dist " +
+                                  "FROM " + strTableName + " z, cond c, plot p " +
                                   "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
                                   "z.biosum_cond_id = c.biosum_cond_id AND " +
+                                  "c.biosum_plot_id = p.biosum_plot_id AND " +
                                   "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "'";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
@@ -149,6 +155,8 @@ namespace FIA_Biosum_Manager
                             // only use fvs_species from cut list if it is an FVS created tree
                             newTree.SpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_species"]).Trim();
                         }
+                        newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
+                        newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
                         m_trees.Add(newTree);
                     }
                 }
@@ -172,6 +180,7 @@ namespace FIA_Biosum_Manager
                         dictSpCd.Add(strTreeId, strSpCd);
                     }
 
+                    // Second pass at processing tree properties based on information from the cut list
                     foreach (tree nextTree in m_trees)
                     {
                         if (!nextTree.FvsCreatedTree)
@@ -192,7 +201,7 @@ namespace FIA_Biosum_Manager
                             }
                         }
 
-                        // set values from scenario_tree_species_diam_dollar_values
+                        // set tree properties based on scenario_tree_species_diam_dollar_values
                         string strSpeciesDiamKey = nextTree.DiamGroup + "|" + nextTree.SpeciesGroup;
                         speciesDiamValue treeSpeciesDiam = null;
                         if (dictSpeciesDiamValues.TryGetValue(strSpeciesDiamKey, out treeSpeciesDiam))
@@ -218,6 +227,13 @@ namespace FIA_Biosum_Manager
 
                         //Assign OpCostTreeType
                         nextTree.TreeType = chooseOpCostTreeType(nextTree);
+                        //Dump OpCostTreeType in .csv format for validation
+                        //string strLogEntry = nextTree.Dbh + ", " + nextTree.Slope + ", " + nextTree.IsNonCommercial +
+                        //    ", " + nextTree.SpeciesGroup + ", " + nextTree.TreeType.ToString();
+                        //if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        //    frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: OpCost tree type, " +
+                        //        strLogEntry + "\r\n");
+
 
                         //if (nextTree.DiamGroup < 1)
                         //{
@@ -225,8 +241,62 @@ namespace FIA_Biosum_Manager
                         //}
                     }
                 }
-                System.Windows.MessageBox.Show(m_trees.Count + " trees");
+                //System.Windows.MessageBox.Show(m_trees.Count + " trees");
             }
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+        }
+
+        private void createOpcostInput()
+        {
+            if (m_trees.Count < 1)
+            {
+                System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n The OpCost input file cannot be created",
+                    "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            // create connection to database
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            
+            // drop opcost input table if it exists
+            if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, _strOpcostTableName) == true)
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + _strOpcostTableName);
+
+            if (m_oAdo.m_intError == 0)
+            {
+
+                // create opcost input table
+                frmMain.g_oTables.m_oProcessor.CreateOpcostInputTable(m_oAdo, m_oAdo.m_OleDbConnection, _strOpcostTableName);
+
+                IDictionary<string, opcostInput> dictOpcostInput = new Dictionary<string, opcostInput>();
+                foreach (tree nextTree in m_trees)
+                {
+                    opcostInput nextInput = null;
+                    string strStand = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
+                    bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
+                    if (!blnFound)
+                    {
+                        //check helicopter system
+                        //delete plots where yarding distance greater than 1300 feet if cable system
+                        //m_oAdo.m_strSQL = "DELETE [One-way Yarding Distance], [Harvesting System] " +
+                        //                  "FROM [" + p_strTable + "] " +
+                        //                  "WHERE ((([One-way Yarding Distance])>" + ScenarioHarvestMethodVariables.MaxCableYardingDistance.ToString().Trim() + ") AND " +
+                        //                         "(TRIM([Harvesting System]) IN ('Cable Manual WT/Log'," +
+                        //                                                        "'Cable Manual WT'," +
+                        //                                                        "'Cable Manual Log'," +
+                        //                                                        "'Cable CTL')))";
+                        
+                        nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
+                                                    nextTree.Rx, nextTree.RxYear, nextTree.YardingDistance, nextTree.Elevation);
+                        dictOpcostInput.Add(strStand, nextInput);
+                    }
+                }
+                System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
+            }
+            
             // Always close the connection
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             m_oAdo = null;
@@ -367,16 +437,29 @@ namespace FIA_Biosum_Manager
             if (p_tree.Dbh < m_diamVariables.MinChipDbh)
             {
                 returnType = OpCostTreeType.BC;
-//else if tree.slope >= DiameterVariables. SteepSlopePercent and tree.dbh < DiameterVariables. MinDiaSteepSlope
-//tree.opCostTreeType = BC
-//else if tree.isNonCommercial = true then
-//tree.opCostTreeType = CT
-//else if tree.dbh >= DiameterVariables.MinDiaChips and tree.dbh < DiameterVariables.MinDiaSmLogs then 
-//tree.opCostTreeType = CT
-//else if tree.dbh >= DiameterVariables.MinDiaSmLogs and tree.dbh < DiameterVariables.MinDiaLgLogs then
-//tree.opCostTreeType = ST
-//else if tree.dbh >= DiameterVariables.MinDiaLgLogs then
-//    tree.opCostTreeType = LT
+            }
+            else if (p_tree.Slope >= m_diamVariables.SteepSlopePct && 
+                     p_tree.Dbh < m_diamVariables.MinDbhSteepSlope)
+            {
+                returnType = OpCostTreeType.BC;
+            }
+            else if (p_tree.IsNonCommercial)
+            {
+                returnType = OpCostTreeType.CT;
+            }
+            else if (p_tree.Dbh >= m_diamVariables.MinChipDbh && 
+                     p_tree.Dbh < m_diamVariables.MinSmallLogDbh)
+            {
+                returnType = OpCostTreeType.CT;
+            }
+            else if (p_tree.Dbh >= m_diamVariables.MinSmallLogDbh &&
+                     p_tree.Dbh < m_diamVariables.MinLargeLogDbh)
+            {
+                returnType = OpCostTreeType.SL;
+            }
+            else if (p_tree.Dbh >= m_diamVariables.MinLargeLogDbh)
+            {
+                returnType = OpCostTreeType.LL;
             }
 
             return returnType;
@@ -384,11 +467,11 @@ namespace FIA_Biosum_Manager
 
         enum OpCostTreeType
         {
-            None,
-            BC,
-            CT,
-            SL,
-            LL
+            None = 0,
+            BC = 1,
+            CT = 2,
+            SL = 3,
+            LL = 4
         };
         
         ///<summary>
@@ -416,6 +499,8 @@ namespace FIA_Biosum_Manager
             bool _boolIsNonCommercial;
             double _dblMerchValue;
             double _dblChipValue;
+            int _intElev;
+            double _dblYardingDistance;
 
             string _strDebugFile;
 
@@ -524,6 +609,16 @@ namespace FIA_Biosum_Manager
                 get { return _dblChipValue; }
                 set { _dblChipValue = value; }
             }
+            public int Elevation
+            {
+                get { return _intElev; }
+                set { _intElev = value; }
+            }
+            public double YardingDistance
+            {
+                get { return _dblYardingDistance; }
+                set { _dblYardingDistance = value; }
+            }
         }
 
         private class treeDiamGroup
@@ -630,6 +725,68 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblMinDbhSteepSlope; }
             }
+            // Overriding the ToString method for debugging purposes
+            public override string ToString()
+            {
+                return string.Format("MinChipDbh: {0}, MinSmallLogDbh: {1}, MinLargeLogDbh: {2}, SteepSlopePct: {3}, MinDbhSteepSlope: {4}]", 
+                    _dblMinChipDbh, _dblMinSmallLogDbh, _dblMinLargeLogDbh, _intSteepSlopePct, _dblMinDbhSteepSlope);
+            }
         }
+
+        /// <summary>
+        /// An opcostInput object represents a line in the opcostInput file
+        /// The metrics are aggregated by stand with is a unique concatenation of
+        /// conditionId, rxPackage, rx, and rxCycle
+        /// </summary>
+        private class opcostInput
+        {
+            string _strCondId = "";
+            int _intPercentSlope;
+            string _strRxCycle = "";
+            string _strRxPackage = "";
+            string _strRx = "";
+            string _strRxYear = "";
+            double _dblYardingDistance;
+            int _intElev;
+
+            public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
+                               string rxYear, double yardingDistance, int elev)
+            {
+                _strCondId = condId;
+                _intPercentSlope = percentSlope;
+                _strRxCycle = rxCycle;
+                _strRxPackage = rxPackage;
+                _strRx = rx;
+                _strRxYear = rxYear;
+                _dblYardingDistance = yardingDistance;
+                _intElev = elev;
+            }
+
+            public string OpCostStand    
+            {
+                get { return _strCondId + _strRxPackage + _strRx + _strRxCycle; }
+            }
+            public int PercentSlope
+            {
+                get { return _intPercentSlope; }
+            }
+            public double YardingDistance
+            {
+                get { return _dblYardingDistance; }
+            }
+            public string RxYear
+            {
+                get { return _strRxYear; }
+            }
+            public int Elev
+            {
+                get { return _intElev; }
+            }
+            public string RxPackageRxRxCycle
+            {
+                get { return _strRxPackage + _strRx + _strRxCycle; }
+            }
+        }
+
     }
 }

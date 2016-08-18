@@ -3139,6 +3139,43 @@ namespace FIA_Biosum_Manager
                     "DateTimeCreated CHAR(22))";
             }
 
+            public void CreateOpcostInputTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, Tables.Processor.CreateOpcostInputTableSQL(p_strTableName));
+                // No indexes currently on OpCost input table
+            }
+
+            
+            static public string CreateOpcostInputTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " " +
+                             "(Stand text (255)," +
+                             " [Percent Slope] short," +
+                             " [One-way Yarding Distance] DOUBLE," +
+                             " YearCostCalc long," +
+                             " [Project Elevation] short," +
+                             " [Harvesting System] text (50)," +
+                             " [Chip tree per acre] single," +
+                             " [Residue fraction for chip trees] single," +
+                            " [Chip trees average volume(ft3)] single," +
+                            " [CHIPS Average Density (lbs/ft3)] single," +
+                            " [CHIPS Average Weight (tons)] single, " +
+                            " [CHIPS Hwd Proportion] single," +
+                            " [Small log trees per acre] single," +
+                            " [Small log trees residue fraction] single," +
+                            " [Small log trees average volume(ft3)] single," +
+                            " [Small log trees average density(lbs/ft3)] single," +
+                            " [Small log trees hardwood proportion] single," +
+                            " [Large log trees per acre] single," +
+                            " [Large log trees residue fraction] single," +
+                            " [Large log trees average vol(ft3)] single," +
+                            " [Large log trees average density(lbs/ft3)] single," +
+                            " [Large log trees hardwood proportion] single," +
+                            " BrushCutTPA single," +
+                            " BrushCutAvgVol single," +
+                            " RxPackage_Rx_RxCycle text (255))";
+            }
+
 		}
 		public class Scenario
 		{

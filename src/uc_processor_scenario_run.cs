@@ -2147,6 +2147,8 @@ namespace FIA_Biosum_Manager
                                                 case "FRCSVARIABLESSTEEPSLOPETABLE": break;
                                                 case "OPCOST_CHIPPING": break;
                                                 case "OPCOST_IDEAL": break;
+                                                    //temporary name for PROCESSOR redesign output
+                                                case "OPCOST_INPUT_NEW": break;
                                                 default:
                                                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
                                                     break;
