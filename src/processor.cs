@@ -13,8 +13,8 @@ namespace FIA_Biosum_Manager
         Queries m_oQueries = new Queries();
         RxTools m_oRxTools = new RxTools();
         //@ToDo: this will come from the UI
-        private string _strScenarioId = "scenario1";
-        private string _strOpcostTableName = "OPCOST_INPUT_NEW";
+        private string m_strScenarioId = "scenario1";
+        private string m_strOpcostTableName = "OPCOST_INPUT_NEW";
         private string m_strDebugFile = "";
         private ado_data_access m_oAdo;
         private List<tree> m_trees;
@@ -46,7 +46,7 @@ namespace FIA_Biosum_Manager
             //
             string strScenarioResultsMDB =
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\processor\\" + _strScenarioId + "\\" + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsDbFile;
+                "\\processor\\" + m_strScenarioId + "\\" + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsDbFile;
 
             //
             //LOAD PROJECT DATATASOURCES INFO
@@ -54,7 +54,7 @@ namespace FIA_Biosum_Manager
             m_oQueries.m_oFvs.LoadDatasource = true;
             m_oQueries.m_oReference.LoadDatasource = true;
             m_oQueries.m_oProcessor.LoadDatasource = true;
-            m_oQueries.LoadDatasources(true, "processor", _strScenarioId);
+            m_oQueries.LoadDatasources(true, "processor", m_strScenarioId);
 
             //link to all the scenario rule definition tables
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
@@ -111,9 +111,9 @@ namespace FIA_Biosum_Manager
             //Load species groups into reference dictionary
             IDictionary<string, int> dictSpeciesGroups = loadSpeciesGroups(p_strVariant);
             //Load species diam values into reference dictionary
-            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(_strScenarioId);
+            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
             //Load diameter variables into reference object
-            m_scenarioHarvestMethod = loadScenarioHarvestMethod(_strScenarioId);
+            m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
 
@@ -302,14 +302,18 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             
             // drop opcost input table if it exists
-            if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, _strOpcostTableName) == true)
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + _strOpcostTableName);
+            if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, m_strOpcostTableName) == true)
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + m_strOpcostTableName);
 
             if (m_oAdo.m_intError == 0)
             {
 
                 // create opcost input table
-                frmMain.g_oTables.m_oProcessor.CreateOpcostInputTable(m_oAdo, m_oAdo.m_OleDbConnection, _strOpcostTableName);
+                frmMain.g_oTables.m_oProcessor.CreateOpcostInputTable(m_oAdo, m_oAdo.m_OleDbConnection, m_strOpcostTableName);
+
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Read trees into opcost input - " + System.DateTime.Now.ToString() + "\r\n");
 
                 IDictionary<string, opcostInput> dictOpcostInput = new Dictionary<string, opcostInput>();
                 foreach (tree nextTree in m_trees)
@@ -319,22 +323,37 @@ namespace FIA_Biosum_Manager
                     bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
                     if (!blnFound)
                     {
-                        //check helicopter system
-                        //delete plots where yarding distance greater than 1300 feet if cable system
-                        //m_oAdo.m_strSQL = "DELETE [One-way Yarding Distance], [Harvesting System] " +
-                        //                  "FROM [" + p_strTable + "] " +
-                        //                  "WHERE ((([One-way Yarding Distance])>" + ScenarioHarvestMethodVariables.MaxCableYardingDistance.ToString().Trim() + ") AND " +
-                        //                         "(TRIM([Harvesting System]) IN ('Cable Manual WT/Log'," +
-                        //                                                        "'Cable Manual WT'," +
-                        //                                                        "'Cable Manual Log'," +
-                        //                                                        "'Cable CTL')))";
-                        
                         nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
-                                                    nextTree.Rx, nextTree.RxYear, nextTree.YardingDistance, nextTree.Elevation);
+                                                    nextTree.Rx, nextTree.RxYear, nextTree.YardingDistance, nextTree.Elevation,
+                                                    nextTree.HarvestMethod);
                         dictOpcostInput.Add(strStand, nextInput);
                     }
                 }
-                System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
+                //System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Finished reading trees - " + System.DateTime.Now.ToString() + "\r\n");
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Begin writing opcost input table - " + System.DateTime.Now.ToString() + "\r\n");
+                long lngCount =0;
+                foreach (string key in dictOpcostInput.Keys)
+                {
+                    opcostInput nextStand = dictOpcostInput[key];
+                    m_oAdo.m_strSQL = "INSERT INTO " + m_strOpcostTableName + " " +
+                    "(Stand, [Percent Slope], [One-way Yarding Distance], YearCostCalc, " +
+                    "[Project Elevation], [Harvesting System]) " +
+                    "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
+                    nextStand.Elev + ", '" + nextStand.HarvestSystem + "' )";
+
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    if (m_oAdo.m_intError != 0) break;
+                    lngCount++;
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "END createOpcostInput INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
+
+                }
             }
             
             // Always close the connection
@@ -911,9 +930,10 @@ namespace FIA_Biosum_Manager
             string _strRxYear = "";
             double _dblYardingDistance;
             int _intElev;
+            string _strHarvestSystem;
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
-                               string rxYear, double yardingDistance, int elev)
+                               string rxYear, double yardingDistance, int elev, string harvestSystem)
             {
                 _strCondId = condId;
                 _intPercentSlope = percentSlope;
@@ -923,6 +943,7 @@ namespace FIA_Biosum_Manager
                 _strRxYear = rxYear;
                 _dblYardingDistance = yardingDistance;
                 _intElev = elev;
+                _strHarvestSystem = harvestSystem;
             }
 
             public string OpCostStand    
@@ -948,6 +969,10 @@ namespace FIA_Biosum_Manager
             public string RxPackageRxRxCycle
             {
                 get { return _strRxPackage + _strRx + _strRxCycle; }
+            }
+            public string HarvestSystem
+            {
+                get { return _strHarvestSystem; }
             }
         }
 
