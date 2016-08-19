@@ -18,7 +18,8 @@ namespace FIA_Biosum_Manager
         private string m_strDebugFile = "";
         private ado_data_access m_oAdo;
         private List<tree> m_trees;
-        private diameterVariables m_diamVariables;
+        private scenarioHarvestMethod m_scenarioHarvestMethod;
+        private IDictionary<string, prescription> m_prescriptions;
 
         public processor(string strDebugFile)
         {
@@ -103,6 +104,8 @@ namespace FIA_Biosum_Manager
         
         private void loadTrees(string p_strVariant, string p_strRxPackage)
         {
+            //Load presciptions into reference dictionary
+            m_prescriptions = loadPrescriptions();
             //Load diameter groups into reference list
             List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
             //Load species groups into reference dictionary
@@ -110,9 +113,9 @@ namespace FIA_Biosum_Manager
             //Load species diam values into reference dictionary
             IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(_strScenarioId);
             //Load diameter variables into reference object
-            m_diamVariables = loadDiameterVariables(_strScenarioId);
+            m_scenarioHarvestMethod = loadScenarioHarvestMethod(_strScenarioId);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_diamVariables.ToString() + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
 
 
             
@@ -137,6 +140,7 @@ namespace FIA_Biosum_Manager
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         tree newTree = new tree();
+                        newTree.DebugFile = m_strDebugFile;
                         newTree.CondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
                         newTree.RxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
                         newTree.RxPackage = p_strRxPackage;
@@ -148,6 +152,41 @@ namespace FIA_Biosum_Manager
                         newTree.DryBiot = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiot"]);
                         newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
                         newTree.Slope = Convert.ToInt32(m_oAdo.m_OleDbDataReader["slope"]);
+                        // find default harvest methods in prescription in case we need them
+                        string strDefaultHarvestMethodLowSlope = "";
+                        string strDefaultHarvestMethodSteepSlope = "";
+                        prescription currentPrescription = null;
+                        m_prescriptions.TryGetValue(newTree.Rx, out currentPrescription);
+                        if (currentPrescription != null)
+                        {
+                            strDefaultHarvestMethodLowSlope = currentPrescription.HarvestMethodLowSlope;
+                            strDefaultHarvestMethodSteepSlope = currentPrescription.HarvestMethodSteepSlope;
+                        }
+
+                        if (newTree.Slope < m_scenarioHarvestMethod.SteepSlopePct)
+                        {
+                            // assign low slope harvest method
+                            if (! String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodLowSlope))
+                            {
+                                newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodLowSlope;
+                            }
+                            else
+                            {
+                                newTree.HarvestMethod = strDefaultHarvestMethodLowSlope;
+                            }
+                        }
+                        else
+                        {
+                            // assign steep slope harvest method
+                            if (!String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodSteepSlope))
+                            {
+                                newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodSteepSlope;
+                            }
+                            else
+                            {
+                                newTree.HarvestMethod = strDefaultHarvestMethodSteepSlope;
+                            }
+                        }
                         newTree.FvsTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
                         if (Convert.ToString(m_oAdo.m_OleDbDataReader["FvsCreatedTree_YN"]).Trim().ToUpper() == "Y")
                         {
@@ -157,7 +196,8 @@ namespace FIA_Biosum_Manager
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
                         newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
-                        m_trees.Add(newTree);
+                        if (! newTree.exceedsYardingLimit(m_scenarioHarvestMethod.MaxCableYardingDistance, m_scenarioHarvestMethod.MaxHelicopterCableYardingDistance))
+                        { m_trees.Add(newTree); }
                     }
                 }
 
@@ -241,7 +281,7 @@ namespace FIA_Biosum_Manager
                         //}
                     }
                 }
-                //System.Windows.MessageBox.Show(m_trees.Count + " trees");
+                System.Windows.MessageBox.Show(m_trees.Count + " trees");
             }
             // Always close the connection
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
@@ -397,11 +437,39 @@ namespace FIA_Biosum_Manager
             return dictSpeciesDiamValues;
         }
 
-        private diameterVariables loadDiameterVariables(string p_scenario)
+        private IDictionary<String, prescription> loadPrescriptions()
+        {
+            IDictionary<String, prescription> dictPrescriptions = new Dictionary<String, prescription>();
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT * FROM rx";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strRx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
+                        string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
+                        string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
+
+                        dictPrescriptions.Add(strRx, new prescription(strRx, strHarvestMethodLowSlope, strHarvestMethodSteepSlope));
+                    }
+                }
+            }
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return dictPrescriptions;
+        }
+
+        private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario)
         {
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
-            diameterVariables returnVariables = null;
+            scenarioHarvestMethod returnVariables = null;
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM scenario_harvest_method " +
@@ -416,11 +484,14 @@ namespace FIA_Biosum_Manager
                     double dblMinLgLogDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_lg_log_dbh"]);
                     int intMinSlopePct = Convert.ToInt32(m_oAdo.m_OleDbDataReader["SteepSlope"]);
                     double dblMinDbhSteepSlope = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
+                    double dblMaxCableYardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["MaxCableYardingDistance"]);
+                    double dblMaxHelicopterCableYardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["MaxHelicopterCableYardingDistance"]);
+                    string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
+                    string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
 
-                    returnVariables = new diameterVariables(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
-                        intMinSlopePct, dblMinDbhSteepSlope);
-
-                    //Console.WriteLine("DiamValues: " + dictSpeciesDiamValues.Keys.Count);
+                    returnVariables = new scenarioHarvestMethod(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
+                        intMinSlopePct, dblMinDbhSteepSlope, dblMaxCableYardingDistance, dblMaxHelicopterCableYardingDistance,
+                        strHarvestMethodLowSlope, strHarvestMethodSteepSlope);
                 }
             }
 
@@ -434,12 +505,12 @@ namespace FIA_Biosum_Manager
         private OpCostTreeType chooseOpCostTreeType(tree p_tree)
         {
             OpCostTreeType returnType = OpCostTreeType.None;
-            if (p_tree.Dbh < m_diamVariables.MinChipDbh)
+            if (p_tree.Dbh < m_scenarioHarvestMethod.MinChipDbh)
             {
                 returnType = OpCostTreeType.BC;
             }
-            else if (p_tree.Slope >= m_diamVariables.SteepSlopePct && 
-                     p_tree.Dbh < m_diamVariables.MinDbhSteepSlope)
+            else if (p_tree.Slope >= m_scenarioHarvestMethod.SteepSlopePct && 
+                     p_tree.Dbh < m_scenarioHarvestMethod.MinDbhSteepSlope)
             {
                 returnType = OpCostTreeType.BC;
             }
@@ -447,17 +518,17 @@ namespace FIA_Biosum_Manager
             {
                 returnType = OpCostTreeType.CT;
             }
-            else if (p_tree.Dbh >= m_diamVariables.MinChipDbh && 
-                     p_tree.Dbh < m_diamVariables.MinSmallLogDbh)
+            else if (p_tree.Dbh >= m_scenarioHarvestMethod.MinChipDbh && 
+                     p_tree.Dbh < m_scenarioHarvestMethod.MinSmallLogDbh)
             {
                 returnType = OpCostTreeType.CT;
             }
-            else if (p_tree.Dbh >= m_diamVariables.MinSmallLogDbh &&
-                     p_tree.Dbh < m_diamVariables.MinLargeLogDbh)
+            else if (p_tree.Dbh >= m_scenarioHarvestMethod.MinSmallLogDbh &&
+                     p_tree.Dbh < m_scenarioHarvestMethod.MinLargeLogDbh)
             {
                 returnType = OpCostTreeType.SL;
             }
-            else if (p_tree.Dbh >= m_diamVariables.MinLargeLogDbh)
+            else if (p_tree.Dbh >= m_scenarioHarvestMethod.MinLargeLogDbh)
             {
                 returnType = OpCostTreeType.LL;
             }
@@ -501,8 +572,9 @@ namespace FIA_Biosum_Manager
             double _dblChipValue;
             int _intElev;
             double _dblYardingDistance;
+            string _strHarvestMethod;
 
-            string _strDebugFile;
+            string _strDebugFile = "";
 
             public tree()
 			{
@@ -619,6 +691,42 @@ namespace FIA_Biosum_Manager
                 get { return _dblYardingDistance; }
                 set { _dblYardingDistance = value; }
             }
+            public string HarvestMethod
+            {
+                get { return _strHarvestMethod; }
+                set { _strHarvestMethod = value; }
+            }
+            public string DebugFile
+            {
+                set { _strDebugFile = value; }
+            }
+
+            public bool exceedsYardingLimit(double maxCableYardingDistance, double maxHelicopterYardingDistance)
+            {
+                if (string.IsNullOrEmpty(_strHarvestMethod))
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(_strDebugFile, "tree.exceedsYardingLimit: No harvest method assigned \r\n");
+                    return false;
+                }
+                if (_dblYardingDistance < 1)
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(_strDebugFile, "tree.exceedsYardingLimit: Invalid yarding distance: " + _dblYardingDistance + " \r\n");
+                    return false;
+                }
+                if (_strHarvestMethod.Contains("Cable") && _dblYardingDistance > maxCableYardingDistance)
+                {
+                    //Cable harvest method exceeds cable yarding limit
+                    return true;
+                }
+                else if (_strHarvestMethod.Contains("Helicopter") && _dblYardingDistance > maxHelicopterYardingDistance)
+                {
+                    //Helicopter harvest method exceeds helicopter yarding limit
+                    return true;
+                }
+                else {return false;}
+            }
         }
 
         private class treeDiamGroup
@@ -687,22 +795,31 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private class diameterVariables
+        private class scenarioHarvestMethod
         {
             double _dblMinSmallLogDbh;
             double _dblMinLargeLogDbh;
             double _dblMinChipDbh;
             int _intSteepSlopePct;
             double _dblMinDbhSteepSlope;
+            double _dblMaxCableYardingDistance;
+            double _dblMaxHelicopterCableYardingDistance;
+            string _strHarvestMethodLowSlope;
+            string _strHarvestMethodSteepSlope;
 
-            public diameterVariables(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
-                                     double minDbhSteepSlope)
+            public scenarioHarvestMethod(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
+                                         double minDbhSteepSlope, double maxCableYardingDistance, double maxHelicopterYardingDistance,
+                                         string harvestMethodLowSlope, string harvestMethodSteepSlope)
             {
                 _dblMinSmallLogDbh = minSmallLogDbh;
                 _dblMinLargeLogDbh = minLargeLogDbh;
                 _dblMinChipDbh = minChipDbh;
                 _intSteepSlopePct = steepSlopePct;
                 _dblMinDbhSteepSlope = minDbhSteepSlope;
+                _dblMaxCableYardingDistance = maxCableYardingDistance;
+                _dblMaxHelicopterCableYardingDistance = maxHelicopterYardingDistance;
+                _strHarvestMethodLowSlope = harvestMethodLowSlope;
+                _strHarvestMethodSteepSlope = harvestMethodSteepSlope;
             }
 
             public double MinChipDbh
@@ -725,12 +842,58 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblMinDbhSteepSlope; }
             }
+            public double MaxCableYardingDistance
+            {
+                get { return _dblMaxCableYardingDistance; }
+            }
+            public double MaxHelicopterCableYardingDistance
+            {
+                get { return _dblMaxHelicopterCableYardingDistance; }
+            }
+            public string HarvestMethodLowSlope
+            {
+                get { return _strHarvestMethodLowSlope; }
+            }
+            public string HarvestMethodSteepSlope
+            {
+                get { return _strHarvestMethodSteepSlope; }
+            }
             // Overriding the ToString method for debugging purposes
             public override string ToString()
             {
-                return string.Format("MinChipDbh: {0}, MinSmallLogDbh: {1}, MinLargeLogDbh: {2}, SteepSlopePct: {3}, MinDbhSteepSlope: {4}]", 
-                    _dblMinChipDbh, _dblMinSmallLogDbh, _dblMinLargeLogDbh, _intSteepSlopePct, _dblMinDbhSteepSlope);
+                return string.Format("MinChipDbh: {0}, MinSmallLogDbh: {1}, MinLargeLogDbh: {2}, SteepSlopePct: {3}, MinDbhSteepSlope: {4}, " +
+                    "MaxCableYardingDistance: {5}, MaxHelicopterCableYardingDistance: {6}, HarvestMethodLowSlope: {7}, HarvestMethodSteepSlope: {8} ]",
+                    _dblMinChipDbh, _dblMinSmallLogDbh, _dblMinLargeLogDbh, _intSteepSlopePct, _dblMinDbhSteepSlope,
+                    _dblMaxCableYardingDistance, _dblMaxHelicopterCableYardingDistance, _strHarvestMethodSteepSlope, _strHarvestMethodSteepSlope);
             }
+        }
+
+        private class prescription
+        {
+            string _strRx = "";
+            string _strHarvestMethodLowSlope = "";
+            string _strHarvestMethodSteepSlope = "";
+
+            public prescription(string rx, string harvestMethodLowSlope, string harvestMethodSteepSlope)
+            {
+                _strRx = rx;
+                _strHarvestMethodLowSlope = harvestMethodLowSlope;
+                _strHarvestMethodSteepSlope = harvestMethodSteepSlope;
+            }
+
+            public string Rx
+            {
+                get { return _strRx; }
+            }
+            public string HarvestMethodLowSlope
+            {
+                get { return _strHarvestMethodLowSlope; }
+            }
+            public string HarvestMethodSteepSlope
+            {
+                get { return _strHarvestMethodSteepSlope; }
+            }
+
         }
 
         /// <summary>
