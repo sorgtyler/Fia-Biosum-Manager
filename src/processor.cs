@@ -109,7 +109,7 @@ namespace FIA_Biosum_Manager
             //Load diameter groups into reference list
             List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
             //Load species groups into reference dictionary
-            IDictionary<string, int> dictSpeciesGroups = loadSpeciesGroups(p_strVariant);
+            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant);
             //Load species diam values into reference dictionary
             IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
             //Load diameter variables into reference object
@@ -227,8 +227,11 @@ namespace FIA_Biosum_Manager
                         {
                             nextTree.SpCd = dictSpCd[nextTree.FvsTreeId];
                         }
-                        // set species group from species group dictionary
-                        nextTree.SpeciesGroup = dictSpeciesGroups[nextTree.SpCd];
+                        // set tree species fields from treeSpecies dictionary
+                        treeSpecies foundSpecies = dictTreeSpecies[nextTree.SpCd];
+                        nextTree.SpeciesGroup = foundSpecies.SpeciesGroup;
+                        nextTree.OdWgt = foundSpecies.OdWgt;
+                        nextTree.DryToGreen = foundSpecies.DryToGreen;
 
                         // set diameter group from diameter group list
                         foreach (treeDiamGroup nextGroup in listDiamGroups)
@@ -388,18 +391,18 @@ namespace FIA_Biosum_Manager
             return listDiamGroups;
         }
 
-        private IDictionary<String, int> loadSpeciesGroups(string p_strVariant)
+        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant)
         {
-            IDictionary<String, int> dictSpeciesGroups = new Dictionary<String, int>();
+            IDictionary<String, treeSpecies> dictTreeSpecies = new Dictionary<String, treeSpecies>();
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP FROM tree_species " +
+                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green FROM tree_species " +
                                 "WHERE FVS_VARIANT = '" + p_strVariant + "' " +
                                 "AND SPCD IS NOT NULL " +
                                 "AND USER_SPC_GROUP IS NOT NULL " +
-                                "GROUP BY SPCD, USER_SPC_GROUP";
+                                "GROUP BY SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -407,7 +410,10 @@ namespace FIA_Biosum_Manager
                     {
                         string strSpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["SPCD"]).Trim();
                         int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["USER_SPC_GROUP"]);
-                        dictSpeciesGroups.Add(strSpCd, intSpcGroup);
+                        double dblOdWgt = Convert.ToDouble(m_oAdo.m_OleDbDataReader["OD_WGT"]);
+                        double dblDryToGreen = Convert.ToDouble(m_oAdo.m_OleDbDataReader["Dry_to_Green"]);
+                        treeSpecies nextTreeSpecies = new treeSpecies(strSpCd, intSpcGroup, dblOdWgt, dblDryToGreen);
+                        dictTreeSpecies.Add(strSpCd, nextTreeSpecies);
                     }
                 }
             }
@@ -415,7 +421,7 @@ namespace FIA_Biosum_Manager
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             m_oAdo = null;
 
-            return dictSpeciesGroups;
+            return dictTreeSpecies;
         }
 
         ///<summary>
@@ -592,6 +598,8 @@ namespace FIA_Biosum_Manager
             int _intElev;
             double _dblYardingDistance;
             string _strHarvestMethod;
+            double _dblOdWgt;
+            double _dblDryToGreen;
 
             string _strDebugFile = "";
 
@@ -709,6 +717,16 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblYardingDistance; }
                 set { _dblYardingDistance = value; }
+            }
+            public double OdWgt
+            {
+                get { return _dblOdWgt; }
+                set { _dblOdWgt = value; }
+            }
+            public double DryToGreen
+            {
+                get { return _dblDryToGreen; }
+                set { _dblDryToGreen = value; }
             }
             public string HarvestMethod
             {
@@ -973,6 +991,39 @@ namespace FIA_Biosum_Manager
             public string HarvestSystem
             {
                 get { return _strHarvestSystem; }
+            }
+        }
+
+        private class treeSpecies
+        {
+            string _strSpcd = "";
+            int _intSpeciesGroup;
+            double _dblOdWgt;
+            double _dblDryToGreen;
+
+            public treeSpecies(string spCd, int speciesGroup, double odWgt, double dryToGreen)
+            {
+                _strSpcd = spCd;
+                _intSpeciesGroup = speciesGroup;
+                _dblOdWgt = odWgt;
+                _dblDryToGreen = dryToGreen;
+            }
+
+            public string Spcd
+            {
+                get { return _strSpcd; }
+            }
+            public int SpeciesGroup
+            {
+                get { return _intSpeciesGroup; }
+            }
+            public double OdWgt
+            {
+                get { return _dblOdWgt; }
+            }
+            public double DryToGreen
+            {
+                get { return _dblDryToGreen; }
             }
         }
 
