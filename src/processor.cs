@@ -15,7 +15,8 @@ namespace FIA_Biosum_Manager
         //@ToDo: this will come from the UI
         private string m_strScenarioId = "scenario1";
         private string m_strOpcostTableName = "OPCOST_INPUT_NEW";
-        private string m_strDebugFile = "";
+        private string m_strDebugFile =
+            "";
         private ado_data_access m_oAdo;
         private List<tree> m_trees;
         private scenarioHarvestMethod m_scenarioHarvestMethod;
@@ -270,6 +271,7 @@ namespace FIA_Biosum_Manager
 
                         //Assign OpCostTreeType
                         nextTree.TreeType = chooseOpCostTreeType(nextTree);
+                        calculateVolumeAndWeight(nextTree);
                         //Dump OpCostTreeType in .csv format for validation
                         //string strLogEntry = nextTree.Dbh + ", " + nextTree.Slope + ", " + nextTree.IsNonCommercial +
                         //    ", " + nextTree.SpeciesGroup + ", " + nextTree.TreeType.ToString();
@@ -331,6 +333,17 @@ namespace FIA_Biosum_Manager
                                                     nextTree.HarvestMethod);
                         dictOpcostInput.Add(strStand, nextInput);
                     }
+                    // Metrics for small log trees
+                    if (nextTree.TreeType == OpCostTreeType.SL)
+                    {
+                        nextInput.TotalSmLogTpa = nextInput.TotalSmLogTpa + nextTree.Tpa;
+                        nextInput.TotalSmLogTreeBiomass = nextInput.TotalSmLogTreeBiomass + nextTree.DryBiot;
+                        nextInput.TotalSmLogBoleBiomass = nextInput.TotalSmLogBoleBiomass + nextTree.DryBiom;
+                        nextInput.TotalSmLogVolCf = nextInput.TotalSmLogVolCf + nextTree.OpCostMerchVolCf;
+                        nextInput.TotalSmLogWtGt = nextInput.TotalSmLogWtGt + nextTree.OpCostMerchWtGt;
+                        if (Convert.ToInt32(nextTree.SpCd) > 299)
+                            nextInput.TotalSmLogHwdVolCf = nextInput.TotalSmLogHwdVolCf + nextTree.OpCostMerchVolCf;
+                    }
                 }
                 //System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
 
@@ -341,13 +354,32 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Begin writing opcost input table - " + System.DateTime.Now.ToString() + "\r\n");
                 long lngCount =0;
                 foreach (string key in dictOpcostInput.Keys)
-                {
+                {                    
                     opcostInput nextStand = dictOpcostInput[key];
+
+                    // Some fields we wait to calculate until we have the totals
+                    double dblSmLogResidueFraction = 0;
+                    if (nextStand.TotalSmLogBoleBiomass > 0)
+                        { dblSmLogResidueFraction = Math.Round((nextStand.TotalSmLogTreeBiomass - nextStand.TotalSmLogBoleBiomass) / nextStand.TotalSmLogBoleBiomass * 100); }
+                    double dblSmLogAvgVolume = 0;
+                    if (nextStand.TotalSmLogTpa > 0)
+                        { dblSmLogAvgVolume = nextStand.TotalSmLogVolCf / nextStand.TotalSmLogTpa; }
+                    double dblSmLogAvgDensity = 0;
+                    double dblSmLogHwdProp = 0;
+                    if (nextStand.TotalSmLogVolCf > 0)
+                    { 
+                        dblSmLogAvgDensity = nextStand.TotalSmLogWtGt * 2000 / nextStand.TotalSmLogVolCf;
+                        dblSmLogHwdProp = nextStand.TotalSmLogHwdVolCf / nextStand.TotalSmLogVolCf; 
+                    }
+  
                     m_oAdo.m_strSQL = "INSERT INTO " + m_strOpcostTableName + " " +
                     "(Stand, [Percent Slope], [One-way Yarding Distance], YearCostCalc, " +
-                    "[Project Elevation], [Harvesting System]) " +
+                    "[Project Elevation], [Harvesting System], [Small log trees per acre], [Small log trees residue fraction], " +
+                    "[Small log trees average volume(ft3)], [Small log trees average density(lbs/ft3)], " +
+                    "[Small log trees hardwood proportion], RxPackage_Rx_RxCycle) " +
                     "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
-                    nextStand.Elev + ", '" + nextStand.HarvestSystem + "' )";
+                    nextStand.Elev + ", '" + nextStand.HarvestSystem + "', " + nextStand.TotalSmLogTpa + ", " + dblSmLogResidueFraction + ", " +
+                    dblSmLogAvgVolume + ", " + dblSmLogAvgDensity + ", " + dblSmLogHwdProp + ",'" + nextStand.RxPackageRxRxCycle + "' )";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
@@ -561,6 +593,15 @@ namespace FIA_Biosum_Manager
             return returnType;
         }
 
+        private void calculateVolumeAndWeight(tree p_tree)
+        {
+            p_tree.MerchVolCf = p_tree.VolCfNet * p_tree.Tpa;
+            p_tree.OpCostMerchVolCf = p_tree.MerchVolCf;
+            if (p_tree.DryToGreen != 0)
+            { p_tree.MerchWtGt = p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000; }
+            p_tree.OpCostMerchWtGt = p_tree.MerchWtGt;
+        }
+
         enum OpCostTreeType
         {
             None = 0,
@@ -600,6 +641,10 @@ namespace FIA_Biosum_Manager
             string _strHarvestMethod;
             double _dblOdWgt;
             double _dblDryToGreen;
+            double _dblMerchVolCf;
+            double _dblOpCostMerchVolCf;
+            double _dblMerchWtGt;
+            double _dblOpCostMerchWtGt;
 
             string _strDebugFile = "";
 
@@ -727,6 +772,26 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblDryToGreen; }
                 set { _dblDryToGreen = value; }
+            }
+            public double MerchVolCf
+            {
+                get { return _dblMerchVolCf; }
+                set { _dblMerchVolCf = value; }
+            }
+            public double OpCostMerchVolCf
+            {
+                get { return _dblOpCostMerchVolCf; }
+                set { _dblOpCostMerchVolCf = value; }
+            }
+            public double MerchWtGt
+            {
+                get { return _dblMerchWtGt; }
+                set { _dblMerchWtGt = value; }
+            }
+            public double OpCostMerchWtGt
+            {
+                get { return _dblOpCostMerchWtGt; }
+                set { _dblOpCostMerchWtGt = value; }
             }
             public string HarvestMethod
             {
@@ -949,6 +1014,12 @@ namespace FIA_Biosum_Manager
             double _dblYardingDistance;
             int _intElev;
             string _strHarvestSystem;
+            double _dblTotalSmLogTpa;
+            double _dblTotalSmLogTreeBiomass;
+            double _dblTotalSmLogBoleBiomass;
+            double _dblTotalSmLogVolCf;
+            double _dblTotalSmLogWtGt;
+            double _dblTotalSmLogHwdVolCf;
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
                                string rxYear, double yardingDistance, int elev, string harvestSystem)
@@ -991,6 +1062,36 @@ namespace FIA_Biosum_Manager
             public string HarvestSystem
             {
                 get { return _strHarvestSystem; }
+            }
+            public double TotalSmLogTpa
+            {
+                set { _dblTotalSmLogTpa = value; }
+                get { return _dblTotalSmLogTpa; }
+            }
+            public double TotalSmLogBoleBiomass
+            {
+                set { _dblTotalSmLogBoleBiomass = value; }
+                get { return _dblTotalSmLogBoleBiomass; }
+            }
+            public double TotalSmLogTreeBiomass
+            {
+                set { _dblTotalSmLogTreeBiomass = value; }
+                get { return _dblTotalSmLogTreeBiomass; }
+            }
+            public double TotalSmLogVolCf
+            {
+                set { _dblTotalSmLogVolCf = value; }
+                get { return _dblTotalSmLogVolCf; }
+            }
+            public double TotalSmLogWtGt
+            {
+                set { _dblTotalSmLogWtGt = value; }
+                get { return _dblTotalSmLogWtGt; }
+            }
+            public double TotalSmLogHwdVolCf
+            {
+                set { _dblTotalSmLogHwdVolCf = value; }
+                get { return _dblTotalSmLogHwdVolCf; }
             }
         }
 
