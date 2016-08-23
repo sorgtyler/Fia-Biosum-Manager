@@ -4604,8 +4604,9 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("SET RFILE=" + uc_processor_opcost_settings.g_strRDirectory + "\r\n");
             oTextStreamWriter.Write("SET OPCOSTRFILE=" + uc_processor_opcost_settings.g_strOPCOSTDirectory + "\r\n");
             oTextStreamWriter.Write("SET INPUTFILE=" + m_oQueries.m_strTempDbFile + "\r\n");
+            oTextStreamWriter.Write("SET ERRORFILE=" + frmMain.g_oEnv.strTempDir + "\\opcost_error_log.txt  \r\n");
             oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
-            oTextStreamWriter.Write("\"" + "%RFILE%" + "\"" + " " + "\"" + "%OPCOSTRFILE%" + "\"" + " " + "\"" + "%INPUTFILE%" + "\"" + "\r\n\r\n");
+            oTextStreamWriter.Write("\"" + "%RFILE%" + "\"" + " " + "\"" + "%OPCOSTRFILE%" + "\"" + " " + "\"" + "%INPUTFILE%" + "\"" + " 2> " + "\"" + "%ERRORFILE%" + "\"" + "\r\n\r\n");
             oTextStreamWriter.Write("EXIT\r\n");
             oTextStreamWriter.Close();
             oTextFileStream.Close();
