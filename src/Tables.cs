@@ -3159,7 +3159,6 @@ namespace FIA_Biosum_Manager
                              " [Residue fraction for chip trees] single," +
                             " [Chip trees average volume(ft3)] single," +
                             " [CHIPS Average Density (lbs/ft3)] single," +
-                            " [CHIPS Average Weight (tons)] single, " +
                             " [CHIPS Hwd Proportion] single," +
                             " [Small log trees per acre] single," +
                             " [Small log trees residue fraction] single," +
