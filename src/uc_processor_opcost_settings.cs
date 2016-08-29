@@ -14,6 +14,10 @@ namespace FIA_Biosum_Manager
         public static string g_strRDirectory = "";
         public static string g_strOPCOSTDirectory = "";
         private frmDialog _frmDialog = null;
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultProcessorXPSFile;
+
         public uc_processor_opcost_settings()
         {
             InitializeComponent();
@@ -32,6 +36,8 @@ namespace FIA_Biosum_Manager
 
             if (g_strRDirectory.Trim().Length > 0 &&
                 System.IO.File.Exists(g_strRDirectory)==true) txtRdir.Text = g_strRDirectory;
+
+            this.m_oEnv = new env();
         }
 
         private void btnRdir_Click(object sender, EventArgs e)
@@ -126,6 +132,15 @@ namespace FIA_Biosum_Manager
         private void txtOpcost_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete) e.SuppressKeyPress = true;
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "OPCOSTSETTINGS", "OPCOSTSETTINGS" });
         }
     }
 }

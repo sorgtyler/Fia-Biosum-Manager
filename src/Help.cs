@@ -33,6 +33,7 @@ namespace FIA_Biosum_Manager
         private env _env = null;
 
         static public string DefaultDatabaseXPSFile { get { return "DATABASE_Help.xps"; } }
+        static public string DefaultProcessorXPSFile { get { return "PROCESSOR_Help.xps"; } }
         
         //call default constructor after initializing variables
         public Help(string p_strXPSFile, env p_env)
