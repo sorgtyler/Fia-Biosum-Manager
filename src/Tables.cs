@@ -3101,6 +3101,7 @@ namespace FIA_Biosum_Manager
                     "merch_to_chipbin_YN CHAR(1) DEFAULT 'N'," +
                     "bc_vol_cf DOUBLE," +
                     "bc_wt_gt DOUBLE," +
+                    "stand_residue_wt_gt DOUBLE," +
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
 			}

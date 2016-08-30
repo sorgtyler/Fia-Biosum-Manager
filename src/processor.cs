@@ -15,6 +15,7 @@ namespace FIA_Biosum_Manager
         //@ToDo: this will come from the UI
         private string m_strScenarioId = "scenario1";
         private string m_strOpcostTableName = "OPCOST_INPUT_NEW";
+        private string m_strTvvTableName = "tree_vol_val_by_species_diam_groups_new";
         private string m_strDebugFile =
             "";
         private ado_data_access m_oAdo;
@@ -198,8 +199,7 @@ namespace FIA_Biosum_Manager
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
                         newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
-                        if (! newTree.exceedsYardingLimit(m_scenarioHarvestMethod.MaxCableYardingDistance, m_scenarioHarvestMethod.MaxHelicopterCableYardingDistance))
-                        { m_trees.Add(newTree); }
+                        m_trees.Add(newTree);
                     }
                 }
 
@@ -273,6 +273,7 @@ namespace FIA_Biosum_Manager
                         //Assign OpCostTreeType
                         nextTree.TreeType = chooseOpCostTreeType(nextTree);
                         calculateVolumeAndWeight(nextTree);
+
                         //Dump OpCostTreeType in .csv format for validation
                         //string strLogEntry = nextTree.Dbh + ", " + nextTree.Slope + ", " + nextTree.IsNonCommercial +
                         //    ", " + nextTree.SpeciesGroup + ", " + nextTree.TreeType.ToString();
@@ -309,8 +310,8 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             
             // drop opcost input table if it exists
-            if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, m_strOpcostTableName) == true)
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + m_strOpcostTableName);
+            //if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, m_strOpcostTableName) == true)
+            //    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + m_strOpcostTableName);
 
             if (m_oAdo.m_intError == 0)
             {
@@ -325,6 +326,11 @@ namespace FIA_Biosum_Manager
                 IDictionary<string, opcostInput> dictOpcostInput = new Dictionary<string, opcostInput>();
                 foreach (tree nextTree in m_trees)
                 {
+
+                    // if the tree yarding distance exceeds the user maximum, don't process it
+                    if (nextTree.exceedsYardingLimit(m_scenarioHarvestMethod.MaxCableYardingDistance, m_scenarioHarvestMethod.MaxHelicopterCableYardingDistance))
+                    { break; }
+
                     opcostInput nextInput = null;
                     string strStand = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
                     bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
@@ -335,7 +341,7 @@ namespace FIA_Biosum_Manager
                                                     nextTree.HarvestMethod);
                         dictOpcostInput.Add(strStand, nextInput);
                     }
-
+                    
                     // Metrics for brush cut trees
                     if (nextTree.TreeType == OpCostTreeType.BC)
                     {
@@ -474,6 +480,70 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
         }
 
+        private void updateTreeVolVal()
+        {
+            if (m_trees.Count < 1)
+            {
+                System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n The tree vol val cannot be created",
+                    "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            // create connection to database
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+
+            if (m_oAdo.m_intError == 0)
+            {
+
+                // create tree vol val table
+                frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(m_oAdo, m_oAdo.m_OleDbConnection, m_strTvvTableName);
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolVal: Read trees into tree vol val - " + System.DateTime.Now.ToString() + "\r\n");
+
+                string strSeparator = "_";
+                IDictionary<string, treeVolValInput> dictTvvInput = new Dictionary<string, treeVolValInput>();
+                foreach (tree nextTree in m_trees)
+                {
+                    if (nextTree.CondId.Equals("1200541010506100965060001"))
+                    { Console.Out.Write(nextTree.Dbh); }
+
+                    treeVolValInput nextInput = null;
+                    string strKey = nextTree.CondId + strSeparator + nextTree.RxCycle + strSeparator + nextTree.DiamGroup + strSeparator + nextTree.SpeciesGroup;
+                    bool blnFound = dictTvvInput.TryGetValue(strKey, out nextInput);
+                    if (!blnFound)
+                    {
+                        nextInput = new treeVolValInput(nextTree.CondId, nextTree.RxCycle, nextTree.RxPackage, nextTree.Rx,
+                            nextTree.SpeciesGroup, nextTree.DiamGroup);
+                        dictTvvInput.Add(strKey, nextInput);
+                    }
+                }
+                
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolVal: Finished reading trees - " + System.DateTime.Now.ToString() + "\r\n");
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolVal: Begin writing tree vol val table - " + System.DateTime.Now.ToString() + "\r\n");
+                long lngCount =0;
+                foreach (string key in dictTvvInput.Keys)
+                {
+                    treeVolValInput nextStand = dictTvvInput[key];
+                    m_oAdo.m_strSQL = "INSERT INTO " + m_strTvvTableName + " " +
+                    "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group)" +
+                    "VALUES ('" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" + nextStand.Rx + "', '" + 
+                    nextStand.RxCycle + "', " + nextStand.SpeciesGroup + ", " + nextStand.DiamGroup +
+                    " )";
+
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    if (m_oAdo.m_intError != 0) break;
+                    lngCount++;
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "END createTreeVolVal INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
+                }
+            }
+        }
         private List<treeDiamGroup> loadTreeDiamGroups()
         {
             List<treeDiamGroup> listDiamGroups = new List<treeDiamGroup>();
@@ -1342,6 +1412,58 @@ namespace FIA_Biosum_Manager
             {
                 set { _dblTotalLgLogHwdVolCf = value; }
                 get { return _dblTotalLgLogHwdVolCf; }
+            }
+        }
+
+        /// <summary>
+        /// An treeVolValInput object represents a line in the tree vol val file
+        /// The metrics are aggregated by conditionId
+        /// </summary>
+        private class treeVolValInput
+        {
+            string _strCondId = "";
+            string _strRxCycle = "";
+            string _strRxPackage = "";
+            string _strRx = "";
+            int _intSpeciesGroup;
+            int _intDiamGroup;
+
+            public treeVolValInput(string condId, string rxCycle, string rxPackage, string rx,
+                                    int speciesGroup, int diamGroup)
+            {
+                _strCondId = condId;
+                _strRxCycle = rxCycle;
+                _strRxPackage = rxPackage;
+                _strRx = rx;
+                _intSpeciesGroup = speciesGroup;
+                _intDiamGroup = diamGroup;
+            }
+            
+            public string CondId
+            {
+                get { return _strCondId; }
+            }
+            public string Rx
+            {
+                get { return _strRx; }
+            }
+            public string RxCycle
+            {
+                get { return _strRxCycle; }
+            }
+            public string RxPackage
+            {
+                get { return _strRxPackage; }
+            }
+            public int SpeciesGroup
+            {
+                get { return _intSpeciesGroup; }
+                set { _intSpeciesGroup = value; }
+            }
+            public int DiamGroup
+            {
+                get { return _intDiamGroup; }
+                set { _intDiamGroup = value; }
             }
         }
 
