@@ -326,63 +326,61 @@ namespace FIA_Biosum_Manager
                 IDictionary<string, opcostInput> dictOpcostInput = new Dictionary<string, opcostInput>();
                 foreach (tree nextTree in m_trees)
                 {
-
                     // if the tree yarding distance exceeds the user maximum, don't process it
-                    if (nextTree.exceedsYardingLimit(m_scenarioHarvestMethod.MaxCableYardingDistance, m_scenarioHarvestMethod.MaxHelicopterCableYardingDistance))
-                    { break; }
-
-                    opcostInput nextInput = null;
-                    string strStand = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
-                    bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
-                    if (!blnFound)
+                    if (!nextTree.exceedsYardingLimit(m_scenarioHarvestMethod.MaxCableYardingDistance, m_scenarioHarvestMethod.MaxHelicopterCableYardingDistance))
                     {
-                        nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
+                        opcostInput nextInput = null;
+                        string strStand = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
+                        bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
+                        if (!blnFound)
+                        {
+                            nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
                                                     nextTree.Rx, nextTree.RxYear, nextTree.YardingDistance, nextTree.Elevation,
                                                     nextTree.HarvestMethod);
-                        dictOpcostInput.Add(strStand, nextInput);
-                    }
+                            dictOpcostInput.Add(strStand, nextInput);
+                        }
                     
-                    // Metrics for brush cut trees
-                    if (nextTree.TreeType == OpCostTreeType.BC)
-                    {
-                        nextInput.TotalBcTpa = nextInput.TotalBcTpa + nextTree.Tpa;
-                        nextInput.TotalBcVolCf = nextInput.TotalBcVolCf + nextTree.OpCostBrushCutVolCf;
-                    }
-                    // Metrics for chip trees
-                    else if (nextTree.TreeType == OpCostTreeType.CT)
-                    {
-                        nextInput.TotalCtTpa = nextInput.TotalCtTpa + nextTree.Tpa;
-                        nextInput.TotalCtTreeBiomass = nextInput.TotalCtTreeBiomass + nextTree.DryBiot;
-                        nextInput.TotalCtBoleBiomass = nextInput.TotalCtBoleBiomass + nextTree.DryBiom;
-                        nextInput.TotalCtVolCf = nextInput.TotalCtVolCf + nextTree.OpCostChipVolCf;
-                        nextInput.TotalCtWtGt = nextInput.TotalCtWtGt + nextTree.OpCostChipWtGt;
-                        if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                            nextInput.TotalCtHwdVolCf = nextInput.TotalCtHwdVolCf + nextTree.OpCostChipVolCf;
+                        // Metrics for brush cut trees
+                        if (nextTree.TreeType == OpCostTreeType.BC)
+                        {
+                            nextInput.TotalBcTpa = nextInput.TotalBcTpa + nextTree.Tpa;
+                            nextInput.TotalBcVolCf = nextInput.TotalBcVolCf + nextTree.OpCostBrushCutVolCf;
+                        }
+                        // Metrics for chip trees
+                        else if (nextTree.TreeType == OpCostTreeType.CT)
+                        {
+                            nextInput.TotalCtTpa = nextInput.TotalCtTpa + nextTree.Tpa;
+                            nextInput.TotalCtTreeBiomass = nextInput.TotalCtTreeBiomass + nextTree.DryBiot;
+                            nextInput.TotalCtBoleBiomass = nextInput.TotalCtBoleBiomass + nextTree.DryBiom;
+                            nextInput.TotalCtVolCf = nextInput.TotalCtVolCf + nextTree.OpCostChipVolCf;
+                            nextInput.TotalCtWtGt = nextInput.TotalCtWtGt + nextTree.OpCostChipWtGt;
+                            if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
+                                nextInput.TotalCtHwdVolCf = nextInput.TotalCtHwdVolCf + nextTree.OpCostChipVolCf;
 
+                        }
+                        // Metrics for small log trees
+                        else if (nextTree.TreeType == OpCostTreeType.SL)
+                        {
+                            nextInput.TotalSmLogTpa = nextInput.TotalSmLogTpa + nextTree.Tpa;
+                            nextInput.TotalSmLogTreeBiomass = nextInput.TotalSmLogTreeBiomass + nextTree.DryBiot;
+                            nextInput.TotalSmLogBoleBiomass = nextInput.TotalSmLogBoleBiomass + nextTree.DryBiom;
+                            nextInput.TotalSmLogVolCf = nextInput.TotalSmLogVolCf + nextTree.OpCostMerchVolCf;
+                            nextInput.TotalSmLogWtGt = nextInput.TotalSmLogWtGt + nextTree.OpCostMerchWtGt;
+                            if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
+                                nextInput.TotalSmLogHwdVolCf = nextInput.TotalSmLogHwdVolCf + nextTree.OpCostMerchVolCf;
+                        }
+                        // Metrics for small log trees
+                        else if (nextTree.TreeType == OpCostTreeType.LL)
+                        {
+                            nextInput.TotalLgLogTpa = nextInput.TotalLgLogTpa + nextTree.Tpa;
+                            nextInput.TotalLgLogTreeBiomass = nextInput.TotalLgLogTreeBiomass + nextTree.DryBiot;
+                            nextInput.TotalLgLogBoleBiomass = nextInput.TotalLgLogBoleBiomass + nextTree.DryBiom;
+                            nextInput.TotalLgLogVolCf = nextInput.TotalLgLogVolCf + nextTree.OpCostMerchVolCf;
+                            nextInput.TotalLgLogWtGt = nextInput.TotalLgLogWtGt + nextTree.OpCostMerchWtGt;
+                            if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
+                                nextInput.TotalLgLogHwdVolCf = nextInput.TotalLgLogHwdVolCf + nextTree.OpCostMerchVolCf;
+                        }
                     }
-                    // Metrics for small log trees
-                    else if (nextTree.TreeType == OpCostTreeType.SL)
-                    {
-                        nextInput.TotalSmLogTpa = nextInput.TotalSmLogTpa + nextTree.Tpa;
-                        nextInput.TotalSmLogTreeBiomass = nextInput.TotalSmLogTreeBiomass + nextTree.DryBiot;
-                        nextInput.TotalSmLogBoleBiomass = nextInput.TotalSmLogBoleBiomass + nextTree.DryBiom;
-                        nextInput.TotalSmLogVolCf = nextInput.TotalSmLogVolCf + nextTree.OpCostMerchVolCf;
-                        nextInput.TotalSmLogWtGt = nextInput.TotalSmLogWtGt + nextTree.OpCostMerchWtGt;
-                        if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                            nextInput.TotalSmLogHwdVolCf = nextInput.TotalSmLogHwdVolCf + nextTree.OpCostMerchVolCf;
-                    }
-                    // Metrics for small log trees
-                    else if (nextTree.TreeType == OpCostTreeType.LL)
-                    {
-                        nextInput.TotalLgLogTpa = nextInput.TotalLgLogTpa + nextTree.Tpa;
-                        nextInput.TotalLgLogTreeBiomass = nextInput.TotalLgLogTreeBiomass + nextTree.DryBiot;
-                        nextInput.TotalLgLogBoleBiomass = nextInput.TotalLgLogBoleBiomass + nextTree.DryBiom;
-                        nextInput.TotalLgLogVolCf = nextInput.TotalLgLogVolCf + nextTree.OpCostMerchVolCf;
-                        nextInput.TotalLgLogWtGt = nextInput.TotalLgLogWtGt + nextTree.OpCostMerchWtGt;
-                        if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                            nextInput.TotalLgLogHwdVolCf = nextInput.TotalLgLogHwdVolCf + nextTree.OpCostMerchVolCf;
-                    }
-
                 }
                 //System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
 
@@ -399,13 +397,14 @@ namespace FIA_Biosum_Manager
                     // Some fields we wait to calculate until we have the totals
                     // *** BRUSH CUT ***
                     double dblBcAvgVolume = 0;
+
                     if (nextStand.TotalBcTpa > 0)
                         { dblBcAvgVolume = nextStand.TotalBcVolCf / nextStand.TotalBcTpa; }
 
                     // *** CHIP TREES ***
                     double dblCtResidueFraction = 0;
                     if (nextStand.TotalCtBoleBiomass > 0)
-                        { dblCtResidueFraction = Math.Round((nextStand.TotalCtTreeBiomass - nextStand.TotalCtBoleBiomass) / nextStand.TotalCtBoleBiomass * 100); }
+                        { dblCtResidueFraction = Math.Round((nextStand.TotalCtTreeBiomass - nextStand.TotalCtBoleBiomass) / nextStand.TotalCtBoleBiomass) * 100; }
                     double dblCtAvgVolume = 0;
                     if (nextStand.TotalCtTpa > 0)
                         { dblCtAvgVolume = nextStand.TotalCtVolCf / nextStand.TotalCtTpa; }
@@ -421,7 +420,7 @@ namespace FIA_Biosum_Manager
                     // *** SMALL LOGS ***
                     double dblSmLogResidueFraction = 0;
                     if (nextStand.TotalSmLogBoleBiomass > 0)
-                        { dblSmLogResidueFraction = Math.Round((nextStand.TotalSmLogTreeBiomass - nextStand.TotalSmLogBoleBiomass) / nextStand.TotalSmLogBoleBiomass * 100); }
+                        { dblSmLogResidueFraction = Math.Round((nextStand.TotalSmLogTreeBiomass - nextStand.TotalSmLogBoleBiomass) / nextStand.TotalSmLogBoleBiomass) * 100; }
                     double dblSmLogAvgVolume = 0;
                     if (nextStand.TotalSmLogTpa > 0)
                         { dblSmLogAvgVolume = nextStand.TotalSmLogVolCf / nextStand.TotalSmLogTpa; }
@@ -436,7 +435,7 @@ namespace FIA_Biosum_Manager
                     // *** LARGE LOGS ***
                     double dblLgLogResidueFraction = 0;
                     if (nextStand.TotalLgLogBoleBiomass > 0)
-                    { dblLgLogResidueFraction = Math.Round((nextStand.TotalLgLogTreeBiomass - nextStand.TotalLgLogBoleBiomass) / nextStand.TotalLgLogBoleBiomass * 100); }
+                    { dblLgLogResidueFraction = Math.Round((nextStand.TotalLgLogTreeBiomass - nextStand.TotalLgLogBoleBiomass) / nextStand.TotalLgLogBoleBiomass) * 100; }
                     double dblLgLogAvgVolume = 0;
                     if (nextStand.TotalLgLogTpa > 0)
                     { dblLgLogAvgVolume = nextStand.TotalLgLogVolCf / nextStand.TotalLgLogTpa; }
@@ -480,7 +479,7 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
         }
 
-        private void updateTreeVolVal()
+        private void updateTreeVolVal(string strDateTimeCreated)
         {
             if (m_trees.Count < 1)
             {
@@ -489,13 +488,15 @@ namespace FIA_Biosum_Manager
                 return;
             }
 
+            // load escalators; We will need them later
+            escalators p_escalators = loadEscalators(m_strScenarioId);
+            
             // create connection to database
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
 
             if (m_oAdo.m_intError == 0)
-            {
-
+            {                
                 // create tree vol val table
                 frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(m_oAdo, m_oAdo.m_OleDbConnection, m_strTvvTableName);
 
@@ -506,16 +507,27 @@ namespace FIA_Biosum_Manager
                 IDictionary<string, treeVolValInput> dictTvvInput = new Dictionary<string, treeVolValInput>();
                 foreach (tree nextTree in m_trees)
                 {
-                    if (nextTree.CondId.Equals("1200541010506100965060001"))
-                    { Console.Out.Write(nextTree.Dbh); }
-
                     treeVolValInput nextInput = null;
                     string strKey = nextTree.CondId + strSeparator + nextTree.RxCycle + strSeparator + nextTree.DiamGroup + strSeparator + nextTree.SpeciesGroup;
                     bool blnFound = dictTvvInput.TryGetValue(strKey, out nextInput);
                     if (!blnFound)
                     {
+                        //calculate chipMktValPgt; Apply escalators according to rxCycle
+                        double chipMktValPgt = nextTree.ChipValue;
+                        switch (nextTree.RxCycle)
+                        {
+                            case "2":
+                                chipMktValPgt = chipMktValPgt * p_escalators.EnergyWoodRevCycle2;
+                                break;
+                            case "3":
+                                chipMktValPgt = chipMktValPgt * p_escalators.EnergyWoodRevCycle3;
+                                break;
+                            case "4":
+                                chipMktValPgt = chipMktValPgt * p_escalators.EnergyWoodRevCycle4;
+                                break;
+                        }
                         nextInput = new treeVolValInput(nextTree.CondId, nextTree.RxCycle, nextTree.RxPackage, nextTree.Rx,
-                            nextTree.SpeciesGroup, nextTree.DiamGroup);
+                            nextTree.SpeciesGroup, nextTree.DiamGroup, nextTree.IsNonCommercial, chipMktValPgt);
                         dictTvvInput.Add(strKey, nextInput);
                     }
                 }
@@ -530,10 +542,11 @@ namespace FIA_Biosum_Manager
                 {
                     treeVolValInput nextStand = dictTvvInput[key];
                     m_oAdo.m_strSQL = "INSERT INTO " + m_strTvvTableName + " " +
-                    "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group)" +
+                    "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group, " +
+                    "merch_to_chipbin_YN, chip_mkt_val_pgt, DateTimeCreated, place_holder)" +
                     "VALUES ('" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" + nextStand.Rx + "', '" + 
                     nextStand.RxCycle + "', " + nextStand.SpeciesGroup + ", " + nextStand.DiamGroup +
-                    " )";
+                    ", '" + nextStand.MerchToChip + "', " + nextStand.ChipMktValPgt + ", '" + strDateTimeCreated + "', 'N')";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
@@ -706,6 +719,35 @@ namespace FIA_Biosum_Manager
 
             return returnVariables;
         }
+
+        private escalators loadEscalators(string p_scenario)
+        {
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            escalators returnEscalators = null;
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT * FROM scenario_cost_revenue_escalators " +
+                                "WHERE scenario_id = '" + p_scenario + "'";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    // We should only have one record
+                    m_oAdo.m_OleDbDataReader.Read();
+                    double dblEnergyWoodRevCycle2 = Convert.ToDouble(m_oAdo.m_OleDbDataReader["EscalatorEnergyWoodRevenue_Cycle2"]);
+                    double dblEnergyWoodRevCycle3 = Convert.ToDouble(m_oAdo.m_OleDbDataReader["EscalatorEnergyWoodRevenue_Cycle3"]);
+                    double dblEnergyWoodRevCycle4 = Convert.ToDouble(m_oAdo.m_OleDbDataReader["EscalatorEnergyWoodRevenue_Cycle4"]);
+
+                    returnEscalators = new escalators(dblEnergyWoodRevCycle2, dblEnergyWoodRevCycle3, dblEnergyWoodRevCycle4);
+                }
+            }
+
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return returnEscalators;
+        }
         
         private OpCostTreeType chooseOpCostTreeType(tree p_tree)
         {
@@ -746,46 +788,37 @@ namespace FIA_Biosum_Manager
         {
             if (p_tree.TreeType == OpCostTreeType.LL || p_tree.TreeType == OpCostTreeType.SL)
             {
-                p_tree.MerchVolCf = p_tree.VolCfNet * p_tree.Tpa;
-                p_tree.OpCostMerchVolCf = p_tree.MerchVolCf;
+                p_tree.OpCostMerchVolCf = p_tree.VolCfNet * p_tree.Tpa;
                 if (p_tree.DryToGreen != 0)
-                { p_tree.MerchWtGt = p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000; }
-                p_tree.OpCostMerchWtGt = p_tree.MerchWtGt;
+                    { p_tree.OpCostMerchWtGt = p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000; }
             }
             else if (p_tree.TreeType == OpCostTreeType.BC)
             {
-                p_tree.BrushCutVolCf = p_tree.DryBiot * p_tree.Tpa / p_tree.OdWgt;
-                p_tree.BrushCutWtGt = (p_tree.DryBiot * p_tree.Tpa / p_tree.DryToGreen) / 2000;
-                p_tree.OpCostBrushCutVolCf = p_tree.BrushCutVolCf;
+                //p_tree.BrushCutWtGt = (p_tree.DryBiot * p_tree.Tpa / p_tree.DryToGreen) / 2000;
+                p_tree.OpCostBrushCutVolCf = p_tree.DryBiot * p_tree.Tpa / p_tree.OdWgt;
             }
             else if (p_tree.TreeType == OpCostTreeType.CT)
             {
+                // For opCost chip trees we just send bole volume
+                // OpCost is expects bole volumes/weights only for chip trees.
                 if (p_tree.VolCfNet > 0)
                 {
-                    p_tree.ChipVolCf = (p_tree.VolCfNet * p_tree.Tpa) + (((p_tree.DryBiot - p_tree.DryBiom) * p_tree.Tpa) / p_tree.OdWgt);
+                    p_tree.OpCostChipVolCf = p_tree.VolCfNet * p_tree.Tpa;
                 }
                 else
                 {
-                    p_tree.ChipVolCf = (p_tree.DryBiot * p_tree.Tpa) / p_tree.OdWgt;
+                    p_tree.OpCostChipVolCf = p_tree.VolTsGrs * p_tree.Tpa;
                 }
-                p_tree.OpCostChipVolCf = p_tree.ChipVolCf;
 
-                //chip weight is a sum of the bole and tops
-                //first the bole
-                double dblChipWtGtBole = 0;
+                // Just sending weight of bole as well for chips
                 if (p_tree.VolCfNet > 0)
                 {
-                    dblChipWtGtBole = (p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
+                    p_tree.OpCostChipWtGt = (p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
                 }
                 else
                 {
-                    dblChipWtGtBole = (p_tree.VolTsGrs * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
+                    p_tree.OpCostChipWtGt = (p_tree.VolTsGrs * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
                 }
-                // next the tops/limbs
-                double dblChipWtGtTops = 0;
-                dblChipWtGtTops = (((p_tree.DryBiot - p_tree.DryBiom) * p_tree.Tpa) / p_tree.DryToGreen) / 2000;
-                // And add them together for OpCost weight; Whole tree always chipped in OpCost
-                p_tree.OpCostChipWtGt = dblChipWtGtBole + dblChipWtGtTops;
             }
         }
 
@@ -1417,7 +1450,7 @@ namespace FIA_Biosum_Manager
 
         /// <summary>
         /// An treeVolValInput object represents a line in the tree vol val file
-        /// The metrics are aggregated by conditionId
+        /// The metrics are aggregated by conditionId, rxCycle, speciesGroup, and diameterGroup
         /// </summary>
         private class treeVolValInput
         {
@@ -1427,9 +1460,12 @@ namespace FIA_Biosum_Manager
             string _strRx = "";
             int _intSpeciesGroup;
             int _intDiamGroup;
+            string _strMerchToChip;
+            double _dblChipMktValPgt;
 
             public treeVolValInput(string condId, string rxCycle, string rxPackage, string rx,
-                                    int speciesGroup, int diamGroup)
+                                    int speciesGroup, int diamGroup, bool isNonCommercial,
+                                    double chipMktValPgt)
             {
                 _strCondId = condId;
                 _strRxCycle = rxCycle;
@@ -1437,6 +1473,15 @@ namespace FIA_Biosum_Manager
                 _strRx = rx;
                 _intSpeciesGroup = speciesGroup;
                 _intDiamGroup = diamGroup;
+                if (isNonCommercial)
+                {
+                    _strMerchToChip = "Y";
+                }
+                else
+                {
+                    _strMerchToChip = "N";
+                }
+                _dblChipMktValPgt = chipMktValPgt;
             }
             
             public string CondId
@@ -1464,6 +1509,14 @@ namespace FIA_Biosum_Manager
             {
                 get { return _intDiamGroup; }
                 set { _intDiamGroup = value; }
+            }
+            public string MerchToChip
+            {
+                get { return _strMerchToChip; }
+            }
+            public double ChipMktValPgt
+            {
+                get { return _dblChipMktValPgt; }
             }
         }
 
@@ -1497,6 +1550,33 @@ namespace FIA_Biosum_Manager
             public double DryToGreen
             {
                 get { return _dblDryToGreen; }
+            }
+        }
+
+        private class escalators
+        {
+            double _dblEnergyWoodRevCycle2;
+            double _dblEnergyWoodRevCycle3;
+            double _dblEnergyWoodRevCycle4;
+
+            public escalators(double energyWoodRevCycle2, double energyWoodRevCycle3, double energyWoodRevCycle4)
+            {
+                _dblEnergyWoodRevCycle2 = energyWoodRevCycle2;
+                _dblEnergyWoodRevCycle3 = energyWoodRevCycle3;
+                _dblEnergyWoodRevCycle4 = energyWoodRevCycle4;
+            }
+            
+            public double EnergyWoodRevCycle2
+            {
+                get { return _dblEnergyWoodRevCycle2; }
+            }
+            public double EnergyWoodRevCycle3
+            {
+                get { return _dblEnergyWoodRevCycle3; }
+            }
+            public double EnergyWoodRevCycle4
+            {
+                get { return _dblEnergyWoodRevCycle4; }
             }
         }
 
