@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace FIA_Biosum_Manager
 {
@@ -22,6 +22,7 @@ namespace FIA_Biosum_Manager
         private List<tree> m_trees;
         private scenarioHarvestMethod m_scenarioHarvestMethod;
         private IDictionary<string, prescription> m_prescriptions;
+        private IList<harvestMethod> m_harvestMethodList;
 
         public processor(string strDebugFile)
         {
@@ -106,6 +107,8 @@ namespace FIA_Biosum_Manager
         
         private void loadTrees(string p_strVariant, string p_strRxPackage)
         {
+            //Load harvest methods; Prescription load depends on harvest methods
+            m_harvestMethodList = loadHarvestMethods();
             //Load presciptions into reference dictionary
             m_prescriptions = loadPrescriptions();
             //Load diameter groups into reference list
@@ -118,8 +121,6 @@ namespace FIA_Biosum_Manager
             m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
-
-
             
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
@@ -158,12 +159,16 @@ namespace FIA_Biosum_Manager
                         // find default harvest methods in prescription in case we need them
                         string strDefaultHarvestMethodLowSlope = "";
                         string strDefaultHarvestMethodSteepSlope = "";
+                        int intDefaultHarvestMethodCategoryLowSlope = 0;
+                        int intDefaultHarvestMethodCategorySteepSlope = 0 ;
                         prescription currentPrescription = null;
                         m_prescriptions.TryGetValue(newTree.Rx, out currentPrescription);
                         if (currentPrescription != null)
                         {
                             strDefaultHarvestMethodLowSlope = currentPrescription.HarvestMethodLowSlope;
                             strDefaultHarvestMethodSteepSlope = currentPrescription.HarvestMethodSteepSlope;
+                            intDefaultHarvestMethodCategoryLowSlope = currentPrescription.HarvestCategoryLowSlope;
+                            intDefaultHarvestMethodCategorySteepSlope = currentPrescription.HarvestCategorySteepSlope;
                         }
 
                         if (newTree.Slope < m_scenarioHarvestMethod.SteepSlopePct)
@@ -172,10 +177,12 @@ namespace FIA_Biosum_Manager
                             if (! String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodLowSlope))
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodLowSlope;
+                                newTree.HarvestMethodCategory = m_scenarioHarvestMethod.HarvestCategoryLowSlope;
                             }
                             else
                             {
                                 newTree.HarvestMethod = strDefaultHarvestMethodLowSlope;
+                                newTree.HarvestMethodCategory = intDefaultHarvestMethodCategoryLowSlope;
                             }
                         }
                         else
@@ -184,10 +191,12 @@ namespace FIA_Biosum_Manager
                             if (!String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodSteepSlope))
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodSteepSlope;
+                                newTree.HarvestMethodCategory = m_scenarioHarvestMethod.HarvestCategorySteepSlope;
                             }
                             else
                             {
                                 newTree.HarvestMethod = strDefaultHarvestMethodSteepSlope;
+                                newTree.HarvestMethodCategory = intDefaultHarvestMethodCategorySteepSlope;
                             }
                         }
                         newTree.FvsTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
@@ -564,7 +573,7 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM tree_diam_groups";
+                string strSQL = "SELECT * FROM " + Tables.Processor.DefaultTreeDiamGroupsTableName;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -591,8 +600,9 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green FROM tree_species " +
-                                "WHERE FVS_VARIANT = '" + p_strVariant + "' " +
+                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green FROM " + 
+                                Tables.Reference.DefaultTreeSpeciesTableName +
+                                " WHERE FVS_VARIANT = '" + p_strVariant + "' " +
                                 "AND SPCD IS NOT NULL " +
                                 "AND USER_SPC_GROUP IS NOT NULL " +
                                 "GROUP BY SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green";
@@ -629,8 +639,9 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM scenario_tree_species_diam_dollar_values " +
-                                "WHERE scenario_id = '" + p_scenario + "'";
+                string strSQL = "SELECT * FROM " + 
+                                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesDollarValuesTableName + 
+                                " WHERE scenario_id = '" + p_scenario + "'";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -657,12 +668,17 @@ namespace FIA_Biosum_Manager
 
         private IDictionary<String, prescription> loadPrescriptions()
         {
+            if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
+            {
+                MessageBox.Show("Harvest methods must be loaded before loading prescriptions", "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
             IDictionary<String, prescription> dictPrescriptions = new Dictionary<String, prescription>();
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM rx";
+                string strSQL = "SELECT * FROM " + Tables.FVS.DefaultRxTableName;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -671,8 +687,22 @@ namespace FIA_Biosum_Manager
                         string strRx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
                         string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
                         string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
-
-                        dictPrescriptions.Add(strRx, new prescription(strRx, strHarvestMethodLowSlope, strHarvestMethodSteepSlope));
+                        int intHarvestCategoryLowSlope = 0;
+                        int intHarvestCategorySteepSlope = 0;
+                        foreach (harvestMethod nextMethod in m_harvestMethodList)
+                        {
+                            if (nextMethod.Method.Equals(strHarvestMethodLowSlope) && !nextMethod.SteepSlope)
+                            {
+                                intHarvestCategoryLowSlope = nextMethod.BiosumCategory;
+                            }
+                            else if (nextMethod.Method.Equals(strHarvestMethodSteepSlope) && nextMethod.SteepSlope)
+                            {
+                                intHarvestCategorySteepSlope = nextMethod.BiosumCategory;
+                            }
+                        }
+                        
+                        dictPrescriptions.Add(strRx, new prescription(strRx, strHarvestMethodLowSlope, strHarvestMethodSteepSlope, 
+                            intHarvestCategoryLowSlope, intHarvestCategorySteepSlope));
                     }
                 }
             }
@@ -685,13 +715,18 @@ namespace FIA_Biosum_Manager
 
         private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario)
         {
+            if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
+            {
+                MessageBox.Show("Harvest methods must be loaded before loading scenario harvest methods", "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
             scenarioHarvestMethod returnVariables = null;
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM scenario_harvest_method " +
-                                "WHERE scenario_id = '" + p_scenario + "'";
+                string strSQL = "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName +
+                                " WHERE scenario_id = '" + p_scenario + "'";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -706,10 +741,23 @@ namespace FIA_Biosum_Manager
                     double dblMaxHelicopterCableYardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["MaxHelicopterCableYardingDistance"]);
                     string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
                     string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
-
+                    int intHarvestCategoryLowSlope = 0;
+                    int intHarvestCategorySteepSlope = 0;
+                    foreach (harvestMethod nextMethod in m_harvestMethodList)
+                    {
+                        if (nextMethod.Method.Equals(strHarvestMethodLowSlope) && !nextMethod.SteepSlope)
+                        {
+                            intHarvestCategoryLowSlope = nextMethod.BiosumCategory;
+                        }
+                        else if (nextMethod.Method.Equals(strHarvestMethodSteepSlope) && nextMethod.SteepSlope)
+                        {
+                            intHarvestCategorySteepSlope = nextMethod.BiosumCategory;
+                        }
+                    }
+                    
                     returnVariables = new scenarioHarvestMethod(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
                         intMinSlopePct, dblMinDbhSteepSlope, dblMaxCableYardingDistance, dblMaxHelicopterCableYardingDistance,
-                        strHarvestMethodLowSlope, strHarvestMethodSteepSlope);
+                        strHarvestMethodLowSlope, strHarvestMethodSteepSlope, intHarvestCategoryLowSlope, intHarvestCategorySteepSlope);
                 }
             }
 
@@ -727,8 +775,9 @@ namespace FIA_Biosum_Manager
             escalators returnEscalators = null;
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM scenario_cost_revenue_escalators " +
-                                "WHERE scenario_id = '" + p_scenario + "'";
+                string strSQL = "SELECT * FROM " +
+                                Tables.ProcessorScenarioRuleDefinitions.DefaultCostRevenueEscalatorsTableName + 
+                                " WHERE scenario_id = '" + p_scenario + "'";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -747,6 +796,51 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
 
             return returnEscalators;
+        }
+
+        private IList<harvestMethod> loadHarvestMethods()
+        {
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            IList<harvestMethod> harvestMethodList = null;
+
+            if (m_oAdo.m_intError == 0)
+            {
+                // Check to see if the biosum_category column exists in the harvest method table; If not
+                // throw an error and exit the function; Processor won't work without this value
+                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultFRCSHarvestMethodTableName, "biosum_category"))
+                {
+                    string strErrMsg = "Your project contains an obsolete version of the " + Tables.Reference.DefaultFRCSHarvestMethodTableName +
+                                       " table that does not contain the 'biosum_category' field. Copy a new version of this table into your project from the" +
+                                       " BioSum installation directory before trying to run Processor.";
+                    MessageBox.Show(strErrMsg,"FIA Biosum",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    return harvestMethodList;
+                }
+
+                string strSQL = "SELECT * FROM " + Tables.Reference.DefaultFRCSHarvestMethodTableName;
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    harvestMethodList = new List<harvestMethod>();
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strSteepYN = Convert.ToString(m_oAdo.m_OleDbDataReader["STEEP_YN"]).Trim();
+                        bool blnSteep = false;
+                        if (strSteepYN.Equals("Y"))
+                            { blnSteep = true; }
+                        string strMethod = Convert.ToString(m_oAdo.m_OleDbDataReader["Method"]).Trim();
+                        int intBiosumCategory = Convert.ToInt16(m_oAdo.m_OleDbDataReader["biosum_category"]);
+                        harvestMethod newMethod = new harvestMethod(blnSteep, strMethod, intBiosumCategory);
+                        harvestMethodList.Add(newMethod);
+                    }
+                }
+            }
+
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return harvestMethodList;
         }
         
         private OpCostTreeType chooseOpCostTreeType(tree p_tree)
@@ -860,6 +954,7 @@ namespace FIA_Biosum_Manager
             int _intElev;
             double _dblYardingDistance;
             string _strHarvestMethod;
+            int _intHarvestMethodCategory;
             double _dblOdWgt;
             double _dblDryToGreen;
             double _dblMerchVolCf;
@@ -1066,6 +1161,11 @@ namespace FIA_Biosum_Manager
                 get { return _strHarvestMethod; }
                 set { _strHarvestMethod = value; }
             }
+            public int HarvestMethodCategory
+            {
+                get { return _intHarvestMethodCategory; }
+                set { _intHarvestMethodCategory = value; }
+            }
             public string DebugFile
             {
                 set { _strDebugFile = value; }
@@ -1176,10 +1276,13 @@ namespace FIA_Biosum_Manager
             double _dblMaxHelicopterCableYardingDistance;
             string _strHarvestMethodLowSlope;
             string _strHarvestMethodSteepSlope;
+            int _intHarvestCategoryLowSlope;
+            int _intHarvestCategorySteepSlope;
 
             public scenarioHarvestMethod(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
                                          double minDbhSteepSlope, double maxCableYardingDistance, double maxHelicopterYardingDistance,
-                                         string harvestMethodLowSlope, string harvestMethodSteepSlope)
+                                         string harvestMethodLowSlope, string harvestMethodSteepSlope,
+                                         int harvestCategoryLowSlope, int harvestCategorySteepSlope)
             {
                 _dblMinSmallLogDbh = minSmallLogDbh;
                 _dblMinLargeLogDbh = minLargeLogDbh;
@@ -1190,6 +1293,8 @@ namespace FIA_Biosum_Manager
                 _dblMaxHelicopterCableYardingDistance = maxHelicopterYardingDistance;
                 _strHarvestMethodLowSlope = harvestMethodLowSlope;
                 _strHarvestMethodSteepSlope = harvestMethodSteepSlope;
+                _intHarvestCategoryLowSlope = harvestCategoryLowSlope;
+                _intHarvestCategorySteepSlope = harvestCategorySteepSlope;
             }
 
             public double MinChipDbh
@@ -1228,6 +1333,14 @@ namespace FIA_Biosum_Manager
             {
                 get { return _strHarvestMethodSteepSlope; }
             }
+            public int HarvestCategoryLowSlope
+            {
+                get { return _intHarvestCategoryLowSlope; }
+            }
+            public int HarvestCategorySteepSlope
+            {
+                get { return _intHarvestCategorySteepSlope; }
+            }
             // Overriding the ToString method for debugging purposes
             public override string ToString()
             {
@@ -1243,12 +1356,17 @@ namespace FIA_Biosum_Manager
             string _strRx = "";
             string _strHarvestMethodLowSlope = "";
             string _strHarvestMethodSteepSlope = "";
+            int _intHarvestCategoryLowSlope;
+            int _intHarvestCategorySteepSlope;
 
-            public prescription(string rx, string harvestMethodLowSlope, string harvestMethodSteepSlope)
+            public prescription(string rx, string harvestMethodLowSlope, string harvestMethodSteepSlope,
+                                int harvestCategoryLowSlope, int harvestCategorySteepSlope)
             {
                 _strRx = rx;
                 _strHarvestMethodLowSlope = harvestMethodLowSlope;
                 _strHarvestMethodSteepSlope = harvestMethodSteepSlope;
+                _intHarvestCategoryLowSlope = harvestCategoryLowSlope;
+                _intHarvestCategorySteepSlope = harvestCategorySteepSlope;
             }
 
             public string Rx
@@ -1263,7 +1381,14 @@ namespace FIA_Biosum_Manager
             {
                 get { return _strHarvestMethodSteepSlope; }
             }
-
+            public int HarvestCategoryLowSlope
+            {
+                get { return _intHarvestCategoryLowSlope; }
+            }
+            public int HarvestCategorySteepSlope
+            {
+                get { return _intHarvestCategorySteepSlope; }
+            }
         }
 
         /// <summary>
@@ -1577,6 +1702,33 @@ namespace FIA_Biosum_Manager
             public double EnergyWoodRevCycle4
             {
                 get { return _dblEnergyWoodRevCycle4; }
+            }
+        }
+
+        private class harvestMethod
+        {
+            bool _blnSteepSlope;
+            string _strMethod;
+            int _intBiosumCategory;
+
+            public harvestMethod(bool steepSlope, string method, int biosumCategory)
+            {
+                _blnSteepSlope = steepSlope;
+                _strMethod = method;
+                _intBiosumCategory = biosumCategory;
+            }
+
+            public bool SteepSlope
+            {
+                get { return _blnSteepSlope; }
+            }
+            public string Method
+            {
+                get { return _strMethod; }
+            }
+            public int BiosumCategory
+            {
+                get { return _intBiosumCategory; }
             }
         }
 
