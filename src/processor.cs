@@ -536,7 +536,7 @@ namespace FIA_Biosum_Manager
                                 break;
                         }
                         nextInput = new treeVolValInput(nextTree.CondId, nextTree.RxCycle, nextTree.RxPackage, nextTree.Rx,
-                            nextTree.SpeciesGroup, nextTree.DiamGroup, nextTree.IsNonCommercial, chipMktValPgt);
+                            nextTree.SpeciesGroup, nextTree.DiamGroup, nextTree.IsNonCommercial, chipMktValPgt, nextTree.HarvestMethodCategory);
                         dictTvvInput.Add(strKey, nextInput);
                     }
                 }
@@ -552,10 +552,10 @@ namespace FIA_Biosum_Manager
                     treeVolValInput nextStand = dictTvvInput[key];
                     m_oAdo.m_strSQL = "INSERT INTO " + m_strTvvTableName + " " +
                     "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group, " +
-                    "merch_to_chipbin_YN, chip_mkt_val_pgt, DateTimeCreated, place_holder)" +
+                    "merch_to_chipbin_YN, chip_mkt_val_pgt, biosum_harvest_method_category, DateTimeCreated, place_holder)" +
                     "VALUES ('" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" + nextStand.Rx + "', '" + 
                     nextStand.RxCycle + "', " + nextStand.SpeciesGroup + ", " + nextStand.DiamGroup +
-                    ", '" + nextStand.MerchToChip + "', " + nextStand.ChipMktValPgt + ", '" + strDateTimeCreated + "', 'N')";
+                    ", '" + nextStand.MerchToChip + "', " + nextStand.ChipMktValPgt + ", " + nextStand.HarvestMethodCategory + ", '" + strDateTimeCreated + "', 'N')";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
@@ -1585,12 +1585,13 @@ namespace FIA_Biosum_Manager
             string _strRx = "";
             int _intSpeciesGroup;
             int _intDiamGroup;
+            int _intHarvestMethodCategory;
             string _strMerchToChip;
             double _dblChipMktValPgt;
 
             public treeVolValInput(string condId, string rxCycle, string rxPackage, string rx,
                                     int speciesGroup, int diamGroup, bool isNonCommercial,
-                                    double chipMktValPgt)
+                                    double chipMktValPgt, int harvestMethodCategory)
             {
                 _strCondId = condId;
                 _strRxCycle = rxCycle;
@@ -1598,6 +1599,7 @@ namespace FIA_Biosum_Manager
                 _strRx = rx;
                 _intSpeciesGroup = speciesGroup;
                 _intDiamGroup = diamGroup;
+                _intHarvestMethodCategory = harvestMethodCategory;
                 if (isNonCommercial)
                 {
                     _strMerchToChip = "Y";
@@ -1642,6 +1644,10 @@ namespace FIA_Biosum_Manager
             public double ChipMktValPgt
             {
                 get { return _dblChipMktValPgt; }
+            }
+            public int HarvestMethodCategory
+            {
+                get { return _intHarvestMethodCategory; }
             }
         }
 

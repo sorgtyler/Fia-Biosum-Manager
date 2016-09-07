@@ -3090,7 +3090,8 @@ namespace FIA_Biosum_Manager
 					"rx CHAR(3)," +		
                     "rxcycle CHAR(1)," +
 					"species_group INTEGER," + 
-					"diam_group INTEGER DEFAULT 0," + 
+					"diam_group INTEGER DEFAULT 0," +
+                    "biosum_harvest_method_category INTEGER DEFAULT 0," +
 					"chip_vol_cf DOUBLE," + 
 					"chip_wt_gt DOUBLE," + 
 					"chip_val_dpa DOUBLE," +
