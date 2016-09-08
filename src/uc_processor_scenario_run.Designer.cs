@@ -30,6 +30,9 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblHarvestCosts = new System.Windows.Forms.Label();
+            this.chkOPCOST = new System.Windows.Forms.CheckBox();
+            this.chkFRCS = new System.Windows.Forms.CheckBox();
             this.cmbFilter = new System.Windows.Forms.ComboBox();
             this.pnlFileSizeMonitor = new System.Windows.Forms.Panel();
             this.uc_filesize_monitor3 = new FIA_Biosum_Manager.uc_filesize_monitor();
@@ -43,9 +46,7 @@
             this.btnUncheckAll = new System.Windows.Forms.Button();
             this.btnChkAll = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.chkFRCS = new System.Windows.Forms.CheckBox();
-            this.chkOPCOST = new System.Windows.Forms.CheckBox();
-            this.lblHarvestCosts = new System.Windows.Forms.Label();
+            this.btnRunNew = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pnlFileSizeMonitor.SuspendLayout();
@@ -65,6 +66,7 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.btnRunNew);
             this.panel1.Controls.Add(this.lblHarvestCosts);
             this.panel1.Controls.Add(this.chkOPCOST);
             this.panel1.Controls.Add(this.chkFRCS);
@@ -83,6 +85,41 @@
             this.panel1.Size = new System.Drawing.Size(749, 506);
             this.panel1.TabIndex = 32;
             this.panel1.Resize += new System.EventHandler(this.panel1_Resize);
+            // 
+            // lblHarvestCosts
+            // 
+            this.lblHarvestCosts.AutoSize = true;
+            this.lblHarvestCosts.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHarvestCosts.ForeColor = System.Drawing.Color.ForestGreen;
+            this.lblHarvestCosts.Location = new System.Drawing.Point(466, 9);
+            this.lblHarvestCosts.Name = "lblHarvestCosts";
+            this.lblHarvestCosts.Size = new System.Drawing.Size(131, 13);
+            this.lblHarvestCosts.TabIndex = 72;
+            this.lblHarvestCosts.Text = "Harvest Cost Options:";
+            // 
+            // chkOPCOST
+            // 
+            this.chkOPCOST.AutoSize = true;
+            this.chkOPCOST.Checked = true;
+            this.chkOPCOST.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkOPCOST.Location = new System.Drawing.Point(663, 8);
+            this.chkOPCOST.Name = "chkOPCOST";
+            this.chkOPCOST.Size = new System.Drawing.Size(70, 17);
+            this.chkOPCOST.TabIndex = 71;
+            this.chkOPCOST.Text = "OPCOST";
+            this.chkOPCOST.UseVisualStyleBackColor = true;
+            this.chkOPCOST.Click += new System.EventHandler(this.chkOPCOST_Click);
+            // 
+            // chkFRCS
+            // 
+            this.chkFRCS.AutoSize = true;
+            this.chkFRCS.Location = new System.Drawing.Point(603, 8);
+            this.chkFRCS.Name = "chkFRCS";
+            this.chkFRCS.Size = new System.Drawing.Size(54, 17);
+            this.chkFRCS.TabIndex = 70;
+            this.chkFRCS.Text = "FRCS";
+            this.chkFRCS.UseVisualStyleBackColor = true;
+            this.chkFRCS.Click += new System.EventHandler(this.chkFRCS_Click);
             // 
             // cmbFilter
             // 
@@ -223,40 +260,15 @@
             this.lblTitle.TabIndex = 31;
             this.lblTitle.Text = "Run Processor Scenario";
             // 
-            // chkFRCS
+            // btnRunNew
             // 
-            this.chkFRCS.AutoSize = true;
-            this.chkFRCS.Location = new System.Drawing.Point(603, 8);
-            this.chkFRCS.Name = "chkFRCS";
-            this.chkFRCS.Size = new System.Drawing.Size(54, 17);
-            this.chkFRCS.TabIndex = 70;
-            this.chkFRCS.Text = "FRCS";
-            this.chkFRCS.UseVisualStyleBackColor = true;
-            this.chkFRCS.Click += new System.EventHandler(this.chkFRCS_Click);
-            // 
-            // chkOPCOST
-            // 
-            this.chkOPCOST.AutoSize = true;
-            this.chkOPCOST.Checked = true;
-            this.chkOPCOST.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkOPCOST.Location = new System.Drawing.Point(663, 8);
-            this.chkOPCOST.Name = "chkOPCOST";
-            this.chkOPCOST.Size = new System.Drawing.Size(70, 17);
-            this.chkOPCOST.TabIndex = 71;
-            this.chkOPCOST.Text = "OPCOST";
-            this.chkOPCOST.UseVisualStyleBackColor = true;
-            this.chkOPCOST.Click += new System.EventHandler(this.chkOPCOST_Click);
-            // 
-            // lblHarvestCosts
-            // 
-            this.lblHarvestCosts.AutoSize = true;
-            this.lblHarvestCosts.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHarvestCosts.ForeColor = System.Drawing.Color.ForestGreen;
-            this.lblHarvestCosts.Location = new System.Drawing.Point(466, 9);
-            this.lblHarvestCosts.Name = "lblHarvestCosts";
-            this.lblHarvestCosts.Size = new System.Drawing.Size(131, 13);
-            this.lblHarvestCosts.TabIndex = 72;
-            this.lblHarvestCosts.Text = "Harvest Cost Options:";
+            this.btnRunNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRunNew.Location = new System.Drawing.Point(449, 354);
+            this.btnRunNew.Name = "btnRunNew";
+            this.btnRunNew.Size = new System.Drawing.Size(126, 32);
+            this.btnRunNew.TabIndex = 73;
+            this.btnRunNew.Text = "Run New";
+            this.btnRunNew.Click += new System.EventHandler(this.btnRunNew_Click);
             // 
             // uc_processor_scenario_run
             // 
@@ -293,5 +305,6 @@
         private System.Windows.Forms.Label lblHarvestCosts;
         private System.Windows.Forms.CheckBox chkOPCOST;
         private System.Windows.Forms.CheckBox chkFRCS;
+        private System.Windows.Forms.Button btnRunNew;
     }
 }

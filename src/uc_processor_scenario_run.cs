@@ -1243,7 +1243,6 @@ namespace FIA_Biosum_Manager
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            DialogResult result;
 
             if (this.btnRun.Text.Trim().ToUpper() == "CANCEL")
             {
@@ -1286,14 +1285,23 @@ namespace FIA_Biosum_Manager
                 }
                 ReferenceProcessorScenarioForm.SaveRuleDefinitions();
                 m_intError = ReferenceProcessorScenarioForm.m_intError;
-                
+
                 if (this.m_intError == 0 && (frmMain.g_oDelegate.m_oThread == null ||
                                              frmMain.g_oDelegate.m_oThread.IsAlive == false))
                 {
                     
-                      btnRun.Text = "Cancel";
-                      RunScenario_Start();
-                    
+                    // Here is where we branch off to new processing, if desired 
+                    Button btnCaller = (Button)sender;
+                    if (btnCaller.Text.Equals("Run New"))
+                    {
+                        btnCaller.Text = "Cancel";
+                        RunScenario_StartNew();
+                    }
+                    else
+                    {
+                        btnRun.Text = "Cancel";
+                        RunScenario_Start();
+                    }
                 }
 
             }
@@ -5425,6 +5433,500 @@ namespace FIA_Biosum_Manager
 
             m_intError = m_oAdo.m_intError;
             m_strError = m_oAdo.m_strError;
+        }
+
+        private void RunScenario_StartNew()
+        {
+            ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", false);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", false);
+            string strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
+            if (!System.IO.Directory.Exists(strPath))
+                System.IO.Directory.CreateDirectory(strPath);
+
+            btnChkAll.Enabled = false;
+            btnUncheckAll.Enabled = false;
+            chkOPCOST.Enabled = false;
+            chkLowSlope.Enabled = false;
+            chkSteepSlope.Enabled = false;
+
+            this.lblMsg.Text = "";
+            this.lblMsg.Show();
+            this.m_strDateTimeCreated = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss tt");
+
+            frmMain.g_oDelegate.InitializeThreadEvents();
+            frmMain.g_oDelegate.m_oEventStopThread.Reset();
+            frmMain.g_oDelegate.m_oEventThreadStopped.Reset();
+            frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(this.RunScenario_MainNew));
+            frmMain.g_oDelegate.m_oThread.IsBackground = true;
+            frmMain.g_oDelegate.m_oThread.Start();
+        }
+
+        private void RunScenario_MainNew()
+        {
+            frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
+
+            int x, y, z;
+            int intCount = 0;
+            int intRowCount = 0;
+            bool bOPCOST = (bool)frmMain.g_oDelegate.GetControlPropertyValue(chkOPCOST, "Checked", false);
+            string strInputPath = "";
+            int intPercent = 0;
+
+
+            dao_data_access oDao = new dao_data_access();
+
+
+            string strRx1, strRx2, strRx3, strRx4, strRxPackage, strVariant;
+
+
+            frmMain.g_oDelegate.CurrentThreadProcessName = "main";
+            frmMain.g_oDelegate.CurrentThreadProcessStarted = true;
+
+            if (System.IO.File.Exists(m_strDebugFile))
+                System.IO.File.Delete(m_strDebugFile);
+
+            System.Threading.Thread.Sleep(2000);
+
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
+
+            m_intLvCheckedCount = 0;
+            m_intLvTotalCount = this.m_lvEx.Items.Count;
+            for (x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
+            {
+                ReferenceProgressBarEx = (ProgressBarEx.ProgressBarEx)this.m_lvEx.GetEmbeddedControl(COL_RUNSTATUS, x);
+                ReferenceProgressBarEx.backgroundpainter.Color = ReferenceProgressBarEx.backgroundpainter.DefaultColor;
+                frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Minimum", 0);
+                frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", 0);
+                if ((bool)frmMain.g_oDelegate.GetListViewExItemPropertyValue(this.m_lvEx, x, "Checked", false))
+                {
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Text", "0%");
+                    m_intLvCheckedCount++;
+
+                }
+                else
+                {
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Text", "");
+
+                }
+                frmMain.g_oDelegate.ExecuteControlMethod(ReferenceProgressBarEx, "Refresh");
+
+            }
+            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Prepare for processing...Stand By");
+
+
+            for (x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
+            {
+                if ((bool)frmMain.g_oDelegate.GetListViewExItemPropertyValue(this.m_lvEx, x, "Checked", false))
+                {
+
+                    if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.UserControl)uc_filesize_monitor1, "Visible", false) == false)
+                    {
+                        uc_filesize_monitor1.BeginMonitoringFile(
+                            m_oQueries.m_strTempDbFile, 2000000000, "2GB");
+                        uc_filesize_monitor1.Information = "Work table containing table links";
+                        uc_filesize_monitor2.BeginMonitoringFile(
+                             frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                            "\\processor\\" + ScenarioId + "\\" + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsDbFile
+                            , 2000000000, "2GB");
+                        uc_filesize_monitor2.Information = "Scenario results DB file containing Harvest Costs and Tree Volume and Value tables";
+                    }
+                    frmMain.g_oDelegate.EnsureListViewExItemVisible(this.m_lvEx, x);
+
+                    frmMain.g_oDelegate.SetListViewExItemPropertyValue(this.m_lvEx, x, "Selected", true);
+                    frmMain.g_oDelegate.SetListViewExItemPropertyValue(this.m_lvEx, x, "Focused", true);
+
+                    this.m_intError = 0;
+                    this.m_strError = "";
+                    ReferenceProgressBarEx = (ProgressBarEx.ProgressBarEx)this.m_lvEx.GetEmbeddedControl(COL_RUNSTATUS, x);
+
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 100);
+
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Minimum", 0);
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", 0);
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Text", "0%");
+
+                    frmMain.g_oDelegate.SetStatusBarPanelTextValue(
+                               frmMain.g_sbpInfo.Parent,
+                               1,
+                               "Processing " + Convert.ToString(intCount + 1) + " Of " + Convert.ToString(frmMain.g_oDelegate.GetListViewExCheckedItemsCount(m_lvEx, false)) + "...Stand By");
+
+                    strVariant = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_VARIANT, "Text", false);
+                    strVariant = strVariant.Trim();
+
+                    //get the package and treatments
+                    strRxPackage = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_PACKAGE, "Text", false);
+                    strRxPackage = strRxPackage.Trim();
+
+                    strRx1 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE1, "Text", false);
+                    strRx1 = strRx1.Trim();
+
+                    strRx2 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE2, "Text", false);
+                    strRx2 = strRx2.Trim();
+
+                    strRx3 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE3, "Text", false);
+                    strRx3 = strRx3.Trim();
+
+                    strRx4 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE4, "Text", false);
+                    strRx4 = strRx4.Trim();
+
+                    m_strOPCOSTBatchFile = frmMain.g_oEnv.strTempDir + "\\" +
+                        "OPCOST_Input_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + ".BAT";
+
+                    if (System.IO.File.Exists(m_strOPCOSTBatchFile))
+                        System.IO.File.Delete(m_strOPCOSTBatchFile);
+
+                    //find the package item in the package collection
+                    for (y = 0; y <= this.m_oRxPackageItem_Collection.Count - 1; y++)
+                    {
+                        if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear1Rx.Trim() == strRx1.Trim() &&
+                            this.m_oRxPackageItem_Collection.Item(y).SimulationYear2Rx.Trim() == strRx2.Trim() &&
+                            this.m_oRxPackageItem_Collection.Item(y).SimulationYear3Rx.Trim() == strRx3.Trim() &&
+                            this.m_oRxPackageItem_Collection.Item(y).SimulationYear4Rx.Trim() == strRx4.Trim() &&
+                            this.m_oRxPackageItem_Collection.Item(y).RxPackageId.Trim() == strRxPackage.Trim())
+                            break;
+
+
+                    }
+                    if (y <= m_oRxPackageItem_Collection.Count - 1)
+                    {
+                        this.m_oRxPackageItem = new RxPackageItem();
+                        m_oRxPackageItem.CopyProperties(m_oRxPackageItem_Collection.Item(y), m_oRxPackageItem);
+                    }
+                    else
+                    {
+                        this.m_oRxPackageItem = null;
+                    }
+
+                    //get the list of treatment cycle year fields to reference for this package
+                    this.m_strRxCycleList = "";
+                    if (strRx1.Trim().Length > 0 && strRx1.Trim() != "000") this.m_strRxCycleList = "1,";
+                    if (strRx2.Trim().Length > 0 && strRx2.Trim() != "000") this.m_strRxCycleList = this.m_strRxCycleList + "2,";
+                    if (strRx3.Trim().Length > 0 && strRx3.Trim() != "000") this.m_strRxCycleList = this.m_strRxCycleList + "3,";
+                    if (strRx4.Trim().Length > 0 && strRx4.Trim() != "000") this.m_strRxCycleList = this.m_strRxCycleList + "4,";
+
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "HarvestCostsWorkTable") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE HarvestCostsWorkTable");
+
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_input") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input");
+
+                    //@ToDo: remove this after testing; Will only have one opcost_input table
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_input_new") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input_new");
+
+
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_output") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_output");
+
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_err") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_err");
+
+
+
+                    //Here we set the maximum number of ticks on the progress bar
+                    //y cannot exceed this max number
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 20);
+                    
+                    y = 0;
+                    //
+                    //LOW SLOPE
+                    //
+                    if (chkLowSlope.Checked)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Load trees from cut list...Stand By");
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper());
+                        mainProcessor.loadTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
+
+                        if (m_intError == 0)
+                        {
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                            mainProcessor.createOpcostInput(m_oQueries.m_strTempDbFile);
+                        }
+
+                        if (m_intError == 0)
+                        {
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Low Slope Tree Volumes And Values Table With Merch and Chip Market Values...Stand By");
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                            RunScenario_UpdateTreeVolValWithMerchChipMarketValues("TreeVolValLowSlope");
+                        }
+
+                        if (m_intError == 0)
+                        {
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+
+                                frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Low Slope Data To OPCOST Input Table...Stand By");
+                                RunScenario_InitOPCOSTInputTable("bin_output_lowslope", "opcost_input");
+
+
+                        }
+
+
+
+                        if (m_intError == 0)
+                        {
+
+                            m_oAdo.m_strSQL = "SELECT COUNT(*) AS reccount FROM opcost_input";
+
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                            ScenarioHarvestMethodVariables.LowSlopeRecordCount =
+                                (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "frcs_input");
+
+                        }
+
+
+                    }
+                    
+                    intCount++;
+
+
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Get Maximum Values...Stand By");
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        RunScenario_MaxValues("opcost_input");
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+                    if (m_intError == 0 && bOPCOST)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "OPCOST Processing Batch Input...Stand By");
+                        RunScenario_ProcessOPCOST(strVariant, strRxPackage);
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+                    if (m_intError == 0 && bOPCOST)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append OPCOST Data To Harvest Costs Work Table...Stand By");
+                        RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable", false);
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Harvest Costs Work Table With Additional Costs...Stand By");
+                        RunScenario_UpdateHarvestCostsTableWithAdditionalCosts("HarvestCostsWorkTable");
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Delete Old Variant=" + strVariant + " and RxPackage=" + strRxPackage + " Records From Harvest Costs And Tree Vol Val Table...Stand By");
+                        RunScenario_DeleteFromTreeVolValAndHarvestCostsTable(strVariant, strRxPackage);
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append New Variant=" + strVariant + " and RxPackage=" + strRxPackage + " Records To Harvest Costs And Tree Vol Val Table...Stand By");
+                        RunScenario_AppendToTreeVolValAndHarvestCostsTable();
+                    }
+
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+
+
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Placeholder Records For Variant=" + strVariant + " and RxPackage=" + strRxPackage + " To Tree Vol Val And Harvest Cost Tables...Stand By");
+                        RunScenario_AppendPlaceholdersToTreeVolValAndHarvestCostsTables();
+                    }
+
+
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Finalizing Processor Scenario Database Tables...Stand By");
+                        //update counts
+                        intRowCount = 0;
+                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "TreeVolValLowSlope"))
+                            intRowCount = (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM TreeVolValLowSlope", "temp");
+
+                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "TreeVolValSteepSlope"))
+                            intRowCount = intRowCount + (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM TreeVolValSteepSlope", "temp");
+
+                        frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_VOLVAL, intRowCount.ToString());
+
+                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "HarvestCostsWorkTable"))
+                            intRowCount = (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM HarvestCostsWorkTable", "temp");
+                        frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_HVSTCOST, intRowCount.ToString());
+                    }
+
+                    if (System.IO.File.Exists(m_strOPCOSTBatchFile))
+                        System.IO.File.Delete(m_strOPCOSTBatchFile);
+
+                    //compact mdb
+                    if (m_intError == 0)
+                    {
+
+                        string strConn = m_oAdo.m_OleDbConnection.ConnectionString;
+                        string strDb = m_oQueries.m_strTempDbFile;
+                        m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+                        System.Threading.Thread.Sleep(5000);
+
+                        //check if file size greater than 70% of 2GB
+                        if (uc_filesize_monitor1.CurrentPercent(m_oQueries.m_strTempDbFile, 2000000000) > 70)
+                        {
+                            oDao.m_DaoDbEngine.Idle(1);
+                            oDao.m_DaoDbEngine.Idle(8);
+                            oDao.DisplayErrors = false;
+                            oDao.m_intErrorCount = 0;
+                            oDao.m_intError = -1;
+                            for (; ; )
+                            {
+                                oDao.CompactMDB(strDb);
+                                if (oDao.m_intError == 0)
+                                {
+                                    break;
+                                }
+                                if (oDao.m_intErrorCount == 5) break;
+                                if (oDao.m_intErrorCount == 4)
+                                {
+                                    int count = oDao.m_intErrorCount;
+                                    oDao.m_DaoDbEngine.Idle(1);
+                                    oDao.m_DaoDbEngine.Idle(8);
+                                    oDao.m_DaoWorkspace.Close();
+                                    oDao.m_DaoDbEngine = null;
+                                    oDao = null;
+                                    oDao = new dao_data_access();
+                                    oDao.m_intErrorCount = count;
+
+                                }
+
+                                oDao.m_intErrorCount++;
+                                System.Threading.Thread.Sleep(5000);
+
+
+                            }
+                            System.Threading.Thread.Sleep(5000);
+                        }
+                        oDao.DisplayErrors = true;
+                        if (oDao.m_intError != 0)
+                        {
+                            MessageBox.Show("Failed to compact and repair file " + m_oQueries.m_strTempDbFile, "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        }
+                        string strInputFile = "";
+
+                        if (bOPCOST)
+                        {
+                            strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
+                            strInputFile = "OPCOST_Input_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
+                            strInputFile = strInputFile.Replace(":", "_");
+                            strInputFile = strInputFile.Replace(" ", "_");
+                            System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
+                            System.Threading.Thread.Sleep(5000);
+                            //delete the work tables and any links
+                            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
+                            if (m_oAdo.m_intError == 0)
+                            {
+                                string[] strTables = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
+                                if (strTables != null)
+                                {
+                                    for (z = 0; z <= strTables.Length - 1; z++)
+                                    {
+                                        if (strTables[z] != null)
+                                        {
+                                            switch (strTables[z].Trim().ToUpper())
+                                            {
+                                                case "OPCOST_ERR": break;
+                                                case "OPCOST_INPUT": break;
+                                                case "OPCOST_OUTPUT": break;
+                                                case "FRCSVARIABLESLOWSLOPETABLE": break;
+                                                case "FRCSVARIABLESSTEEPSLOPETABLE": break;
+                                                case "OPCOST_CHIPPING": break;
+                                                case "OPCOST_IDEAL": break;
+                                                //temporary name for PROCESSOR redesign output
+                                                case "OPCOST_INPUT_NEW": break;
+                                                default:
+                                                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
+                                                    break;
+
+                                            }
+                                        }
+                                    }
+                                }
+                                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+                                System.Threading.Thread.Sleep(5000);
+                                if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
+                                {
+                                    oDao.m_DaoDbEngine.Idle(1);
+                                    oDao.m_DaoDbEngine.Idle(8);
+                                    oDao.CompactMDB(strInputPath + "\\" + strInputFile);
+                                    System.Threading.Thread.Sleep(5000);
+                                }
+
+                            }
+                        }
+                        m_intError = oDao.m_intError;
+                        m_oAdo.OpenConnection(strConn, 5);
+                    }
+
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_CHECKBOX, " ");
+                        frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_PROCESSOR_PROCESSINGDATETIME, m_strDateTimeCreated);
+                    }
+                    else
+                    {
+                        ReferenceProgressBarEx.backgroundpainter.Color = Color.Red;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", 0);
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Text", "!!Error!!");
+                    }
+
+                    System.Threading.Thread.Sleep(2000);
+
+
+
+                }
+
+
+
+            }
+        }
+
+        private void btnRunNew_Click(object sender, EventArgs e)
+        {
+            btnRun_Click(sender, e);
         }
         
     }

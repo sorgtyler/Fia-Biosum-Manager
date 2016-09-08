@@ -10,10 +10,8 @@ namespace FIA_Biosum_Manager
     /// </summary>
     public class processor
     {
-        Queries m_oQueries = new Queries();
         RxTools m_oRxTools = new RxTools();
-        //@ToDo: this will come from the UI
-        private string m_strScenarioId = "scenario1";
+        private string m_strScenarioId = "";
         private string m_strOpcostTableName = "OPCOST_INPUT_NEW";
         private string m_strTvvTableName = "tree_vol_val_by_species_diam_groups_new";
         private string m_strDebugFile =
@@ -24,13 +22,16 @@ namespace FIA_Biosum_Manager
         private IDictionary<string, prescription> m_prescriptions;
         private IList<harvestMethod> m_harvestMethodList;
 
-        public processor(string strDebugFile)
+        public processor(string strDebugFile, string strScenarioId)
         {
-            m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\" + strDebugFile;
+            m_strDebugFile = strDebugFile;
+            m_strScenarioId = strScenarioId;
         }
         
-        public void init()
+        public Queries init()
         {
+            Queries p_oQueries = new Queries();
+            
             //
             //CREATE LINK IN TEMP MDB TO ALL PROCESSOR SCENARIO TABLES
             //
@@ -54,33 +55,33 @@ namespace FIA_Biosum_Manager
             //
             //LOAD PROJECT DATATASOURCES INFO
             //
-            m_oQueries.m_oFvs.LoadDatasource = true;
-            m_oQueries.m_oReference.LoadDatasource = true;
-            m_oQueries.m_oProcessor.LoadDatasource = true;
-            m_oQueries.LoadDatasources(true, "processor", m_strScenarioId);
+            p_oQueries.m_oFvs.LoadDatasource = true;
+            p_oQueries.m_oReference.LoadDatasource = true;
+            p_oQueries.m_oProcessor.LoadDatasource = true;
+            p_oQueries.LoadDatasources(true, "processor", m_strScenarioId);
 
             //link to all the scenario rule definition tables
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
                 "scenario_cost_revenue_escalators",
                 strScenarioMDB, "scenario_cost_revenue_escalators", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
                 "scenario_additional_harvest_costs",
                 strScenarioMDB, "scenario_additional_harvest_costs", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
                "scenario_harvest_cost_columns",
                strScenarioMDB, "scenario_harvest_cost_columns", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
               "scenario_harvest_method",
               strScenarioMDB, "scenario_harvest_method", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
              "scenario_tree_species_diam_dollar_values",
              strScenarioMDB, "scenario_tree_species_diam_dollar_values", true);
             //link scenario results tables
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
                 Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName,
                 strScenarioResultsMDB,
                 Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName,
                 strScenarioResultsMDB,
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, true);
@@ -99,31 +100,32 @@ namespace FIA_Biosum_Manager
             //
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "START: CreateTableLinksToFVSOutTreeListTables - " + System.DateTime.Now.ToString() + "\r\n");
-            m_oRxTools.CreateTableLinksToFVSOutTreeListTables(m_oQueries, m_oQueries.m_strTempDbFile);
+            m_oRxTools.CreateTableLinksToFVSOutTreeListTables(p_oQueries, p_oQueries.m_strTempDbFile);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "END: CreateTableLinksToFVSOutTreeListTables - " + System.DateTime.Now.ToString() + "\r\n");
 
+            return p_oQueries;
         }
         
-        private void loadTrees(string p_strVariant, string p_strRxPackage)
+        public void loadTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)
         {
             //Load harvest methods; Prescription load depends on harvest methods
-            m_harvestMethodList = loadHarvestMethods();
+            m_harvestMethodList = loadHarvestMethods(strTempDbFile);
             //Load presciptions into reference dictionary
-            m_prescriptions = loadPrescriptions();
+            m_prescriptions = loadPrescriptions(strTempDbFile);
             //Load diameter groups into reference list
-            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
+            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups(strTempDbFile);
             //Load species groups into reference dictionary
-            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant);
+            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant, strTempDbFile);
             //Load species diam values into reference dictionary
-            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
+            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId, strTempDbFile);
             //Load diameter variables into reference object
-            m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId);
+            m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId, strTempDbFile);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
             
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
             if (m_oAdo.m_intError == 0)
             {
@@ -304,7 +306,7 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
         }
 
-        private void createOpcostInput()
+        public void createOpcostInput(string strTempDbFile)
         {
             int intHwdSpeciesCodeThreshold = 299; // Species codes greater than this are hardwoods
             if (m_trees.Count < 1)
@@ -316,7 +318,7 @@ namespace FIA_Biosum_Manager
 
             // create connection to database
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             
             // drop opcost input table if it exists
             //if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, m_strOpcostTableName) == true)
@@ -488,7 +490,7 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
         }
 
-        private void updateTreeVolVal(string strDateTimeCreated)
+        public void updateTreeVolVal(string strDateTimeCreated, string strTempDbFile)
         {
             if (m_trees.Count < 1)
             {
@@ -498,11 +500,11 @@ namespace FIA_Biosum_Manager
             }
 
             // load escalators; We will need them later
-            escalators p_escalators = loadEscalators(m_strScenarioId);
+            escalators p_escalators = loadEscalators(strTempDbFile);
             
             // create connection to database
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
 
             if (m_oAdo.m_intError == 0)
             {                
@@ -566,11 +568,11 @@ namespace FIA_Biosum_Manager
                 }
             }
         }
-        private List<treeDiamGroup> loadTreeDiamGroups()
+        private List<treeDiamGroup> loadTreeDiamGroups(string strTempDbFile)
         {
             List<treeDiamGroup> listDiamGroups = new List<treeDiamGroup>();
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + Tables.Processor.DefaultTreeDiamGroupsTableName;
@@ -593,11 +595,11 @@ namespace FIA_Biosum_Manager
             return listDiamGroups;
         }
 
-        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant)
+        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant, string strTempDbFile)
         {
             IDictionary<String, treeSpecies> dictTreeSpecies = new Dictionary<String, treeSpecies>();
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green FROM " + 
@@ -632,11 +634,11 @@ namespace FIA_Biosum_Manager
         /// The composite key is intDiamGroup + "|" + intSpcGroup
         /// The value is a speciesDiamValue object
         ///</summary> 
-        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario)
+        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario, string strTempDbFile)
         {
             IDictionary<String, speciesDiamValue> dictSpeciesDiamValues = new Dictionary<String, speciesDiamValue>();
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + 
@@ -666,7 +668,7 @@ namespace FIA_Biosum_Manager
             return dictSpeciesDiamValues;
         }
 
-        private IDictionary<String, prescription> loadPrescriptions()
+        private IDictionary<String, prescription> loadPrescriptions(string strTempDbFile)
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
@@ -675,7 +677,7 @@ namespace FIA_Biosum_Manager
             
             IDictionary<String, prescription> dictPrescriptions = new Dictionary<String, prescription>();
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + Tables.FVS.DefaultRxTableName;
@@ -713,7 +715,7 @@ namespace FIA_Biosum_Manager
             return dictPrescriptions;
         }
 
-        private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario)
+        private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario, string strTempDbFile)
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
@@ -721,7 +723,7 @@ namespace FIA_Biosum_Manager
             }
             
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             scenarioHarvestMethod returnVariables = null;
             if (m_oAdo.m_intError == 0)
             {
@@ -768,16 +770,16 @@ namespace FIA_Biosum_Manager
             return returnVariables;
         }
 
-        private escalators loadEscalators(string p_scenario)
+        private escalators loadEscalators(string strTempDbFile)
         {
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             escalators returnEscalators = null;
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " +
                                 Tables.ProcessorScenarioRuleDefinitions.DefaultCostRevenueEscalatorsTableName + 
-                                " WHERE scenario_id = '" + p_scenario + "'";
+                                " WHERE scenario_id = '" + m_strScenarioId + "'";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -798,10 +800,10 @@ namespace FIA_Biosum_Manager
             return returnEscalators;
         }
 
-        private IList<harvestMethod> loadHarvestMethods()
+        private IList<harvestMethod> loadHarvestMethods(string strTempDbFile)
         {
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             IList<harvestMethod> harvestMethodList = null;
 
             if (m_oAdo.m_intError == 0)
