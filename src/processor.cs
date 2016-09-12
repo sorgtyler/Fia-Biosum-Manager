@@ -10,10 +10,10 @@ namespace FIA_Biosum_Manager
     /// </summary>
     public class processor
     {
-        RxTools m_oRxTools = new RxTools();
         private string m_strScenarioId = "";
-        private string m_strOpcostTableName = "OPCOST_INPUT_NEW";
-        private string m_strTvvTableName = "tree_vol_val_by_species_diam_groups_new";
+        private string m_strTempDbFile = "";
+        private string m_strOpcostTableName = "opcost_input";
+        private string m_strTvvTableName = "TreeVolValLowSlope";
         private string m_strDebugFile =
             "";
         private ado_data_access m_oAdo;
@@ -100,7 +100,8 @@ namespace FIA_Biosum_Manager
             //
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "START: CreateTableLinksToFVSOutTreeListTables - " + System.DateTime.Now.ToString() + "\r\n");
-            m_oRxTools.CreateTableLinksToFVSOutTreeListTables(p_oQueries, p_oQueries.m_strTempDbFile);
+            RxTools oRxTools = new RxTools();
+            oRxTools.CreateTableLinksToFVSOutTreeListTables(p_oQueries, p_oQueries.m_strTempDbFile);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "END: CreateTableLinksToFVSOutTreeListTables - " + System.DateTime.Now.ToString() + "\r\n");
 
@@ -109,18 +110,14 @@ namespace FIA_Biosum_Manager
         
         public void loadTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)
         {
+            //Set tempDbFile
+            m_strTempDbFile = strTempDbFile;
             //Load harvest methods; Prescription load depends on harvest methods
-            m_harvestMethodList = loadHarvestMethods(strTempDbFile);
+            m_harvestMethodList = loadHarvestMethods();
             //Load presciptions into reference dictionary
             m_prescriptions = loadPrescriptions(strTempDbFile);
-            //Load diameter groups into reference list
-            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups(strTempDbFile);
-            //Load species groups into reference dictionary
-            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant, strTempDbFile);
-            //Load species diam values into reference dictionary
-            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId, strTempDbFile);
             //Load diameter variables into reference object
-            m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId, strTempDbFile);
+            m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
             
@@ -213,101 +210,124 @@ namespace FIA_Biosum_Manager
                         m_trees.Add(newTree);
                     }
                 }
-
-                //Query TREE table to get original FIA species codes
-                strSQL = "SELECT DISTINCT t.fvs_tree_id, t.spcd " +
-                        "FROM tree t, " + strTableName + " z " +
-                        "WHERE t.fvs_tree_id = z.fvs_tree_id " +
-                        "AND z.rxpackage='" + p_strRxPackage + "' " +
-                        "AND mid(t.fvs_tree_id,1,2)='" + p_strVariant + "' " +
-                        "GROUP BY t.fvs_tree_id, t.spcd";
-
-                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
-                if (m_oAdo.m_OleDbDataReader.HasRows)
-                {
-                    Dictionary<String, String> dictSpCd = new Dictionary<string, string>();
-                    while (m_oAdo.m_OleDbDataReader.Read())
-                    {
-                        string strTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
-                        string strSpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["spcd"]).Trim();
-                        dictSpCd.Add(strTreeId, strSpCd);
-                    }
-
-                    // Second pass at processing tree properties based on information from the cut list
-                    foreach (tree nextTree in m_trees)
-                    {
-                        if (!nextTree.FvsCreatedTree)
-                        {
-                            nextTree.SpCd = dictSpCd[nextTree.FvsTreeId];
-                        }
-                        // set tree species fields from treeSpecies dictionary
-                        treeSpecies foundSpecies = dictTreeSpecies[nextTree.SpCd];
-                        nextTree.SpeciesGroup = foundSpecies.SpeciesGroup;
-                        nextTree.OdWgt = foundSpecies.OdWgt;
-                        nextTree.DryToGreen = foundSpecies.DryToGreen;
-
-                        // set diameter group from diameter group list
-                        foreach (treeDiamGroup nextGroup in listDiamGroups)
-                        {
-                            if (nextTree.Dbh >= nextGroup.MinDiam &&
-                                nextTree.Dbh <= nextGroup.MaxDiam)
-                            {
-                                nextTree.DiamGroup = nextGroup.DiamGroup;
-                                break;
-                            }
-                        }
-
-                        // set tree properties based on scenario_tree_species_diam_dollar_values
-                        string strSpeciesDiamKey = nextTree.DiamGroup + "|" + nextTree.SpeciesGroup;
-                        speciesDiamValue treeSpeciesDiam = null;
-                        if (dictSpeciesDiamValues.TryGetValue(strSpeciesDiamKey, out treeSpeciesDiam))
-                        {
-                            nextTree.MerchValue = treeSpeciesDiam.MerchValue;
-                            nextTree.ChipValue = treeSpeciesDiam.ChipValue;
-                            switch (treeSpeciesDiam.WoodBin)
-                            {
-                                case "M":
-                                    nextTree.IsNonCommercial = false;
-                                    break;
-                                case "C":
-                                    nextTree.IsNonCommercial = true;
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Missing species diam values for diamGroup|speciesGroup " + 
-                                    strSpeciesDiamKey + " - " + System.DateTime.Now.ToString() + "\r\n");
-                        }
-
-                        //Assign OpCostTreeType
-                        nextTree.TreeType = chooseOpCostTreeType(nextTree);
-                        calculateVolumeAndWeight(nextTree);
-
-                        //Dump OpCostTreeType in .csv format for validation
-                        //string strLogEntry = nextTree.Dbh + ", " + nextTree.Slope + ", " + nextTree.IsNonCommercial +
-                        //    ", " + nextTree.SpeciesGroup + ", " + nextTree.TreeType.ToString();
-                        //if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        //    frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: OpCost tree type, " +
-                        //        strLogEntry + "\r\n");
-
-
-                        //if (nextTree.DiamGroup < 1)
-                        //{
-                        //    System.Windows.MessageBox.Show("missing diam group");
-                        //}
-                    }
-                }
-                System.Windows.MessageBox.Show(m_trees.Count + " trees");
             }
             // Always close the connection
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             m_oAdo = null;
         }
 
+        public void updateTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)
+        {
+            if (m_trees.Count < 1)
+            {
+                System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n Auxillary tree data cannot be appended",
+                    "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            m_strTempDbFile = strTempDbFile;
+
+            //Load species groups into reference dictionary
+            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant);
+            //Load species diam values into reference dictionary
+            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
+            //Load diameter groups into reference list
+            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
+            
+            //Query TREE table to get original FIA species codes
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
+
+            if (m_oAdo.m_intError == 0)
+            {
+            string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
+            string strSQL = "SELECT DISTINCT t.fvs_tree_id, t.spcd " +
+                    "FROM tree t, " + strTableName + " z " +
+                    "WHERE t.fvs_tree_id = z.fvs_tree_id " +
+                    "AND z.rxpackage='" + p_strRxPackage + "' " +
+                    "AND mid(t.fvs_tree_id,1,2)='" + p_strVariant + "' " +
+                    "GROUP BY t.fvs_tree_id, t.spcd";
+
+            m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+            if (m_oAdo.m_OleDbDataReader.HasRows)
+            {
+                Dictionary<String, String> dictSpCd = new Dictionary<string, string>();
+                while (m_oAdo.m_OleDbDataReader.Read())
+                {
+                    string strTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
+                    string strSpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["spcd"]).Trim();
+                    dictSpCd.Add(strTreeId, strSpCd);
+                }
+
+                // Second pass at processing tree properties based on information from the cut list
+                foreach (tree nextTree in m_trees)
+                {
+                    if (!nextTree.FvsCreatedTree)
+                    {
+                        nextTree.SpCd = dictSpCd[nextTree.FvsTreeId];
+                    }
+                    // set tree species fields from treeSpecies dictionary
+                    treeSpecies foundSpecies = dictTreeSpecies[nextTree.SpCd];
+                    nextTree.SpeciesGroup = foundSpecies.SpeciesGroup;
+                    nextTree.OdWgt = foundSpecies.OdWgt;
+                    nextTree.DryToGreen = foundSpecies.DryToGreen;
+
+                    // set diameter group from diameter group list
+                    foreach (treeDiamGroup nextGroup in listDiamGroups)
+                    {
+                        if (nextTree.Dbh >= nextGroup.MinDiam &&
+                            nextTree.Dbh <= nextGroup.MaxDiam)
+                        {
+                            nextTree.DiamGroup = nextGroup.DiamGroup;
+                            break;
+                        }
+                    }
+
+                    // set tree properties based on scenario_tree_species_diam_dollar_values
+                    string strSpeciesDiamKey = nextTree.DiamGroup + "|" + nextTree.SpeciesGroup;
+                    speciesDiamValue treeSpeciesDiam = null;
+                    if (dictSpeciesDiamValues.TryGetValue(strSpeciesDiamKey, out treeSpeciesDiam))
+                    {
+                        nextTree.MerchValue = treeSpeciesDiam.MerchValue;
+                        nextTree.ChipValue = treeSpeciesDiam.ChipValue;
+                        switch (treeSpeciesDiam.WoodBin)
+                        {
+                            case "M":
+                                nextTree.IsNonCommercial = false;
+                                break;
+                            case "C":
+                                nextTree.IsNonCommercial = true;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Missing species diam values for diamGroup|speciesGroup " +
+                                strSpeciesDiamKey + " - " + System.DateTime.Now.ToString() + "\r\n");
+                    }
+
+                    //Assign OpCostTreeType
+                    nextTree.TreeType = chooseOpCostTreeType(nextTree);
+                    calculateVolumeAndWeight(nextTree);
+
+                    //Dump OpCostTreeType in .csv format for validation
+                    //string strLogEntry = nextTree.Dbh + ", " + nextTree.Slope + ", " + nextTree.IsNonCommercial +
+                    //    ", " + nextTree.SpeciesGroup + ", " + nextTree.TreeType.ToString();
+                    //if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    //    frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: OpCost tree type, " +
+                    //        strLogEntry + "\r\n");
+                }
+            }
+            }
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+        }
+        
         public void createOpcostInput(string strTempDbFile)
         {
+            m_strTempDbFile = strTempDbFile;
             int intHwdSpeciesCodeThreshold = 299; // Species codes greater than this are hardwoods
             if (m_trees.Count < 1)
             {
@@ -490,7 +510,7 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
         }
 
-        public void updateTreeVolVal(string strDateTimeCreated, string strTempDbFile)
+        public void createTreeVolValWorkTable(string strDateTimeCreated, string strTempDbFile, bool blnInclHarvMethodCat)
         {
             if (m_trees.Count < 1)
             {
@@ -500,19 +520,19 @@ namespace FIA_Biosum_Manager
             }
 
             // load escalators; We will need them later
-            escalators p_escalators = loadEscalators(strTempDbFile);
+            escalators p_escalators = loadEscalators();
             
             // create connection to database
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
 
             if (m_oAdo.m_intError == 0)
-            {                
-                // create tree vol val table
-                frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(m_oAdo, m_oAdo.m_OleDbConnection, m_strTvvTableName);
+            {
+                // create tree vol val work table (TreeVolValLowSlope); Re-use the sql from tree vol val but don't create the indexes
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, Tables.Processor.CreateTreeVolValSpeciesDiamGroupsTableSQL(m_strTvvTableName));
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolVal: Read trees into tree vol val - " + System.DateTime.Now.ToString() + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Read trees into tree vol val - " + System.DateTime.Now.ToString() + "\r\n");
 
                 string strSeparator = "_";
                 IDictionary<string, treeVolValInput> dictTvvInput = new Dictionary<string, treeVolValInput>();
@@ -544,10 +564,10 @@ namespace FIA_Biosum_Manager
                 }
                 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolVal: Finished reading trees - " + System.DateTime.Now.ToString() + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Finished reading trees - " + System.DateTime.Now.ToString() + "\r\n");
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolVal: Begin writing tree vol val table - " + System.DateTime.Now.ToString() + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Begin writing tree vol val table - " + System.DateTime.Now.ToString() + "\r\n");
                 long lngCount =0;
                 foreach (string key in dictTvvInput.Keys)
                 {
@@ -562,17 +582,26 @@ namespace FIA_Biosum_Manager
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
                     lngCount++;
-
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "END createTreeVolVal INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
                 }
+
+                //We may want this column for testing but not in the final product
+                //Also drop id column because it prevents copying rows into final tree vol val
+                if (!blnInclHarvMethodCat)
+                {
+                    string strSqlAlter = "ALTER TABLE " + m_strTvvTableName + " DROP COLUMN biosum_harvest_method_category, id";
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, strSqlAlter);
+                }
+                
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "END createTreeVolValWorkTable INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
             }
         }
-        private List<treeDiamGroup> loadTreeDiamGroups(string strTempDbFile)
+
+        private List<treeDiamGroup> loadTreeDiamGroups()
         {
             List<treeDiamGroup> listDiamGroups = new List<treeDiamGroup>();
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + Tables.Processor.DefaultTreeDiamGroupsTableName;
@@ -595,11 +624,11 @@ namespace FIA_Biosum_Manager
             return listDiamGroups;
         }
 
-        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant, string strTempDbFile)
+        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant)
         {
             IDictionary<String, treeSpecies> dictTreeSpecies = new Dictionary<String, treeSpecies>();
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green FROM " + 
@@ -634,11 +663,11 @@ namespace FIA_Biosum_Manager
         /// The composite key is intDiamGroup + "|" + intSpcGroup
         /// The value is a speciesDiamValue object
         ///</summary> 
-        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario, string strTempDbFile)
+        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario)
         {
             IDictionary<String, speciesDiamValue> dictSpeciesDiamValues = new Dictionary<String, speciesDiamValue>();
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + 
@@ -715,7 +744,7 @@ namespace FIA_Biosum_Manager
             return dictPrescriptions;
         }
 
-        private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario, string strTempDbFile)
+        private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario)
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
@@ -723,7 +752,7 @@ namespace FIA_Biosum_Manager
             }
             
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             scenarioHarvestMethod returnVariables = null;
             if (m_oAdo.m_intError == 0)
             {
@@ -770,10 +799,10 @@ namespace FIA_Biosum_Manager
             return returnVariables;
         }
 
-        private escalators loadEscalators(string strTempDbFile)
+        private escalators loadEscalators()
         {
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             escalators returnEscalators = null;
             if (m_oAdo.m_intError == 0)
             {
@@ -800,10 +829,10 @@ namespace FIA_Biosum_Manager
             return returnEscalators;
         }
 
-        private IList<harvestMethod> loadHarvestMethods(string strTempDbFile)
+        private IList<harvestMethod> loadHarvestMethods()
         {
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             IList<harvestMethod> harvestMethodList = null;
 
             if (m_oAdo.m_intError == 0)

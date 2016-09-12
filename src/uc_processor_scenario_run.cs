@@ -2155,8 +2155,6 @@ namespace FIA_Biosum_Manager
                                                 case "FRCSVARIABLESSTEEPSLOPETABLE": break;
                                                 case "OPCOST_CHIPPING": break;
                                                 case "OPCOST_IDEAL": break;
-                                                    //temporary name for PROCESSOR redesign output
-                                                case "OPCOST_INPUT_NEW": break;
                                                 default:
                                                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
                                                     break;
@@ -5249,8 +5247,11 @@ namespace FIA_Biosum_Manager
         private void RunScenario_Finished()
         {
             //if (m_oExcel.ExcelFileName.Trim().Length > 0) System.IO.File.Delete(m_oExcel.ExcelFileName);
-            m_oExcel.ReleaseComObjects();
-            m_oExcel = null;
+            if (m_oExcel != null)
+            {
+                m_oExcel.ReleaseComObjects();
+                m_oExcel = null;
+            }
             uc_filesize_monitor1.EndMonitoringFile();
             uc_filesize_monitor2.EndMonitoringFile();
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tlbScenario, "Enabled", true);
@@ -5612,11 +5613,6 @@ namespace FIA_Biosum_Manager
                     if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_input") == true)
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input");
 
-                    //@ToDo: remove this after testing; Will only have one opcost_input table
-                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_input_new") == true)
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input_new");
-
-
                     if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_output") == true)
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_output");
 
@@ -5627,7 +5623,7 @@ namespace FIA_Biosum_Manager
 
                     //Here we set the maximum number of ticks on the progress bar
                     //y cannot exceed this max number
-                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 20);
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 14);
                     
                     y = 0;
                     //
@@ -5643,43 +5639,34 @@ namespace FIA_Biosum_Manager
 
                         if (m_intError == 0)
                         {
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                            mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
+                        }
+                        
+                        if (m_intError == 0)
+                        {
                             frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
                             y++;
                             frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                             mainProcessor.createOpcostInput(m_oQueries.m_strTempDbFile);
                         }
-
+                        
                         if (m_intError == 0)
                         {
-                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Low Slope Tree Volumes And Values Table With Merch and Chip Market Values...Stand By");
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
                             y++;
                             frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                            RunScenario_UpdateTreeVolValWithMerchChipMarketValues("TreeVolValLowSlope");
+                            mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, m_oQueries.m_strTempDbFile, false);
                         }
 
                         if (m_intError == 0)
                         {
-                            y++;
-                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-
-                                frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Low Slope Data To OPCOST Input Table...Stand By");
-                                RunScenario_InitOPCOSTInputTable("bin_output_lowslope", "opcost_input");
-
-
-                        }
-
-
-
-                        if (m_intError == 0)
-                        {
-
                             m_oAdo.m_strSQL = "SELECT COUNT(*) AS reccount FROM opcost_input";
 
                             y++;
                             frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                            ScenarioHarvestMethodVariables.LowSlopeRecordCount =
-                                (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "frcs_input");
-
                         }
 
 
@@ -5694,15 +5681,6 @@ namespace FIA_Biosum_Manager
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                         RunScenario_MaxValues("opcost_input");
-                    }
-                    if (m_intError == 0)
-                    {
-                        y++;
-                    }
-                    if (m_intError == 0)
-                    {
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     }
                     if (m_intError == 0)
                     {
@@ -5873,8 +5851,6 @@ namespace FIA_Biosum_Manager
                                                 case "FRCSVARIABLESSTEEPSLOPETABLE": break;
                                                 case "OPCOST_CHIPPING": break;
                                                 case "OPCOST_IDEAL": break;
-                                                //temporary name for PROCESSOR redesign output
-                                                case "OPCOST_INPUT_NEW": break;
                                                 default:
                                                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
                                                     break;
@@ -5914,14 +5890,24 @@ namespace FIA_Biosum_Manager
                     }
 
                     System.Threading.Thread.Sleep(2000);
-
-
-
                 }
-
-
-
             }
+            oDao.m_DaoDbEngine.Idle(1);
+            oDao.m_DaoDbEngine.Idle(8);
+            oDao.m_DaoWorkspace.Close();
+            oDao.m_DaoDbEngine = null;
+            oDao = null;
+
+            MessageBox.Show("Done", "FIA Biosum");
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
+
+            RunScenario_Finished();
+
+
+            frmMain.g_oDelegate.CurrentThreadProcessDone = true;
+            frmMain.g_oDelegate.m_oEventThreadStopped.Set();
+            this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
         }
 
         private void btnRunNew_Click(object sender, EventArgs e)
