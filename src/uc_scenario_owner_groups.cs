@@ -101,7 +101,7 @@ namespace FIA_Biosum_Manager
             this.chkOwnGrp10.ForeColor = System.Drawing.Color.Black;
             this.chkOwnGrp10.Location = new System.Drawing.Point(8, 18);
             this.chkOwnGrp10.Name = "chkOwnGrp10";
-            this.chkOwnGrp10.Size = new System.Drawing.Size(200, 40);
+            this.chkOwnGrp10.Size = new System.Drawing.Size(250, 40);
             this.chkOwnGrp10.TabIndex = 17;
             this.chkOwnGrp10.Text = "U.S. Forest Service";
             this.chkOwnGrp10.Click += new System.EventHandler(this.chkOwnGrp10_Click);

@@ -343,7 +343,7 @@ namespace FIA_Biosum_Manager
             this.tlbScenario.Location = new System.Drawing.Point(0, 0);
             this.tlbScenario.Name = "tlbScenario";
             this.tlbScenario.ShowToolTips = true;
-            this.tlbScenario.Size = new System.Drawing.Size(663, 44);
+            this.tlbScenario.Size = new System.Drawing.Size(909, 44);
             this.tlbScenario.TabIndex = 42;
             this.tlbScenario.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.tlbScenario_ButtonClick);
             // 
@@ -667,7 +667,7 @@ namespace FIA_Biosum_Manager
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(663, 454);
+            this.ClientSize = new System.Drawing.Size(909, 762);
             this.Controls.Add(this.tlbScenario);
             this.Controls.Add(this.tabControlScenario);
             this.Controls.Add(this.btnClose);

@@ -77,7 +77,8 @@ namespace FIA_Biosum_Manager
 		public int m_intError;
 		public string m_strError;
 		public string m_strAction;
-		public int m_intFullHt=520;
+        public int m_intFullHt = 0;
+        public int m_intFullWh = 0;
 
         private FIA_Biosum_Manager.frmDialog m_frmDialog1;
 		private env m_oEnv;
@@ -143,6 +144,10 @@ namespace FIA_Biosum_Manager
 			this.oleDbConnection1 = new System.Data.OleDb.OleDbConnection();
 			this.m_intError = 0;
 			this.m_strError="";
+            // Set the control height to accomodate the lowest button
+            this.m_intFullHt = this.btnClose.Location.Y + this.btnClose.Size.Height + 10;
+            // Set the control width to accomodate the furthest right groupbox
+            this.m_intFullWh = this.grpboxCreated.Location.X + this.grpboxCreated.Size.Width + 30;
 
 			this.txtRootDirectory.Enabled=false;
 			this.txtShared.Enabled=false;

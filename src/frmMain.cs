@@ -2703,8 +2703,7 @@ namespace FIA_Biosum_Manager
 			this.frmProject.uc_project1.lblTitle.Text = "Project Properties";
 			
 			this.tlbMain.Buttons[1].Enabled=true;
-			if (this.frmProject.Height < this.frmProject.uc_project1.m_intFullHt)
-				this.frmProject.Height = this.frmProject.uc_project1.m_intFullHt;
+            resizeProjectForm(this);
 			
 			this.frmProject.Visible = true;
 			if (this.frmProject.WindowState==System.Windows.Forms.FormWindowState.Minimized)
@@ -2903,6 +2902,7 @@ namespace FIA_Biosum_Manager
 			{
 				this.frmProject.uc_project1.lblTitle.Text = "New Project";
 				this.frmProject.uc_project1.New_Project();
+                resizeProjectForm(this);
 			}
 			else 
 			{
@@ -2910,12 +2910,9 @@ namespace FIA_Biosum_Manager
 				frmTemp.m_ProjectOpen = false;
 				frmTemp.frmProject.uc_project1.lblTitle.Text = "New Project";
 				frmTemp.frmProject.uc_project1.New_Project();
+                resizeProjectForm(frmTemp);
 				frmTemp.Show();
 			}
-		
-		 
-  
-		  
 		 
 		}
 		private void recentfiles()
@@ -4323,6 +4320,13 @@ namespace FIA_Biosum_Manager
             oForm.Show();
         }
 
+        private void resizeProjectForm(frmMain parentForm)
+        {
+            if (parentForm.frmProject.Height < parentForm.frmProject.uc_project1.m_intFullHt)
+                parentForm.frmProject.Height = parentForm.frmProject.uc_project1.m_intFullHt;
+            if (parentForm.frmProject.Width < parentForm.frmProject.uc_project1.m_intFullWh)
+                parentForm.frmProject.Width = parentForm.frmProject.uc_project1.m_intFullWh;
 
+        }
 	}
 }
