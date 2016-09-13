@@ -140,7 +140,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "OPCOSTSETTINGS", "OPCOSTSETTINGS" });
+            m_oHelp.ShowHelp(new string[] { "PROCESSOR", "OPCOSTSETTINGS" });
         }
     }
 }
