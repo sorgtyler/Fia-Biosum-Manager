@@ -561,6 +561,15 @@ namespace FIA_Biosum_Manager
                             nextTree.SpeciesGroup, nextTree.DiamGroup, nextTree.IsNonCommercial, chipMktValPgt, nextTree.HarvestMethodCategory);
                         dictTvvInput.Add(strKey, nextInput);
                     }
+
+                    // Metrics for brush cut trees
+                    if (nextTree.TreeType == OpCostTreeType.BC)
+                    {
+                        nextInput.TotalBrushCutWtGt = nextInput.TotalBrushCutWtGt + nextTree.BrushCutWtGt;
+                        nextInput.TotalBrushCutVolumeCf = nextInput.TotalBrushCutVolumeCf + nextTree.BrushCutVolCf;
+                        nextInput.TotalStandResidueWtGt = nextInput.TotalStandResidueWtGt + nextTree.StandResidueWtGt;
+                    }
+
                 }
                 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -574,10 +583,13 @@ namespace FIA_Biosum_Manager
                     treeVolValInput nextStand = dictTvvInput[key];
                     m_oAdo.m_strSQL = "INSERT INTO " + m_strTvvTableName + " " +
                     "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group, " +
-                    "merch_to_chipbin_YN, chip_mkt_val_pgt, biosum_harvest_method_category, DateTimeCreated, place_holder)" +
+                    "merch_to_chipbin_YN, chip_mkt_val_pgt, bc_vol_cf, bc_wt_gt, stand_residue_wt_gt, " +
+                    "biosum_harvest_method_category, DateTimeCreated, place_holder)" +
                     "VALUES ('" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" + nextStand.Rx + "', '" + 
                     nextStand.RxCycle + "', " + nextStand.SpeciesGroup + ", " + nextStand.DiamGroup +
-                    ", '" + nextStand.MerchToChip + "', " + nextStand.ChipMktValPgt + ", " + nextStand.HarvestMethodCategory + ", '" + strDateTimeCreated + "', 'N')";
+                    ", '" + nextStand.MerchToChip + "', " + nextStand.ChipMktValPgt + ", " + nextStand.TotalBrushCutVolumeCf + "," +
+                    nextStand.TotalBrushCutWtGt + ", " + nextStand.TotalStandResidueWtGt + ", " + 
+                    nextStand.HarvestMethodCategory + ", '" + strDateTimeCreated + "', 'N')";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
@@ -911,39 +923,51 @@ namespace FIA_Biosum_Manager
 
         private void calculateVolumeAndWeight(tree p_tree)
         {
-            if (p_tree.TreeType == OpCostTreeType.LL || p_tree.TreeType == OpCostTreeType.SL)
+ 
+            switch (p_tree.TreeType)
             {
-                p_tree.OpCostMerchVolCf = p_tree.VolCfNet * p_tree.Tpa;
-                if (p_tree.DryToGreen != 0)
-                    { p_tree.OpCostMerchWtGt = p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000; }
-            }
-            else if (p_tree.TreeType == OpCostTreeType.BC)
-            {
-                //p_tree.BrushCutWtGt = (p_tree.DryBiot * p_tree.Tpa / p_tree.DryToGreen) / 2000;
-                p_tree.OpCostBrushCutVolCf = p_tree.DryBiot * p_tree.Tpa / p_tree.OdWgt;
-            }
-            else if (p_tree.TreeType == OpCostTreeType.CT)
-            {
-                // For opCost chip trees we just send bole volume
-                // OpCost is expects bole volumes/weights only for chip trees.
-                if (p_tree.VolCfNet > 0)
-                {
-                    p_tree.OpCostChipVolCf = p_tree.VolCfNet * p_tree.Tpa;
-                }
-                else
-                {
-                    p_tree.OpCostChipVolCf = p_tree.VolTsGrs * p_tree.Tpa;
-                }
+                case OpCostTreeType.LL:
+                    //OpCost
+                    p_tree.OpCostMerchVolCf = p_tree.VolCfNet * p_tree.Tpa;
+                    if (p_tree.DryToGreen != 0)
+                        p_tree.OpCostMerchWtGt = p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000; 
 
-                // Just sending weight of bole as well for chips
-                if (p_tree.VolCfNet > 0)
-                {
-                    p_tree.OpCostChipWtGt = (p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
-                }
-                else
-                {
-                    p_tree.OpCostChipWtGt = (p_tree.VolTsGrs * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
-                }
+                    return;
+                case OpCostTreeType.SL:
+                    //OpCost
+                    p_tree.OpCostMerchVolCf = p_tree.VolCfNet * p_tree.Tpa;
+                    if (p_tree.DryToGreen != 0)
+                        p_tree.OpCostMerchWtGt = p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000;
+
+                    return;
+                case OpCostTreeType.BC:
+                    //OpCost
+                    p_tree.OpCostBrushCutVolCf = p_tree.DryBiot * p_tree.Tpa / p_tree.OdWgt;
+
+                    //TVV
+                    if (p_tree.DryToGreen != 0)
+                        p_tree.BrushCutWtGt = (p_tree.DryBiot * p_tree.Tpa / p_tree.DryToGreen) / 2000;
+                    if (p_tree.OdWgt > 0)
+                        p_tree.BrushCutVolCf = p_tree.DryBiot * p_tree.Tpa / p_tree.OdWgt;
+                    return;
+                case OpCostTreeType.CT:
+                    // For opCost chip trees we just send bole volume
+                    // OpCost is expects bole volumes/weights only for chip trees.
+                    if (p_tree.VolCfNet > 0)
+                    {
+                        p_tree.OpCostChipVolCf = p_tree.VolCfNet * p_tree.Tpa;
+                        if (p_tree.DryToGreen > 0)
+                            p_tree.OpCostChipWtGt = (p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
+                    }
+                    else
+                    {
+                        p_tree.OpCostChipVolCf = p_tree.VolTsGrs * p_tree.Tpa;
+                        if (p_tree.DryToGreen > 0)
+                            p_tree.OpCostChipWtGt = (p_tree.VolTsGrs * p_tree.OdWgt * p_tree.Tpa) / p_tree.DryToGreen / 2000;
+                    }
+                    return;
+                default:
+                    return;
             }
         }
 
@@ -999,6 +1023,7 @@ namespace FIA_Biosum_Manager
             double _dblOpCostChipVolCf;
             double _dblChipWtGt;
             double _dblOpCostChipWtGt;
+            double _dblStandResidueWtGt;
 
             string _strDebugFile = "";
 
@@ -1196,6 +1221,11 @@ namespace FIA_Biosum_Manager
             {
                 get { return _intHarvestMethodCategory; }
                 set { _intHarvestMethodCategory = value; }
+            }
+            public double StandResidueWtGt
+            {
+                get { return _dblStandResidueWtGt; }
+                set { _dblStandResidueWtGt = value; }
             }
             public string DebugFile
             {
@@ -1619,6 +1649,9 @@ namespace FIA_Biosum_Manager
             int _intHarvestMethodCategory;
             string _strMerchToChip;
             double _dblChipMktValPgt;
+            double _dblTotalBrushCutVolumeCf;
+            double _dblTotalBrushCutWtGt;
+            double _dblTotalStandResidueWtGt;
 
             public treeVolValInput(string condId, string rxCycle, string rxPackage, string rx,
                                     int speciesGroup, int diamGroup, bool isNonCommercial,
@@ -1679,6 +1712,21 @@ namespace FIA_Biosum_Manager
             public int HarvestMethodCategory
             {
                 get { return _intHarvestMethodCategory; }
+            }
+            public double TotalBrushCutVolumeCf
+            {
+                get { return _dblTotalBrushCutVolumeCf; }
+                set { _dblTotalBrushCutVolumeCf = value; }
+            }
+            public double TotalBrushCutWtGt
+            {
+                get { return _dblTotalBrushCutWtGt; }
+                set { _dblTotalBrushCutWtGt = value; }
+            }
+            public double TotalStandResidueWtGt
+            {
+                get { return _dblTotalStandResidueWtGt; }
+                set { _dblTotalStandResidueWtGt = value; }
             }
         }
 
