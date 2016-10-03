@@ -30,23 +30,18 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblHarvestCosts = new System.Windows.Forms.Label();
-            this.chkOPCOST = new System.Windows.Forms.CheckBox();
-            this.chkFRCS = new System.Windows.Forms.CheckBox();
+            this.btnRunNew = new System.Windows.Forms.Button();
             this.cmbFilter = new System.Windows.Forms.ComboBox();
             this.pnlFileSizeMonitor = new System.Windows.Forms.Panel();
             this.uc_filesize_monitor3 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.uc_filesize_monitor2 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.uc_filesize_monitor1 = new FIA_Biosum_Manager.uc_filesize_monitor();
-            this.chkSteepSlope = new System.Windows.Forms.CheckBox();
-            this.chkLowSlope = new System.Windows.Forms.CheckBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.lblMsg = new System.Windows.Forms.Label();
             this.lstFvsOutput = new System.Windows.Forms.ListView();
             this.btnUncheckAll = new System.Windows.Forms.Button();
             this.btnChkAll = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.btnRunNew = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pnlFileSizeMonitor.SuspendLayout();
@@ -67,13 +62,8 @@
             // 
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.btnRunNew);
-            this.panel1.Controls.Add(this.lblHarvestCosts);
-            this.panel1.Controls.Add(this.chkOPCOST);
-            this.panel1.Controls.Add(this.chkFRCS);
             this.panel1.Controls.Add(this.cmbFilter);
             this.panel1.Controls.Add(this.pnlFileSizeMonitor);
-            this.panel1.Controls.Add(this.chkSteepSlope);
-            this.panel1.Controls.Add(this.chkLowSlope);
             this.panel1.Controls.Add(this.btnRun);
             this.panel1.Controls.Add(this.lblMsg);
             this.panel1.Controls.Add(this.lstFvsOutput);
@@ -86,40 +76,15 @@
             this.panel1.TabIndex = 32;
             this.panel1.Resize += new System.EventHandler(this.panel1_Resize);
             // 
-            // lblHarvestCosts
+            // btnRunNew
             // 
-            this.lblHarvestCosts.AutoSize = true;
-            this.lblHarvestCosts.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHarvestCosts.ForeColor = System.Drawing.Color.ForestGreen;
-            this.lblHarvestCosts.Location = new System.Drawing.Point(466, 9);
-            this.lblHarvestCosts.Name = "lblHarvestCosts";
-            this.lblHarvestCosts.Size = new System.Drawing.Size(131, 13);
-            this.lblHarvestCosts.TabIndex = 72;
-            this.lblHarvestCosts.Text = "Harvest Cost Options:";
-            // 
-            // chkOPCOST
-            // 
-            this.chkOPCOST.AutoSize = true;
-            this.chkOPCOST.Checked = true;
-            this.chkOPCOST.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkOPCOST.Location = new System.Drawing.Point(663, 8);
-            this.chkOPCOST.Name = "chkOPCOST";
-            this.chkOPCOST.Size = new System.Drawing.Size(70, 17);
-            this.chkOPCOST.TabIndex = 71;
-            this.chkOPCOST.Text = "OPCOST";
-            this.chkOPCOST.UseVisualStyleBackColor = true;
-            this.chkOPCOST.Click += new System.EventHandler(this.chkOPCOST_Click);
-            // 
-            // chkFRCS
-            // 
-            this.chkFRCS.AutoSize = true;
-            this.chkFRCS.Location = new System.Drawing.Point(603, 8);
-            this.chkFRCS.Name = "chkFRCS";
-            this.chkFRCS.Size = new System.Drawing.Size(54, 17);
-            this.chkFRCS.TabIndex = 70;
-            this.chkFRCS.Text = "FRCS";
-            this.chkFRCS.UseVisualStyleBackColor = true;
-            this.chkFRCS.Click += new System.EventHandler(this.chkFRCS_Click);
+            this.btnRunNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRunNew.Location = new System.Drawing.Point(449, 354);
+            this.btnRunNew.Name = "btnRunNew";
+            this.btnRunNew.Size = new System.Drawing.Size(126, 32);
+            this.btnRunNew.TabIndex = 73;
+            this.btnRunNew.Text = "Run New";
+            this.btnRunNew.Click += new System.EventHandler(this.btnRunNew_Click);
             // 
             // cmbFilter
             // 
@@ -170,32 +135,6 @@
             this.uc_filesize_monitor1.TabIndex = 0;
             this.uc_filesize_monitor1.Visible = false;
             // 
-            // chkSteepSlope
-            // 
-            this.chkSteepSlope.AutoSize = true;
-            this.chkSteepSlope.Checked = true;
-            this.chkSteepSlope.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSteepSlope.Location = new System.Drawing.Point(156, 7);
-            this.chkSteepSlope.Name = "chkSteepSlope";
-            this.chkSteepSlope.Size = new System.Drawing.Size(130, 17);
-            this.chkSteepSlope.TabIndex = 61;
-            this.chkSteepSlope.Text = "Process Steep Slopes";
-            this.chkSteepSlope.UseVisualStyleBackColor = true;
-            this.chkSteepSlope.CheckedChanged += new System.EventHandler(this.chkSteepSlope_CheckedChanged);
-            // 
-            // chkLowSlope
-            // 
-            this.chkLowSlope.AutoSize = true;
-            this.chkLowSlope.Checked = true;
-            this.chkLowSlope.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkLowSlope.Location = new System.Drawing.Point(19, 7);
-            this.chkLowSlope.Name = "chkLowSlope";
-            this.chkLowSlope.Size = new System.Drawing.Size(122, 17);
-            this.chkLowSlope.TabIndex = 60;
-            this.chkLowSlope.Text = "Process Low Slopes";
-            this.chkLowSlope.UseVisualStyleBackColor = true;
-            this.chkLowSlope.CheckedChanged += new System.EventHandler(this.chkLowSlope_CheckedChanged);
-            // 
             // btnRun
             // 
             this.btnRun.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -223,10 +162,10 @@
             this.lstFvsOutput.GridLines = true;
             this.lstFvsOutput.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstFvsOutput.HideSelection = false;
-            this.lstFvsOutput.Location = new System.Drawing.Point(19, 30);
+            this.lstFvsOutput.Location = new System.Drawing.Point(19, 13);
             this.lstFvsOutput.MultiSelect = false;
             this.lstFvsOutput.Name = "lstFvsOutput";
-            this.lstFvsOutput.Size = new System.Drawing.Size(714, 294);
+            this.lstFvsOutput.Size = new System.Drawing.Size(714, 310);
             this.lstFvsOutput.TabIndex = 57;
             this.lstFvsOutput.UseCompatibleStateImageBehavior = false;
             this.lstFvsOutput.View = System.Windows.Forms.View.Details;
@@ -260,16 +199,6 @@
             this.lblTitle.TabIndex = 31;
             this.lblTitle.Text = "Run Processor Scenario";
             // 
-            // btnRunNew
-            // 
-            this.btnRunNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRunNew.Location = new System.Drawing.Point(449, 354);
-            this.btnRunNew.Name = "btnRunNew";
-            this.btnRunNew.Size = new System.Drawing.Size(126, 32);
-            this.btnRunNew.TabIndex = 73;
-            this.btnRunNew.Text = "Run New";
-            this.btnRunNew.Click += new System.EventHandler(this.btnRunNew_Click);
-            // 
             // uc_processor_scenario_run
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -295,16 +224,11 @@
         private System.Windows.Forms.Button btnChkAll;
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Label lblMsg;
-        private System.Windows.Forms.CheckBox chkSteepSlope;
-        private System.Windows.Forms.CheckBox chkLowSlope;
         private System.Windows.Forms.Panel pnlFileSizeMonitor;
         private uc_filesize_monitor uc_filesize_monitor3;
         private uc_filesize_monitor uc_filesize_monitor2;
         private uc_filesize_monitor uc_filesize_monitor1;
         private System.Windows.Forms.ComboBox cmbFilter;
-        private System.Windows.Forms.Label lblHarvestCosts;
-        private System.Windows.Forms.CheckBox chkOPCOST;
-        private System.Windows.Forms.CheckBox chkFRCS;
         private System.Windows.Forms.Button btnRunNew;
     }
 }

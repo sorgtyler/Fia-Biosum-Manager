@@ -34,6 +34,10 @@ namespace FIA_Biosum_Manager
         int m_intCurrentCount = 0;
         string m_strDateTimeCreated = "";
         string m_strOPCOSTBatchFile="";
+        private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_processor_debug.txt";
+        //@ToDo: Remove these when removing old Processor code; These variable stand-in for checkboxes that are removed
+        bool m_blnLowSlope = true;
+        bool m_blnSteepSlope = true;
         
         Queries m_oQueries = new Queries();
         Tables m_oTables = new Tables();
@@ -50,16 +54,13 @@ namespace FIA_Biosum_Manager
         private string _strScenarioId = "";
         private frmProcessorScenario _frmProcessorScenario = null;
         private ProgressBarEx.ProgressBarEx _oProgressBarEx = null;
-        private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_processor_debug.txt";
 
         //FRCS Harvest Method Low Slope
         FRCSHarvestMethodItem m_oFRCSHarvestMethodItemLowSlope = new FRCSHarvestMethodItem();
         FRCSHarvestMethodItem m_oFRCSHarvestMethodItemSteepSlope = new FRCSHarvestMethodItem();
 
         //FRCS Harvest Method collection
-        FRCSHarvestMethodItem_Collection m_oFRCSHarvestMethodItem_Collection = new FRCSHarvestMethodItem_Collection();
-        
-
+        FRCSHarvestMethodItem_Collection m_oFRCSHarvestMethodItem_Collection = new FRCSHarvestMethodItem_Collection(); 
         
 
         private const int COL_CHECKBOX = 0;
@@ -587,11 +588,6 @@ namespace FIA_Biosum_Manager
             cmbFilter.Items.Clear();
             cmbFilter.Items.Add("All");
             cmbFilter.Text = "All";
-            //
-            //SET THE LOW/STEEP SLOPE CHECK BOXES
-            //
-            chkLowSlope.Checked = ScenarioHarvestMethodVariables.ProcessLowSlope;
-            chkSteepSlope.Checked = ScenarioHarvestMethodVariables.ProcessSteepSlope;
             //
             //INSTANTIATE EXTENDED LISTVIEW OBJECT
             //
@@ -1172,7 +1168,7 @@ namespace FIA_Biosum_Manager
                 this.cmbFilter.Top = btnChkAll.Top;
                 this.btnRun.Top = this.btnChkAll.Top;
                 this.lblMsg.Top = this.btnRun.Top - this.lblMsg.Height - 5;
-                this.m_lvEx.Height = this.lblMsg.Top - this.m_lvEx.Top - 5;
+                this.m_lvEx.Height = this.lblMsg.Top - this.m_lvEx.Top + 10;
                 this.m_lvEx.Width = this.panel1.Width - (m_lvEx.Left * 2);
                 this.btnRun.Left = this.m_lvEx.Width - (int)(m_lvEx.Width * .5) - (int)(btnRun.Width * .5);
                 this.lblMsg.Width = this.m_lvEx.Width;
@@ -1273,16 +1269,6 @@ namespace FIA_Biosum_Manager
                     MessageBox.Show("No Boxes Are Checked", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                     return;
                 }
-                if (this.chkFRCS.Checked == false && this.chkOPCOST.Checked == false)
-                {
-                    MessageBox.Show("No Harvest Cost Method Boxes Are Checked", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    return;
-                }
-                if (this.chkSteepSlope.Checked == false && this.chkLowSlope.Checked == false)
-                {
-                    MessageBox.Show("No Slope Type Boxes Are Checked", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    return;
-                }
                 ReferenceProcessorScenarioForm.SaveRuleDefinitions();
                 m_intError = ReferenceProcessorScenarioForm.m_intError;
 
@@ -1320,10 +1306,6 @@ namespace FIA_Biosum_Manager
              
             btnChkAll.Enabled = false;
             btnUncheckAll.Enabled = false;
-            chkOPCOST.Enabled = false;
-            chkFRCS.Enabled = false;
-            chkLowSlope.Enabled = false;
-            chkSteepSlope.Enabled = false;
 
             this.lblMsg.Text = "";
             this.lblMsg.Show();
@@ -1346,8 +1328,9 @@ namespace FIA_Biosum_Manager
             int x,y,z;
             int intCount = 0;
             int intRowCount = 0;
-            bool bFRCS = (bool)frmMain.g_oDelegate.GetControlPropertyValue(chkFRCS, "Checked", false);
-            bool bOPCOST = (bool)frmMain.g_oDelegate.GetControlPropertyValue(chkOPCOST, "Checked", false);
+            //@ToDo: We are only supporting OpCost now; Eventually should delete all FRCS code
+            bool bFRCS = false;
+            bool bOPCOST = true;
             string strInputPath = "";
             int intPercent = 0;
 
@@ -1518,11 +1501,11 @@ namespace FIA_Biosum_Manager
 
                     //Here we set the maximum number of ticks on the progress bar
                     //y cannot exceed theis max number
-                    if (chkLowSlope.Checked && chkSteepSlope.Checked)
+                    if (m_blnLowSlope == true && m_blnSteepSlope == true)
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 45);
                     else
                     {
-                        if (chkLowSlope.Checked)
+                        if (m_blnLowSlope == true)
                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 28);
                         else
                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 29);
@@ -1543,7 +1526,7 @@ namespace FIA_Biosum_Manager
                     //
                     //LOW SLOPE
                     //
-                    if (chkLowSlope.Checked)
+                    if (m_blnLowSlope == true)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Create Low Slope Diameters Table...Stand By");
                         y++;
@@ -1711,7 +1694,7 @@ namespace FIA_Biosum_Manager
                     //
                     //STEEP SLOPE
                     //
-                    if (chkSteepSlope.Checked)
+                    if (m_blnSteepSlope == true)
                     {
                         if (m_intError == 0)
                         {
@@ -5263,10 +5246,6 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)btnChkAll, "Enabled", true);
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)btnUncheckAll, "Enabled", true);
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)btnRun, "Text", "Run");
-            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)chkFRCS, "Enabled", true);
-            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)chkOPCOST, "Enabled", true);
-            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)chkLowSlope, "Enabled", true);
-            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)chkSteepSlope, "Enabled", true);
             frmMain.g_oDelegate.SetStatusBarPanelTextValue((System.Windows.Forms.StatusBar)frmMain.g_sbpInfo.Parent, 1, "Ready");
             frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "* = New FVS Tree records to process");
             //frmMain.g_oDelegate.ExecuteControlMethod(lblMsg, "Hide");
@@ -5279,23 +5258,13 @@ namespace FIA_Biosum_Manager
         private void chkLowSlope_CheckedChanged(object sender, EventArgs e)
         {
             if (ReferenceProcessorScenarioForm.m_bDataSourceFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
-            ScenarioHarvestMethodVariables.ProcessLowSlope = chkLowSlope.Checked;
+            ScenarioHarvestMethodVariables.ProcessLowSlope = m_blnLowSlope;
         }
 
         private void chkSteepSlope_CheckedChanged(object sender, EventArgs e)
         {
             if (ReferenceProcessorScenarioForm.m_bDataSourceFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
-            ScenarioHarvestMethodVariables.ProcessSteepSlope = chkSteepSlope.Checked;
-        }
-
-        private void chkOPCOST_Click(object sender, EventArgs e)
-        {
-           chkFRCS.Checked = !chkOPCOST.Checked;
-        }
-
-        private void chkFRCS_Click(object sender, EventArgs e)
-        {
-           chkOPCOST.Checked = !chkFRCS.Checked;
+            ScenarioHarvestMethodVariables.ProcessSteepSlope = m_blnSteepSlope;
         }
 
         private void RunScenario_AppendPlaceholdersToTreeVolValAndHarvestCostsTables()
@@ -5447,9 +5416,6 @@ namespace FIA_Biosum_Manager
 
             btnChkAll.Enabled = false;
             btnUncheckAll.Enabled = false;
-            chkOPCOST.Enabled = false;
-            chkLowSlope.Enabled = false;
-            chkSteepSlope.Enabled = false;
 
             this.lblMsg.Text = "";
             this.lblMsg.Show();
@@ -5470,7 +5436,6 @@ namespace FIA_Biosum_Manager
             int x, y, z;
             int intCount = 0;
             int intRowCount = 0;
-            bool bOPCOST = (bool)frmMain.g_oDelegate.GetControlPropertyValue(chkOPCOST, "Checked", false);
             string strInputPath = "";
             int intPercent = 0;
 
@@ -5626,50 +5591,43 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 14);
                     
                     y = 0;
-                    //
-                    //LOW SLOPE
-                    //
-                    if (chkLowSlope.Checked)
+
+                    frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Load trees from cut list...Stand By");
+                    y++;
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper());
+                    mainProcessor.loadTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
+
+                    if (m_intError == 0)
                     {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Load trees from cut list...Stand By");
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper());
-                        mainProcessor.loadTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
-
-                        if (m_intError == 0)
-                        {
-                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
-                            y++;
-                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                            mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
-                        }
+                        mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
+                    }
                         
-                        if (m_intError == 0)
-                        {
-                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
-                            y++;
-                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                            mainProcessor.createOpcostInput(m_oQueries.m_strTempDbFile);
-                        }
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        mainProcessor.createOpcostInput(m_oQueries.m_strTempDbFile);
+                    }
                         
-                        if (m_intError == 0)
-                        {
-                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
-                            y++;
-                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                            mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, m_oQueries.m_strTempDbFile, false);
-                        }
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, m_oQueries.m_strTempDbFile, false);
+                    }
 
-                        if (m_intError == 0)
-                        {
-                            m_oAdo.m_strSQL = "SELECT COUNT(*) AS reccount FROM opcost_input";
+                    if (m_intError == 0)
+                    {
+                        m_oAdo.m_strSQL = "SELECT COUNT(*) AS reccount FROM opcost_input";
 
-                            y++;
-                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        }
-
-
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     }
                     
                     intCount++;
@@ -5687,7 +5645,7 @@ namespace FIA_Biosum_Manager
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     }
-                    if (m_intError == 0 && bOPCOST)
+                    if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "OPCOST Processing Batch Input...Stand By");
                         RunScenario_ProcessOPCOST(strVariant, strRxPackage);
@@ -5697,7 +5655,7 @@ namespace FIA_Biosum_Manager
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     }
-                    if (m_intError == 0 && bOPCOST)
+                    if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append OPCOST Data To Harvest Costs Work Table...Stand By");
                         RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable", false);
@@ -5823,53 +5781,50 @@ namespace FIA_Biosum_Manager
                         }
                         string strInputFile = "";
 
-                        if (bOPCOST)
+                        strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
+                        strInputFile = "OPCOST_Input_" + strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
+                        strInputFile = strInputFile.Replace(":", "_");
+                        strInputFile = strInputFile.Replace(" ", "_");
+                        System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
+                        System.Threading.Thread.Sleep(5000);
+                        //delete the work tables and any links
+                        m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
+                        if (m_oAdo.m_intError == 0)
                         {
-                            strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                            strInputFile = "OPCOST_Input_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
-                            strInputFile = strInputFile.Replace(":", "_");
-                            strInputFile = strInputFile.Replace(" ", "_");
-                            System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
-                            System.Threading.Thread.Sleep(5000);
-                            //delete the work tables and any links
-                            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
-                            if (m_oAdo.m_intError == 0)
-                            {
-                                string[] strTables = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
-                                if (strTables != null)
+                           string[] strTables = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
+                           if (strTables != null)
+                           {
+                                for (z = 0; z <= strTables.Length - 1; z++)
                                 {
-                                    for (z = 0; z <= strTables.Length - 1; z++)
+                                    if (strTables[z] != null)
                                     {
-                                        if (strTables[z] != null)
+                                        switch (strTables[z].Trim().ToUpper())
                                         {
-                                            switch (strTables[z].Trim().ToUpper())
-                                            {
-                                                case "OPCOST_ERR": break;
-                                                case "OPCOST_INPUT": break;
-                                                case "OPCOST_OUTPUT": break;
-                                                case "FRCSVARIABLESLOWSLOPETABLE": break;
-                                                case "FRCSVARIABLESSTEEPSLOPETABLE": break;
-                                                case "OPCOST_CHIPPING": break;
-                                                case "OPCOST_IDEAL": break;
-                                                default:
-                                                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
-                                                    break;
+                                            case "OPCOST_ERR": break;
+                                            case "OPCOST_INPUT": break;
+                                            case "OPCOST_OUTPUT": break;
+                                            case "FRCSVARIABLESLOWSLOPETABLE": break;
+                                            case "FRCSVARIABLESSTEEPSLOPETABLE": break;
+                                            case "OPCOST_CHIPPING": break;
+                                            case "OPCOST_IDEAL": break;
+                                            default:
+                                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
+                                                break;
 
-                                            }
-                                        }
-                                    }
-                                }
-                                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-                                System.Threading.Thread.Sleep(5000);
-                                if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
-                                {
-                                    oDao.m_DaoDbEngine.Idle(1);
-                                    oDao.m_DaoDbEngine.Idle(8);
-                                    oDao.CompactMDB(strInputPath + "\\" + strInputFile);
-                                    System.Threading.Thread.Sleep(5000);
-                                }
-
+                                         }
+                                     }
+                                 }
                             }
+                            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+                            System.Threading.Thread.Sleep(5000);
+                            if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
+                            {
+                                oDao.m_DaoDbEngine.Idle(1);
+                                oDao.m_DaoDbEngine.Idle(8);
+                                oDao.CompactMDB(strInputPath + "\\" + strInputFile);
+                                System.Threading.Thread.Sleep(5000);
+                            }
+
                         }
                         m_intError = oDao.m_intError;
                         m_oAdo.OpenConnection(strConn, 5);
