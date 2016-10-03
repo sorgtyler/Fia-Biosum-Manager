@@ -2671,7 +2671,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "NEWPROJECT", "NEWPROJECT" });
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "NEWPROJECT" });
         }
 
         private void button1_Click(object sender, EventArgs e)

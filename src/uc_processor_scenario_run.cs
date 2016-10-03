@@ -2130,7 +2130,7 @@ namespace FIA_Biosum_Manager
                         if (bOPCOST)
                         {
                             strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                            strInputFile = "OPCOST_Input_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
+                            strInputFile = "OPCOST_Input_" + strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
                             strInputFile = strInputFile.Replace(":", "_");
                             strInputFile = strInputFile.Replace(" ", "_");
                             System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);

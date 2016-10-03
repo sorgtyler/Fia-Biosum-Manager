@@ -7607,7 +7607,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "PLOTDATA1", "PLOTDATA1" });
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "PLOTDATA1" });
         }
 
         private void btnFilterHelp_Click(object sender, EventArgs e)
@@ -7616,7 +7616,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "PLOTDATA2", "PLOTDATA2" });
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "PLOTDATA2" });
         }
 
         /*
