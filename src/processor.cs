@@ -361,61 +361,75 @@ namespace FIA_Biosum_Manager
                 IDictionary<string, opcostInput> dictOpcostInput = new Dictionary<string, opcostInput>();
                 foreach (tree nextTree in m_trees)
                 {
-                    // if the tree yarding distance exceeds the user maximum, don't process it
-                    if (!nextTree.exceedsYardingLimit(m_scenarioHarvestMethod.MaxCableYardingDistance, m_scenarioHarvestMethod.MaxHelicopterCableYardingDistance))
+                    opcostInput nextInput = null;
+                    string strStand = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
+                    bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
+                    if (!blnFound)
                     {
-                        opcostInput nextInput = null;
-                        string strStand = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
-                        bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
-                        if (!blnFound)
-                        {
-                            nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
+                        nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
                                                     nextTree.Rx, nextTree.RxYear, nextTree.YardingDistance, nextTree.Elevation,
                                                     nextTree.HarvestMethod);
-                            dictOpcostInput.Add(strStand, nextInput);
-                        }
+                        dictOpcostInput.Add(strStand, nextInput);
+                    }
                     
-                        // Metrics for brush cut trees
-                        if (nextTree.TreeType == OpCostTreeType.BC)
-                        {
-                            nextInput.TotalBcTpa = nextInput.TotalBcTpa + nextTree.Tpa;
-                            //nextInput.TotalBcVolCf = nextInput.TotalBcVolCf + nextTree.OpCostBrushCutVolCf;
-                        }
-                        // Metrics for chip trees
-                        else if (nextTree.TreeType == OpCostTreeType.CT)
-                        {
-                            nextInput.TotalChipTpa = nextInput.TotalChipTpa + nextTree.Tpa;
-                            //nextInput.TotalCtTreeBiomass = nextInput.TotalCtTreeBiomass + nextTree.DryBiot;
-                            nextInput.TotalChipMerchVolCf = nextInput.TotalChipMerchVolCf + nextTree.DryBiom;
-                            //nextInput.TotalCtVolCf = nextInput.TotalCtVolCf + nextTree.OpCostChipVolCf;
-                            //nextInput.TotalCtWtGt = nextInput.TotalCtWtGt + nextTree.OpCostChipWtGt;
-                            //if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                                //nextInput.TotalCtHwdVolCf = nextInput.TotalCtHwdVolCf + nextTree.OpCostChipVolCf;
+                    // Metrics for brush cut trees
+                    if (nextTree.TreeType == OpCostTreeType.BC)
+                    {
+                        nextInput.TotalBcTpa = nextInput.TotalBcTpa + nextTree.Tpa;
+                        nextInput.TotalBcVolCf = nextInput.TotalBcVolCf + nextTree.BrushCutVolCf;
+                    }
 
-                        }
-                        // Metrics for small log trees
-                        else if (nextTree.TreeType == OpCostTreeType.SL)
+                    // Metrics for chip trees
+                    else if (nextTree.TreeType == OpCostTreeType.CT)
+                    {
+                        nextInput.TotalChipTpa = nextInput.TotalChipTpa + nextTree.Tpa;
+                        nextInput.TotalChipMerchVolCf = nextInput.TotalChipMerchVolCf + nextTree.MerchVolCf;
+                        nextInput.TotalChipNonMerchVolCf = nextInput.TotalChipNonMerchVolCf + nextTree.NonMerchVolCf;
+                        nextInput.TotalChipVolCf = nextInput.TotalChipVolCf + nextTree.TotalVolCf;
+                        nextInput.TotalChipWtGt = nextInput.TotalChipWtGt + nextTree.TotalWtGt;
+                        if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
+                            nextInput.TotalChipHwdVolCf = nextInput.TotalChipHwdVolCf + nextTree.TotalVolCf;
+                    }
+
+                    // Metrics for small log trees
+                    else if (nextTree.TreeType == OpCostTreeType.SL)
+                    {
+                        nextInput.TotalSmLogTpa = nextInput.TotalSmLogTpa + nextTree.Tpa;
+                        nextInput.TotalSmLogMerchVolCf = nextInput.TotalSmLogMerchVolCf + nextTree.MerchVolCf;
+                        if (nextTree.IsNonCommercial)
                         {
-                            nextInput.TotalSmLogTpa = nextInput.TotalSmLogTpa + nextTree.Tpa;
-                            //nextInput.TotalSmLogTreeBiomass = nextInput.TotalSmLogTreeBiomass + nextTree.DryBiot;
-                            //nextInput.TotalSmLogBoleBiomass = nextInput.TotalSmLogBoleBiomass + nextTree.DryBiom;
-                            //nextInput.TotalSmLogVolCf = nextInput.TotalSmLogVolCf + nextTree.OpCostMerchVolCf;
-                            //nextInput.TotalSmLogWtGt = nextInput.TotalSmLogWtGt + nextTree.OpCostMerchWtGt;
-                            //if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                            //    nextInput.TotalSmLogHwdVolCf = nextInput.TotalSmLogHwdVolCf + nextTree.OpCostMerchVolCf;
+                            nextInput.TotalSmLogNonCommMerchVolCf = nextInput.TotalSmLogNonCommMerchVolCf + nextTree.MerchVolCf;
+                            nextInput.TotalSmLogNonCommVolCf = nextInput.TotalSmLogNonCommVolCf + nextTree.TotalVolCf;
                         }
-                        // Metrics for small log trees
+                        else
+                        {
+                            nextInput.TotalSmLogCommNonMerchVolCf = nextInput.TotalSmLogCommNonMerchVolCf + nextTree.NonMerchVolCf;
+                        }
+                        nextInput.TotalSmLogVolCf = nextInput.TotalSmLogVolCf + nextTree.TotalVolCf;
+                        nextInput.TotalSmLogWtGt = nextInput.TotalSmLogWtGt + nextTree.TotalWtGt;
+                        if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
+                            nextInput.TotalSmLogHwdVolCf = nextInput.TotalSmLogHwdVolCf + nextTree.TotalVolCf;
+                        }
+
+                        // Metrics for large log trees
                         else if (nextTree.TreeType == OpCostTreeType.LL)
                         {
                             nextInput.TotalLgLogTpa = nextInput.TotalLgLogTpa + nextTree.Tpa;
-                            //nextInput.TotalLgLogTreeBiomass = nextInput.TotalLgLogTreeBiomass + nextTree.DryBiot;
-                            //nextInput.TotalLgLogBoleBiomass = nextInput.TotalLgLogBoleBiomass + nextTree.DryBiom;
-                            //nextInput.TotalLgLogVolCf = nextInput.TotalLgLogVolCf + nextTree.OpCostMerchVolCf;
-                            //nextInput.TotalLgLogWtGt = nextInput.TotalLgLogWtGt + nextTree.OpCostMerchWtGt;
-                            //if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                            //    nextInput.TotalLgLogHwdVolCf = nextInput.TotalLgLogHwdVolCf + nextTree.OpCostMerchVolCf;
+                            nextInput.TotalLgLogMerchVolCf = nextInput.TotalLgLogMerchVolCf + nextTree.MerchVolCf;
+                            if (nextTree.IsNonCommercial)
+                            {
+                                nextInput.TotalLgLogNonCommMerchVolCf = nextInput.TotalLgLogNonCommMerchVolCf + nextTree.MerchVolCf;
+                                nextInput.TotalLgLogNonCommVolCf = nextInput.TotalLgLogNonCommVolCf + nextTree.TotalVolCf;
+                            }
+                            else
+                            {
+                                nextInput.TotalLgLogCommNonMerchVolCf = nextInput.TotalLgLogCommNonMerchVolCf + nextTree.NonMerchVolCf;
+                            }
+                            nextInput.TotalLgLogVolCf = nextInput.TotalLgLogVolCf + nextTree.TotalVolCf;
+                            nextInput.TotalLgLogWtGt = nextInput.TotalLgLogWtGt + nextTree.TotalWtGt;
+                            if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
+                                nextInput.TotalLgLogHwdVolCf = nextInput.TotalLgLogHwdVolCf + nextTree.TotalVolCf;
                         }
-                    }
                 }
                 //System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
 
@@ -1244,7 +1258,7 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-            public double TotalVolCf
+            public double TotalWtGt
             {
                 get
                 {
@@ -1261,33 +1275,6 @@ namespace FIA_Biosum_Manager
             public string DebugFile
             {
                 set { _strDebugFile = value; }
-            }
-
-            public bool exceedsYardingLimit(double maxCableYardingDistance, double maxHelicopterYardingDistance)
-            {
-                if (string.IsNullOrEmpty(_strHarvestMethod))
-                {
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(_strDebugFile, "tree.exceedsYardingLimit: No harvest method assigned \r\n");
-                    return false;
-                }
-                if (_dblYardingDistance < 1)
-                {
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(_strDebugFile, "tree.exceedsYardingLimit: Invalid yarding distance: " + _dblYardingDistance + " \r\n");
-                    return false;
-                }
-                if (_strHarvestMethod.Contains("Cable") && _dblYardingDistance > maxCableYardingDistance)
-                {
-                    //Cable harvest method exceeds cable yarding limit
-                    return true;
-                }
-                else if (_strHarvestMethod.Contains("Helicopter") && _dblYardingDistance > maxHelicopterYardingDistance)
-                {
-                    //Helicopter harvest method exceeds helicopter yarding limit
-                    return true;
-                }
-                else {return false;}
             }
         }
 
