@@ -352,7 +352,7 @@ namespace FIA_Biosum_Manager
             {
 
                 // create opcost input table
-                frmMain.g_oTables.m_oProcessor.CreateOpcostInputTable(m_oAdo, m_oAdo.m_OleDbConnection, m_strOpcostTableName);
+                frmMain.g_oTables.m_oProcessor.CreateNewOpcostInputTable(m_oAdo, m_oAdo.m_OleDbConnection, m_strOpcostTableName);
 
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -376,59 +376,59 @@ namespace FIA_Biosum_Manager
                     if (nextTree.TreeType == OpCostTreeType.BC)
                     {
                         nextInput.TotalBcTpa = nextInput.TotalBcTpa + nextTree.Tpa;
-                        nextInput.TotalBcVolCf = nextInput.TotalBcVolCf + nextTree.BrushCutVolCf;
+                        nextInput.PerAcBcVolCf = nextInput.PerAcBcVolCf + nextTree.BrushCutVolCf;
                     }
 
                     // Metrics for chip trees
                     else if (nextTree.TreeType == OpCostTreeType.CT)
                     {
                         nextInput.TotalChipTpa = nextInput.TotalChipTpa + nextTree.Tpa;
-                        nextInput.TotalChipMerchVolCf = nextInput.TotalChipMerchVolCf + nextTree.MerchVolCf;
-                        nextInput.TotalChipNonMerchVolCf = nextInput.TotalChipNonMerchVolCf + nextTree.NonMerchVolCf;
-                        nextInput.TotalChipVolCf = nextInput.TotalChipVolCf + nextTree.TotalVolCf;
-                        nextInput.TotalChipWtGt = nextInput.TotalChipWtGt + nextTree.TotalWtGt;
+                        nextInput.PerAcChipMerchVolCf = nextInput.PerAcChipMerchVolCf + nextTree.MerchVolCf;
+                        nextInput.PerAcChipNonMerchVolCf = nextInput.PerAcChipNonMerchVolCf + nextTree.NonMerchVolCf;
+                        nextInput.PerAcChipVolCf = nextInput.PerAcChipVolCf + nextTree.TotalVolCf;
+                        nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.TotalWtGt;
                         if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                            nextInput.TotalChipHwdVolCf = nextInput.TotalChipHwdVolCf + nextTree.TotalVolCf;
+                            nextInput.PerAcChipHwdVolCf = nextInput.PerAcChipHwdVolCf + nextTree.TotalVolCf;
                     }
 
                     // Metrics for small log trees
                     else if (nextTree.TreeType == OpCostTreeType.SL)
                     {
                         nextInput.TotalSmLogTpa = nextInput.TotalSmLogTpa + nextTree.Tpa;
-                        nextInput.TotalSmLogMerchVolCf = nextInput.TotalSmLogMerchVolCf + nextTree.MerchVolCf;
+                        nextInput.PerAcSmLogMerchVolCf = nextInput.PerAcSmLogMerchVolCf + nextTree.MerchVolCf;
                         if (nextTree.IsNonCommercial)
                         {
-                            nextInput.TotalSmLogNonCommMerchVolCf = nextInput.TotalSmLogNonCommMerchVolCf + nextTree.MerchVolCf;
-                            nextInput.TotalSmLogNonCommVolCf = nextInput.TotalSmLogNonCommVolCf + nextTree.TotalVolCf;
+                            nextInput.PerAcSmLogNonCommMerchVolCf = nextInput.PerAcSmLogNonCommMerchVolCf + nextTree.MerchVolCf;
+                            nextInput.PerAcSmLogNonCommVolCf = nextInput.PerAcSmLogNonCommVolCf + nextTree.TotalVolCf;
                         }
                         else
                         {
-                            nextInput.TotalSmLogCommNonMerchVolCf = nextInput.TotalSmLogCommNonMerchVolCf + nextTree.NonMerchVolCf;
+                            nextInput.PerAcSmLogCommNonMerchVolCf = nextInput.PerAcSmLogCommNonMerchVolCf + nextTree.NonMerchVolCf;
                         }
-                        nextInput.TotalSmLogVolCf = nextInput.TotalSmLogVolCf + nextTree.TotalVolCf;
-                        nextInput.TotalSmLogWtGt = nextInput.TotalSmLogWtGt + nextTree.TotalWtGt;
+                        nextInput.PerAcSmLogVolCf = nextInput.PerAcSmLogVolCf + nextTree.TotalVolCf;
+                        nextInput.PerAcSmLogWtGt = nextInput.PerAcSmLogWtGt + nextTree.TotalWtGt;
                         if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                            nextInput.TotalSmLogHwdVolCf = nextInput.TotalSmLogHwdVolCf + nextTree.TotalVolCf;
+                            nextInput.PerAcSmLogHwdVolCf = nextInput.PerAcSmLogHwdVolCf + nextTree.TotalVolCf;
                         }
 
                         // Metrics for large log trees
                         else if (nextTree.TreeType == OpCostTreeType.LL)
                         {
                             nextInput.TotalLgLogTpa = nextInput.TotalLgLogTpa + nextTree.Tpa;
-                            nextInput.TotalLgLogMerchVolCf = nextInput.TotalLgLogMerchVolCf + nextTree.MerchVolCf;
+                            nextInput.PerAcLgLogMerchVolCf = nextInput.PerAcLgLogMerchVolCf + nextTree.MerchVolCf;
                             if (nextTree.IsNonCommercial)
                             {
-                                nextInput.TotalLgLogNonCommMerchVolCf = nextInput.TotalLgLogNonCommMerchVolCf + nextTree.MerchVolCf;
-                                nextInput.TotalLgLogNonCommVolCf = nextInput.TotalLgLogNonCommVolCf + nextTree.TotalVolCf;
+                                nextInput.PerAcLgLogNonCommMerchVolCf = nextInput.PerAcLgLogNonCommMerchVolCf + nextTree.MerchVolCf;
+                                nextInput.PerAcLgLogNonCommVolCf = nextInput.PerAcLgLogNonCommVolCf + nextTree.TotalVolCf;
                             }
                             else
                             {
-                                nextInput.TotalLgLogCommNonMerchVolCf = nextInput.TotalLgLogCommNonMerchVolCf + nextTree.NonMerchVolCf;
+                                nextInput.PerAcLgLogCommNonMerchVolCf = nextInput.PerAcLgLogCommNonMerchVolCf + nextTree.NonMerchVolCf;
                             }
-                            nextInput.TotalLgLogVolCf = nextInput.TotalLgLogVolCf + nextTree.TotalVolCf;
-                            nextInput.TotalLgLogWtGt = nextInput.TotalLgLogWtGt + nextTree.TotalWtGt;
+                            nextInput.PerAcLgLogVolCf = nextInput.PerAcLgLogVolCf + nextTree.TotalVolCf;
+                            nextInput.PerAcLgLogWtGt = nextInput.PerAcLgLogWtGt + nextTree.TotalWtGt;
                             if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
-                                nextInput.TotalLgLogHwdVolCf = nextInput.TotalLgLogHwdVolCf + nextTree.TotalVolCf;
+                                nextInput.PerAcLgLogHwdVolCf = nextInput.PerAcLgLogHwdVolCf + nextTree.TotalVolCf;
                         }
                 }
                 //System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
@@ -448,67 +448,70 @@ namespace FIA_Biosum_Manager
                     double dblBcAvgVolume = 0;
 
                     if (nextStand.TotalBcTpa > 0)
-                        { dblBcAvgVolume = nextStand.TotalBcVolCf / nextStand.TotalBcTpa; }
+                        { dblBcAvgVolume = nextStand.PerAcBcVolCf / nextStand.TotalBcTpa; }
 
                     // *** CHIP TREES ***
-                    double dblCtResidueFraction = 0;
-                    //if (nextStand.TotalChipMerchVolCf > 0)
-                    //    { dblCtResidueFraction = Math.Round((nextStand.TotalCtTreeBiomass - nextStand.TotalChipMerchVolCf) / nextStand.TotalChipMerchVolCf) * 100; }
                     double dblCtAvgVolume = 0;
                     if (nextStand.TotalChipTpa > 0)
-                        { dblCtAvgVolume = nextStand.TotalChipVolCf / nextStand.TotalChipTpa; }
+                        { dblCtAvgVolume = nextStand.PerAcChipVolCf / nextStand.TotalChipTpa; }
+                    double dblCtMerchPctTotal = 0;
                     double dblCtAvgDensity = 0;
                     double dblCtHwdProp = 0;
-                    if (nextStand.TotalChipVolCf > 0)
+                    if (nextStand.PerAcChipVolCf > 0)
                     {
-                        dblCtAvgDensity = nextStand.TotalChipWtGt * 2000 / nextStand.TotalChipVolCf;
-                        dblCtHwdProp = nextStand.TotalChipHwdVolCf / nextStand.TotalChipVolCf;
+                        dblCtMerchPctTotal = nextStand.PerAcChipMerchVolCf / nextStand.PerAcChipVolCf * 100;
+                        dblCtAvgDensity = nextStand.PerAcChipWtGt * 2000 / nextStand.PerAcChipVolCf;
+                        dblCtHwdProp = nextStand.PerAcChipHwdVolCf / nextStand.PerAcChipVolCf;
                     }
 
                     
                     // *** SMALL LOGS ***
-                    double dblSmLogResidueFraction = 0;
-                    //if (nextStand.TotalSmLogBoleBiomass > 0)
-                    //    { dblSmLogResidueFraction = Math.Round((nextStand.TotalSmLogTreeBiomass - nextStand.TotalSmLogBoleBiomass) / nextStand.TotalSmLogBoleBiomass) * 100; }
                     double dblSmLogAvgVolume = 0;
                     if (nextStand.TotalSmLogTpa > 0)
-                        { dblSmLogAvgVolume = nextStand.TotalSmLogVolCf / nextStand.TotalSmLogTpa; }
+                        { dblSmLogAvgVolume = nextStand.PerAcSmLogVolCf / nextStand.TotalSmLogTpa; }
+                    double dblSmLogMerchPctTotal = 0;
+                    double dblSmLogChipPct_Cat1_3 = 0;
+                    double dblSmLogChipPct_Cat2_4 = 0;
+                    double dblSmLogChipPct_Cat5 = 0;
                     double dblSmLogAvgDensity = 0;
                     double dblSmLogHwdProp = 0;
-                    if (nextStand.TotalSmLogVolCf > 0)
-                    { 
-                        dblSmLogAvgDensity = nextStand.TotalSmLogWtGt * 2000 / nextStand.TotalSmLogVolCf;
-                        dblSmLogHwdProp = nextStand.TotalSmLogHwdVolCf / nextStand.TotalSmLogVolCf; 
+                    if (nextStand.PerAcSmLogVolCf > 0)
+                    {
+                        dblSmLogMerchPctTotal = nextStand.PerAcSmLogMerchVolCf / nextStand.PerAcSmLogVolCf * 100;
+                        dblSmLogChipPct_Cat1_3 = nextStand.PerAcSmLogNonCommMerchVolCf / nextStand.PerAcSmLogVolCf * 100;
+                        dblSmLogChipPct_Cat2_4 = (nextStand.PerAcSmLogNonCommMerchVolCf + nextStand.PerAcSmLogCommNonMerchVolCf) / nextStand.PerAcSmLogVolCf * 100;
+                        dblSmLogChipPct_Cat5 = nextStand.PerAcLgLogNonCommVolCf / nextStand.PerAcSmLogVolCf * 100;
+                        dblSmLogAvgDensity = nextStand.PerAcSmLogWtGt * 2000 / nextStand.PerAcSmLogVolCf;
+                        dblSmLogHwdProp = nextStand.PerAcSmLogHwdVolCf / nextStand.PerAcSmLogVolCf; 
                     }
 
                     // *** LARGE LOGS ***
                     double dblLgLogResidueFraction = 0;
-                    //if (nextStand.TotalLgLogBoleBiomass > 0)
-                    //{ dblLgLogResidueFraction = Math.Round((nextStand.TotalLgLogTreeBiomass - nextStand.TotalLgLogBoleBiomass) / nextStand.TotalLgLogBoleBiomass) * 100; }
                     double dblLgLogAvgVolume = 0;
                     if (nextStand.TotalLgLogTpa > 0)
-                    { dblLgLogAvgVolume = nextStand.TotalLgLogVolCf / nextStand.TotalLgLogTpa; }
+                    { dblLgLogAvgVolume = nextStand.PerAcLgLogVolCf / nextStand.TotalLgLogTpa; }
                     double dblLgLogAvgDensity = 0;
                     double dblLgLogHwdProp = 0;
-                    if (nextStand.TotalLgLogVolCf > 0)
+                    if (nextStand.PerAcLgLogVolCf > 0)
                     {
-                        dblLgLogAvgDensity = nextStand.TotalLgLogWtGt * 2000 / nextStand.TotalLgLogVolCf;
-                        dblLgLogHwdProp = nextStand.TotalLgLogHwdVolCf / nextStand.TotalLgLogVolCf;
+                        dblLgLogAvgDensity = nextStand.PerAcLgLogWtGt * 2000 / nextStand.PerAcLgLogVolCf;
+                        dblLgLogHwdProp = nextStand.PerAcLgLogHwdVolCf / nextStand.PerAcLgLogVolCf;
                     }
   
                     m_oAdo.m_strSQL = "INSERT INTO " + m_strOpcostTableName + " " +
                     "(Stand, [Percent Slope], [One-way Yarding Distance], YearCostCalc, " +
-                    "[Project Elevation], [Harvesting System], [Chip tree per acre], [Residue fraction for chip trees], " +
+                    "[Project Elevation], [Harvesting System], [Chip tree per acre], [Chip trees MerchAsPctOfTotal], " +
                     "[Chip trees average volume(ft3)], [CHIPS Average Density (lbs/ft3)], [CHIPS Hwd Proportion], [Small log trees per acre],  " +
-                    "[Small log trees residue fraction], [Small log trees average volume(ft3)], [Small log trees average density(lbs/ft3)], " +
-                    "[Small log trees hardwood proportion], [Large log trees per acre], [Large log trees residue fraction], " +
+                    "[Small log trees MerchAsPctOfTotal], [Small log trees ChipPct_Cat1_3], [Small log trees ChipPct_Cat2_4], " +
+                    "[Small log trees ChipPct_Cat5], [Small log trees average volume(ft3)], [Small log trees average density(lbs/ft3)], " +
+                    "[Small log trees hardwood proportion], [Large log trees per acre], [Large log trees MerchAsPctOfTotal ], " +
                     "[Large log trees average vol(ft3)], [Large log trees average density(lbs/ft3)], [Large log trees hardwood proportion], " +
                     "BrushCutTPA, [BrushCutAvgVol], RxPackage_Rx_RxCycle) " +
                     "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
                     nextStand.Elev + ", '" + nextStand.HarvestSystem + "', " + nextStand.TotalChipTpa + ", " + 
-                    dblCtResidueFraction + ", " + dblCtAvgVolume + ", " + dblCtAvgDensity + ", " + dblCtHwdProp + ", " +
-                    nextStand.TotalSmLogTpa + ", " + dblSmLogResidueFraction + ", " +
-                    dblSmLogAvgVolume + ", " + dblSmLogAvgDensity + ", " + dblSmLogHwdProp + ", " +
+                    dblCtMerchPctTotal + ", " + dblCtAvgVolume + ", " + dblCtAvgDensity + ", " + dblCtHwdProp + ", " +
+                    nextStand.TotalSmLogTpa + ", " + dblSmLogMerchPctTotal + ", " + dblSmLogChipPct_Cat1_3 + ", " +
+                    dblSmLogChipPct_Cat2_4 + ", " + dblSmLogChipPct_Cat5 + ", " + dblSmLogAvgVolume + ", " + dblSmLogAvgDensity + ", " + dblSmLogHwdProp + ", " +
                     nextStand.TotalLgLogTpa + ", " + dblLgLogResidueFraction + ", " + dblLgLogAvgVolume + ", " +
                     dblLgLogAvgDensity + ", " + dblLgLogHwdProp + "," + nextStand.TotalBcTpa + ", " + dblBcAvgVolume + 
                     ",'" + nextStand.RxPackageRxRxCycle + "' )";
@@ -1000,11 +1003,11 @@ namespace FIA_Biosum_Manager
             //nonMerchWtGt
             if (p_tree.AdjDryBiom > 0)
             {
-                p_tree.NonMerchWtGt = ((p_tree.DryBiot - p_tree.AdjDryBiom) * p_tree.Tpa) / p_tree.OdWgt;
+                p_tree.NonMerchWtGt = ((p_tree.DryBiot - p_tree.AdjDryBiom) * p_tree.Tpa) / p_tree.DryToGreen / 2000;
             }
             else
             {
-                p_tree.NonMerchVolCf = ((p_tree.DryBiot - p_tree.DryBiom) * p_tree.Tpa) / p_tree.OdWgt;
+                p_tree.NonMerchWtGt = ((p_tree.DryBiot - p_tree.DryBiom) * p_tree.Tpa) / p_tree.DryToGreen / 2000;
             }
 
             //brushcut
@@ -1495,29 +1498,29 @@ namespace FIA_Biosum_Manager
             int _intElev;
             string _strHarvestSystem;
             double _dblTotalBcTpa;
-            double _dblTotalBcVolCf;
+            double _dblPerAcBcVolCf;
             double _dblTotalChipTpa;
-            double _dblTotalChipNonMerchVolCf;
-            double _dblTotalChipMerchVolCf;
-            double _dblTotalChipVolCf;
-            double _dblTotalChipWtGt;
-            double _dblTotalChipHwdVolCf;
+            double _dblPerAcChipNonMerchVolCf;
+            double _dblPerAcChipMerchVolCf;
+            double _dblPerAcChipVolCf;
+            double _dblPerAcChipWtGt;
+            double _dblPerAcChipHwdVolCf;
             double _dblTotalSmLogTpa;
-            double _dblTotalSmLogNonCommVolCf;
-            double _dblTotalSmLogMerchVolCf;
-            double _dblTotalSmLogNonCommMerchVolCf;
-            double _dblTotalSmLogCommNonMerchVolCf;
-            double _dblTotalSmLogVolCf;
-            double _dblTotalSmLogWtGt;
-            double _dblTotalSmLogHwdVolCf;
+            double _dblPerAcSmLogNonCommVolCf;
+            double _dblPerAcSmLogMerchVolCf;
+            double _dblPerAcSmLogNonCommMerchVolCf;
+            double _dblPerAcSmLogCommNonMerchVolCf;
+            double _dblPerAcSmLogVolCf;
+            double _dblPerAcSmLogWtGt;
+            double _dblPerAcSmLogHwdVolCf;
             double _dblTotalLgLogTpa;
-            double _dblTotalLgLogMerchVolCf;
-            double _dblTotalLgLogNonCommMerchVolCf;
-            double _dblTotalLgLogNonCommVolCf;
-            double _dblTotalLgLogCommNonMerchVolCf;
-            double _dblTotalLgLogVolCf;
-            double _dblTotalLgLogWtGt;
-            double _dblTotalLgLogHwdVolCf;
+            double _dblPerAcLgLogMerchVolCf;
+            double _dblPerAcLgLogNonCommMerchVolCf;
+            double _dblPerAcLgLogNonCommVolCf;
+            double _dblPerAcLgLogCommNonMerchVolCf;
+            double _dblPerAcLgLogVolCf;
+            double _dblPerAcLgLogWtGt;
+            double _dblPerAcLgLogHwdVolCf;
 
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
@@ -1567,120 +1570,120 @@ namespace FIA_Biosum_Manager
                 set { _dblTotalBcTpa = value; }
                 get { return _dblTotalBcTpa; }
             }
-            public double TotalBcVolCf
+            public double PerAcBcVolCf
             {
-                set { _dblTotalBcVolCf = value; }
-                get { return _dblTotalBcVolCf; }
+                set { _dblPerAcBcVolCf = value; }
+                get { return _dblPerAcBcVolCf; }
             }
             public double TotalChipTpa
             {
                 set { _dblTotalChipTpa = value; }
                 get { return _dblTotalChipTpa; }
             }
-            public double TotalChipMerchVolCf
+            public double PerAcChipMerchVolCf
             {
-                set { _dblTotalChipMerchVolCf = value; }
-                get { return _dblTotalChipMerchVolCf; }
+                set { _dblPerAcChipMerchVolCf = value; }
+                get { return _dblPerAcChipMerchVolCf; }
             }
-            public double TotalChipNonMerchVolCf
+            public double PerAcChipNonMerchVolCf
             {
-                set { _dblTotalChipNonMerchVolCf = value; }
-                get { return _dblTotalChipNonMerchVolCf; }
+                set { _dblPerAcChipNonMerchVolCf = value; }
+                get { return _dblPerAcChipNonMerchVolCf; }
             }
-            public double TotalChipVolCf
+            public double PerAcChipVolCf
             {
-                set { _dblTotalChipVolCf = value; }
-                get { return _dblTotalChipVolCf; }
+                set { _dblPerAcChipVolCf = value; }
+                get { return _dblPerAcChipVolCf; }
             }
-            public double TotalChipWtGt
+            public double PerAcChipWtGt
             {
-                set { _dblTotalChipWtGt = value; }
-                get { return _dblTotalChipWtGt; }
+                set { _dblPerAcChipWtGt = value; }
+                get { return _dblPerAcChipWtGt; }
             }
-            public double TotalChipHwdVolCf
+            public double PerAcChipHwdVolCf
             {
-                set { _dblTotalChipHwdVolCf = value; }
-                get { return _dblTotalChipHwdVolCf; }
+                set { _dblPerAcChipHwdVolCf = value; }
+                get { return _dblPerAcChipHwdVolCf; }
             }
             public double TotalSmLogTpa
             {
                 set { _dblTotalSmLogTpa = value; }
                 get { return _dblTotalSmLogTpa; }
             }
-            public double TotalSmLogMerchVolCf
+            public double PerAcSmLogMerchVolCf
             {
-                set { _dblTotalSmLogMerchVolCf = value; }
-                get { return _dblTotalSmLogMerchVolCf; }
+                set { _dblPerAcSmLogMerchVolCf = value; }
+                get { return _dblPerAcSmLogMerchVolCf; }
             }
-            public double TotalSmLogNonCommVolCf
+            public double PerAcSmLogNonCommVolCf
             {
-                set { _dblTotalSmLogNonCommVolCf = value; }
-                get { return _dblTotalSmLogNonCommVolCf; }
+                set { _dblPerAcSmLogNonCommVolCf = value; }
+                get { return _dblPerAcSmLogNonCommVolCf; }
             }
-            public double TotalSmLogNonCommMerchVolCf
+            public double PerAcSmLogNonCommMerchVolCf
             {
-                set { _dblTotalSmLogNonCommMerchVolCf = value; }
-                get { return _dblTotalSmLogNonCommMerchVolCf; }
+                set { _dblPerAcSmLogNonCommMerchVolCf = value; }
+                get { return _dblPerAcSmLogNonCommMerchVolCf; }
             }
-            public double TotalSmLogCommNonMerchVolCf
+            public double PerAcSmLogCommNonMerchVolCf
             {
-                set { _dblTotalSmLogCommNonMerchVolCf = value; }
-                get { return _dblTotalSmLogCommNonMerchVolCf; }
+                set { _dblPerAcSmLogCommNonMerchVolCf = value; }
+                get { return _dblPerAcSmLogCommNonMerchVolCf; }
             }
-            public double TotalSmLogVolCf
+            public double PerAcSmLogVolCf
             {
-                set { _dblTotalSmLogVolCf = value; }
-                get { return _dblTotalSmLogVolCf; }
+                set { _dblPerAcSmLogVolCf = value; }
+                get { return _dblPerAcSmLogVolCf; }
             }
-            public double TotalSmLogWtGt
+            public double PerAcSmLogWtGt
             {
-                set { _dblTotalSmLogWtGt = value; }
-                get { return _dblTotalSmLogWtGt; }
+                set { _dblPerAcSmLogWtGt = value; }
+                get { return _dblPerAcSmLogWtGt; }
             }
-            public double TotalSmLogHwdVolCf
+            public double PerAcSmLogHwdVolCf
             {
-                set { _dblTotalSmLogHwdVolCf = value; }
-                get { return _dblTotalSmLogHwdVolCf; }
+                set { _dblPerAcSmLogHwdVolCf = value; }
+                get { return _dblPerAcSmLogHwdVolCf; }
             }
             public double TotalLgLogTpa
             {
                 set { _dblTotalLgLogTpa = value; }
                 get { return _dblTotalLgLogTpa; }
             }
-            public double TotalLgLogNonCommMerchVolCf
+            public double PerAcLgLogNonCommMerchVolCf
             {
-                set { _dblTotalLgLogNonCommMerchVolCf = value; }
-                get { return _dblTotalLgLogNonCommMerchVolCf; }
+                set { _dblPerAcLgLogNonCommMerchVolCf = value; }
+                get { return _dblPerAcLgLogNonCommMerchVolCf; }
             }
-            public double TotalLgLogMerchVolCf
+            public double PerAcLgLogMerchVolCf
             {
-                set { _dblTotalLgLogMerchVolCf = value; }
-                get { return _dblTotalLgLogMerchVolCf; }
+                set { _dblPerAcLgLogMerchVolCf = value; }
+                get { return _dblPerAcLgLogMerchVolCf; }
             }
-            public double TotalLgLogNonCommVolCf
+            public double PerAcLgLogNonCommVolCf
             {
-                set { _dblTotalLgLogNonCommVolCf = value; }
-                get { return _dblTotalLgLogNonCommVolCf; }
+                set { _dblPerAcLgLogNonCommVolCf = value; }
+                get { return _dblPerAcLgLogNonCommVolCf; }
             }
-            public double TotalLgLogCommNonMerchVolCf
+            public double PerAcLgLogCommNonMerchVolCf
             {
-                set { _dblTotalLgLogCommNonMerchVolCf = value; }
-                get { return _dblTotalLgLogCommNonMerchVolCf; }
+                set { _dblPerAcLgLogCommNonMerchVolCf = value; }
+                get { return _dblPerAcLgLogCommNonMerchVolCf; }
             }
-            public double TotalLgLogVolCf
+            public double PerAcLgLogVolCf
             {
-                set { _dblTotalLgLogVolCf = value; }
-                get { return _dblTotalLgLogVolCf; }
+                set { _dblPerAcLgLogVolCf = value; }
+                get { return _dblPerAcLgLogVolCf; }
             }
-            public double TotalLgLogWtGt
+            public double PerAcLgLogWtGt
             {
-                set { _dblTotalLgLogWtGt = value; }
-                get { return _dblTotalLgLogWtGt; }
+                set { _dblPerAcLgLogWtGt = value; }
+                get { return _dblPerAcLgLogWtGt; }
             }
-            public double TotalLgLogHwdVolCf
+            public double PerAcLgLogHwdVolCf
             {
-                set { _dblTotalLgLogHwdVolCf = value; }
-                get { return _dblTotalLgLogHwdVolCf; }
+                set { _dblPerAcLgLogHwdVolCf = value; }
+                get { return _dblPerAcLgLogHwdVolCf; }
             }
             public string CondId
             {
