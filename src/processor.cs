@@ -486,14 +486,21 @@ namespace FIA_Biosum_Manager
                     }
 
                     // *** LARGE LOGS ***
-                    double dblLgLogResidueFraction = 0;
                     double dblLgLogAvgVolume = 0;
                     if (nextStand.TotalLgLogTpa > 0)
                     { dblLgLogAvgVolume = nextStand.PerAcLgLogVolCf / nextStand.TotalLgLogTpa; }
+                    double dblLgLogMerchPctTotal = 0;
+                    double dblLgLogChipPct_Cat1_3_4 = 0;
+                    double dblLgLogChipPct_Cat2 = 0;
+                    double dblLgLogChipPct_Cat5 = 0;
                     double dblLgLogAvgDensity = 0;
                     double dblLgLogHwdProp = 0;
                     if (nextStand.PerAcLgLogVolCf > 0)
                     {
+                        dblLgLogMerchPctTotal = nextStand.PerAcLgLogMerchVolCf / nextStand.PerAcLgLogVolCf * 100;
+                        dblLgLogChipPct_Cat1_3_4 = nextStand.PerAcLgLogNonCommMerchVolCf / nextStand.PerAcLgLogVolCf * 100;
+                        dblLgLogChipPct_Cat2 = (nextStand.PerAcLgLogNonCommVolCf + nextStand.PerAcLgLogCommNonMerchVolCf) / nextStand.PerAcLgLogVolCf * 100;
+                        dblLgLogChipPct_Cat5 = nextStand.PerAcLgLogNonCommVolCf / nextStand.PerAcLgLogVolCf * 100;
                         dblLgLogAvgDensity = nextStand.PerAcLgLogWtGt * 2000 / nextStand.PerAcLgLogVolCf;
                         dblLgLogHwdProp = nextStand.PerAcLgLogHwdVolCf / nextStand.PerAcLgLogVolCf;
                     }
@@ -505,16 +512,19 @@ namespace FIA_Biosum_Manager
                     "[Small log trees MerchAsPctOfTotal], [Small log trees ChipPct_Cat1_3], [Small log trees ChipPct_Cat2_4], " +
                     "[Small log trees ChipPct_Cat5], [Small log trees average volume(ft3)], [Small log trees average density(lbs/ft3)], " +
                     "[Small log trees hardwood proportion], [Large log trees per acre], [Large log trees MerchAsPctOfTotal ], " +
+                    "[Large log trees ChipPct_Cat1_3_4], [Large log trees ChipPct_Cat2], [Large log trees ChipPct_Cat5], " +
                     "[Large log trees average vol(ft3)], [Large log trees average density(lbs/ft3)], [Large log trees hardwood proportion], " +
-                    "BrushCutTPA, [BrushCutAvgVol], RxPackage_Rx_RxCycle) " +
+                    "BrushCutTPA, [BrushCutAvgVol], RxPackage_Rx_RxCycle, biosum_cond_id, RxPackage, Rx, RxCycle) " +
                     "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
                     nextStand.Elev + ", '" + nextStand.HarvestSystem + "', " + nextStand.TotalChipTpa + ", " + 
                     dblCtMerchPctTotal + ", " + dblCtAvgVolume + ", " + dblCtAvgDensity + ", " + dblCtHwdProp + ", " +
                     nextStand.TotalSmLogTpa + ", " + dblSmLogMerchPctTotal + ", " + dblSmLogChipPct_Cat1_3 + ", " +
                     dblSmLogChipPct_Cat2_4 + ", " + dblSmLogChipPct_Cat5 + ", " + dblSmLogAvgVolume + ", " + dblSmLogAvgDensity + ", " + dblSmLogHwdProp + ", " +
-                    nextStand.TotalLgLogTpa + ", " + dblLgLogResidueFraction + ", " + dblLgLogAvgVolume + ", " +
-                    dblLgLogAvgDensity + ", " + dblLgLogHwdProp + "," + nextStand.TotalBcTpa + ", " + dblBcAvgVolume + 
-                    ",'" + nextStand.RxPackageRxRxCycle + "' )";
+                    nextStand.TotalLgLogTpa + ", " + dblLgLogMerchPctTotal + ", " + dblLgLogChipPct_Cat1_3_4 + "," +
+                    dblLgLogChipPct_Cat2 + "," + dblLgLogChipPct_Cat5 + "," + dblLgLogAvgVolume + ", " +
+                    dblLgLogAvgDensity + ", " + dblLgLogHwdProp + "," + nextStand.TotalBcTpa + ", " + dblBcAvgVolume +
+                    ",'" + nextStand.RxPackageRxRxCycle + "', '" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" +
+                    nextStand.Rx + "', '" + nextStand.RxCycle + "' )";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
