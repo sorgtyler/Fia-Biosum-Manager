@@ -480,7 +480,7 @@ namespace FIA_Biosum_Manager
                         dblSmLogMerchPctTotal = nextStand.PerAcSmLogMerchVolCf / nextStand.PerAcSmLogVolCf * 100;
                         dblSmLogChipPct_Cat1_3 = nextStand.PerAcSmLogNonCommMerchVolCf / nextStand.PerAcSmLogVolCf * 100;
                         dblSmLogChipPct_Cat2_4 = (nextStand.PerAcSmLogNonCommMerchVolCf + nextStand.PerAcSmLogCommNonMerchVolCf) / nextStand.PerAcSmLogVolCf * 100;
-                        dblSmLogChipPct_Cat5 = nextStand.PerAcLgLogNonCommVolCf / nextStand.PerAcSmLogVolCf * 100;
+                        dblSmLogChipPct_Cat5 = nextStand.PerAcSmLogNonCommVolCf / nextStand.PerAcSmLogVolCf * 100;
                         dblSmLogAvgDensity = nextStand.PerAcSmLogWtGt * 2000 / nextStand.PerAcSmLogVolCf;
                         dblSmLogHwdProp = nextStand.PerAcSmLogHwdVolCf / nextStand.PerAcSmLogVolCf; 
                     }
@@ -925,10 +925,6 @@ namespace FIA_Biosum_Manager
             {
                 returnType = OpCostTreeType.BC;
             }
-            else if (p_tree.IsNonCommercial)
-            {
-                returnType = OpCostTreeType.CT;
-            }
             else if (p_tree.Dbh >= m_scenarioHarvestMethod.MinChipDbh && 
                      p_tree.Dbh < m_scenarioHarvestMethod.MinSmallLogDbh)
             {
@@ -949,6 +945,7 @@ namespace FIA_Biosum_Manager
 
         private void calculateVolumeAndWeight(tree p_tree)
         {
+
             int intGenericMerchFactor = m_scenarioHarvestMethod.GenericMerchAsPercentOfTotalVol / 100;
             //adjDryBiom - Do this first; precursor to other calculations
             if (p_tree.DryBiot <= p_tree.DryBiom)
@@ -974,16 +971,16 @@ namespace FIA_Biosum_Manager
                 {
                     case "1":
                         p_tree.MerchValDpa = p_tree.MerchVolCf * p_tree.MerchValue;
-                        return;
+                        break;
                     case "2":
                         p_tree.MerchValDpa = p_tree.MerchVolCf * p_tree.MerchValue * m_escalators.MerchWoodRevCycle2;
-                        return;
+                        break;
                     case "3":
                         p_tree.MerchValDpa = p_tree.MerchVolCf * p_tree.MerchValue * m_escalators.MerchWoodRevCycle3;
-                        return;
+                        break;
                     case "4":
                         p_tree.MerchValDpa = p_tree.MerchVolCf * p_tree.MerchValue * m_escalators.MerchWoodRevCycle4;
-                        return;
+                        break;
                 }
             }
 

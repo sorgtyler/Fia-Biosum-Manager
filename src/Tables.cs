@@ -3180,7 +3180,6 @@ namespace FIA_Biosum_Manager
 
             public void CreateNewOpcostInputTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
-                string copyString = Tables.Processor.CreateNewOpcostInputTableSQL(p_strTableName);
                 p_oAdo.SqlNonQuery(p_oConn, Tables.Processor.CreateNewOpcostInputTableSQL(p_strTableName));
                 // No indexes currently on OpCost input table
             }
