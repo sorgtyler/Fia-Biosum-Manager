@@ -5596,7 +5596,7 @@ namespace FIA_Biosum_Manager
                     y++;
                     frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper());
-                    mainProcessor.loadTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
+                    m_intError = mainProcessor.loadTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
 
                     if (m_intError == 0)
                     {

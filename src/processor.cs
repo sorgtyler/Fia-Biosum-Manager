@@ -109,12 +109,17 @@ namespace FIA_Biosum_Manager
             return p_oQueries;
         }
         
-        public void loadTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)
+        public int loadTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)
         {
             //Set tempDbFile
             m_strTempDbFile = strTempDbFile;
             //Load harvest methods; Prescription load depends on harvest methods
             m_harvestMethodList = loadHarvestMethods();
+            //If harvest methods didn't load, stop processing
+            if (m_harvestMethodList == null)
+            {
+                return -1;
+            }
             //Load prescriptions into reference dictionary
             m_prescriptions = loadPrescriptions(strTempDbFile);
             //Load diameter variables into reference object
@@ -210,7 +215,9 @@ namespace FIA_Biosum_Manager
                             newTree.SpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_species"]).Trim();
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
-                        newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
+                        if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
+                            newTree.YardingDistance = 0;
+                        else newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
                         m_trees.Add(newTree);
                     }
                 }
@@ -218,6 +225,7 @@ namespace FIA_Biosum_Manager
             // Always close the connection
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             m_oAdo = null;
+            return 0;
         }
 
         public void updateTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)

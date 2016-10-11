@@ -721,8 +721,8 @@ namespace FIA_Biosum_Manager
                              "MaxCableYardingDistance," + 
                              "MaxHelicopterCableYardingDistance," + 
                              "min_chip_dbh,min_sm_log_dbh," + 
-				             "min_lg_log_dbh,SteepSlope,min_dbh_steep_slope," + 
-                             "ProcessLowSlopeYN,ProcessSteepSlopeYN";
+				             "min_lg_log_dbh,SteepSlope,min_dbh_steep_slope," +
+                             "ProcessLowSlopeYN,ProcessSteepSlopeYN,GenericMerchAsPercentOfTotalVol ";
 			string strValues="";
 			
 			oAdo.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " " + 
@@ -845,12 +845,18 @@ namespace FIA_Biosum_Manager
             //
             if (uc_processor_scenario_run.ScenarioHarvestMethodVariables.ProcessSteepSlope == true)
             {
-                strValues = strValues + "'Y'";
+                strValues = strValues + "'Y',";
             }
             else
             {
-                strValues = strValues + "'N'";
+                strValues = strValues + "'N',";
             }
+            //
+            //PROCESS GENERIC MERCH ADJUSTMENT FACTOR
+            //@ToDo: incorporate value from UI when textbox is added
+            //
+            strValues = strValues + "70";
+
 			oAdo.m_strSQL=Queries.GetInsertSQL(strFields,strValues,Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName);
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 			m_intError=oAdo.m_intError;
