@@ -5603,7 +5603,7 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
+                        mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile, false);
                     }
                         
                     if (m_intError == 0)

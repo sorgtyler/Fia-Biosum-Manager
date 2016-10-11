@@ -2935,37 +2935,37 @@ namespace FIA_Biosum_Manager
                     "biosum_status_cd BYTE)";
             }
 		}
-		public class Processor
-		{
-			public Processor()
-			{
-			}
-			static public string DefaultHarvestCostsTableDbFile {get {return @"db\master.mdb";}}
-			static public string DefaultHarvestCostsTableName {get {return "harvest_costs";}}
+        public class Processor
+        {
+            public Processor()
+            {
+            }
+            static public string DefaultHarvestCostsTableDbFile { get { return @"db\master.mdb"; } }
+            static public string DefaultHarvestCostsTableName { get { return "harvest_costs"; } }
             static public string DefaultAdditionalHarvestCostsTableName { get { return "additional_harvest_costs"; } }
             static public string DefaultAdditionalHarvestCostsTableDbFile { get { return @"db\master.mdb"; } }
-			static public string DefaultTreeDiamGroupsDbFile {get {return @"db\master.mdb";}}
-			static public string DefaultTreeDiamGroupsTableName {get {return "tree_diam_groups";}}
-			static public string DefaultTreeSpeciesGroupsDbFile {get {return @"db\master.mdb";}}
-			static public string DefaultTreeSpeciesGroupsTableName {get {return "tree_species_groups";}}
-			static public string DefaultTreeSpeciesGroupsListDbFile {get {return @"db\master.mdb";}}
-			static public string DefaultTreeSpeciesGroupsListTableName {get {return "tree_species_groups_list";}}
-			static public string DefaultTreeVolValSpeciesDiamGroupsDbFile {get {return @"db\master.mdb";}}
-			static public string DefaultTreeVolValSpeciesDiamGroupsTableName {get {return "tree_vol_val_by_species_diam_groups";}}
-			static public string DefaultHarvestMethodTableDbFile {get {return @"db\master.mdb";}}
-			static public string DefaultHarvestMethodTableName {get {return @"harvest_method";}}
+            static public string DefaultTreeDiamGroupsDbFile { get { return @"db\master.mdb"; } }
+            static public string DefaultTreeDiamGroupsTableName { get { return "tree_diam_groups"; } }
+            static public string DefaultTreeSpeciesGroupsDbFile { get { return @"db\master.mdb"; } }
+            static public string DefaultTreeSpeciesGroupsTableName { get { return "tree_species_groups"; } }
+            static public string DefaultTreeSpeciesGroupsListDbFile { get { return @"db\master.mdb"; } }
+            static public string DefaultTreeSpeciesGroupsListTableName { get { return "tree_species_groups_list"; } }
+            static public string DefaultTreeVolValSpeciesDiamGroupsDbFile { get { return @"db\master.mdb"; } }
+            static public string DefaultTreeVolValSpeciesDiamGroupsTableName { get { return "tree_vol_val_by_species_diam_groups"; } }
+            static public string DefaultHarvestMethodTableDbFile { get { return @"db\master.mdb"; } }
+            static public string DefaultHarvestMethodTableName { get { return @"harvest_method"; } }
 
-			public void CreateHarvestCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,Tables.Processor.CreateHarvestCostsTableSQL(p_strTableName));
-				CreateHarvestCostsTableIndexes(p_oAdo,p_oConn,p_strTableName);
-			}
-			public void CreateHarvestCostsTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id,rxpackage,rx,rxcycle");
-			}
-			static public string CreateHarvestCostsTableSQL(string p_strTableName)
-			{
+            public void CreateHarvestCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, Tables.Processor.CreateHarvestCostsTableSQL(p_strTableName));
+                CreateHarvestCostsTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateHarvestCostsTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id,rxpackage,rx,rxcycle");
+            }
+            static public string CreateHarvestCostsTableSQL(string p_strTableName)
+            {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "biosum_cond_id CHAR(25)," +
                     "rxpackage CHAR(3)," +
@@ -2979,7 +2979,7 @@ namespace FIA_Biosum_Manager
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
 
-			}
+            }
             public void CreateAdditionalHarvestCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.SqlNonQuery(p_oConn, Tables.Processor.CreateAdditionalHarvestCostsTableSQL(p_strTableName));
@@ -2998,114 +2998,114 @@ namespace FIA_Biosum_Manager
                     "brush_cutting_cpa DOUBLE)";
 
             }
-			public void CreateHarvestTechniqueTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateHarvestTechniqueTableSQL(p_strTableName));
-				CreateHarvestTechniqueTableIndexes(p_oAdo,p_oConn,p_strTableName);
-			}
-			public void CreateHarvestTechniqueTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id,rx");
-			}
-			public string CreateHarvestTechniqueTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id CHAR(25)," + 
-					"rxpackage CHAR(3)," + 
-					"rx CHAR(3)," + 
-					"harvest_technique CHAR(30)," +
-					"harvest_technique_40 CHAR(30))";
-
-			}
-			public void CreateTreeDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateTreeDiamGroupsTableSQL(p_strTableName));
-				CreateTreeDiamGroupsTableIndexes(p_oAdo,p_oConn,p_strTableName);
-				
-			}
-			public void CreateTreeDiamGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","diam_group");
-			}
-			public string CreateTreeDiamGroupsTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"diam_group INTEGER DEFAULT 0," + 
-					"diam_class CHAR(15)," + 
-					"min_diam DOUBLE DEFAULT 0," + 
-					"max_diam DOUBLE DEFAULT 0)";
-			}
-			
-			public void CreateTreeSpeciesGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateTreeSpeciesGroupsTableSQL(p_strTableName));
-				CreateTreeSpeciesGroupsTableIndexes(p_oAdo,p_oConn,p_strTableName);
-			}
-			public void CreateTreeSpeciesGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","species_group");
-			}
-			public string CreateTreeSpeciesGroupsTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"species_group INTEGER," + 
-					"species_label CHAR(50))";
-			}
-			public void CreateTreeSpeciesGroupsListTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateTreeSpeciesGroupsListTableSQL(p_strTableName));
-				CreateTreeSpeciesGroupsListTableIndexes(p_oAdo,p_oConn,p_strTableName);
-			}
-			public void CreateTreeSpeciesGroupsListTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","species_group");
-			}
-			public string CreateTreeSpeciesGroupsListTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"species_group INTEGER," + 
-					"common_name CHAR(50))";
-			}
-			public void CreateTreeVolValSpeciesDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,Tables.Processor.CreateTreeVolValSpeciesDiamGroupsTableSQL(p_strTableName));
-				CreateTreeVolValSpeciesDiamGroupsTableIndexes(p_oAdo,p_oConn,p_strTableName);
-			}
-			public void CreateTreeVolValSpeciesDiamGroupsTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddAutoNumber(p_oConn,p_strTableName,"id");
-				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","biosum_cond_id,rxpackage,rx,rxcycle");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","rx");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","species_group");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","diam_group");
-			}
-			
-			static public string CreateTreeVolValSpeciesDiamGroupsTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"id LONG," + 
-					"biosum_cond_id CHAR(25)," + 
+            public void CreateHarvestTechniqueTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateHarvestTechniqueTableSQL(p_strTableName));
+                CreateHarvestTechniqueTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateHarvestTechniqueTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id,rx");
+            }
+            public string CreateHarvestTechniqueTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id CHAR(25)," +
                     "rxpackage CHAR(3)," +
-					"rx CHAR(3)," +		
+                    "rx CHAR(3)," +
+                    "harvest_technique CHAR(30)," +
+                    "harvest_technique_40 CHAR(30))";
+
+            }
+            public void CreateTreeDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateTreeDiamGroupsTableSQL(p_strTableName));
+                CreateTreeDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+            }
+            public void CreateTreeDiamGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "diam_group");
+            }
+            public string CreateTreeDiamGroupsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "diam_group INTEGER DEFAULT 0," +
+                    "diam_class CHAR(15)," +
+                    "min_diam DOUBLE DEFAULT 0," +
+                    "max_diam DOUBLE DEFAULT 0)";
+            }
+
+            public void CreateTreeSpeciesGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateTreeSpeciesGroupsTableSQL(p_strTableName));
+                CreateTreeSpeciesGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateTreeSpeciesGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "species_group");
+            }
+            public string CreateTreeSpeciesGroupsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "species_group INTEGER," +
+                    "species_label CHAR(50))";
+            }
+            public void CreateTreeSpeciesGroupsListTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateTreeSpeciesGroupsListTableSQL(p_strTableName));
+                CreateTreeSpeciesGroupsListTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateTreeSpeciesGroupsListTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "species_group");
+            }
+            public string CreateTreeSpeciesGroupsListTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "species_group INTEGER," +
+                    "common_name CHAR(50))";
+            }
+            public void CreateTreeVolValSpeciesDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, Tables.Processor.CreateTreeVolValSpeciesDiamGroupsTableSQL(p_strTableName));
+                CreateTreeVolValSpeciesDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateTreeVolValSpeciesDiamGroupsTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddAutoNumber(p_oConn, p_strTableName, "id");
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "id");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id,rxpackage,rx,rxcycle");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "rx");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx3", "species_group");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx4", "diam_group");
+            }
+
+            static public string CreateTreeVolValSpeciesDiamGroupsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "id LONG," +
+                    "biosum_cond_id CHAR(25)," +
+                    "rxpackage CHAR(3)," +
+                    "rx CHAR(3)," +
                     "rxcycle CHAR(1)," +
-					"species_group INTEGER," + 
-					"diam_group INTEGER DEFAULT 0," +
+                    "species_group INTEGER," +
+                    "diam_group INTEGER DEFAULT 0," +
                     "biosum_harvest_method_category INTEGER DEFAULT 0," +
-					"chip_vol_cf DOUBLE," + 
-					"chip_wt_gt DOUBLE," + 
-					"chip_val_dpa DOUBLE," +
-					"chip_mkt_val_pgt DOUBLE DEFAULT 0," + 
-					"merch_vol_cf DOUBLE," + 
-					"merch_wt_gt DOUBLE," + 
-					"merch_val_dpa DOUBLE," + 
+                    "chip_vol_cf DOUBLE," +
+                    "chip_wt_gt DOUBLE," +
+                    "chip_val_dpa DOUBLE," +
+                    "chip_mkt_val_pgt DOUBLE DEFAULT 0," +
+                    "merch_vol_cf DOUBLE," +
+                    "merch_wt_gt DOUBLE," +
+                    "merch_val_dpa DOUBLE," +
                     "merch_to_chipbin_YN CHAR(1) DEFAULT 'N'," +
                     "bc_vol_cf DOUBLE," +
                     "bc_wt_gt DOUBLE," +
                     "stand_residue_wt_gt DOUBLE," +
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
-			}
+            }
             public void CreateTreeVolValSpeciesDiamGroupsWorkTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.SqlNonQuery(p_oConn, Tables.Processor.CreateTreeVolValSpeciesDiamGroupsWorkTableSQL(p_strTableName));
@@ -3147,7 +3147,7 @@ namespace FIA_Biosum_Manager
                 // No indexes currently on OpCost input table
             }
 
-            
+
             static public string CreateOpcostInputTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " " +
@@ -3223,7 +3223,30 @@ namespace FIA_Biosum_Manager
                             " RxCycle text (255))";
             }
 
-		}
+            public void CreateTreeReconcilationTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, Tables.Processor.CreateTreeReconcilationTableSQL(p_strTableName));
+                // No indexes currently on OpCost input table
+            }
+
+            static public string CreateTreeReconcilationTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName +
+                       " (cn text (34)," +
+                       " tree long," +
+                       " biosum_cond_id text (25)," +
+                       " biosum_plot_id text (24)," +
+                       " spcd INTEGER," +
+                       " merchWtGt double," +
+                       " drybiom double," +
+                       " drybiot double," +
+                       " volCfNet double," +
+                       " volTsGrs double," +
+                       " odWgt double," +
+                       " dryToGreen double)";
+            }
+        }
+
 		public class Scenario
 		{
 			private string strSQL = "";

@@ -135,7 +135,7 @@ namespace FIA_Biosum_Manager
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT z.biosum_cond_id, z.rxCycle, z.rx, z.rxYear, " +
+                string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
                                 "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
                                 "z.fvs_tree_id, z.fvs_species, z.volTsGrs, " +
                                 "c.slope, p.elev, p.gis_yard_dist " +
@@ -153,6 +153,7 @@ namespace FIA_Biosum_Manager
                         tree newTree = new tree();
                         newTree.DebugFile = m_strDebugFile;
                         newTree.CondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
+                        newTree.PlotId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_plot_id"]).Trim();
                         newTree.RxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
                         newTree.RxPackage = p_strRxPackage;
                         newTree.Rx= Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
@@ -228,7 +229,7 @@ namespace FIA_Biosum_Manager
             return 0;
         }
 
-        public void updateTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)
+        public void updateTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile, bool blnCreateReconcilationTable)
         {
             if (m_trees.Count < 1)
             {
@@ -332,6 +333,48 @@ namespace FIA_Biosum_Manager
                 }
             }
             }
+            
+            // Create the reconcilation table, if desired
+            if (blnCreateReconcilationTable == true)
+            {
+                createTreeReconcilationTable();
+            }
+
+            // Always close the connection
+            if (m_oAdo != null)
+            {
+                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+                m_oAdo = null;
+            }
+        }
+
+        private void createTreeReconcilationTable()
+        {
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
+
+            if (m_oAdo.m_intError == 0)
+            {
+                string strTableName = "reconcile_trees";
+                frmMain.g_oTables.m_oProcessor.CreateTreeReconcilationTable(m_oAdo, m_oAdo.m_OleDbConnection, strTableName);
+
+                string strTempCn = "9999";
+                int intTempTree = 9999;
+                foreach (tree nextTree in m_trees)
+                {
+                    m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
+                    "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, drybiom, " +
+                    "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen )" +
+                    "VALUES ('" + strTempCn + "', " + intTempTree + ", '" + nextTree.CondId + "', '" + nextTree.PlotId + "', " +
+                    nextTree.SpCd + ", " + nextTree.MerchWtGt + ", " + nextTree.DryBiom + ", " +
+                    nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
+                    ", " + nextTree.DryToGreen + " )";
+
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                }
+
+            }
+
             // Always close the connection
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             m_oAdo = null;
@@ -1045,6 +1088,7 @@ namespace FIA_Biosum_Manager
         private class tree
         {
             string _strCondId = "";
+            string _strPlotId = "";
             string _strRxCycle = "";
             string _strRxPackage = "";
             string _strRx = "";
@@ -1091,6 +1135,11 @@ namespace FIA_Biosum_Manager
             {
                 get { return _strCondId; }
                 set { _strCondId = value; }
+            }
+            public string PlotId
+            {
+                get { return _strPlotId; }
+                set { _strPlotId = value; }
             }
             public string RxCycle
             {
