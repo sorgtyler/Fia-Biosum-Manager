@@ -337,7 +337,7 @@ namespace FIA_Biosum_Manager
             // Create the reconcilation table, if desired
             if (blnCreateReconcilationTable == true)
             {
-                createTreeReconcilationTable();
+                createTreeReconcilationTable(p_strVariant);
             }
 
             // Always close the connection
@@ -348,29 +348,56 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void createTreeReconcilationTable()
+        private void createTreeReconcilationTable(string p_strVariant)
         {
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
 
             if (m_oAdo.m_intError == 0)
             {
-                string strTableName = "reconcile_trees";
-                frmMain.g_oTables.m_oProcessor.CreateTreeReconcilationTable(m_oAdo, m_oAdo.m_OleDbConnection, strTableName);
-
-                string strTempCn = "9999";
-                int intTempTree = 9999;
-                foreach (tree nextTree in m_trees)
+                string strSQL = "SELECT fvs_tree_id, tree, cn from tree where fvs_tree_id is not null";
+  
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
-                    m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
-                    "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, drybiom, " +
-                    "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen )" +
-                    "VALUES ('" + strTempCn + "', " + intTempTree + ", '" + nextTree.CondId + "', '" + nextTree.PlotId + "', " +
-                    nextTree.SpCd + ", " + nextTree.MerchWtGt + ", " + nextTree.DryBiom + ", " +
-                    nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
-                    ", " + nextTree.DryToGreen + " )";
+                    short idxTree = 0;
+                    short idxCn = 1;
+                    IDictionary<string, List<string>> dictTreeTable = new Dictionary<string, List<string>>();
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        List<string> treeList = new List<string>();
+                        string strFvsTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
+                        //This is stored as a number but we convert to string so we can store in list
+                        string strTree = Convert.ToString(m_oAdo.m_OleDbDataReader["tree"]);
+                        string strCn = Convert.ToString(m_oAdo.m_OleDbDataReader["cn"]).Trim();
+                        treeList.Add(strTree);
+                        treeList.Add(strCn);
+                        dictTreeTable.Add(strFvsTreeId, treeList);
+                    }
 
-                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    string strTableName = p_strVariant + "_reconcile_trees";
+                    frmMain.g_oTables.m_oProcessor.CreateTreeReconcilationTable(m_oAdo, m_oAdo.m_OleDbConnection, strTableName);
+
+                    string strTempCn = "9999";
+                    int intTempTree = 9999;
+                    foreach (tree nextTree in m_trees)
+                    {
+                        if (dictTreeTable.ContainsKey(nextTree.FvsTreeId))
+                        {
+                            List<string> treeList = dictTreeTable[nextTree.FvsTreeId];
+                            intTempTree = Convert.ToInt16(treeList[idxTree]);
+                            strTempCn = treeList[idxCn];
+                        }
+                        m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
+                        "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, drybiom, " +
+                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen )" +
+                        "VALUES ('" + strTempCn + "', " + intTempTree + ", '" + nextTree.CondId + "', '" + nextTree.PlotId + "', " +
+                        nextTree.SpCd + ", " + nextTree.MerchWtGt + ", " + nextTree.DryBiom + ", " +
+                        nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
+                        ", " + nextTree.DryToGreen + " )";
+
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    }
                 }
 
             }
