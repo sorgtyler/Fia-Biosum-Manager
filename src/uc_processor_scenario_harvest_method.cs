@@ -259,7 +259,7 @@ namespace FIA_Biosum_Manager
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(208, 40);
             this.label13.TabIndex = 31;
-            this.label13.Text = "Generic merch adjustment factor";
+            this.label13.Text = "Percent of woodland species biomass assumed of merchantable size";
             // 
             // label10
             // 
