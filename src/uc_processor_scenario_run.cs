@@ -151,21 +151,7 @@ namespace FIA_Biosum_Manager
             {
                 get { return _bProcessSteepSlope; }
                 set { _bProcessSteepSlope = value; }
-            }
-            static private int _intMaxCableYardingDistance=1300;
-            static public int MaxCableYardingDistance
-            {
-                get {return _intMaxCableYardingDistance;}
-                set {_intMaxCableYardingDistance=value;}
-            }
-            static private int _intMaxHelicopterCableYardingDistance=1300;
-            static public int MaxHelicopterCableYardingDistance
-            {
-                get {return _intMaxHelicopterCableYardingDistance;}
-                set {_intMaxHelicopterCableYardingDistance=value;}
-            }
-
-            
+            }            
            
         }
         
@@ -1502,13 +1488,13 @@ namespace FIA_Biosum_Manager
                     //Here we set the maximum number of ticks on the progress bar
                     //y cannot exceed theis max number
                     if (m_blnLowSlope == true && m_blnSteepSlope == true)
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 45);
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 44);
                     else
                     {
                         if (m_blnLowSlope == true)
-                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 28);
+                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 27);
                         else
-                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 29);
+                           frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 28);
 
                     }
                     //
@@ -1875,16 +1861,6 @@ namespace FIA_Biosum_Manager
 
                     if (m_intError == 0)
                     {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Delete Records That Exceed Yarding Distance Limits...Stand By");
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        if (bFRCS)
-                         RunScenario_DeleteExceededYardingDistances("frcs_input");
-                        if (bOPCOST)
-                            RunScenario_DeleteExceededYardingDistances("opcost_input");
-                    }
-                    if (m_intError == 0)
-                    {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Get Maximum Values...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
@@ -2242,10 +2218,7 @@ namespace FIA_Biosum_Manager
 
             ScenarioHarvestMethodVariables.HarvestMethodLowSlope = (string)m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection,"SELECT harvestmethodlowslope FROM scenario_harvest_method WHERE TRIM(UCASE(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'","temp"); 
             ScenarioHarvestMethodVariables.HarvestMethodSteepSlope = (string)m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection,"SELECT harvestmethodsteepslope FROM scenario_harvest_method WHERE TRIM(UCASE(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'","temp"); 
-            ScenarioHarvestMethodVariables.SteepSlope = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection,"SELECT steepslope FROM scenario_harvest_method WHERE TRIM(UCASE(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'","temp");    
-            ScenarioHarvestMethodVariables.MaxCableYardingDistance = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection,"SELECT MaxCableYardingDistance FROM scenario_harvest_method WHERE TRIM(UCASE(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'","temp");    
-            ScenarioHarvestMethodVariables.MaxHelicopterCableYardingDistance = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection,"SELECT MaxHelicopterCableYardingDistance FROM scenario_harvest_method WHERE TRIM(UCASE(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'","temp");    
-            
+            ScenarioHarvestMethodVariables.SteepSlope = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection,"SELECT steepslope FROM scenario_harvest_method WHERE TRIM(UCASE(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'","temp");                
         }
         private void RunScenario_LoadDiameterVariables(string p_strVariant,string p_strRxPackage)
         {
@@ -4204,41 +4177,7 @@ namespace FIA_Biosum_Manager
             m_strError = m_oAdo.m_strError;
 
         }
-        private void RunScenario_DeleteExceededYardingDistances(string p_strTable)
-        {
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_DeleteExceededYardingDistances\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-            }
-            
-            //delete plots where yarding distance greater than 1300 feet if cable system
-            m_oAdo.m_strSQL = "DELETE [One-way Yarding Distance], [Harvesting System] "  + 
-                              "FROM [" + p_strTable + "] " + 
-                              "WHERE ((([One-way Yarding Distance])>" + ScenarioHarvestMethodVariables.MaxCableYardingDistance.ToString().Trim()+ ") AND " + 
-                                     "(TRIM([Harvesting System]) IN ('Cable Manual WT/Log'," + 
-                                                                    "'Cable Manual WT'," + 
-                                                                    "'Cable Manual Log'," + 
-                                                                    "'Cable CTL')))";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-           m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
-           if (m_oAdo.m_intError == 0)
-           {
-               //delete plots where yarding distance greater than 10000 feet if helicopter system
-               m_oAdo.m_strSQL = "DELETE [One-way Yarding Distance], [Harvesting System] " +
-                                 "FROM [" + p_strTable + "] " + 
-                                 "WHERE ((([One-way Yarding Distance])>" + ScenarioHarvestMethodVariables.MaxHelicopterCableYardingDistance.ToString().Trim() + ") AND " +
-                                        "(TRIM([Harvesting System]) IN ('Helicopter Manual WT'," +
-                                                                       "'Helicopter CTL')))";
-               if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                   frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-               m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-           }
-           m_intError = m_oAdo.m_intError;
-           m_strError = m_oAdo.m_strError;
-        }
+ 
         private void RunScenario_UpdateFRCSThresholds()
         {
             int x;

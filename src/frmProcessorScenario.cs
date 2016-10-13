@@ -1083,18 +1083,6 @@ namespace FIA_Biosum_Manager
                 get { return _strMinDiaForAllTreesSteepSlope; }
                 set { _strMinDiaForAllTreesSteepSlope = value; }
             }
-            private string _strMaxCableYardingDistance = "1300";
-            public string MaxCableYardingDistance
-            {
-                get { return _strMaxCableYardingDistance; }
-                set { _strMaxCableYardingDistance = value; }
-            }
-            private string _strMaxHelicopterCableYardingDistance="10000";
-            public string MaxHelicopterCableYardingDistance
-            {
-                get { return _strMaxHelicopterCableYardingDistance; }
-                set { _strMaxHelicopterCableYardingDistance = value; }
-            }
             private bool _bProcessSteepSlope = true;
             public bool ProcessSteepSlope
             {
@@ -1107,12 +1095,16 @@ namespace FIA_Biosum_Manager
                 get { return _bProcessLowSlope; }
                 set { _bProcessLowSlope = value; }
             }
+            private string _strMerchAdjFactor = "70";
+            public string MerchAdjFactor
+            {
+                get { return _strMerchAdjFactor; }
+                set { _strMerchAdjFactor = value; }
+            }
             public void Copy(HarvestMethod p_oSource, HarvestMethod p_oDest)
             {
                 p_oDest.HarvestMethodLowSlope = p_oSource.HarvestMethodLowSlope;
                 p_oDest.HarvestMethodSteepSlope = p_oSource.HarvestMethodSteepSlope;
-                p_oDest.MaxCableYardingDistance = p_oSource.MaxCableYardingDistance;
-                p_oDest.MaxHelicopterCableYardingDistance = p_oSource.MaxHelicopterCableYardingDistance;
                 p_oDest.MinDiaForAllTreesSteepSlope = p_oSource.MinDiaForAllTreesSteepSlope;
                 p_oDest.MinDiaForChips = p_oSource.MinDiaForChips;
                 p_oDest.MinDiaForLargeLogs = p_oSource.MinDiaForLargeLogs;
@@ -1121,6 +1113,7 @@ namespace FIA_Biosum_Manager
                 p_oDest.ProcessSteepSlope = p_oSource.ProcessSteepSlope;
                 p_oDest.SteepSlopePercent = p_oSource.SteepSlopePercent;
                 p_oDest.UseDefaultHarvestMethod = p_oSource.UseDefaultHarvestMethod;
+                p_oDest.MerchAdjFactor = p_oSource.MerchAdjFactor;
             }
             
         }
@@ -1618,26 +1611,6 @@ namespace FIA_Biosum_Manager
                             }
                         }
                         //
-                        //CABLE YARDING DISTANCE
-                        //
-                        if (p_oAdo.m_OleDbDataReader["MaxCableYardingDistance"] != System.DBNull.Value)
-                        {
-                            if (p_oAdo.m_OleDbDataReader["MaxCableYardingDistance"].ToString().Trim().Length > 0)
-                            {
-                                p_oProcessorScenarioItem.m_oHarvestMethod.MaxCableYardingDistance = p_oAdo.m_OleDbDataReader["MaxCableYardingDistance"].ToString().Trim();
-                            }
-                        }
-                        //
-                        //HELICOPTER CABLE YARDING DISTANCE
-                        //
-                        if (p_oAdo.m_OleDbDataReader["MaxHelicopterCableYardingDistance"] != System.DBNull.Value)
-                        {
-                            if (p_oAdo.m_OleDbDataReader["MaxHelicopterCableYardingDistance"].ToString().Trim().Length > 0)
-                            {
-                               p_oProcessorScenarioItem.m_oHarvestMethod.MaxHelicopterCableYardingDistance = p_oAdo.m_OleDbDataReader["MaxHelicopterCableYardingDistance"].ToString().Trim();
-                            }
-                        }
-                        //
                         //MINIMUM CHIPS DBH
                         //
                         if (p_oAdo.m_OleDbDataReader["min_chip_dbh"] != System.DBNull.Value)
@@ -1707,6 +1680,16 @@ namespace FIA_Biosum_Manager
                         else
                         {
                             p_oProcessorScenarioItem.m_oHarvestMethod.ProcessSteepSlope = false;
+                        }
+                        //
+                        //GENERIC MERCH ADJUSTMENT FACTOR
+                        //
+                        if (p_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"] != System.DBNull.Value)
+                        {
+                            if (p_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"].ToString().Trim().Length > 0)
+                            {
+                                p_oProcessorScenarioItem.m_oHarvestMethod.MerchAdjFactor = p_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"].ToString().Trim();
+                            }
                         }
 
                     }
@@ -2037,6 +2020,8 @@ namespace FIA_Biosum_Manager
             strLine = strLine + "Small Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForSmallLogs + "\r\n";
             strLine = strLine + "Large Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForLargeLogs + "\r\n";
             strLine = strLine + "Slope Percent: < " + p_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + "\r\n";
+            strLine = strLine + "Generic merch adj factor: = " + p_oProcessorScenarioItem.m_oHarvestMethod.MerchAdjFactor + "\r\n";
+
 
             strLine = strLine + "\r\nHarvest Method Steep Slope\r\n";
             strLine = strLine + "-------------------------------\r\n";
@@ -2065,10 +2050,8 @@ namespace FIA_Biosum_Manager
             strLine = strLine + "Small Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForSmallLogs + "\r\n";
             strLine = strLine + "Large Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForLargeLogs + "\r\n";
             strLine = strLine + "Slope Percent: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + "\r\n";
+            strLine = strLine + "Generic merch adjustment factor: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MerchAdjFactor + "\r\n";
 
-            strLine = strLine + "------\r\n";
-            strLine = strLine + "Maximum Cable Yarding Distance (Feet): <= " + p_oProcessorScenarioItem.m_oHarvestMethod.MaxCableYardingDistance + "\r\n";
-            strLine = strLine + "Maximum Helicoptor Cable Yarding Distance (Feet): <= " + p_oProcessorScenarioItem.m_oHarvestMethod.MaxHelicopterCableYardingDistance + "\r\n";
 
             strLine = strLine + "\r\nAdditional Harvest Cost Components (Costs Not covered in FRCS)\r\n";
             strLine = strLine + "----------------------------------------------------------------------------\r\n";

@@ -1227,16 +1227,6 @@ namespace FIA_Biosum_Manager
 			get {return this._strFilterType;}
 			set {this._strFilterType=value;}
 		}
-        public string strSteepYardingDistanceDefault
-        {
-            set { this._strSteepYardingDistanceDefault = value; }
-            get { return this._strSteepYardingDistanceDefault; }
-        }
-        public string strLowYardingDistanceDefault
-        {
-            set { this._strLowYardingDistanceDefault = value; }
-            get { return this._strLowYardingDistanceDefault; }
-        }
         public string strSteepSlope
         {
             set { this.lblHighSlope.Text = "Steep Slope > " + value; }

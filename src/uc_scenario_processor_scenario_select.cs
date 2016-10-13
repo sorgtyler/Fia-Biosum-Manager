@@ -152,17 +152,11 @@ namespace FIA_Biosum_Manager
                                 if (lvProcessorScenario.Items[x].SubItems[COL_SCENARIOID].Text.Trim().ToUpper() ==
                                     ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).ScenarioId.Trim().ToUpper())
                                 {
-                                    ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strLowYardingDistanceDefault =
-                                      Convert.ToString(ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.MaxCableYardingDistance);
-
-                                    ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strSteepYardingDistanceDefault =
-                                        Convert.ToString(ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.MaxHelicopterCableYardingDistance);
-
                                     ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strLowSlope =
                                         ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.SteepSlopePercent;
 
                                     ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strSteepSlope =
-                                        ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.SteepSlopePercent;
+                                        ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.SteepSlopePercent;                                    
                                 }
                             }
                             break;
@@ -283,13 +277,6 @@ namespace FIA_Biosum_Manager
                 {
                     if (e.NewValue == System.Windows.Forms.CheckState.Checked)
                     {
-
-                        ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strLowYardingDistanceDefault =
-                            Convert.ToString(m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.SelectedItems[0].Index).m_oHarvestMethod.MaxCableYardingDistance);
-
-                        ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strSteepYardingDistanceDefault =
-                            Convert.ToString(m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.SelectedItems[0].Index).m_oHarvestMethod.MaxHelicopterCableYardingDistance);
-
                         ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strLowSlope =
                             m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.SelectedItems[0].Index).m_oHarvestMethod.SteepSlopePercent;
 

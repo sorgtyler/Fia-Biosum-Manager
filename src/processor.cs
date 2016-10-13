@@ -1006,8 +1006,6 @@ namespace FIA_Biosum_Manager
                     double dblMinLgLogDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_lg_log_dbh"]);
                     int intMinSlopePct = Convert.ToInt32(m_oAdo.m_OleDbDataReader["SteepSlope"]);
                     double dblMinDbhSteepSlope = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
-                    double dblMaxCableYardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["MaxCableYardingDistance"]);
-                    double dblMaxHelicopterCableYardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["MaxHelicopterCableYardingDistance"]);
                     string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
                     string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
                     int intGenericMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"]);
@@ -1026,7 +1024,7 @@ namespace FIA_Biosum_Manager
                     }
                     
                     returnVariables = new scenarioHarvestMethod(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
-                        intMinSlopePct, dblMinDbhSteepSlope, dblMaxCableYardingDistance, dblMaxHelicopterCableYardingDistance,
+                        intMinSlopePct, dblMinDbhSteepSlope,
                         strHarvestMethodLowSlope, strHarvestMethodSteepSlope, intHarvestCategoryLowSlope, intHarvestCategorySteepSlope,
                         intGenericMerchAsPercentOfTotalVol);
                 }
@@ -1564,8 +1562,6 @@ namespace FIA_Biosum_Manager
             double _dblMinChipDbh;
             int _intSteepSlopePct;
             double _dblMinDbhSteepSlope;
-            double _dblMaxCableYardingDistance;
-            double _dblMaxHelicopterCableYardingDistance;
             string _strHarvestMethodLowSlope;
             string _strHarvestMethodSteepSlope;
             int _intHarvestCategoryLowSlope;
@@ -1573,7 +1569,7 @@ namespace FIA_Biosum_Manager
             int _intGenericMerchAsPercentOfTotalVol;
 
             public scenarioHarvestMethod(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
-                                         double minDbhSteepSlope, double maxCableYardingDistance, double maxHelicopterYardingDistance,
+                                         double minDbhSteepSlope,
                                          string harvestMethodLowSlope, string harvestMethodSteepSlope,
                                          int harvestCategoryLowSlope, int harvestCategorySteepSlope, int genericMerchAsPercentOfTotalVol)
             {
@@ -1582,8 +1578,6 @@ namespace FIA_Biosum_Manager
                 _dblMinChipDbh = minChipDbh;
                 _intSteepSlopePct = steepSlopePct;
                 _dblMinDbhSteepSlope = minDbhSteepSlope;
-                _dblMaxCableYardingDistance = maxCableYardingDistance;
-                _dblMaxHelicopterCableYardingDistance = maxHelicopterYardingDistance;
                 _strHarvestMethodLowSlope = harvestMethodLowSlope;
                 _strHarvestMethodSteepSlope = harvestMethodSteepSlope;
                 _intHarvestCategoryLowSlope = harvestCategoryLowSlope;
@@ -1611,14 +1605,6 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblMinDbhSteepSlope; }
             }
-            public double MaxCableYardingDistance
-            {
-                get { return _dblMaxCableYardingDistance; }
-            }
-            public double MaxHelicopterCableYardingDistance
-            {
-                get { return _dblMaxHelicopterCableYardingDistance; }
-            }
             public string HarvestMethodLowSlope
             {
                 get { return _strHarvestMethodLowSlope; }
@@ -1643,10 +1629,10 @@ namespace FIA_Biosum_Manager
             public override string ToString()
             {
                 return string.Format("MinChipDbh: {0}, MinSmallLogDbh: {1}, MinLargeLogDbh: {2}, SteepSlopePct: {3}, MinDbhSteepSlope: {4}, " +
-                    "MaxCableYardingDistance: {5}, MaxHelicopterCableYardingDistance: {6}, HarvestMethodLowSlope: {7}, HarvestMethodSteepSlope: {8}, " +
-                    "GenericMerchAsPercentOfTotalVol: {9} ]",
+                    "HarvestMethodLowSlope: {5}, HarvestMethodSteepSlope: {6}, " +
+                    "GenericMerchAsPercentOfTotalVol: {7} ]",
                     _dblMinChipDbh, _dblMinSmallLogDbh, _dblMinLargeLogDbh, _intSteepSlopePct, _dblMinDbhSteepSlope,
-                    _dblMaxCableYardingDistance, _dblMaxHelicopterCableYardingDistance, _strHarvestMethodSteepSlope, _strHarvestMethodSteepSlope,
+                    _strHarvestMethodSteepSlope, _strHarvestMethodSteepSlope,
                     _intGenericMerchAsPercentOfTotalVol);
             }
         }

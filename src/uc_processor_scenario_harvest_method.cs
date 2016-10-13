@@ -49,14 +49,9 @@ namespace FIA_Biosum_Manager
         private Label label10;
         private Label label9;
         private Label label8;
-        private GroupBox groupBox2;
         private Label label12;
-        private TextBox txtHelicopterCableMax;
+        private TextBox txtMerchAdjFactor;
         private Label label13;
-        private TextBox txtCableMax;
-        private Button btnDefault;
-        private Label label15;
-        private Label label14;
         
 		
 
@@ -130,13 +125,9 @@ namespace FIA_Biosum_Manager
         {
             get { return txtSteepSlopeMinDia.Text.Trim(); }
         }
-        public string MaxCableYardingDistance
+        public string MerchAdjFactor
         {
-            get { return txtCableMax.Text.Trim(); }
-        }
-        public string MaxHelicopterCableYardingDistance
-        {
-            get { return txtHelicopterCableMax.Text.Trim(); }
+            get { return txtMerchAdjFactor.Text.Trim(); }
         }
 
 
@@ -151,6 +142,9 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtMerchAdjFactor = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -162,14 +156,6 @@ namespace FIA_Biosum_Manager
             this.label3 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.txtHelicopterCableMax = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.txtCableMax = new System.Windows.Forms.TextBox();
-            this.btnDefault = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
             this.txtMinDiaSmallLogs = new System.Windows.Forms.TextBox();
             this.chkUseDefault = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -187,7 +173,6 @@ namespace FIA_Biosum_Manager
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.grpboxSteepSlopeHarvestMethod.SuspendLayout();
             this.grpboxHarvestMethod.SuspendLayout();
             this.SuspendLayout();
@@ -217,6 +202,8 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.label12);
+            this.panel1.Controls.Add(this.label13);
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label1);
@@ -228,19 +215,51 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.txtMinDiaSmallLogs);
             this.panel1.Controls.Add(this.chkUseDefault);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.grpboxSteepSlopeHarvestMethod);
             this.panel1.Controls.Add(this.txtMinDiaLargeLogs);
             this.panel1.Controls.Add(this.grpboxHarvestMethod);
+            this.panel1.Controls.Add(this.txtMerchAdjFactor);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 16);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(802, 550);
             this.panel1.TabIndex = 0;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.ForeColor = System.Drawing.Color.Black;
+            this.label12.Location = new System.Drawing.Point(13, 420);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(14, 13);
+            this.label12.TabIndex = 33;
+            this.label12.Text = "=";
+            // 
+            // txtMerchAdjFactor
+            // 
+            this.txtMerchAdjFactor.ForeColor = System.Drawing.Color.Black;
+            this.txtMerchAdjFactor.Location = new System.Drawing.Point(32, 417);
+            this.txtMerchAdjFactor.Name = "txtMerchAdjFactor";
+            this.txtMerchAdjFactor.Size = new System.Drawing.Size(36, 20);
+            this.txtMerchAdjFactor.TabIndex = 32;
+            this.txtMerchAdjFactor.Text = "70.0";
+            this.txtMerchAdjFactor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMerchAdjFactor_KeyPress);
+            this.txtMerchAdjFactor.Leave += new System.EventHandler(this.txtMerchAdjFactor_Leave);
+            // 
+            // label13
+            // 
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.ForeColor = System.Drawing.Color.Black;
+            this.label13.Location = new System.Drawing.Point(71, 412);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(208, 40);
+            this.label13.TabIndex = 31;
+            this.label13.Text = "Generic merch adjustment factor";
             // 
             // label10
             // 
@@ -364,96 +383,6 @@ namespace FIA_Biosum_Manager
             this.label4.TabIndex = 11;
             this.label4.Text = "Minimum diameter for chip trees (Trees to be chipped for energy wood)";
             this.label4.Click += new System.EventHandler(this.label4_Click);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.label15);
-            this.groupBox2.Controls.Add(this.label14);
-            this.groupBox2.Controls.Add(this.txtHelicopterCableMax);
-            this.groupBox2.Controls.Add(this.label13);
-            this.groupBox2.Controls.Add(this.txtCableMax);
-            this.groupBox2.Controls.Add(this.btnDefault);
-            this.groupBox2.Controls.Add(this.label12);
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.ForeColor = System.Drawing.Color.Black;
-            this.groupBox2.Location = new System.Drawing.Point(16, 419);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(760, 78);
-            this.groupBox2.TabIndex = 31;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Cable One-Way Yarding Limits (Feet)";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(16, 52);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(14, 13);
-            this.label15.TabIndex = 38;
-            this.label15.Text = ">";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(16, 24);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(14, 13);
-            this.label14.TabIndex = 37;
-            this.label14.Text = ">";
-            // 
-            // txtHelicopterCableMax
-            // 
-            this.txtHelicopterCableMax.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtHelicopterCableMax.Location = new System.Drawing.Point(43, 49);
-            this.txtHelicopterCableMax.Name = "txtHelicopterCableMax";
-            this.txtHelicopterCableMax.Size = new System.Drawing.Size(49, 20);
-            this.txtHelicopterCableMax.TabIndex = 36;
-            this.txtHelicopterCableMax.Text = "10000";
-            this.txtHelicopterCableMax.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtHelicopterCableMax_KeyPress);
-            this.txtHelicopterCableMax.Leave += new System.EventHandler(this.txtHelicopterCableMax_Leave);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(109, 52);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(327, 13);
-            this.label13.TabIndex = 35;
-            this.label13.Text = "Helicopter Manual Whole Tree, Helicopter Cut-to-Length";
-            // 
-            // txtCableMax
-            // 
-            this.txtCableMax.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCableMax.Location = new System.Drawing.Point(43, 21);
-            this.txtCableMax.Name = "txtCableMax";
-            this.txtCableMax.Size = new System.Drawing.Size(49, 20);
-            this.txtCableMax.TabIndex = 34;
-            this.txtCableMax.Text = "1300";
-            this.txtCableMax.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCableMax_KeyPress);
-            this.txtCableMax.Leave += new System.EventHandler(this.txtCableMax_Leave);
-            // 
-            // btnDefault
-            // 
-            this.btnDefault.Location = new System.Drawing.Point(612, 28);
-            this.btnDefault.Name = "btnDefault";
-            this.btnDefault.Size = new System.Drawing.Size(93, 37);
-            this.btnDefault.TabIndex = 33;
-            this.btnDefault.Text = "Default";
-            this.btnDefault.UseVisualStyleBackColor = true;
-            this.btnDefault.Click += new System.EventHandler(this.btnDefault_Click);
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(109, 28);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(472, 13);
-            this.label12.TabIndex = 32;
-            this.label12.Text = "Manual Whole Tree/Log,  Manual Whole Tree, Manual Log, Manual Cut-to-Length";
             // 
             // txtMinDiaSmallLogs
             // 
@@ -630,8 +559,6 @@ namespace FIA_Biosum_Manager
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.grpboxSteepSlopeHarvestMethod.ResumeLayout(false);
             this.grpboxSteepSlopeHarvestMethod.PerformLayout();
             this.grpboxHarvestMethod.ResumeLayout(false);
@@ -679,8 +606,6 @@ namespace FIA_Biosum_Manager
                 this.chkUseDefault.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
                 this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                 cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
-                txtCableMax.Text = oItem.m_oHarvestMethod.MaxCableYardingDistance;
-                txtHelicopterCableMax.Text = oItem.m_oHarvestMethod.MaxHelicopterCableYardingDistance;
                 txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
                 txtMinDiaSmallLogs.Text = oItem.m_oHarvestMethod.MinDiaForSmallLogs;
                 txtMinDiaLargeLogs.Text = oItem.m_oHarvestMethod.MinDiaForLargeLogs;
@@ -690,7 +615,7 @@ namespace FIA_Biosum_Manager
                      oItem.m_oHarvestMethod.ProcessLowSlope;
                 uc_processor_scenario_run.ScenarioHarvestMethodVariables.ProcessSteepSlope =
                     oItem.m_oHarvestMethod.ProcessSteepSlope;
-
+                txtMerchAdjFactor.Text = oItem.m_oHarvestMethod.MerchAdjFactor;
             }
 
 			
@@ -718,8 +643,6 @@ namespace FIA_Biosum_Manager
 			m_strError="";
             string strFields = "scenario_id,UseRxDefaultHarvestMethodYN,HarvestMethodLowSlope," + 
 				             "HarvestMethodSteepSlope," +
-                             "MaxCableYardingDistance," + 
-                             "MaxHelicopterCableYardingDistance," + 
                              "min_chip_dbh,min_sm_log_dbh," + 
 				             "min_lg_log_dbh,SteepSlope,min_dbh_steep_slope," +
                              "ProcessLowSlopeYN,ProcessSteepSlopeYN,GenericMerchAsPercentOfTotalVol ";
@@ -752,28 +675,6 @@ namespace FIA_Biosum_Manager
 			//HARVEST METHOD STEEP SLOPE
 			//
 			strValues=strValues + "'" + this.cmbSteepSlopeMethod.Text.Trim() + "',"; 
-            //
-            //MAXIMUM CABLE YARDING DISTANCE
-            //
-            if (this.txtCableMax.Text.Trim().Length > 0)
-            {
-                strValues = strValues + this.txtCableMax.Text.Trim() + ",";
-            }
-            else
-            {
-                strValues = strValues + "null,";
-            }
-            //
-            //MAXIMUM HELICOPTER CABLE YARDING DISTANCE
-            //
-            if (this.txtHelicopterCableMax.Text.Trim().Length > 0)
-            {
-                strValues = strValues + this.txtHelicopterCableMax.Text.Trim() + ",";
-            }
-            else
-            {
-                strValues = strValues + "null,";
-            }
 			//
 			//MINIMUM CHIP DBH
 			//
@@ -853,10 +754,14 @@ namespace FIA_Biosum_Manager
             }
             //
             //PROCESS GENERIC MERCH ADJUSTMENT FACTOR
-            //@ToDo: incorporate value from UI when textbox is added
-            //
-            strValues = strValues + "70";
-
+            if (txtMerchAdjFactor.Text.Trim().Length > 0)
+            {
+                strValues = strValues + txtMerchAdjFactor.Text.Trim();
+            }
+            else
+            {
+                strValues = strValues + "null";
+            }
 			oAdo.m_strSQL=Queries.GetInsertSQL(strFields,strValues,Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName);
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 			m_intError=oAdo.m_intError;
@@ -1011,6 +916,22 @@ namespace FIA_Biosum_Manager
 				txtSteepSlopeMinDia.Focus();
 		}
 
+        private void txtMerchAdjFactor_Leave(object sender, System.EventArgs e)
+        {
+            m_oValidate.RoundDecimalLength = 2;
+            m_oValidate.MaxValue = 100;
+            m_oValidate.MinValue = 0;
+            m_oValidate.TestForMaxMin = true;
+            m_oValidate.NullsAllowed = false;
+            m_oValidate.ValidateDecimal(txtMerchAdjFactor.Text.Trim());
+            if (m_oValidate.m_intError == 0)
+            {
+                txtMerchAdjFactor.Text = m_oValidate.ReturnValue;
+            }
+            else
+                txtMerchAdjFactor.Focus();
+        }
+
 		private void cmbSteepSlopePercent_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
 			e.Handled=true;
@@ -1019,49 +940,6 @@ namespace FIA_Biosum_Manager
         private void label4_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void btnDefault_Click(object sender, EventArgs e)
-        {
-            if (txtCableMax.Text.Trim() != "1300" ||
-                txtHelicopterCableMax.Text.Trim() != "10000")
-                ReferenceProcessorScenarioForm.m_bSave = true;
-
-            txtCableMax.Text = "1300";
-            txtHelicopterCableMax.Text = "10000";
-
-        }
-
-        private void txtCableMax_Leave(object sender, EventArgs e)
-        {
-            m_oValidate.RoundDecimalLength = 0;
-            m_oValidate.MaxValue = 20000;
-            m_oValidate.MinValue = 50;
-            m_oValidate.TestForMaxMin = true;
-            m_oValidate.NullsAllowed = false;
-            m_oValidate.ValidateDecimal(this.txtCableMax.Text.Trim());
-            if (m_oValidate.m_intError == 0)
-            {
-                this.txtCableMax.Text = m_oValidate.ReturnValue;
-            }
-            else
-                this.txtCableMax.Focus();
-        }
-
-        private void txtHelicopterCableMax_Leave(object sender, EventArgs e)
-        {
-            m_oValidate.RoundDecimalLength = 0;
-            m_oValidate.MaxValue = 20000;
-            m_oValidate.MinValue = 50;
-            m_oValidate.TestForMaxMin = true;
-            m_oValidate.NullsAllowed = false;
-            m_oValidate.ValidateDecimal(this.txtHelicopterCableMax.Text.Trim());
-            if (m_oValidate.m_intError == 0)
-            {
-                this.txtHelicopterCableMax.Text = m_oValidate.ReturnValue;
-            }
-            else
-                this.txtHelicopterCableMax.Focus();
         }
 
         private void txtMinDiaForChips_KeyPress(object sender, KeyPressEventArgs e)
@@ -1083,20 +961,13 @@ namespace FIA_Biosum_Manager
         {
             ReferenceProcessorScenarioForm.m_bSave = true;
         }
-
-        private void txtCableMax_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ReferenceProcessorScenarioForm.m_bSave = true;
-        }
-
-        private void txtHelicopterCableMax_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ReferenceProcessorScenarioForm.m_bSave = true;
-        }
-
         private void cmbSteepSlopePercent_SelectedValueChanged(object sender, EventArgs e)
         {
             if (ReferenceProcessorScenarioForm.m_bRulesFirstTime==false) ReferenceProcessorScenarioForm.m_bSave = true;
+        }
+        private void txtMerchAdjFactor_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ReferenceProcessorScenarioForm.m_bSave = true;
         }
 
         private void label3_Click(object sender, EventArgs e)
