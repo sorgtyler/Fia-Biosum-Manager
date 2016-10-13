@@ -3197,7 +3197,7 @@ namespace FIA_Biosum_Manager
                              " [Chip trees MerchAsPctOfTotal] single," +
                              " [Chip trees average volume(ft3)] single," +
                             " [CHIPS Average Density (lbs/ft3)] single," +
-                            " [CHIPS Hwd Proportion] single," +
+                            " [CHIPS Hwd Percent] single," +
                             " [Small log trees per acre] single," +
                             " [Small log trees MerchAsPctOfTotal] single," +
                             " [Small log trees ChipPct_Cat1_3] single," +
@@ -3205,7 +3205,7 @@ namespace FIA_Biosum_Manager
                             " [Small log trees ChipPct_Cat5] single," +
                             " [Small log trees average volume(ft3)] single," +
                             " [Small log trees average density(lbs/ft3)] single," +
-                            " [Small log trees hardwood proportion] single," +
+                            " [Small log trees hardwood percent] single," +
                             " [Large log trees per acre] single," +
                             " [Large log trees MerchAsPctOfTotal] single," +
                             " [Large log trees ChipPct_Cat1_3_4] single," +
@@ -3213,7 +3213,7 @@ namespace FIA_Biosum_Manager
                             " [Large log trees ChipPct_Cat5] single," +
                             " [Large log trees average vol(ft3)] single," +
                             " [Large log trees average density(lbs/ft3)] single," +
-                            " [Large log trees hardwood proportion] single," +
+                            " [Large log trees hardwood percent] single," +
                             " BrushCutTPA single," +
                             " BrushCutAvgVol single," +
                             " RxPackage_Rx_RxCycle text (255)," +
