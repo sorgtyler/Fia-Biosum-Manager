@@ -390,11 +390,11 @@ namespace FIA_Biosum_Manager
                         }
                         m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
                         "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, drybiom, " +
-                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen )" +
+                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen, tpa )" +
                         "VALUES ('" + strTempCn + "', " + intTempTree + ", '" + nextTree.CondId + "', '" + nextTree.PlotId + "', " +
                         nextTree.SpCd + ", " + nextTree.MerchWtGt + ", " + nextTree.DryBiom + ", " +
                         nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
-                        ", " + nextTree.DryToGreen + " )";
+                        ", " + nextTree.DryToGreen + ", " + nextTree.Tpa +  ")";
 
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
@@ -674,6 +674,7 @@ namespace FIA_Biosum_Manager
                     {
                         nextInput.PerAcBrushCutWtGt = nextInput.PerAcBrushCutWtGt + nextTree.BrushCutWtGt;
                         nextInput.PerAcBrushCutVolumeCf = nextInput.PerAcBrushCutVolumeCf + nextTree.BrushCutVolCf;
+                        nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.BrushCutWtGt;
                     }
 
                     //metrics for chip trees

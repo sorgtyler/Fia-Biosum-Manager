@@ -3243,7 +3243,8 @@ namespace FIA_Biosum_Manager
                        " volCfNet double," +
                        " volTsGrs double," +
                        " odWgt double," +
-                       " dryToGreen double)";
+                       " dryToGreen double, " +
+                       " tpa double)";
             }
         }
 
