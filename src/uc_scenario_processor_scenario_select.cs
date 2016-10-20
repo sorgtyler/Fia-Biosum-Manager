@@ -36,6 +36,8 @@ namespace FIA_Biosum_Manager
         {
             int x;
             ProcessorScenarioTools oTools = new ProcessorScenarioTools();
+            //Reset m_oProcessorScenarioItem_Collection so we don't get duplicates when we loadAll down below
+            m_oProcessorScenarioItem_Collection = new ProcessorScenarioItem_Collection();
             lvProcessorScenario.Items.Clear();
             System.Windows.Forms.ListViewItem entryListItem = null;
             this.m_oLvAlternateColors.InitializeRowCollection();
