@@ -332,6 +332,7 @@ namespace FIA_Biosum_Manager
 			string strMax="";
 			string strMin="";
 			string strId = "";
+            double dblMin = 0;
 
 			//get the last id if there is one
 			if (this.lstTreeDiam.Items.Count > 0)
@@ -339,6 +340,9 @@ namespace FIA_Biosum_Manager
 				strId = Convert.ToString(Convert.ToInt16(this.lstTreeDiam.Items[this.lstTreeDiam.Items.Count-1].Text) + 1);
 				strMin = this.lstTreeDiam.Items[this.lstTreeDiam.Items.Count-1].SubItems[2].Text;
 				if (strMin.IndexOf(".") < 0) strMin += ".0";
+
+                dblMin = Convert.ToDouble(strMin) + 0.1;
+                strMin = Convert.ToString(dblMin);
 				
 				strMax = strMin;
 				//if (strMin.IndexOf(".") < 0) strMin += ".0";
