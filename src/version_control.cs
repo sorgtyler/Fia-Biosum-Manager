@@ -429,6 +429,7 @@ namespace FIA_Biosum_Manager
                
             }
 
+            UpdateDatasources_5_7_7();
             if (bPerformCheck)
             {
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -4424,6 +4425,8 @@ namespace FIA_Biosum_Manager
 
         private void UpdateDatasources_5_7_7()
         {
+            frmMain.g_sbpInfo.Text = "Version Update: Copying new harvest methods table to project...Stand by";
+
             // Load project data sources table
             FIA_Biosum_Manager.Datasource oDs = new Datasource();
             oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
@@ -4442,6 +4445,8 @@ namespace FIA_Biosum_Manager
             string strTableName = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
             string strTableStatus = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
 
+            ado_data_access oAdo = new ado_data_access();
+
             // Create table link of the application db ref_master harvest method table
             if (strFileStatus == "F" && strTableStatus == "F")
             {
@@ -4456,20 +4461,83 @@ namespace FIA_Biosum_Manager
                 
 
                 //open connection to destination database
-                ado_data_access oAdo = new ado_data_access();
                 oAdo.OpenConnection(oAdo.getMDBConnString(strDestinationDbFile, "", ""));
                 //drop existing table
                 string strSql = "DROP TABLE " + strTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 //copy contents of new table into place
-                strSql = "SELECT * INTO " + strTableName + " FROM harvestmethod_worktable";
+                strSql = "SELECT * INTO " + strTableName + " FROM " + strDestinationTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 //drop the table link
-                strSql = "DROP TABLE harvestmethod_worktable";
+                if (oAdo.TableExist(oAdo.m_OleDbConnection, strDestinationTableName))
+                {
+                    strSql = "DROP TABLE " + strDestinationTableName;
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
+                }
 
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
             }
- 
+
+
+            frmMain.g_sbpInfo.Text = "Version Update: Creating GenericMerchAsPercentOfTotalVol column in scenario_harvest_method table...Stand by";
+
+            string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db";
+            //open the scenario_processor_rule_definitions.mdb file
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
+
+            string strMerchFactorCol = "GenericMerchAsPercentOfTotalVol";
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strMerchFactorCol))
+            {
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strMerchFactorCol, "INTEGER", "");
+
+                // Set adj factor to 70 for new column
+                oAdo.m_strSQL = "UPDATE " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " " +
+                    "SET " + strMerchFactorCol + " = 70";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Creating stand_residue_wt_gt column in tree vol val table(s)...Stand by";
+
+            //retrieve paths for all scenarios in the project and put them in list
+            List<string> lstScenarioDb = new List<string>();
+            oAdo.m_strSQL = "SELECT path from scenario";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strPath = "";
+                    if (oAdo.m_OleDbDataReader["path"] != System.DBNull.Value)
+                        strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                    if (!String.IsNullOrEmpty(strPath))
+                    {
+                        //Check to see if the .mdb exists before adding it to the list
+                        string strPathToMdb = strPath + "\\db\\scenario_results.mdb";
+                        //sample path: C:\\workspace\\BioSum\\biosum_data\\bluemountains\\processor\\scenario1\\db\\scenario_results.mdb
+                        if (System.IO.File.Exists(strPathToMdb))
+                            lstScenarioDb.Add(strPathToMdb);
+                    }
+                }
+                oAdo.m_OleDbDataReader.Close();
+            }
+
+            // Loop through the scenario_results.mdb looking for tree_vol_val_by_species_diam_groups table
+            string strStandResidueWtGt = "stand_residue_wt_gt";
+            foreach (string strPath in lstScenarioDb)
+            {
+                // Add columns to tree_vol_val_by_species_diam_groups table
+                oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strStandResidueWtGt))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strStandResidueWtGt, "DOUBLE", "");
+                }
+            }
+
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+
+            //open the scenario_processor_rule_definitions.mdb file
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
+
         }
 
         public string ReferenceProjectDirectory
