@@ -4422,6 +4422,56 @@ namespace FIA_Biosum_Manager
             }
         }
 
+        private void UpdateDatasources_5_7_7()
+        {
+            // Load project data sources table
+            FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oDs.m_strDataSourceTableName = "datasource";
+            oDs.m_strScenarioId = "";
+            oDs.LoadTableColumnNamesAndDataTypes = false;
+            oDs.LoadTableRecordCount = false;
+            oDs.populate_datasource_array();
+
+            // Extract table properties from data sources table
+            int intHarvestMethodTable = oDs.getValidTableNameRow("FRCS System Harvest Method");
+            string strDirectoryPath = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            string strFileName = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+            string strFileStatus = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            string strTableName = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            string strTableStatus = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+
+            // Create table link of the application db ref_master harvest method table
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                dao_data_access oDao = new dao_data_access();
+                string strDestinationDbFile = strDirectoryPath + "\\" + strFileName;
+                string strDestinationTableName = "harvestmethod_worktable";
+                string strSourceDbFile=frmMain.g_oEnv. strAppDir.Trim() + "\\db\\ref_master.mdb";
+                string strSourceTableName = "frcs_system_harvest_method";
+
+                oDao.CreateTableLink(strDestinationDbFile, strDestinationTableName, strSourceDbFile, strSourceTableName);
+                oDao.m_DaoWorkspace.Close();
+                
+
+                //open connection to destination database
+                ado_data_access oAdo = new ado_data_access();
+                oAdo.OpenConnection(oAdo.getMDBConnString(strDestinationDbFile, "", ""));
+                //drop existing table
+                string strSql = "DROP TABLE " + strTableName;
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
+                //copy contents of new table into place
+                strSql = "SELECT * INTO " + strTableName + " FROM harvestmethod_worktable";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
+                //drop the table link
+                strSql = "DROP TABLE harvestmethod_worktable";
+
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            }
+ 
+        }
+
         public string ReferenceProjectDirectory
 		{
 			get {return _strProjDir;}
