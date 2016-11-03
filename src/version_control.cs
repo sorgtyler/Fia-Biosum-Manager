@@ -416,6 +416,18 @@ namespace FIA_Biosum_Manager
                             bPerformCheck = false;
                         }
                     }
+                        //5.7.7 is Processor redesign
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 7 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 7) &&
+                           (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 7 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 7))
+                    {
+                        UpdateDatasources_5_7_7();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6) &&
                             (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
@@ -429,7 +441,6 @@ namespace FIA_Biosum_Manager
                
             }
 
-            UpdateDatasources_5_7_7();
             if (bPerformCheck)
             {
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -4463,7 +4474,7 @@ namespace FIA_Biosum_Manager
                 //open connection to destination database
                 oAdo.OpenConnection(oAdo.getMDBConnString(strDestinationDbFile, "", ""));
                 //drop existing table
-                string strSql = "DROP TABLE " + strTableName;
+                string strSql = "DROP TABLE " + strSourceTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 //copy contents of new table into place
                 strSql = "SELECT * INTO " + strTableName + " FROM " + strDestinationTableName;
@@ -4534,10 +4545,6 @@ namespace FIA_Biosum_Manager
             }
 
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
-
-            //open the scenario_processor_rule_definitions.mdb file
-            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
-
         }
 
         public string ReferenceProjectDirectory
