@@ -3238,13 +3238,17 @@ namespace FIA_Biosum_Manager
                        " biosum_plot_id text (24)," +
                        " spcd INTEGER," +
                        " merchWtGt double," +
+                       " nonMerchWtGt double," +
                        " drybiom double," +
                        " drybiot double," +
                        " volCfNet double," +
                        " volTsGrs double," +
                        " odWgt double," +
                        " dryToGreen double, " +
-                       " tpa double)";
+                       " tpa double, " +
+                       " dbh double, " +
+                       " species_group integer, " +
+                       " diam_group integer)";
             }
         }
 

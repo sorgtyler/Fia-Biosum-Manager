@@ -389,12 +389,13 @@ namespace FIA_Biosum_Manager
                             strTempCn = treeList[idxCn];
                         }
                         m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
-                        "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, drybiom, " +
-                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen, tpa )" +
+                        "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, nonMerchWtGt, drybiom, " +
+                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen, tpa, dbh, species_group, diam_group)" +
                         "VALUES ('" + strTempCn + "', " + intTempTree + ", '" + nextTree.CondId + "', '" + nextTree.PlotId + "', " +
-                        nextTree.SpCd + ", " + nextTree.MerchWtGt + ", " + nextTree.DryBiom + ", " +
+                        nextTree.SpCd + ", " + nextTree.MerchWtGt + ", " + nextTree.NonMerchWtGt + ", " + nextTree.DryBiom + ", " +
                         nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
-                        ", " + nextTree.DryToGreen + ", " + nextTree.Tpa +  ")";
+                        ", " + nextTree.DryToGreen + ", " + nextTree.Tpa + ", " + nextTree.Dbh + ", " + nextTree.SpeciesGroup + ", " +
+                        nextTree.DiamGroup + ")";
 
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
