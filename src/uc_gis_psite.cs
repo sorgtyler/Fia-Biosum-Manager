@@ -1887,23 +1887,24 @@ namespace FIA_Biosum_Manager
 						y += p_lbl.Height;
 						p_lbl.Visible=true;
 						break;
-					case "KEEPLYR_YN":
-						p_lbl = new TemplateInputLabel(p_groupBox1,"label" + z.ToString().Trim(),"Keep Temp GIS Layer");
-						p_lbl.Left = x;
-						p_lbl.Top = y;
-						p_cmb = new TemplateComboBox(p_groupBox1,strField.Trim(),"");
-						p_cmb.Items.Add("Yes");
-						p_cmb.Items.Add("No");
-						p_cmb.Text = "No";
-						p_cmb.Left = p_lbl.Left + p_lbl.Width + 5;
-						p_cmb.Top = p_lbl.Top;
-						intFieldSize = (int)this.CreateGraphics().MeasureString("Yes", p_cmb.Font).Width + 50;
-						p_cmb.Width = intFieldSize;
-						p_cmb.Visible=true;
-						//p_cmb.ReadOnly=true;
-						y += p_lbl.Height;
-						p_lbl.Visible=true;
-						break;
+                    case "KEEPLYR_YN":
+                        // GitHub issue #56: Remove Keep Temp GIS Layer comboBox; Do nothing for now
+                    //    p_lbl = new TemplateInputLabel(p_groupBox1,"label" + z.ToString().Trim(),"Keep Temp GIS Layer");
+                    //    p_lbl.Left = x;
+                    //    p_lbl.Top = y;
+                    //    p_cmb = new TemplateComboBox(p_groupBox1,strField.Trim(),"");
+                    //    p_cmb.Items.Add("Yes");
+                    //    p_cmb.Items.Add("No");
+                    //    p_cmb.Text = "No";
+                    //    p_cmb.Left = p_lbl.Left + p_lbl.Width + 5;
+                    //    p_cmb.Top = p_lbl.Top;
+                    //    intFieldSize = (int)this.CreateGraphics().MeasureString("Yes", p_cmb.Font).Width + 50;
+                    //    p_cmb.Width = intFieldSize;
+                    //    p_cmb.Visible=true;
+                    //    //p_cmb.ReadOnly=true;
+                    //    y += p_lbl.Height;
+                    //    p_lbl.Visible=true;
+                        break;
 					case "NAME":
 						p_lbl = new TemplateInputLabel(p_groupBox1,"label" + z.ToString().Trim(),"Processing Site Name");
 						p_lbl.Left = x;
@@ -2155,9 +2156,10 @@ namespace FIA_Biosum_Manager
 								case "NAME":
 									p_row["name"] = p_groupBox1.Controls[z].Text;
 									break;
-								case "KEEPLYR_YN":
-									p_row["keeplyr_yn"] = p_groupBox1.Controls[z].Text.Substring(0,1);
-									break;
+                                // GitHub issue #56: Remove Keep Temp GIS Layer comboBox
+                                //case "KEEPLYR_YN":
+                                //    p_row["keeplyr_yn"] = p_groupBox1.Controls[z].Text.Substring(0,1);
+                                //    break;
 								case "EXISTS_YN":
 									p_row["exists_yn"] = p_groupBox1.Controls[z].Text.Substring(0,1);
 									break;
@@ -2260,6 +2262,10 @@ namespace FIA_Biosum_Manager
 									break;
 							}
 						}
+                        // GitHub issue #56: Remove Keep Temp GIS Layer comboBox
+                        // Always set keeplyr_yn to 'N' for new entries for now
+                        p_row["keeplyr_yn"] = "NO".Substring(0, 1);
+
 						this.m_ado.m_DataSet.Tables["processing_site"].Rows.Add(p_row);
 						p_row=null;
 						this.m_dv.AllowNew = false;
@@ -2312,17 +2318,18 @@ namespace FIA_Biosum_Manager
 								return;
 							}
 							break;
-						case "KEEPLYR_YN":
-							/****************************************************
-							 **if user did not select a value then use 'No' as
-							 **the default
-							 ****************************************************/
-							if (p_groupBox.Controls[z].Text.Trim().ToUpper()!="YES" && 
-								p_groupBox.Controls[z].Text.Trim().ToUpper()!="NO")
-							{
-								p_groupBox.Controls[z].Text = "No";
-							}
-							break;
+                        //GitHub issue #56: Remove Keep Temp GIS Layer comboBox
+                        //case "KEEPLYR_YN":
+                        //    /****************************************************
+                        //     **if user did not select a value then use 'No' as
+                        //     **the default
+                        //     ****************************************************/
+                        //    if (p_groupBox.Controls[z].Text.Trim().ToUpper()!="YES" && 
+                        //        p_groupBox.Controls[z].Text.Trim().ToUpper()!="NO")
+                        //    {
+                        //        p_groupBox.Controls[z].Text = "No";
+                        //    }
+                        //    break;
 						case "EXISTS_YN":
 							//error if user did not specify whether the processing site already exists
 							if (p_groupBox.Controls[z].Text.Trim().ToUpper()!="YES" &&
@@ -2646,29 +2653,30 @@ namespace FIA_Biosum_Manager
 						y += p_lbl.Height;
 						p_lbl.Visible=true;
 						break;
-					case "KEEPLYR_YN":
-						p_lbl = new TemplateInputLabel(p_groupBox1,"label" + z.ToString().Trim(),"Keep Temp GIS Layer");
-						p_lbl.Left = x;
-						p_lbl.Top = y;
-						if (this.m_dg[this.m_intCurrRow-1,intGridCol].ToString().Trim() == "Y")
-						{
-							strValue = "Yes";
-						}
-						else if (this.m_dg[this.m_intCurrRow-1,intGridCol].ToString().Trim() == "N")
-						{
-							strValue = "No";
-						}
-						p_cmb = new TemplateComboBox(p_groupBox1,strField.Trim(),strValue);
-						p_cmb.Items.Add("Yes");
-						p_cmb.Items.Add("No");
-						p_cmb.Left = p_lbl.Left + p_lbl.Width + 5;
-						p_cmb.Top = p_lbl.Top;
-						intFieldSize = (int)this.CreateGraphics().MeasureString("Yes", p_cmb.Font).Width + 50;
-						p_cmb.Width = intFieldSize;
-						p_cmb.Visible=true;
-						y += p_lbl.Height;
-						p_lbl.Visible=true;
-						break;
+                    case "KEEPLYR_YN":
+                        //GitHub issue #56: Remove Keep Temp GIS Layer comboBox; Do nothing for now
+                    //    p_lbl = new TemplateInputLabel(p_groupBox1,"label" + z.ToString().Trim(),"Keep Temp GIS Layer");
+                    //    p_lbl.Left = x;
+                    //    p_lbl.Top = y;
+                    //    if (this.m_dg[this.m_intCurrRow-1,intGridCol].ToString().Trim() == "Y")
+                    //    {
+                    //        strValue = "Yes";
+                    //    }
+                    //    else if (this.m_dg[this.m_intCurrRow-1,intGridCol].ToString().Trim() == "N")
+                    //    {
+                    //        strValue = "No";
+                    //    }
+                    //    p_cmb = new TemplateComboBox(p_groupBox1,strField.Trim(),strValue);
+                    //    p_cmb.Items.Add("Yes");
+                    //    p_cmb.Items.Add("No");
+                    //    p_cmb.Left = p_lbl.Left + p_lbl.Width + 5;
+                    //    p_cmb.Top = p_lbl.Top;
+                    //    intFieldSize = (int)this.CreateGraphics().MeasureString("Yes", p_cmb.Font).Width + 50;
+                    //    p_cmb.Width = intFieldSize;
+                    //    p_cmb.Visible=true;
+                    //    y += p_lbl.Height;
+                    //    p_lbl.Visible=true;
+                        break;
 					case "NAME":
 						p_lbl = new TemplateInputLabel(p_groupBox1,"label" + z.ToString().Trim(),"Processing Site Name");
 						p_lbl.Left = x;
@@ -2939,9 +2947,10 @@ namespace FIA_Biosum_Manager
 								case "NAME":
 									this.m_dg[this.m_intCurrRow-1,this.getGridColumn("NAME")] = p_groupBox1.Controls[z].Text;
 									break;
-								case "KEEPLYR_YN":
-									this.m_dg[this.m_intCurrRow-1,this.getGridColumn("KEEPLYR_YN")] = p_groupBox1.Controls[z].Text.Substring(0,1);
-									break;
+                                //GitHub issue #56: Remove Keep Temp GIS Layer comboBox
+                                //case "KEEPLYR_YN":
+                                //    this.m_dg[this.m_intCurrRow-1,this.getGridColumn("KEEPLYR_YN")] = p_groupBox1.Controls[z].Text.Substring(0,1);
+                                //    break;
 								case "EXISTS_YN":
 									this.m_dg[this.m_intCurrRow-1,this.getGridColumn("EXISTS_YN")] = p_groupBox1.Controls[z].Text.Substring(0,1);
 									break;
