@@ -841,10 +841,6 @@ namespace FIA_Biosum_Manager
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
 
-				strFullPath = this.txtRootDirectory.Text.Trim() + "\\frcs\\db";
-				if (!System.IO.Directory.Exists(strFullPath))
-					System.IO.Directory.CreateDirectory(strFullPath);
-
 				strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\db";
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
@@ -1138,16 +1134,6 @@ namespace FIA_Biosum_Manager
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\biosum_processor.version";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.version";
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
-
-				strSourceFile = this.m_oEnv.strAppDir + "\\db\\frcs.xls";
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\frcs.xls";
-				p_frmTherm.Increment(14);
-				p_frmTherm.lblMsg.Text = strDestFile;
-				p_frmTherm.lblMsg.Refresh();
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
-				strSourceFile = this.m_oEnv.strAppDir + "\\db\\frcs.version";
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\frcs.version";
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
 
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\audit.mdb";
