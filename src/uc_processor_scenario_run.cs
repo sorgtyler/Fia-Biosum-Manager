@@ -1283,10 +1283,7 @@ namespace FIA_Biosum_Manager
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", false);
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules,"tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", false);
-            string strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\FRCS\\Input";
-            if (!System.IO.Directory.Exists(strPath))
-                System.IO.Directory.CreateDirectory(strPath);
-            strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
+            string strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
             if (!System.IO.Directory.Exists(strPath))
                 System.IO.Directory.CreateDirectory(strPath);
              
@@ -1318,7 +1315,6 @@ namespace FIA_Biosum_Manager
             bool bFRCS = false;
             bool bOPCOST = true;
             string strInputPath = "";
-            int intPercent = 0;
 
             
             dao_data_access oDao = new dao_data_access();

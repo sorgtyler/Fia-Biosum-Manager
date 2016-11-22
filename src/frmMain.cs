@@ -109,7 +109,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeDiam;
 		public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpcGrps;
 		public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpc;
-		public FIA_Biosum_Manager.btnMainForm m_btnProcessorFrcs;
+		//public FIA_Biosum_Manager.btnMainForm m_btnProcessorFrcs;
         public FIA_Biosum_Manager.btnMainForm m_btnProcessorOpcost;
 
 		
@@ -3703,25 +3703,14 @@ namespace FIA_Biosum_Manager
 			this.m_btnProcessorTreeSpcGrps.Text = "Tree Species Groups";
 			this.m_btnProcessorTreeSpcGrps.strToolTip = "Step 3 - Assign Tree Species Groups";
 
-
-			//start FRCS
-			this.m_btnProcessorFrcs = new btnMainForm(this);
-			this.m_pnlProcessor.Controls.Add(this.m_btnProcessorFrcs);
-			this.m_btnProcessorFrcs.Size = this.btnMain1.Size;
-			this.m_btnProcessorFrcs.Left  = this.btnMain1.Left;   //this.m_btnDbPlotData.Left;
-			this.m_btnProcessorFrcs.Top = this.m_btnProcessorTreeSpcGrps.Top + this.m_btnProcessorTreeSpcGrps.Height  + 5;
-			this.m_btnProcessorFrcs.Text = "Start FRCS";
-			this.m_btnProcessorFrcs.strToolTip = "Step 4 - Edit Harvest Cost Parameters";
-
-
             //start OPCOST
             this.m_btnProcessorOpcost = new btnMainForm(this);
             this.m_pnlProcessor.Controls.Add(this.m_btnProcessorOpcost);
             this.m_btnProcessorOpcost.Size = this.btnMain1.Size;
             this.m_btnProcessorOpcost.Left = this.btnMain1.Left;   //this.m_btnDbPlotData.Left;
-            this.m_btnProcessorOpcost.Top = this.m_btnProcessorFrcs.Top + this.m_btnProcessorFrcs.Height + 5;
+            this.m_btnProcessorOpcost.Top = this.m_btnProcessorTreeSpcGrps.Top + this.m_btnProcessorTreeSpcGrps.Height + 5;
             this.m_btnProcessorOpcost.Text = "OPCOST";
-            this.m_btnProcessorOpcost.strToolTip = "Step 5 - Edit OPCOST Settings";
+            this.m_btnProcessorOpcost.strToolTip = "Step 4 - Edit OPCOST Settings";
 
 			//start biosum processor button
 			
@@ -3732,7 +3721,7 @@ namespace FIA_Biosum_Manager
 			this.m_btnProcessorStart.Left = this.m_btnProcessorOpcost.Left;
 			this.m_btnProcessorStart.Top = this.m_btnProcessorOpcost.Top + this.m_btnProcessorOpcost.Height + 5;
 			this.m_btnProcessorStart.Text = "Start Biosum Processor";
-			this.m_btnProcessorStart.strToolTip = "Step 6 - Execute Processor";
+			this.m_btnProcessorStart.strToolTip = "Step 5 - Execute Processor";
 	     	
 
 			//DATABASE PANEL AND BUTTONS
