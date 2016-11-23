@@ -1084,16 +1084,16 @@ namespace FIA_Biosum_Manager
             {
                 // Check to see if the biosum_category column exists in the harvest method table; If not
                 // throw an error and exit the function; Processor won't work without this value
-                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultFRCSHarvestMethodTableName, "biosum_category"))
+                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultHarvestMethodsTableName, "biosum_category"))
                 {
-                    string strErrMsg = "Your project contains an obsolete version of the " + Tables.Reference.DefaultFRCSHarvestMethodTableName +
+                    string strErrMsg = "Your project contains an obsolete version of the " + Tables.Reference.DefaultHarvestMethodsTableName +
                                        " table that does not contain the 'biosum_category' field. Copy a new version of this table into your project from the" +
                                        " BioSum installation directory before trying to run Processor.";
                     MessageBox.Show(strErrMsg,"FIA Biosum",MessageBoxButtons.OK,MessageBoxIcon.Error);
                     return harvestMethodList;
                 }
 
-                string strSQL = "SELECT * FROM " + Tables.Reference.DefaultFRCSHarvestMethodTableName;
+                string strSQL = "SELECT * FROM " + Tables.Reference.DefaultHarvestMethodsTableName;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {

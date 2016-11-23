@@ -3959,8 +3959,8 @@ namespace FIA_Biosum_Manager
 			static public string DefaultFVSTreeSpeciesTableName {get {return "fvs_tree_species";}}
 			static public string DefaultFiadbFVSVariantTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultFiadbFVSVariantTableName {get {return "fiadb_fvs_variant";}}
-			static public string DefaultFRCSHarvestMethodTableDbFile {get {return @"db\ref_master.mdb";}}
-			static public string DefaultFRCSHarvestMethodTableName {get {return "frcs_system_harvest_method";}}
+			static public string DefaultHarvestMethodsTableDbFile {get {return @"db\ref_master.mdb";}}
+            static public string DefaultHarvestMethodsTableName { get { return "harvest_methods"; } }
             static public string DefaultRxCategoryTableDbFile { get { return @"db\ref_master.mdb"; } }
             static public string DefaultRxCategoryTableName { get { return "fvs_rx_category"; } }
             static public string DefaultRxSubCategoryTableDbFile { get { return @"db\ref_master.mdb"; } }
@@ -4139,16 +4139,16 @@ namespace FIA_Biosum_Manager
 					"fvs_variant CHAR(2))";
 			}
 
-			public void CreateFRCSHarvestMethodTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateHarvestMethodsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateFRCSHarvestMethodTableSQL(p_strTableName));
+				p_oAdo.SqlNonQuery(p_oConn,CreateHarvestMethodsTableSQL(p_strTableName));
 			}
-			public void CreateFRCSHarvestMethodTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateHarvestMethodsTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","HarvestMethodId");
 			}
 			
-			static public string CreateFRCSHarvestMethodTableSQL(string p_strTableName)
+			static public string CreateHarvestMethodsTableSQL(string p_strTableName)
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
 					"HarvestMethodId BYTE," + 
@@ -4181,7 +4181,8 @@ namespace FIA_Biosum_Manager
                     "MaxSlopePercentCellLocation CHAR(15)," +
                     "MaxYardingDistance INTEGER," +
                     "MaxYardingDistanceDefault INTEGER," +
-                    "MaxYardingDistanceCellLocation CHAR(15))";
+                    "MaxYardingDistanceCellLocation CHAR(15), " +
+                    "biosum_category INTEGER)";
 			}
 
             public void CreateRxCategoryTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)

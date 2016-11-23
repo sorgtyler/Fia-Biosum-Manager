@@ -1454,10 +1454,10 @@ namespace FIA_Biosum_Manager
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
 
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " + 
-						"('FRCS System Harvest Method'," + 
+						"('Harvest Methods'," + 
 						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
 						"'ref_master.mdb'," +
-						"'frcs_system_harvest_method');";
+                        "'harvest_methods');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 					
 

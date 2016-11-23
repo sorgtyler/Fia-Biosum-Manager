@@ -519,7 +519,7 @@ namespace FIA_Biosum_Manager
 								case "TREE":
 									if (ScenarioType=="processor")	bCore = true;
 									break;
-								case "FRCS SYSTEM HARVEST METHOD":
+								case "HARVEST METHODS":
 									if (ScenarioType=="processor") bCore=true;
 									break;
 								case "TREATMENT PACKAGES":

@@ -3756,13 +3756,13 @@ namespace FIA_Biosum_Manager
 
 			public void LoadDatasources()
 			{
-				m_strRefHarvestMethodTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FRCS SYSTEM HARVEST METHOD");
+				m_strRefHarvestMethodTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("HARVEST METHODS");
 				
 			
 				if (m_strRefHarvestMethodTable.Trim().Length == 0 && this._oQueries._strScenarioType!="core") 
 				{
 					
-					MessageBox.Show("!!Could Not Locate Harvest Method Reference Table!!","FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
+					MessageBox.Show("!!Could Not Locate Harvest Methods Reference Table!!","FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
 					ReferenceQueries.m_intError=-1;
 					return;
 				}					

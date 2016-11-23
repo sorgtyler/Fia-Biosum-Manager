@@ -1301,12 +1301,12 @@ namespace FIA_Biosum_Manager
                                 "'fvs_commands');";
 							oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
                             break;
-                        case "FRCS SYSTEM HARVEST METHOD":
+                        case "HARVEST METHODS":
                             oAdo.m_strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-                                "('FRCS System Harvest Method'," +
+                                "('Harvest Methods'," +
                                 "'" + ReferenceProjectDirectory.Trim() + "\\db'," +
                                 "'ref_master.mdb'," +
-                                "'frcs_system_harvest_method');";
+                                "'harvest_methods');";
                             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
                             break;
                         //version 5.2.1 additions
@@ -1519,8 +1519,8 @@ namespace FIA_Biosum_Manager
                                     frmMain.g_oTables.m_oFvs.CreateRxPackageFvsCommandsOrderTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.FVS.DefaultRxPackageFvsCommandsOrderTableName);
                                     break;
                                
-                                case "FRCS SYSTEM HARVEST METHOD":
-                                    frmMain.g_oTables.m_oReference.CreateFRCSHarvestMethodTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection, Tables.Reference.DefaultFRCSHarvestMethodTableName);
+                                case "HARVEST METHODS":
+                                    frmMain.g_oTables.m_oReference.CreateHarvestMethodsTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection, Tables.Reference.DefaultHarvestMethodsTableName);
                                     break;
                                 case "ADDITIONAL HARVEST COSTS":
                                     frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection,Tables.Processor.DefaultAdditionalHarvestCostsTableName);
@@ -1686,9 +1686,9 @@ namespace FIA_Biosum_Manager
                                     frmMain.g_oTables.m_oFvs.CreateRxPackageFvsCommandsOrderTable(oAdoCurrent, oConn, strTempTableName);
                                     break;
                                 
-                                case "FRCS SYSTEM HARVEST METHOD":
-                                    strTempTableName = Tables.Reference.DefaultFRCSHarvestMethodTableName;
-                                    frmMain.g_oTables.m_oReference.CreateFRCSHarvestMethodTable(oAdoCurrent, oConn, strTempTableName);
+                                case "HARVEST METHODS":
+                                    strTempTableName = Tables.Reference.DefaultHarvestMethodsTableName;
+                                    frmMain.g_oTables.m_oReference.CreateHarvestMethodsTable(oAdoCurrent, oConn, strTempTableName);
                                     break;
                                 case "ADDITIONAL HARVEST COSTS":
                                     strTempTableName = Tables.Processor.DefaultAdditionalHarvestCostsTableName;
@@ -1856,7 +1856,7 @@ namespace FIA_Biosum_Manager
                                       "'INVENTORIES'," + 
                                       "'TREATMENT PRESCRIPTION CATEGORIES'," + 
                                       "'TREATMENT PRESCRIPTION SUBCATEGORIES'," + 
-                                      "'FRCS SYSTEM HARVEST METHOD'," + 
+                                      "'HARVEST METHODS'," + 
                                       "'FVS WESTERN TREE SPECIES TRANSLATOR'," +
                                       "'FVS EASTERN TREE SPECIES TRANSLATOR'" + 
                                       ") ORDER BY path,file";
@@ -1890,8 +1890,8 @@ namespace FIA_Biosum_Manager
 									oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection,"DROP TABLE fiadb_fvs_variant_temp");
 								if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection,"inventories_temp"))
 									oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection,"DROP TABLE inventories_temp");
-                                if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "frcs_system_harvest_method_temp"))
-                                    oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, "DROP TABLE frcs_system_harvest_method_temp");
+                                if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "harvest_methods_temp"))
+                                    oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, "DROP TABLE harvest_methods_temp");
                                 if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "fvs_rx_category_temp"))
                                     oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, "DROP TABLE fvs_rx_category_temp");
                                 if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "fvs_rx_subcategory_temp"))
@@ -1924,7 +1924,7 @@ namespace FIA_Biosum_Manager
 							oDao.CreateTableLink(strDbFile,"fvs_tree_species_temp",strTempDbFile,"fvs_tree_species",true);
 							oDao.CreateTableLink(strDbFile,"fiadb_fvs_variant_temp",strTempDbFile,"fiadb_fvs_variant",true);
 							oDao.CreateTableLink(strDbFile,"inventories_temp",strTempDbFile,"inventories",true);
-                            oDao.CreateTableLink(strDbFile, "frcs_system_harvest_method_temp", strTempDbFile, "frcs_system_harvest_method", true);
+                            oDao.CreateTableLink(strDbFile, "harvest_methods_temp", strTempDbFile, "harvest_methods", true);
                             oDao.CreateTableLink(strDbFile, "fvs_rx_category_temp", strTempDbFile, "fvs_rx_category",true);
                             oDao.CreateTableLink(strDbFile, "fvs_rx_subcategory_temp", strTempDbFile, "fvs_rx_subcategory",true);
                             oDao.CreateTableLink(strDbFile, "FVS_WesternTreeSpeciesTranslator_temp", strTempDbFile, "FVS_WesternTreeSpeciesTranslator", true);
@@ -1989,8 +1989,8 @@ namespace FIA_Biosum_Manager
                                         oDs.m_strDataSource[x, Datasource.TABLETYPE].Trim(),
                                         oDs.m_strDataSource[x, Datasource.TABLE].Trim());
                                     break;
-                                case "FRCS SYSTEM HARVEST METHOD":
-                                    oAdoCurrent.m_strSQL = "SELECT * INTO " + oDs.m_strDataSource[x, Datasource.TABLE].Trim() + " FROM frcs_system_harvest_method_temp";
+                                case "HARVEST METHODS":
+                                    oAdoCurrent.m_strSQL = "SELECT * INTO " + oDs.m_strDataSource[x, Datasource.TABLE].Trim() + " FROM harvest_methods_temp";
                                     oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, oAdoCurrent.m_strSQL);
                                     oDs.SetPrimaryIndexesAndAutoNumbers(oAdoCurrent, oAdoCurrent.m_OleDbConnection,
                                         oDs.m_strDataSource[x, Datasource.TABLETYPE].Trim(),
@@ -2221,11 +2221,11 @@ namespace FIA_Biosum_Manager
                                     
                                     }
                                     break;
-                                case "FRCS SYSTEM HARVEST METHOD":
+                                case "HARVEST METHODS":
                                         oAdoCurrent.m_strSQL = "DROP TABLE " + oDs.m_strDataSource[x, Datasource.TABLE];
                                         oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, oAdoCurrent.m_strSQL);
-                                        frmMain.g_oTables.m_oReference.CreateFRCSHarvestMethodTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, oDs.m_strDataSource[x, Datasource.TABLE]);
-                                        strTempTableName = "frcs_system_harvest_method_temp";
+                                        frmMain.g_oTables.m_oReference.CreateHarvestMethodsTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, oDs.m_strDataSource[x, Datasource.TABLE]);
+                                        strTempTableName = "harvest_methods_temp";
                                         strColumnsList="";
                                         //insert any new tree species records
                                         strColumnsArray = oAdoCurrent.getFieldNamesArray(oAdoCurrent.m_OleDbConnection, "SELECT * FROM " + strTempTableName);
@@ -2298,8 +2298,8 @@ namespace FIA_Biosum_Manager
 					oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection,"DROP TABLE fiadb_fvs_variant_temp");
 				if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection,"inventories_temp"))
 					oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection,"DROP TABLE inventories_temp");
-                if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "frcs_system_harvest_method_temp"))
-                    oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, "DROP TABLE frcs_system_harvest_method_temp");
+                if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "harvest_methods_temp"))
+                    oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, "DROP TABLE harvest_methods_temp");
                 if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "fvs_rx_category_temp"))
                     oAdoCurrent.SqlNonQuery(oAdoCurrent.m_OleDbConnection, "DROP TABLE fvs_rx_category_temp");
                 if (oAdoCurrent.TableExist(oAdoCurrent.m_OleDbConnection, "fvs_rx_subcategory_temp"))
@@ -2862,7 +2862,7 @@ namespace FIA_Biosum_Manager
                                 case "TREATMENT PACKAGES":
                                     bCore = true;
                                     break;
-                                case "FRCS SYSTEM HARVEST METHOD":
+                                case "HARVEST METHODS":
                                     bCore = true;
                                     break;
                                 //case "ADDITIONAL HARVEST COSTS":
@@ -4447,13 +4447,13 @@ namespace FIA_Biosum_Manager
             oDs.LoadTableRecordCount = false;
             oDs.populate_datasource_array();
 
-            // Extract table properties from data sources table
+            // Extract table properties from data sources table; Assume still under the old name
             int intHarvestMethodTable = oDs.getValidTableNameRow("FRCS System Harvest Method");
             string strDirectoryPath = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
             string strFileName = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
             //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
             string strFileStatus = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
-            string strTableName = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            string strSourceTableName = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
             string strTableStatus = oDs.m_strDataSource[intHarvestMethodTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
 
             ado_data_access oAdo = new ado_data_access();
@@ -4465,9 +4465,8 @@ namespace FIA_Biosum_Manager
                 string strDestinationDbFile = strDirectoryPath + "\\" + strFileName;
                 string strDestinationTableName = "harvestmethod_worktable";
                 string strSourceDbFile=frmMain.g_oEnv. strAppDir.Trim() + "\\db\\ref_master.mdb";
-                string strSourceTableName = "frcs_system_harvest_method";
 
-                oDao.CreateTableLink(strDestinationDbFile, strDestinationTableName, strSourceDbFile, strSourceTableName);
+                oDao.CreateTableLink(strDestinationDbFile, strDestinationTableName, strSourceDbFile, Tables.Reference.DefaultHarvestMethodsTableName);
                 oDao.m_DaoWorkspace.Close();
                 
 
@@ -4477,7 +4476,7 @@ namespace FIA_Biosum_Manager
                 string strSql = "DROP TABLE " + strSourceTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 //copy contents of new table into place
-                strSql = "SELECT * INTO " + strTableName + " FROM " + strDestinationTableName;
+                strSql = "SELECT * INTO " + Tables.Reference.DefaultHarvestMethodsTableName + " FROM " + strDestinationTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 //drop the table link
                 if (oAdo.TableExist(oAdo.m_OleDbConnection, strDestinationTableName))
@@ -4486,6 +4485,13 @@ namespace FIA_Biosum_Manager
                     oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 }
 
+                //open connection to DATASOURce database
+                oAdo.OpenConnection(oAdo.getMDBConnString(oDs.m_strDataSourceMDBFile, "", ""));
+                strSql = "UPDATE " + oDs.m_strDataSourceTableName + " SET table_type = 'Harvest Methods', " +
+                         "table_name = '" + Tables.Reference.DefaultHarvestMethodsTableName + "' " +
+                         "WHERE TRIM(table_type) = 'FRCS System Harvest Method'";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
+                
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
             }
 

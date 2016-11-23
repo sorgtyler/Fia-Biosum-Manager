@@ -72,7 +72,7 @@ namespace FIA_Biosum_Manager
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
                                                               "FIA Tree Macro Plot Breakpoint Diameter",
-															  "FRCS System Harvest Method",
+															  "Harvest Methods",
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
 															  "Tree Regional Biomass",
@@ -107,7 +107,7 @@ namespace FIA_Biosum_Manager
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
                                                               "FIA Tree Macro Plot Breakpoint Diameter",
-															  "FRCS System Harvest Method",
+															  "Harvest Methods",
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
 															  "Tree Regional Biomass",
@@ -141,7 +141,7 @@ namespace FIA_Biosum_Manager
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
                                                               "FIA Tree Macro Plot Breakpoint Diameter",
-															  "FRCS System Harvest Method",
+															  "Harvest Methods",
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
 															  "Tree Regional Biomass",
@@ -973,8 +973,8 @@ namespace FIA_Biosum_Manager
                 case "FVS COMMANDS":
                     frmMain.g_oTables.m_oReference.CreateFVSCommandsTableIndexes(p_oAdo, p_oConn, p_strTableName);
                     break;
-                case "FRCS SYSTEM HARVEST METHOD":
-                    frmMain.g_oTables.m_oReference.CreateFRCSHarvestMethodTableIndexes(p_oAdo, p_oConn, p_strTableName);
+                case "HARVEST METHODS":
+                    frmMain.g_oTables.m_oReference.CreateHarvestMethodsTableIndexes(p_oAdo, p_oConn, p_strTableName);
                     break;
                 case "TREATMENT PRESCRIPTION SUBCATEGORIES":
                     frmMain.g_oTables.m_oReference.CreateRxSubCategoryTableIndexes(p_oAdo, p_oConn, p_strTableName);
@@ -1041,8 +1041,8 @@ namespace FIA_Biosum_Manager
 					oItem.VariableName="FiadbFvsVariantTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Reference.DefaultFiadbFVSVariantTableName;
 					break;
-                case "FRCS SYSTEM HARVEST METHOD":
-					oItem.VariableName="FrcsSystemHarvestMethodTable";
+                case "HARVEST METHODS":
+					oItem.VariableName="HarvestMethodsTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Reference.DefaultFiadbFVSVariantTableName;
 					break;
 				case "TREATMENT PRESCRIPTIONS":
