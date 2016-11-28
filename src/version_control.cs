@@ -4502,6 +4502,7 @@ namespace FIA_Biosum_Manager
             //open the scenario_processor_rule_definitions.mdb file
             oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
 
+            //update the generic merch as percent of total factor
             string strMerchFactorCol = "GenericMerchAsPercentOfTotalVol";
             if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strMerchFactorCol))
             {
@@ -4512,6 +4513,12 @@ namespace FIA_Biosum_Manager
                     "SET " + strMerchFactorCol + " = 70";
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             }
+
+            //rename the FRCS System Harvest Method table in scenario_processor_rule_definitions.mdb
+            oAdo.m_strSQL = "UPDATE " + Tables.Scenario.DefaultScenarioDatasourceTableName + " SET table_type = 'Harvest Methods', " +
+                            "table_name = '" + Tables.Reference.DefaultHarvestMethodsTableName + "' " +
+                            "WHERE TRIM(table_type) = 'FRCS System Harvest Method'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
             frmMain.g_sbpInfo.Text = "Version Update: Creating stand_residue_wt_gt column in tree vol val table(s)...Stand by";
 
