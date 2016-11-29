@@ -3248,7 +3248,8 @@ namespace FIA_Biosum_Manager
                        " tpa double, " +
                        " dbh double, " +
                        " species_group integer, " +
-                       " diam_group integer)";
+                       " diam_group integer, " +
+                       " merch_value double)";
             }
         }
 

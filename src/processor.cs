@@ -390,12 +390,12 @@ namespace FIA_Biosum_Manager
                         }
                         m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
                         "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, nonMerchWtGt, drybiom, " +
-                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen, tpa, dbh, species_group, diam_group)" +
+                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen, tpa, dbh, species_group, diam_group, merch_value)" +
                         "VALUES ('" + strTempCn + "', " + intTempTree + ", '" + nextTree.CondId + "', '" + nextTree.PlotId + "', " +
                         nextTree.SpCd + ", " + nextTree.MerchWtGt + ", " + nextTree.NonMerchWtGt + ", " + nextTree.DryBiom + ", " +
                         nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
                         ", " + nextTree.DryToGreen + ", " + nextTree.Tpa + ", " + nextTree.Dbh + ", " + nextTree.SpeciesGroup + ", " +
-                        nextTree.DiamGroup + ")";
+                        nextTree.DiamGroup + ", " + nextTree.MerchValue + " )";
 
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
@@ -574,6 +574,10 @@ namespace FIA_Biosum_Manager
                     double dblLgLogChipPct_Cat5 = 0;
                     double dblLgLogAvgDensity = 0;
                     double dblLgLogHwdPct = 0;
+                    if (nextStand.CondId == "1200506050501900557720001")
+                    {
+                        Console.Out.Write("blah");
+                    }
                     if (nextStand.PerAcLgLogVolCf > 0)
                     {
                         dblLgLogMerchPctTotal = nextStand.PerAcLgLogMerchVolCf / nextStand.PerAcLgLogVolCf * 100;
