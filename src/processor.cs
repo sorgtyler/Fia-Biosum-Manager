@@ -574,11 +574,7 @@ namespace FIA_Biosum_Manager
                     double dblLgLogChipPct_Cat5 = 0;
                     double dblLgLogAvgDensity = 0;
                     double dblLgLogHwdPct = 0;
-                    if (nextStand.CondId == "1200506050501900557720001")
-                    {
-                        Console.Out.Write("blah");
-                    }
-                    if (nextStand.PerAcLgLogVolCf > 0)
+                   if (nextStand.PerAcLgLogVolCf > 0)
                     {
                         dblLgLogMerchPctTotal = nextStand.PerAcLgLogMerchVolCf / nextStand.PerAcLgLogVolCf * 100;
                         dblLgLogChipPct_Cat1_3_4 = nextStand.PerAcLgLogNonCommMerchVolCf / nextStand.PerAcLgLogVolCf * 100;
@@ -1157,11 +1153,11 @@ namespace FIA_Biosum_Manager
         private void calculateVolumeAndWeight(tree p_tree)
         {
 
-            int intGenericMerchFactor = m_scenarioHarvestMethod.GenericMerchAsPercentOfTotalVol / 100;
+            double dblGenericMerchFactor = (double) m_scenarioHarvestMethod.GenericMerchAsPercentOfTotalVol / 100;
             //adjDryBiom - Do this first; precursor to other calculations
             if (p_tree.DryBiot <= p_tree.DryBiom)
             {
-                p_tree.AdjDryBiom = intGenericMerchFactor * p_tree.DryBiom;
+                p_tree.AdjDryBiom = dblGenericMerchFactor * p_tree.DryBiom;
                 
             }
             
@@ -1172,7 +1168,7 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                p_tree.MerchVolCf = p_tree.VolTsGrs * intGenericMerchFactor * p_tree.Tpa;
+                p_tree.MerchVolCf = p_tree.VolTsGrs * dblGenericMerchFactor * p_tree.Tpa;
             }
 
             //merchValDpa
@@ -1195,8 +1191,8 @@ namespace FIA_Biosum_Manager
                 }
             }
 
-            //merchWtGt
-            p_tree.MerchWtGt = p_tree.VolCfNet * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000;
+            //merchWtGt; Always calculate merchVolCf first because it's used in this equation
+            p_tree.MerchWtGt = p_tree.MerchVolCf * p_tree.OdWgt * p_tree.Tpa / p_tree.DryToGreen / 2000;
 
             //nonMerchVolCf
             if (p_tree.AdjDryBiom > 0)
