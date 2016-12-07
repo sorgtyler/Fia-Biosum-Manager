@@ -122,6 +122,9 @@ namespace FIA_Biosum_Manager
     
 
     private ado_data_access m_oAdo = new ado_data_access();
+
+   
+
     public frmFCSTreeVolumeEdit()
     {
      this.SetStyle(ControlStyles.OptimizedDoubleBuffer |
@@ -1669,20 +1672,32 @@ namespace FIA_Biosum_Manager
 
     private void btnLinkTableTest_Click(object sender, EventArgs e)
     {
-        string strFile=frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir,"accdb");
+
+        frmMain.g_oDelegate.InitializeThreadEvents();
+        frmMain.g_oDelegate.m_oEventStopThread.Reset();
+        frmMain.g_oDelegate.m_oEventThreadStopped.Reset();
+        frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(this.TestOracleTableLink));
+        frmMain.g_oDelegate.m_oThread.IsBackground = true;
+        frmMain.g_oDelegate.m_oThread.Start();
+
+    
+    }
+    private void TestOracleTableLink()
+    {
+        frmMain.g_oDelegate.CurrentThreadProcessDone = false;
+        string strFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir, "accdb");
         
         string str = "ODBC\r\n-----------------\r\nData Source Name:FIA Biosum Oracle Services\r\nTNS Service Name:XE\r\nUser Id:fcs\r\nOracle Table Name:BIOSUM_VOLUME\r\nMS Access Table Link Name:fcs_biosum_volume\r\nConnection Status:";
         try
         {
             frmMain.g_oFrmMain.ActivateStandByAnimation(
-                this.WindowState,
-                this.Left,
-                this.Height,
-                this.Width,
-                this.Top);
+                 this.WindowState,
+                 this.Left,
+                 this.Height,
+                 this.Width,
+                 this.Top);
             FIA_Biosum_Manager.dao_data_access oDao = new FIA_Biosum_Manager.dao_data_access();
             oDao.CreateMDB(strFile);
-
             oDao.CreateOracleXETableLink("FIA Biosum Oracle Services", "FCS", "fcs", "FCS", "BIOSUM_VOLUME", strFile, "fcs_biosum_volume");
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
             if (oDao.TableExists(strFile, "fcs_biosum_volume"))
@@ -1693,18 +1708,27 @@ namespace FIA_Biosum_Manager
             {
                 MessageBox.Show(str + "Error creating MS Access table link to Oracle XE table 'BIOSUM_VOLUME'", "FIA Biosum");
             }
+            oDao.m_DaoDbEngine.Idle(1);
+            oDao.m_DaoDbEngine.Idle(8);
             oDao.m_DaoWorkspace.Close();
+            oDao.m_DaoDbEngine = null;
             oDao = null;
-            
-            
+
+
         }
         catch (Exception err)
         {
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
-            MessageBox.Show(str + "Error creating MS Access table link to Oracle XE table 'BIOSUM_VOLUME'\r\n Error Message:" + err.Message,"FIA Biosum");
+            MessageBox.Show(str + "Error creating MS Access table link to Oracle XE table 'BIOSUM_VOLUME'\r\n Error Message:" + err.Message, "FIA Biosum");
         }
+
+
+        frmMain.g_oDelegate.CurrentThreadProcessDone = true;
+        frmMain.g_oDelegate.m_oEventThreadStopped.Set();
+        this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
+
+            
         
-    
     }
 
     private void txtStateCd_TextChanged(object sender, EventArgs e)
