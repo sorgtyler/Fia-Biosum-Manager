@@ -137,7 +137,7 @@ namespace FIA_Biosum_Manager
             {
                 string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
                                 "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
-                                "z.fvs_tree_id, z.fvs_species, z.volTsGrs, " +
+                                "z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, " +
                                 "c.slope, p.elev, p.gis_yard_dist " +
                                   "FROM " + strTableName + " z, cond c, plot p " +
                                   "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
@@ -162,6 +162,7 @@ namespace FIA_Biosum_Manager
                         newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
                         newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
                         newTree.VolTsGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volTsGrs"]);
+                        newTree.VolCfGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfGrs"]);
                         newTree.DryBiot = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiot"]);
                         newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
                         newTree.Slope = Convert.ToInt32(m_oAdo.m_OleDbDataReader["slope"]);
@@ -284,6 +285,7 @@ namespace FIA_Biosum_Manager
                     nextTree.SpeciesGroup = foundSpecies.SpeciesGroup;
                     nextTree.OdWgt = foundSpecies.OdWgt;
                     nextTree.DryToGreen = foundSpecies.DryToGreen;
+                    nextTree.IsWoodlandSpecies = foundSpecies.IsWoodlandSpecies;
 
                     // set diameter group from diameter group list
                     foreach (treeDiamGroup nextGroup in listDiamGroups)
@@ -320,6 +322,16 @@ namespace FIA_Biosum_Manager
                                 strSpeciesDiamKey + " - " + System.DateTime.Now.ToString() + "\r\n");
                     }
 
+                    // set cull pct based on scenarioHarvestMethod.cullPctThreshold
+                    if (nextTree.VolCfNet < ((100 - m_scenarioHarvestMethod.CullPctThreshold) * nextTree.VolCfGrs / 100))
+                    {
+                        nextTree.IsCull = true;
+                    }
+                    else
+                    {
+                        nextTree.IsCull = false;
+                    }
+                    
                     //Assign OpCostTreeType
                     nextTree.TreeType = chooseOpCostTreeType(nextTree);
                     calculateVolumeAndWeight(nextTree);
@@ -871,12 +883,12 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green FROM " + 
+                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " + 
                                 Tables.Reference.DefaultTreeSpeciesTableName +
                                 " WHERE FVS_VARIANT = '" + p_strVariant + "' " +
                                 "AND SPCD IS NOT NULL " +
                                 "AND USER_SPC_GROUP IS NOT NULL " +
-                                "GROUP BY SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green";
+                                "GROUP BY SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -886,7 +898,13 @@ namespace FIA_Biosum_Manager
                         int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["USER_SPC_GROUP"]);
                         double dblOdWgt = Convert.ToDouble(m_oAdo.m_OleDbDataReader["OD_WGT"]);
                         double dblDryToGreen = Convert.ToDouble(m_oAdo.m_OleDbDataReader["Dry_to_Green"]);
-                        treeSpecies nextTreeSpecies = new treeSpecies(strSpCd, intSpcGroup, dblOdWgt, dblDryToGreen);
+                        string strIsWoodlandSpecies = Convert.ToString(m_oAdo.m_OleDbDataReader["WOODLAND_YN"]).Trim();
+                        bool isWoodlandSpecies = false;
+                        if (strIsWoodlandSpecies == "Y")
+                        {
+                            isWoodlandSpecies = true;
+                        }
+                        treeSpecies nextTreeSpecies = new treeSpecies(strSpCd, intSpcGroup, dblOdWgt, dblDryToGreen, isWoodlandSpecies);
                         dictTreeSpecies.Add(strSpCd, nextTreeSpecies);
                     }
                 }
@@ -1010,7 +1028,9 @@ namespace FIA_Biosum_Manager
                     double dblMinDbhSteepSlope = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
                     string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
                     string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
-                    int intGenericMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"]);
+                    int intSaplingMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["SaplingMerchAsPercentOfTotalVol"]);
+                    int intWoodlandMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["WoodlandMerchAsPercentOfTotalVol"]);
+                    int intCullPctThreshold = Convert.ToInt16(m_oAdo.m_OleDbDataReader["CullPctThreshold"]);
                     int intHarvestCategoryLowSlope = 0;
                     int intHarvestCategorySteepSlope = 0;
                     foreach (harvestMethod nextMethod in m_harvestMethodList)
@@ -1028,7 +1048,7 @@ namespace FIA_Biosum_Manager
                     returnVariables = new scenarioHarvestMethod(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
                         intMinSlopePct, dblMinDbhSteepSlope,
                         strHarvestMethodLowSlope, strHarvestMethodSteepSlope, intHarvestCategoryLowSlope, intHarvestCategorySteepSlope,
-                        intGenericMerchAsPercentOfTotalVol);
+                        intSaplingMerchAsPercentOfTotalVol, intWoodlandMerchAsPercentOfTotalVol, intCullPctThreshold);
                 }
             }
 
@@ -1153,11 +1173,11 @@ namespace FIA_Biosum_Manager
         private void calculateVolumeAndWeight(tree p_tree)
         {
 
-            double dblGenericMerchFactor = (double) m_scenarioHarvestMethod.GenericMerchAsPercentOfTotalVol / 100;
+            //double dblGenericMerchFactor = (double) m_scenarioHarvestMethod.GenericMerchAsPercentOfTotalVol / 100;
             //adjDryBiom - Do this first; precursor to other calculations
             if (p_tree.DryBiot <= p_tree.DryBiom)
             {
-                p_tree.AdjDryBiom = dblGenericMerchFactor * p_tree.DryBiom;
+                //p_tree.AdjDryBiom = dblGenericMerchFactor * p_tree.DryBiom;
                 
             }
             
@@ -1168,7 +1188,7 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                p_tree.MerchVolCf = p_tree.VolTsGrs * dblGenericMerchFactor * p_tree.Tpa;
+                //p_tree.MerchVolCf = p_tree.VolTsGrs * dblGenericMerchFactor * p_tree.Tpa;
             }
 
             //merchValDpa
@@ -1243,6 +1263,7 @@ namespace FIA_Biosum_Manager
             double _dblTpa;
             double _dblVolCfNet;
             double _dblVolTsGrs;
+            double _dblVolCfGrs;
             double _dblDryBiot;
             double _dblDryBiom;
             int _intSlope;
@@ -1269,6 +1290,8 @@ namespace FIA_Biosum_Manager
             double _dblNonMerchWtGt;
             double _dblAdjDryBiom;
             double _dblMerchValDpa;
+            bool _blnIsWoodlandSpecies;
+            bool _blnIsCull;
 
             string _strDebugFile = "";
 
@@ -1326,6 +1349,11 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblVolTsGrs; }
                 set { _dblVolTsGrs = value; }
+            }
+            public double VolCfGrs
+            {
+                get { return _dblVolCfGrs; }
+                set { _dblVolCfGrs = value; }
             }
             public double DryBiot
             {
@@ -1485,6 +1513,30 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
+            public bool IsWoodlandSpecies
+            {
+                get { return _blnIsWoodlandSpecies; }
+                set { _blnIsWoodlandSpecies = value; }
+            }
+            public bool IsSapling
+            {
+                get
+                {
+                    if (_dblDbh < 5.0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            public bool IsCull
+            {
+                get { return _blnIsCull; }
+                set { _blnIsCull = value; }
+            }
             public string DebugFile
             {
                 set { _strDebugFile = value; }
@@ -1568,12 +1620,15 @@ namespace FIA_Biosum_Manager
             string _strHarvestMethodSteepSlope;
             int _intHarvestCategoryLowSlope;
             int _intHarvestCategorySteepSlope;
-            int _intGenericMerchAsPercentOfTotalVol;
+            int _intSaplingMerchAsPercentOfTotalVol;
+            int _intWoodlandMerchAsPercentOfTotalVol;
+            int _intCullPctThreshold;
 
             public scenarioHarvestMethod(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
                                          double minDbhSteepSlope,
                                          string harvestMethodLowSlope, string harvestMethodSteepSlope,
-                                         int harvestCategoryLowSlope, int harvestCategorySteepSlope, int genericMerchAsPercentOfTotalVol)
+                                         int harvestCategoryLowSlope, int harvestCategorySteepSlope, int saplingMerchAsPercentOfTotalVol,
+                                         int woodlandMerchAsPercentOfTotalVol, int cullPctThreshold)
             {
                 _dblMinSmallLogDbh = minSmallLogDbh;
                 _dblMinLargeLogDbh = minLargeLogDbh;
@@ -1584,7 +1639,9 @@ namespace FIA_Biosum_Manager
                 _strHarvestMethodSteepSlope = harvestMethodSteepSlope;
                 _intHarvestCategoryLowSlope = harvestCategoryLowSlope;
                 _intHarvestCategorySteepSlope = harvestCategorySteepSlope;
-                _intGenericMerchAsPercentOfTotalVol = genericMerchAsPercentOfTotalVol;
+                _intSaplingMerchAsPercentOfTotalVol = saplingMerchAsPercentOfTotalVol;
+                _intWoodlandMerchAsPercentOfTotalVol = woodlandMerchAsPercentOfTotalVol;
+                _intCullPctThreshold = cullPctThreshold;
             }
 
             public double MinChipDbh
@@ -1623,19 +1680,27 @@ namespace FIA_Biosum_Manager
             {
                 get { return _intHarvestCategorySteepSlope; }
             }
-            public int GenericMerchAsPercentOfTotalVol
+            public int SaplingMerchAsPercentOfTotalVol
             {
-                get { return _intGenericMerchAsPercentOfTotalVol; }
+                get { return _intSaplingMerchAsPercentOfTotalVol; }
+            }
+            public int WoodlandMerchAsPercentOfTotalVol
+            {
+                get { return _intWoodlandMerchAsPercentOfTotalVol; }
+            }
+            public int CullPctThreshold
+            {
+                get { return _intCullPctThreshold; }
             }
             // Overriding the ToString method for debugging purposes
             public override string ToString()
             {
                 return string.Format("MinChipDbh: {0}, MinSmallLogDbh: {1}, MinLargeLogDbh: {2}, SteepSlopePct: {3}, MinDbhSteepSlope: {4}, " +
                     "HarvestMethodLowSlope: {5}, HarvestMethodSteepSlope: {6}, " +
-                    "GenericMerchAsPercentOfTotalVol: {7} ]",
+                    "SaplingMerchAsPercentOfTotalVol: {7} WoodlandMerchAsPercentOfTotalVol: {8} CullPctThreshold: {9}]",
                     _dblMinChipDbh, _dblMinSmallLogDbh, _dblMinLargeLogDbh, _intSteepSlopePct, _dblMinDbhSteepSlope,
                     _strHarvestMethodSteepSlope, _strHarvestMethodSteepSlope,
-                    _intGenericMerchAsPercentOfTotalVol);
+                    _intSaplingMerchAsPercentOfTotalVol, _intWoodlandMerchAsPercentOfTotalVol, _intCullPctThreshold);
             }
         }
 
@@ -2036,13 +2101,15 @@ namespace FIA_Biosum_Manager
             int _intSpeciesGroup;
             double _dblOdWgt;
             double _dblDryToGreen;
+            bool _blnIsWoodlandSpecies;
 
-            public treeSpecies(string spCd, int speciesGroup, double odWgt, double dryToGreen)
+            public treeSpecies(string spCd, int speciesGroup, double odWgt, double dryToGreen, bool isWoodlandSpecies)
             {
                 _strSpcd = spCd;
                 _intSpeciesGroup = speciesGroup;
                 _dblOdWgt = odWgt;
                 _dblDryToGreen = dryToGreen;
+                _blnIsWoodlandSpecies = isWoodlandSpecies;
             }
 
             public string Spcd
@@ -2060,6 +2127,10 @@ namespace FIA_Biosum_Manager
             public double DryToGreen
             {
                 get { return _dblDryToGreen; }
+            }
+            public bool IsWoodlandSpecies
+            {
+                get { return _blnIsWoodlandSpecies; }
             }
         }
 
