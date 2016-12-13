@@ -50,8 +50,14 @@ namespace FIA_Biosum_Manager
         private Label label9;
         private Label label8;
         private Label label12;
-        private TextBox txtMerchAdjFactor;
+        private TextBox txtWoodlandMerchPct;
         private Label label13;
+        private Label label16;
+        private Label label17;
+        private TextBox txtCullPct;
+        private Label label14;
+        private Label label15;
+        private TextBox txtSaplingMerchPct;
         
 		
 
@@ -125,11 +131,18 @@ namespace FIA_Biosum_Manager
         {
             get { return txtSteepSlopeMinDia.Text.Trim(); }
         }
-        public string MerchAdjFactor
+        public string WoodlandMerchPct
         {
-            get { return txtMerchAdjFactor.Text.Trim(); }
+            get { return txtWoodlandMerchPct.Text.Trim(); }
         }
-
+        public string SaplingMerchPct
+        {
+            get { return txtSaplingMerchPct.Text.Trim(); }
+        }
+        public string CullPct
+        {
+            get { return txtCullPct.Text.Trim(); }
+        }
 
 
 		#region Component Designer generated code
@@ -142,8 +155,13 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txtCullPct = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.txtSaplingMerchPct = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.txtMerchAdjFactor = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -170,6 +188,7 @@ namespace FIA_Biosum_Manager
             this.txtDesc = new System.Windows.Forms.TextBox();
             this.cmbMethod = new System.Windows.Forms.ComboBox();
             this.lblMethod = new System.Windows.Forms.Label();
+            this.txtWoodlandMerchPct = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -202,6 +221,12 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.label16);
+            this.panel1.Controls.Add(this.label17);
+            this.panel1.Controls.Add(this.txtCullPct);
+            this.panel1.Controls.Add(this.label14);
+            this.panel1.Controls.Add(this.label15);
+            this.panel1.Controls.Add(this.txtSaplingMerchPct);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.label13);
             this.panel1.Controls.Add(this.label10);
@@ -221,13 +246,78 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.grpboxSteepSlopeHarvestMethod);
             this.panel1.Controls.Add(this.txtMinDiaLargeLogs);
             this.panel1.Controls.Add(this.grpboxHarvestMethod);
-            this.panel1.Controls.Add(this.txtMerchAdjFactor);
+            this.panel1.Controls.Add(this.txtWoodlandMerchPct);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 16);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(802, 550);
             this.panel1.TabIndex = 0;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.ForeColor = System.Drawing.Color.Black;
+            this.label16.Location = new System.Drawing.Point(578, 424);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(14, 13);
+            this.label16.TabIndex = 39;
+            this.label16.Text = "=";
+            // 
+            // label17
+            // 
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.ForeColor = System.Drawing.Color.Black;
+            this.label17.Location = new System.Drawing.Point(642, 412);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(155, 66);
+            this.label17.TabIndex = 37;
+            this.label17.Text = "Cull threshold, above which trees are assumed nonmerchantable and processed inste" +
+    "ad as chips";
+            // 
+            // txtCullPct
+            // 
+            this.txtCullPct.ForeColor = System.Drawing.Color.Black;
+            this.txtCullPct.Location = new System.Drawing.Point(601, 422);
+            this.txtCullPct.Name = "txtCullPct";
+            this.txtCullPct.Size = new System.Drawing.Size(33, 20);
+            this.txtCullPct.TabIndex = 38;
+            this.txtCullPct.Text = "50.0";
+            this.txtCullPct.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCullPct_KeyPress);
+            this.txtCullPct.Leave += new System.EventHandler(this.txtCullPct_Leave);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.ForeColor = System.Drawing.Color.Black;
+            this.label14.Location = new System.Drawing.Point(289, 425);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(14, 13);
+            this.label14.TabIndex = 36;
+            this.label14.Text = "=";
+            // 
+            // label15
+            // 
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.ForeColor = System.Drawing.Color.Black;
+            this.label15.Location = new System.Drawing.Point(354, 417);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(208, 40);
+            this.label15.TabIndex = 34;
+            this.label15.Text = "Percent of sapling biomass assumed of merchantable size";
+            // 
+            // txtSaplingMerchPct
+            // 
+            this.txtSaplingMerchPct.ForeColor = System.Drawing.Color.Black;
+            this.txtSaplingMerchPct.Location = new System.Drawing.Point(311, 422);
+            this.txtSaplingMerchPct.Name = "txtSaplingMerchPct";
+            this.txtSaplingMerchPct.Size = new System.Drawing.Size(36, 20);
+            this.txtSaplingMerchPct.TabIndex = 35;
+            this.txtSaplingMerchPct.Text = "80.0";
+            this.txtSaplingMerchPct.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSaplingMerchPct_KeyPress);
+            this.txtSaplingMerchPct.Leave += new System.EventHandler(this.txtSaplingMerchPct_Leave);
             // 
             // label12
             // 
@@ -239,17 +329,6 @@ namespace FIA_Biosum_Manager
             this.label12.Size = new System.Drawing.Size(14, 13);
             this.label12.TabIndex = 33;
             this.label12.Text = "=";
-            // 
-            // txtMerchAdjFactor
-            // 
-            this.txtMerchAdjFactor.ForeColor = System.Drawing.Color.Black;
-            this.txtMerchAdjFactor.Location = new System.Drawing.Point(32, 417);
-            this.txtMerchAdjFactor.Name = "txtMerchAdjFactor";
-            this.txtMerchAdjFactor.Size = new System.Drawing.Size(36, 20);
-            this.txtMerchAdjFactor.TabIndex = 32;
-            this.txtMerchAdjFactor.Text = "70.0";
-            this.txtMerchAdjFactor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMerchAdjFactor_KeyPress);
-            this.txtMerchAdjFactor.Leave += new System.EventHandler(this.txtMerchAdjFactor_Leave);
             // 
             // label13
             // 
@@ -541,6 +620,17 @@ namespace FIA_Biosum_Manager
             this.lblMethod.TabIndex = 0;
             this.lblMethod.Text = "Method";
             // 
+            // txtWoodlandMerchPct
+            // 
+            this.txtWoodlandMerchPct.ForeColor = System.Drawing.Color.Black;
+            this.txtWoodlandMerchPct.Location = new System.Drawing.Point(32, 417);
+            this.txtWoodlandMerchPct.Name = "txtWoodlandMerchPct";
+            this.txtWoodlandMerchPct.Size = new System.Drawing.Size(36, 20);
+            this.txtWoodlandMerchPct.TabIndex = 32;
+            this.txtWoodlandMerchPct.Text = "60.0";
+            this.txtWoodlandMerchPct.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtWoodlandMerchPct_KeyPress);
+            this.txtWoodlandMerchPct.Leave += new System.EventHandler(this.txtWoodlandMerchPct_Leave);
+            // 
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -615,7 +705,9 @@ namespace FIA_Biosum_Manager
                      oItem.m_oHarvestMethod.ProcessLowSlope;
                 uc_processor_scenario_run.ScenarioHarvestMethodVariables.ProcessSteepSlope =
                     oItem.m_oHarvestMethod.ProcessSteepSlope;
-                txtMerchAdjFactor.Text = oItem.m_oHarvestMethod.MerchAdjFactor;
+                txtWoodlandMerchPct.Text = oItem.m_oHarvestMethod.WoodlandMerchAsPctOfTotalVol;
+                txtSaplingMerchPct.Text = oItem.m_oHarvestMethod.SaplingMerchAsPctOfTotalVol;
+                txtCullPct.Text = oItem.m_oHarvestMethod.CullPctThreshold;
             }
 
 			
@@ -645,7 +737,8 @@ namespace FIA_Biosum_Manager
 				             "HarvestMethodSteepSlope," +
                              "min_chip_dbh,min_sm_log_dbh," + 
 				             "min_lg_log_dbh,SteepSlope,min_dbh_steep_slope," +
-                             "ProcessLowSlopeYN,ProcessSteepSlopeYN,GenericMerchAsPercentOfTotalVol ";
+                             "ProcessLowSlopeYN,ProcessSteepSlopeYN,WoodlandMerchAsPercentOfTotalVol," +
+                             "SaplingMerchAsPercentOfTotalVol,CullPctThreshold";
 			string strValues="";
 			
 			oAdo.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " " + 
@@ -753,10 +846,30 @@ namespace FIA_Biosum_Manager
                 strValues = strValues + "'N',";
             }
             //
-            //PROCESS GENERIC MERCH ADJUSTMENT FACTOR
-            if (txtMerchAdjFactor.Text.Trim().Length > 0)
+            //PROCESS WOODLAND MERCH PERCENT
+            if (txtWoodlandMerchPct.Text.Trim().Length > 0)
             {
-                strValues = strValues + txtMerchAdjFactor.Text.Trim();
+                strValues = strValues + txtWoodlandMerchPct.Text.Trim() + ",";
+            }
+            else
+            {
+                strValues = strValues + "null,";
+            }
+            //
+            //PROCESS SAPLING MERCH PERCENT
+            if (txtSaplingMerchPct.Text.Trim().Length > 0)
+            {
+                strValues = strValues + txtSaplingMerchPct.Text.Trim() + ",";
+            }
+            else
+            {
+                strValues = strValues + "null,";
+            }
+            //
+            //PROCESS CULL PERCENT
+            if (txtCullPct.Text.Trim().Length > 0)
+            {
+                strValues = strValues + txtCullPct.Text.Trim();
             }
             else
             {
@@ -916,20 +1029,52 @@ namespace FIA_Biosum_Manager
 				txtSteepSlopeMinDia.Focus();
 		}
 
-        private void txtMerchAdjFactor_Leave(object sender, System.EventArgs e)
+        private void txtWoodlandMerchPct_Leave(object sender, System.EventArgs e)
         {
             m_oValidate.RoundDecimalLength = 2;
             m_oValidate.MaxValue = 100;
             m_oValidate.MinValue = 0;
             m_oValidate.TestForMaxMin = true;
             m_oValidate.NullsAllowed = false;
-            m_oValidate.ValidateDecimal(txtMerchAdjFactor.Text.Trim());
+            m_oValidate.ValidateDecimal(txtWoodlandMerchPct.Text.Trim());
             if (m_oValidate.m_intError == 0)
             {
-                txtMerchAdjFactor.Text = m_oValidate.ReturnValue;
+                txtWoodlandMerchPct.Text = m_oValidate.ReturnValue;
             }
             else
-                txtMerchAdjFactor.Focus();
+                txtWoodlandMerchPct.Focus();
+        }
+
+        private void txtSaplingMerchPct_Leave(object sender, System.EventArgs e)
+        {
+            m_oValidate.RoundDecimalLength = 2;
+            m_oValidate.MaxValue = 100;
+            m_oValidate.MinValue = 0;
+            m_oValidate.TestForMaxMin = true;
+            m_oValidate.NullsAllowed = false;
+            m_oValidate.ValidateDecimal(txtSaplingMerchPct.Text.Trim());
+            if (m_oValidate.m_intError == 0)
+            {
+                txtSaplingMerchPct.Text = m_oValidate.ReturnValue;
+            }
+            else
+                txtSaplingMerchPct.Focus();
+        }
+
+        private void txtCullPct_Leave(object sender, System.EventArgs e)
+        {
+            m_oValidate.RoundDecimalLength = 2;
+            m_oValidate.MaxValue = 100;
+            m_oValidate.MinValue = 0;
+            m_oValidate.TestForMaxMin = true;
+            m_oValidate.NullsAllowed = false;
+            m_oValidate.ValidateDecimal(txtCullPct.Text.Trim());
+            if (m_oValidate.m_intError == 0)
+            {
+                txtCullPct.Text = m_oValidate.ReturnValue;
+            }
+            else
+                txtCullPct.Focus();
         }
 
 		private void cmbSteepSlopePercent_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -965,11 +1110,18 @@ namespace FIA_Biosum_Manager
         {
             if (ReferenceProcessorScenarioForm.m_bRulesFirstTime==false) ReferenceProcessorScenarioForm.m_bSave = true;
         }
-        private void txtMerchAdjFactor_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtWoodlandMerchPct_KeyPress(object sender, KeyPressEventArgs e)
         {
             ReferenceProcessorScenarioForm.m_bSave = true;
         }
-
+        private void txtSaplingMerchPct_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ReferenceProcessorScenarioForm.m_bSave = true;
+        }
+        private void txtCullPct_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ReferenceProcessorScenarioForm.m_bSave = true;
+        }
         private void label3_Click(object sender, EventArgs e)
         {
 

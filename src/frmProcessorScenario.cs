@@ -1095,11 +1095,23 @@ namespace FIA_Biosum_Manager
                 get { return _bProcessLowSlope; }
                 set { _bProcessLowSlope = value; }
             }
-            private string _strMerchAdjFactor = "70";
-            public string MerchAdjFactor
+            private string _strWoodlandMerchAsPctOfTotalVol = "60";
+            public string WoodlandMerchAsPctOfTotalVol
             {
-                get { return _strMerchAdjFactor; }
-                set { _strMerchAdjFactor = value; }
+                get { return _strWoodlandMerchAsPctOfTotalVol; }
+                set { _strWoodlandMerchAsPctOfTotalVol = value; }
+            }
+            private string _strSaplingMerchAsPctOfTotalVol = "80";
+            public string SaplingMerchAsPctOfTotalVol
+            {
+                get { return _strSaplingMerchAsPctOfTotalVol; }
+                set { _strSaplingMerchAsPctOfTotalVol = value; }
+            }
+            private string _strCullPctThreshold = "50";
+            public string CullPctThreshold
+            {
+                get { return _strCullPctThreshold; }
+                set { _strCullPctThreshold = value; }
             }
             public void Copy(HarvestMethod p_oSource, HarvestMethod p_oDest)
             {
@@ -1113,7 +1125,9 @@ namespace FIA_Biosum_Manager
                 p_oDest.ProcessSteepSlope = p_oSource.ProcessSteepSlope;
                 p_oDest.SteepSlopePercent = p_oSource.SteepSlopePercent;
                 p_oDest.UseDefaultHarvestMethod = p_oSource.UseDefaultHarvestMethod;
-                p_oDest.MerchAdjFactor = p_oSource.MerchAdjFactor;
+                p_oDest.WoodlandMerchAsPctOfTotalVol = p_oSource.WoodlandMerchAsPctOfTotalVol;
+                p_oDest.SaplingMerchAsPctOfTotalVol = p_oSource.SaplingMerchAsPctOfTotalVol;
+                p_oDest.CullPctThreshold = p_oSource.CullPctThreshold;
             }
             
         }
@@ -1682,16 +1696,35 @@ namespace FIA_Biosum_Manager
                             p_oProcessorScenarioItem.m_oHarvestMethod.ProcessSteepSlope = false;
                         }
                         //
-                        //GENERIC MERCH ADJUSTMENT FACTOR
+                        //WOODLAND MERCH AS PCT OF TOTAL VOLUME
                         //
-                        if (p_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"] != System.DBNull.Value)
+                        if (p_oAdo.m_OleDbDataReader["WoodlandMerchAsPercentOfTotalVol"] != System.DBNull.Value)
                         {
-                            if (p_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"].ToString().Trim().Length > 0)
+                            if (p_oAdo.m_OleDbDataReader["WoodlandMerchAsPercentOfTotalVol"].ToString().Trim().Length > 0)
                             {
-                                p_oProcessorScenarioItem.m_oHarvestMethod.MerchAdjFactor = p_oAdo.m_OleDbDataReader["GenericMerchAsPercentOfTotalVol"].ToString().Trim();
+                                p_oProcessorScenarioItem.m_oHarvestMethod.WoodlandMerchAsPctOfTotalVol = p_oAdo.m_OleDbDataReader["WoodlandMerchAsPercentOfTotalVol"].ToString().Trim();
                             }
                         }
-
+                        //
+                        //SAPLING MERCH AS PCT OF TOTAL VOLUME
+                        //
+                        if (p_oAdo.m_OleDbDataReader["SaplingMerchAsPercentOfTotalVol"] != System.DBNull.Value)
+                        {
+                            if (p_oAdo.m_OleDbDataReader["SaplingMerchAsPercentOfTotalVol"].ToString().Trim().Length > 0)
+                            {
+                                p_oProcessorScenarioItem.m_oHarvestMethod.SaplingMerchAsPctOfTotalVol = p_oAdo.m_OleDbDataReader["SaplingMerchAsPercentOfTotalVol"].ToString().Trim();
+                            }
+                        }
+                        //
+                        //CULL PCT THRESHOLD
+                        //
+                        if (p_oAdo.m_OleDbDataReader["CullPctThreshold"] != System.DBNull.Value)
+                        {
+                            if (p_oAdo.m_OleDbDataReader["CullPctThreshold"].ToString().Trim().Length > 0)
+                            {
+                                p_oProcessorScenarioItem.m_oHarvestMethod.CullPctThreshold = p_oAdo.m_OleDbDataReader["CullPctThreshold"].ToString().Trim();
+                            }
+                        }
                     }
                     p_oAdo.m_OleDbDataReader.Close();
                 }
@@ -2020,8 +2053,9 @@ namespace FIA_Biosum_Manager
             strLine = strLine + "Small Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForSmallLogs + "\r\n";
             strLine = strLine + "Large Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForLargeLogs + "\r\n";
             strLine = strLine + "Slope Percent: < " + p_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + "\r\n";
-            strLine = strLine + "Generic merch adj factor: = " + p_oProcessorScenarioItem.m_oHarvestMethod.MerchAdjFactor + "\r\n";
-
+            strLine = strLine + "Woodland Merch as Pct of Total Vol: = " + p_oProcessorScenarioItem.m_oHarvestMethod.WoodlandMerchAsPctOfTotalVol + "\r\n";
+            strLine = strLine + "Sapling Merch as Pct of Total Vol: = " + p_oProcessorScenarioItem.m_oHarvestMethod.SaplingMerchAsPctOfTotalVol + "\r\n";
+            strLine = strLine + "Cull Pct Threshold: = " + p_oProcessorScenarioItem.m_oHarvestMethod.CullPctThreshold + "\r\n";
 
             strLine = strLine + "\r\nHarvest Method Steep Slope\r\n";
             strLine = strLine + "-------------------------------\r\n";
@@ -2050,7 +2084,9 @@ namespace FIA_Biosum_Manager
             strLine = strLine + "Small Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForSmallLogs + "\r\n";
             strLine = strLine + "Large Logs Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForLargeLogs + "\r\n";
             strLine = strLine + "Slope Percent: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + "\r\n";
-            strLine = strLine + "Generic merch adjustment factor: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MerchAdjFactor + "\r\n";
+            strLine = strLine + "Woodland Merch as Pct of Total Vol: = " + p_oProcessorScenarioItem.m_oHarvestMethod.WoodlandMerchAsPctOfTotalVol + "\r\n";
+            strLine = strLine + "Sapling Merch as Pct of Total Vol: = " + p_oProcessorScenarioItem.m_oHarvestMethod.SaplingMerchAsPctOfTotalVol + "\r\n";
+            strLine = strLine + "Cull Pct Threshold: = " + p_oProcessorScenarioItem.m_oHarvestMethod.CullPctThreshold + "\r\n";
 
 
             strLine = strLine + "\r\nAdditional Harvest Cost Components (Costs Not covered in FRCS)\r\n";
