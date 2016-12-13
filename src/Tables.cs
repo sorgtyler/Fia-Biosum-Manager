@@ -3242,11 +3242,15 @@ namespace FIA_Biosum_Manager
                        " drybiom double," +
                        " drybiot double," +
                        " volCfNet double," +
+                       " volCfGrs double," +
                        " volTsGrs double," +
                        " odWgt double," +
                        " dryToGreen double, " +
                        " tpa double, " +
                        " dbh double, " +
+                       " isSapling bit, " +
+                       " isWoodland bit, " +
+                       " isCull bit, " +
                        " species_group integer, " +
                        " diam_group integer, " +
                        " merch_value double)";

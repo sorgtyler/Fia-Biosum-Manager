@@ -402,12 +402,13 @@ namespace FIA_Biosum_Manager
                         }
                         m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
                         "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, nonMerchWtGt, drybiom, " +
-                        "drybiot, volCfNet, voltsgrs, odWgt, dryToGreen, tpa, dbh, species_group, diam_group, merch_value)" +
+                        "drybiot, volCfNet, volCfGrs, volTsgrs, odWgt, dryToGreen, tpa, dbh, species_group, " +
+                        "isSapling, isWoodland, isCull, diam_group, merch_value)" +
                         "VALUES ('" + strTempCn + "', " + intTempTree + ", '" + nextTree.CondId + "', '" + nextTree.PlotId + "', " +
                         nextTree.SpCd + ", " + nextTree.MerchWtGtPa + ", " + nextTree.NonMerchWtGtPa + ", " + nextTree.DryBiom + ", " +
-                        nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
+                        nextTree.DryBiot + ", " + nextTree.VolCfNet + ", " + nextTree.VolCfGrs + ", " + nextTree.VolTsGrs + ", " + nextTree.OdWgt +
                         ", " + nextTree.DryToGreen + ", " + nextTree.Tpa + ", " + nextTree.Dbh + ", " + nextTree.SpeciesGroup + ", " +
-                        nextTree.DiamGroup + ", " + nextTree.MerchValue + " )";
+                        nextTree.IsSapling + ", " + nextTree.IsWoodlandSpecies + ", " + nextTree.IsCull + ", " + nextTree.DiamGroup + ", " + nextTree.MerchValue + " )";
 
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
@@ -487,7 +488,7 @@ namespace FIA_Biosum_Manager
                     {
                         nextInput.TotalSmLogTpa = nextInput.TotalSmLogTpa + nextTree.Tpa;
                         nextInput.SmLogMerchVolCfPa = nextInput.SmLogMerchVolCfPa + nextTree.MerchVolCfPa;
-                        if (nextTree.IsNonCommercial)
+                        if (nextTree.IsNonCommercial || nextTree.IsCull)
                         {
                             nextInput.SmLogNonCommMerchVolCfPa = nextInput.SmLogNonCommMerchVolCfPa + nextTree.MerchVolCfPa;
                             nextInput.SmLogNonCommVolCfPa = nextInput.SmLogNonCommVolCfPa + nextTree.TotalVolCfPa;
@@ -507,7 +508,7 @@ namespace FIA_Biosum_Manager
                         {
                             nextInput.TotalLgLogTpa = nextInput.TotalLgLogTpa + nextTree.Tpa;
                             nextInput.LgLogMerchVolCfPa = nextInput.LgLogMerchVolCfPa + nextTree.MerchVolCfPa;
-                            if (nextTree.IsNonCommercial)
+                            if (nextTree.IsNonCommercial || nextTree.IsCull)
                             {
                                 nextInput.LgLogNonCommMerchVolCfPa = nextInput.LgLogNonCommMerchVolCfPa + nextTree.MerchVolCfPa;
                                 nextInput.LgLogNonCommVolCfPa = nextInput.LgLogNonCommVolCfPa + nextTree.TotalVolCfPa;
@@ -685,9 +686,9 @@ namespace FIA_Biosum_Manager
                     // Metrics for brush cut trees
                     if (nextTree.TreeType == OpCostTreeType.BC)
                     {
-                        nextInput.PerAcBrushCutWtGt = nextInput.PerAcBrushCutWtGt + nextTree.BrushCutWtGtPa;
-                        nextInput.PerAcBrushCutVolumeCf = nextInput.PerAcBrushCutVolumeCf + nextTree.BrushCutVolCfPa;
-                        nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.BrushCutWtGtPa;
+                        nextInput.BrushCutWtGtPa = nextInput.BrushCutWtGtPa + nextTree.BrushCutWtGtPa;
+                        nextInput.BrushCutVolCfPa = nextInput.BrushCutVolCfPa + nextTree.BrushCutVolCfPa;
+                        nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.BrushCutWtGtPa;
                     }
 
                     //metrics for chip trees
@@ -696,15 +697,15 @@ namespace FIA_Biosum_Manager
                         if (nextTree.HarvestMethodCategory == 1 || nextTree.HarvestMethodCategory == 3)
                         {
                             // Only bole is chipped; nonMerch goes to stand residue
-                            nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.MerchVolCfPa;
-                            nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.MerchWtGtPa;
-                            nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.NonMerchWtGtPa;
+                            nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.MerchVolCfPa;
+                            nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.MerchWtGtPa;
+                            nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.NonMerchWtGtPa;
                         }
                         else
                         {
                             // Whole tree is chipped
-                            nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.TotalVolCfPa;
-                            nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.TotalWtGtPa;
+                            nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.TotalVolCfPa;
+                            nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.TotalWtGtPa;
                         }
                     }
 
@@ -713,37 +714,37 @@ namespace FIA_Biosum_Manager
                     {
                         if (nextTree.HarvestMethodCategory == 1 || nextTree.HarvestMethodCategory == 3)
                         {
-                            if (nextTree.IsNonCommercial)
+                            if (nextTree.IsNonCommercial || nextTree.IsCull)
                             {
                                 // Only bole is chipped; nonMerch goes to stand residue
-                                nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.MerchVolCfPa;
-                                nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.MerchWtGtPa;
-                                nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.NonMerchWtGtPa;
+                                nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.MerchVolCfPa;
+                                nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.MerchWtGtPa;
+                                nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.NonMerchWtGtPa;
                             }
                             else
                             {
                                 // Only bole is merch; nonMerch goes to stand residue
-                                nextInput.PerAcMerchVolumeCf = nextInput.PerAcMerchVolumeCf + nextTree.MerchVolCfPa;
-                                nextInput.PerAcMerchWtGt = nextInput.PerAcMerchWtGt+ nextTree.MerchWtGtPa;
-                                nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.NonMerchWtGtPa;
+                                nextInput.TotalMerchVolCfPa = nextInput.TotalMerchVolCfPa + nextTree.MerchVolCfPa;
+                                nextInput.TotalMerchWtGtPa = nextInput.TotalMerchWtGtPa+ nextTree.MerchWtGtPa;
+                                nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.NonMerchWtGtPa;
                                 nextInput.TotalMerchValDpa = nextInput.TotalMerchValDpa + nextTree.MerchValDpa;
                             }
                         }
                         else if (nextTree.HarvestMethodCategory == 2)
                         {
-                            if (nextTree.IsNonCommercial)
+                            if (nextTree.IsNonCommercial || nextTree.IsCull)
                             {
                                 // Entire tree is chipped
-                                nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.TotalVolCfPa;
-                                nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.TotalWtGtPa;
+                                nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.TotalVolCfPa;
+                                nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.TotalWtGtPa;
                             }
                             else
                             {
                                 // Bole is merch; nonMerch goes to chips
-                                nextInput.PerAcMerchVolumeCf = nextInput.PerAcMerchVolumeCf + nextTree.MerchVolCfPa;
-                                nextInput.PerAcMerchWtGt = nextInput.PerAcMerchWtGt + nextTree.MerchWtGtPa;
-                                nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.NonMerchVolCfPa;
-                                nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.NonMerchWtGtPa;
+                                nextInput.TotalMerchVolCfPa = nextInput.TotalMerchVolCfPa + nextTree.MerchVolCfPa;
+                                nextInput.TotalMerchWtGtPa = nextInput.TotalMerchWtGtPa + nextTree.MerchWtGtPa;
+                                nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.NonMerchVolCfPa;
+                                nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.NonMerchWtGtPa;
                                 nextInput.TotalMerchValDpa = nextInput.TotalMerchValDpa + nextTree.MerchValDpa;
                             }
                         }
@@ -751,55 +752,55 @@ namespace FIA_Biosum_Manager
                         {
                             if (nextTree.TreeType == OpCostTreeType.SL)
                             {
-                                if (nextTree.IsNonCommercial)
+                                if (nextTree.IsNonCommercial || nextTree.IsCull)
                                 {
                                     // Entire tree is chipped
-                                    nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.TotalVolCfPa;
-                                    nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.TotalWtGtPa;
+                                    nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.TotalVolCfPa;
+                                    nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.TotalWtGtPa;
                                 }
                                 else
                                 {
                                     // Bole is merch; nonMerch goes to chips
-                                    nextInput.PerAcMerchVolumeCf = nextInput.PerAcMerchVolumeCf + nextTree.MerchVolCfPa;
-                                    nextInput.PerAcMerchWtGt = nextInput.PerAcMerchWtGt + nextTree.MerchWtGtPa;
-                                    nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.NonMerchVolCfPa;
-                                    nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.NonMerchWtGtPa;
+                                    nextInput.TotalMerchVolCfPa = nextInput.TotalMerchVolCfPa + nextTree.MerchVolCfPa;
+                                    nextInput.TotalMerchWtGtPa = nextInput.TotalMerchWtGtPa + nextTree.MerchWtGtPa;
+                                    nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.NonMerchVolCfPa;
+                                    nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.NonMerchWtGtPa;
                                     nextInput.TotalMerchValDpa = nextInput.TotalMerchValDpa + nextTree.MerchValDpa;
                                 }
                             }
                             else if (nextTree.TreeType == OpCostTreeType.LL)
                             {
-                                if (nextTree.IsNonCommercial)
+                                if (nextTree.IsNonCommercial || nextTree.IsCull)
                                 {
                                     // Only bole is chipped; nonMerch goes to stand residue
-                                    nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.MerchVolCfPa;
-                                    nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.MerchWtGtPa;
-                                    nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.NonMerchWtGtPa;
+                                    nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.MerchVolCfPa;
+                                    nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.MerchWtGtPa;
+                                    nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.NonMerchWtGtPa;
                                 }
                                 else
                                 {
                                     // Only bole is merch; nonMerch goes to stand residue
-                                    nextInput.PerAcMerchVolumeCf = nextInput.PerAcMerchVolumeCf + nextTree.MerchVolCfPa;
-                                    nextInput.PerAcMerchWtGt = nextInput.PerAcMerchWtGt + nextTree.MerchWtGtPa;
-                                    nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.NonMerchWtGtPa;
+                                    nextInput.TotalMerchVolCfPa = nextInput.TotalMerchVolCfPa + nextTree.MerchVolCfPa;
+                                    nextInput.TotalMerchWtGtPa = nextInput.TotalMerchWtGtPa + nextTree.MerchWtGtPa;
+                                    nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.NonMerchWtGtPa;
                                     nextInput.TotalMerchValDpa = nextInput.TotalMerchValDpa + nextTree.MerchValDpa;
                                 }
                             }
                         }
                         else if (nextTree.HarvestMethodCategory == 5)
                         {
-                            if (nextTree.IsNonCommercial)
+                            if (nextTree.IsNonCommercial || nextTree.IsCull)
                             {
                                 // Entire tree is chipped
-                                nextInput.PerAcChipVolumeCf = nextInput.PerAcChipVolumeCf + nextTree.TotalVolCfPa;
-                                nextInput.PerAcChipWtGt = nextInput.PerAcChipWtGt + nextTree.TotalWtGtPa;
+                                nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.TotalVolCfPa;
+                                nextInput.ChipWtGtPa = nextInput.ChipWtGtPa + nextTree.TotalWtGtPa;
                             }
                             else
                             {
                                 // Only bole is merch; nonMerch goes to stand residue
-                                nextInput.PerAcMerchVolumeCf = nextInput.PerAcMerchVolumeCf + nextTree.MerchVolCfPa;
-                                nextInput.PerAcMerchWtGt = nextInput.PerAcMerchWtGt + nextTree.MerchWtGtPa;
-                                nextInput.PerAcStandResidueWtGt = nextInput.PerAcStandResidueWtGt + nextTree.NonMerchWtGtPa;
+                                nextInput.TotalMerchVolCfPa = nextInput.TotalMerchVolCfPa + nextTree.MerchVolCfPa;
+                                nextInput.TotalMerchWtGtPa = nextInput.TotalMerchWtGtPa + nextTree.MerchWtGtPa;
+                                nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.NonMerchWtGtPa;
                                 nextInput.TotalMerchValDpa = nextInput.TotalMerchValDpa + nextTree.MerchValDpa;
                             }
                         }
@@ -825,10 +826,10 @@ namespace FIA_Biosum_Manager
                     "biosum_harvest_method_category, DateTimeCreated, place_holder)" +
                     "VALUES ('" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" + nextStand.Rx + "', '" + 
                     nextStand.RxCycle + "', " + nextStand.SpeciesGroup + ", " + nextStand.DiamGroup + ", " +
-                    nextStand.PerAcChipVolumeCf + ", " + nextStand.PerAcChipWtGt + ", " + (nextStand.PerAcChipWtGt * nextStand.ChipMktValPgt) +
-                    ", " + nextStand.ChipMktValPgt + ", " + nextStand.PerAcMerchVolumeCf + ", " + nextStand.PerAcMerchWtGt + ", " + nextStand.TotalMerchValDpa +
-                    ", '" + nextStand.MerchToChip + "', " + nextStand.PerAcBrushCutVolumeCf + "," +
-                    nextStand.PerAcBrushCutWtGt + ", " + nextStand.PerAcStandResidueWtGt + ", " + 
+                    nextStand.ChipVolCfPa + ", " + nextStand.ChipWtGtPa + ", " + (nextStand.ChipWtGtPa * nextStand.ChipMktValPgt) +
+                    ", " + nextStand.ChipMktValPgt + ", " + nextStand.TotalMerchVolCfPa + ", " + nextStand.TotalMerchWtGtPa + ", " + nextStand.TotalMerchValDpa +
+                    ", '" + nextStand.MerchToChip + "', " + nextStand.BrushCutVolCfPa + "," +
+                    nextStand.BrushCutWtGtPa + ", " + nextStand.StandResidueWtGtPa + ", " + 
                     nextStand.HarvestMethodCategory + ", '" + strDateTimeCreated + "', 'N')";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
@@ -1178,16 +1179,16 @@ namespace FIA_Biosum_Manager
             {
                 if (p_tree.VolTsGrs > 0)
                 {
-                    p_tree.MerchVolCfPa = p_tree.VolTsGrs * (m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol / 100) * p_tree.Tpa;
+                    p_tree.MerchVolCfPa = p_tree.VolTsGrs * ( (double) m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol / 100) * p_tree.Tpa;
                 }
                 else
                 {
-                    p_tree.MerchVolCfPa = p_tree.DryBiot * p_tree.Tpa * (m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol / 100);
+                    p_tree.MerchVolCfPa = p_tree.DryBiot * p_tree.Tpa * ( (double) m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol / 100);
                 }
             }
             else if (p_tree.IsWoodlandSpecies)
             {
-                p_tree.MerchVolCfPa = p_tree.VolCfGrs * (m_scenarioHarvestMethod.WoodlandMerchAsPercentOfTotalVol / 100) * p_tree.Tpa;
+                p_tree.MerchVolCfPa = p_tree.VolCfGrs * ( (double) m_scenarioHarvestMethod.WoodlandMerchAsPercentOfTotalVol / 100) * p_tree.Tpa;
             }
             else
             {
@@ -1195,7 +1196,7 @@ namespace FIA_Biosum_Manager
             }
 
             //merchValDpa
-            if (!p_tree.IsNonCommercial)
+            if (!p_tree.IsNonCommercial && !p_tree.IsCull)
             {
                 switch (p_tree.RxCycle)
                 {
@@ -1220,12 +1221,12 @@ namespace FIA_Biosum_Manager
             //nonMerchVolCfPa
             if (p_tree.IsSapling)
             {
-                p_tree.NonMerchVolCfPa = ((p_tree.DryBiot * ((100 - m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol) / 100)) 
+                p_tree.NonMerchVolCfPa = ((p_tree.DryBiot * ((100 - (double) m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol) / 100)) 
                                          * p_tree.Tpa) / p_tree.OdWgt;
             }
             else if (p_tree.IsWoodlandSpecies)
             {
-                p_tree.NonMerchVolCfPa = ((p_tree.DryBiot * ((100 - m_scenarioHarvestMethod.WoodlandMerchAsPercentOfTotalVol) / 100)) 
+                p_tree.NonMerchVolCfPa = ((p_tree.DryBiot * ((100 - (double) m_scenarioHarvestMethod.WoodlandMerchAsPercentOfTotalVol) / 100)) 
                                          * p_tree.Tpa) / p_tree.OdWgt;
             }
             else
@@ -1978,13 +1979,13 @@ namespace FIA_Biosum_Manager
             int _intHarvestMethodCategory;
             string _strMerchToChip;
             double _dblChipMktValPgt;
-            double _dblPerAcBrushCutVolumeCf;
-            double _dblPerAcBrushCutWtGt;
-            double _dblPerAcStandResidueWtGt;
-            double _dblPerAcChipVolumeCf;
-            double _dblPerAcChipWtGt;
-            double _dblPerAcMerchVolumeCf;
-            double _dblPerAcMerchWtGt;
+            double _dblBrushCutVolCfPa;
+            double _dblBrushCutWtGtPa;
+            double _dblStandResidueWtGtPa;
+            double _dblChipVolCfPa;
+            double _dblChipWtGtPa;
+            double _dblTotalMerchVolCfPa;
+            double _dblTotalMerchWtGtPa;
             double _dblTotalMerchValDpa;
 
 
@@ -2048,40 +2049,40 @@ namespace FIA_Biosum_Manager
             {
                 get { return _intHarvestMethodCategory; }
             }
-            public double PerAcBrushCutVolumeCf
+            public double BrushCutVolCfPa
             {
-                get { return _dblPerAcBrushCutVolumeCf; }
-                set { _dblPerAcBrushCutVolumeCf = value; }
+                get { return _dblBrushCutVolCfPa; }
+                set { _dblBrushCutVolCfPa = value; }
             }
-            public double PerAcBrushCutWtGt
+            public double BrushCutWtGtPa
             {
-                get { return _dblPerAcBrushCutWtGt; }
-                set { _dblPerAcBrushCutWtGt = value; }
+                get { return _dblBrushCutWtGtPa; }
+                set { _dblBrushCutWtGtPa = value; }
             }
-            public double PerAcStandResidueWtGt
+            public double StandResidueWtGtPa
             {
-                get { return _dblPerAcStandResidueWtGt; }
-                set { _dblPerAcStandResidueWtGt = value; }
+                get { return _dblStandResidueWtGtPa; }
+                set { _dblStandResidueWtGtPa = value; }
             }
-            public double PerAcChipVolumeCf
+            public double ChipVolCfPa
             {
-                get { return _dblPerAcChipVolumeCf; }
-                set { _dblPerAcChipVolumeCf = value; }
+                get { return _dblChipVolCfPa; }
+                set { _dblChipVolCfPa = value; }
             }
-            public double PerAcChipWtGt
+            public double ChipWtGtPa
             {
-                get { return _dblPerAcChipWtGt; }
-                set { _dblPerAcChipWtGt = value; }
+                get { return _dblChipWtGtPa; }
+                set { _dblChipWtGtPa = value; }
             }
-            public double PerAcMerchVolumeCf
+            public double TotalMerchVolCfPa
             {
-                get { return _dblPerAcMerchVolumeCf; }
-                set { _dblPerAcMerchVolumeCf = value; }
+                get { return _dblTotalMerchVolCfPa; }
+                set { _dblTotalMerchVolCfPa = value; }
             }
-            public double PerAcMerchWtGt
+            public double TotalMerchWtGtPa
             {
-                get { return _dblPerAcMerchWtGt; }
-                set { _dblPerAcMerchWtGt = value; }
+                get { return _dblTotalMerchWtGtPa; }
+                set { _dblTotalMerchWtGtPa = value; }
             }
             public double TotalMerchValDpa
             {
