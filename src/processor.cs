@@ -686,8 +686,8 @@ namespace FIA_Biosum_Manager
                     // Metrics for brush cut trees
                     if (nextTree.TreeType == OpCostTreeType.BC)
                     {
-                        nextInput.BrushCutWtGtPa = nextInput.BrushCutWtGtPa + nextTree.BrushCutWtGtPa;
-                        nextInput.BrushCutVolCfPa = nextInput.BrushCutVolCfPa + nextTree.BrushCutVolCfPa;
+                        nextInput.TotalBrushCutWtGtPa = nextInput.TotalBrushCutWtGtPa + nextTree.BrushCutWtGtPa;
+                        nextInput.TotalBrushCutVolCfPa = nextInput.TotalBrushCutVolCfPa + nextTree.BrushCutVolCfPa;
                         nextInput.StandResidueWtGtPa = nextInput.StandResidueWtGtPa + nextTree.BrushCutWtGtPa;
                     }
 
@@ -828,8 +828,8 @@ namespace FIA_Biosum_Manager
                     nextStand.RxCycle + "', " + nextStand.SpeciesGroup + ", " + nextStand.DiamGroup + ", " +
                     nextStand.ChipVolCfPa + ", " + nextStand.ChipWtGtPa + ", " + (nextStand.ChipWtGtPa * nextStand.ChipMktValPgt) +
                     ", " + nextStand.ChipMktValPgt + ", " + nextStand.TotalMerchVolCfPa + ", " + nextStand.TotalMerchWtGtPa + ", " + nextStand.TotalMerchValDpa +
-                    ", '" + nextStand.MerchToChip + "', " + nextStand.BrushCutVolCfPa + "," +
-                    nextStand.BrushCutWtGtPa + ", " + nextStand.StandResidueWtGtPa + ", " + 
+                    ", '" + nextStand.MerchToChip + "', " + nextStand.TotalBrushCutVolCfPa + "," +
+                    nextStand.TotalBrushCutWtGtPa + ", " + nextStand.StandResidueWtGtPa + ", " + 
                     nextStand.HarvestMethodCategory + ", '" + strDateTimeCreated + "', 'N')";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
@@ -1979,8 +1979,8 @@ namespace FIA_Biosum_Manager
             int _intHarvestMethodCategory;
             string _strMerchToChip;
             double _dblChipMktValPgt;
-            double _dblBrushCutVolCfPa;
-            double _dblBrushCutWtGtPa;
+            double _dblTotalrushCutVolCfPa;
+            double _dblTotalBrushCutWtGtPa;
             double _dblStandResidueWtGtPa;
             double _dblChipVolCfPa;
             double _dblChipWtGtPa;
@@ -2049,15 +2049,15 @@ namespace FIA_Biosum_Manager
             {
                 get { return _intHarvestMethodCategory; }
             }
-            public double BrushCutVolCfPa
+            public double TotalBrushCutVolCfPa
             {
-                get { return _dblBrushCutVolCfPa; }
-                set { _dblBrushCutVolCfPa = value; }
+                get { return _dblTotalrushCutVolCfPa; }
+                set { _dblTotalrushCutVolCfPa = value; }
             }
-            public double BrushCutWtGtPa
+            public double TotalBrushCutWtGtPa
             {
-                get { return _dblBrushCutWtGtPa; }
-                set { _dblBrushCutWtGtPa = value; }
+                get { return _dblTotalBrushCutWtGtPa; }
+                set { _dblTotalBrushCutWtGtPa = value; }
             }
             public double StandResidueWtGtPa
             {
