@@ -3253,7 +3253,9 @@ namespace FIA_Biosum_Manager
                        " isCull bit, " +
                        " species_group integer, " +
                        " diam_group integer, " +
-                       " merch_value double)";
+                       " merch_value double, " +
+                       " opcost_type text (5), " +
+                       " biosum_category integer)";
             }
         }
 
