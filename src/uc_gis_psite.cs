@@ -72,6 +72,10 @@ namespace FIA_Biosum_Manager
 
 		private System.Data.DataTable m_dtTableSchema;
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultDatabaseXPSFile;
+
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -115,7 +119,7 @@ namespace FIA_Biosum_Manager
 
 
 			// TODO: Add any initialization after the InitializeComponent call
-
+            this.m_oEnv = new env();
 		}
 
 		/// <summary> 
@@ -1029,134 +1033,136 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.btnClose = new System.Windows.Forms.Button();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.btnDelete = new System.Windows.Forms.Button();
-			this.btnNew = new System.Windows.Forms.Button();
-			this.btnEdit = new System.Windows.Forms.Button();
-			this.btnSave = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.m_dg = new System.Windows.Forms.DataGrid();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_dg)).BeginInit();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.btnClose);
-			this.groupBox1.Controls.Add(this.btnHelp);
-			this.groupBox1.Controls.Add(this.btnDelete);
-			this.groupBox1.Controls.Add(this.btnNew);
-			this.groupBox1.Controls.Add(this.btnEdit);
-			this.groupBox1.Controls.Add(this.btnSave);
-			this.groupBox1.Controls.Add(this.btnCancel);
-			this.groupBox1.Controls.Add(this.m_dg);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(704, 352);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			// 
-			// btnClose
-			// 
-			this.btnClose.Location = new System.Drawing.Point(598, 312);
-			this.btnClose.Name = "btnClose";
-			this.btnClose.Size = new System.Drawing.Size(96, 32);
-			this.btnClose.TabIndex = 58;
-			this.btnClose.Text = "Close";
-			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-			// 
-			// btnHelp
-			// 
-			this.btnHelp.Location = new System.Drawing.Point(12, 312);
-			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.Size = new System.Drawing.Size(96, 32);
-			this.btnHelp.TabIndex = 57;
-			this.btnHelp.Text = "Help";
-			// 
-			// btnDelete
-			// 
-			this.btnDelete.Enabled = false;
-			this.btnDelete.Location = new System.Drawing.Point(336, 280);
-			this.btnDelete.Name = "btnDelete";
-			this.btnDelete.Size = new System.Drawing.Size(64, 32);
-			this.btnDelete.TabIndex = 56;
-			this.btnDelete.Text = "Delete";
-			this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-			// 
-			// btnNew
-			// 
-			this.btnNew.Location = new System.Drawing.Point(208, 280);
-			this.btnNew.Name = "btnNew";
-			this.btnNew.Size = new System.Drawing.Size(64, 32);
-			this.btnNew.TabIndex = 52;
-			this.btnNew.Text = "New";
-			this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-			// 
-			// btnEdit
-			// 
-			this.btnEdit.Location = new System.Drawing.Point(272, 280);
-			this.btnEdit.Name = "btnEdit";
-			this.btnEdit.Size = new System.Drawing.Size(64, 32);
-			this.btnEdit.TabIndex = 53;
-			this.btnEdit.Text = "Edit";
-			this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
-			// 
-			// btnSave
-			// 
-			this.btnSave.Enabled = false;
-			this.btnSave.Location = new System.Drawing.Point(400, 280);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(64, 32);
-			this.btnSave.TabIndex = 54;
-			this.btnSave.Text = "Save";
-			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Location = new System.Drawing.Point(464, 280);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(64, 32);
-			this.btnCancel.TabIndex = 55;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// m_dg
-			// 
-			this.m_dg.DataMember = "";
-			this.m_dg.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-			this.m_dg.Location = new System.Drawing.Point(8, 64);
-			this.m_dg.Name = "m_dg";
-			this.m_dg.Size = new System.Drawing.Size(688, 208);
-			this.m_dg.TabIndex = 27;
-			this.m_dg.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseDown);
-			this.m_dg.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseUp);
-			this.m_dg.CurrentCellChanged += new System.EventHandler(this.m_dg_CurrentCellChanged);
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(3, 16);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Size = new System.Drawing.Size(698, 32);
-			this.lblTitle.TabIndex = 26;
-			this.lblTitle.Text = "Processing Sites";
-			// 
-			// uc_gis_psite
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_gis_psite";
-			this.Size = new System.Drawing.Size(704, 352);
-			this.Resize += new System.EventHandler(this.uc_gis_psite_Resize);
-			this.groupBox1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.m_dg)).EndInit();
-			this.ResumeLayout(false);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.m_dg = new System.Windows.Forms.DataGrid();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_dg)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnClose);
+            this.groupBox1.Controls.Add(this.btnHelp);
+            this.groupBox1.Controls.Add(this.btnDelete);
+            this.groupBox1.Controls.Add(this.btnNew);
+            this.groupBox1.Controls.Add(this.btnEdit);
+            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.m_dg);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(704, 352);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(598, 312);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(96, 32);
+            this.btnClose.TabIndex = 58;
+            this.btnClose.Text = "Close";
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(12, 312);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 57;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Enabled = false;
+            this.btnDelete.Location = new System.Drawing.Point(336, 280);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(64, 32);
+            this.btnDelete.TabIndex = 56;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.Location = new System.Drawing.Point(208, 280);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(64, 32);
+            this.btnNew.TabIndex = 52;
+            this.btnNew.Text = "New";
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Location = new System.Drawing.Point(272, 280);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(64, 32);
+            this.btnEdit.TabIndex = 53;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Enabled = false;
+            this.btnSave.Location = new System.Drawing.Point(400, 280);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(64, 32);
+            this.btnSave.TabIndex = 54;
+            this.btnSave.Text = "Save";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(464, 280);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(64, 32);
+            this.btnCancel.TabIndex = 55;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // m_dg
+            // 
+            this.m_dg.DataMember = "";
+            this.m_dg.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+            this.m_dg.Location = new System.Drawing.Point(8, 64);
+            this.m_dg.Name = "m_dg";
+            this.m_dg.Size = new System.Drawing.Size(688, 208);
+            this.m_dg.TabIndex = 27;
+            this.m_dg.CurrentCellChanged += new System.EventHandler(this.m_dg_CurrentCellChanged);
+            this.m_dg.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseDown);
+            this.m_dg.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseUp);
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(3, 16);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(698, 32);
+            this.lblTitle.TabIndex = 26;
+            this.lblTitle.Text = "Processing Sites";
+            // 
+            // uc_gis_psite
+            // 
+            this.Controls.Add(this.groupBox1);
+            this.Name = "uc_gis_psite";
+            this.Size = new System.Drawing.Size(704, 352);
+            this.Resize += new System.EventHandler(this.uc_gis_psite_Resize);
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.m_dg)).EndInit();
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -3204,6 +3210,15 @@ namespace FIA_Biosum_Manager
 			this.CleanUp();
 			this.ParentForm.Close();
 		}
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "WOOD_PROCESSING_SITES" });
+        }
 
 	}
 	public class PSite_DataGridColoredTextBoxColumn : DataGridTextBoxColumn

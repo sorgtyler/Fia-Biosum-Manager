@@ -59,6 +59,10 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ToolBarButton tlbBtnClose;
 		private System.Windows.Forms.ToolBarButton tlbBtnHelp;
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultDatabaseXPSFile;
+
 		public FIA_Biosum_Manager.ResizeFormUsingVisibleScrollBars m_oResizeForm = new ResizeFormUsingVisibleScrollBars();
 
 		private ListViewColumnSorter lvwColumnSorter;
@@ -80,6 +84,7 @@ namespace FIA_Biosum_Manager
 			m_oResizeForm.ResizeWidth=false;
 			m_oResizeForm.ResizeHeight=false;
 			m_oResizeForm.MaximumHeight = 650;
+            this.m_oEnv = new env();
 			
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -102,7 +107,7 @@ namespace FIA_Biosum_Manager
 			this.m_oLvRowColors.ReferenceSelectedRowBackgroundColor=frmMain.g_oGridViewSelectedRowBackgroundColor;
 			this.m_oLvRowColors.CustomFullRowSelect=true;
 			if (frmMain.g_oGridViewFont != null) this.lstRequiredTables.Font = frmMain.g_oGridViewFont;
-
+            this.m_oEnv = new env();
 			
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -126,7 +131,7 @@ namespace FIA_Biosum_Manager
 			this.m_oLvRowColors.CustomFullRowSelect=true;
 			this.m_oLvRowColors.ReferenceListView = lstRequiredTables;
 			if (frmMain.g_oGridViewFont != null) this.lstRequiredTables.Font = frmMain.g_oGridViewFont;
-
+            this.m_oEnv = new env();
 			
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -1535,6 +1540,9 @@ namespace FIA_Biosum_Manager
 				case "Refresh":
 					this.populate_listview_grid();
 					break;
+                case "Help":
+                    this.showHelp();
+                    break;
 			}
 		}
 
@@ -1638,6 +1646,15 @@ namespace FIA_Biosum_Manager
 			get {return _strScenarioType;}
 			set {_strScenarioType=value;}
 		}
+
+        public void showHelp()
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "PROJECT_DATA_SOURCES" });
+        }
 		
 		
       
