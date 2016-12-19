@@ -661,6 +661,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnFIADBInvHelp
             // 
+            this.btnFIADBInvHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnFIADBInvHelp.Location = new System.Drawing.Point(16, 325);
             this.btnFIADBInvHelp.Name = "btnFIADBInvHelp";
             this.btnFIADBInvHelp.Size = new System.Drawing.Size(64, 24);
@@ -831,11 +832,13 @@ namespace FIA_Biosum_Manager
             // 
             // btnFilterByStateHelp
             // 
+            this.btnFilterByStateHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnFilterByStateHelp.Location = new System.Drawing.Point(16, 325);
             this.btnFilterByStateHelp.Name = "btnFilterByStateHelp";
             this.btnFilterByStateHelp.Size = new System.Drawing.Size(64, 24);
             this.btnFilterByStateHelp.TabIndex = 23;
             this.btnFilterByStateHelp.Text = "Help";
+            this.btnFilterByStateHelp.Click += new System.EventHandler(this.btnFilterByStateHelp_Click);
             // 
             // btnFilterByStatePrevious
             // 
@@ -1116,11 +1119,13 @@ namespace FIA_Biosum_Manager
             // 
             // btnFilterByPlotHelp
             // 
+            this.btnFilterByPlotHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnFilterByPlotHelp.Location = new System.Drawing.Point(16, 325);
             this.btnFilterByPlotHelp.Name = "btnFilterByPlotHelp";
             this.btnFilterByPlotHelp.Size = new System.Drawing.Size(64, 24);
             this.btnFilterByPlotHelp.TabIndex = 23;
             this.btnFilterByPlotHelp.Text = "Help";
+            this.btnFilterByPlotHelp.Click += new System.EventHandler(this.btnFilterByPlotHelp_Click);
             // 
             // btnFilterByPlotPrevious
             // 
@@ -1395,6 +1400,7 @@ namespace FIA_Biosum_Manager
 			this.grpboxFIADBInv.Height = this.grpboxMDBFiadbInput.Height;
 			this.grpboxFIADBInv.Top = this.grpboxMDBFiadbInput.Top;
 			this.btnFIADBInvHelp.Location = this.btnMDBFiadbInputHelp.Location;
+            this.btnFIADBInvHelp.Click += new System.EventHandler(this.btnFIADBInvHelp_Click);
 			this.btnFIADBInvCancel.Location = this.btnMDBFiadbInputCancel.Location;
 			this.btnFIADBInvPrevious.Location = this.btnMDBFiadbInputPrev.Location;
 			this.btnFIADBInvNext.Location = this.btnMDBFiadbInputNext.Location;
@@ -7617,6 +7623,33 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "DATABASE", "PLOTDATA2" });
+        }
+
+        private void btnFIADBInvHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "FIADB_INVENTORY_EVAL" });
+        }
+
+        private void btnFilterByStateHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "FILTER_STATE_COUNTY" });
+        }
+
+        private void btnFilterByPlotHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "FILTER_BY_PLOT" });
         }
 
         /*

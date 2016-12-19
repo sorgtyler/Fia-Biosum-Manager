@@ -40,6 +40,10 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label lblFileSize;
 		private System.Windows.Forms.Button btnOpen;
 		FIA_Biosum_Manager.frmGridView m_frmGridView;
+
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultDatabaseXPSFile;
 		
 
 		public uc_db(string p_strProjDir)
@@ -49,6 +53,7 @@ namespace FIA_Biosum_Manager
 			this.m_strProjDir = p_strProjDir.Trim();
 			this.m_ado = new ado_data_access();
 			this.m_dao = new dao_data_access();
+            this.m_oEnv = new env();
 
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -175,210 +180,215 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_db));
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.grpMdb = new System.Windows.Forms.GroupBox();
-			this.btnOpen = new System.Windows.Forms.Button();
-			this.label4 = new System.Windows.Forms.Label();
-			this.lblFileSize = new System.Windows.Forms.Label();
-			this.btnCompact = new System.Windows.Forms.Button();
-			this.btnClearAll = new System.Windows.Forms.Button();
-			this.btnCheckAll = new System.Windows.Forms.Button();
-			this.btnBrowse = new System.Windows.Forms.Button();
-			this.lstFields = new System.Windows.Forms.CheckedListBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.lstTables = new System.Windows.Forms.ListBox();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.btnClose = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.treeView1 = new System.Windows.Forms.TreeView();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.groupBox1.SuspendLayout();
-			this.grpMdb.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.grpMdb);
-			this.groupBox1.Controls.Add(this.btnClearAll);
-			this.groupBox1.Controls.Add(this.btnCheckAll);
-			this.groupBox1.Controls.Add(this.btnBrowse);
-			this.groupBox1.Controls.Add(this.lstFields);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.lstTables);
-			this.groupBox1.Controls.Add(this.btnHelp);
-			this.groupBox1.Controls.Add(this.btnClose);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.treeView1);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(744, 608);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			// 
-			// grpMdb
-			// 
-			this.grpMdb.Controls.Add(this.btnOpen);
-			this.grpMdb.Controls.Add(this.label4);
-			this.grpMdb.Controls.Add(this.lblFileSize);
-			this.grpMdb.Controls.Add(this.btnCompact);
-			this.grpMdb.Location = new System.Drawing.Point(8, 440);
-			this.grpMdb.Name = "grpMdb";
-			this.grpMdb.Size = new System.Drawing.Size(232, 88);
-			this.grpMdb.TabIndex = 51;
-			this.grpMdb.TabStop = false;
-			// 
-			// btnOpen
-			// 
-			this.btnOpen.Enabled = false;
-			this.btnOpen.Location = new System.Drawing.Point(80, 56);
-			this.btnOpen.Name = "btnOpen";
-			this.btnOpen.Size = new System.Drawing.Size(96, 24);
-			this.btnOpen.TabIndex = 53;
-			this.btnOpen.Text = "Open In Access";
-			this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(8, 16);
-			this.label4.Name = "label4";
-			this.label4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.label4.Size = new System.Drawing.Size(64, 16);
-			this.label4.TabIndex = 52;
-			this.label4.Text = "File Size";
-			// 
-			// lblFileSize
-			// 
-			this.lblFileSize.BackColor = System.Drawing.Color.White;
-			this.lblFileSize.Location = new System.Drawing.Point(88, 16);
-			this.lblFileSize.Name = "lblFileSize";
-			this.lblFileSize.Size = new System.Drawing.Size(136, 24);
-			this.lblFileSize.TabIndex = 52;
-			// 
-			// btnCompact
-			// 
-			this.btnCompact.Enabled = false;
-			this.btnCompact.Location = new System.Drawing.Point(16, 56);
-			this.btnCompact.Name = "btnCompact";
-			this.btnCompact.Size = new System.Drawing.Size(64, 24);
-			this.btnCompact.TabIndex = 46;
-			this.btnCompact.Text = "Compact";
-			this.btnCompact.Click += new System.EventHandler(this.btnCompact_Click);
-			// 
-			// btnClearAll
-			// 
-			this.btnClearAll.Location = new System.Drawing.Point(568, 488);
-			this.btnClearAll.Name = "btnClearAll";
-			this.btnClearAll.Size = new System.Drawing.Size(64, 24);
-			this.btnClearAll.TabIndex = 50;
-			this.btnClearAll.Text = "Clear All";
-			this.btnClearAll.Click += new System.EventHandler(this.btnClearAll_Click);
-			// 
-			// btnCheckAll
-			// 
-			this.btnCheckAll.Location = new System.Drawing.Point(504, 488);
-			this.btnCheckAll.Name = "btnCheckAll";
-			this.btnCheckAll.Size = new System.Drawing.Size(64, 24);
-			this.btnCheckAll.TabIndex = 49;
-			this.btnCheckAll.Text = "Check All";
-			this.btnCheckAll.Click += new System.EventHandler(this.btnCheckAll_Click);
-			// 
-			// btnBrowse
-			// 
-			this.btnBrowse.Location = new System.Drawing.Point(632, 488);
-			this.btnBrowse.Name = "btnBrowse";
-			this.btnBrowse.Size = new System.Drawing.Size(64, 24);
-			this.btnBrowse.TabIndex = 48;
-			this.btnBrowse.Text = "Browse";
-			this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-			// 
-			// lstFields
-			// 
-			this.lstFields.CheckOnClick = true;
-			this.lstFields.Location = new System.Drawing.Point(493, 40);
-			this.lstFields.Name = "lstFields";
-			this.lstFields.Size = new System.Drawing.Size(237, 394);
-			this.lstFields.TabIndex = 45;
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(496, 16);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(136, 16);
-			this.label3.TabIndex = 44;
-			this.label3.Text = "Columns";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(248, 16);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(136, 16);
-			this.label2.TabIndex = 42;
-			this.label2.Text = "Tables";
-			// 
-			// lstTables
-			// 
-			this.lstTables.Location = new System.Drawing.Point(253, 40);
-			this.lstTables.Name = "lstTables";
-			this.lstTables.Size = new System.Drawing.Size(237, 394);
-			this.lstTables.TabIndex = 41;
-			this.lstTables.SelectedIndexChanged += new System.EventHandler(this.lstTables_SelectedIndexChanged);
-			// 
-			// btnHelp
-			// 
-			this.btnHelp.Location = new System.Drawing.Point(8, 567);
-			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.Size = new System.Drawing.Size(96, 32);
-			this.btnHelp.TabIndex = 40;
-			this.btnHelp.Text = "Help";
-			// 
-			// btnClose
-			// 
-			this.btnClose.Location = new System.Drawing.Point(632, 568);
-			this.btnClose.Name = "btnClose";
-			this.btnClose.Size = new System.Drawing.Size(96, 32);
-			this.btnClose.TabIndex = 39;
-			this.btnClose.Text = "Close";
-			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(8, 16);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(152, 16);
-			this.label1.TabIndex = 5;
-			this.label1.Text = "MS Access Database Files";
-			// 
-			// treeView1
-			// 
-			this.treeView1.ImageList = this.imageList1;
-			this.treeView1.Location = new System.Drawing.Point(10, 40);
-			this.treeView1.Name = "treeView1";
-			this.treeView1.Size = new System.Drawing.Size(237, 392);
-			this.treeView1.TabIndex = 4;
-			this.treeView1.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterExpand);
-			this.treeView1.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCollapse);
-			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
-			// 
-			// imageList1
-			// 
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
-			// uc_db
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_db";
-			this.Size = new System.Drawing.Size(744, 608);
-			this.Resize += new System.EventHandler(this.uc_db_Resize);
-			this.groupBox1.ResumeLayout(false);
-			this.grpMdb.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_db));
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpMdb = new System.Windows.Forms.GroupBox();
+            this.btnOpen = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblFileSize = new System.Windows.Forms.Label();
+            this.btnCompact = new System.Windows.Forms.Button();
+            this.btnClearAll = new System.Windows.Forms.Button();
+            this.btnCheckAll = new System.Windows.Forms.Button();
+            this.btnBrowse = new System.Windows.Forms.Button();
+            this.lstFields = new System.Windows.Forms.CheckedListBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lstTables = new System.Windows.Forms.ListBox();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.groupBox1.SuspendLayout();
+            this.grpMdb.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.grpMdb);
+            this.groupBox1.Controls.Add(this.btnClearAll);
+            this.groupBox1.Controls.Add(this.btnCheckAll);
+            this.groupBox1.Controls.Add(this.btnBrowse);
+            this.groupBox1.Controls.Add(this.lstFields);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.lstTables);
+            this.groupBox1.Controls.Add(this.btnHelp);
+            this.groupBox1.Controls.Add(this.btnClose);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.treeView1);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(744, 608);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            // 
+            // grpMdb
+            // 
+            this.grpMdb.Controls.Add(this.btnOpen);
+            this.grpMdb.Controls.Add(this.label4);
+            this.grpMdb.Controls.Add(this.lblFileSize);
+            this.grpMdb.Controls.Add(this.btnCompact);
+            this.grpMdb.Location = new System.Drawing.Point(8, 440);
+            this.grpMdb.Name = "grpMdb";
+            this.grpMdb.Size = new System.Drawing.Size(232, 88);
+            this.grpMdb.TabIndex = 51;
+            this.grpMdb.TabStop = false;
+            // 
+            // btnOpen
+            // 
+            this.btnOpen.Enabled = false;
+            this.btnOpen.Location = new System.Drawing.Point(80, 56);
+            this.btnOpen.Name = "btnOpen";
+            this.btnOpen.Size = new System.Drawing.Size(96, 24);
+            this.btnOpen.TabIndex = 53;
+            this.btnOpen.Text = "Open In Access";
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(8, 16);
+            this.label4.Name = "label4";
+            this.label4.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label4.Size = new System.Drawing.Size(64, 16);
+            this.label4.TabIndex = 52;
+            this.label4.Text = "File Size";
+            // 
+            // lblFileSize
+            // 
+            this.lblFileSize.BackColor = System.Drawing.Color.White;
+            this.lblFileSize.Location = new System.Drawing.Point(88, 16);
+            this.lblFileSize.Name = "lblFileSize";
+            this.lblFileSize.Size = new System.Drawing.Size(136, 24);
+            this.lblFileSize.TabIndex = 52;
+            // 
+            // btnCompact
+            // 
+            this.btnCompact.Enabled = false;
+            this.btnCompact.Location = new System.Drawing.Point(16, 56);
+            this.btnCompact.Name = "btnCompact";
+            this.btnCompact.Size = new System.Drawing.Size(64, 24);
+            this.btnCompact.TabIndex = 46;
+            this.btnCompact.Text = "Compact";
+            this.btnCompact.Click += new System.EventHandler(this.btnCompact_Click);
+            // 
+            // btnClearAll
+            // 
+            this.btnClearAll.Location = new System.Drawing.Point(568, 488);
+            this.btnClearAll.Name = "btnClearAll";
+            this.btnClearAll.Size = new System.Drawing.Size(64, 24);
+            this.btnClearAll.TabIndex = 50;
+            this.btnClearAll.Text = "Clear All";
+            this.btnClearAll.Click += new System.EventHandler(this.btnClearAll_Click);
+            // 
+            // btnCheckAll
+            // 
+            this.btnCheckAll.Location = new System.Drawing.Point(504, 488);
+            this.btnCheckAll.Name = "btnCheckAll";
+            this.btnCheckAll.Size = new System.Drawing.Size(64, 24);
+            this.btnCheckAll.TabIndex = 49;
+            this.btnCheckAll.Text = "Check All";
+            this.btnCheckAll.Click += new System.EventHandler(this.btnCheckAll_Click);
+            // 
+            // btnBrowse
+            // 
+            this.btnBrowse.Location = new System.Drawing.Point(632, 488);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(64, 24);
+            this.btnBrowse.TabIndex = 48;
+            this.btnBrowse.Text = "Browse";
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            // 
+            // lstFields
+            // 
+            this.lstFields.CheckOnClick = true;
+            this.lstFields.Location = new System.Drawing.Point(493, 40);
+            this.lstFields.Name = "lstFields";
+            this.lstFields.Size = new System.Drawing.Size(237, 394);
+            this.lstFields.TabIndex = 45;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(496, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(136, 16);
+            this.label3.TabIndex = 44;
+            this.label3.Text = "Columns";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(248, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(136, 16);
+            this.label2.TabIndex = 42;
+            this.label2.Text = "Tables";
+            // 
+            // lstTables
+            // 
+            this.lstTables.Location = new System.Drawing.Point(253, 40);
+            this.lstTables.Name = "lstTables";
+            this.lstTables.Size = new System.Drawing.Size(237, 394);
+            this.lstTables.TabIndex = 41;
+            this.lstTables.SelectedIndexChanged += new System.EventHandler(this.lstTables_SelectedIndexChanged);
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(8, 567);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 40;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(632, 568);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(96, 32);
+            this.btnClose.TabIndex = 39;
+            this.btnClose.Text = "Close";
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(8, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(152, 16);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "MS Access Database Files";
+            // 
+            // treeView1
+            // 
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Location = new System.Drawing.Point(10, 40);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.Size = new System.Drawing.Size(237, 392);
+            this.treeView1.TabIndex = 4;
+            this.treeView1.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCollapse);
+            this.treeView1.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterExpand);
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "");
+            this.imageList1.Images.SetKeyName(1, "");
+            // 
+            // uc_db
+            // 
+            this.Controls.Add(this.groupBox1);
+            this.Name = "uc_db";
+            this.Size = new System.Drawing.Size(744, 608);
+            this.Resize += new System.EventHandler(this.uc_db_Resize);
+            this.groupBox1.ResumeLayout(false);
+            this.grpMdb.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -608,5 +618,15 @@ namespace FIA_Biosum_Manager
 				this.m_intError=-1;
 			}
 		}
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "MANAGE_TABLES" });
+
+        }
 	}
 }

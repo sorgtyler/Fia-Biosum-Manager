@@ -41,6 +41,11 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Button btnHelp;
 		private System.Windows.Forms.Button btnCopyToSameDbFile;
+
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultDatabaseXPSFile;
+
 		
 		/// <summary> 
 		/// Required designer variable.
@@ -52,6 +57,7 @@ namespace FIA_Biosum_Manager
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
             this.strAction="";
+            this.m_oEnv = new env();
 			// TODO: Add any initialization after the InitializeComponent call
 
 		}
@@ -62,6 +68,7 @@ namespace FIA_Biosum_Manager
 			this.strAction="";
 			this.m_strDataSourceMDBFile=p_strProjectMDBFile.Trim();
 			this.m_strDataSourceTable = "datasource";
+            this.m_oEnv = new env();
 			// TODO: Add any initialization after the InitializeComponent call
 
 		}
@@ -73,6 +80,7 @@ namespace FIA_Biosum_Manager
 			this.m_strDataSourceMDBFile = p_strScenarioMDBFile.Trim();
 			this.m_strDataSourceTable = "scenario_datasource";
 			this.m_strScenarioId=p_strScenarioId;
+            this.m_oEnv = new env();
 			// TODO: Add any initialization after the InitializeComponent call
 
 		}
@@ -99,255 +107,257 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.lblProgress = new System.Windows.Forms.Label();
-			this.groupBox4 = new System.Windows.Forms.GroupBox();
-			this.btnTableName = new System.Windows.Forms.Button();
-			this.lblNewTable = new System.Windows.Forms.Label();
-			this.lblNewMDBFile = new System.Windows.Forms.Label();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.btnCommitChange = new System.Windows.Forms.Button();
-			this.btnClose = new System.Windows.Forms.Button();
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.btnCopyToSameDbFile = new System.Windows.Forms.Button();
-			this.btnCopy = new System.Windows.Forms.Button();
-			this.lblTable = new System.Windows.Forms.Label();
-			this.btnMove = new System.Windows.Forms.Button();
-			this.btnFile = new System.Windows.Forms.Button();
-			this.lblMDBFile = new System.Windows.Forms.Label();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.lblTableType = new System.Windows.Forms.Label();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.groupBox4.SuspendLayout();
-			this.groupBox3.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.btnHelp);
-			this.groupBox1.Controls.Add(this.progressBar1);
-			this.groupBox1.Controls.Add(this.lblProgress);
-			this.groupBox1.Controls.Add(this.groupBox4);
-			this.groupBox1.Controls.Add(this.btnCancel);
-			this.groupBox1.Controls.Add(this.btnCommitChange);
-			this.groupBox1.Controls.Add(this.btnClose);
-			this.groupBox1.Controls.Add(this.groupBox3);
-			this.groupBox1.Controls.Add(this.groupBox2);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(696, 464);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			// 
-			// btnHelp
-			// 
-			this.btnHelp.Location = new System.Drawing.Point(8, 416);
-			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.Size = new System.Drawing.Size(96, 32);
-			this.btnHelp.TabIndex = 35;
-			this.btnHelp.Text = "Help";
-			// 
-			// progressBar1
-			// 
-			this.progressBar1.Location = new System.Drawing.Point(224, 424);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(240, 8);
-			this.progressBar1.TabIndex = 34;
-			this.progressBar1.Visible = false;
-			// 
-			// lblProgress
-			// 
-			this.lblProgress.Location = new System.Drawing.Point(208, 440);
-			this.lblProgress.Name = "lblProgress";
-			this.lblProgress.Size = new System.Drawing.Size(360, 16);
-			this.lblProgress.TabIndex = 33;
-			this.lblProgress.Text = "lblProgress";
-			this.lblProgress.Visible = false;
-			// 
-			// groupBox4
-			// 
-			this.groupBox4.Controls.Add(this.btnTableName);
-			this.groupBox4.Controls.Add(this.lblNewTable);
-			this.groupBox4.Controls.Add(this.lblNewMDBFile);
-			this.groupBox4.Location = new System.Drawing.Point(8, 280);
-			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(680, 80);
-			this.groupBox4.TabIndex = 32;
-			this.groupBox4.TabStop = false;
-			this.groupBox4.Text = "New Database File And Table";
-			// 
-			// btnTableName
-			// 
-			this.btnTableName.Location = new System.Drawing.Point(290, 46);
-			this.btnTableName.Name = "btnTableName";
-			this.btnTableName.Size = new System.Drawing.Size(120, 24);
-			this.btnTableName.TabIndex = 2;
-			this.btnTableName.Text = "Change Table Name";
-			this.btnTableName.Click += new System.EventHandler(this.btnTableName_Click);
-			// 
-			// lblNewTable
-			// 
-			this.lblNewTable.BackColor = System.Drawing.Color.White;
-			this.lblNewTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.lblNewTable.Location = new System.Drawing.Point(16, 48);
-			this.lblNewTable.Name = "lblNewTable";
-			this.lblNewTable.Size = new System.Drawing.Size(256, 16);
-			this.lblNewTable.TabIndex = 1;
-			// 
-			// lblNewMDBFile
-			// 
-			this.lblNewMDBFile.BackColor = System.Drawing.Color.White;
-			this.lblNewMDBFile.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.lblNewMDBFile.Location = new System.Drawing.Point(16, 24);
-			this.lblNewMDBFile.Name = "lblNewMDBFile";
-			this.lblNewMDBFile.Size = new System.Drawing.Size(648, 16);
-			this.lblNewMDBFile.TabIndex = 0;
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Location = new System.Drawing.Point(336, 376);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(72, 40);
-			this.btnCancel.TabIndex = 31;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// btnCommitChange
-			// 
-			this.btnCommitChange.Location = new System.Drawing.Point(264, 376);
-			this.btnCommitChange.Name = "btnCommitChange";
-			this.btnCommitChange.Size = new System.Drawing.Size(72, 40);
-			this.btnCommitChange.TabIndex = 30;
-			this.btnCommitChange.Text = "Commit Change";
-			this.btnCommitChange.Click += new System.EventHandler(this.btnCommitChange_Click);
-			// 
-			// btnClose
-			// 
-			this.btnClose.Location = new System.Drawing.Point(592, 416);
-			this.btnClose.Name = "btnClose";
-			this.btnClose.Size = new System.Drawing.Size(96, 32);
-			this.btnClose.TabIndex = 29;
-			this.btnClose.Text = "Close";
-			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-			// 
-			// groupBox3
-			// 
-			this.groupBox3.Controls.Add(this.btnCopyToSameDbFile);
-			this.groupBox3.Controls.Add(this.btnCopy);
-			this.groupBox3.Controls.Add(this.lblTable);
-			this.groupBox3.Controls.Add(this.btnMove);
-			this.groupBox3.Controls.Add(this.btnFile);
-			this.groupBox3.Controls.Add(this.lblMDBFile);
-			this.groupBox3.Location = new System.Drawing.Point(8, 104);
-			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(680, 160);
-			this.groupBox3.TabIndex = 27;
-			this.groupBox3.TabStop = false;
-			this.groupBox3.Text = "Current Database File And Table";
-			// 
-			// btnCopyToSameDbFile
-			// 
-			this.btnCopyToSameDbFile.Location = new System.Drawing.Point(272, 80);
-			this.btnCopyToSameDbFile.Name = "btnCopyToSameDbFile";
-			this.btnCopyToSameDbFile.Size = new System.Drawing.Size(328, 24);
-			this.btnCopyToSameDbFile.TabIndex = 30;
-			this.btnCopyToSameDbFile.Text = "Copy Table To Same Db File And Assign A New Table Name";
-			this.btnCopyToSameDbFile.Click += new System.EventHandler(this.btnCopyToSameDbFile_Click);
-			// 
-			// btnCopy
-			// 
-			this.btnCopy.Location = new System.Drawing.Point(16, 128);
-			this.btnCopy.Name = "btnCopy";
-			this.btnCopy.Size = new System.Drawing.Size(256, 24);
-			this.btnCopy.TabIndex = 29;
-			this.btnCopy.Text = "Copy Table To A Different MS Access Db File";
-			this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
-			// 
-			// lblTable
-			// 
-			this.lblTable.BackColor = System.Drawing.Color.White;
-			this.lblTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.lblTable.Location = new System.Drawing.Point(16, 48);
-			this.lblTable.Name = "lblTable";
-			this.lblTable.Size = new System.Drawing.Size(256, 16);
-			this.lblTable.TabIndex = 28;
-			// 
-			// btnMove
-			// 
-			this.btnMove.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.btnMove.Location = new System.Drawing.Point(16, 104);
-			this.btnMove.Name = "btnMove";
-			this.btnMove.Size = new System.Drawing.Size(256, 24);
-			this.btnMove.TabIndex = 27;
-			this.btnMove.Text = "Move Table To A Different MS Access Db  File";
-			this.btnMove.Click += new System.EventHandler(this.btnMove_Click);
-			// 
-			// btnFile
-			// 
-			this.btnFile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.btnFile.Location = new System.Drawing.Point(16, 80);
-			this.btnFile.Name = "btnFile";
-			this.btnFile.Size = new System.Drawing.Size(256, 24);
-			this.btnFile.TabIndex = 8;
-			this.btnFile.Text = "Get An MS Access Db File And Table";
-			this.btnFile.Click += new System.EventHandler(this.btnFile_Click);
-			// 
-			// lblMDBFile
-			// 
-			this.lblMDBFile.BackColor = System.Drawing.Color.White;
-			this.lblMDBFile.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.lblMDBFile.Location = new System.Drawing.Point(16, 24);
-			this.lblMDBFile.Name = "lblMDBFile";
-			this.lblMDBFile.Size = new System.Drawing.Size(648, 16);
-			this.lblMDBFile.TabIndex = 0;
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Controls.Add(this.lblTableType);
-			this.groupBox2.Location = new System.Drawing.Point(8, 56);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(680, 40);
-			this.groupBox2.TabIndex = 26;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Table Type";
-			// 
-			// lblTableType
-			// 
-			this.lblTableType.BackColor = System.Drawing.Color.White;
-			this.lblTableType.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.lblTableType.Location = new System.Drawing.Point(16, 16);
-			this.lblTableType.Name = "lblTableType";
-			this.lblTableType.Size = new System.Drawing.Size(648, 16);
-			this.lblTableType.TabIndex = 0;
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(3, 16);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Size = new System.Drawing.Size(690, 32);
-			this.lblTitle.TabIndex = 25;
-			this.lblTitle.Text = "Data Source Edit";
-			// 
-			// uc_datasource_edit
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_datasource_edit";
-			this.Size = new System.Drawing.Size(696, 464);
-			this.Resize += new System.EventHandler(this.uc_datasource_edit_Resize);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox4.ResumeLayout(false);
-			this.groupBox3.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblProgress = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnTableName = new System.Windows.Forms.Button();
+            this.lblNewTable = new System.Windows.Forms.Label();
+            this.lblNewMDBFile = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnCommitChange = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnCopyToSameDbFile = new System.Windows.Forms.Button();
+            this.btnCopy = new System.Windows.Forms.Button();
+            this.lblTable = new System.Windows.Forms.Label();
+            this.btnMove = new System.Windows.Forms.Button();
+            this.btnFile = new System.Windows.Forms.Button();
+            this.lblMDBFile = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lblTableType = new System.Windows.Forms.Label();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnHelp);
+            this.groupBox1.Controls.Add(this.progressBar1);
+            this.groupBox1.Controls.Add(this.lblProgress);
+            this.groupBox1.Controls.Add(this.groupBox4);
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.btnCommitChange);
+            this.groupBox1.Controls.Add(this.btnClose);
+            this.groupBox1.Controls.Add(this.groupBox3);
+            this.groupBox1.Controls.Add(this.groupBox2);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(696, 464);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(8, 416);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 35;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(224, 424);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(240, 8);
+            this.progressBar1.TabIndex = 34;
+            this.progressBar1.Visible = false;
+            // 
+            // lblProgress
+            // 
+            this.lblProgress.Location = new System.Drawing.Point(208, 440);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(360, 16);
+            this.lblProgress.TabIndex = 33;
+            this.lblProgress.Text = "lblProgress";
+            this.lblProgress.Visible = false;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.btnTableName);
+            this.groupBox4.Controls.Add(this.lblNewTable);
+            this.groupBox4.Controls.Add(this.lblNewMDBFile);
+            this.groupBox4.Location = new System.Drawing.Point(8, 280);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(680, 80);
+            this.groupBox4.TabIndex = 32;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "New Database File And Table";
+            // 
+            // btnTableName
+            // 
+            this.btnTableName.Location = new System.Drawing.Point(290, 46);
+            this.btnTableName.Name = "btnTableName";
+            this.btnTableName.Size = new System.Drawing.Size(120, 24);
+            this.btnTableName.TabIndex = 2;
+            this.btnTableName.Text = "Change Table Name";
+            this.btnTableName.Click += new System.EventHandler(this.btnTableName_Click);
+            // 
+            // lblNewTable
+            // 
+            this.lblNewTable.BackColor = System.Drawing.Color.White;
+            this.lblNewTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblNewTable.Location = new System.Drawing.Point(16, 48);
+            this.lblNewTable.Name = "lblNewTable";
+            this.lblNewTable.Size = new System.Drawing.Size(256, 16);
+            this.lblNewTable.TabIndex = 1;
+            // 
+            // lblNewMDBFile
+            // 
+            this.lblNewMDBFile.BackColor = System.Drawing.Color.White;
+            this.lblNewMDBFile.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblNewMDBFile.Location = new System.Drawing.Point(16, 24);
+            this.lblNewMDBFile.Name = "lblNewMDBFile";
+            this.lblNewMDBFile.Size = new System.Drawing.Size(648, 16);
+            this.lblNewMDBFile.TabIndex = 0;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(336, 376);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(72, 40);
+            this.btnCancel.TabIndex = 31;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnCommitChange
+            // 
+            this.btnCommitChange.Location = new System.Drawing.Point(264, 376);
+            this.btnCommitChange.Name = "btnCommitChange";
+            this.btnCommitChange.Size = new System.Drawing.Size(72, 40);
+            this.btnCommitChange.TabIndex = 30;
+            this.btnCommitChange.Text = "Commit Change";
+            this.btnCommitChange.Click += new System.EventHandler(this.btnCommitChange_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(592, 416);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(96, 32);
+            this.btnClose.TabIndex = 29;
+            this.btnClose.Text = "Close";
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.btnCopyToSameDbFile);
+            this.groupBox3.Controls.Add(this.btnCopy);
+            this.groupBox3.Controls.Add(this.lblTable);
+            this.groupBox3.Controls.Add(this.btnMove);
+            this.groupBox3.Controls.Add(this.btnFile);
+            this.groupBox3.Controls.Add(this.lblMDBFile);
+            this.groupBox3.Location = new System.Drawing.Point(8, 104);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(680, 160);
+            this.groupBox3.TabIndex = 27;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Current Database File And Table";
+            // 
+            // btnCopyToSameDbFile
+            // 
+            this.btnCopyToSameDbFile.Location = new System.Drawing.Point(272, 80);
+            this.btnCopyToSameDbFile.Name = "btnCopyToSameDbFile";
+            this.btnCopyToSameDbFile.Size = new System.Drawing.Size(328, 24);
+            this.btnCopyToSameDbFile.TabIndex = 30;
+            this.btnCopyToSameDbFile.Text = "Copy Table To Same Db File And Assign A New Table Name";
+            this.btnCopyToSameDbFile.Click += new System.EventHandler(this.btnCopyToSameDbFile_Click);
+            // 
+            // btnCopy
+            // 
+            this.btnCopy.Location = new System.Drawing.Point(16, 128);
+            this.btnCopy.Name = "btnCopy";
+            this.btnCopy.Size = new System.Drawing.Size(256, 24);
+            this.btnCopy.TabIndex = 29;
+            this.btnCopy.Text = "Copy Table To A Different MS Access Db File";
+            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
+            // 
+            // lblTable
+            // 
+            this.lblTable.BackColor = System.Drawing.Color.White;
+            this.lblTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTable.Location = new System.Drawing.Point(16, 48);
+            this.lblTable.Name = "lblTable";
+            this.lblTable.Size = new System.Drawing.Size(256, 16);
+            this.lblTable.TabIndex = 28;
+            // 
+            // btnMove
+            // 
+            this.btnMove.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMove.Location = new System.Drawing.Point(16, 104);
+            this.btnMove.Name = "btnMove";
+            this.btnMove.Size = new System.Drawing.Size(256, 24);
+            this.btnMove.TabIndex = 27;
+            this.btnMove.Text = "Move Table To A Different MS Access Db  File";
+            this.btnMove.Click += new System.EventHandler(this.btnMove_Click);
+            // 
+            // btnFile
+            // 
+            this.btnFile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnFile.Location = new System.Drawing.Point(16, 80);
+            this.btnFile.Name = "btnFile";
+            this.btnFile.Size = new System.Drawing.Size(256, 24);
+            this.btnFile.TabIndex = 8;
+            this.btnFile.Text = "Get An MS Access Db File And Table";
+            this.btnFile.Click += new System.EventHandler(this.btnFile_Click);
+            // 
+            // lblMDBFile
+            // 
+            this.lblMDBFile.BackColor = System.Drawing.Color.White;
+            this.lblMDBFile.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblMDBFile.Location = new System.Drawing.Point(16, 24);
+            this.lblMDBFile.Name = "lblMDBFile";
+            this.lblMDBFile.Size = new System.Drawing.Size(648, 16);
+            this.lblMDBFile.TabIndex = 0;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.lblTableType);
+            this.groupBox2.Location = new System.Drawing.Point(8, 56);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(680, 40);
+            this.groupBox2.TabIndex = 26;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Table Type";
+            // 
+            // lblTableType
+            // 
+            this.lblTableType.BackColor = System.Drawing.Color.White;
+            this.lblTableType.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTableType.Location = new System.Drawing.Point(16, 16);
+            this.lblTableType.Name = "lblTableType";
+            this.lblTableType.Size = new System.Drawing.Size(648, 16);
+            this.lblTableType.TabIndex = 0;
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(3, 16);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(690, 32);
+            this.lblTitle.TabIndex = 25;
+            this.lblTitle.Text = "Data Source Edit";
+            // 
+            // uc_datasource_edit
+            // 
+            this.Controls.Add(this.groupBox1);
+            this.Name = "uc_datasource_edit";
+            this.Size = new System.Drawing.Size(696, 464);
+            this.Resize += new System.EventHandler(this.uc_datasource_edit_Resize);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -1402,6 +1412,15 @@ namespace FIA_Biosum_Manager
 				this.m_strScenarioId = value;
 			}
 		}
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "EDIT_DATA_SOURCE" });
+        }
 
 
 	}
