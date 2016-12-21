@@ -4464,9 +4464,13 @@ namespace FIA_Biosum_Manager
                 dao_data_access oDao = new dao_data_access();
                 string strDestinationDbFile = strDirectoryPath + "\\" + strFileName;
                 string strDestinationTableName = "harvestmethod_worktable";
+                string strDestinationSpeciesTableName = "tree_species_577";
                 string strSourceDbFile=frmMain.g_oEnv. strAppDir.Trim() + "\\db\\ref_master.mdb";
 
+                // Harvest Methods table
                 oDao.CreateTableLink(strDestinationDbFile, strDestinationTableName, strSourceDbFile, Tables.Reference.DefaultHarvestMethodsTableName);
+                // Tree Species table
+                oDao.CreateTableLink(strDestinationDbFile, strDestinationSpeciesTableName + "_worktable", strSourceDbFile, Tables.Reference.DefaultTreeSpeciesTableName);
                 oDao.m_DaoWorkspace.Close();
                 
 
@@ -4475,15 +4479,26 @@ namespace FIA_Biosum_Manager
                 //drop existing table
                 string strSql = "DROP TABLE " + strSourceTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
-                //copy contents of new table into place
+                //copy contents of new harvest methods table into place
                 strSql = "SELECT * INTO " + Tables.Reference.DefaultHarvestMethodsTableName + " FROM " + strDestinationTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
-                //drop the table link
+                //copy contents of new tree species table into place
+                strSql = "SELECT * INTO " + strDestinationSpeciesTableName + " FROM " + strDestinationSpeciesTableName + "_worktable";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
+
+                //drop the harvest methods table link
                 if (oAdo.TableExist(oAdo.m_OleDbConnection, strDestinationTableName))
                 {
                     strSql = "DROP TABLE " + strDestinationTableName;
                     oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 }
+                //drop the tree species table link
+                if (oAdo.TableExist(oAdo.m_OleDbConnection, strDestinationSpeciesTableName))
+                {
+                    strSql = "DROP TABLE " + strDestinationSpeciesTableName + "_worktable";
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
+                }
+
 
                 //open connection to DATASOURce database
                 oAdo.OpenConnection(oAdo.getMDBConnString(oDs.m_strDataSourceMDBFile, "", ""));
