@@ -5538,7 +5538,7 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile, false);
+                        m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile, false);
                     }
                         
                     if (m_intError == 0)
@@ -5546,7 +5546,7 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        mainProcessor.createOpcostInput(m_oQueries.m_strTempDbFile);
+                        m_intError = mainProcessor.createOpcostInput(m_oQueries.m_strTempDbFile);
                     }
                         
                     if (m_intError == 0)
@@ -5554,7 +5554,7 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, m_oQueries.m_strTempDbFile, false);
+                        m_intError = mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, m_oQueries.m_strTempDbFile, false);
                     }
 
                     if (m_intError == 0)

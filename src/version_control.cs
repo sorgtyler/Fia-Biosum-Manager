@@ -4458,7 +4458,7 @@ namespace FIA_Biosum_Manager
 
             ado_data_access oAdo = new ado_data_access();
 
-            // Create table link of the application db ref_master harvest method table
+            // Create table link of the application db ref_master harvest method table and tree species table
             if (strFileStatus == "F" && strTableStatus == "F")
             {
                 dao_data_access oDao = new dao_data_access();
@@ -4476,7 +4476,7 @@ namespace FIA_Biosum_Manager
 
                 //open connection to destination database
                 oAdo.OpenConnection(oAdo.getMDBConnString(strDestinationDbFile, "", ""));
-                //drop existing table
+                //drop existing harvest methods table
                 string strSql = "DROP TABLE " + strSourceTableName;
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                 //copy contents of new harvest methods table into place
@@ -4511,24 +4511,45 @@ namespace FIA_Biosum_Manager
             }
 
 
-            frmMain.g_sbpInfo.Text = "Version Update: Creating GenericMerchAsPercentOfTotalVol column in scenario_harvest_method table...Stand by";
+            frmMain.g_sbpInfo.Text = "Version Update: Creating 3 new columns in scenario_harvest_method table...Stand by";
 
             string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db";
             //open the scenario_processor_rule_definitions.mdb file
             oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
 
-            //update the generic merch as percent of total factor
-            string strMerchFactorCol = "GenericMerchAsPercentOfTotalVol";
-            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strMerchFactorCol))
+            //update the woodland as percent of total
+            string strWoodlandMarchPctCol = "WoodlandMerchAsPercentOfTotalVol";
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strWoodlandMarchPctCol))
             {
-                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strMerchFactorCol, "INTEGER", "");
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strWoodlandMarchPctCol, "INTEGER", "");
 
-                // Set adj factor to 70 for new column
+                // Set adj factor to 80 for new column
                 oAdo.m_strSQL = "UPDATE " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " " +
-                    "SET " + strMerchFactorCol + " = 70";
+                    "SET " + strWoodlandMarchPctCol + " = 80";
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             }
 
+            string strSaplingMerchPctCol = "SaplingMerchAsPercentOfTotalVol";
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strSaplingMerchPctCol))
+            {
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strSaplingMerchPctCol, "INTEGER", "");
+
+                // Set adj factor to 80 for new column
+                oAdo.m_strSQL = "UPDATE " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " " +
+                    "SET " + strSaplingMerchPctCol + " = 60";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            }
+
+            string strCullPctThreshold = "CullPctThreshold";
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strCullPctThreshold))
+            {
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, strCullPctThreshold, "INTEGER", "");
+
+                // Set adj factor to 80 for new column
+                oAdo.m_strSQL = "UPDATE " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " " +
+                    "SET " + strCullPctThreshold + " = 50";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            }
             //rename the FRCS System Harvest Method table in scenario_processor_rule_definitions.mdb
             oAdo.m_strSQL = "UPDATE " + Tables.Scenario.DefaultScenarioDatasourceTableName + " SET table_type = 'Harvest Methods', " +
                             "table_name = '" + Tables.Reference.DefaultHarvestMethodsTableName + "' " +

@@ -230,13 +230,13 @@ namespace FIA_Biosum_Manager
             return 0;
         }
 
-        public void updateTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile, bool blnCreateReconcilationTable)
+        public int updateTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile, bool blnCreateReconcilationTable)
         {
             if (m_trees.Count < 1)
             {
                 System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n Auxillary tree data cannot be appended",
                     "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return -1;
             }
 
             m_strTempDbFile = strTempDbFile;
@@ -247,6 +247,13 @@ namespace FIA_Biosum_Manager
             IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
             //Load diameter groups into reference list
             List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
+
+            if (dictTreeSpecies == null)
+            {
+                System.Windows.MessageBox.Show("Some reference data is unavailable. Processor cannot continue. Process halted!",
+                    "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return -1;
+            }
             
             //Query TREE table to get original FIA species codes
             m_oAdo = new ado_data_access();
@@ -358,6 +365,7 @@ namespace FIA_Biosum_Manager
                 m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
                 m_oAdo = null;
             }
+            return 0;
         }
 
         private void createTreeReconcilationTable(string p_strVariant)
@@ -422,7 +430,7 @@ namespace FIA_Biosum_Manager
             m_oAdo = null;
         }
         
-        public void createOpcostInput(string strTempDbFile)
+        public int createOpcostInput(string strTempDbFile)
         {
             m_strTempDbFile = strTempDbFile;
             int intHwdSpeciesCodeThreshold = 299; // Species codes greater than this are hardwoods
@@ -430,7 +438,7 @@ namespace FIA_Biosum_Manager
             {
                 System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n The OpCost input file cannot be created",
                     "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return -1;
             }
 
             // create connection to database
@@ -626,21 +634,27 @@ namespace FIA_Biosum_Manager
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "END createOpcostInput INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
 
+                    // Always close the connection
+                    m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+                    m_oAdo = null;
+                    
+                    return 0;
                 }
             }
             
             // Always close the connection
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             m_oAdo = null;
+            return -1;
         }
 
-        public void createTreeVolValWorkTable(string strDateTimeCreated, string strTempDbFile, bool blnInclHarvMethodCat)
+        public int createTreeVolValWorkTable(string strDateTimeCreated, string strTempDbFile, bool blnInclHarvMethodCat)
         {
             if (m_trees.Count < 1)
             {
                 System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n The tree vol val cannot be created",
                     "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return -1;
             }
 
             
@@ -848,7 +862,19 @@ namespace FIA_Biosum_Manager
                 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "END createTreeVolValWorkTable INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
+
+                // Always close the connection
+                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+                m_oAdo = null;
+
+                return 0;
             }
+
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return -1;
         }
 
         private List<treeDiamGroup> loadTreeDiamGroups()
@@ -885,6 +911,15 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
+                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultTreeSpeciesTableName, "WOODLAND_YN"))
+                {
+                    MessageBox.Show("The WOODLAND_YN field is missing from the tree_species table. " +
+                                    "The most likely cause is having an outdated tree_species table. " +
+                                    "Please check the migration instructions for v5.7.7.", 
+                                    "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+                
                 string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " + 
                                 Tables.Reference.DefaultTreeSpeciesTableName +
                                 " WHERE FVS_VARIANT = '" + p_strVariant + "' " +
