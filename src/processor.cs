@@ -630,16 +630,16 @@ namespace FIA_Biosum_Manager
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
                     lngCount++;
-
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "END createOpcostInput INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
-
-                    // Always close the connection
-                    m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-                    m_oAdo = null;
-                    
-                    return 0;
                 }
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "END createOpcostInput INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
+
+                // Always close the connection
+                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+                m_oAdo = null;
+
+                return 0;
             }
             
             // Always close the connection
