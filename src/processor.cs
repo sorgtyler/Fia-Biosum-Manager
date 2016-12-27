@@ -580,7 +580,7 @@ namespace FIA_Biosum_Manager
                     {
                         dblSmLogMerchPctTotal = nextStand.SmLogMerchVolCfPa / nextStand.SmLogVolCfPa * 100;
                         dblSmLogChipPct_Cat1_3 = nextStand.SmLogNonCommMerchVolCfPa / nextStand.SmLogVolCfPa * 100;
-                        dblSmLogChipPct_Cat2_4 = (nextStand.SmLogNonCommMerchVolCfPa + nextStand.SmLogCommNonMerchVolCfPa) / nextStand.SmLogVolCfPa * 100;
+                        dblSmLogChipPct_Cat2_4 = (nextStand.SmLogNonCommVolCfPa + nextStand.SmLogCommNonMerchVolCfPa) / nextStand.SmLogVolCfPa * 100;
                         dblSmLogChipPct_Cat5 = nextStand.SmLogNonCommVolCfPa / nextStand.SmLogVolCfPa * 100;
                         dblSmLogAvgDensity = nextStand.SmLogWtGtPa * 2000 / nextStand.SmLogVolCfPa;
                         dblSmLogHwdPct = nextStand.SmLogHwdVolCfPa / nextStand.SmLogVolCfPa * 100; 
