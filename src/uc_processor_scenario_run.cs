@@ -1226,7 +1226,8 @@ namespace FIA_Biosum_Manager
         private void btnRun_Click(object sender, EventArgs e)
         {
 
-            if (this.btnRun.Text.Trim().ToUpper() == "CANCEL")
+            //@ToDo: Take this out when we only have one run button
+            if (this.btnRun.Text.Trim().ToUpper() == "CANCEL" || this.btnRunNew.Text.Trim().ToUpper() == "CANCEL")
             {
                 bool bAbort = frmMain.g_oDelegate.AbortProcessing("QATools", "Cancel Running The Processor Scenario (Y/N)?");
                 if (bAbort)
@@ -5538,7 +5539,10 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile, false);
+                        bool blnCreateReconcileTreesTable = false;
+                        // print reconcile trees table if debug at highest level; This will be in temporary .accdb
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2) { blnCreateReconcileTreesTable = true; }
+                        m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile, blnCreateReconcileTreesTable);
                     }
                         
                     if (m_intError == 0)
