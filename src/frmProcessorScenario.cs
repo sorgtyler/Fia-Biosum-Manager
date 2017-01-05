@@ -52,6 +52,7 @@ namespace FIA_Biosum_Manager
         public FIA_Biosum_Manager.ProcessorScenarioTools m_oProcessorScenarioTools = new ProcessorScenarioTools();
 
         public int m_intError = 0;
+        private ToolBarButton btnScenarioCopy;
         
         
         public string m_strError = "";
@@ -160,6 +161,7 @@ namespace FIA_Biosum_Manager
             this.btnScenarioSave = new System.Windows.Forms.ToolBarButton();
             this.btnScenarioDelete = new System.Windows.Forms.ToolBarButton();
             this.btnScenarioProperties = new System.Windows.Forms.ToolBarButton();
+            this.btnScenarioCopy = new System.Windows.Forms.ToolBarButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.btnClose = new System.Windows.Forms.Button();
             this.tabControlScenario = new System.Windows.Forms.TabControl();
@@ -169,14 +171,14 @@ namespace FIA_Biosum_Manager
             this.tbRules = new System.Windows.Forms.TabPage();
             this.tabControlRules = new System.Windows.Forms.TabControl();
             this.tbHarvestMethod = new System.Windows.Forms.TabPage();
-            this.tbWoodValue = new System.Windows.Forms.TabPage();
-            this.tbEscalators = new System.Windows.Forms.TabPage();
-            this.tbAddHarvestCosts = new System.Windows.Forms.TabPage();
-            this.tbRun = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_harvest_method1 = new FIA_Biosum_Manager.uc_processor_scenario_harvest_method();
+            this.tbWoodValue = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_merch_chip_value1 = new FIA_Biosum_Manager.uc_processor_scenario_merch_chip_value();
+            this.tbEscalators = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_escalators1 = new FIA_Biosum_Manager.uc_processor_scenario_escalators();
+            this.tbAddHarvestCosts = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_additional_harvest_cost_columns1 = new FIA_Biosum_Manager.uc_processor_scenario_additional_harvest_cost_columns();
+            this.tbRun = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_run1 = new FIA_Biosum_Manager.uc_processor_scenario_run();
             this.tabControlScenario.SuspendLayout();
             this.tbRules.SuspendLayout();
@@ -196,7 +198,8 @@ namespace FIA_Biosum_Manager
             this.toolBarButton1,
             this.btnScenarioSave,
             this.btnScenarioDelete,
-            this.btnScenarioProperties});
+            this.btnScenarioProperties,
+            this.btnScenarioCopy});
             this.tlbScenario.ButtonSize = new System.Drawing.Size(60, 45);
             this.tlbScenario.DropDownArrows = true;
             this.tlbScenario.ImageList = this.imageList1;
@@ -245,6 +248,13 @@ namespace FIA_Biosum_Manager
             this.btnScenarioProperties.ImageIndex = 4;
             this.btnScenarioProperties.Name = "btnScenarioProperties";
             this.btnScenarioProperties.Text = "Properties";
+            // 
+            // btnScenarioCopy
+            // 
+            this.btnScenarioCopy.ImageIndex = 4;
+            this.btnScenarioCopy.Name = "btnScenarioCopy";
+            this.btnScenarioCopy.Text = "Copy";
+            this.btnScenarioCopy.ToolTipText = "Copy scenario values to this scenario";
             // 
             // imageList1
             // 
@@ -350,51 +360,6 @@ namespace FIA_Biosum_Manager
             this.tbHarvestMethod.Text = "Harvest Method";
             this.tbHarvestMethod.UseVisualStyleBackColor = true;
             // 
-            // tbWoodValue
-            // 
-            this.tbWoodValue.Controls.Add(this.uc_processor_scenario_merch_chip_value1);
-            this.tbWoodValue.Location = new System.Drawing.Point(4, 22);
-            this.tbWoodValue.Name = "tbWoodValue";
-            this.tbWoodValue.Size = new System.Drawing.Size(891, 423);
-            this.tbWoodValue.TabIndex = 7;
-            this.tbWoodValue.Text = "Wood Value";
-            this.tbWoodValue.UseVisualStyleBackColor = true;
-            this.tbWoodValue.Visible = false;
-            // 
-            // tbEscalators
-            // 
-            this.tbEscalators.Controls.Add(this.uc_processor_scenario_escalators1);
-            this.tbEscalators.Location = new System.Drawing.Point(4, 22);
-            this.tbEscalators.Name = "tbEscalators";
-            this.tbEscalators.Size = new System.Drawing.Size(891, 423);
-            this.tbEscalators.TabIndex = 5;
-            this.tbEscalators.Text = "Escalators";
-            this.tbEscalators.UseVisualStyleBackColor = true;
-            this.tbEscalators.Visible = false;
-            // 
-            // tbAddHarvestCosts
-            // 
-            this.tbAddHarvestCosts.Controls.Add(this.uc_processor_scenario_additional_harvest_cost_columns1);
-            this.tbAddHarvestCosts.Location = new System.Drawing.Point(4, 22);
-            this.tbAddHarvestCosts.Name = "tbAddHarvestCosts";
-            this.tbAddHarvestCosts.Size = new System.Drawing.Size(891, 423);
-            this.tbAddHarvestCosts.TabIndex = 8;
-            this.tbAddHarvestCosts.Text = "Supplemental Harvest Costs";
-            this.tbAddHarvestCosts.UseVisualStyleBackColor = true;
-            this.tbAddHarvestCosts.Visible = false;
-            // 
-            // tbRun
-            // 
-            this.tbRun.BackColor = System.Drawing.SystemColors.Control;
-            this.tbRun.Controls.Add(this.uc_processor_scenario_run1);
-            this.tbRun.ForeColor = System.Drawing.Color.Black;
-            this.tbRun.Location = new System.Drawing.Point(4, 22);
-            this.tbRun.Name = "tbRun";
-            this.tbRun.Size = new System.Drawing.Size(891, 423);
-            this.tbRun.TabIndex = 6;
-            this.tbRun.Text = "Run";
-            this.tbRun.Visible = false;
-            // 
             // uc_processor_scenario_harvest_method1
             // 
             this.uc_processor_scenario_harvest_method1.BackColor = System.Drawing.SystemColors.Control;
@@ -405,6 +370,17 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_harvest_method1.ScenarioId = "";
             this.uc_processor_scenario_harvest_method1.Size = new System.Drawing.Size(891, 423);
             this.uc_processor_scenario_harvest_method1.TabIndex = 0;
+            // 
+            // tbWoodValue
+            // 
+            this.tbWoodValue.Controls.Add(this.uc_processor_scenario_merch_chip_value1);
+            this.tbWoodValue.Location = new System.Drawing.Point(4, 22);
+            this.tbWoodValue.Name = "tbWoodValue";
+            this.tbWoodValue.Size = new System.Drawing.Size(891, 423);
+            this.tbWoodValue.TabIndex = 7;
+            this.tbWoodValue.Text = "Wood Value";
+            this.tbWoodValue.UseVisualStyleBackColor = true;
+            this.tbWoodValue.Visible = false;
             // 
             // uc_processor_scenario_merch_chip_value1
             // 
@@ -417,6 +393,17 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_merch_chip_value1.Size = new System.Drawing.Size(891, 423);
             this.uc_processor_scenario_merch_chip_value1.TabIndex = 0;
             // 
+            // tbEscalators
+            // 
+            this.tbEscalators.Controls.Add(this.uc_processor_scenario_escalators1);
+            this.tbEscalators.Location = new System.Drawing.Point(4, 22);
+            this.tbEscalators.Name = "tbEscalators";
+            this.tbEscalators.Size = new System.Drawing.Size(891, 423);
+            this.tbEscalators.TabIndex = 5;
+            this.tbEscalators.Text = "Escalators";
+            this.tbEscalators.UseVisualStyleBackColor = true;
+            this.tbEscalators.Visible = false;
+            // 
             // uc_processor_scenario_escalators1
             // 
             this.uc_processor_scenario_escalators1.BackColor = System.Drawing.SystemColors.Control;
@@ -428,6 +415,17 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_escalators1.Size = new System.Drawing.Size(891, 423);
             this.uc_processor_scenario_escalators1.TabIndex = 0;
             // 
+            // tbAddHarvestCosts
+            // 
+            this.tbAddHarvestCosts.Controls.Add(this.uc_processor_scenario_additional_harvest_cost_columns1);
+            this.tbAddHarvestCosts.Location = new System.Drawing.Point(4, 22);
+            this.tbAddHarvestCosts.Name = "tbAddHarvestCosts";
+            this.tbAddHarvestCosts.Size = new System.Drawing.Size(891, 423);
+            this.tbAddHarvestCosts.TabIndex = 8;
+            this.tbAddHarvestCosts.Text = "Supplemental Harvest Costs";
+            this.tbAddHarvestCosts.UseVisualStyleBackColor = true;
+            this.tbAddHarvestCosts.Visible = false;
+            // 
             // uc_processor_scenario_additional_harvest_cost_columns1
             // 
             this.uc_processor_scenario_additional_harvest_cost_columns1.BackColor = System.Drawing.SystemColors.Control;
@@ -438,6 +436,18 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_additional_harvest_cost_columns1.ScenarioId = "";
             this.uc_processor_scenario_additional_harvest_cost_columns1.Size = new System.Drawing.Size(891, 423);
             this.uc_processor_scenario_additional_harvest_cost_columns1.TabIndex = 0;
+            // 
+            // tbRun
+            // 
+            this.tbRun.BackColor = System.Drawing.SystemColors.Control;
+            this.tbRun.Controls.Add(this.uc_processor_scenario_run1);
+            this.tbRun.ForeColor = System.Drawing.Color.Black;
+            this.tbRun.Location = new System.Drawing.Point(4, 22);
+            this.tbRun.Name = "tbRun";
+            this.tbRun.Size = new System.Drawing.Size(891, 423);
+            this.tbRun.TabIndex = 6;
+            this.tbRun.Text = "Run";
+            this.tbRun.Visible = false;
             // 
             // uc_processor_scenario_run1
             // 
@@ -525,6 +535,9 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     frmTemp.Show();
                     break;
+                case "COPY":
+                    CopyScenario();
+                    break;
 			}
 		}
 		public void InitializeNewScenario()
@@ -566,6 +579,8 @@ namespace FIA_Biosum_Manager
 			this.btnScenarioOpen.Enabled=false;
             this.btnScenarioProperties.Enabled = false;
             this.btnScenarioProperties.Visible = false;
+            this.btnScenarioCopy.Enabled = false;
+            this.btnScenarioCopy.Visible = false;
 
 			this.tabControlScenario.Hide();
 
@@ -961,8 +976,11 @@ namespace FIA_Biosum_Manager
                 uc_processor_scenario_run1.panel1_Resize();
             }
         }
-       
-       
+
+        private void CopyScenario()
+        {
+            frmDialog frmTemp = new frmDialog();
+        }
 
 	}
     public class ProcessorScenarioItem
@@ -2154,5 +2172,7 @@ namespace FIA_Biosum_Manager
             return strLine;
 
         }
+
     }
+
 }
