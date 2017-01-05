@@ -251,7 +251,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnScenarioCopy
             // 
-            this.btnScenarioCopy.ImageIndex = 4;
+            this.btnScenarioCopy.ImageIndex = 5;
             this.btnScenarioCopy.Name = "btnScenarioCopy";
             this.btnScenarioCopy.Text = "Copy";
             this.btnScenarioCopy.ToolTipText = "Copy scenario values to this scenario";
@@ -265,6 +265,7 @@ namespace FIA_Biosum_Manager
             this.imageList1.Images.SetKeyName(2, "");
             this.imageList1.Images.SetKeyName(3, "");
             this.imageList1.Images.SetKeyName(4, "properties.png");
+            this.imageList1.Images.SetKeyName(5, "copy.bmp");
             // 
             // btnClose
             // 
