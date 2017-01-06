@@ -35,7 +35,7 @@ namespace FIA_Biosum_Manager
             this.btnCopy = new System.Windows.Forms.Button();
             this.chkFullDetails = new System.Windows.Forms.CheckBox();
             this.txtDetails = new System.Windows.Forms.TextBox();
-            this.lvCoreAnalysisScenario = new System.Windows.Forms.ListView();
+            this.lvProcessorScenario = new System.Windows.Forms.ListView();
             this.colCheckBox = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colScenarioId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colDesc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -63,7 +63,7 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.btnCopy);
             this.panel1.Controls.Add(this.chkFullDetails);
             this.panel1.Controls.Add(this.txtDetails);
-            this.panel1.Controls.Add(this.lvCoreAnalysisScenario);
+            this.panel1.Controls.Add(this.lvProcessorScenario);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 48);
             this.panel1.Name = "panel1";
@@ -124,25 +124,25 @@ namespace FIA_Biosum_Manager
             this.txtDetails.Size = new System.Drawing.Size(769, 174);
             this.txtDetails.TabIndex = 1;
             // 
-            // lvCoreAnalysisScenario
+            // lvProcessorScenario
             // 
-            this.lvCoreAnalysisScenario.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvProcessorScenario.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colCheckBox,
             this.colScenarioId,
             this.colDesc});
-            this.lvCoreAnalysisScenario.GridLines = true;
-            this.lvCoreAnalysisScenario.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvCoreAnalysisScenario.Location = new System.Drawing.Point(12, 18);
-            this.lvCoreAnalysisScenario.MultiSelect = false;
-            this.lvCoreAnalysisScenario.Name = "lvCoreAnalysisScenario";
-            this.lvCoreAnalysisScenario.Size = new System.Drawing.Size(769, 160);
-            this.lvCoreAnalysisScenario.TabIndex = 0;
-            this.lvCoreAnalysisScenario.UseCompatibleStateImageBehavior = false;
-            this.lvCoreAnalysisScenario.View = System.Windows.Forms.View.Details;
-            this.lvCoreAnalysisScenario.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvCoreAnalysisScenario_ItemCheck);
-            this.lvCoreAnalysisScenario.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvCoreAnalysisScenario_ItemChecked);
-            this.lvCoreAnalysisScenario.SelectedIndexChanged += new System.EventHandler(this.lvCoreAnalysisScenario_SelectedIndexChanged);
-            this.lvCoreAnalysisScenario.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvCoreAnalysisScenario_MouseUp);
+            this.lvProcessorScenario.GridLines = true;
+            this.lvProcessorScenario.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lvProcessorScenario.Location = new System.Drawing.Point(12, 18);
+            this.lvProcessorScenario.MultiSelect = false;
+            this.lvProcessorScenario.Name = "lvProcessorScenario";
+            this.lvProcessorScenario.Size = new System.Drawing.Size(769, 160);
+            this.lvProcessorScenario.TabIndex = 0;
+            this.lvProcessorScenario.UseCompatibleStateImageBehavior = false;
+            this.lvProcessorScenario.View = System.Windows.Forms.View.Details;
+            this.lvProcessorScenario.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvCoreAnalysisScenario_ItemCheck);
+            this.lvProcessorScenario.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvCoreAnalysisScenario_ItemChecked);
+            this.lvProcessorScenario.SelectedIndexChanged += new System.EventHandler(this.lvCoreAnalysisScenario_SelectedIndexChanged);
+            this.lvProcessorScenario.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvCoreAnalysisScenario_MouseUp);
             // 
             // colCheckBox
             // 
@@ -168,7 +168,7 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(798, 32);
             this.lblTitle.TabIndex = 27;
-            this.lblTitle.Text = "Copy Core Analysis Scenario";
+            this.lblTitle.Text = "Copy Processor Scenario";
             // 
             // uc_processor_scenario_copy
             // 
@@ -190,7 +190,7 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.TextBox txtDetails;
-        private System.Windows.Forms.ListView lvCoreAnalysisScenario;
+        private System.Windows.Forms.ListView lvProcessorScenario;
         private System.Windows.Forms.CheckBox chkFullDetails;
         private System.Windows.Forms.ColumnHeader colScenarioId;
         private System.Windows.Forms.ColumnHeader colDesc;
