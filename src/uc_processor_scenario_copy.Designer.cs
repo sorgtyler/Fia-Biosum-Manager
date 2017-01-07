@@ -139,10 +139,10 @@ namespace FIA_Biosum_Manager
             this.lvProcessorScenario.TabIndex = 0;
             this.lvProcessorScenario.UseCompatibleStateImageBehavior = false;
             this.lvProcessorScenario.View = System.Windows.Forms.View.Details;
-            this.lvProcessorScenario.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvCoreAnalysisScenario_ItemCheck);
-            this.lvProcessorScenario.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvCoreAnalysisScenario_ItemChecked);
-            this.lvProcessorScenario.SelectedIndexChanged += new System.EventHandler(this.lvCoreAnalysisScenario_SelectedIndexChanged);
-            this.lvProcessorScenario.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvCoreAnalysisScenario_MouseUp);
+            this.lvProcessorScenario.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvProcessorScenario_ItemCheck);
+            this.lvProcessorScenario.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvProcessorScenario_ItemChecked);
+            this.lvProcessorScenario.SelectedIndexChanged += new System.EventHandler(this.lvProcessorScenario_SelectedIndexChanged);
+            this.lvProcessorScenario.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvProcessorScenario_MouseUp);
             // 
             // colCheckBox
             // 

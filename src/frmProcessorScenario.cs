@@ -981,6 +981,32 @@ namespace FIA_Biosum_Manager
         private void CopyScenario()
         {
             frmDialog frmTemp = new frmDialog();
+            frmTemp.Initialize_Processor_Scenario_Copy();
+            frmTemp.Text = "FIA Biosum";
+            if (m_oProcessorScenarioItem.ScenarioId.Trim().Length == 0) LoadRuleDefinitions();
+
+            frmTemp.uc_processor_scenario_copy1.ReferenceCurrentScenarioItem = m_oProcessorScenarioItem;
+            frmTemp.uc_processor_scenario_copy1.loadvalues();
+            DialogResult result = frmTemp.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                frmMain.g_sbpInfo.Text = "Copying scenario rule definitions...Stand by";
+
+                this.m_oProcessorScenarioItem.ScenarioId = uc_scenario1.txtScenarioId.Text.Trim();
+			    this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
+                frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
+                this.uc_processor_scenario_harvest_method1.loadvalues();
+                frmMain.g_sbpInfo.Text = "Loading Scenario Merch and Chip Market Value Rule Definitions...Stand By";
+			    this.uc_processor_scenario_merch_chip_value1.loadvalues();
+                frmMain.g_sbpInfo.Text = "Loading Scenario Revenue And Cost Escalator Rule Definitions...Stand By";
+			    this.uc_processor_scenario_escalators1.loadvalues();
+                frmMain.g_sbpInfo.Text = "Loading Scenario Supplemental Harvest Component Rule Definitions...Stand By";
+                this.uc_processor_scenario_additional_harvest_cost_columns1.loadvalues();
+                frmMain.g_sbpInfo.Text = "Loading Scenario Run Data...Stand By";
+                this.uc_processor_scenario_run1.loadvalues();
+                frmMain.g_sbpInfo.Text = "Ready";
+                m_bSave = true;
+            }
         }
 
 	}
@@ -1432,6 +1458,7 @@ namespace FIA_Biosum_Manager
             }
 
         }
+
     }
     public class ProcessorScenarioItem_Collection : System.Collections.CollectionBase
     {
@@ -1499,6 +1526,25 @@ namespace FIA_Biosum_Manager
         public ProcessorScenarioTools()
         {
         }
+
+        public void LoadScenario(string p_strScenarioId, Queries p_oQueries, ProcessorScenarioItem_Collection p_oProcessorScenarioItem_Collection)
+        {
+
+            //
+            //LOAD PROJECT DATATASOURCES INFO
+            //
+            p_oQueries.m_oFvs.LoadDatasource = true;
+            p_oQueries.m_oFIAPlot.LoadDatasource = true;
+            p_oQueries.m_oProcessor.LoadDatasource = true;
+            p_oQueries.m_oReference.LoadDatasource = true;
+            p_oQueries.LoadDatasources(true, "processor", p_strScenarioId);
+            p_oQueries.m_oDataSource.CreateScenarioRuleDefinitionTableLinks(
+                p_oQueries.m_strTempDbFile,
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim(),
+                "P");
+            LoadAll(p_oQueries.m_strTempDbFile, p_oQueries, p_strScenarioId, p_oProcessorScenarioItem_Collection);
+        }
+
         public void LoadAll(string p_strDbFile,Queries p_oQueries, string p_strScenarioId, FIA_Biosum_Manager.ProcessorScenarioItem_Collection p_oProcessorScenarioItem_Collection)
         {
             ado_data_access oAdo = new ado_data_access();

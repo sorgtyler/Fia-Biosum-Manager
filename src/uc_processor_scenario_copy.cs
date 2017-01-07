@@ -54,17 +54,17 @@ namespace FIA_Biosum_Manager
             this.m_oLvAlternateColors.CustomFullRowSelect = true;
             if (frmMain.g_oGridViewFont != null) this.lvProcessorScenario.Font = frmMain.g_oGridViewFont;
             //
-            //OPEN CONNECTION TO DB FILE CONTAINING Core Analysis Scenario TABLE
+            //OPEN CONNECTION TO DB FILE CONTAINING Processor Scenario TABLE
             //
             //scenario mdb connection
-            string strCoreAnalysisScenarioMDB =
+            string strProcessorScenarioMDB =
               frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
               "\\processor\\db\\scenario_processor_rule_definitions.mdb";
             //
             //get a list of all the scenarios
             //
             ado_data_access oAdo = new ado_data_access();
-            oAdo.OpenConnection(oAdo.getMDBConnString(strCoreAnalysisScenarioMDB,"",""));
+            oAdo.OpenConnection(oAdo.getMDBConnString(strProcessorScenarioMDB,"",""));
             oAdo.SqlQueryReader(oAdo.m_OleDbConnection,
                        "SELECT scenario_id,description " +
                        "FROM scenario " +
@@ -119,7 +119,7 @@ namespace FIA_Biosum_Manager
            
         }
 
-        private void lvCoreAnalysisScenario_SelectedIndexChanged(object sender, EventArgs e)
+        private void lvProcessorScenario_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lvProcessorScenario.SelectedItems.Count > 0)
             {
@@ -135,7 +135,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void lvCoreAnalysisScenario_MouseUp(object sender, MouseEventArgs e)
+        private void lvProcessorScenario_MouseUp(object sender, MouseEventArgs e)
         {
             
             try
@@ -155,12 +155,12 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void lvCoreAnalysisScenario_ItemChecked(object sender, ItemCheckedEventArgs e)
+        private void lvProcessorScenario_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             
         }
 
-        private void lvCoreAnalysisScenario_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void lvProcessorScenario_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (m_bSuppressCheckEvents == true) return;
             if (this.lvProcessorScenario.SelectedItems.Count == 0) return;
@@ -289,10 +289,7 @@ namespace FIA_Biosum_Manager
                 lblMsg.Show();
                 lblMsg.Refresh();
                 //load the scenario into the collection
-                m_oProcessorScenarioTools.LoadAll(
-                    p_strScenarioId.Trim(),
-                    m_oQueries,
-                    m_oProcessorScenarioItem_Collection);
+                m_oProcessorScenarioTools.LoadScenario(p_strScenarioId.Trim(), m_oQueries, m_oProcessorScenarioItem_Collection);
                 lblMsg.Hide();
             }
         }
