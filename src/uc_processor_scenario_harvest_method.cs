@@ -259,7 +259,7 @@ namespace FIA_Biosum_Manager
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label16.ForeColor = System.Drawing.Color.Black;
-            this.label16.Location = new System.Drawing.Point(578, 424);
+            this.label16.Location = new System.Drawing.Point(571, 412);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(14, 13);
             this.label16.TabIndex = 39;
@@ -269,9 +269,9 @@ namespace FIA_Biosum_Manager
             // 
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label17.ForeColor = System.Drawing.Color.Black;
-            this.label17.Location = new System.Drawing.Point(642, 412);
+            this.label17.Location = new System.Drawing.Point(635, 400);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(155, 66);
+            this.label17.Size = new System.Drawing.Size(197, 66);
             this.label17.TabIndex = 37;
             this.label17.Text = "Cull threshold, above which trees are assumed nonmerchantable and processed inste" +
     "ad as chips";
@@ -279,7 +279,7 @@ namespace FIA_Biosum_Manager
             // txtCullPct
             // 
             this.txtCullPct.ForeColor = System.Drawing.Color.Black;
-            this.txtCullPct.Location = new System.Drawing.Point(601, 422);
+            this.txtCullPct.Location = new System.Drawing.Point(594, 410);
             this.txtCullPct.Name = "txtCullPct";
             this.txtCullPct.Size = new System.Drawing.Size(33, 20);
             this.txtCullPct.TabIndex = 38;
@@ -292,7 +292,7 @@ namespace FIA_Biosum_Manager
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label14.ForeColor = System.Drawing.Color.Black;
-            this.label14.Location = new System.Drawing.Point(289, 425);
+            this.label14.Location = new System.Drawing.Point(289, 413);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(14, 13);
             this.label14.TabIndex = 36;
@@ -302,7 +302,7 @@ namespace FIA_Biosum_Manager
             // 
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label15.ForeColor = System.Drawing.Color.Black;
-            this.label15.Location = new System.Drawing.Point(354, 417);
+            this.label15.Location = new System.Drawing.Point(354, 405);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(208, 40);
             this.label15.TabIndex = 34;
@@ -311,7 +311,7 @@ namespace FIA_Biosum_Manager
             // txtSaplingMerchPct
             // 
             this.txtSaplingMerchPct.ForeColor = System.Drawing.Color.Black;
-            this.txtSaplingMerchPct.Location = new System.Drawing.Point(311, 422);
+            this.txtSaplingMerchPct.Location = new System.Drawing.Point(311, 410);
             this.txtSaplingMerchPct.Name = "txtSaplingMerchPct";
             this.txtSaplingMerchPct.Size = new System.Drawing.Size(36, 20);
             this.txtSaplingMerchPct.TabIndex = 35;
@@ -324,7 +324,7 @@ namespace FIA_Biosum_Manager
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.ForeColor = System.Drawing.Color.Black;
-            this.label12.Location = new System.Drawing.Point(13, 420);
+            this.label12.Location = new System.Drawing.Point(13, 408);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(14, 13);
             this.label12.TabIndex = 33;
@@ -334,7 +334,7 @@ namespace FIA_Biosum_Manager
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.ForeColor = System.Drawing.Color.Black;
-            this.label13.Location = new System.Drawing.Point(71, 412);
+            this.label13.Location = new System.Drawing.Point(71, 400);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(208, 40);
             this.label13.TabIndex = 31;
@@ -345,7 +345,7 @@ namespace FIA_Biosum_Manager
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label10.Location = new System.Drawing.Point(286, 381);
+            this.label10.Location = new System.Drawing.Point(286, 371);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(21, 13);
             this.label10.TabIndex = 18;
@@ -356,7 +356,7 @@ namespace FIA_Biosum_Manager
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.ForeColor = System.Drawing.Color.Black;
-            this.label11.Location = new System.Drawing.Point(578, 322);
+            this.label11.Location = new System.Drawing.Point(571, 312);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(21, 13);
             this.label11.TabIndex = 19;
@@ -366,7 +366,7 @@ namespace FIA_Biosum_Manager
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.Black;
-            this.label1.Location = new System.Drawing.Point(354, 370);
+            this.label1.Location = new System.Drawing.Point(354, 360);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(239, 29);
             this.label1.TabIndex = 8;
@@ -378,7 +378,7 @@ namespace FIA_Biosum_Manager
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(13, 325);
+            this.label7.Location = new System.Drawing.Point(13, 315);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(21, 13);
             this.label7.TabIndex = 17;
@@ -389,7 +389,7 @@ namespace FIA_Biosum_Manager
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.ForeColor = System.Drawing.Color.Black;
-            this.label8.Location = new System.Drawing.Point(13, 367);
+            this.label8.Location = new System.Drawing.Point(13, 357);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(21, 13);
             this.label8.TabIndex = 18;
@@ -398,7 +398,7 @@ namespace FIA_Biosum_Manager
             // txtSteepSlopeMinDia
             // 
             this.txtSteepSlopeMinDia.ForeColor = System.Drawing.Color.Black;
-            this.txtSteepSlopeMinDia.Location = new System.Drawing.Point(603, 319);
+            this.txtSteepSlopeMinDia.Location = new System.Drawing.Point(596, 309);
             this.txtSteepSlopeMinDia.Name = "txtSteepSlopeMinDia";
             this.txtSteepSlopeMinDia.Size = new System.Drawing.Size(33, 20);
             this.txtSteepSlopeMinDia.TabIndex = 10;
@@ -409,7 +409,7 @@ namespace FIA_Biosum_Manager
             // txtMinDiaForChips
             // 
             this.txtMinDiaForChips.ForeColor = System.Drawing.Color.Black;
-            this.txtMinDiaForChips.Location = new System.Drawing.Point(32, 322);
+            this.txtMinDiaForChips.Location = new System.Drawing.Point(32, 312);
             this.txtMinDiaForChips.Name = "txtMinDiaForChips";
             this.txtMinDiaForChips.Size = new System.Drawing.Size(36, 20);
             this.txtMinDiaForChips.TabIndex = 12;
@@ -421,7 +421,7 @@ namespace FIA_Biosum_Manager
             // 
             this.cmbSteepSlopePercent.ForeColor = System.Drawing.Color.Black;
             this.cmbSteepSlopePercent.ItemHeight = 13;
-            this.cmbSteepSlopePercent.Location = new System.Drawing.Point(311, 378);
+            this.cmbSteepSlopePercent.Location = new System.Drawing.Point(311, 368);
             this.cmbSteepSlopePercent.Name = "cmbSteepSlopePercent";
             this.cmbSteepSlopePercent.Size = new System.Drawing.Size(37, 21);
             this.cmbSteepSlopePercent.TabIndex = 0;
@@ -433,12 +433,11 @@ namespace FIA_Biosum_Manager
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Black;
-            this.label3.Location = new System.Drawing.Point(642, 319);
+            this.label3.Location = new System.Drawing.Point(635, 309);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(147, 65);
+            this.label3.Size = new System.Drawing.Size(175, 65);
             this.label3.TabIndex = 9;
-            this.label3.Text = "Minimum diameteter of trees that will be utilized for any purpose on steep slopes" +
-    "";
+            this.label3.Text = "Minimum diameter of trees that will be utilized for any purpose on steep slopes";
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // label9
@@ -446,7 +445,7 @@ namespace FIA_Biosum_Manager
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.ForeColor = System.Drawing.Color.Black;
-            this.label9.Location = new System.Drawing.Point(286, 329);
+            this.label9.Location = new System.Drawing.Point(286, 319);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(21, 13);
             this.label9.TabIndex = 19;
@@ -456,7 +455,7 @@ namespace FIA_Biosum_Manager
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(71, 317);
+            this.label4.Location = new System.Drawing.Point(71, 307);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(208, 40);
             this.label4.TabIndex = 11;
@@ -466,7 +465,7 @@ namespace FIA_Biosum_Manager
             // txtMinDiaSmallLogs
             // 
             this.txtMinDiaSmallLogs.ForeColor = System.Drawing.Color.Black;
-            this.txtMinDiaSmallLogs.Location = new System.Drawing.Point(32, 364);
+            this.txtMinDiaSmallLogs.Location = new System.Drawing.Point(32, 354);
             this.txtMinDiaSmallLogs.Name = "txtMinDiaSmallLogs";
             this.txtMinDiaSmallLogs.Size = new System.Drawing.Size(36, 20);
             this.txtMinDiaSmallLogs.TabIndex = 15;
@@ -491,7 +490,7 @@ namespace FIA_Biosum_Manager
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(71, 359);
+            this.label5.Location = new System.Drawing.Point(71, 349);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(208, 40);
             this.label5.TabIndex = 13;
@@ -508,7 +507,7 @@ namespace FIA_Biosum_Manager
             this.grpboxSteepSlopeHarvestMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             this.grpboxSteepSlopeHarvestMethod.Location = new System.Drawing.Point(408, 61);
             this.grpboxSteepSlopeHarvestMethod.Name = "grpboxSteepSlopeHarvestMethod";
-            this.grpboxSteepSlopeHarvestMethod.Size = new System.Drawing.Size(368, 252);
+            this.grpboxSteepSlopeHarvestMethod.Size = new System.Drawing.Size(368, 245);
             this.grpboxSteepSlopeHarvestMethod.TabIndex = 29;
             this.grpboxSteepSlopeHarvestMethod.TabStop = false;
             this.grpboxSteepSlopeHarvestMethod.Text = "Steep Slope Harvest Method";
@@ -558,7 +557,7 @@ namespace FIA_Biosum_Manager
             // txtMinDiaLargeLogs
             // 
             this.txtMinDiaLargeLogs.ForeColor = System.Drawing.Color.Black;
-            this.txtMinDiaLargeLogs.Location = new System.Drawing.Point(311, 326);
+            this.txtMinDiaLargeLogs.Location = new System.Drawing.Point(311, 316);
             this.txtMinDiaLargeLogs.Name = "txtMinDiaLargeLogs";
             this.txtMinDiaLargeLogs.Size = new System.Drawing.Size(37, 20);
             this.txtMinDiaLargeLogs.TabIndex = 16;
@@ -576,7 +575,7 @@ namespace FIA_Biosum_Manager
             this.grpboxHarvestMethod.ForeColor = System.Drawing.Color.ForestGreen;
             this.grpboxHarvestMethod.Location = new System.Drawing.Point(16, 61);
             this.grpboxHarvestMethod.Name = "grpboxHarvestMethod";
-            this.grpboxHarvestMethod.Size = new System.Drawing.Size(368, 253);
+            this.grpboxHarvestMethod.Size = new System.Drawing.Size(368, 245);
             this.grpboxHarvestMethod.TabIndex = 28;
             this.grpboxHarvestMethod.TabStop = false;
             this.grpboxHarvestMethod.Text = "Low Slope Harvest Method";
@@ -623,7 +622,7 @@ namespace FIA_Biosum_Manager
             // txtWoodlandMerchPct
             // 
             this.txtWoodlandMerchPct.ForeColor = System.Drawing.Color.Black;
-            this.txtWoodlandMerchPct.Location = new System.Drawing.Point(32, 417);
+            this.txtWoodlandMerchPct.Location = new System.Drawing.Point(32, 405);
             this.txtWoodlandMerchPct.Name = "txtWoodlandMerchPct";
             this.txtWoodlandMerchPct.Size = new System.Drawing.Size(36, 20);
             this.txtWoodlandMerchPct.TabIndex = 32;
@@ -635,7 +634,7 @@ namespace FIA_Biosum_Manager
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.Black;
-            this.label6.Location = new System.Drawing.Point(358, 322);
+            this.label6.Location = new System.Drawing.Point(358, 312);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(208, 48);
             this.label6.TabIndex = 14;
