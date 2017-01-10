@@ -695,6 +695,42 @@ namespace FIA_Biosum_Manager
 
 			
 		}
+
+        public void loadvalues_FromProperties()
+        {
+
+            this.txtDesc.Text = "";
+            this.txtSteepSlopeDesc.Text = "";
+            this.cmbSteepSlopePercent.Items.Clear();
+            for (int x = 90; x >= 10; x = x - 5)
+            {
+                this.cmbSteepSlopePercent.Items.Add(x.ToString().Trim());
+            }
+            this.cmbSteepSlopePercent.Text = "40";
+
+            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oHarvestMethod != null)
+            {
+                FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
+                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
+                {
+                    this.chkUseDefault.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
+                    this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
+                    cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
+                    txtCableMax.Text = oItem.m_oHarvestMethod.MaxCableYardingDistance;
+                    txtHelicopterCableMax.Text = oItem.m_oHarvestMethod.MaxHelicopterCableYardingDistance;
+                    txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
+                    txtMinDiaSmallLogs.Text = oItem.m_oHarvestMethod.MinDiaForSmallLogs;
+                    txtMinDiaLargeLogs.Text = oItem.m_oHarvestMethod.MinDiaForLargeLogs;
+                    cmbSteepSlopePercent.Text = oItem.m_oHarvestMethod.SteepSlopePercent;
+                    txtSteepSlopeMinDia.Text = oItem.m_oHarvestMethod.MinDiaForAllTreesSteepSlope;
+                    uc_processor_scenario_run.ScenarioHarvestMethodVariables.ProcessLowSlope =
+                         oItem.m_oHarvestMethod.ProcessLowSlope;
+                    uc_processor_scenario_run.ScenarioHarvestMethodVariables.ProcessSteepSlope =
+                        oItem.m_oHarvestMethod.ProcessSteepSlope;
+                }
+            }
+
+        }
 		public void savevalues()
 		{
 			//

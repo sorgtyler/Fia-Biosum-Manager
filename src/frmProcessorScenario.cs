@@ -992,18 +992,19 @@ namespace FIA_Biosum_Manager
             {
                 frmMain.g_sbpInfo.Text = "Copying scenario rule definitions...Stand by";
 
-                this.m_oProcessorScenarioItem.ScenarioId = uc_scenario1.txtScenarioId.Text.Trim();
-			    this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
+                this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm = this;
                 frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
-                this.uc_processor_scenario_harvest_method1.loadvalues();
+                this.uc_processor_scenario_harvest_method1.loadvalues_FromProperties();
                 frmMain.g_sbpInfo.Text = "Loading Scenario Merch and Chip Market Value Rule Definitions...Stand By";
-			    this.uc_processor_scenario_merch_chip_value1.loadvalues();
+                this.uc_processor_scenario_merch_chip_value1.loadvalues_FromProperties();
                 frmMain.g_sbpInfo.Text = "Loading Scenario Revenue And Cost Escalator Rule Definitions...Stand By";
-			    this.uc_processor_scenario_escalators1.loadvalues();
+                this.uc_processor_scenario_escalators1.loadvalues_FromProperties();
                 frmMain.g_sbpInfo.Text = "Loading Scenario Supplemental Harvest Component Rule Definitions...Stand By";
-                this.uc_processor_scenario_additional_harvest_cost_columns1.loadvalues();
-                frmMain.g_sbpInfo.Text = "Loading Scenario Run Data...Stand By";
-                this.uc_processor_scenario_run1.loadvalues();
+                //@ToDo: This doesn't copy any values into the scenario_additional_harvest_costs table
+                this.uc_processor_scenario_additional_harvest_cost_columns1.loadvaluesFromProperties();
+                //frmMain.g_sbpInfo.Text = "Loading Scenario Run Data...Stand By";
+                //this.uc_processor_scenario_run1.loadvalues();
+                
                 frmMain.g_sbpInfo.Text = "Ready";
                 m_bSave = true;
             }
