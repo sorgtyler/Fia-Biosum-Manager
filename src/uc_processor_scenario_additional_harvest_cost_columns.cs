@@ -360,19 +360,10 @@ namespace FIA_Biosum_Manager
             string strRx = "";
             string strColumnName = "";
             string strDesc = "";
-            string strDefaultValue = "";
-            string strColumnsList = "";
-            string[] strColumnsArray = null;
-            int intCount = 0;
             bool bFound = false;
-
 
             if (m_oAdo != null && m_oAdo.m_OleDbConnection != null)
                 if (m_oAdo.m_OleDbConnection.State == System.Data.ConnectionState.Open) m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-
-
-
-
 
             //
             //SCENARIO MDB
@@ -403,9 +394,9 @@ namespace FIA_Biosum_Manager
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                                  "scenario_additional_harvest_costs",
                                  strScenarioMDB, "scenario_additional_harvest_costs", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
-                                 "scenario",
-                                 strScenarioMDB, "scenario", true);
+            //oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            //                     "scenario",
+            //                     strScenarioMDB, "scenario", true);
 
             oDao.m_DaoWorkspace.Close();
             oDao = null;
@@ -638,6 +629,61 @@ namespace FIA_Biosum_Manager
                 //make sure columns exist in the additional harvest cost columns table
                 //
                 CreateColumns();
+
+                // Copy values from reference to target scenario
+                m_oAdo.m_strSQL = "";
+                string strColumn = "";
+
+                for (int q = 0; q <= uc_collection.Count - 1; q++)
+                {
+                    strColumn = uc_collection.Item(q).ColumnName.Trim();
+                    //make sure the source scenario has this column
+                    if (m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, "scenario_additional_harvest_costs", strColumn))
+                    {
+
+                        //make sure columnname not already referenced
+                        if (m_oAdo.m_strSQL.ToUpper().IndexOf("B." + strColumn.ToUpper() + " IS NOT NULL", 0) < 0)
+                        {
+                            m_oAdo.m_strSQL = m_oAdo.m_strSQL + "a." + strColumn + "= IIF(b." + strColumn + " IS NOT NULL,b." + strColumn + ",a." + strColumn + "),";
+                        }
+
+
+                    }
+                }
+                if (m_oAdo.m_strSQL.Trim().Length > 0)
+                {
+                    frmMain.g_oFrmMain.ActivateStandByAnimation(
+                           this.ParentForm.WindowState,
+                           this.ParentForm.Left,
+                           this.ParentForm.Height,
+                           this.ParentForm.Width,
+                           this.ParentForm.Top);
+                    //remove the comma at the end of the string
+                    m_oAdo.m_strSQL = m_oAdo.m_strSQL.Substring(0, m_oAdo.m_strSQL.Length - 1);
+
+                    m_oAdo.m_strSQL = "UPDATE additional_harvest_costs_work_table a " +
+                                      "INNER JOIN  scenario_additional_harvest_costs b " +
+                                      "ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " +
+                                      "SET " + m_oAdo.m_strSQL;
+
+
+                    frmMain.g_sbpInfo.Text = "Updating Harvest Cost Component $/A/C Values...Stand By";
+
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+                    frmMain.g_sbpInfo.Text = "Ready";
+
+                    if (m_oAdo.m_intError == 0)
+                    {
+                        UpdateNullCounts();
+                        frmMain.g_oFrmMain.DeactivateStandByAnimation();
+                        //MessageBox.Show("Done");
+                    }
+                    else
+                        frmMain.g_oFrmMain.DeactivateStandByAnimation();
+
+                }
+
                 //
                 //get null counts for each column
                 //
@@ -1616,7 +1662,7 @@ namespace FIA_Biosum_Manager
                                  "FROM scenario_additional_harvest_costs GROUP BY scenario_id)  b " +
                                "WHERE a.scenario_id=b.scenario_id AND a.scenario_id <> '" + ScenarioId + "'";
 
-            frmPrevExp.uc_previous_expressions1.lblTitle.Text = "Previous Scenario Harvest Cost Componenet Values";
+            frmPrevExp.uc_previous_expressions1.lblTitle.Text = "Previous Scenario Harvest Cost Component Values";
             frmPrevExp.uc_previous_expressions1.loadvalues(m_oAdo, m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "DESCRIPTION", "SCENARIO", "scenario");
             frmPrevExp.MinimizeBox = false;
             frmPrevExp.uc_previous_expressions1.ShowDeleteButton = false;

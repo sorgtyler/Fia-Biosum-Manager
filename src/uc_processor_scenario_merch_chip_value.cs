@@ -284,6 +284,9 @@ namespace FIA_Biosum_Manager
                             oItem.ReferenceProcessorScenarioForm = ReferenceProcessorScenarioForm;
                             oItem.Visible = true;
                             this.uc_processor_scenario_spc_dbh_group_value_collection1.Add(oItem);
+                            this.m_oValidate.ValidateDecimal(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).ChipsDollarPerCubicFootValue);
+                            this.txtChipValue.Text = this.m_oValidate.ReturnValue;
+                            this.m_strChipValueSave = this.txtChipValue.Text;
                         }
                     }
                 }
