@@ -667,6 +667,10 @@ namespace FIA_Biosum_Manager
 
             if (m_oAdo.m_intError == 0)
             {
+                // drop tree vol val work table (TreeVolValLowSlope) if it exists for next variant/package
+                if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, m_strTvvTableName) == true)
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + m_strTvvTableName);
+                
                 // create tree vol val work table (TreeVolValLowSlope); Re-use the sql from tree vol val but don't create the indexes
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, Tables.Processor.CreateTreeVolValSpeciesDiamGroupsTableSQL(m_strTvvTableName));
 
@@ -931,6 +935,13 @@ namespace FIA_Biosum_Manager
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         string strSpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["SPCD"]).Trim();
+                        if (dictTreeSpecies.ContainsKey(strSpCd))
+                        {
+                            MessageBox.Show("The tree_species table contains duplicate entries for variant " +
+                                p_strVariant + " spcd " + strSpCd + ". Please resolve this issue before running Processor.", 
+                                "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return null;
+                        }
                         int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["USER_SPC_GROUP"]);
                         double dblOdWgt = Convert.ToDouble(m_oAdo.m_OleDbDataReader["OD_WGT"]);
                         double dblDryToGreen = Convert.ToDouble(m_oAdo.m_OleDbDataReader["Dry_to_Green"]);
