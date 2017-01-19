@@ -2119,6 +2119,12 @@ namespace FIA_Biosum_Manager
                                         }
                                     }
                                 }
+
+                                // Rename opcost_input table with current opcost version
+                                string strNewTableName = "OpCost_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_input";
+                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "select * into " + strNewTableName + " from opcost_input");
+                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input");
+                                
                                 m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
                                 System.Threading.Thread.Sleep(5000);
                                 if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
@@ -5754,6 +5760,12 @@ namespace FIA_Biosum_Manager
                                      }
                                  }
                             }
+
+                           // Rename opcost_input table with current opcost version
+                           string strNewTableName = "OpCost_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_input";
+                           m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "select * into " + strNewTableName + " from opcost_input");
+                           m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input");
+
                             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
                             System.Threading.Thread.Sleep(5000);
                             if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
