@@ -394,6 +394,12 @@
     <Compile Include="uc_processor_scenario_additional_harvest_cost_column_item.Designer.cs">
       <DependentUpon>uc_processor_scenario_additional_harvest_cost_column_item.cs</DependentUpon>
     </Compile>
+    <Compile Include="uc_processor_scenario_copy.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_processor_scenario_copy.Designer.cs">
+      <DependentUpon>uc_processor_scenario_copy.cs</DependentUpon>
+    </Compile>
     <Compile Include="uc_processor_scenario_escalators.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -722,6 +728,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="uc_processor_scenario_additional_harvest_cost_column_item.resx">
       <DependentUpon>uc_processor_scenario_additional_harvest_cost_column_item.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_scenario_copy.resx">
+      <DependentUpon>uc_processor_scenario_copy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_processor_scenario_escalators.resx">
       <DependentUpon>uc_processor_scenario_escalators.cs</DependentUpon>

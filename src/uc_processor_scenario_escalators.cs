@@ -452,6 +452,114 @@ namespace FIA_Biosum_Manager
                 
 			
 		}
+        public void loadvalues_FromProperties()
+        {
+
+            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oEscalators != null)
+            {
+                ProcessorScenarioItem.Escalators oEscalators = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oEscalators;
+                //
+                //UPDATE CYCLE ESCALATOR TEXT BOXES
+                //
+                //operating costs cycle 2,3,4
+                //cycle2
+                if (oEscalators.OperatingCostsCycle2.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value1.Cycle1 =
+                         oEscalators.OperatingCostsCycle2.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value1.Cycle1 = "1.00";
+                }
+                //cycle3
+                if (oEscalators.OperatingCostsCycle3.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value1.Cycle2 =
+                         oEscalators.OperatingCostsCycle3.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value1.Cycle2 = "1.00";
+                }
+                if (oEscalators.OperatingCostsCycle4.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value1.Cycle3 =
+                         oEscalators.OperatingCostsCycle4.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value1.Cycle3 = "1.00";
+                }
+                //merch wood revenue cycle 2,3,4
+                //cycle2
+                if (oEscalators.MerchWoodRevenueCycle2.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value2.Cycle1 =
+                         oEscalators.MerchWoodRevenueCycle2.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value2.Cycle1 = "1.00";
+                }
+                //cycle3
+                if (oEscalators.MerchWoodRevenueCycle3.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value2.Cycle2 =
+                         oEscalators.MerchWoodRevenueCycle3.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value2.Cycle2 = "1.00";
+                }
+                if (oEscalators.MerchWoodRevenueCycle4.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value2.Cycle3 =
+                         oEscalators.MerchWoodRevenueCycle4.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value2.Cycle3 = "1.00";
+                }
+                //Energy wood revenue cycle 2,3,4
+                //cycle2
+                if (oEscalators.EnergyWoodRevenueCycle2.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value3.Cycle1 =
+                         oEscalators.EnergyWoodRevenueCycle2.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value3.Cycle1 = "1.00";
+                }
+                //cycle3
+                if (oEscalators.EnergyWoodRevenueCycle3.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value3.Cycle2 =
+                         oEscalators.EnergyWoodRevenueCycle3.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value3.Cycle2 = "1.00";
+                }
+                if (oEscalators.EnergyWoodRevenueCycle4.Trim().Length > 0)
+                {
+                    uc_processor_scenario_escalators_value3.Cycle3 =
+                         oEscalators.EnergyWoodRevenueCycle4.Trim();
+                }
+                else
+                {
+                    uc_processor_scenario_escalators_value3.Cycle3 = "1.00";
+                }
+
+
+            }
+            this.uc_processor_scenario_escalators_value1.ReferenceProcessorScenarioForm = ReferenceProcessorScenarioForm;
+            this.uc_processor_scenario_escalators_value2.ReferenceProcessorScenarioForm = ReferenceProcessorScenarioForm;
+            this.uc_processor_scenario_escalators_value3.ReferenceProcessorScenarioForm = ReferenceProcessorScenarioForm;
+            lblCycleLength.Text = Convert.ToString(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oEscalators.CycleLength);
+        }
+
 		public void savevalues()
 		{
             m_intError = 0;

@@ -208,6 +208,91 @@ namespace FIA_Biosum_Manager
 
 			
 		}
+
+        public void loadvalues_FromProperties()
+        {
+            int x;
+
+            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection != null)
+            {
+                for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Count - 1; x++)
+                {
+                    if (this.uc_processor_scenario_spc_dbh_group_value_collection1.Count == 0)
+                    {
+                        if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).SpeciesGroup.Trim().Length > 0)
+                        {
+
+                            //
+                            //SPECIES GROUP
+                            //
+                            this.uc_processor_scenario_spc_dbh_group_value1.SpeciesGroup =
+                                ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).SpeciesGroup.Trim();
+                            //
+                            //DBH GROUP
+                            //
+                            this.uc_processor_scenario_spc_dbh_group_value1.DbhGroup =
+                                ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).DbhGroup.Trim();
+                            //
+                            //MERCH CUBIC FOOT VALUE
+                            //
+                            this.m_oValidate.ValidateDecimal(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).MerchDollarPerCubicFootValue);
+                            this.uc_processor_scenario_spc_dbh_group_value1.CubicFootDollarValue = this.m_oValidate.ReturnValue;
+                            //
+                            //USE AS ENERGY WOOD
+                            //
+                            this.uc_processor_scenario_spc_dbh_group_value1.EnergyWood =
+                                  ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).UseAsEnergyWood;
+
+                            this.uc_processor_scenario_spc_dbh_group_value1.ReferenceProcessorScenarioForm = ReferenceProcessorScenarioForm;
+
+                            this.uc_processor_scenario_spc_dbh_group_value_collection1.Add(this.uc_processor_scenario_spc_dbh_group_value1);
+                            this.m_oValidate.ValidateDecimal(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).ChipsDollarPerCubicFootValue);
+                            this.txtChipValue.Text = this.m_oValidate.ReturnValue;
+                            this.m_strChipValueSave = this.txtChipValue.Text;
+                        }
+                    }
+                    else
+                    {
+                        if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).SpeciesGroup.Trim().Length > 0)
+                        {
+                            uc_processor_scenario_spc_dbh_group_value oItem = new uc_processor_scenario_spc_dbh_group_value();
+                            //
+                            //SPECIES GROUP
+                            //
+                            oItem.SpeciesGroup =
+                                ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).SpeciesGroup.Trim();
+                            //
+                            //DBH GROUP
+                            //
+                            oItem.DbhGroup =
+                                ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).DbhGroup.Trim();
+                            //
+                            //MERCH CUBIC FOOT VALUE
+                            //
+                            this.m_oValidate.ValidateDecimal(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).MerchDollarPerCubicFootValue);
+                            oItem.CubicFootDollarValue = this.m_oValidate.ReturnValue;
+                            //
+                            //USE AS ENERGY WOOD
+                            //
+                            oItem.EnergyWood =
+                                  ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).UseAsEnergyWood;
+                            oItem.Name = "uc_processor_scenario_spc_dbh_group_value" + Convert.ToString(uc_processor_scenario_spc_dbh_group_value_collection1.Count + 1).Trim();
+                            this.pnlMerchValues.Controls.Add(oItem);
+                            oItem.Top = uc_processor_scenario_spc_dbh_group_value_collection1.Item(uc_processor_scenario_spc_dbh_group_value_collection1.Count - 1).Top +
+                                uc_processor_scenario_spc_dbh_group_value_collection1.Item(uc_processor_scenario_spc_dbh_group_value_collection1.Count - 1).Height;
+                            oItem.Left = uc_processor_scenario_spc_dbh_group_value_collection1.Item(uc_processor_scenario_spc_dbh_group_value_collection1.Count - 1).Left;
+                            oItem.ReferenceProcessorScenarioForm = ReferenceProcessorScenarioForm;
+                            oItem.Visible = true;
+                            this.uc_processor_scenario_spc_dbh_group_value_collection1.Add(oItem);
+                            this.m_oValidate.ValidateDecimal(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).ChipsDollarPerCubicFootValue);
+                            this.txtChipValue.Text = this.m_oValidate.ReturnValue;
+                            this.m_strChipValueSave = this.txtChipValue.Text;
+                        }
+                    }
+                }
+            }
+        }
+
 		public void savevalues()
 		{
 			int x;
