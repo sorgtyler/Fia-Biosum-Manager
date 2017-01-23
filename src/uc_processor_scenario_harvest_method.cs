@@ -732,8 +732,6 @@ namespace FIA_Biosum_Manager
                     this.chkUseDefault.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
                     this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                     cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
-                    txtCableMax.Text = oItem.m_oHarvestMethod.MaxCableYardingDistance;
-                    txtHelicopterCableMax.Text = oItem.m_oHarvestMethod.MaxHelicopterCableYardingDistance;
                     txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
                     txtMinDiaSmallLogs.Text = oItem.m_oHarvestMethod.MinDiaForSmallLogs;
                     txtMinDiaLargeLogs.Text = oItem.m_oHarvestMethod.MinDiaForLargeLogs;
@@ -743,6 +741,9 @@ namespace FIA_Biosum_Manager
                          oItem.m_oHarvestMethod.ProcessLowSlope;
                     uc_processor_scenario_run.ScenarioHarvestMethodVariables.ProcessSteepSlope =
                         oItem.m_oHarvestMethod.ProcessSteepSlope;
+                    txtWoodlandMerchPct.Text = oItem.m_oHarvestMethod.WoodlandMerchAsPctOfTotalVol;
+                    txtCullPct.Text = oItem.m_oHarvestMethod.CullPctThreshold;
+                    txtSaplingMerchPct.Text = oItem.m_oHarvestMethod.SaplingMerchAsPctOfTotalVol;
                 }
             }
 
