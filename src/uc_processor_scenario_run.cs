@@ -69,15 +69,16 @@ namespace FIA_Biosum_Manager
         private const int COL_RUNSTATUS = 3;
         private const int COL_VOLVAL = 4;
         private const int COL_HVSTCOST = 5;
-        private const int COL_CUTCOUNT = 6;
-        private const int COL_RXCYCLE1 = 7;
-        private const int COL_RXCYCLE2 = 8;
-        private const int COL_RXCYCLE3 = 9;
-        private const int COL_RXCYCLE4 = 10;
-        private const int COL_FVSTREEFILE = 11;
-        private const int COL_FOUND = 12;
-        private const int COL_FVSTREE_PROCESSINGDATETIME = 13;
-        private const int COL_PROCESSOR_PROCESSINGDATETIME = 14;
+        private const int COL_OPCOSTDROP = 6;
+        private const int COL_CUTCOUNT = 7;
+        private const int COL_RXCYCLE1 = 8;
+        private const int COL_RXCYCLE2 = 9;
+        private const int COL_RXCYCLE3 = 10;
+        private const int COL_RXCYCLE4 = 11;
+        private const int COL_FVSTREEFILE = 12;
+        private const int COL_FOUND = 13;
+        private const int COL_FVSTREE_PROCESSINGDATETIME = 14;
+        private const int COL_PROCESSOR_PROCESSINGDATETIME = 15;
        
 
         public frmProcessorScenario ReferenceProcessorScenarioForm
@@ -619,6 +620,7 @@ namespace FIA_Biosum_Manager
             this.m_lvEx.Columns.Add("Run Status", 250, HorizontalAlignment.Left);
             this.m_lvEx.Columns.Add("TreeVolValRecordCount", 100, HorizontalAlignment.Left);
             this.m_lvEx.Columns.Add("HarvestCostRecordCount", 100, HorizontalAlignment.Left);
+            this.m_lvEx.Columns.Add("OpcostDropped", 100, HorizontalAlignment.Left);
             this.m_lvEx.Columns.Add("TreeCutListRecordCount", 100, HorizontalAlignment.Left);
             this.m_lvEx.Columns.Add("Cycle1Rx", 80, HorizontalAlignment.Left);
             this.m_lvEx.Columns.Add("Cycle2Rx", 80, HorizontalAlignment.Left);
@@ -944,6 +946,8 @@ namespace FIA_Biosum_Manager
                                 }
                                 else
                                     entryListItem.SubItems.Add(" ");
+                                //opcost dropped column count; Always empty
+                                entryListItem.SubItems.Add(" ");
                                 //tree cutlist count
                                 if (frmMain.g_bSuppressProcessorScenarioTableRowCount == false)
                                     entryListItem.SubItems.Add(strCount);
@@ -5669,6 +5673,20 @@ namespace FIA_Biosum_Manager
                         if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "HarvestCostsWorkTable"))
                             intRowCount = (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM HarvestCostsWorkTable", "temp");
                         frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_HVSTCOST, intRowCount.ToString());
+
+                        // Checking to see if opcost_input has > rows than harvest costs; If so, opcost dropped some records
+                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_input"))
+                        {
+                            int intOpcostRowCount = (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM opcost_input", "temp");
+                            intRowCount = intRowCount - intOpcostRowCount;
+                            frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_OPCOSTDROP, intRowCount.ToString());
+                            // If OpCost dropped records, set text color to red
+                            if (intRowCount > 0)
+                            {
+                                frmMain.g_oDelegate.SetListViewSubItemPropertyValue(m_lvEx, x, COL_OPCOSTDROP, "ForeColor", System.Drawing.Color.Red);
+                                frmMain.g_oDelegate.SetListViewSubItemPropertyValue(m_lvEx, x, COL_OPCOSTDROP, "UseItemStyleForSubItems", "False");
+                            }
+                        }
                     }
 
                     if (System.IO.File.Exists(m_strOPCOSTBatchFile))
