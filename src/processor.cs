@@ -356,7 +356,7 @@ namespace FIA_Biosum_Manager
             // Create the reconcilation table, if desired
             if (blnCreateReconcilationTable == true)
             {
-                createTreeReconcilationTable(p_strVariant);
+                createTreeReconcilationTable(p_strVariant, p_strRxPackage);
             }
 
             // Always close the connection
@@ -368,7 +368,7 @@ namespace FIA_Biosum_Manager
             return 0;
         }
 
-        private void createTreeReconcilationTable(string p_strVariant)
+        private void createTreeReconcilationTable(string p_strVariant, string p_strRxPackage)
         {
             m_oAdo = new ado_data_access();
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
@@ -395,7 +395,8 @@ namespace FIA_Biosum_Manager
                         dictTreeTable.Add(strFvsTreeId, treeList);
                     }
 
-                    string strTableName = p_strVariant + "_reconcile_trees";
+                    string strTableName = p_strVariant + "_" + p_strRxPackage + "_reconcile_trees";
+
                     frmMain.g_oTables.m_oProcessor.CreateTreeReconcilationTable(m_oAdo, m_oAdo.m_OleDbConnection, strTableName);
 
                     string strTempCn = "9999";
