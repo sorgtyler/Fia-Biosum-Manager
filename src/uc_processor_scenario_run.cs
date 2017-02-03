@@ -1156,11 +1156,13 @@ namespace FIA_Biosum_Manager
                 this.btnChkAll.Top = pnlFileSizeMonitor.Top - this.btnChkAll.Height - 2;
                 this.btnUncheckAll.Top = this.btnChkAll.Top;
                 this.cmbFilter.Top = btnChkAll.Top;
+                this.btnRunOC7.Top = this.btnChkAll.Top;
                 this.btnRun.Top = this.btnChkAll.Top;
                 this.lblMsg.Top = this.btnRun.Top - this.lblMsg.Height - 5;
                 this.m_lvEx.Height = this.lblMsg.Top - this.m_lvEx.Top + 10;
                 this.m_lvEx.Width = this.panel1.Width - (m_lvEx.Left * 2);
                 this.btnRun.Left = this.m_lvEx.Width - (int)(m_lvEx.Width * .5) - (int)(btnRun.Width * .5);
+                this.btnRunOC7.Left = (int) this.btnRun.Left + 150;
                 this.lblMsg.Width = this.m_lvEx.Width;
 
                 if (uc_filesize_monitor1.lblMaxSize.Left + uc_filesize_monitor1.lblMaxSize.Width > uc_filesize_monitor1.Width)
@@ -1227,62 +1229,12 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void btnRun_Click(object sender, EventArgs e)
+        private void btnRunOC7_Click(object sender, EventArgs e)
         {
 
-            //@ToDo: Take this out when we only have one run button
-            if (this.btnRun.Text.Trim().ToUpper() == "CANCEL" || this.btnRunNew.Text.Trim().ToUpper() == "CANCEL")
-            {
-                bool bAbort = frmMain.g_oDelegate.AbortProcessing("QATools", "Cancel Running The Processor Scenario (Y/N)?");
-                if (bAbort)
-                {
-                    if (frmMain.g_oDelegate.m_oThread.IsAlive)
-                    {
-                        frmMain.g_oDelegate.m_oThread.Join();
-                    }
-                    frmMain.g_oDelegate.StopThread();
-                    RunScenario_Finished();
-                    
-                    frmMain.g_oDelegate.m_oThread = null;
-                    ReferenceProgressBarEx.backgroundpainter.Color = Color.Red;
-                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", 0);
-                    
-                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Text", "Cancelled");
-                    frmMain.g_oDelegate.ExecuteControlMethod(ReferenceProgressBarEx, "Refresh");
-                }
-            }
-            else
-            {
-                this.m_intError = 0;
-                this.m_strError = "";
-                if (this.m_lvEx.CheckedItems.Count == 0)
-                {
-                    MessageBox.Show("No Boxes Are Checked", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    return;
-                }
-                ReferenceProcessorScenarioForm.SaveRuleDefinitions();
-                m_intError = ReferenceProcessorScenarioForm.m_intError;
-
-                if (this.m_intError == 0 && (frmMain.g_oDelegate.m_oThread == null ||
-                                             frmMain.g_oDelegate.m_oThread.IsAlive == false))
-                {
-                    
-                    // Here is where we branch off to new processing, if desired 
-                    Button btnCaller = (Button)sender;
-                    if (btnCaller.Text.Equals("Run New"))
-                    {
-                        btnCaller.Text = "Cancel";
-                        RunScenario_StartNew();
-                    }
-                    else
-                    {
-                        btnRun.Text = "Cancel";
-                        RunScenario_Start();
-                    }
-                }
-
-            }
+            btnRun_Click(sender, e);
         }
+
         private void RunScenario_Start()
         {
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
@@ -5685,6 +5637,14 @@ namespace FIA_Biosum_Manager
                             {
                                 frmMain.g_oDelegate.SetListViewSubItemPropertyValue(m_lvEx, x, COL_OPCOSTDROP, "ForeColor", System.Drawing.Color.Red);
                                 frmMain.g_oDelegate.SetListViewSubItemPropertyValue(m_lvEx, x, COL_OPCOSTDROP, "UseItemStyleForSubItems", "False");
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                {
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "********* Updating listbox totals " +  System.DateTime.Now.ToString() + " ************" + "\r\n");
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "*Warning: harvest_costs table has " + intRowCount + " less records that opcost_input.* "  + "\r\n");
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "*The totals should be the same. Check opcost_error file!                             * " + "\r\n");
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "************************************************************************************** " + "\r\n");
+                                }
+
                             }
                         }
                     }
@@ -5834,9 +5794,60 @@ namespace FIA_Biosum_Manager
             this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
         }
 
-        private void btnRunNew_Click(object sender, EventArgs e)
+        private void btnRun_Click(object sender, EventArgs e)
         {
-            btnRun_Click(sender, e);
+            //@ToDo: Take this out when we only have one run button
+            if (this.btnRun.Text.Trim().ToUpper() == "CANCEL" || this.btnRunOC7.Text.Trim().ToUpper() == "CANCEL")
+            {
+                bool bAbort = frmMain.g_oDelegate.AbortProcessing("QATools", "Cancel Running The Processor Scenario (Y/N)?");
+                if (bAbort)
+                {
+                    if (frmMain.g_oDelegate.m_oThread.IsAlive)
+                    {
+                        frmMain.g_oDelegate.m_oThread.Join();
+                    }
+                    frmMain.g_oDelegate.StopThread();
+                    RunScenario_Finished();
+
+                    frmMain.g_oDelegate.m_oThread = null;
+                    ReferenceProgressBarEx.backgroundpainter.Color = Color.Red;
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", 0);
+
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Text", "Cancelled");
+                    frmMain.g_oDelegate.ExecuteControlMethod(ReferenceProgressBarEx, "Refresh");
+                }
+            }
+            else
+            {
+                this.m_intError = 0;
+                this.m_strError = "";
+                if (this.m_lvEx.CheckedItems.Count == 0)
+                {
+                    MessageBox.Show("No Boxes Are Checked", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+                ReferenceProcessorScenarioForm.SaveRuleDefinitions();
+                m_intError = ReferenceProcessorScenarioForm.m_intError;
+
+                if (this.m_intError == 0 && (frmMain.g_oDelegate.m_oThread == null ||
+                                             frmMain.g_oDelegate.m_oThread.IsAlive == false))
+                {
+
+                    // Here is where we branch off to old processing, if desired 
+                    Button btnCaller = (Button)sender;
+                    if (btnCaller.Text.Equals("Run"))
+                    {
+                        btnCaller.Text = "Cancel";
+                        RunScenario_StartNew();
+                    }
+                    else
+                    {
+                        btnRunOC7.Text = "Cancel";
+                        RunScenario_Start();
+                    }
+                }
+
+            }
         }
         
     }

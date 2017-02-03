@@ -30,13 +30,13 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnRunNew = new System.Windows.Forms.Button();
+            this.btnRun = new System.Windows.Forms.Button();
             this.cmbFilter = new System.Windows.Forms.ComboBox();
             this.pnlFileSizeMonitor = new System.Windows.Forms.Panel();
             this.uc_filesize_monitor3 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.uc_filesize_monitor2 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.uc_filesize_monitor1 = new FIA_Biosum_Manager.uc_filesize_monitor();
-            this.btnRun = new System.Windows.Forms.Button();
+            this.btnRunOC7 = new System.Windows.Forms.Button();
             this.lblMsg = new System.Windows.Forms.Label();
             this.lstFvsOutput = new System.Windows.Forms.ListView();
             this.btnUncheckAll = new System.Windows.Forms.Button();
@@ -61,10 +61,10 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.btnRunNew);
+            this.panel1.Controls.Add(this.btnRun);
             this.panel1.Controls.Add(this.cmbFilter);
             this.panel1.Controls.Add(this.pnlFileSizeMonitor);
-            this.panel1.Controls.Add(this.btnRun);
+            this.panel1.Controls.Add(this.btnRunOC7);
             this.panel1.Controls.Add(this.lblMsg);
             this.panel1.Controls.Add(this.lstFvsOutput);
             this.panel1.Controls.Add(this.btnUncheckAll);
@@ -76,15 +76,15 @@
             this.panel1.TabIndex = 32;
             this.panel1.Resize += new System.EventHandler(this.panel1_Resize);
             // 
-            // btnRunNew
+            // btnRun
             // 
-            this.btnRunNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRunNew.Location = new System.Drawing.Point(449, 354);
-            this.btnRunNew.Name = "btnRunNew";
-            this.btnRunNew.Size = new System.Drawing.Size(126, 32);
-            this.btnRunNew.TabIndex = 73;
-            this.btnRunNew.Text = "Run New";
-            this.btnRunNew.Click += new System.EventHandler(this.btnRunNew_Click);
+            this.btnRun.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRun.Location = new System.Drawing.Point(317, 354);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(126, 32);
+            this.btnRun.TabIndex = 73;
+            this.btnRun.Text = "Run";
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
             // cmbFilter
             // 
@@ -135,15 +135,15 @@
             this.uc_filesize_monitor1.TabIndex = 0;
             this.uc_filesize_monitor1.Visible = false;
             // 
-            // btnRun
+            // btnRunOC7
             // 
-            this.btnRun.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRun.Location = new System.Drawing.Point(317, 354);
-            this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(126, 32);
-            this.btnRun.TabIndex = 59;
-            this.btnRun.Text = "Run";
-            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            this.btnRunOC7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRunOC7.Location = new System.Drawing.Point(449, 354);
+            this.btnRunOC7.Name = "btnRunOC7";
+            this.btnRunOC7.Size = new System.Drawing.Size(126, 32);
+            this.btnRunOC7.TabIndex = 59;
+            this.btnRunOC7.Text = "Run OC7";
+            this.btnRunOC7.Click += new System.EventHandler(this.btnRunOC7_Click);
             // 
             // lblMsg
             // 
@@ -222,13 +222,13 @@
         public System.Windows.Forms.ListView lstFvsOutput;
         private System.Windows.Forms.Button btnUncheckAll;
         private System.Windows.Forms.Button btnChkAll;
-        private System.Windows.Forms.Button btnRun;
+        private System.Windows.Forms.Button btnRunOC7;
         private System.Windows.Forms.Label lblMsg;
         private System.Windows.Forms.Panel pnlFileSizeMonitor;
         private uc_filesize_monitor uc_filesize_monitor3;
         private uc_filesize_monitor uc_filesize_monitor2;
         private uc_filesize_monitor uc_filesize_monitor1;
         private System.Windows.Forms.ComboBox cmbFilter;
-        private System.Windows.Forms.Button btnRunNew;
+        private System.Windows.Forms.Button btnRun;
     }
 }
