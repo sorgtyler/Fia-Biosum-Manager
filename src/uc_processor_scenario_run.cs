@@ -2042,7 +2042,8 @@ namespace FIA_Biosum_Manager
                         if (bOPCOST)
                         {
                             strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                            strInputFile = "OPCOST_Input_" + strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
+                            strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
+                                           strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
                             strInputFile = strInputFile.Replace(":", "_");
                             strInputFile = strInputFile.Replace(" ", "_");
                             System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
@@ -2075,11 +2076,6 @@ namespace FIA_Biosum_Manager
                                         }
                                     }
                                 }
-
-                                // Rename opcost_input table with current opcost version
-                                string strNewTableName = "OpCost_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_input";
-                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "select * into " + strNewTableName + " from opcost_input");
-                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input");
                                 
                                 m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
                                 System.Threading.Thread.Sleep(5000);
@@ -5705,7 +5701,8 @@ namespace FIA_Biosum_Manager
                         string strInputFile = "";
 
                         strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                        strInputFile = "OPCOST_Input_" + strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
+                        strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
+                                       strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
                         strInputFile = strInputFile.Replace(":", "_");
                         strInputFile = strInputFile.Replace(" ", "_");
                         System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
@@ -5738,11 +5735,6 @@ namespace FIA_Biosum_Manager
                                      }
                                  }
                             }
-
-                           // Rename opcost_input table with current opcost version
-                           string strNewTableName = "OpCost_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_input";
-                           m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "select * into " + strNewTableName + " from opcost_input");
-                           m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input");
 
                             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
                             System.Threading.Thread.Sleep(5000);
