@@ -184,7 +184,8 @@ namespace FIA_Biosum_Manager
                         if (newTree.Slope < m_scenarioHarvestMethod.SteepSlopePct)
                         {
                             // assign low slope harvest method
-                            if (! String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodLowSlope))
+                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false && 
+                                !String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodLowSlope))
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodLowSlope;
                                 newTree.HarvestMethodCategory = m_scenarioHarvestMethod.HarvestCategoryLowSlope;
@@ -198,7 +199,8 @@ namespace FIA_Biosum_Manager
                         else
                         {
                             // assign steep slope harvest method
-                            if (!String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodSteepSlope))
+                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false && 
+                                !String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodSteepSlope))
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodSteepSlope;
                                 newTree.HarvestMethodCategory = m_scenarioHarvestMethod.HarvestCategorySteepSlope;
@@ -462,6 +464,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Read trees into opcost input - " + System.DateTime.Now.ToString() + "\r\n");
 
                 IDictionary<string, opcostInput> dictOpcostInput = new Dictionary<string, opcostInput>();
+
                 foreach (tree nextTree in m_trees)
                 {
                     opcostInput nextInput = null;
@@ -474,6 +477,10 @@ namespace FIA_Biosum_Manager
                                                     nextTree.HarvestMethod);
                         dictOpcostInput.Add(strStand, nextInput);
                     }
+
+                    //@ToDo: Replace this when we implement move-in costs; Constants for testing
+                    nextInput.MoveInHours = 8.0;
+                    nextInput.HarvestAreaAssumedAc = 80.0;
                     
                     // Metrics for brush cut trees
                     if (nextTree.TreeType == OpCostTreeType.BC)
@@ -617,7 +624,8 @@ namespace FIA_Biosum_Manager
                     "[Small log trees hardwood percent], [Large log trees per acre], [Large log trees MerchAsPctOfTotal ], " +
                     "[Large log trees ChipPct_Cat1_3_4], [Large log trees ChipPct_Cat2], [Large log trees ChipPct_Cat5], " +
                     "[Large log trees average vol(ft3)], [Large log trees average density(lbs/ft3)], [Large log trees hardwood percent], " +
-                    "BrushCutTPA, [BrushCutAvgVol], RxPackage_Rx_RxCycle, biosum_cond_id, RxPackage, Rx, RxCycle) " +
+                    "BrushCutTPA, [BrushCutAvgVol], RxPackage_Rx_RxCycle, biosum_cond_id, RxPackage, Rx, RxCycle, Move_In_Hours, " +
+                    "Harvest_Area_Assumed_Acres) " +
                     "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
                     nextStand.Elev + ", '" + nextStand.HarvestSystem + "', " + nextStand.TotalChipTpa + ", " + 
                     dblCtMerchPctTotal + ", " + dblCtAvgVolume + ", " + dblCtAvgDensity + ", " + dblCtHwdPct + ", " +
@@ -627,7 +635,8 @@ namespace FIA_Biosum_Manager
                     dblLgLogChipPct_Cat2 + "," + dblLgLogChipPct_Cat5 + "," + dblLgLogAvgVolume + ", " +
                     dblLgLogAvgDensity + ", " + dblLgLogHwdPct + "," + nextStand.TotalBcTpa + ", " + dblBcAvgVolume +
                     ",'" + nextStand.RxPackageRxRxCycle + "', '" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" +
-                    nextStand.Rx + "', '" + nextStand.RxCycle + "' )";
+                    nextStand.Rx + "', '" + nextStand.RxCycle + "', " + nextStand.MoveInHours + ", " + nextStand.HarvestAreaAssumedAc +
+                    " )";
 
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     if (m_oAdo.m_intError != 0) break;
@@ -1069,12 +1078,13 @@ namespace FIA_Biosum_Manager
                 {
                     // We should only have one record
                     m_oAdo.m_OleDbDataReader.Read();
+                    string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
                     double dblMinChipDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_chip_dbh"]);
                     double dblMinSmallLogDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_sm_log_dbh"]);
                     double dblMinLgLogDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_lg_log_dbh"]);
                     int intMinSlopePct = Convert.ToInt32(m_oAdo.m_OleDbDataReader["SteepSlope"]);
                     double dblMinDbhSteepSlope = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
-                    string strHarvestMethodLowSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodLowSlope"]).Trim();
+                    string strUseRxDefaultHarvestMethodYN = Convert.ToString(m_oAdo.m_OleDbDataReader["UseRxDefaultHarvestMethodYN"]).Trim();
                     string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
                     int intSaplingMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["SaplingMerchAsPercentOfTotalVol"]);
                     int intWoodlandMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["WoodlandMerchAsPercentOfTotalVol"]);
@@ -1096,7 +1106,7 @@ namespace FIA_Biosum_Manager
                     returnVariables = new scenarioHarvestMethod(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
                         intMinSlopePct, dblMinDbhSteepSlope,
                         strHarvestMethodLowSlope, strHarvestMethodSteepSlope, intHarvestCategoryLowSlope, intHarvestCategorySteepSlope,
-                        intSaplingMerchAsPercentOfTotalVol, intWoodlandMerchAsPercentOfTotalVol, intCullPctThreshold);
+                        intSaplingMerchAsPercentOfTotalVol, intWoodlandMerchAsPercentOfTotalVol, intCullPctThreshold, strUseRxDefaultHarvestMethodYN);
                 }
             }
 
@@ -1667,12 +1677,13 @@ namespace FIA_Biosum_Manager
             int _intSaplingMerchAsPercentOfTotalVol;
             int _intWoodlandMerchAsPercentOfTotalVol;
             int _intCullPctThreshold;
+            bool _blnUseRxDefaultHarvestMethod;
 
             public scenarioHarvestMethod(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
                                          double minDbhSteepSlope,
                                          string harvestMethodLowSlope, string harvestMethodSteepSlope,
                                          int harvestCategoryLowSlope, int harvestCategorySteepSlope, int saplingMerchAsPercentOfTotalVol,
-                                         int woodlandMerchAsPercentOfTotalVol, int cullPctThreshold)
+                                         int woodlandMerchAsPercentOfTotalVol, int cullPctThreshold, string useRxDefaultHarvestMethod)
             {
                 _dblMinSmallLogDbh = minSmallLogDbh;
                 _dblMinLargeLogDbh = minLargeLogDbh;
@@ -1686,6 +1697,14 @@ namespace FIA_Biosum_Manager
                 _intSaplingMerchAsPercentOfTotalVol = saplingMerchAsPercentOfTotalVol;
                 _intWoodlandMerchAsPercentOfTotalVol = woodlandMerchAsPercentOfTotalVol;
                 _intCullPctThreshold = cullPctThreshold;
+                if (useRxDefaultHarvestMethod.Trim().ToUpper() == "Y")
+                {
+                    _blnUseRxDefaultHarvestMethod = true;
+                }
+                else
+                {
+                    _blnUseRxDefaultHarvestMethod = false;
+                }
             }
 
             public double MinChipDbh
@@ -1736,15 +1755,21 @@ namespace FIA_Biosum_Manager
             {
                 get { return _intCullPctThreshold; }
             }
+            public bool UseRxDefaultHarvestMethod
+            {
+                get { return _blnUseRxDefaultHarvestMethod; }
+            }
             // Overriding the ToString method for debugging purposes
             public override string ToString()
             {
                 return string.Format("MinChipDbh: {0}, MinSmallLogDbh: {1}, MinLargeLogDbh: {2}, SteepSlopePct: {3}, MinDbhSteepSlope: {4}, " +
                     "HarvestMethodLowSlope: {5}, HarvestMethodSteepSlope: {6}, " +
-                    "SaplingMerchAsPercentOfTotalVol: {7} WoodlandMerchAsPercentOfTotalVol: {8} CullPctThreshold: {9}]",
+                    "SaplingMerchAsPercentOfTotalVol: {7} WoodlandMerchAsPercentOfTotalVol: {8} CullPctThreshold: {9} " +
+                    "UseRxDefaultHarvestMethod: {10} ]",
                     _dblMinChipDbh, _dblMinSmallLogDbh, _dblMinLargeLogDbh, _intSteepSlopePct, _dblMinDbhSteepSlope,
                     _strHarvestMethodSteepSlope, _strHarvestMethodSteepSlope,
-                    _intSaplingMerchAsPercentOfTotalVol, _intWoodlandMerchAsPercentOfTotalVol, _intCullPctThreshold);
+                    _intSaplingMerchAsPercentOfTotalVol, _intWoodlandMerchAsPercentOfTotalVol, _intCullPctThreshold,
+                    Convert.ToString(_blnUseRxDefaultHarvestMethod));
             }
         }
 
@@ -1828,7 +1853,8 @@ namespace FIA_Biosum_Manager
             double _dblLgLogVolCfPa;
             double _dblLgLogWtGtPa;
             double _dblLgLogHwdVolCfPa;
-
+            double _dblMoveInHours;
+            double _dblHarvestAreaAssumedAc;
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
                                string rxYear, double yardingDistance, int elev, string harvestSystem)
@@ -2008,6 +2034,16 @@ namespace FIA_Biosum_Manager
             public string Rx
             {
                 get { return _strRx; }
+            }
+            public double MoveInHours
+            {
+                set { _dblMoveInHours = value; }
+                get { return _dblMoveInHours; }
+            }
+            public double HarvestAreaAssumedAc
+            {
+                set { _dblHarvestAreaAssumedAc = value; }
+                get { return _dblHarvestAreaAssumedAc; }
             }
         }
 

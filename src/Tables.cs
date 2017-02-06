@@ -3217,10 +3217,13 @@ namespace FIA_Biosum_Manager
                             " BrushCutTPA single," +
                             " BrushCutAvgVol single," +
                             " RxPackage_Rx_RxCycle text (255)," +
+                            " RxCycle text (255), " +
                             " biosum_cond_id text (255)," +
                             " RxPackage text (255)," +
                             " Rx text (255)," +
-                            " RxCycle text (255))";
+                            " Move_In_Hours single," +
+                            " Harvest_area_assumed_acres single" +
+                            " )";
             }
 
             public void CreateTreeReconcilationTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)

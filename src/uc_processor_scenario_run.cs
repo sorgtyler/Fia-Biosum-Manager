@@ -5626,7 +5626,7 @@ namespace FIA_Biosum_Manager
                         if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_input"))
                         {
                             int intOpcostRowCount = (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM opcost_input", "temp");
-                            intRowCount = intRowCount - intOpcostRowCount;
+                            intRowCount = intOpcostRowCount - intRowCount;
                             frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_OPCOSTDROP, intRowCount.ToString());
                             // If OpCost dropped records, set text color to red
                             if (intRowCount > 0)
