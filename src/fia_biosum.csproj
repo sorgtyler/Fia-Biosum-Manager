@@ -164,6 +164,9 @@
     <Compile Include="btnMainForm.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="uc_processor_movein_costs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="dao_data_access.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -581,6 +584,9 @@
     <Content Include="table-select-row-icon.png" />
     <EmbeddedResource Include="btnMainForm.resx">
       <DependentUpon>btnMainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_processor_movein_costs.resx">
+      <DependentUpon>uc_processor_movein_costs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
