@@ -17,23 +17,27 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Label lblMinYardingDistance;
+		private System.Windows.Forms.Label lblYardDistThreshold;
 		private RxTools m_oRxTools = new RxTools();
 		private Queries m_oQueries = new Queries();
 		private ado_data_access m_oAdo = null;
 		private string _strScenarioId="";
         private frmProcessorScenario _frmProcessorScenario = null;
-        private TextBox txtMoveInHoursAdjFactor;
+        private TextBox txtMoveInAddend;
         private Label label6;
         private Label label7;
-        private TextBox txtMoveInHoursMultiplier;
+        private TextBox txtMoveInTimeMultiplier;
         private Label label4;
         private Label label5;
         private Label label2;
         private TextBox txtAssumedHarvestArea;
         private Label label3;
         private Label label1;
-        private TextBox txtMinYardingDistance;
+        private TextBox txtYardDistThreshold;
+        private Label label9;
+        private Label label8;
+        private Label label10;
+        private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
 		
 		/// <summary> 
 		/// Required designer variable.
@@ -82,21 +86,25 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_processor_movein_costs));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblMinYardingDistance = new System.Windows.Forms.Label();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.txtMinYardingDistance = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtMoveInAddend = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txtMoveInTimeMultiplier = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtAssumedHarvestArea = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txtMoveInHoursMultiplier = new System.Windows.Forms.TextBox();
-            this.txtMoveInHoursAdjFactor = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtYardDistThreshold = new System.Windows.Forms.TextBox();
+            this.lblYardDistThreshold = new System.Windows.Forms.Label();
+            this.lblTitle = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -115,33 +123,186 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.txtMoveInHoursAdjFactor);
+            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.label9);
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.txtMoveInAddend);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.txtMoveInHoursMultiplier);
+            this.panel1.Controls.Add(this.txtMoveInTimeMultiplier);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtAssumedHarvestArea);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.txtMinYardingDistance);
-            this.panel1.Controls.Add(this.lblMinYardingDistance);
+            this.panel1.Controls.Add(this.txtYardDistThreshold);
+            this.panel1.Controls.Add(this.lblYardDistThreshold);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 48);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(690, 397);
             this.panel1.TabIndex = 31;
             // 
-            // lblMinYardingDistance
+            // label10
             // 
-            this.lblMinYardingDistance.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMinYardingDistance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.lblMinYardingDistance.Location = new System.Drawing.Point(16, 8);
-            this.lblMinYardingDistance.Name = "lblMinYardingDistance";
-            this.lblMinYardingDistance.Size = new System.Drawing.Size(240, 16);
-            this.lblMinYardingDistance.TabIndex = 52;
-            this.lblMinYardingDistance.Text = "Minimum Yarding Distance (Feet):";
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label10.Location = new System.Drawing.Point(268, 227);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(49, 16);
+            this.label10.TabIndex = 68;
+            this.label10.Text = "Hours";
+            // 
+            // label9
+            // 
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label9.Location = new System.Drawing.Point(268, 73);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(49, 16);
+            this.label9.TabIndex = 67;
+            this.label9.Text = "Acres";
+            // 
+            // label8
+            // 
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label8.Location = new System.Drawing.Point(268, 8);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(49, 16);
+            this.label8.TabIndex = 66;
+            this.label8.Text = "Feet";
+            // 
+            // txtMoveInAddend
+            // 
+            this.txtMoveInAddend.ForeColor = System.Drawing.Color.Black;
+            this.txtMoveInAddend.Location = new System.Drawing.Point(221, 227);
+            this.txtMoveInAddend.Name = "txtMoveInAddend";
+            this.txtMoveInAddend.Size = new System.Drawing.Size(45, 20);
+            this.txtMoveInAddend.TabIndex = 65;
+            this.txtMoveInAddend.Text = "0.0";
+            this.txtMoveInAddend.Leave += new System.EventHandler(this.txtMoveInHoursAddend_Leave);
+            this.txtMoveInAddend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMoveInHoursAddend_KeyPress);
+
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label6.Location = new System.Drawing.Point(16, 247);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(630, 36);
+            this.label6.TabIndex = 64;
+            this.label6.Text = "Move-in Time will be calculated as the sum of Scaled Move-in Time and this Move-i" +
+    "n Adjustment";
+            // 
+            // label7
+            // 
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label7.Location = new System.Drawing.Point(16, 227);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(380, 16);
+            this.label7.TabIndex = 63;
+            this.label7.Text = "Move-in Adjustment:";
+            // 
+            // txtMoveInTimeMultiplier
+            // 
+            this.txtMoveInTimeMultiplier.ForeColor = System.Drawing.Color.Black;
+            this.txtMoveInTimeMultiplier.Location = new System.Drawing.Point(221, 134);
+            this.txtMoveInTimeMultiplier.Name = "txtMoveInTimeMultiplier";
+            this.txtMoveInTimeMultiplier.Size = new System.Drawing.Size(45, 20);
+            this.txtMoveInTimeMultiplier.TabIndex = 62;
+            this.txtMoveInTimeMultiplier.Text = "1.0";
+            this.txtMoveInTimeMultiplier.Leave += new System.EventHandler(this.txtMoveInTimeMultiplier_Leave);
+            this.txtMoveInTimeMultiplier.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMoveInTimeMultiplier_KeyPress);
+
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label4.Location = new System.Drawing.Point(16, 155);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(650, 56);
+            this.label4.TabIndex = 61;
+            this.label4.Text = resources.GetString("label4.Text");
+            // 
+            // label5
+            // 
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label5.Location = new System.Drawing.Point(16, 135);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(325, 16);
+            this.label5.TabIndex = 60;
+            this.label5.Text = "Move-in Time Multiplier:";
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label2.Location = new System.Drawing.Point(16, 93);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(486, 16);
+            this.label2.TabIndex = 59;
+            this.label2.Text = "Per-acre move-in costs will be calculated based on this assumption";
+            // 
+            // txtAssumedHarvestArea
+            // 
+            this.txtAssumedHarvestArea.ForeColor = System.Drawing.Color.Black;
+            this.txtAssumedHarvestArea.Location = new System.Drawing.Point(221, 72);
+            this.txtAssumedHarvestArea.Name = "txtAssumedHarvestArea";
+            this.txtAssumedHarvestArea.Size = new System.Drawing.Size(45, 20);
+            this.txtAssumedHarvestArea.TabIndex = 58;
+            this.txtAssumedHarvestArea.Text = "80.0";
+            this.txtAssumedHarvestArea.Leave += new System.EventHandler(this.txtAssumedHarvestArea_Leave);
+            this.txtAssumedHarvestArea.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAssumedHarvestArea_KeyPress);
+
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label3.Location = new System.Drawing.Point(16, 73);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(259, 16);
+            this.label3.TabIndex = 57;
+            this.label3.Text = "Assumed Harvest Area:";
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label1.Location = new System.Drawing.Point(16, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(566, 16);
+            this.label1.TabIndex = 56;
+            this.label1.Text = "Distances shorter than this will be set to this value for cost estimation in OpCo" +
+    "st";
+            // 
+            // txtYardDistThreshold
+            // 
+            this.txtYardDistThreshold.ForeColor = System.Drawing.Color.Black;
+            this.txtYardDistThreshold.Location = new System.Drawing.Point(221, 7);
+            this.txtYardDistThreshold.Name = "txtYardDistThreshold";
+            this.txtYardDistThreshold.Size = new System.Drawing.Size(45, 20);
+            this.txtYardDistThreshold.TabIndex = 55;
+            this.txtYardDistThreshold.Text = "150.0";
+            this.txtYardDistThreshold.Leave += new System.EventHandler(this.txtYardDistThreshold_Leave);
+            this.txtYardDistThreshold.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtYardDistThreshold_KeyPress);
+
+            // 
+            // lblYardDistThreshold
+            // 
+            this.lblYardDistThreshold.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblYardDistThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.lblYardDistThreshold.Location = new System.Drawing.Point(16, 8);
+            this.lblYardDistThreshold.Name = "lblYardDistThreshold";
+            this.lblYardDistThreshold.Size = new System.Drawing.Size(240, 16);
+            this.lblYardDistThreshold.TabIndex = 52;
+            this.lblYardDistThreshold.Text = "Yarding Distance Threshold:";
             // 
             // lblTitle
             // 
@@ -153,114 +314,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(690, 32);
             this.lblTitle.TabIndex = 30;
             this.lblTitle.Text = "Move-in costs";
-            // 
-            // txtMinYardingDistance
-            // 
-            this.txtMinYardingDistance.ForeColor = System.Drawing.Color.Black;
-            this.txtMinYardingDistance.Location = new System.Drawing.Point(273, 7);
-            this.txtMinYardingDistance.Name = "txtMinYardingDistance";
-            this.txtMinYardingDistance.Size = new System.Drawing.Size(45, 20);
-            this.txtMinYardingDistance.TabIndex = 55;
-            this.txtMinYardingDistance.Text = "150.0";
-            // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.label1.Location = new System.Drawing.Point(16, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(402, 16);
-            this.label1.TabIndex = 56;
-            this.label1.Text = "The shortest yarding distance sent to OpCost for a plot";
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.label2.Location = new System.Drawing.Point(16, 93);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(402, 16);
-            this.label2.TabIndex = 59;
-            this.label2.Text = "Additional information?";
-            // 
-            // txtAssumedHarvestArea
-            // 
-            this.txtAssumedHarvestArea.ForeColor = System.Drawing.Color.Black;
-            this.txtAssumedHarvestArea.Location = new System.Drawing.Point(273, 72);
-            this.txtAssumedHarvestArea.Name = "txtAssumedHarvestArea";
-            this.txtAssumedHarvestArea.Size = new System.Drawing.Size(45, 20);
-            this.txtAssumedHarvestArea.TabIndex = 58;
-            this.txtAssumedHarvestArea.Text = "80.0";
-            // 
-            // label3
-            // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.label3.Location = new System.Drawing.Point(16, 73);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(259, 16);
-            this.label3.TabIndex = 57;
-            this.label3.Text = "Assumed Harvest Area Size (Acres):";
-            // 
-            // label4
-            // 
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.label4.Location = new System.Drawing.Point(16, 155);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(486, 36);
-            this.label4.TabIndex = 61;
-            this.label4.Text = "Multiplied against GIS travel time for a plot; A value of 0 disconnects move-in c" +
-    "ost calculations from GIS travel time";
-            // 
-            // label5
-            // 
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.label5.Location = new System.Drawing.Point(16, 135);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(325, 16);
-            this.label5.TabIndex = 60;
-            this.label5.Text = "Move-in Hours Multiplier:";
-            // 
-            // txtMoveInHoursMultiplier
-            // 
-            this.txtMoveInHoursMultiplier.ForeColor = System.Drawing.Color.Black;
-            this.txtMoveInHoursMultiplier.Location = new System.Drawing.Point(273, 134);
-            this.txtMoveInHoursMultiplier.Name = "txtMoveInHoursMultiplier";
-            this.txtMoveInHoursMultiplier.Size = new System.Drawing.Size(45, 20);
-            this.txtMoveInHoursMultiplier.TabIndex = 62;
-            this.txtMoveInHoursMultiplier.Text = "1.0";
-            // 
-            // txtMoveInHoursAdjFactor
-            // 
-            this.txtMoveInHoursAdjFactor.ForeColor = System.Drawing.Color.Black;
-            this.txtMoveInHoursAdjFactor.Location = new System.Drawing.Point(392, 214);
-            this.txtMoveInHoursAdjFactor.Name = "txtMoveInHoursAdjFactor";
-            this.txtMoveInHoursAdjFactor.Size = new System.Drawing.Size(45, 20);
-            this.txtMoveInHoursAdjFactor.TabIndex = 65;
-            this.txtMoveInHoursAdjFactor.Text = "0.0";
-            // 
-            // label6
-            // 
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.label6.Location = new System.Drawing.Point(16, 235);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(486, 36);
-            this.label6.TabIndex = 64;
-            this.label6.Text = "Adds a fixed value to GIS travel time for a plot; Value can be positive or negati" +
-    "ve.";
-            // 
-            // label7
-            // 
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.label7.Location = new System.Drawing.Point(16, 215);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(380, 16);
-            this.label7.TabIndex = 63;
-            this.label7.Text = "Move-in Hours Adjustment Factor (Decimal Seconds):";
             // 
             // uc_processor_movein_costs
             // 
@@ -276,67 +329,133 @@ namespace FIA_Biosum_Manager
 		#endregion
 		public void loadvalues()
 		{
-			int x,y;
-			string strField;
-			if (m_oAdo!=null && m_oAdo.m_OleDbConnection != null)
-				if (m_oAdo.m_OleDbConnection.State == System.Data.ConnectionState.Open) m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 
-			//
-			//SCENARIO MDB
-			//
-			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +  
-				"\\processor\\db\\scenario_processor_rule_definitions.mdb";
-			//
-			//SCENARIO ID
-			//
-			ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
-			//
-			//LOAD PROJECT DATATASOURCES INFO
-			//
-			m_oQueries.m_oFvs.LoadDatasource=true;
-			m_oQueries.m_oReference.LoadDatasource=true;
-			m_oQueries.LoadDatasources(true,"processor",ScenarioId);
-			//
-			//CREATE LINK IN TEMP MDB TO SCENARIO COST REVENUE ESCALATORS TABLE
-			//
-			dao_data_access oDao = new dao_data_access();
-			//link to tree species groups table
-			oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
-				"scenario_cost_revenue_escalators",
-				strScenarioMDB,"scenario_cost_revenue_escalators",true);
-			oDao.m_DaoWorkspace.Close();
-			oDao=null;
-			//
-			//OPEN CONNECTION TO TEMP DB FILE
-			//
-			m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));                
+            m_oQueries.m_oFvs.LoadDatasource = true;
+            m_oQueries.m_oReference.LoadDatasource = true;
+            m_oQueries.LoadDatasources(true, "processor", ScenarioId);
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+     
+            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadMoveInCosts
+                (frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                "\\processor\\db\\scenario_processor_rule_definitions.mdb",
+                ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
+
+            FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
+            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
+            {
+                this.txtYardDistThreshold.Text = oItem.m_oMoveInCosts.YardDistThreshold;
+                this.txtAssumedHarvestArea.Text = oItem.m_oMoveInCosts.AssumedHarvestAreaAc;
+                this.txtMoveInTimeMultiplier.Text = oItem.m_oMoveInCosts.MoveInTimeMultiplier;
+                this.txtMoveInAddend.Text = oItem.m_oMoveInCosts.MoveInHoursAddend;
+            }              
 			
 		}
         public void loadvalues_FromProperties()
         {
 
-            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oEscalators != null)
+            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oMoveInCosts != null)
             {
-                ProcessorScenarioItem.Escalators oEscalators = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oEscalators;
-                //
-                //UPDATE CYCLE ESCALATOR TEXT BOXES
-                //
-                //operating costs cycle 2,3,4
-                //cycle2
-                
+                FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
+                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
+                {
+                    this.txtYardDistThreshold.Text = oItem.m_oMoveInCosts.YardDistThreshold;
+                    this.txtAssumedHarvestArea.Text = oItem.m_oMoveInCosts.AssumedHarvestAreaAc;
+                    this.txtMoveInTimeMultiplier.Text = oItem.m_oMoveInCosts.MoveInTimeMultiplier;
+                    this.txtMoveInAddend.Text = oItem.m_oMoveInCosts.MoveInHoursAddend;
+                }
             }
  
         }
 
 		public void savevalues()
 		{
+            //
+            //OPEN CONNECTION TO DB FILE CONTAINING PROCESSOR SCENARIO TABLES
+            //
+            //scenario mdb connection
+            ado_data_access oAdo = new ado_data_access();
+            string strScenarioMDB =
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
+            if (oAdo.m_intError != 0)
+            {
+                m_intError = oAdo.m_intError;
+                m_strError = oAdo.m_strError;
+                oAdo = null;
+                return;
+            }
+
             m_intError = 0;
             m_strError = "";
+            string strFields = "scenario_id,yard_dist_threshold,assumed_harvest_area_ac," +
+                             "move_in_time_multiplier," +
+                             "move_in_hours_addend";
+            string strValues = "";
 
-			int x;
-			string strValues="";
+            oAdo.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName + " " +
+                              "WHERE TRIM(UCASE(scenario_id)) = '" + ScenarioId.Trim().ToUpper() + "'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            //
+            //SCENARIOID
+            //
+            strValues = "'" + ScenarioId + "',";
+            //
+            //YARDING DISTANCE THRESHOLD
+            //
+            if (this.txtYardDistThreshold.Text.Trim().Length > 0)
+            {
+                strValues = strValues + this.txtYardDistThreshold.Text.Trim() + ",";
+            }
+            else
+            {
+                strValues = strValues + "null,";
+            }
+            //
+            //ASSUMED HARVEST AREA
+            //
+            if (this.txtAssumedHarvestArea.Text.Trim().Length > 0)
+            {
+                strValues = strValues + this.txtAssumedHarvestArea.Text.Trim() + ",";
+            }
+            else
+            {
+                strValues = strValues + "null,";
+            }
+            //
+            //MOVE IN TIME MULTIPLIER
+            //
+            if (this.txtMoveInTimeMultiplier.Text.Trim().Length > 0)
+            {
+                strValues = strValues + this.txtMoveInTimeMultiplier.Text.Trim() + ",";
+            }
+            else
+            {
+                strValues = strValues + "null,";
+            }
+            //
+            //MOVE IN TIME ADDEND
+            //
+            if (this.txtMoveInAddend.Text.Trim().Length > 0)
+            {
+                strValues = strValues + this.txtMoveInAddend.Text.Trim();
+            }
+            else
+            {
+                strValues = strValues + "null";
+            }
+            //
+
+            oAdo.m_strSQL = Queries.GetInsertSQL(strFields, strValues, Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName);
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            m_intError = oAdo.m_intError;
+
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo = null;
+
 
 			
 		}
@@ -345,5 +464,86 @@ namespace FIA_Biosum_Manager
 		{
 		
 		}
+
+        private void txtYardDistThreshold_Leave(object sender, System.EventArgs e)
+        {
+            m_oValidate.RoundDecimalLength = 3;
+            m_oValidate.MaxValue = 500;
+            m_oValidate.MinValue = 0;
+            m_oValidate.TestForMaxMin = true;
+            m_oValidate.NullsAllowed = false;
+            m_oValidate.ValidateDecimal(this.txtYardDistThreshold.Text.Trim());
+            if (m_oValidate.m_intError == 0)
+            {
+                this.txtYardDistThreshold.Text = m_oValidate.ReturnValue;
+            }
+            else
+                this.txtYardDistThreshold.Focus();
+        }
+
+        private void txtAssumedHarvestArea_Leave(object sender, EventArgs e)
+        {
+            m_oValidate.RoundDecimalLength = 4;
+            m_oValidate.MaxValue = 1000;
+            m_oValidate.MinValue = 0;
+            m_oValidate.TestForMaxMin = true;
+            m_oValidate.NullsAllowed = false;
+            m_oValidate.ValidateDecimal(this.txtAssumedHarvestArea.Text.Trim());
+            if (m_oValidate.m_intError == 0)
+            {
+                this.txtAssumedHarvestArea.Text = m_oValidate.ReturnValue;
+            }
+            else
+                this.txtAssumedHarvestArea.Focus();
+        }
+
+        private void txtMoveInTimeMultiplier_Leave(object sender, EventArgs e)
+        {
+            m_oValidate.RoundDecimalLength = 2;
+            m_oValidate.MaxValue = 25;
+            m_oValidate.MinValue = 0;
+            m_oValidate.TestForMaxMin = true;
+            m_oValidate.NullsAllowed = false;
+            m_oValidate.ValidateDecimal(this.txtMoveInTimeMultiplier.Text.Trim());
+            if (m_oValidate.m_intError == 0)
+            {
+                this.txtMoveInTimeMultiplier.Text = m_oValidate.ReturnValue;
+            }
+            else
+                this.txtMoveInTimeMultiplier.Focus();
+        }
+        
+        private void txtMoveInHoursAddend_Leave(object sender, EventArgs e)
+        {
+            m_oValidate.RoundDecimalLength = 2;
+            m_oValidate.MaxValue = 25;
+            m_oValidate.MinValue = 0;
+            m_oValidate.TestForMaxMin = true;
+            m_oValidate.NullsAllowed = false;
+            m_oValidate.ValidateDecimal(this.txtMoveInAddend.Text.Trim());
+            if (m_oValidate.m_intError == 0)
+            {
+                this.txtMoveInAddend.Text = m_oValidate.ReturnValue;
+            }
+            else
+                this.txtMoveInAddend.Focus();
+        }
+
+        private void txtYardDistThreshold_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ReferenceProcessorScenarioForm.m_bSave = true;
+        }
+        private void txtAssumedHarvestArea_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ReferenceProcessorScenarioForm.m_bSave = true;
+        }
+        private void txtMoveInTimeMultiplier_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ReferenceProcessorScenarioForm.m_bSave = true;
+        }
+        private void txtMoveInHoursAddend_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ReferenceProcessorScenarioForm.m_bSave = true;
+        }
 	}
 }

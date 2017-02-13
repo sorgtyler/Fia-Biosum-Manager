@@ -3804,6 +3804,7 @@ namespace FIA_Biosum_Manager
 			static public string DefaultRxHarvestMethodTableName {get {return "scenario_rx_harvest_method";}}
 			static public string DefaultHarvestMethodDbFile {get {return @"db\scenario_processor_rule_definitions.mdb";}}
 			static public string DefaultHarvestMethodTableName {get {return "scenario_harvest_method";}}
+            static public string DefaultMoveInCostsTableName { get { return "scenario_move_in_costs"; } }
             static public string DefaultHarvestCostColumnsDbFile { get { return @"db\scenario_processor_rule_definitions.mdb"; } }
             static public string DefaultHarvestCostColumnsTableName { get { return "scenario_harvest_cost_columns"; } }
 			static public string DefaultCostRevenueEscalatorsDbFile {get {return @"db\scenario_processor_rule_definitions.mdb";}}

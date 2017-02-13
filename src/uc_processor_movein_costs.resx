@@ -117,4 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Scaled Move-in Time will be calculated as the minimum travel time to a merchantable wood processing site times this parameter. Entering 0 provides opportunity to select a constant value for Move-in Time by entering a positive value in Move-in Adjustment.</value>
+  </data>
 </root>

@@ -1012,6 +1012,7 @@ namespace FIA_Biosum_Manager
     public class ProcessorScenarioItem
     {
         public HarvestMethod m_oHarvestMethod = new HarvestMethod();
+        public MoveInCosts m_oMoveInCosts = new MoveInCosts();
         public Escalators m_oEscalators = new Escalators();
         public HarvestCostItem_Collection m_oHarvestCostItem_Collection = new HarvestCostItem_Collection();
         public TreeSpeciesAndDbhDollarValuesItem_Collection m_oTreeSpeciesAndDbhDollarValuesItem_Collection
@@ -1071,6 +1072,7 @@ namespace FIA_Biosum_Manager
                 p_oSource.m_oHarvestCostItem_Collection,
             ref p_oDest.m_oHarvestCostItem_Collection,true);
             p_oDest.m_oHarvestMethod.Copy(p_oSource.m_oHarvestMethod, p_oDest.m_oHarvestMethod);
+            p_oDest.m_oMoveInCosts.Copy(p_oSource.m_oMoveInCosts, p_oDest.m_oMoveInCosts);
             p_oDest.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Copy(
                 p_oSource.m_oTreeSpeciesAndDbhDollarValuesItem_Collection,
             ref p_oDest.m_oTreeSpeciesAndDbhDollarValuesItem_Collection, true);
@@ -1174,6 +1176,42 @@ namespace FIA_Biosum_Manager
                 p_oDest.CullPctThreshold = p_oSource.CullPctThreshold;
             }
             
+        }
+        public class MoveInCosts
+        {
+            private string _strYardDistThreshold = "150";
+            public string YardDistThreshold
+            {
+                get { return _strYardDistThreshold; }
+                set { _strYardDistThreshold = value; }
+            }
+            private string _strAssumedHarvestAreaAc = "80";
+            public string AssumedHarvestAreaAc
+            {
+                get { return _strAssumedHarvestAreaAc; }
+                set { _strAssumedHarvestAreaAc = value; }
+            }
+            private string _strMoveInTimeMultiplier = "1";
+            public string MoveInTimeMultiplier
+            {
+                get { return _strMoveInTimeMultiplier; }
+                set { _strMoveInTimeMultiplier = value; }
+            }
+            private string _strMoveInHoursAddend = "0";
+            public string MoveInHoursAddend
+            {
+                get { return _strMoveInHoursAddend; }
+                set { _strMoveInHoursAddend = value; }
+            }
+
+            public void Copy(MoveInCosts p_oSource, MoveInCosts p_oDest)
+            {
+                p_oDest.YardDistThreshold = p_oSource.YardDistThreshold;
+                p_oDest.AssumedHarvestAreaAc = p_oSource.AssumedHarvestAreaAc;
+                p_oDest.MoveInTimeMultiplier = p_oSource.MoveInTimeMultiplier;
+                p_oDest.MoveInHoursAddend = p_oSource.MoveInHoursAddend;
+            }
+
         }
         public class Escalators
         {
@@ -1787,6 +1825,73 @@ namespace FIA_Biosum_Manager
                             if (p_oAdo.m_OleDbDataReader["CullPctThreshold"].ToString().Trim().Length > 0)
                             {
                                 p_oProcessorScenarioItem.m_oHarvestMethod.CullPctThreshold = p_oAdo.m_OleDbDataReader["CullPctThreshold"].ToString().Trim();
+                            }
+                        }
+                    }
+                    p_oAdo.m_OleDbDataReader.Close();
+                }
+            }
+        }
+        public void LoadMoveInCosts(string p_strDbFile, FIA_Biosum_Manager.ProcessorScenarioItem p_oProcessorScenarioItem)
+        {
+            ado_data_access oAdo = new ado_data_access();
+            oAdo.OpenConnection(oAdo.getMDBConnString(p_strDbFile, "", ""));
+            if (oAdo.m_intError == 0)
+            {
+                this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, p_oProcessorScenarioItem);
+            }
+            m_intError = oAdo.m_intError;
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo = null;
+        }
+        public void LoadMoveInCosts(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, FIA_Biosum_Manager.ProcessorScenarioItem p_oProcessorScenarioItem)
+        {
+            p_oAdo.SqlQueryReader(p_oConn, "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName + " WHERE TRIM(UCASE(scenario_id))='" + p_oProcessorScenarioItem.ScenarioId.Trim().ToUpper() + "'");
+
+            if (p_oAdo.m_intError == 0)
+            {
+                if (p_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (p_oAdo.m_OleDbDataReader.Read())
+                    {
+                        //
+                        //YARDING DISTANCE THRESHOLD
+                        //
+                        if (p_oAdo.m_OleDbDataReader["yard_dist_threshold"] != System.DBNull.Value)
+                        {
+                            if (p_oAdo.m_OleDbDataReader["yard_dist_threshold"].ToString().Trim().Length > 0)
+                            {
+                                p_oProcessorScenarioItem.m_oMoveInCosts.YardDistThreshold = p_oAdo.m_OleDbDataReader["yard_dist_threshold"].ToString().Trim();
+                            }
+                        }
+                        //
+                        //ASSUMED HARVEST AREA
+                        //
+                        if (p_oAdo.m_OleDbDataReader["assumed_harvest_area_ac"] != System.DBNull.Value)
+                        {
+                            if (p_oAdo.m_OleDbDataReader["assumed_harvest_area_ac"].ToString().Trim().Length > 0)
+                            {
+                                p_oProcessorScenarioItem.m_oMoveInCosts.AssumedHarvestAreaAc = p_oAdo.m_OleDbDataReader["assumed_harvest_area_ac"].ToString().Trim();
+                            }
+                        }
+                        //
+                        //MOVE-IN TIME MULTIPLIER
+                        //
+                        if (p_oAdo.m_OleDbDataReader["move_in_time_multiplier"] != System.DBNull.Value)
+                        {
+                            if (p_oAdo.m_OleDbDataReader["move_in_time_multiplier"].ToString().Trim().Length > 0)
+                            {
+                                p_oProcessorScenarioItem.m_oMoveInCosts.MoveInTimeMultiplier = p_oAdo.m_OleDbDataReader["move_in_time_multiplier"].ToString().Trim();
+                            }
+                        }
+                        //
+                        //MOVE-IN HOURS ADDEND
+                        //
+                        if (p_oAdo.m_OleDbDataReader["move_in_hours_addend"] != System.DBNull.Value)
+                        {
+                            if (p_oAdo.m_OleDbDataReader["move_in_hours_addend"].ToString().Trim().Length > 0)
+                            {
+                                p_oProcessorScenarioItem.m_oMoveInCosts.MoveInHoursAddend = p_oAdo.m_OleDbDataReader["move_in_hours_addend"].ToString().Trim();
                             }
                         }
                     }
