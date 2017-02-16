@@ -40,6 +40,7 @@ namespace FIA_Biosum_Manager
 		public bool m_bRulesFirstTime=true;
 		private System.Windows.Forms.TabPage tbHarvestMethod;
 		private FIA_Biosum_Manager.uc_processor_scenario_harvest_method uc_processor_scenario_harvest_method1;
+        private FIA_Biosum_Manager.uc_processor_scenario_movein_costs uc_processor_scenario_movein_costs1;
 		private System.Windows.Forms.TabPage tbWoodValue;
 		private FIA_Biosum_Manager.uc_processor_scenario_merch_chip_value uc_processor_scenario_merch_chip_value1;
 		private System.Windows.Forms.TabPage tbEscalators;
@@ -53,6 +54,7 @@ namespace FIA_Biosum_Manager
 
         public int m_intError = 0;
         private ToolBarButton btnScenarioCopy;
+        private TabPage tbMoveInCosts;
         
         
         public string m_strError = "";
@@ -172,6 +174,7 @@ namespace FIA_Biosum_Manager
             this.tabControlRules = new System.Windows.Forms.TabControl();
             this.tbHarvestMethod = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_harvest_method1 = new FIA_Biosum_Manager.uc_processor_scenario_harvest_method();
+            this.uc_processor_scenario_movein_costs1 = new FIA_Biosum_Manager.uc_processor_scenario_movein_costs();
             this.tbWoodValue = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_merch_chip_value1 = new FIA_Biosum_Manager.uc_processor_scenario_merch_chip_value();
             this.tbEscalators = new System.Windows.Forms.TabPage();
@@ -180,6 +183,7 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_additional_harvest_cost_columns1 = new FIA_Biosum_Manager.uc_processor_scenario_additional_harvest_cost_columns();
             this.tbRun = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_run1 = new FIA_Biosum_Manager.uc_processor_scenario_run();
+            this.tbMoveInCosts = new System.Windows.Forms.TabPage();
             this.tabControlScenario.SuspendLayout();
             this.tbRules.SuspendLayout();
             this.tabControlRules.SuspendLayout();
@@ -336,6 +340,7 @@ namespace FIA_Biosum_Manager
             // tabControlRules
             // 
             this.tabControlRules.Controls.Add(this.tbHarvestMethod);
+            this.tabControlRules.Controls.Add(this.tbMoveInCosts);
             this.tabControlRules.Controls.Add(this.tbWoodValue);
             this.tabControlRules.Controls.Add(this.tbEscalators);
             this.tabControlRules.Controls.Add(this.tbAddHarvestCosts);
@@ -459,6 +464,27 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_run1.ScenarioId = "";
             this.uc_processor_scenario_run1.Size = new System.Drawing.Size(891, 423);
             this.uc_processor_scenario_run1.TabIndex = 0;
+            // 
+            // tbMoveInCosts
+            // 
+            this.tbMoveInCosts.Controls.Add(this.uc_processor_scenario_movein_costs1);
+            this.tbMoveInCosts.Location = new System.Drawing.Point(4, 22);
+            this.tbMoveInCosts.Name = "tbMoveInCosts";
+            this.tbMoveInCosts.Size = new System.Drawing.Size(891, 423);
+            this.tbMoveInCosts.TabIndex = 2;
+            this.tbMoveInCosts.Text = "Move-in Costs";
+            this.tbMoveInCosts.UseVisualStyleBackColor = true;
+
+            // 
+            // tbHarvestMethod
+            // 
+            this.tbHarvestMethod.Controls.Add(this.uc_processor_scenario_harvest_method1);
+            this.tbHarvestMethod.Location = new System.Drawing.Point(4, 22);
+            this.tbHarvestMethod.Name = "tbHarvestMethod";
+            this.tbHarvestMethod.Size = new System.Drawing.Size(891, 423);
+            this.tbHarvestMethod.TabIndex = 1;
+            this.tbHarvestMethod.Text = "Harvest Method";
+            this.tbHarvestMethod.UseVisualStyleBackColor = true;
             // 
             // frmProcessorScenario
             // 

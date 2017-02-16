@@ -3887,6 +3887,25 @@ namespace FIA_Biosum_Manager
 
 			}
 
+            public void CreateScenarioMoveInCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, Tables.ProcessorScenarioRuleDefinitions.CreateScenarioMoveInCostsTableSQL(p_strTableName));
+                CreateScenarioHarvestMethodTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateScenarioMoveInCostsTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_ScenarioId", "scenario_id");
+            }
+            static public string CreateScenarioMoveInCostsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "scenario_id CHAR(20)," +
+                    "yard_dist_threshold SINGLE," +
+                    "assumed_harvest_area_ac SINGLE," +
+                    "move_in_time_multiplier SINGLE," +
+                    "move_in_hours_addend SINGLE)"; 
+            }
+
 			public void CreateScenarioCostRevenueEscalatorsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.SqlNonQuery(p_oConn,Tables.ProcessorScenarioRuleDefinitions.CreateScenarioCostRevenueEscalatorsTableSQL(p_strTableName));
