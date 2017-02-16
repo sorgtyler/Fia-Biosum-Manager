@@ -19,6 +19,7 @@ namespace FIA_Biosum_Manager
         private ado_data_access m_oAdo;
         private List<tree> m_trees;
         private scenarioHarvestMethod m_scenarioHarvestMethod;
+        private scenarioMoveInCost m_scenarioMoveInCost;
         private IDictionary<string, prescription> m_prescriptions;
         private IList<harvestMethod> m_harvestMethodList;
         private escalators m_escalators;
@@ -74,6 +75,10 @@ namespace FIA_Biosum_Manager
             oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
               "scenario_harvest_method",
               strScenarioMDB, "scenario_harvest_method", true);
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+                Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName,
+                strScenarioMDB, 
+                Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName, true);
             oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
              "scenario_tree_species_diam_dollar_values",
              strScenarioMDB, "scenario_tree_species_diam_dollar_values", true);
@@ -133,6 +138,8 @@ namespace FIA_Biosum_Manager
             m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId);
             //Load escalators into reference object
             m_escalators = loadEscalators();
+            //Load move-in costs into reference object
+            m_scenarioMoveInCost = loadScenarioMoveInCost(m_strScenarioId);
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
@@ -1128,6 +1135,37 @@ namespace FIA_Biosum_Manager
             return returnVariables;
         }
 
+        private scenarioMoveInCost loadScenarioMoveInCost(string p_scenario)
+        {
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempDbFile, "", ""));
+            scenarioMoveInCost returnVariables = null;
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName +
+                                " WHERE scenario_id = '" + p_scenario + "'";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    // We should only have one record
+                    m_oAdo.m_OleDbDataReader.Read();
+                    double dblYardDistThreshold = Convert.ToDouble(m_oAdo.m_OleDbDataReader["yard_dist_threshold"]);
+                    double dblAssumedHarvestAreaAc = Convert.ToDouble(m_oAdo.m_OleDbDataReader["assumed_harvest_area_ac"]);
+                    double dblMoveInTimeMultiplier = Convert.ToDouble(m_oAdo.m_OleDbDataReader["move_in_time_multiplier"]);
+                    double dblMoveInHoursAddend = Convert.ToDouble(m_oAdo.m_OleDbDataReader["move_in_hours_addend"]);
+
+                    returnVariables = new scenarioMoveInCost(dblYardDistThreshold, dblAssumedHarvestAreaAc,
+                                                             dblMoveInTimeMultiplier, dblMoveInHoursAddend);
+                }
+            }
+
+            // Always close the connection
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            m_oAdo = null;
+
+            return returnVariables;
+        }
+
         private escalators loadEscalators()
         {
             m_oAdo = new ado_data_access();
@@ -1787,6 +1825,40 @@ namespace FIA_Biosum_Manager
                     _strHarvestMethodSteepSlope, _strHarvestMethodSteepSlope,
                     _intSaplingMerchAsPercentOfTotalVol, _intWoodlandMerchAsPercentOfTotalVol, _intCullPctThreshold,
                     Convert.ToString(_blnUseRxDefaultHarvestMethod));
+            }
+        }
+
+        private class scenarioMoveInCost
+        {
+            double _dblYardDistThreshold;
+            double _dblAssumedHarvestAreaAc;
+            double _dblMoveInTimeMultiplier;
+            double _dblMoveInHoursAddend;
+
+            public scenarioMoveInCost(double yardDistThreshold, double assumedHarvestAreaAc, 
+                                      double moveInTimeMultiplier, double moveInHoursAddend)
+            {
+                _dblYardDistThreshold = yardDistThreshold;
+                _dblAssumedHarvestAreaAc = assumedHarvestAreaAc;
+                _dblMoveInTimeMultiplier = moveInTimeMultiplier;
+                _dblMoveInHoursAddend = moveInHoursAddend;
+            }
+
+            public double YardDistThreshold
+            {
+                get { return _dblYardDistThreshold; }
+            }
+            public double AssumedHarvestAreaAc
+            {
+                get { return _dblAssumedHarvestAreaAc; }
+            }
+            public double MoveInTimeMultiplier
+            {
+                get { return _dblMoveInTimeMultiplier; }
+            }
+            public double MoveInHoursAddend
+            {
+                get { return _dblMoveInHoursAddend; }
             }
         }
 

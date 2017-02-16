@@ -1026,6 +1026,9 @@ namespace FIA_Biosum_Manager
                 this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm = this;
                 frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
                 this.uc_processor_scenario_harvest_method1.loadvalues_FromProperties();
+                this.uc_processor_scenario_movein_costs1.ReferenceProcessorScenarioForm = this;
+                frmMain.g_sbpInfo.Text = "Loading Scenario Move-in Cost Rule Definitions...Stand By";
+                this.uc_processor_scenario_movein_costs1.loadvalues_FromProperties();
                 frmMain.g_sbpInfo.Text = "Loading Scenario Merch and Chip Market Value Rule Definitions...Stand By";
                 this.uc_processor_scenario_merch_chip_value1.loadvalues_FromProperties();
                 frmMain.g_sbpInfo.Text = "Loading Scenario Revenue And Cost Escalator Rule Definitions...Stand By";
