@@ -505,6 +505,12 @@ namespace FIA_Biosum_Manager
                     Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesDollarValuesTableName,
                     strPath + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesDollarValuesDbFile,
                     Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesDollarValuesTableName);
+
+                p_oDao.CreateTableLink(
+                    p_DaoDatabase,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName,
+                    strPath + Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsDbFile,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName);
             }
             else
             {

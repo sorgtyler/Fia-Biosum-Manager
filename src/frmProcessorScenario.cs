@@ -714,6 +714,9 @@ namespace FIA_Biosum_Manager
 			this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
             frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
             this.uc_processor_scenario_harvest_method1.loadvalues();
+            this.uc_processor_scenario_movein_costs1.ReferenceProcessorScenarioForm = this;
+            frmMain.g_sbpInfo.Text = "Loading Scenario Move-in Cost Rule Definitions...Stand By";
+            this.uc_processor_scenario_movein_costs1.loadvalues();
             frmMain.g_sbpInfo.Text = "Loading Scenario Merch and Chip Market Value Rule Definitions...Stand By";
 			this.uc_processor_scenario_merch_chip_value1.loadvalues();
             frmMain.g_sbpInfo.Text = "Loading Scenario Revenue And Cost Escalator Rule Definitions...Stand By";
@@ -742,6 +745,8 @@ namespace FIA_Biosum_Manager
 
 				this.uc_processor_scenario_harvest_method1.savevalues();
                 this.m_intError = uc_processor_scenario_harvest_method1.m_intError;
+                this.uc_processor_scenario_movein_costs1.savevalues();
+                this.m_intError = uc_processor_scenario_movein_costs1.m_intError;
 				this.uc_processor_scenario_merch_chip_value1.savevalues();
                 if (m_intError == 0) m_intError = uc_processor_scenario_merch_chip_value1.m_intError;
                 this.uc_processor_scenario_escalators1.savevalues();
@@ -1864,7 +1869,7 @@ namespace FIA_Biosum_Manager
             oAdo.OpenConnection(oAdo.getMDBConnString(p_strDbFile, "", ""));
             if (oAdo.m_intError == 0)
             {
-                this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, p_oProcessorScenarioItem);
+                this.LoadMoveInCosts(oAdo, oAdo.m_OleDbConnection, p_oProcessorScenarioItem);
             }
             m_intError = oAdo.m_intError;
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
