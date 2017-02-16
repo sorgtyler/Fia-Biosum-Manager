@@ -87,6 +87,13 @@ namespace FIA_Biosum_Manager
                 strScenarioResultsMDB,
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, true);
 
+            // link gis travel_timetable
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+                frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName,
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableDbFile,
+                frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName, true);
+
+
             oDao.m_DaoDbEngine.Idle(1);
             oDao.m_DaoDbEngine.Idle(8);
             oDao.m_DaoWorkspace.Close();
@@ -138,11 +145,12 @@ namespace FIA_Biosum_Manager
                 string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
                                 "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
                                 "z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, " +
-                                "c.slope, p.elev, p.gis_yard_dist " +
-                                  "FROM " + strTableName + " z, cond c, plot p " +
+                                "c.slope, p.elev, p.gis_yard_dist, t.travel_time " +
+                                  "FROM " + strTableName + " z, cond c, plot p, travel_time t " +
                                   "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
                                   "z.biosum_cond_id = c.biosum_cond_id AND " +
                                   "c.biosum_plot_id = p.biosum_plot_id AND " +
+                                  "c.biosum_plot_id = t.biosum_plot_id AND " +
                                   "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "'";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
@@ -222,6 +230,10 @@ namespace FIA_Biosum_Manager
                         if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
                             newTree.YardingDistance = 0;
                         else newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
+                        if (m_oAdo.m_OleDbDataReader["travel_time"] == System.DBNull.Value)
+                            newTree.TravelTime = 0;
+                        else newTree.TravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["travel_time"]);
+
                         m_trees.Add(newTree);
                     }
                 }
@@ -474,12 +486,11 @@ namespace FIA_Biosum_Manager
                     {
                         nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
                                                     nextTree.Rx, nextTree.RxYear, nextTree.YardingDistance, nextTree.Elevation,
-                                                    nextTree.HarvestMethod);
+                                                    nextTree.HarvestMethod, nextTree.TravelTime);
                         dictOpcostInput.Add(strStand, nextInput);
                     }
 
                     //@ToDo: Replace this when we implement move-in costs; Constants for testing
-                    nextInput.MoveInHours = 8.0;
                     nextInput.HarvestAreaAssumedAc = 80.0;
                     
                     // Metrics for brush cut trees
@@ -1351,6 +1362,7 @@ namespace FIA_Biosum_Manager
             double _dblMerchValDpa;
             bool _blnIsWoodlandSpecies;
             bool _blnIsCull;
+            double _dblTravelTime;
 
             string _strDebugFile = "";
 
@@ -1590,6 +1602,11 @@ namespace FIA_Biosum_Manager
             {
                 get { return _blnIsCull; }
                 set { _blnIsCull = value; }
+            }
+            public double TravelTime
+            {
+                get { return _dblTravelTime; }
+                set {_dblTravelTime = value; }
             }
             public string DebugFile
             {
@@ -1857,7 +1874,7 @@ namespace FIA_Biosum_Manager
             double _dblHarvestAreaAssumedAc;
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
-                               string rxYear, double yardingDistance, int elev, string harvestSystem)
+                               string rxYear, double yardingDistance, int elev, string harvestSystem, double moveInHours)
             {
                 _strCondId = condId;
                 _intPercentSlope = percentSlope;
@@ -1868,6 +1885,7 @@ namespace FIA_Biosum_Manager
                 _dblYardingDistance = yardingDistance;
                 _intElev = elev;
                 _strHarvestSystem = harvestSystem;
+                _dblMoveInHours = moveInHours;
             }
 
             public string OpCostStand    
@@ -2037,7 +2055,6 @@ namespace FIA_Biosum_Manager
             }
             public double MoveInHours
             {
-                set { _dblMoveInHours = value; }
                 get { return _dblMoveInHours; }
             }
             public double HarvestAreaAssumedAc

@@ -703,6 +703,10 @@ namespace FIA_Biosum_Manager
               "scenario_harvest_method",
               strScenarioMDB, "scenario_harvest_method", true);
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName,
+                strScenarioMDB,
+                Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName, true);
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
              "scenario_tree_species_diam_dollar_values",
              strScenarioMDB, "scenario_tree_species_diam_dollar_values", true);
             //link scenario results tables
