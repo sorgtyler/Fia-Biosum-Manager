@@ -149,16 +149,31 @@ namespace FIA_Biosum_Manager
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
-                                "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
-                                "z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, " +
-                                "c.slope, p.elev, p.gis_yard_dist, t.travel_time " +
-                                  "FROM " + strTableName + " z, cond c, plot p, travel_time t " +
-                                  "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
-                                  "z.biosum_cond_id = c.biosum_cond_id AND " +
-                                  "c.biosum_plot_id = p.biosum_plot_id AND " +
-                                  "c.biosum_plot_id = t.biosum_plot_id AND " +
-                                  "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "'";
+                //string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
+                //                "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
+                //                "z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, " +
+                //                "c.slope, p.elev, p.gis_yard_dist, min(t.travel_time) as travel_time " +
+                //                  "FROM " + strTableName + " z, cond c, plot p, travel_time t " +
+                //                  "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
+                //                  "z.biosum_cond_id = c.biosum_cond_id AND " +
+                //                  "c.biosum_plot_id = p.biosum_plot_id AND " +
+                //                  "c.biosum_plot_id = t.biosum_plot_id AND " +
+                //                  "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "' AND " +
+                //                  "t.travel_time > 0" +
+                //                  " group by z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
+                //                  "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
+                //                  "z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, " +
+                //                  "c.slope, p.elev, p.gis_yard_dist";
+                string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, z.dbh, z.tpa, " +
+                                "z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, " +
+                                "z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, c.gis_yard_dist, t.min_traveltime " +
+                                "FROM " + strTableName + " z, " +
+                                "(SELECT MIN(TRAVEL_TIME) AS min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID) t, " +
+                                "(SELECT p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON p.biosum_plot_id = d.biosum_plot_id) c " +
+                                "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
+                                "z.biosum_cond_id = c.biosum_cond_id AND " +
+                                "c.biosum_plot_id = t.biosum_plot_id AND " +
+                                "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "' ";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -234,12 +249,10 @@ namespace FIA_Biosum_Manager
                             newTree.SpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_species"]).Trim();
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
+                        newTree.TravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_traveltime"]);
                         if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
                             newTree.YardingDistance = 0;
-                        else newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
-                        if (m_oAdo.m_OleDbDataReader["travel_time"] == System.DBNull.Value)
-                            newTree.TravelTime = 0;
-                        else newTree.TravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["travel_time"]);
+                        else newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);;
 
                         m_trees.Add(newTree);
                     }
