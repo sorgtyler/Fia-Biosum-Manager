@@ -11,12 +11,12 @@ namespace FIA_Biosum_Manager
     public class processor
     {
         private string m_strScenarioId = "";
-        //private string m_strTempDbFile = "";
+        private ado_data_access  m_oAdo;
         private string m_strOpcostTableName = "opcost_input";
         private string m_strTvvTableName = "TreeVolValLowSlope";
         private string m_strDebugFile =
             "";
-        private ado_data_access m_oAdo;
+        //private ado_data_access p_oAdo;
         private List<tree> m_trees;
         private scenarioHarvestMethod m_scenarioHarvestMethod;
         private scenarioMoveInCost m_scenarioMoveInCost;
@@ -24,10 +24,11 @@ namespace FIA_Biosum_Manager
         private IList<harvestMethod> m_harvestMethodList;
         private escalators m_escalators;
 
-        public processor(string strDebugFile, string strScenarioId)
+        public processor(string strDebugFile, string strScenarioId, ado_data_access oAdo)
         {
             m_strDebugFile = strDebugFile;
             m_strScenarioId = strScenarioId;
+            m_oAdo = oAdo;
         }
         
         public Queries init()
@@ -121,10 +122,11 @@ namespace FIA_Biosum_Manager
             return p_oQueries;
         }
         
-        public int loadTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile)
+        public int loadTrees(string p_strVariant, string p_strRxPackage)
         {
+
             //Load harvest methods; Prescription load depends on harvest methods
-            m_harvestMethodList = loadHarvestMethods(strTempDbFile);
+            m_harvestMethodList = loadHarvestMethods();
             //If harvest methods didn't load, stop processing
             if (m_harvestMethodList == null)
             {
@@ -139,19 +141,17 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
             //Load prescriptions into reference dictionary
-            m_prescriptions = loadPrescriptions(strTempDbFile);
+            m_prescriptions = loadPrescriptions();
             //Load diameter variables into reference object
-            m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId, strTempDbFile);
+            m_scenarioHarvestMethod = loadScenarioHarvestMethod(m_strScenarioId);
             //Load escalators into reference object
-            m_escalators = loadEscalators(strTempDbFile);
+            m_escalators = loadEscalators();
             //Load move-in costs into reference object
-            m_scenarioMoveInCost = loadScenarioMoveInCost(m_strScenarioId, strTempDbFile);
+            m_scenarioMoveInCost = loadScenarioMoveInCost(m_strScenarioId);
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
             
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
             if (m_oAdo.m_intError == 0)
             {
@@ -272,13 +272,10 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//Loaded " + m_trees.Count + " trees \r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
             return 0;
         }
 
-        public int updateTrees(string p_strVariant, string p_strRxPackage, string strTempDbFile, bool blnCreateReconcilationTable)
+        public int updateTrees(string p_strVariant, string p_strRxPackage, bool blnCreateReconcilationTable)
         {
             if (m_trees.Count < 1)
             {
@@ -295,11 +292,11 @@ namespace FIA_Biosum_Manager
             }
 
             //Load species groups into reference dictionary
-            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant, strTempDbFile);
+            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant);
             //Load species diam values into reference dictionary
-            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId, strTempDbFile);
+            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
             //Load diameter groups into reference list
-            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups(strTempDbFile);
+            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
 
             if (dictTreeSpecies == null)
             {
@@ -309,9 +306,6 @@ namespace FIA_Biosum_Manager
             }
             
             //Query TREE table to get original FIA species codes
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
-
             if (m_oAdo.m_intError == 0)
             {
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
@@ -409,7 +403,7 @@ namespace FIA_Biosum_Manager
             // Create the reconcilation table, if desired
             if (blnCreateReconcilationTable == true)
             {
-                createTreeReconcilationTable(p_strVariant, p_strRxPackage, strTempDbFile);
+                createTreeReconcilationTable(p_strVariant, p_strRxPackage, m_oAdo);
             }
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -419,37 +413,28 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
-            // Always close the connection
-            if (m_oAdo != null)
-            {
-                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-                m_oAdo = null;
-            }
             return 0;
         }
 
-        private void createTreeReconcilationTable(string p_strVariant, string p_strRxPackage, string p_strTempDbFile)
+        private void createTreeReconcilationTable(string p_strVariant, string p_strRxPackage, ado_data_access p_oAdo)
         {
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
-
-            if (m_oAdo.m_intError == 0)
+            if (p_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT fvs_tree_id, tree, cn from tree where fvs_tree_id is not null";
   
-                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
-                if (m_oAdo.m_OleDbDataReader.HasRows)
+                p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, strSQL);
+                if (p_oAdo.m_OleDbDataReader.HasRows)
                 {
                     short idxTree = 0;
                     short idxCn = 1;
                     IDictionary<string, List<string>> dictTreeTable = new Dictionary<string, List<string>>();
-                    while (m_oAdo.m_OleDbDataReader.Read())
+                    while (p_oAdo.m_OleDbDataReader.Read())
                     {
                         List<string> treeList = new List<string>();
-                        string strFvsTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
+                        string strFvsTreeId = Convert.ToString(p_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
                         //This is stored as a number but we convert to string so we can store in list
-                        string strTree = Convert.ToString(m_oAdo.m_OleDbDataReader["tree"]);
-                        string strCn = Convert.ToString(m_oAdo.m_OleDbDataReader["cn"]).Trim();
+                        string strTree = Convert.ToString(p_oAdo.m_OleDbDataReader["tree"]);
+                        string strCn = Convert.ToString(p_oAdo.m_OleDbDataReader["cn"]).Trim();
                         treeList.Add(strTree);
                         treeList.Add(strCn);
                         dictTreeTable.Add(strFvsTreeId, treeList);
@@ -458,11 +443,11 @@ namespace FIA_Biosum_Manager
                     string strTableName = p_strVariant + "_" + p_strRxPackage + "_reconcile_trees";
 
                     // drop reconcilation table if it already exists
-                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTableName) == true)
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTableName);
+                    if (p_oAdo.TableExist(p_oAdo.m_OleDbConnection, strTableName) == true)
+                        p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, "DROP TABLE " + strTableName);
 
 
-                    frmMain.g_oTables.m_oProcessor.CreateTreeReconcilationTable(m_oAdo, m_oAdo.m_OleDbConnection, strTableName);
+                    frmMain.g_oTables.m_oProcessor.CreateTreeReconcilationTable(p_oAdo, p_oAdo.m_OleDbConnection, strTableName);
 
                     string strTempCn = "9999";
                     int intTempTree = 9999;
@@ -474,7 +459,7 @@ namespace FIA_Biosum_Manager
                             intTempTree = Convert.ToInt16(treeList[idxTree]);
                             strTempCn = treeList[idxCn];
                         }
-                        m_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
+                        p_oAdo.m_strSQL = "INSERT INTO " + strTableName + " " +
                         "(cn, tree, biosum_cond_id, biosum_plot_id, spcd, merchWtGt, nonMerchWtGt, drybiom, " +
                         "drybiot, volCfNet, volCfGrs, volTsgrs, odWgt, dryToGreen, tpa, dbh, species_group, " +
                         "isSapling, isWoodland, isCull, diam_group, merch_value, opcost_type, biosum_category)" +
@@ -485,18 +470,14 @@ namespace FIA_Biosum_Manager
                         nextTree.IsSapling + ", " + nextTree.IsWoodlandSpecies + ", " + nextTree.IsCull + ", " + nextTree.DiamGroup + 
                         ", " + nextTree.MerchValue + ", '" + nextTree.TreeType + "', " + nextTree.HarvestMethodCategory + " )";
 
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                        p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
                     }
                 }
 
             }
-
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
         }
-        
-        public int createOpcostInput(string strTempDbFile)
+
+        public int createOpcostInput()
         {
             int intReturnVal = -1;
             int intHwdSpeciesCodeThreshold = 299; // Species codes greater than this are hardwoods
@@ -506,14 +487,6 @@ namespace FIA_Biosum_Manager
                     "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 return intReturnVal;
             }
-
-            // create connection to database
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
-            
-            // drop opcost input table if it exists
-            //if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, m_strOpcostTableName) == true)
-            //    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + m_strOpcostTableName);
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -731,21 +704,12 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//INSERTED " + lngCount + " RECORDS: " + System.DateTime.Now.ToString() + "\r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                 }
-                
-                // Always close the connection
-                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-                m_oAdo = null;
-
                 return intReturnVal;
             }
-            
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
             return -1;
         }
 
-        public int createTreeVolValWorkTable(string strDateTimeCreated, string strTempDbFile, bool blnInclHarvMethodCat)
+        public int createTreeVolValWorkTable(string strDateTimeCreated, bool blnInclHarvMethodCat)
         {
             int intReturnVal = -1;
             if (m_trees.Count < 1)
@@ -761,10 +725,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createTreeVolValWorkTable BEGIN \r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-            
-            // create connection to database
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
 
             if (m_oAdo.m_intError == 0)
             {
@@ -979,20 +939,12 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createTreeVolValWorkTable END \r\n");
                  frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-
-
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return intReturnVal;
         }
 
-        private List<treeDiamGroup> loadTreeDiamGroups(string p_strTempDbFile)
+        private List<treeDiamGroup> loadTreeDiamGroups()
         {
             List<treeDiamGroup> listDiamGroups = new List<treeDiamGroup>();
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + Tables.Processor.DefaultTreeDiamGroupsTableName;
@@ -1008,18 +960,12 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return listDiamGroups;
         }
 
-        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant, string p_strTempDbFile)
+        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant)
         {
             IDictionary<String, treeSpecies> dictTreeSpecies = new Dictionary<String, treeSpecies>();
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultTreeSpeciesTableName, "WOODLAND_YN"))
@@ -1064,10 +1010,6 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return dictTreeSpecies;
         }
 
@@ -1076,11 +1018,9 @@ namespace FIA_Biosum_Manager
         /// The composite key is intDiamGroup + "|" + intSpcGroup
         /// The value is a speciesDiamValue object
         ///</summary> 
-        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario, string p_strTempDbFile)
+        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario)
         {
             IDictionary<String, speciesDiamValue> dictSpeciesDiamValues = new Dictionary<String, speciesDiamValue>();
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + 
@@ -1103,14 +1043,10 @@ namespace FIA_Biosum_Manager
                     //Console.WriteLine("DiamValues: " + dictSpeciesDiamValues.Keys.Count);
                 }
             }
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return dictSpeciesDiamValues;
         }
 
-        private IDictionary<String, prescription> loadPrescriptions(string strTempDbFile)
+        private IDictionary<String, prescription> loadPrescriptions()
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
@@ -1118,8 +1054,6 @@ namespace FIA_Biosum_Manager
             }
             
             IDictionary<String, prescription> dictPrescriptions = new Dictionary<String, prescription>();
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + Tables.FVS.DefaultRxTableName;
@@ -1150,22 +1084,16 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return dictPrescriptions;
         }
 
-        private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario, string p_strTempDbFile)
+        private scenarioHarvestMethod loadScenarioHarvestMethod(string p_scenario)
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
                 MessageBox.Show("Harvest methods must be loaded before loading scenario harvest methods", "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
             scenarioHarvestMethod returnVariables = null;
             if (m_oAdo.m_intError == 0)
             {
@@ -1207,18 +1135,11 @@ namespace FIA_Biosum_Manager
                         intSaplingMerchAsPercentOfTotalVol, intWoodlandMerchAsPercentOfTotalVol, intCullPctThreshold, strUseRxDefaultHarvestMethodYN);
                 }
             }
-
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return returnVariables;
         }
 
-        private scenarioMoveInCost loadScenarioMoveInCost(string p_scenario, string p_strTempDbFile)
+        private scenarioMoveInCost loadScenarioMoveInCost(string p_scenario)
         {
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
             scenarioMoveInCost returnVariables = null;
             if (m_oAdo.m_intError == 0)
             {
@@ -1238,18 +1159,11 @@ namespace FIA_Biosum_Manager
                                                              dblMoveInTimeMultiplier, dblMoveInHoursAddend);
                 }
             }
-
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return returnVariables;
         }
 
-        private escalators loadEscalators(string p_strTempDbFile)
+        private escalators loadEscalators()
         {
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
             escalators returnEscalators = null;
             if (m_oAdo.m_intError == 0)
             {
@@ -1273,20 +1187,12 @@ namespace FIA_Biosum_Manager
                                                       dblMerchWoodRevCycle2, dblMerchWoodRevCycle3, dblMerchWoodRevCycle4);
                 }
             }
-
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
-
             return returnEscalators;
         }
 
-        private IList<harvestMethod> loadHarvestMethods(string p_strTempDbFile)
+        private IList<harvestMethod> loadHarvestMethods()
         {
-            m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_strTempDbFile, "", ""));
             IList<harvestMethod> harvestMethodList = null;
-
             if (m_oAdo.m_intError == 0)
             {
                 // Check to see if the biosum_category column exists in the harvest method table; If not
@@ -1318,10 +1224,6 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-
-            // Always close the connection
-            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            m_oAdo = null;
 
             return harvestMethodList;
         }

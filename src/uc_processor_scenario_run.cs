@@ -3774,7 +3774,7 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_MaxValues\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_MaxValues BEGIN \r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
             int x,y;
@@ -4135,6 +4135,14 @@ namespace FIA_Biosum_Manager
             }
             m_intError = m_oAdo.m_intError;
             m_strError = m_oAdo.m_strError;
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_MaxValues END \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//DataSource: " + m_oAdo.m_OleDbConnection.DataSource + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
 
         }
  
@@ -5471,6 +5479,13 @@ namespace FIA_Biosum_Manager
                     if (strRx3.Trim().Length > 0 && strRx3.Trim() != "000") this.m_strRxCycleList = this.m_strRxCycleList + "3,";
                     if (strRx4.Trim().Length > 0 && strRx4.Trim() != "000") this.m_strRxCycleList = this.m_strRxCycleList + "4,";
 
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "// Dropping OpCost tables " + strVariant + strRxPackage + "\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                    }
+                    
                     if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "HarvestCostsWorkTable") == true)
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE HarvestCostsWorkTable");
 
@@ -5494,8 +5509,15 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Load trees from cut list...Stand By");
                     y++;
                     frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                    processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper());
-                    m_intError = mainProcessor.loadTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile);
+                    processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper(), m_oAdo);
+                    m_intError = mainProcessor.loadTrees(strVariant, strRxPackage);
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.loadTrees return value: " + m_intError + "\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                    }
 
                     if (m_intError == 0)
                     {
@@ -5505,7 +5527,14 @@ namespace FIA_Biosum_Manager
                         bool blnCreateReconcileTreesTable = false;
                         // print reconcile trees table if debug at highest level; This will be in temporary .accdb
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2) { blnCreateReconcileTreesTable = true; }
-                        m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, m_oQueries.m_strTempDbFile, blnCreateReconcileTreesTable);
+                        m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, blnCreateReconcileTreesTable);
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.updateTrees return value: " + m_intError + "\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                        }
                     }
                         
                     if (m_intError == 0)
@@ -5513,7 +5542,14 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        m_intError = mainProcessor.createOpcostInput(m_oQueries.m_strTempDbFile);
+                        m_intError = mainProcessor.createOpcostInput();
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createOpcostInput return value: " + m_intError + "\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                        }
                     }
                         
                     if (m_intError == 0)
@@ -5521,7 +5557,14 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        m_intError = mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, m_oQueries.m_strTempDbFile, false);
+                        m_intError = mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, false);
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createTreeVolValWorkTable return value: " + m_intError + "\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                        }
                     }
 
                     if (m_intError == 0)
@@ -5551,6 +5594,15 @@ namespace FIA_Biosum_Manager
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "OPCOST Processing Batch Input...Stand By");
                         RunScenario_ProcessOPCOST(strVariant, strRxPackage);
+                    }
+                    else
+                    {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_MaxValues ERROR: " + m_strError + "\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                        }
                     }
                     if (m_intError == 0)
                     {
