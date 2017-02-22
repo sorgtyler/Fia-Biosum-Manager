@@ -4556,6 +4556,13 @@ namespace FIA_Biosum_Manager
                             "WHERE TRIM(table_type) = 'FRCS System Harvest Method'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
+            // Add new move-in costs table in scenario_processor_rule_definitions.mdb if it is missing
+            if (!oAdo.TableExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName))
+            {
+                frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioMoveInCostsTable(oAdo, oAdo.m_OleDbConnection,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName);
+            }
+
             frmMain.g_sbpInfo.Text = "Version Update: Creating stand_residue_wt_gt column in tree vol val table(s)...Stand by";
 
             //retrieve paths for all scenarios in the project and put them in list

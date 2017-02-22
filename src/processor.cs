@@ -517,15 +517,19 @@ namespace FIA_Biosum_Manager
                             double dblYardingDistance = nextTree.YardingDistance;
                             if (nextTree.YardingDistance < m_scenarioMoveInCost.YardDistThreshold)
                                 dblYardingDistance = m_scenarioMoveInCost.YardDistThreshold;
+
+                            // Apply move-in hours modifiers
+                            double dblMoveInHours = nextTree.TravelTime;
+                            if (m_scenarioMoveInCost.MoveInTimeMultiplier > 0)
+                                dblMoveInHours = dblMoveInHours * m_scenarioMoveInCost.MoveInTimeMultiplier;
+                            if (m_scenarioMoveInCost.MoveInHoursAddend > 0)
+                                dblMoveInHours = dblMoveInHours + m_scenarioMoveInCost.MoveInHoursAddend;
  
                             nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
                                                         nextTree.Rx, nextTree.RxYear, dblYardingDistance, nextTree.Elevation,
-                                                        nextTree.HarvestMethod, nextTree.TravelTime);
+                                                        nextTree.HarvestMethod, dblMoveInHours, m_scenarioMoveInCost.AssumedHarvestAreaAc);
                             dictOpcostInput.Add(strStand, nextInput);
                         }
-
-                        //@ToDo: Replace this when we implement move-in costs; Constants for testing
-                        nextInput.HarvestAreaAssumedAc = 80.0;
 
                         // Metrics for brush cut trees
                         if (nextTree.TreeType == OpCostTreeType.BC)
@@ -1928,7 +1932,8 @@ namespace FIA_Biosum_Manager
             double _dblHarvestAreaAssumedAc;
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
-                               string rxYear, double yardingDistance, int elev, string harvestSystem, double moveInHours)
+                               string rxYear, double yardingDistance, int elev, string harvestSystem, double moveInHours,
+                               double harvestAreaAssumed)
             {
                 _strCondId = condId;
                 _intPercentSlope = percentSlope;
@@ -1940,6 +1945,7 @@ namespace FIA_Biosum_Manager
                 _intElev = elev;
                 _strHarvestSystem = harvestSystem;
                 _dblMoveInHours = moveInHours;
+                _dblHarvestAreaAssumedAc = harvestAreaAssumed;
             }
 
             public string OpCostStand    
@@ -2113,7 +2119,6 @@ namespace FIA_Biosum_Manager
             }
             public double HarvestAreaAssumedAc
             {
-                set { _dblHarvestAreaAssumedAc = value; }
                 get { return _dblHarvestAreaAssumedAc; }
             }
         }
