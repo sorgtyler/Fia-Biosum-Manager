@@ -335,6 +335,13 @@ namespace FIA_Biosum_Manager
                         nextTree.SpCd = dictSpCd[nextTree.FvsTreeId];
                     }
                     // set tree species fields from treeSpecies dictionary
+                    if (! dictTreeSpecies.ContainsKey(nextTree.SpCd))
+                    {
+                        MessageBox.Show("The tree_species table is missing either an entry or species group for variant " +
+                        p_strVariant + " spcd " + nextTree.SpCd + ". Please resolve this issue before running Processor.", 
+                        "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return -1;
+                    }
                     treeSpecies foundSpecies = dictTreeSpecies[nextTree.SpCd];
                     nextTree.SpeciesGroup = foundSpecies.SpeciesGroup;
                     nextTree.OdWgt = foundSpecies.OdWgt;
