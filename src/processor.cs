@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 
 namespace FIA_Biosum_Manager
 {
@@ -337,9 +336,9 @@ namespace FIA_Biosum_Manager
                     // set tree species fields from treeSpecies dictionary
                     if (! dictTreeSpecies.ContainsKey(nextTree.SpCd))
                     {
-                        MessageBox.Show("The tree_species table is missing either an entry or species group for variant " +
-                        p_strVariant + " spcd " + nextTree.SpCd + ". Please resolve this issue before running Processor.", 
-                        "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        System.Windows.Forms.MessageBox.Show("The tree_species table is missing either an entry or species group for variant " +
+                        p_strVariant + " spcd " + nextTree.SpCd + ". Please resolve this issue before running Processor.",
+                        "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                         return -1;
                     }
                     treeSpecies foundSpecies = dictTreeSpecies[nextTree.SpCd];
@@ -981,10 +980,11 @@ namespace FIA_Biosum_Manager
             {
                 if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultTreeSpeciesTableName, "WOODLAND_YN"))
                 {
-                    MessageBox.Show("The WOODLAND_YN field is missing from the tree_species table. " +
+                    System.Windows.Forms.MessageBox.Show("The WOODLAND_YN field is missing from the tree_species table. " +
                                     "The most likely cause is having an outdated tree_species table. " +
                                     "Please check the migration instructions for v5.7.7.", 
-                                    "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, 
+                                    System.Windows.Forms.MessageBoxIcon.Error);
                     return null;
                 }
                 
@@ -1002,9 +1002,10 @@ namespace FIA_Biosum_Manager
                         string strSpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["SPCD"]).Trim();
                         if (dictTreeSpecies.ContainsKey(strSpCd))
                         {
-                            MessageBox.Show("The tree_species table contains duplicate entries for variant " +
-                                p_strVariant + " spcd " + strSpCd + ". Please resolve this issue before running Processor.", 
-                                "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            System.Windows.Forms.MessageBox.Show("The tree_species table contains duplicate entries for variant " +
+                                p_strVariant + " spcd " + strSpCd + ". Please resolve this issue before running Processor.",
+                                "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, 
+                                System.Windows.Forms.MessageBoxIcon.Error);
                             return null;
                         }
                         int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["USER_SPC_GROUP"]);
@@ -1061,7 +1062,8 @@ namespace FIA_Biosum_Manager
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
-                MessageBox.Show("Harvest methods must be loaded before loading prescriptions", "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show("Harvest methods must be loaded before loading prescriptions", "FIA Biosum", 
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
             
             IDictionary<String, prescription> dictPrescriptions = new Dictionary<String, prescription>();
@@ -1102,7 +1104,8 @@ namespace FIA_Biosum_Manager
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
-                MessageBox.Show("Harvest methods must be loaded before loading scenario harvest methods", "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show("Harvest methods must be loaded before loading scenario harvest methods", "FIA Biosum",
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
             
             scenarioHarvestMethod returnVariables = null;
@@ -1213,7 +1216,8 @@ namespace FIA_Biosum_Manager
                     string strErrMsg = "Your project contains an obsolete version of the " + Tables.Reference.DefaultHarvestMethodsTableName +
                                        " table that does not contain the 'biosum_category' field. Copy a new version of this table into your project from the" +
                                        " BioSum installation directory before trying to run Processor.";
-                    MessageBox.Show(strErrMsg,"FIA Biosum",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    System.Windows.Forms.MessageBox.Show(strErrMsg, "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                     return harvestMethodList;
                 }
 
@@ -1282,7 +1286,8 @@ namespace FIA_Biosum_Manager
                 }
                 else
                 {
-                    p_tree.MerchVolCfPa = p_tree.DryBiot * p_tree.Tpa * ( (double) m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol / 100);
+                    //convert drybiot to some kind of volume
+                    p_tree.MerchVolCfPa = (p_tree.DryBiot / p_tree.OdWgt) * p_tree.Tpa * ((double)m_scenarioHarvestMethod.SaplingMerchAsPercentOfTotalVol / 100);
                 }
             }
             else if (p_tree.IsWoodlandSpecies)
