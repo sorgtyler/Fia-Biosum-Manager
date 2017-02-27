@@ -5502,7 +5502,7 @@ namespace FIA_Biosum_Manager
 
                     //Here we set the maximum number of ticks on the progress bar
                     //y cannot exceed this max number
-                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 14);
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 12);
                     
                     y = 0;
 
@@ -5577,19 +5577,6 @@ namespace FIA_Biosum_Manager
                     
                     intCount++;
 
-
-                    if (m_intError == 0)
-                    {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Get Maximum Values...Stand By");
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        RunScenario_MaxValues("opcost_input");
-                    }
-                    if (m_intError == 0)
-                    {
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                    }
                     if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "OPCOST Processing Batch Input...Stand By");
@@ -5600,7 +5587,7 @@ namespace FIA_Biosum_Manager
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         {
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_MaxValues ERROR: " + m_strError + "\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//OPCOST Processing Batch Input ERROR: " + m_strError + "\r\n");
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                         }
                     }
