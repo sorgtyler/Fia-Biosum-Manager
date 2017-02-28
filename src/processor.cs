@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FIA_Biosum_Manager
 {
@@ -16,11 +14,11 @@ namespace FIA_Biosum_Manager
         private string m_strDebugFile =
             "";
         //private ado_data_access p_oAdo;
-        private List<tree> m_trees;
+        private System.Collections.Generic.List<tree> m_trees;
         private scenarioHarvestMethod m_scenarioHarvestMethod;
         private scenarioMoveInCost m_scenarioMoveInCost;
-        private IDictionary<string, prescription> m_prescriptions;
-        private IList<harvestMethod> m_harvestMethodList;
+        private System.Collections.Generic.IDictionary<string, prescription> m_prescriptions;
+        private System.Collections.Generic.IList<harvestMethod> m_harvestMethodList;
         private escalators m_escalators;
 
         public processor(string strDebugFile, string strScenarioId, ado_data_access oAdo)
@@ -118,6 +116,9 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "END: CreateTableLinksToFVSOutTreeListTables - " + System.DateTime.Now.ToString() + "\r\n");
 
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_oQueries.m_strTempDbFile, "", ""));
+ 
             return p_oQueries;
         }
         
@@ -182,7 +183,7 @@ namespace FIA_Biosum_Manager
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                  if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
-                    m_trees = new List<tree>();
+                    m_trees = new System.Collections.Generic.List<tree>();
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         tree newTree = new tree();
@@ -291,11 +292,11 @@ namespace FIA_Biosum_Manager
             }
 
             //Load species groups into reference dictionary
-            IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant);
+            System.Collections.Generic.IDictionary<string, treeSpecies> dictTreeSpecies = loadTreeSpecies(p_strVariant);
             //Load species diam values into reference dictionary
-            IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
+            System.Collections.Generic.IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
             //Load diameter groups into reference list
-            List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
+            System.Collections.Generic.List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
 
             if (dictTreeSpecies == null)
             {
@@ -318,7 +319,8 @@ namespace FIA_Biosum_Manager
             m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
             if (m_oAdo.m_OleDbDataReader.HasRows)
             {
-                Dictionary<String, String> dictSpCd = new Dictionary<string, string>();
+                System.Collections.Generic.Dictionary<String, String> dictSpCd = 
+                    new System.Collections.Generic.Dictionary<string, string>();
                 while (m_oAdo.m_OleDbDataReader.Read())
                 {
                     string strTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
@@ -433,10 +435,12 @@ namespace FIA_Biosum_Manager
                 {
                     short idxTree = 0;
                     short idxCn = 1;
-                    IDictionary<string, List<string>> dictTreeTable = new Dictionary<string, List<string>>();
+                    System.Collections.Generic.IDictionary<string, System.Collections.Generic.List<string>> dictTreeTable = 
+                        new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>();
                     while (p_oAdo.m_OleDbDataReader.Read())
                     {
-                        List<string> treeList = new List<string>();
+                        System.Collections.Generic.List<string> treeList = 
+                            new System.Collections.Generic.List<string>();
                         string strFvsTreeId = Convert.ToString(p_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
                         //This is stored as a number but we convert to string so we can store in list
                         string strTree = Convert.ToString(p_oAdo.m_OleDbDataReader["tree"]);
@@ -461,7 +465,7 @@ namespace FIA_Biosum_Manager
                     {
                         if (dictTreeTable.ContainsKey(nextTree.FvsTreeId))
                         {
-                            List<string> treeList = dictTreeTable[nextTree.FvsTreeId];
+                            System.Collections.Generic.List<string> treeList = dictTreeTable[nextTree.FvsTreeId];
                             intTempTree = Convert.ToInt16(treeList[idxTree]);
                             strTempCn = treeList[idxCn];
                         }
@@ -510,7 +514,8 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Read trees into opcost input - " + System.DateTime.Now.ToString() + "\r\n");
 
-                IDictionary<string, opcostInput> dictOpcostInput = new Dictionary<string, opcostInput>();
+                System.Collections.Generic.IDictionary<string, opcostInput> dictOpcostInput = 
+                    new System.Collections.Generic.Dictionary<string, opcostInput>();
 
                     foreach (tree nextTree in m_trees)
                     {
@@ -749,7 +754,8 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Read trees into tree vol val - " + System.DateTime.Now.ToString() + "\r\n");
 
                 string strSeparator = "_";
-                IDictionary<string, treeVolValInput> dictTvvInput = new Dictionary<string, treeVolValInput>();
+                System.Collections.Generic.IDictionary<string, treeVolValInput> dictTvvInput = 
+                    new System.Collections.Generic.Dictionary<string, treeVolValInput>();
                 foreach (tree nextTree in m_trees)
                 {
                     treeVolValInput nextInput = null;
@@ -952,9 +958,9 @@ namespace FIA_Biosum_Manager
             return intReturnVal;
         }
 
-        private List<treeDiamGroup> loadTreeDiamGroups()
+        private System.Collections.Generic.List<treeDiamGroup> loadTreeDiamGroups()
         {
-            List<treeDiamGroup> listDiamGroups = new List<treeDiamGroup>();
+            System.Collections.Generic.List<treeDiamGroup> listDiamGroups = new System.Collections.Generic.List<treeDiamGroup>();
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + Tables.Processor.DefaultTreeDiamGroupsTableName;
@@ -973,9 +979,10 @@ namespace FIA_Biosum_Manager
             return listDiamGroups;
         }
 
-        private IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant)
+        private System.Collections.Generic.IDictionary<String, treeSpecies> loadTreeSpecies(string p_strVariant)
         {
-            IDictionary<String, treeSpecies> dictTreeSpecies = new Dictionary<String, treeSpecies>();
+            System.Collections.Generic.IDictionary<String, treeSpecies> dictTreeSpecies = 
+                new System.Collections.Generic.Dictionary<String, treeSpecies>();
             if (m_oAdo.m_intError == 0)
             {
                 if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultTreeSpeciesTableName, "WOODLAND_YN"))
@@ -1030,9 +1037,10 @@ namespace FIA_Biosum_Manager
         /// The composite key is intDiamGroup + "|" + intSpcGroup
         /// The value is a speciesDiamValue object
         ///</summary> 
-        private IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario)
+        private System.Collections.Generic.IDictionary<String, speciesDiamValue> loadSpeciesDiamValues(string p_scenario)
         {
-            IDictionary<String, speciesDiamValue> dictSpeciesDiamValues = new Dictionary<String, speciesDiamValue>();
+            System.Collections.Generic.IDictionary<String, speciesDiamValue> dictSpeciesDiamValues = 
+                new System.Collections.Generic.Dictionary<String, speciesDiamValue>();
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + 
@@ -1058,7 +1066,7 @@ namespace FIA_Biosum_Manager
             return dictSpeciesDiamValues;
         }
 
-        private IDictionary<String, prescription> loadPrescriptions()
+        private System.Collections.Generic.IDictionary<String, prescription> loadPrescriptions()
         {
             if (m_harvestMethodList == null || m_harvestMethodList.Count == 0)
             {
@@ -1066,7 +1074,8 @@ namespace FIA_Biosum_Manager
                     System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
             
-            IDictionary<String, prescription> dictPrescriptions = new Dictionary<String, prescription>();
+            System.Collections.Generic.IDictionary<String, prescription> dictPrescriptions = 
+                new System.Collections.Generic.Dictionary<String, prescription>();
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " + Tables.FVS.DefaultRxTableName;
@@ -1204,9 +1213,9 @@ namespace FIA_Biosum_Manager
             return returnEscalators;
         }
 
-        private IList<harvestMethod> loadHarvestMethods()
+        private System.Collections.Generic.IList<harvestMethod> loadHarvestMethods()
         {
-            IList<harvestMethod> harvestMethodList = null;
+            System.Collections.Generic.IList<harvestMethod> harvestMethodList = null;
             if (m_oAdo.m_intError == 0)
             {
                 // Check to see if the biosum_category column exists in the harvest method table; If not
@@ -1225,7 +1234,7 @@ namespace FIA_Biosum_Manager
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
-                    harvestMethodList = new List<harvestMethod>();
+                    harvestMethodList = new System.Collections.Generic.List<harvestMethod>();
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         string strSteepYN = Convert.ToString(m_oAdo.m_OleDbDataReader["STEEP_YN"]).Trim();
