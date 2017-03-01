@@ -181,7 +181,7 @@ namespace FIA_Biosum_Manager
                                 "c.biosum_plot_id = t.biosum_plot_id AND " +
                                 "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "' ";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
-                 if (m_oAdo.m_OleDbDataReader.HasRows)
+                if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
                     m_trees = new System.Collections.Generic.List<tree>();
                     while (m_oAdo.m_OleDbDataReader.Read())
@@ -192,7 +192,7 @@ namespace FIA_Biosum_Manager
                         newTree.PlotId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_plot_id"]).Trim();
                         newTree.RxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
                         newTree.RxPackage = p_strRxPackage;
-                        newTree.Rx= Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
+                        newTree.Rx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
                         newTree.RxYear = Convert.ToString(m_oAdo.m_OleDbDataReader["rxYear"]).Trim();
                         newTree.Dbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["dbh"]);
                         newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
@@ -206,7 +206,7 @@ namespace FIA_Biosum_Manager
                         string strDefaultHarvestMethodLowSlope = "";
                         string strDefaultHarvestMethodSteepSlope = "";
                         int intDefaultHarvestMethodCategoryLowSlope = 0;
-                        int intDefaultHarvestMethodCategorySteepSlope = 0 ;
+                        int intDefaultHarvestMethodCategorySteepSlope = 0;
                         prescription currentPrescription = null;
                         m_prescriptions.TryGetValue(newTree.Rx, out currentPrescription);
                         if (currentPrescription != null)
@@ -220,7 +220,7 @@ namespace FIA_Biosum_Manager
                         if (newTree.Slope < m_scenarioHarvestMethod.SteepSlopePct)
                         {
                             // assign low slope harvest method
-                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false && 
+                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false &&
                                 !String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodLowSlope))
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodLowSlope;
@@ -235,7 +235,7 @@ namespace FIA_Biosum_Manager
                         else
                         {
                             // assign steep slope harvest method
-                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false && 
+                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false &&
                                 !String.IsNullOrEmpty(m_scenarioHarvestMethod.HarvestMethodSteepSlope))
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodSteepSlope;
@@ -250,7 +250,7 @@ namespace FIA_Biosum_Manager
                         newTree.FvsTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
                         if (Convert.ToString(m_oAdo.m_OleDbDataReader["FvsCreatedTree_YN"]).Trim().ToUpper() == "Y")
                         {
-                            newTree.FvsCreatedTree = true;                           
+                            newTree.FvsCreatedTree = true;
                             // only use fvs_species from cut list if it is an FVS created tree
                             newTree.SpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_species"]).Trim();
                         }
@@ -258,7 +258,8 @@ namespace FIA_Biosum_Manager
                         newTree.TravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_traveltime"]);
                         if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
                             newTree.YardingDistance = 0;
-                        else newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);;
+                        else 
+                            newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
 
                         m_trees.Add(newTree);
                     }
@@ -277,7 +278,7 @@ namespace FIA_Biosum_Manager
 
         public int updateTrees(string p_strVariant, string p_strRxPackage, bool blnCreateReconcilationTable)
         {
-            if (m_trees.Count < 1)
+            if (m_trees == null)
             {
                 System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n Auxillary tree data cannot be appended",
                     "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
@@ -1240,7 +1241,7 @@ namespace FIA_Biosum_Manager
                         string strSteepYN = Convert.ToString(m_oAdo.m_OleDbDataReader["STEEP_YN"]).Trim();
                         bool blnSteep = false;
                         if (strSteepYN.Equals("Y"))
-                            { blnSteep = true; }
+                        { blnSteep = true; }
                         string strMethod = Convert.ToString(m_oAdo.m_OleDbDataReader["Method"]).Trim();
                         int intBiosumCategory = Convert.ToInt16(m_oAdo.m_OleDbDataReader["biosum_category"]);
                         harvestMethod newMethod = new harvestMethod(blnSteep, strMethod, intBiosumCategory);
