@@ -4445,12 +4445,19 @@ namespace FIA_Biosum_Manager
             proc.StartInfo.RedirectStandardOutput = false;
             proc.StartInfo.RedirectStandardInput = false;
             proc.StartInfo.RedirectStandardError = false;
-            proc.StartInfo.CreateNoWindow = false;
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel < 3)
+            {
+                //suppress opCost window
+                proc.StartInfo.CreateNoWindow = true;
+
+            }
+            else
+            {
+                proc.StartInfo.CreateNoWindow = false;
+                proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+            }
             proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-
             proc.StartInfo.WorkingDirectory = frmMain.g_oEnv.strTempDir;
-
             proc.StartInfo.ErrorDialog = false;
             proc.EnableRaisingEvents = false;
 
@@ -4504,7 +4511,13 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("SET INPUTFILE=" + m_oQueries.m_strTempDbFile + "\r\n");
             oTextStreamWriter.Write("SET ERRORFILE=" + frmMain.g_oEnv.strTempDir + "\\opcost_error_log.txt  \r\n");
             oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
-            oTextStreamWriter.Write("\"" + "%RFILE%" + "\"" + " " + "\"" + "%OPCOSTRFILE%" + "\"" + " " + "\"" + "%INPUTFILE%" + "\"" + " 2> " + "\"" + "%ERRORFILE%" + "\"" + "\r\n\r\n");
+            string strRedirect = " 2> " + "\"" + "%ERRORFILE%" + "\"";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel < 3)
+            {
+                //OpCost window is suppressed so we write standard out to log
+                strRedirect = "> \"" + "%ERRORFILE%" + "\"" + " 2>&1";
+            }
+            oTextStreamWriter.Write("\"" + "%RFILE%" + "\"" + " " + "\"" + "%OPCOSTRFILE%" + "\"" + " " + "\"" + "%INPUTFILE%" + "\"" + strRedirect + "\r\n\r\n");
             oTextStreamWriter.Write("EXIT\r\n");
             oTextStreamWriter.Close();
             oTextFileStream.Close();
