@@ -631,6 +631,7 @@ namespace FIA_Biosum_Manager
 
                         // *** SMALL LOGS ***
                         double dblSmLogAvgVolume = 0;
+                        double dblSmLogAvgVolumeAdj = 0;
                         if (nextStand.TotalSmLogTpa > 0)
                         { dblSmLogAvgVolume = nextStand.SmLogVolCfPa / nextStand.TotalSmLogTpa; }
                         double dblSmLogMerchPctTotal = 0;
@@ -648,9 +649,21 @@ namespace FIA_Biosum_Manager
                             dblSmLogAvgDensity = nextStand.SmLogWtGtPa * 2000 / nextStand.SmLogVolCfPa;
                             dblSmLogHwdPct = nextStand.SmLogHwdVolCfPa / nextStand.SmLogVolCfPa * 100;
                         }
+                        // Apply OpCost value limits
+                        if (nextStand.TotalSmLogTpa < nextStand.HarvestMethod.MinTpa)
+                        {
+                            nextStand.TotalSmLogTpaUnadj = nextStand.TotalSmLogTpa;
+                            nextStand.TotalSmLogTpa = nextStand.HarvestMethod.MinTpa;
+                        }
+                        if (dblSmLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
+                        {
+                            dblSmLogAvgVolumeAdj = dblSmLogAvgVolume;
+                            dblSmLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                        }
 
                         // *** LARGE LOGS ***
                         double dblLgLogAvgVolume = 0;
+                        double dblLgLogAvgVolumeAdj = 0;
                         if (nextStand.TotalLgLogTpa > 0)
                         { dblLgLogAvgVolume = nextStand.LgLogVolCfPa / nextStand.TotalLgLogTpa; }
                         double dblLgLogMerchPctTotal = 0;
@@ -668,6 +681,17 @@ namespace FIA_Biosum_Manager
                             dblLgLogAvgDensity = nextStand.LgLogWtGtPa * 2000 / nextStand.LgLogVolCfPa;
                             dblLgLogHwdPct = nextStand.LgLogHwdVolCfPa / nextStand.LgLogVolCfPa * 100;
                         }
+                        // Apply OpCost value limits
+                        if (nextStand.TotalLgLogTpa < nextStand.HarvestMethod.MinTpa)
+                        {
+                            nextStand.TotalLgLogTpaUnadj = nextStand.TotalLgLogTpa;
+                            nextStand.TotalLgLogTpa = nextStand.HarvestMethod.MinTpa;
+                        }
+                        if (dblLgLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
+                        {
+                            dblLgLogAvgVolumeAdj = dblLgLogAvgVolume;
+                            dblLgLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                        }
 
                         m_oAdo.m_strSQL = "INSERT INTO " + m_strOpcostTableName + " " +
                         "(Stand, [Percent Slope], [One-way Yarding Distance], YearCostCalc, " +
@@ -679,7 +703,9 @@ namespace FIA_Biosum_Manager
                         "[Large log trees ChipPct_Cat1_3_4], [Large log trees ChipPct_Cat2], [Large log trees ChipPct_Cat5], " +
                         "[Large log trees average vol(ft3)], [Large log trees average density(lbs/ft3)], [Large log trees hardwood percent], " +
                         "BrushCutTPA, [BrushCutAvgVol], RxPackage_Rx_RxCycle, biosum_cond_id, RxPackage, Rx, RxCycle, Move_In_Hours, " +
-                        "Harvest_Area_Assumed_Acres) " +
+                        "Harvest_Area_Assumed_Acres, [Unadjusted One-way Yarding distance], " +
+                        "[Unadjusted Small log trees per acre], [Unadjusted Small log trees average volume (ft3)], " +
+                        "[Unadjusted Large log trees per acre], [Unadjusted Large log trees average vol(ft3)]) " +
                         "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
                         nextStand.Elev + ", '" + nextStand.HarvestMethod.Method + "', " + nextStand.TotalChipTpa + ", " +
                         dblCtMerchPctTotal + ", " + dblCtAvgVolume + ", " + dblCtAvgDensity + ", " + dblCtHwdPct + ", " +
@@ -689,7 +715,10 @@ namespace FIA_Biosum_Manager
                         dblLgLogChipPct_Cat2 + "," + dblLgLogChipPct_Cat5 + "," + dblLgLogAvgVolume + ", " +
                         dblLgLogAvgDensity + ", " + dblLgLogHwdPct + "," + nextStand.TotalBcTpa + ", " + dblBcAvgVolume +
                         ",'" + nextStand.RxPackageRxRxCycle + "', '" + nextStand.CondId + "', '" + nextStand.RxPackage + "', '" +
-                        nextStand.Rx + "', '" + nextStand.RxCycle + "', " + nextStand.MoveInHours + ", " + nextStand.HarvestAreaAssumedAc +
+                        nextStand.Rx + "', '" + nextStand.RxCycle + "', " + nextStand.MoveInHours + ", " + 
+                        nextStand.HarvestAreaAssumedAc + ", " + nextStand.YardingDistanceUnadj + ", " +
+                        nextStand.TotalSmLogTpaUnadj + ", " + dblSmLogAvgVolumeAdj + ", " +
+                        nextStand.TotalLgLogTpaUnadj + ", " + dblLgLogAvgVolumeAdj +
                         " )";
 
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
@@ -1212,10 +1241,10 @@ namespace FIA_Biosum_Manager
             {
                 // Check to see if the biosum_category column exists in the harvest method table; If not
                 // throw an error and exit the function; Processor won't work without this value
-                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultHarvestMethodsTableName, "biosum_category"))
+                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultHarvestMethodsTableName, "min_tpa"))
                 {
                     string strErrMsg = "Your project contains an obsolete version of the " + Tables.Reference.DefaultHarvestMethodsTableName +
-                                       " table that does not contain the 'biosum_category' field. Copy a new version of this table into your project from the" +
+                                       " table that does not contain the 'min_tpa' field. Copy a new version of this table into your project from the" +
                                        " BioSum installation directory before trying to run Processor.";
                     System.Windows.Forms.MessageBox.Show(strErrMsg, "FIA Biosum",
                         System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
@@ -1235,7 +1264,11 @@ namespace FIA_Biosum_Manager
                         { blnSteep = true; }
                         string strMethod = Convert.ToString(m_oAdo.m_OleDbDataReader["Method"]).Trim();
                         int intBiosumCategory = Convert.ToInt16(m_oAdo.m_OleDbDataReader["biosum_category"]);
-                        harvestMethod newMethod = new harvestMethod(blnSteep, strMethod, intBiosumCategory);
+                        double dblMinTpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_tpa"]);
+                        double dblMinYardDistanceFt = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_yard_distance_ft"]);
+                        double dblMinAvgTreeVolCf = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_avg_tree_vol_cf"]);
+                        harvestMethod newMethod = new harvestMethod(blnSteep, strMethod, intBiosumCategory,dblMinTpa,
+                            dblMinYardDistanceFt, dblMinAvgTreeVolCf);
                         harvestMethodList.Add(newMethod);
                     }
                 }
@@ -1919,6 +1952,11 @@ namespace FIA_Biosum_Manager
             double _dblLgLogHwdVolCfPa;
             double _dblMoveInHours;
             double _dblHarvestAreaAssumedAc;
+            double _dblYardingDistanceUnadj;
+            double _dblTotalSmLogTpaUnadj;
+            double _dblTotalLgLogTpaUnadj;
+
+
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
                                string rxYear, double yardingDistance, int elev, harvestMethod harvestMethod, double moveInHours,
@@ -1935,6 +1973,13 @@ namespace FIA_Biosum_Manager
                 _objHarvestMethod = harvestMethod;
                 _dblMoveInHours = moveInHours;
                 _dblHarvestAreaAssumedAc = harvestAreaAssumed;
+
+                //Apply yarding distance minimum
+                if (_dblYardingDistance < _objHarvestMethod.MinYardDistanceFt)
+                {
+                    _dblYardingDistanceUnadj = _dblYardingDistance;
+                    _dblYardingDistance = _objHarvestMethod.MinYardDistanceFt;
+                }
             }
 
             public string OpCostStand    
@@ -2109,6 +2154,20 @@ namespace FIA_Biosum_Manager
             public double HarvestAreaAssumedAc
             {
                 get { return _dblHarvestAreaAssumedAc; }
+            }
+            public double YardingDistanceUnadj
+            {
+                get { return _dblYardingDistanceUnadj; }
+            }
+            public double TotalSmLogTpaUnadj
+            {
+                set { _dblTotalSmLogTpaUnadj = value; }
+                get { return _dblTotalSmLogTpaUnadj; }
+            }
+            public double TotalLgLogTpaUnadj
+            {
+                set { _dblTotalLgLogTpaUnadj = value; }
+                get { return _dblTotalLgLogTpaUnadj; }
             }
         }
 
@@ -2331,12 +2390,19 @@ namespace FIA_Biosum_Manager
             bool _blnSteepSlope;
             string _strMethod;
             int _intBiosumCategory;
+            double _dblMinTpa;
+            double _dblMinYardDistanceFt;
+            double _dblMinAvgTreeVolCf;
 
-            public harvestMethod(bool steepSlope, string method, int biosumCategory)
+            public harvestMethod(bool steepSlope, string method, int biosumCategory, double minTpa, double minYardDistanceFt,
+                                 double minAvgTreeVolCf)
             {
                 _blnSteepSlope = steepSlope;
                 _strMethod = method;
                 _intBiosumCategory = biosumCategory;
+                _dblMinTpa = minTpa;
+                _dblMinYardDistanceFt = minYardDistanceFt;
+                _dblMinAvgTreeVolCf = minAvgTreeVolCf;
             }
 
             public bool SteepSlope
@@ -2350,6 +2416,18 @@ namespace FIA_Biosum_Manager
             public int BiosumCategory
             {
                 get { return _intBiosumCategory; }
+            }
+            public double MinTpa
+            {
+                get { return _dblMinTpa; }
+            }
+            public double MinYardDistanceFt
+            {
+                get { return _dblMinYardDistanceFt; }
+            }
+            public double MinAvgTreeVolCf
+            {
+                get { return _dblMinAvgTreeVolCf; }
             }
         }
 

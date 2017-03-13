@@ -3222,7 +3222,12 @@ namespace FIA_Biosum_Manager
                             " RxPackage text (255)," +
                             " Rx text (255)," +
                             " Move_In_Hours single," +
-                            " Harvest_area_assumed_acres single" +
+                            " Harvest_area_assumed_acres single," +
+                            " [Unadjusted One-way Yarding distance] double," +
+                            " [Unadjusted Small log trees per acre] single," +
+                            " [Unadjusted Small log trees average volume (ft3)] single," +
+                            " [Unadjusted Large log trees per acre] single," +
+                            " [Unadjusted Large log trees average vol(ft3)] single" +
                             " )";
             }
 
