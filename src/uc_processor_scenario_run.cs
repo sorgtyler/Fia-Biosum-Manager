@@ -2068,10 +2068,8 @@ namespace FIA_Biosum_Manager
                                                 case "OPCOST_ERR": break;
                                                 case "OPCOST_INPUT": break;
                                                 case "OPCOST_OUTPUT": break;
-                                                case "FRCSVARIABLESLOWSLOPETABLE": break;
-                                                case "FRCSVARIABLESSTEEPSLOPETABLE": break;
-                                                case "OPCOST_CHIPPING": break;
                                                 case "OPCOST_IDEAL": break;
+                                                case "IDEAL_ERR": break;
                                                 default:
                                                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
                                                     break;
@@ -5780,10 +5778,8 @@ namespace FIA_Biosum_Manager
                                             case "OPCOST_ERR": break;
                                             case "OPCOST_INPUT": break;
                                             case "OPCOST_OUTPUT": break;
-                                            case "FRCSVARIABLESLOWSLOPETABLE": break;
-                                            case "FRCSVARIABLESSTEEPSLOPETABLE": break;
-                                            case "OPCOST_CHIPPING": break;
                                             case "OPCOST_IDEAL": break;
+                                            case "IDEAL_ERR": break;
                                             default:
                                                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
                                                 break;

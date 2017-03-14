@@ -9,7 +9,7 @@ namespace FIA_Biosum_Manager
     {
         private string m_strScenarioId = "";
         private ado_data_access  m_oAdo;
-        private string m_strOpcostTableName = "opcost_input";
+        private string m_strOpcostTableName = "OpCost_Input";
         private string m_strTvvTableName = "TreeVolValLowSlope";
         private string m_strDebugFile =
             "";
