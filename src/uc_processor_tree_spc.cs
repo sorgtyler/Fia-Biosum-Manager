@@ -46,6 +46,7 @@ namespace FIA_Biosum_Manager
 		public int m_intIndex=0;
 		private int m_intCurrRow=0;
 		public int m_intError=0;
+        private bool handleCheck = true;
 
 
 		private const int MENU_FILTERBYVALUE=0;
@@ -1369,6 +1370,7 @@ namespace FIA_Biosum_Manager
             this.btnCancel = new System.Windows.Forms.Button();
             this.m_dg = new System.Windows.Forms.DataGrid();
             this.grpboxAudit = new System.Windows.Forms.GroupBox();
+            this.btnView = new System.Windows.Forms.Button();
             this.cmbAudit = new System.Windows.Forms.ComboBox();
             this.btnAudit = new System.Windows.Forms.Button();
             this.btnAuditClearAll = new System.Windows.Forms.Button();
@@ -1376,7 +1378,6 @@ namespace FIA_Biosum_Manager
             this.btnAuditAdd = new System.Windows.Forms.Button();
             this.lstAudit = new System.Windows.Forms.ListView();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.btnView = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpBoxTreeSpc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_dg)).BeginInit();
@@ -1503,6 +1504,17 @@ namespace FIA_Biosum_Manager
             this.grpboxAudit.TabStop = false;
             this.grpboxAudit.Text = "Audit Results";
             // 
+            // btnView
+            // 
+            this.btnView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnView.Location = new System.Drawing.Point(536, 136);
+            this.btnView.Name = "btnView";
+            this.btnView.Size = new System.Drawing.Size(136, 32);
+            this.btnView.TabIndex = 35;
+            this.btnView.Text = "View Affected Trees";
+            this.btnView.Visible = false;
+            this.btnView.Click += new System.EventHandler(this.btnView_Click);
+            // 
             // cmbAudit
             // 
             this.cmbAudit.Items.AddRange(new object[] {
@@ -1574,6 +1586,7 @@ namespace FIA_Biosum_Manager
             this.lstAudit.TabIndex = 27;
             this.lstAudit.UseCompatibleStateImageBehavior = false;
             this.lstAudit.View = System.Windows.Forms.View.Details;
+            this.lstAudit.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lstAudit_ItemCheck);
             this.lstAudit.SelectedIndexChanged += new System.EventHandler(this.lstAudit_SelectedIndexChanged);
             // 
             // lblTitle
@@ -1586,17 +1599,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(730, 24);
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "Tree Species";
-            // 
-            // btnView
-            // 
-            this.btnView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnView.Location = new System.Drawing.Point(536, 136);
-            this.btnView.Name = "btnView";
-            this.btnView.Size = new System.Drawing.Size(136, 32);
-            this.btnView.TabIndex = 35;
-            this.btnView.Text = "View Affected Trees";
-            this.btnView.Visible = false;
-            this.btnView.Click += new System.EventHandler(this.btnView_Click);
             // 
             // uc_processor_tree_spc
             // 
@@ -1660,7 +1662,14 @@ namespace FIA_Biosum_Manager
 			if (this.lstAudit.Items.Count==0) return;
 			for (int x=0;x<=this.lstAudit.Items.Count-1;x++)
 			{
-				this.lstAudit.Items[x].Checked=true;
+                if (cmbAudit.Text.Trim() == "Assess Data Readiness: Check If Each FIA Tree Spc, FVS Variant, And FVS Tree Spc Combination Is In The Tree Spc Table")
+                {
+                    if (this.lstAudit.Items[x].SubItems[lstAudit.Columns.Count - 1].Text.Trim() == "N")
+                    {
+                        this.lstAudit.Items[x].Checked = true;
+                    }
+                }
+                else this.lstAudit.Items[x].Checked = true;
 			}
 		}
 
@@ -2503,8 +2512,8 @@ namespace FIA_Biosum_Manager
 						{
 							if (p_dt.Rows[y].RowState != System.Data.DataRowState.Deleted)
 							{
-								if (strCurFvsSpCd == Convert.ToString(p_dt.Rows[y]["fvs_species"]).Trim())
-								{
+								//if (strCurFvsSpCd == Convert.ToString(p_dt.Rows[y]["fvs_species"]).Trim())
+								//{
 									if (strCurVariant == Convert.ToString(p_dt.Rows[y]["fvs_variant"]))
 									{
 										if (strCurSpCd.Trim() == Convert.ToString(p_dt.Rows[y]["spcd"]).Trim())
@@ -2517,7 +2526,7 @@ namespace FIA_Biosum_Manager
 
 										}
 									}
-								}
+								//}
 							}
 						}
 					}
@@ -2568,6 +2577,10 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****AuditAssignFvsSpcAlphaChar:START*****" + System.DateTime.Now.ToString() + "\r\n");
             lstAudit.Clear();
+            btnAuditCheckAll.Enabled = false;
+            btnAuditClearAll.Enabled = false;
+            btnAuditAdd.Enabled = false;
+            lstAudit.CheckBoxes = false;
             btnView.Hide();
 
 			this.lstAudit.Columns.Add("Id",80,HorizontalAlignment.Left);
@@ -2736,7 +2749,7 @@ namespace FIA_Biosum_Manager
                     string strMsg = "";
                     if (lstAudit.Items.Count == 0)
                     {
-                        this.btnAuditAdd.Enabled = false;
+                        
                         strMsg = "Audit Passed. \r\n\r\n Every Tree Species Has A 2-Letter FVS Species Code";
                     }
                     else
@@ -2744,6 +2757,10 @@ namespace FIA_Biosum_Manager
                         this.btnAuditAdd.Text = "Attempt to Auto Assign 2-Letter FVS Species";
                         strMsg = "Audit Failed. \r\n\r\n" + Convert.ToString(this.lstAudit.Items.Count) + " Tree Species Record(s) Are Missing 2-Letter FVS Species";
                         btnAuditAdd.Enabled = true;
+                        btnAuditCheckAll.Enabled = true;
+                        btnAuditClearAll.Enabled = true;
+                        btnAuditAdd.Enabled = true;
+                        lstAudit.CheckBoxes = true;
                     }
 
                     frmMain.g_oFrmMain.DeactivateStandByAnimation();
@@ -2799,7 +2816,10 @@ namespace FIA_Biosum_Manager
 			try
 			{
 				this.lstAudit.Clear();
-				this.btnAuditAdd.Enabled=true;
+				btnAuditAdd.Enabled = false;
+                btnAuditCheckAll.Enabled = false;
+                btnAuditClearAll.Enabled = false;
+                lstAudit.CheckBoxes = false;
                 this.btnView.Hide();
 				//first get unique tree species
 				string[,] strValues = new string[1000,2];
@@ -2889,6 +2909,11 @@ namespace FIA_Biosum_Manager
                         strMsg += "The SpCd/Variant assignments are listed at the top of the form.\r\n";
                         strMsg += "To update the tree species table in your project with these SpCd/Variant combinations\r\n";
                         strMsg += "check the items to add and click the <Add Checked Items To Tree Species Table> button.";
+
+                        btnAuditAdd.Enabled = true;
+                        btnAuditCheckAll.Enabled = true;
+                        btnAuditClearAll.Enabled = true;
+                        lstAudit.CheckBoxes = true;
                     }
                     frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     MessageBox.Show(strMsg,
@@ -2915,10 +2940,14 @@ namespace FIA_Biosum_Manager
 		private void AuditFvsOutSpCdCvt()
 		{
 			int x;
-			
+            bool bAppend = false;
+            int COUNT = 0;
 
 			this.lstAudit.Clear();
-			this.btnAuditAdd.Enabled=true;
+			this.btnAuditAdd.Enabled=false;
+            this.btnAuditClearAll.Enabled = false;
+            this.btnAuditCheckAll.Enabled = false;
+            this.lstAudit.CheckBoxes = false;
 			//first get unique tree species
 			string[,] strValues = new string[1000,2];
 
@@ -2926,6 +2955,7 @@ namespace FIA_Biosum_Manager
 			this.lstAudit.Columns.Add("spcd", 80, HorizontalAlignment.Left);
 			this.lstAudit.Columns.Add("fvs_species_numeric_code",150,HorizontalAlignment.Left);
 			this.lstAudit.Columns.Add("fvs_species_two_letter_code",150,HorizontalAlignment.Left);
+            this.lstAudit.Columns.Add("exist_in_tree_species_table_yn", 180, HorizontalAlignment.Left);
            
 
 			ado_data_access oAdo = new ado_data_access();
@@ -3011,7 +3041,8 @@ namespace FIA_Biosum_Manager
 			oAdo.m_strSQL = "SELECT DISTINCT t.spcd as treetable_spcd, " + 
 				                             "f.fvs_species as fvsouttable_spcd," + 
 											 "f.fvs_variant as fvsouttable_fvs_variant, " + 
-											"' ' AS fvs_species_two_letter_code " + 
+											"' ' AS fvs_species_two_letter_code," + 
+                                            "'N' AS exist_in_tree_species_table_yn " + 
 				             "INTO spcd_variant_temp_work_table " + 
 				             "FROM treetemp t,fvsouttreetemp f " + 
 				             "WHERE t.fvs_tree_id = f.fvs_tree_id";
@@ -3040,7 +3071,13 @@ namespace FIA_Biosum_Manager
 
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 
-			
+            oAdo.m_strSQL = "UPDATE spcd_variant_temp_work_table w INNER JOIN " +
+                                this.m_oQueries.m_oFvs.m_strTreeSpcTable + " t " +
+                            "ON w.treetable_spcd = t.spcd AND " +
+                               "W.fvsouttable_fvs_variant = t.FVS_VARIANT " +
+                            "SET w.exist_in_tree_species_table_yn = 'Y'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
 
 			oAdo.m_strSQL = "SELECT * FROM spcd_variant_temp_work_table";
 
@@ -3061,7 +3098,10 @@ namespace FIA_Biosum_Manager
                                 this.lstAudit.Items[this.lstAudit.Items.Count - 1].SubItems.Add(oAdo.m_OleDbDataReader["treetable_spcd"].ToString().Trim());
                                 this.lstAudit.Items[this.lstAudit.Items.Count - 1].SubItems.Add(oAdo.m_OleDbDataReader["fvsouttable_spcd"].ToString().Trim());
                                 this.lstAudit.Items[this.lstAudit.Items.Count - 1].SubItems.Add(oAdo.m_OleDbDataReader["fvs_species_two_letter_code"].ToString().Trim());
+                                this.lstAudit.Items[this.lstAudit.Items.Count - 1].SubItems.Add(oAdo.m_OleDbDataReader["exist_in_tree_species_table_yn"].ToString().Trim());
 
+                                if (oAdo.m_OleDbDataReader["exist_in_tree_species_table_yn"].ToString().Trim() == "Y") COUNT++;
+                                
                             }
                         }
                     }
@@ -3070,7 +3110,6 @@ namespace FIA_Biosum_Manager
                     string strMsg = "";
                     if (this.lstAudit.Items.Count == 0)
                     {
-                        this.btnAuditAdd.Enabled = false;
                         this.btnView.Hide();
                         strMsg = "Audit Passed. \r\n\r\n Every FIA SpCd + FVS Variant + FVS Species Combination is represented in the tree species table";
                     }
@@ -3078,7 +3117,18 @@ namespace FIA_Biosum_Manager
                     {
                         strMsg = "Audit Failed.\r\n\r\n" + Convert.ToString(this.lstAudit.Items.Count) + " FIA SpCd + FVS Variant + FVS Species Combinations NOT In The Tree Species Table ";
                         this.btnAuditAdd.Text = "Add Checked Items To Tree Species Table";
-                        btnAuditAdd.Enabled = true;
+                        //check if all items exist in the tree species table
+                        if (COUNT == lstAudit.Items.Count)
+                        {
+                           
+                        }
+                        else
+                        {
+                            lstAudit.CheckBoxes = true;
+                            btnAuditCheckAll.Enabled = true;
+                            btnAuditClearAll.Enabled = true ;
+                            btnAuditAdd.Enabled = true;
+                        }
                         btnView.Show();
                     }
 
@@ -3122,7 +3172,12 @@ namespace FIA_Biosum_Manager
 		private void AuditOvenDryGreenWtRatio()
 		{
 			this.lstAudit.Clear();
-			this.btnAuditAdd.Enabled=false;
+			
+            btnAuditAdd.Enabled = false;
+            btnAuditCheckAll.Enabled = false;
+            btnAuditClearAll.Enabled = false;
+            btnAuditAdd.Enabled = false;
+            lstAudit.CheckBoxes = false;
             this.btnView.Hide();
 			//first get unique tree species
 			string[,] strValues = new string[1000,2];
@@ -3279,7 +3334,11 @@ namespace FIA_Biosum_Manager
                     oAdo.m_OleDbDataReader.Close();
                     string strMsg = "";
                     if (lstAudit.Items.Count == 0) strMsg = "Audit Passed. \r\n\r\n Every Tree Species Has Wood Weight Ratio Data";
-                    else strMsg = "Audit Failed. \r\n\r\n" + Convert.ToString(this.lstAudit.Items.Count) + " Tree Species Record(s) Are Missing Wood Weight Ratio Data";
+                    else
+                    {
+                        strMsg = "Audit Failed. \r\n\r\n" + Convert.ToString(this.lstAudit.Items.Count) + " Tree Species Record(s) Are Missing Wood Weight Ratio Data";
+
+                    }
                     frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     MessageBox.Show(strMsg,
                                    "Tree Species",
@@ -3399,6 +3458,7 @@ namespace FIA_Biosum_Manager
 					}
 
 				}
+                btnView.Text = "View Affected Trees for Variant:" + strVariant + " SpCd:" + strSpCd;
 			}
 				
 				
@@ -3470,6 +3530,31 @@ namespace FIA_Biosum_Manager
             if (oAdo.TableExist(oAdo.m_OleDbConnection, "fvsouttreetemp2"))
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, "DROP TABLE fvsouttreetemp2");
             
+        }
+
+        private void lstAudit_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (handleCheck)
+            {
+                if (cmbAudit.Text.Trim() == "Assess Data Readiness: Check If Each FIA Tree Spc, FVS Variant, And FVS Tree Spc Combination Is In The Tree Spc Table")
+                {
+
+
+                    ListViewItem oItem = lstAudit.Items[e.Index] as ListViewItem;
+                    if (oItem != null)
+                    {
+                        if (e.CurrentValue == CheckState.Unchecked && oItem.SubItems[lstAudit.Columns.Count - 1].Text.Trim() == "Y")
+                        {
+                            MessageBox.Show("Cannot check this record: Combination of fvs variant and tree species already exists in the tree species table", "BIOSUM");
+                            e.NewValue = e.CurrentValue;
+                        }
+                    }
+
+
+                }
+            }
+            else handleCheck = true;
+
         }
 
 	}
@@ -3580,3 +3665,4 @@ namespace FIA_Biosum_Manager
 		     
 	}
 }
+
