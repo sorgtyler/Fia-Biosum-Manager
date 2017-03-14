@@ -71,6 +71,10 @@ namespace FIA_Biosum_Manager
 			this.btnFvsCmdAdd.Enabled=false;
 			this.btnFvsCmdClearAll.Enabled=false;
 			this.btnFvsCmdDelete.Enabled=false;
+
+            // GitHub issue #70: Can't hide a tab page, but you can remove it
+            // Remove the line below to reinstate
+            tabControl1.TabPages.Remove(this.tbPgRxItemFvsCmd);
 			
 			//
 			// TODO: Add any constructor code after InitializeComponent call
