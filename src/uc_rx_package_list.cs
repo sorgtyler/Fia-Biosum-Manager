@@ -47,6 +47,10 @@ namespace FIA_Biosum_Manager
 		const int COLUMN_DESC=6;
 		const int COLUMN_KCP=7;
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultFvsXPSFile;
+
 		private FIA_Biosum_Manager.RxPackageItem_Collection m_oRxPackageItem_Collection = new RxPackageItem_Collection();
 		private FIA_Biosum_Manager.RxPackageItemFvsCommandItem_Collection m_oRxPackageItemFvsCommandItem_Collection = new RxPackageItemFvsCommandItem_Collection();
 		private FIA_Biosum_Manager.RxPackageCombinedFVSCommandsItem_Collection m_oRxPackageCombinedFVSCommandsItem_Collection = new RxPackageCombinedFVSCommandsItem_Collection();
@@ -70,6 +74,9 @@ namespace FIA_Biosum_Manager
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+
+            this.m_oEnv = new env();
+
 			this.m_intDialogHt = this.groupBox1.Top + this.btnClose.Top + this.btnClose.Height + 20;
 			this.m_intDialogWd = this.groupBox1.Left + this.btnClose.Left + this.btnClose.Width + 20;
 
@@ -205,167 +212,171 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.btnProperties = new System.Windows.Forms.Button();
-			this.btnDelete = new System.Windows.Forms.Button();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.btnClear = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.btnSave = new System.Windows.Forms.Button();
-			this.btnDefault = new System.Windows.Forms.Button();
-			this.btnNew = new System.Windows.Forms.Button();
-			this.btnEdit = new System.Windows.Forms.Button();
-			this.btnClose = new System.Windows.Forms.Button();
-			this.lstRx = new System.Windows.Forms.ListView();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.btnProperties);
-			this.groupBox1.Controls.Add(this.btnDelete);
-			this.groupBox1.Controls.Add(this.btnHelp);
-			this.groupBox1.Controls.Add(this.btnClear);
-			this.groupBox1.Controls.Add(this.btnCancel);
-			this.groupBox1.Controls.Add(this.btnSave);
-			this.groupBox1.Controls.Add(this.btnDefault);
-			this.groupBox1.Controls.Add(this.btnNew);
-			this.groupBox1.Controls.Add(this.btnEdit);
-			this.groupBox1.Controls.Add(this.btnClose);
-			this.groupBox1.Controls.Add(this.lstRx);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(672, 480);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			// 
-			// btnProperties
-			// 
-			this.btnProperties.Location = new System.Drawing.Point(400, 392);
-			this.btnProperties.Name = "btnProperties";
-			this.btnProperties.Size = new System.Drawing.Size(114, 32);
-			this.btnProperties.TabIndex = 11;
-			this.btnProperties.Text = "Properties";
-			this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click);
-			// 
-			// btnDelete
-			// 
-			this.btnDelete.Enabled = false;
-			this.btnDelete.Location = new System.Drawing.Point(272, 392);
-			this.btnDelete.Name = "btnDelete";
-			this.btnDelete.Size = new System.Drawing.Size(64, 32);
-			this.btnDelete.TabIndex = 10;
-			this.btnDelete.Text = "Delete";
-			this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-			// 
-			// btnHelp
-			// 
-			this.btnHelp.Location = new System.Drawing.Point(16, 432);
-			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.Size = new System.Drawing.Size(96, 32);
-			this.btnHelp.TabIndex = 8;
-			this.btnHelp.Text = "Help";
-			// 
-			// btnClear
-			// 
-			this.btnClear.Location = new System.Drawing.Point(336, 392);
-			this.btnClear.Name = "btnClear";
-			this.btnClear.Size = new System.Drawing.Size(64, 32);
-			this.btnClear.TabIndex = 7;
-			this.btnClear.Text = "Clear All";
-			this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Location = new System.Drawing.Point(576, 392);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(64, 32);
-			this.btnCancel.TabIndex = 6;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// btnSave
-			// 
-			this.btnSave.Enabled = false;
-			this.btnSave.Location = new System.Drawing.Point(512, 392);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(64, 32);
-			this.btnSave.TabIndex = 5;
-			this.btnSave.Text = "Save";
-			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-			// 
-			// btnDefault
-			// 
-			this.btnDefault.Location = new System.Drawing.Point(32, 392);
-			this.btnDefault.Name = "btnDefault";
-			this.btnDefault.Size = new System.Drawing.Size(114, 32);
-			this.btnDefault.TabIndex = 2;
-			this.btnDefault.Text = "Use Default Values";
-			// 
-			// btnNew
-			// 
-			this.btnNew.Location = new System.Drawing.Point(144, 392);
-			this.btnNew.Name = "btnNew";
-			this.btnNew.Size = new System.Drawing.Size(64, 32);
-			this.btnNew.TabIndex = 3;
-			this.btnNew.Text = "New";
-			this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-			// 
-			// btnEdit
-			// 
-			this.btnEdit.Enabled = false;
-			this.btnEdit.Location = new System.Drawing.Point(208, 392);
-			this.btnEdit.Name = "btnEdit";
-			this.btnEdit.Size = new System.Drawing.Size(64, 32);
-			this.btnEdit.TabIndex = 4;
-			this.btnEdit.Text = "Edit";
-			this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
-			// 
-			// btnClose
-			// 
-			this.btnClose.Location = new System.Drawing.Point(560, 432);
-			this.btnClose.Name = "btnClose";
-			this.btnClose.Size = new System.Drawing.Size(96, 32);
-			this.btnClose.TabIndex = 9;
-			this.btnClose.Text = "Close";
-			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-			// 
-			// lstRx
-			// 
-			this.lstRx.GridLines = true;
-			this.lstRx.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.lstRx.HideSelection = false;
-			this.lstRx.Location = new System.Drawing.Point(16, 48);
-			this.lstRx.MultiSelect = false;
-			this.lstRx.Name = "lstRx";
-			this.lstRx.Size = new System.Drawing.Size(640, 336);
-			this.lstRx.TabIndex = 1;
-			this.lstRx.View = System.Windows.Forms.View.Details;
-			this.lstRx.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRx_MouseUp);
-			this.lstRx.SelectedIndexChanged += new System.EventHandler(this.lstRx_SelectedIndexChanged);
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(3, 16);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Size = new System.Drawing.Size(666, 24);
-			this.lblTitle.TabIndex = 0;
-			this.lblTitle.Text = "Treatment Package List";
-			// 
-			// uc_rx_package_list
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_rx_package_list";
-			this.Size = new System.Drawing.Size(672, 480);
-			this.Resize += new System.EventHandler(this.uc_rx_package_list_Resize);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnProperties = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnDefault = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.lstRx = new System.Windows.Forms.ListView();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnProperties);
+            this.groupBox1.Controls.Add(this.btnDelete);
+            this.groupBox1.Controls.Add(this.btnHelp);
+            this.groupBox1.Controls.Add(this.btnClear);
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.btnDefault);
+            this.groupBox1.Controls.Add(this.btnNew);
+            this.groupBox1.Controls.Add(this.btnEdit);
+            this.groupBox1.Controls.Add(this.btnClose);
+            this.groupBox1.Controls.Add(this.lstRx);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(672, 480);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            // 
+            // btnProperties
+            // 
+            this.btnProperties.Location = new System.Drawing.Point(400, 392);
+            this.btnProperties.Name = "btnProperties";
+            this.btnProperties.Size = new System.Drawing.Size(114, 32);
+            this.btnProperties.TabIndex = 11;
+            this.btnProperties.Text = "Properties";
+            this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Enabled = false;
+            this.btnDelete.Location = new System.Drawing.Point(272, 392);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(64, 32);
+            this.btnDelete.TabIndex = 10;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(16, 432);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 8;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(336, 392);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(64, 32);
+            this.btnClear.TabIndex = 7;
+            this.btnClear.Text = "Clear All";
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(576, 392);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(64, 32);
+            this.btnCancel.TabIndex = 6;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Enabled = false;
+            this.btnSave.Location = new System.Drawing.Point(512, 392);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(64, 32);
+            this.btnSave.TabIndex = 5;
+            this.btnSave.Text = "Save";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnDefault
+            // 
+            this.btnDefault.Location = new System.Drawing.Point(32, 392);
+            this.btnDefault.Name = "btnDefault";
+            this.btnDefault.Size = new System.Drawing.Size(114, 32);
+            this.btnDefault.TabIndex = 2;
+            this.btnDefault.Text = "Use Default Values";
+            this.btnDefault.Visible = false;
+            // 
+            // btnNew
+            // 
+            this.btnNew.Location = new System.Drawing.Point(144, 392);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(64, 32);
+            this.btnNew.TabIndex = 3;
+            this.btnNew.Text = "New";
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Enabled = false;
+            this.btnEdit.Location = new System.Drawing.Point(208, 392);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(64, 32);
+            this.btnEdit.TabIndex = 4;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(560, 432);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(96, 32);
+            this.btnClose.TabIndex = 9;
+            this.btnClose.Text = "Close";
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // lstRx
+            // 
+            this.lstRx.GridLines = true;
+            this.lstRx.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstRx.HideSelection = false;
+            this.lstRx.Location = new System.Drawing.Point(16, 48);
+            this.lstRx.MultiSelect = false;
+            this.lstRx.Name = "lstRx";
+            this.lstRx.Size = new System.Drawing.Size(640, 336);
+            this.lstRx.TabIndex = 1;
+            this.lstRx.UseCompatibleStateImageBehavior = false;
+            this.lstRx.View = System.Windows.Forms.View.Details;
+            this.lstRx.SelectedIndexChanged += new System.EventHandler(this.lstRx_SelectedIndexChanged);
+            this.lstRx.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRx_MouseUp);
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(3, 16);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(666, 24);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "Treatment Package List";
+            // 
+            // uc_rx_package_list
+            // 
+            this.Controls.Add(this.groupBox1);
+            this.Name = "uc_rx_package_list";
+            this.Size = new System.Drawing.Size(672, 480);
+            this.Resize += new System.EventHandler(this.uc_rx_package_list_Resize);
+            this.groupBox1.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -893,6 +904,15 @@ namespace FIA_Biosum_Manager
 
 		
 		}
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "FVS", "RX_PACKAGE_TREATMENT_LIST" });
+        }
 		
 		
 		

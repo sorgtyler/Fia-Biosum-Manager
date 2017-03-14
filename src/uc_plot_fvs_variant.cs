@@ -64,6 +64,10 @@ namespace FIA_Biosum_Manager
 		private string m_strColumnFilterList="";
 		private string m_strColumnSortList="";
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultFvsXPSFile;
+
 		private System.Data.DataTable m_dtTableSchema;
 		private System.Windows.Forms.GroupBox grpBoxPlot;
 		private System.Windows.Forms.Button btnAuditUpdate;
@@ -80,6 +84,8 @@ namespace FIA_Biosum_Manager
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+
+            this.m_oEnv = new env();
 
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -1130,200 +1136,203 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.btnClose = new System.Windows.Forms.Button();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.grpBoxPlot = new System.Windows.Forms.GroupBox();
-			this.btnEdit = new System.Windows.Forms.Button();
-			this.btnSave = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.m_dg = new System.Windows.Forms.DataGrid();
-			this.grpboxAudit = new System.Windows.Forms.GroupBox();
-			this.btnAuditClearAll = new System.Windows.Forms.Button();
-			this.btnAuditCheckAll = new System.Windows.Forms.Button();
-			this.btnAuditUpdate = new System.Windows.Forms.Button();
-			this.btnAuditPlotFVSVariants = new System.Windows.Forms.Button();
-			this.lstAudit = new System.Windows.Forms.ListView();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.grpBoxPlot.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_dg)).BeginInit();
-			this.grpboxAudit.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.btnClose);
-			this.groupBox1.Controls.Add(this.btnHelp);
-			this.groupBox1.Controls.Add(this.grpBoxPlot);
-			this.groupBox1.Controls.Add(this.grpboxAudit);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(704, 616);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			// 
-			// btnClose
-			// 
-			this.btnClose.Location = new System.Drawing.Point(592, 576);
-			this.btnClose.Name = "btnClose";
-			this.btnClose.Size = new System.Drawing.Size(96, 32);
-			this.btnClose.TabIndex = 47;
-			this.btnClose.Text = "Close";
-			this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-			// 
-			// btnHelp
-			// 
-			this.btnHelp.Location = new System.Drawing.Point(8, 576);
-			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.Size = new System.Drawing.Size(96, 32);
-			this.btnHelp.TabIndex = 46;
-			this.btnHelp.Text = "Help";
-			// 
-			// grpBoxPlot
-			// 
-			this.grpBoxPlot.Controls.Add(this.btnEdit);
-			this.grpBoxPlot.Controls.Add(this.btnSave);
-			this.grpBoxPlot.Controls.Add(this.btnCancel);
-			this.grpBoxPlot.Controls.Add(this.m_dg);
-			this.grpBoxPlot.Location = new System.Drawing.Point(24, 272);
-			this.grpBoxPlot.Name = "grpBoxPlot";
-			this.grpBoxPlot.Size = new System.Drawing.Size(664, 288);
-			this.grpBoxPlot.TabIndex = 29;
-			this.grpBoxPlot.TabStop = false;
-			this.grpBoxPlot.Text = "Plot Table";
-			// 
-			// btnEdit
-			// 
-			this.btnEdit.Location = new System.Drawing.Point(245, 240);
-			this.btnEdit.Name = "btnEdit";
-			this.btnEdit.Size = new System.Drawing.Size(64, 32);
-			this.btnEdit.TabIndex = 47;
-			this.btnEdit.Text = "Edit";
-			this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
-			// 
-			// btnSave
-			// 
-			this.btnSave.Enabled = false;
-			this.btnSave.Location = new System.Drawing.Point(309, 240);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(64, 32);
-			this.btnSave.TabIndex = 48;
-			this.btnSave.Text = "Save";
-			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Location = new System.Drawing.Point(373, 240);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(64, 32);
-			this.btnCancel.TabIndex = 49;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// m_dg
-			// 
-			this.m_dg.DataMember = "";
-			this.m_dg.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-			this.m_dg.Location = new System.Drawing.Point(8, 24);
-			this.m_dg.Name = "m_dg";
-			this.m_dg.Size = new System.Drawing.Size(648, 208);
-			this.m_dg.TabIndex = 2;
-			this.m_dg.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseDown);
-			this.m_dg.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseUp);
-			// 
-			// grpboxAudit
-			// 
-			this.grpboxAudit.Controls.Add(this.btnAuditClearAll);
-			this.grpboxAudit.Controls.Add(this.btnAuditCheckAll);
-			this.grpboxAudit.Controls.Add(this.btnAuditUpdate);
-			this.grpboxAudit.Controls.Add(this.btnAuditPlotFVSVariants);
-			this.grpboxAudit.Controls.Add(this.lstAudit);
-			this.grpboxAudit.Location = new System.Drawing.Point(24, 48);
-			this.grpboxAudit.Name = "grpboxAudit";
-			this.grpboxAudit.Size = new System.Drawing.Size(664, 216);
-			this.grpboxAudit.TabIndex = 28;
-			this.grpboxAudit.TabStop = false;
-			this.grpboxAudit.Text = "Audit Results";
-			// 
-			// btnAuditClearAll
-			// 
-			this.btnAuditClearAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.btnAuditClearAll.Location = new System.Drawing.Point(88, 136);
-			this.btnAuditClearAll.Name = "btnAuditClearAll";
-			this.btnAuditClearAll.Size = new System.Drawing.Size(72, 32);
-			this.btnAuditClearAll.TabIndex = 32;
-			this.btnAuditClearAll.Text = "Clear All";
-			this.btnAuditClearAll.Click += new System.EventHandler(this.btnAuditClearAll_Click);
-			// 
-			// btnAuditCheckAll
-			// 
-			this.btnAuditCheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.btnAuditCheckAll.Location = new System.Drawing.Point(16, 136);
-			this.btnAuditCheckAll.Name = "btnAuditCheckAll";
-			this.btnAuditCheckAll.Size = new System.Drawing.Size(72, 32);
-			this.btnAuditCheckAll.TabIndex = 31;
-			this.btnAuditCheckAll.Text = "Check All";
-			this.btnAuditCheckAll.Click += new System.EventHandler(this.btnAuditCheckAll_Click);
-			// 
-			// btnAuditUpdate
-			// 
-			this.btnAuditUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.btnAuditUpdate.Location = new System.Drawing.Point(160, 136);
-			this.btnAuditUpdate.Name = "btnAuditUpdate";
-			this.btnAuditUpdate.Size = new System.Drawing.Size(312, 32);
-			this.btnAuditUpdate.TabIndex = 30;
-			this.btnAuditUpdate.Text = "Update Plot Records With FIADB FVS Variant Table";
-			this.btnAuditUpdate.Click += new System.EventHandler(this.btnAuditAdd_Click);
-			// 
-			// btnAuditPlotFVSVariants
-			// 
-			this.btnAuditPlotFVSVariants.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.btnAuditPlotFVSVariants.Location = new System.Drawing.Point(144, 184);
-			this.btnAuditPlotFVSVariants.Name = "btnAuditPlotFVSVariants";
-			this.btnAuditPlotFVSVariants.Size = new System.Drawing.Size(400, 24);
-			this.btnAuditPlotFVSVariants.TabIndex = 29;
-			this.btnAuditPlotFVSVariants.Text = "Check For Plots Without Variant Codes";
-			this.btnAuditPlotFVSVariants.Click += new System.EventHandler(this.btnAuditPlotFVSVariants_Click);
-			// 
-			// lstAudit
-			// 
-			this.lstAudit.CheckBoxes = true;
-			this.lstAudit.FullRowSelect = true;
-			this.lstAudit.GridLines = true;
-			this.lstAudit.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.lstAudit.HideSelection = false;
-			this.lstAudit.Location = new System.Drawing.Point(16, 24);
-			this.lstAudit.MultiSelect = false;
-			this.lstAudit.Name = "lstAudit";
-			this.lstAudit.Size = new System.Drawing.Size(632, 104);
-			this.lstAudit.TabIndex = 27;
-			this.lstAudit.View = System.Windows.Forms.View.Details;
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(3, 16);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Size = new System.Drawing.Size(698, 24);
-			this.lblTitle.TabIndex = 1;
-			this.lblTitle.Text = "FVS Variant";
-			// 
-			// uc_plot_fvs_variant
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_plot_fvs_variant";
-			this.Size = new System.Drawing.Size(704, 616);
-			this.Resize += new System.EventHandler(this.uc_tree_spc_conversion_Resize);
-			this.groupBox1.ResumeLayout(false);
-			this.grpBoxPlot.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.m_dg)).EndInit();
-			this.grpboxAudit.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.grpBoxPlot = new System.Windows.Forms.GroupBox();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.m_dg = new System.Windows.Forms.DataGrid();
+            this.grpboxAudit = new System.Windows.Forms.GroupBox();
+            this.btnAuditClearAll = new System.Windows.Forms.Button();
+            this.btnAuditCheckAll = new System.Windows.Forms.Button();
+            this.btnAuditUpdate = new System.Windows.Forms.Button();
+            this.btnAuditPlotFVSVariants = new System.Windows.Forms.Button();
+            this.lstAudit = new System.Windows.Forms.ListView();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
+            this.grpBoxPlot.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_dg)).BeginInit();
+            this.grpboxAudit.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnClose);
+            this.groupBox1.Controls.Add(this.btnHelp);
+            this.groupBox1.Controls.Add(this.grpBoxPlot);
+            this.groupBox1.Controls.Add(this.grpboxAudit);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(704, 616);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(592, 576);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(96, 32);
+            this.btnClose.TabIndex = 47;
+            this.btnClose.Text = "Close";
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(8, 576);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 46;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // grpBoxPlot
+            // 
+            this.grpBoxPlot.Controls.Add(this.btnEdit);
+            this.grpBoxPlot.Controls.Add(this.btnSave);
+            this.grpBoxPlot.Controls.Add(this.btnCancel);
+            this.grpBoxPlot.Controls.Add(this.m_dg);
+            this.grpBoxPlot.Location = new System.Drawing.Point(24, 272);
+            this.grpBoxPlot.Name = "grpBoxPlot";
+            this.grpBoxPlot.Size = new System.Drawing.Size(664, 288);
+            this.grpBoxPlot.TabIndex = 29;
+            this.grpBoxPlot.TabStop = false;
+            this.grpBoxPlot.Text = "Plot Table";
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Location = new System.Drawing.Point(245, 240);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(64, 32);
+            this.btnEdit.TabIndex = 47;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Enabled = false;
+            this.btnSave.Location = new System.Drawing.Point(309, 240);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(64, 32);
+            this.btnSave.TabIndex = 48;
+            this.btnSave.Text = "Save";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(373, 240);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(64, 32);
+            this.btnCancel.TabIndex = 49;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // m_dg
+            // 
+            this.m_dg.DataMember = "";
+            this.m_dg.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+            this.m_dg.Location = new System.Drawing.Point(8, 24);
+            this.m_dg.Name = "m_dg";
+            this.m_dg.Size = new System.Drawing.Size(648, 208);
+            this.m_dg.TabIndex = 2;
+            this.m_dg.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseDown);
+            this.m_dg.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_dg_MouseUp);
+            // 
+            // grpboxAudit
+            // 
+            this.grpboxAudit.Controls.Add(this.btnAuditClearAll);
+            this.grpboxAudit.Controls.Add(this.btnAuditCheckAll);
+            this.grpboxAudit.Controls.Add(this.btnAuditUpdate);
+            this.grpboxAudit.Controls.Add(this.btnAuditPlotFVSVariants);
+            this.grpboxAudit.Controls.Add(this.lstAudit);
+            this.grpboxAudit.Location = new System.Drawing.Point(24, 48);
+            this.grpboxAudit.Name = "grpboxAudit";
+            this.grpboxAudit.Size = new System.Drawing.Size(664, 216);
+            this.grpboxAudit.TabIndex = 28;
+            this.grpboxAudit.TabStop = false;
+            this.grpboxAudit.Text = "Audit Results";
+            // 
+            // btnAuditClearAll
+            // 
+            this.btnAuditClearAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAuditClearAll.Location = new System.Drawing.Point(88, 136);
+            this.btnAuditClearAll.Name = "btnAuditClearAll";
+            this.btnAuditClearAll.Size = new System.Drawing.Size(72, 32);
+            this.btnAuditClearAll.TabIndex = 32;
+            this.btnAuditClearAll.Text = "Clear All";
+            this.btnAuditClearAll.Click += new System.EventHandler(this.btnAuditClearAll_Click);
+            // 
+            // btnAuditCheckAll
+            // 
+            this.btnAuditCheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAuditCheckAll.Location = new System.Drawing.Point(16, 136);
+            this.btnAuditCheckAll.Name = "btnAuditCheckAll";
+            this.btnAuditCheckAll.Size = new System.Drawing.Size(72, 32);
+            this.btnAuditCheckAll.TabIndex = 31;
+            this.btnAuditCheckAll.Text = "Check All";
+            this.btnAuditCheckAll.Click += new System.EventHandler(this.btnAuditCheckAll_Click);
+            // 
+            // btnAuditUpdate
+            // 
+            this.btnAuditUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAuditUpdate.Location = new System.Drawing.Point(160, 136);
+            this.btnAuditUpdate.Name = "btnAuditUpdate";
+            this.btnAuditUpdate.Size = new System.Drawing.Size(312, 32);
+            this.btnAuditUpdate.TabIndex = 30;
+            this.btnAuditUpdate.Text = "Update Plot Records With FIADB FVS Variant Table";
+            this.btnAuditUpdate.Click += new System.EventHandler(this.btnAuditAdd_Click);
+            // 
+            // btnAuditPlotFVSVariants
+            // 
+            this.btnAuditPlotFVSVariants.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAuditPlotFVSVariants.Location = new System.Drawing.Point(144, 184);
+            this.btnAuditPlotFVSVariants.Name = "btnAuditPlotFVSVariants";
+            this.btnAuditPlotFVSVariants.Size = new System.Drawing.Size(400, 24);
+            this.btnAuditPlotFVSVariants.TabIndex = 29;
+            this.btnAuditPlotFVSVariants.Text = "Check For Plots Without Variant Codes";
+            this.btnAuditPlotFVSVariants.Click += new System.EventHandler(this.btnAuditPlotFVSVariants_Click);
+            // 
+            // lstAudit
+            // 
+            this.lstAudit.CheckBoxes = true;
+            this.lstAudit.FullRowSelect = true;
+            this.lstAudit.GridLines = true;
+            this.lstAudit.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstAudit.HideSelection = false;
+            this.lstAudit.Location = new System.Drawing.Point(16, 24);
+            this.lstAudit.MultiSelect = false;
+            this.lstAudit.Name = "lstAudit";
+            this.lstAudit.Size = new System.Drawing.Size(632, 104);
+            this.lstAudit.TabIndex = 27;
+            this.lstAudit.UseCompatibleStateImageBehavior = false;
+            this.lstAudit.View = System.Windows.Forms.View.Details;
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(3, 16);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(698, 24);
+            this.lblTitle.TabIndex = 1;
+            this.lblTitle.Text = "FVS Variant";
+            // 
+            // uc_plot_fvs_variant
+            // 
+            this.Controls.Add(this.groupBox1);
+            this.Name = "uc_plot_fvs_variant";
+            this.Size = new System.Drawing.Size(704, 616);
+            this.Resize += new System.EventHandler(this.uc_tree_spc_conversion_Resize);
+            this.groupBox1.ResumeLayout(false);
+            this.grpBoxPlot.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.m_dg)).EndInit();
+            this.grpboxAudit.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -1993,6 +2002,15 @@ namespace FIA_Biosum_Manager
 			}
 			return intGridCol;
 		}
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "FVS", "PLOT_FVS_VARIANTS" });
+        }
 
 
 	}
