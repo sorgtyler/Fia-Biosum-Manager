@@ -2065,11 +2065,11 @@ namespace FIA_Biosum_Manager
                                         {
                                             switch (strTables[z].Trim().ToUpper())
                                             {
-                                                case "OPCOST_ERR": break;
+                                                case "OPCOST_ERRORS": break;
+                                                case "OPCOST_IDEAL_ERRORS": break;
                                                 case "OPCOST_INPUT": break;
                                                 case "OPCOST_OUTPUT": break;
-                                                case "OPCOST_IDEAL": break;
-                                                case "IDEAL_ERR": break;
+                                                case "OPCOST_IDEAL_OUTPUT": break;
                                                 default:
                                                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
                                                     break;
@@ -5775,11 +5775,11 @@ namespace FIA_Biosum_Manager
                                     {
                                         switch (strTables[z].Trim().ToUpper())
                                         {
-                                            case "OPCOST_ERR": break;
+                                            case "OPCOST_ERRORS": break;
+                                            case "OPCOST_IDEAL_ERRORS": break;
                                             case "OPCOST_INPUT": break;
                                             case "OPCOST_OUTPUT": break;
-                                            case "OPCOST_IDEAL": break;
-                                            case "IDEAL_ERR": break;
+                                            case "OPCOST_IDEAL_OUTPUT": break;
                                             default:
                                                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
                                                 break;
