@@ -91,6 +91,10 @@ namespace FIA_Biosum_Manager
 		string[] m_strFVSVariantsArray=null;
         private Button btnView;
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultFvsXPSFile;
+
         private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_processor_audit_debug.txt";
 
 		/// <summary> 
@@ -106,6 +110,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add any initialization after the InitializeComponent call
 
 			this.m_strProjDir = p_strProjDir;
+            this.m_oEnv = new env();
 
 			this.m_oQueries = new Queries();
 			m_oQueries.m_oFvs.LoadDatasource=true;
@@ -1409,11 +1414,13 @@ namespace FIA_Biosum_Manager
             // 
             // btnHelp
             // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnHelp.Location = new System.Drawing.Point(8, 576);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(96, 32);
             this.btnHelp.TabIndex = 46;
             this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // grpBoxTreeSpc
             // 
@@ -3555,6 +3562,15 @@ namespace FIA_Biosum_Manager
             }
             else handleCheck = true;
 
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "FVS", "TREE_SPECIES" });
         }
 
 	}

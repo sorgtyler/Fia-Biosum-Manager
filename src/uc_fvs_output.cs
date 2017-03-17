@@ -99,6 +99,10 @@ namespace FIA_Biosum_Manager
 		string m_strLogFile;
 		string m_strLogDate;
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultFvsXPSFile;
+
 		private System.Threading.Thread m_thread;
 		private FIA_Biosum_Manager.frmTherm m_frmTherm;
 		private bool m_bDebug=true;
@@ -187,7 +191,7 @@ namespace FIA_Biosum_Manager
 
 			}
 
-
+            this.m_oEnv = new env();
 
             this.m_bDebug = frmMain.g_bDebug;
 			htSelectedRxFile=new Hashtable();
@@ -498,11 +502,13 @@ namespace FIA_Biosum_Manager
             // 
             // btnHelp
             // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnHelp.Location = new System.Drawing.Point(11, 485);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(96, 32);
             this.btnHelp.TabIndex = 44;
             this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // uc_fvs_output
             // 
@@ -8771,6 +8777,15 @@ namespace FIA_Biosum_Manager
             oDlg.Initialize_FVS_Output_PREPOST_SeqNum_User_Control();
             oDlg.DisposeOfFormWhenClosing = true;
             oDlg.ShowDialog();
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "FVS", "OUTPUT_DATA" });
         }
         
 		

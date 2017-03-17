@@ -91,9 +91,10 @@ namespace FIA_Biosum_Manager
         private string m_strFVSCycleLength="10";
         private Button btnExecuteAction;
         private ComboBox cmbAction;
-        
-		
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultFvsXPSFile;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -114,8 +115,8 @@ namespace FIA_Biosum_Manager
 			this.m_oLvRowColors.CustomFullRowSelect=true;
 			this.m_oLvRowColors.ReferenceListView = this.lstFvsInput;
 			if (frmMain.g_oGridViewFont != null) this.lstFvsInput.Font = frmMain.g_oGridViewFont;
-			
-		
+
+            this.m_oEnv = new env();
 
 
 			// TODO: Add any initialization after the InitializeComponent call
@@ -145,6 +146,8 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnExecuteAction = new System.Windows.Forms.Button();
+            this.cmbAction = new System.Windows.Forms.ComboBox();
             this.txtDataDir = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnRxPackage = new System.Windows.Forms.Button();
@@ -165,8 +168,6 @@ namespace FIA_Biosum_Manager
             this.lblRxCnt = new System.Windows.Forms.Label();
             this.lstFvsInput = new System.Windows.Forms.ListView();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.cmbAction = new System.Windows.Forms.ComboBox();
-            this.btnExecuteAction = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -200,6 +201,34 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Size = new System.Drawing.Size(784, 616);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // btnExecuteAction
+            // 
+            this.btnExecuteAction.Location = new System.Drawing.Point(680, 501);
+            this.btnExecuteAction.Name = "btnExecuteAction";
+            this.btnExecuteAction.Size = new System.Drawing.Size(88, 32);
+            this.btnExecuteAction.TabIndex = 63;
+            this.btnExecuteAction.Text = "Execute Action";
+            this.btnExecuteAction.Click += new System.EventHandler(this.btnExecuteAction_Click);
+            // 
+            // cmbAction
+            // 
+            this.cmbAction.FormattingEnabled = true;
+            this.cmbAction.Items.AddRange(new object[] {
+            "Create FVS Input Text Files",
+            "Create FVS Output MDB Files",
+            "Delete Standard FVS Output Tables",
+            "Delete POTFIRE Base Year Output Tables",
+            "Delete Both Standard and POTFIRE Base Year Output Tables",
+            "Write KCP Template Scripts",
+            "View KCP Template Scripts"});
+            this.cmbAction.Location = new System.Drawing.Point(312, 508);
+            this.cmbAction.Name = "cmbAction";
+            this.cmbAction.Size = new System.Drawing.Size(362, 21);
+            this.cmbAction.TabIndex = 62;
+            this.cmbAction.Text = "<-------Action Items------->";
+            this.cmbAction.SelectedIndexChanged += new System.EventHandler(this.cmbAction_SelectedIndexChanged);
+            this.cmbAction.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbAction_KeyPress);
             // 
             // txtDataDir
             // 
@@ -307,6 +336,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnHelp
             // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnHelp.Location = new System.Drawing.Point(16, 575);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(96, 32);
@@ -396,34 +426,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(778, 32);
             this.lblTitle.TabIndex = 25;
             this.lblTitle.Text = "Create FVS Input";
-            // 
-            // cmbAction
-            // 
-            this.cmbAction.FormattingEnabled = true;
-            this.cmbAction.Items.AddRange(new object[] {
-            "Create FVS Input Text Files",
-            "Create FVS Output MDB Files",
-            "Delete Standard FVS Output Tables",
-            "Delete POTFIRE Base Year Output Tables",
-            "Delete Both Standard and POTFIRE Base Year Output Tables",
-            "Write KCP Template Scripts",
-            "View KCP Template Scripts"});
-            this.cmbAction.Location = new System.Drawing.Point(312, 508);
-            this.cmbAction.Name = "cmbAction";
-            this.cmbAction.Size = new System.Drawing.Size(362, 21);
-            this.cmbAction.TabIndex = 62;
-            this.cmbAction.Text = "<-------Action Items------->";
-            this.cmbAction.SelectedIndexChanged += new System.EventHandler(this.cmbAction_SelectedIndexChanged);
-            this.cmbAction.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbAction_KeyPress);
-            // 
-            // btnExecuteAction
-            // 
-            this.btnExecuteAction.Location = new System.Drawing.Point(680, 501);
-            this.btnExecuteAction.Name = "btnExecuteAction";
-            this.btnExecuteAction.Size = new System.Drawing.Size(88, 32);
-            this.btnExecuteAction.TabIndex = 63;
-            this.btnExecuteAction.Text = "Execute Action";
-            this.btnExecuteAction.Click += new System.EventHandler(this.btnExecuteAction_Click);
             // 
             // uc_fvs_input
             // 
@@ -1629,7 +1631,11 @@ namespace FIA_Biosum_Manager
 
 		private void btnHelp_Click(object sender, System.EventArgs e)
 		{
-		
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "FVS", "INPUT_DATA" });
 		}
 		private void txtDataDir_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
