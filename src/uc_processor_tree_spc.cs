@@ -3413,7 +3413,8 @@ namespace FIA_Biosum_Manager
 			{
                this.cmbAudit.Items.Add("Assess Data Readiness: Check If Each FIA Tree Spc And FVS Variant Combination Is In The Tree Spc Table");
 			   this.cmbAudit.SelectedIndex = 0;
-
+               // Configure help button based on module type
+               this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
 			}
 			else
 			{
@@ -3421,6 +3422,7 @@ namespace FIA_Biosum_Manager
 			   this.cmbAudit.Items.Add("Assess Data Readiness: Check If Each FIA Tree Spc, FVS Variant, And FVS Tree Spc Combination Is In The Tree Spc Table");
 			   this.cmbAudit.Items.Add("Assess Data Readiness: Check If Oven Dry Weight And Green Weight Conversion Ratios Exist In The Tree Spc Table");
 			   this.cmbAudit.SelectedIndex = 0;
+               this.btnHelp.ForeColor = System.Drawing.SystemColors.ControlText;
 			}
 
 		}
@@ -3570,7 +3572,17 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "FVS", "TREE_SPECIES" });
+            // This form is shared by FVS and PROCESSOR; In FVS the audit list only has one item
+            if (cmbAudit.Items.Count == 1)
+            {
+                m_oHelp.XPSFile = Help.DefaultFvsXPSFile;
+                m_oHelp.ShowHelp(new string[] { "FVS", "TREE_SPECIES" });
+            }
+            else
+            {
+                //@ToDo: Implement help for PROCESSOR when available
+                m_oHelp.XPSFile = Help.DefaultProcessorXPSFile;
+            }
         }
 
 	}
