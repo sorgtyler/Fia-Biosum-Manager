@@ -143,6 +143,7 @@
             this.btnRunOC7.Size = new System.Drawing.Size(126, 32);
             this.btnRunOC7.TabIndex = 59;
             this.btnRunOC7.Text = "Run OC7";
+            this.btnRunOC7.Visible = false;
             this.btnRunOC7.Click += new System.EventHandler(this.btnRunOC7_Click);
             // 
             // lblMsg
