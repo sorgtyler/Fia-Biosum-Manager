@@ -3672,18 +3672,26 @@ namespace FIA_Biosum_Manager
 
             }
             public static string AppendToOPCOSTHarvestCostsTable(string p_strOPCOSTOutputTableName,
+                                                          string p_strOPCOSTIdealOutputTableName,
                                                           string p_strHarvestCostsTableName,
                                                           string p_strDateTimeCreated)
             {
                 return "INSERT INTO " + p_strHarvestCostsTableName + " " +
-                              "(biosum_cond_id,RXPackage,RX,RXCycle,harvest_cpa,DateTimeCreated ) " +
-                               "SELECT MID(STAND,1,25) AS biosum_cond_id," +
-                                       "MID(rxpackage_rx_rxcycle,1,3) AS RXPackage," +
-                                       "MID(rxpackage_rx_rxcycle,4,3) AS RX," +
-                                       "MID(rxpackage_rx_rxcycle,7,1) AS RXCycle," +
-                                       "harvest_cpa, " +
-                                       "'" + p_strDateTimeCreated + "' AS DateTimeCreated " +
-                                "FROM " + p_strOPCOSTOutputTableName;
+                    "(biosum_cond_id, RXPackage, RX, RXCycle, " +
+                    "harvest_cpa, chip_cpa, assumed_movein_cpa, " +
+                    "ideal_harvest_cpa,ideal_chip_cpa, ideal_assumed_movein_cpa, " +
+                    "DateTimeCreated )" +
+                    "SELECT o.biosum_cond_id, o.RxPackage,o.RX,o.RXCycle, " +
+                    "IIF (RIGHT(CSTR(o.harvest_cpa), 6) = '1.#INF', 0,o.harvest_cpa ), " +
+                    "o.chip_cpa, o.assumed_movein_cpa, " +
+                    "IIF (RIGHT(CSTR(i.harvest_cpa), 6) = '1.#INF', 0,i.harvest_cpa ), " +
+                    "i.ideal_chip_cpa, i.ideal_assumed_movein_cpa, " +
+                    "'" + p_strDateTimeCreated + "' AS DateTimeCreated " +
+                    "from " + p_strOPCOSTOutputTableName + " o " +
+                    "inner join " + p_strOPCOSTIdealOutputTableName + " i on o.biosum_cond_id = i.biosum_cond_id " +
+                    "and o.rxPackage = i.rxPackage " +
+                    "and o.RX = i.RX " +
+                    "and o.RXCycle = i.rxCycle ";
             }
             public static string AppendToHarvestCostsTable(string p_strFRCSOutputTableName,
                                                            string p_strHarvestCostsTableName,
@@ -3718,10 +3726,28 @@ namespace FIA_Biosum_Manager
                            "IIF(h.RXCycle='1',(h.harvest_cpa+a.complete_additional_cpa)," + 
                            "IIF(h.RXCycle='2',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle2," + 
                            "IIF(h.RXCycle='3',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle3," + 
-                           "IIF(h.RXCycle='4',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle4,0)))) " + 
+                           "IIF(h.RXCycle='4',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle4,0)))) " +
                        "WHERE h.harvest_cpa IS NOT NULL AND h.harvest_cpa > 0  AND " + 
                              "TRIM(UCASE(e.scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
 
+            }
+            public static string UpdateHarvestCostsTableWithIdealCompleteCostsPerAcre(
+                string p_strScenarioCostRevenueEscalatorValuesTableName,
+                string p_strTotalAdditionalCostsTableName,
+                string p_strHarvestCostsTableName,
+                string p_strScenarioId)
+            {
+                return "UPDATE " + p_strHarvestCostsTableName + " h " +
+                       "INNER JOIN " + p_strTotalAdditionalCostsTableName + " a " +
+                       "ON h.biosum_cond_id = a.biosum_cond_id AND h.rx=a.rx," +
+                       "scenario_cost_revenue_escalators e " +
+                       "SET h.ideal_complete_cpa = " +
+                           "IIF(h.RXCycle='1',(h.ideal_harvest_cpa+a.complete_additional_cpa)," +
+                           "IIF(h.RXCycle='2',(h.ideal_harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle2," +
+                           "IIF(h.RXCycle='3',(h.ideal_harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle3," +
+                           "IIF(h.RXCycle='4',(h.ideal_harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle4,0)))) " +
+                       "WHERE h.ideal_harvest_cpa IS NOT NULL AND h.ideal_harvest_cpa > 0  AND " +
+                       "TRIM(UCASE(e.scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
             }
                   
 

@@ -4817,7 +4817,7 @@ namespace FIA_Biosum_Manager
 
                 
                      m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.AppendToOPCOSTHarvestCostsTable(
-                         "OPCOST_output", p_strHarvestCostTableName, m_strDateTimeCreated);
+                         "OpCost_Output", "OpCost_Ideal_Output", p_strHarvestCostTableName, m_strDateTimeCreated);
                 
             }
 
@@ -5042,6 +5042,16 @@ namespace FIA_Biosum_Manager
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                             frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    }
+                    if (m_oAdo.m_intError == 0)
+                    {
+                        //update the harvest costs table ideal complete costs per acre column
+                        m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHarvestCostsTableWithIdealCompleteCostsPerAcre(
+                                             "scenario_cost_revenue_escalators",
+                                             "HarvestCostsTotalAdditionalWorkTable",
+                                             p_strHarvestCostsTableName, ScenarioId);
+
+                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
                 }
             }
