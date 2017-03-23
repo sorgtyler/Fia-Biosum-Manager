@@ -4603,6 +4603,76 @@ namespace FIA_Biosum_Manager
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
 
+        private void UpdateDatasources_5_7_8()
+        {
+            frmMain.g_sbpInfo.Text = "Version Update: Adding new columns to harvest costs tables...Stand by";
+
+            ado_data_access oAdo = new ado_data_access();
+
+            string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db";
+            //open the scenario_processor_rule_definitions.mdb file
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
+            
+            //retrieve paths for all scenarios in the project and put them in list
+            List<string> lstScenarioDb = new List<string>();
+            oAdo.m_strSQL = "SELECT path from scenario";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strPath = "";
+                    if (oAdo.m_OleDbDataReader["path"] != System.DBNull.Value)
+                        strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                    if (!String.IsNullOrEmpty(strPath))
+                    {
+                        //Check to see if the .mdb exists before adding it to the list
+                        string strPathToMdb = strPath + "\\db\\scenario_results.mdb";
+                        //sample path: C:\\workspace\\BioSum\\biosum_data\\bluemountains\\processor\\scenario1\\db\\scenario_results.mdb
+                        if (System.IO.File.Exists(strPathToMdb))
+                            lstScenarioDb.Add(strPathToMdb);
+                    }
+                }
+                oAdo.m_OleDbDataReader.Close();
+            }
+            // Loop through the scenario_results.mdb looking for tree_vol_val_by_species_diam_groups table
+            foreach (string strPath in lstScenarioDb)
+            {
+                // Add columns to tree_vol_val_by_species_diam_groups table
+                oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "chip_cpa"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "chip_cpa", "DOUBLE", "");
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "assumed_movein_cpa"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "assumed_movein_cpa", "DOUBLE", "");
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_complete_cpa"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_complete_cpa", "DOUBLE", "");
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_harvest_cpa"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_harvest_cpa", "DOUBLE", "");
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_chip_cpa"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_chip_cpa", "DOUBLE", "");
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_assumed_movein_cpa"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_assumed_movein_cpa", "DOUBLE", "");
+                }
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "override_YN"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "override_YN", "CHAR", "1", "N");
+                }
+            }
+
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+        }
+
         public string ReferenceProjectDirectory
 		{
 			get {return _strProjDir;}
