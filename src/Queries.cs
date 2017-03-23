@@ -3673,6 +3673,7 @@ namespace FIA_Biosum_Manager
             }
             public static string AppendToOPCOSTHarvestCostsTable(string p_strOPCOSTOutputTableName,
                                                           string p_strOPCOSTIdealOutputTableName,
+                                                          string p_strOPCOSTInputTableName,
                                                           string p_strHarvestCostsTableName,
                                                           string p_strDateTimeCreated)
             {
@@ -3680,18 +3681,21 @@ namespace FIA_Biosum_Manager
                     "(biosum_cond_id, RXPackage, RX, RXCycle, " +
                     "harvest_cpa, chip_cpa, assumed_movein_cpa, " +
                     "ideal_harvest_cpa,ideal_chip_cpa, ideal_assumed_movein_cpa, " +
-                    "DateTimeCreated )" +
+                    "override_YN, DateTimeCreated )" +
                     "SELECT o.biosum_cond_id, o.RxPackage,o.RX,o.RXCycle, " +
                     "IIF (RIGHT(CSTR(o.harvest_cpa), 6) = '1.#INF', 0,o.harvest_cpa ), " +
                     "o.chip_cpa, o.assumed_movein_cpa, " +
                     "IIF (RIGHT(CSTR(i.harvest_cpa), 6) = '1.#INF', 0,i.harvest_cpa ), " +
                     "i.ideal_chip_cpa, i.ideal_assumed_movein_cpa, " +
+                    "IIF(n.[Unadjusted One-way Yarding distance] > 0 OR n.[Unadjusted Small log trees per acre] > 0 " +
+                    "OR n.[Unadjusted Small log trees average volume (ft3)] > 0 OR n.[Unadjusted Large log trees per acre] > 0 " +
+                    "OR n.[Unadjusted Large log trees average vol(ft3)] >0, 'Y','N') , " +
                     "'" + p_strDateTimeCreated + "' AS DateTimeCreated " +
-                    "from " + p_strOPCOSTOutputTableName + " o " +
-                    "inner join " + p_strOPCOSTIdealOutputTableName + " i on o.biosum_cond_id = i.biosum_cond_id " +
-                    "and o.rxPackage = i.rxPackage " +
-                    "and o.RX = i.RX " +
-                    "and o.RXCycle = i.rxCycle ";
+                    "from (" + p_strOPCOSTOutputTableName + " o " +
+                    "INNER JOIN " + p_strOPCOSTInputTableName + " n ON (o.biosum_cond_id = n.biosum_cond_id) AND " +
+                    "(o.rxPackage = n.rxPackage) AND (o.RX = n.RX) AND (o.RXCycle = n.rxCycle)) " +
+                    "INNER JOIN " + p_strOPCOSTIdealOutputTableName + " i ON (i.biosum_cond_id = n.biosum_cond_id) AND " +
+                    "(i.rxPackage = n.rxPackage) AND (i.RX = n.RX) AND (i.RXCycle = n.rxCycle) ";
             }
             public static string AppendToHarvestCostsTable(string p_strFRCSOutputTableName,
                                                            string p_strHarvestCostsTableName,

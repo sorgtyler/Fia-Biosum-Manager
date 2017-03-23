@@ -4817,7 +4817,7 @@ namespace FIA_Biosum_Manager
 
                 
                      m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.AppendToOPCOSTHarvestCostsTable(
-                         "OpCost_Output", "OpCost_Ideal_Output", p_strHarvestCostTableName, m_strDateTimeCreated);
+                         "OpCost_Output", "OpCost_Ideal_Output", "OpCost_Input", p_strHarvestCostTableName, m_strDateTimeCreated);
                 
             }
 
