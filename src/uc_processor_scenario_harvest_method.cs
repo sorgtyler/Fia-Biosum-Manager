@@ -40,8 +40,7 @@ namespace FIA_Biosum_Manager
 		private RxTools m_oRxTools = new RxTools();
 		private ado_data_access m_oAdo = new ado_data_access();
 		private string _strScenarioId="";
-		private frmProcessorScenario _frmProcessorScenario=null;
-		private System.Windows.Forms.CheckBox chkUseDefault;
+        private frmProcessorScenario _frmProcessorScenario = null;
 		public System.Windows.Forms.Label lblTitle;
 		private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private Label label7;
@@ -58,6 +57,10 @@ namespace FIA_Biosum_Manager
         private Label label14;
         private Label label15;
         private TextBox txtSaplingMerchPct;
+        private RadioButton rdoProcessorSpecified;
+        private RadioButton rdoLowestCost;
+        private RadioButton rdoTreatment;
+        private Label label18;
         
 		
 
@@ -101,7 +104,15 @@ namespace FIA_Biosum_Manager
 		}
         public bool UseDefaultHarvestMethod
         {
-            get { return this.chkUseDefault.Checked; }
+            get { return this.rdoTreatment.Checked; }
+        }
+        public bool UseOpCostIdealHarvestMethod
+        {
+            get { return this.rdoLowestCost.Checked; }
+        }
+        public bool UseSpecifiedHarvestMethod
+        {
+            get { return this.rdoProcessorSpecified.Checked; }
         }
         public string HarvestMethodSteepSlope
         {
@@ -175,7 +186,6 @@ namespace FIA_Biosum_Manager
             this.label9 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtMinDiaSmallLogs = new System.Windows.Forms.TextBox();
-            this.chkUseDefault = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.grpboxSteepSlopeHarvestMethod = new System.Windows.Forms.GroupBox();
             this.lblSteepSlopeDesc = new System.Windows.Forms.Label();
@@ -190,6 +200,10 @@ namespace FIA_Biosum_Manager
             this.lblMethod = new System.Windows.Forms.Label();
             this.txtWoodlandMerchPct = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.rdoTreatment = new System.Windows.Forms.RadioButton();
+            this.rdoLowestCost = new System.Windows.Forms.RadioButton();
+            this.rdoProcessorSpecified = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.grpboxSteepSlopeHarvestMethod.SuspendLayout();
@@ -221,6 +235,10 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.rdoProcessorSpecified);
+            this.panel1.Controls.Add(this.rdoLowestCost);
+            this.panel1.Controls.Add(this.rdoTreatment);
+            this.panel1.Controls.Add(this.label18);
             this.panel1.Controls.Add(this.label16);
             this.panel1.Controls.Add(this.label17);
             this.panel1.Controls.Add(this.txtCullPct);
@@ -241,7 +259,6 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.txtMinDiaSmallLogs);
-            this.panel1.Controls.Add(this.chkUseDefault);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.grpboxSteepSlopeHarvestMethod);
             this.panel1.Controls.Add(this.txtMinDiaLargeLogs);
@@ -473,19 +490,6 @@ namespace FIA_Biosum_Manager
             this.txtMinDiaSmallLogs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMinDiaSmallLogs_KeyPress);
             this.txtMinDiaSmallLogs.Leave += new System.EventHandler(this.txtMinDiaSmallLogs_Leave);
             // 
-            // chkUseDefault
-            // 
-            this.chkUseDefault.Checked = true;
-            this.chkUseDefault.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkUseDefault.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkUseDefault.ForeColor = System.Drawing.Color.Black;
-            this.chkUseDefault.Location = new System.Drawing.Point(16, 29);
-            this.chkUseDefault.Name = "chkUseDefault";
-            this.chkUseDefault.Size = new System.Drawing.Size(368, 24);
-            this.chkUseDefault.TabIndex = 30;
-            this.chkUseDefault.Text = "Use Treatment Default Harvest Method";
-            this.chkUseDefault.CheckedChanged += new System.EventHandler(this.chkUseDefaullt_CheckedChanged);
-            // 
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -510,7 +514,7 @@ namespace FIA_Biosum_Manager
             this.grpboxSteepSlopeHarvestMethod.Size = new System.Drawing.Size(368, 245);
             this.grpboxSteepSlopeHarvestMethod.TabIndex = 29;
             this.grpboxSteepSlopeHarvestMethod.TabStop = false;
-            this.grpboxSteepSlopeHarvestMethod.Text = "Steep Slope Harvest Method";
+            this.grpboxSteepSlopeHarvestMethod.Text = "Steep Slopes";
             // 
             // lblSteepSlopeDesc
             // 
@@ -519,7 +523,7 @@ namespace FIA_Biosum_Manager
             this.lblSteepSlopeDesc.Name = "lblSteepSlopeDesc";
             this.lblSteepSlopeDesc.Size = new System.Drawing.Size(182, 16);
             this.lblSteepSlopeDesc.TabIndex = 7;
-            this.lblSteepSlopeDesc.Text = "Description (Read Only)";
+            this.lblSteepSlopeDesc.Text = "Description";
             // 
             // txtSteepSlopeDesc
             // 
@@ -550,9 +554,9 @@ namespace FIA_Biosum_Manager
             this.lblSteepSlopeMethod.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSteepSlopeMethod.Location = new System.Drawing.Point(18, 16);
             this.lblSteepSlopeMethod.Name = "lblSteepSlopeMethod";
-            this.lblSteepSlopeMethod.Size = new System.Drawing.Size(80, 16);
+            this.lblSteepSlopeMethod.Size = new System.Drawing.Size(103, 16);
             this.lblSteepSlopeMethod.TabIndex = 4;
-            this.lblSteepSlopeMethod.Text = "Method";
+            this.lblSteepSlopeMethod.Text = "Harvest Method";
             // 
             // txtMinDiaLargeLogs
             // 
@@ -578,7 +582,7 @@ namespace FIA_Biosum_Manager
             this.grpboxHarvestMethod.Size = new System.Drawing.Size(368, 245);
             this.grpboxHarvestMethod.TabIndex = 28;
             this.grpboxHarvestMethod.TabStop = false;
-            this.grpboxHarvestMethod.Text = "Low Slope Harvest Method";
+            this.grpboxHarvestMethod.Text = "Low Slopes";
             // 
             // label2
             // 
@@ -587,7 +591,7 @@ namespace FIA_Biosum_Manager
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(184, 16);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Description (Read Only)";
+            this.label2.Text = "Description";
             // 
             // txtDesc
             // 
@@ -617,7 +621,7 @@ namespace FIA_Biosum_Manager
             this.lblMethod.Name = "lblMethod";
             this.lblMethod.Size = new System.Drawing.Size(107, 16);
             this.lblMethod.TabIndex = 0;
-            this.lblMethod.Text = "Method";
+            this.lblMethod.Text = "Harvest Method";
             // 
             // txtWoodlandMerchPct
             // 
@@ -639,6 +643,55 @@ namespace FIA_Biosum_Manager
             this.label6.Size = new System.Drawing.Size(208, 48);
             this.label6.TabIndex = 14;
             this.label6.Text = "Minimum diameter for large log trees (Trees that require chainsaw felling)";
+            // 
+            // label18
+            // 
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.ForeColor = System.Drawing.Color.Black;
+            this.label18.Location = new System.Drawing.Point(22, 40);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(163, 16);
+            this.label18.TabIndex = 40;
+            this.label18.Text = "Harvest Method Selection:";
+            // 
+            // rdoTreatment
+            // 
+            this.rdoTreatment.AutoSize = true;
+            this.rdoTreatment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoTreatment.Location = new System.Drawing.Point(180, 37);
+            this.rdoTreatment.Name = "rdoTreatment";
+            this.rdoTreatment.Size = new System.Drawing.Size(158, 19);
+            this.rdoTreatment.TabIndex = 41;
+            this.rdoTreatment.TabStop = true;
+            this.rdoTreatment.Text = "Defined by treatment";
+            this.rdoTreatment.UseVisualStyleBackColor = true;
+            this.rdoTreatment.CheckedChanged += new System.EventHandler(this.rdoTreatment_CheckedChanged);
+            // 
+            // rdoLowestCost
+            // 
+            this.rdoLowestCost.AutoSize = true;
+            this.rdoLowestCost.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoLowestCost.Location = new System.Drawing.Point(350, 37);
+            this.rdoLowestCost.Name = "rdoLowestCost";
+            this.rdoLowestCost.Size = new System.Drawing.Size(161, 19);
+            this.rdoLowestCost.TabIndex = 42;
+            this.rdoLowestCost.TabStop = true;
+            this.rdoLowestCost.Text = "Lowest per acre cost ";
+            this.rdoLowestCost.UseVisualStyleBackColor = true;
+            this.rdoLowestCost.CheckedChanged += new System.EventHandler(this.rdoLowestCost_CheckedChanged);
+            // 
+            // rdoProcessorSpecified
+            // 
+            this.rdoProcessorSpecified.AutoSize = true;
+            this.rdoProcessorSpecified.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoProcessorSpecified.Location = new System.Drawing.Point(522, 37);
+            this.rdoProcessorSpecified.Name = "rdoProcessorSpecified";
+            this.rdoProcessorSpecified.Size = new System.Drawing.Size(127, 19);
+            this.rdoProcessorSpecified.TabIndex = 43;
+            this.rdoProcessorSpecified.TabStop = true;
+            this.rdoProcessorSpecified.Text = "Specified below";
+            this.rdoProcessorSpecified.UseVisualStyleBackColor = true;
+            this.rdoProcessorSpecified.CheckedChanged += new System.EventHandler(this.rdoProcessorSpecified_CheckedChanged);
             // 
             // uc_processor_scenario_harvest_method
             // 
@@ -692,7 +745,7 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
             if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
             {
-                this.chkUseDefault.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
+                this.rdoTreatment.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
                 this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                 cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
                 txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
@@ -729,7 +782,7 @@ namespace FIA_Biosum_Manager
                 FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
                 if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
                 {
-                    this.chkUseDefault.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
+                    this.rdoTreatment.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
                     this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                     cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
                     txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
@@ -788,7 +841,7 @@ namespace FIA_Biosum_Manager
 			//
 			//DEFAULT HARVEST METHOD
 			//
-			if (this.chkUseDefault.Checked)
+			if (this.rdoTreatment.Checked)
 			{
 				strValues=strValues + "'Y',";
 			}
@@ -996,27 +1049,6 @@ namespace FIA_Biosum_Manager
 				this.txtMinDiaForChips.Focus();
 		}
 
-		private void chkUseDefaullt_CheckedChanged(object sender, System.EventArgs e)
-		{
-            if (ReferenceProcessorScenarioForm.m_bRulesFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
-			if (this.chkUseDefault.Checked) 
-			{
-				this.cmbSteepSlopeMethod.Enabled=false;
-				this.cmbMethod.Enabled=false;
-
-				this.txtDesc.Enabled=false;
-
-				this.txtSteepSlopeDesc.Enabled=false;
-			}
-			else
-			{
-				cmbMethod.Enabled=true;
-				cmbSteepSlopeMethod.Enabled=true;
-				this.txtDesc.Enabled=true;
-				this.txtSteepSlopeDesc.Enabled=true;
-			}
-		}
-
 		private void txtMinDiaSmallLogs_Leave(object sender, System.EventArgs e)
 		{
 			m_oValidate.RoundDecimalLength=2;
@@ -1162,6 +1194,48 @@ namespace FIA_Biosum_Manager
         {
 
         }
+
+        private void rdoTreatment_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ReferenceProcessorScenarioForm.m_bRulesFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
+            if (this.rdoTreatment.Checked)
+            {
+                this.cmbSteepSlopeMethod.Enabled = false;
+                this.cmbMethod.Enabled = false;
+
+                this.txtDesc.Enabled = false;
+
+                this.txtSteepSlopeDesc.Enabled = false;
+            }
+        }
+
+        private void rdoLowestCost_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ReferenceProcessorScenarioForm.m_bRulesFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
+            if (this.rdoLowestCost.Checked)
+            {
+                this.cmbSteepSlopeMethod.Enabled = false;
+                this.cmbMethod.Enabled = false;
+
+                this.txtDesc.Enabled = false;
+
+                this.txtSteepSlopeDesc.Enabled = false;
+            }
+        }
+
+        private void rdoProcessorSpecified_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ReferenceProcessorScenarioForm.m_bRulesFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
+            if (this.rdoProcessorSpecified.Checked)
+            {
+                cmbMethod.Enabled = true;
+                cmbSteepSlopeMethod.Enabled = true;
+                this.txtDesc.Enabled = true;
+                this.txtSteepSlopeDesc.Enabled = true;
+            }
+        }
+
+
        
 	
 		
