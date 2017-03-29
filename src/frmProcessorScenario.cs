@@ -925,9 +925,9 @@ namespace FIA_Biosum_Manager
         //
         //HARVEST METHOD PROPERTIES
         //
-        public bool UseDefaultHarvestMethods
+        public string SelectedHarvestMethod
         {
-            get { return this.uc_processor_scenario_harvest_method1.UseDefaultHarvestMethod; }
+            get { return this.uc_processor_scenario_harvest_method1.SelectedHarvestMethod; }
         }
         public string HarvestMethodSteepSlope
         {
@@ -1115,11 +1115,11 @@ namespace FIA_Biosum_Manager
        
         public class HarvestMethod
         {
-            private bool _bUseDefaultHarvestMethod = true;
-            public bool UseDefaultHarvestMethod
+            private HarvestMethodSelection _objHarvestMethodSelection = HarvestMethodSelection.RX;
+            public HarvestMethodSelection SelectedHarvestMethod
             {
-                get { return _bUseDefaultHarvestMethod; }
-                set { _bUseDefaultHarvestMethod = value; }
+                get { return _objHarvestMethodSelection; }
+                set { _objHarvestMethodSelection = value; }
             }
             private string _strHarvestMethodSteepSlope="";
             public string HarvestMethodSteepSlope
@@ -1204,7 +1204,7 @@ namespace FIA_Biosum_Manager
                 p_oDest.ProcessLowSlope = p_oSource.ProcessLowSlope;
                 p_oDest.ProcessSteepSlope = p_oSource.ProcessSteepSlope;
                 p_oDest.SteepSlopePercent = p_oSource.SteepSlopePercent;
-                p_oDest.UseDefaultHarvestMethod = p_oSource.UseDefaultHarvestMethod;
+                p_oDest.SelectedHarvestMethod = p_oSource.SelectedHarvestMethod;
                 p_oDest.WoodlandMerchAsPctOfTotalVol = p_oSource.WoodlandMerchAsPctOfTotalVol;
                 p_oDest.SaplingMerchAsPctOfTotalVol = p_oSource.SaplingMerchAsPctOfTotalVol;
                 p_oDest.CullPctThreshold = p_oSource.CullPctThreshold;
@@ -1729,16 +1729,20 @@ namespace FIA_Biosum_Manager
                     while (p_oAdo.m_OleDbDataReader.Read())
                     {
                         //
-                        //DEFAULT HARVEST METHOD
+                        //HARVEST METHOD SELECTION
                         //
-                        if (p_oAdo.m_OleDbDataReader["UseRxDefaultHarvestMethodYN"] != System.DBNull.Value)
+                        string strHarvestMethodSelection = p_oAdo.m_OleDbDataReader["HarvestMethodSelection"].ToString().Trim();
+                        if (strHarvestMethodSelection.Equals(HarvestMethodSelection.LOWEST_COST.Value))
                         {
-                            if (p_oAdo.m_OleDbDataReader["UseRxDefaultHarvestMethodYN"].ToString().Trim() == "N")
-                            {
-                                p_oProcessorScenarioItem.m_oHarvestMethod.UseDefaultHarvestMethod = false;
-
-                            }
-
+                            p_oProcessorScenarioItem.m_oHarvestMethod.SelectedHarvestMethod = HarvestMethodSelection.LOWEST_COST;
+                        }
+                        else if (strHarvestMethodSelection.Equals(HarvestMethodSelection.SELECTED.Value))
+                        {
+                            p_oProcessorScenarioItem.m_oHarvestMethod.SelectedHarvestMethod = HarvestMethodSelection.SELECTED;
+                        }
+                        else
+                        {
+                            p_oProcessorScenarioItem.m_oHarvestMethod.SelectedHarvestMethod = HarvestMethodSelection.RX;
                         }
                         //
                         //HARVEST METHOD LOW SLOPE
@@ -2241,15 +2245,11 @@ namespace FIA_Biosum_Manager
             {
                 strLine = strLine + "No\r\n";
             }
-            strLine = strLine + "Use Harvest Method Assigned To Rx: ";
-            if (p_oProcessorScenarioItem.m_oHarvestMethod.UseDefaultHarvestMethod == true)
+            strLine = strLine + "Harvest method selection: ";
+            strLine = strLine + p_oProcessorScenarioItem.m_oHarvestMethod.SelectedHarvestMethod.Value + "\r\n";
+            if (p_oProcessorScenarioItem.m_oHarvestMethod.SelectedHarvestMethod == HarvestMethodSelection.SELECTED)
             {
-                strLine = strLine + "Yes\r\n";
-                strLine = strLine + "Harvest Method: NA\r\n";
-            }
-            else
-            {
-                strLine = strLine + "No\r\n";
+                strLine = strLine + "Processor selected harvest method\r\n";
                 strLine = strLine + "Harvest Method Low Slope: " + p_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodLowSlope + "\r\n";
             }
             strLine = strLine + "Chips Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForChips + "\r\n";
@@ -2271,16 +2271,12 @@ namespace FIA_Biosum_Manager
             {
                 strLine = strLine + "No\r\n";
             }
-            strLine = strLine + "Use Harvest Method Assigned To Rx: ";
-            if (p_oProcessorScenarioItem.m_oHarvestMethod.UseDefaultHarvestMethod == true)
+            strLine = strLine + "Harvest method selection: ";
+            strLine = strLine + p_oProcessorScenarioItem.m_oHarvestMethod.SelectedHarvestMethod.Value + "\r\n";
+            if (p_oProcessorScenarioItem.m_oHarvestMethod.SelectedHarvestMethod == HarvestMethodSelection.SELECTED)
             {
-                strLine = strLine + "Yes\r\n";
-                strLine = strLine + "Harvest Method: NA\r\n";
-            }
-            else
-            {
-                strLine = strLine + "No\r\n";
-                strLine = strLine + "Harvest Method: " + p_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodSteepSlope + "\r\n";
+                strLine = strLine + "Processor selected harvest method\r\n";
+                strLine = strLine + "Harvest Method Steep Slope: " + p_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodSteepSlope + "\r\n";
             }
             strLine = strLine + "All Trees Minimum Diameter: > " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForAllTreesSteepSlope + "\r\n";
             strLine = strLine + "Chips Minimum Diameter: >= " + p_oProcessorScenarioItem.m_oHarvestMethod.MinDiaForChips + "\r\n";

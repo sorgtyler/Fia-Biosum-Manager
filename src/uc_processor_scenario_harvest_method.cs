@@ -102,9 +102,23 @@ namespace FIA_Biosum_Manager
 			get {return _strScenarioId;}
 			set {_strScenarioId=value;}
 		}
-        public bool UseDefaultHarvestMethod
+        public string SelectedHarvestMethod
         {
-            get { return this.rdoTreatment.Checked; }
+            get
+            {
+                if (rdoLowestCost.Checked)
+                {
+                    return HarvestMethodSelection.LOWEST_COST.Value;
+                }
+                else if (rdoProcessorSpecified.Checked)
+                {
+                    return HarvestMethodSelection.SELECTED.Value;
+                }
+                else
+                {
+                    return HarvestMethodSelection.RX.Value;
+                }
+            }
         }
         public bool UseOpCostIdealHarvestMethod
         {
@@ -748,7 +762,25 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
             if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
             {
-                this.rdoTreatment.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
+                if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.LOWEST_COST.Value)
+                {
+                    this.rdoTreatment.Checked = false;
+                    this.rdoProcessorSpecified.Checked = false;
+                    this.rdoLowestCost.Checked = true;
+                }
+                else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.SELECTED.Value)
+                {
+                    this.rdoTreatment.Checked = false;
+                    this.rdoProcessorSpecified.Checked = true;
+                    this.rdoLowestCost.Checked = false;
+                }
+                else
+                {
+                    this.rdoTreatment.Checked = true;
+                    this.rdoProcessorSpecified.Checked = false;
+                    this.rdoLowestCost.Checked = false;
+                }
+
                 this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                 cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
                 txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
@@ -785,7 +817,24 @@ namespace FIA_Biosum_Manager
                 FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
                 if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
                 {
-                    this.rdoTreatment.Checked = oItem.m_oHarvestMethod.UseDefaultHarvestMethod;
+                    if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.LOWEST_COST.Value)
+                    {
+                        this.rdoTreatment.Checked = false;
+                        this.rdoProcessorSpecified.Checked = false;
+                        this.rdoLowestCost.Checked = true;
+                    }
+                    else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.SELECTED.Value)
+                    {
+                        this.rdoTreatment.Checked = false;
+                        this.rdoProcessorSpecified.Checked = true;
+                        this.rdoLowestCost.Checked = false;
+                    }
+                    else
+                    {
+                        this.rdoTreatment.Checked = true;
+                        this.rdoProcessorSpecified.Checked = false;
+                        this.rdoLowestCost.Checked = false;
+                    }
                     this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                     cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
                     txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
@@ -825,7 +874,7 @@ namespace FIA_Biosum_Manager
 
 			m_intError=0;
 			m_strError="";
-            string strFields = "scenario_id,UseRxDefaultHarvestMethodYN,HarvestMethodLowSlope," + 
+            string strFields = "scenario_id,HarvestMethodSelection,HarvestMethodLowSlope," + 
 				             "HarvestMethodSteepSlope," +
                              "min_chip_dbh,min_sm_log_dbh," + 
 				             "min_lg_log_dbh,SteepSlope,min_dbh_steep_slope," +
@@ -842,16 +891,20 @@ namespace FIA_Biosum_Manager
 			//
 			strValues="'" + ScenarioId + "',";
 			//
-			//DEFAULT HARVEST METHOD
+			//HARVEST METHOD SELECTION
 			//
-			if (this.rdoTreatment.Checked)
-			{
-				strValues=strValues + "'Y',";
-			}
-			else
-			{
-				strValues=strValues + "'N',";
-			}
+            if (this.rdoLowestCost.Checked)
+            {
+                strValues = strValues + "'" + HarvestMethodSelection.LOWEST_COST.Value + "',";
+            }
+            else if (this.rdoProcessorSpecified.Checked)
+            {
+                strValues = strValues + "'" + HarvestMethodSelection.SELECTED.Value + "',";
+            }
+            else
+            {
+                strValues = strValues + "'" + HarvestMethodSelection.RX.Value + "',";
+            }
 			//
 			//HARVEST METHOD
 			//
@@ -1243,4 +1296,15 @@ namespace FIA_Biosum_Manager
 	
 		
 	}
+
+    public class HarvestMethodSelection
+    {
+        private HarvestMethodSelection(string value) { Value = value; }
+
+        public string Value { get; set; }
+
+        public static HarvestMethodSelection RX { get { return new HarvestMethodSelection("RX"); } }
+        public static HarvestMethodSelection LOWEST_COST { get { return new HarvestMethodSelection("LOWEST_COST"); } }
+        public static HarvestMethodSelection SELECTED { get { return new HarvestMethodSelection("SELECTED"); } }
+    }
 }
