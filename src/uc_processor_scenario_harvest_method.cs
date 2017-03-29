@@ -166,6 +166,10 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.rdoProcessorSpecified = new System.Windows.Forms.RadioButton();
+            this.rdoLowestCost = new System.Windows.Forms.RadioButton();
+            this.rdoTreatment = new System.Windows.Forms.RadioButton();
+            this.label18 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.txtCullPct = new System.Windows.Forms.TextBox();
@@ -200,10 +204,6 @@ namespace FIA_Biosum_Manager
             this.lblMethod = new System.Windows.Forms.Label();
             this.txtWoodlandMerchPct = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.rdoTreatment = new System.Windows.Forms.RadioButton();
-            this.rdoLowestCost = new System.Windows.Forms.RadioButton();
-            this.rdoProcessorSpecified = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.grpboxSteepSlopeHarvestMethod.SuspendLayout();
@@ -270,6 +270,58 @@ namespace FIA_Biosum_Manager
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(802, 550);
             this.panel1.TabIndex = 0;
+            // 
+            // rdoProcessorSpecified
+            // 
+            this.rdoProcessorSpecified.AutoSize = true;
+            this.rdoProcessorSpecified.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoProcessorSpecified.ForeColor = System.Drawing.Color.Black;
+            this.rdoProcessorSpecified.Location = new System.Drawing.Point(522, 35);
+            this.rdoProcessorSpecified.Name = "rdoProcessorSpecified";
+            this.rdoProcessorSpecified.Size = new System.Drawing.Size(127, 19);
+            this.rdoProcessorSpecified.TabIndex = 43;
+            this.rdoProcessorSpecified.TabStop = true;
+            this.rdoProcessorSpecified.Text = "Specified below";
+            this.rdoProcessorSpecified.UseVisualStyleBackColor = true;
+            this.rdoProcessorSpecified.CheckedChanged += new System.EventHandler(this.rdoProcessorSpecified_CheckedChanged);
+            // 
+            // rdoLowestCost
+            // 
+            this.rdoLowestCost.AutoSize = true;
+            this.rdoLowestCost.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoLowestCost.ForeColor = System.Drawing.Color.Black;
+            this.rdoLowestCost.Location = new System.Drawing.Point(350, 35);
+            this.rdoLowestCost.Name = "rdoLowestCost";
+            this.rdoLowestCost.Size = new System.Drawing.Size(161, 19);
+            this.rdoLowestCost.TabIndex = 42;
+            this.rdoLowestCost.TabStop = true;
+            this.rdoLowestCost.Text = "Lowest per acre cost ";
+            this.rdoLowestCost.UseVisualStyleBackColor = true;
+            this.rdoLowestCost.CheckedChanged += new System.EventHandler(this.rdoLowestCost_CheckedChanged);
+            // 
+            // rdoTreatment
+            // 
+            this.rdoTreatment.AutoSize = true;
+            this.rdoTreatment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoTreatment.ForeColor = System.Drawing.Color.Black;
+            this.rdoTreatment.Location = new System.Drawing.Point(180, 35);
+            this.rdoTreatment.Name = "rdoTreatment";
+            this.rdoTreatment.Size = new System.Drawing.Size(158, 19);
+            this.rdoTreatment.TabIndex = 41;
+            this.rdoTreatment.TabStop = true;
+            this.rdoTreatment.Text = "Defined by treatment";
+            this.rdoTreatment.UseVisualStyleBackColor = true;
+            this.rdoTreatment.CheckedChanged += new System.EventHandler(this.rdoTreatment_CheckedChanged);
+            // 
+            // label18
+            // 
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.ForeColor = System.Drawing.Color.Black;
+            this.label18.Location = new System.Drawing.Point(22, 38);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(163, 16);
+            this.label18.TabIndex = 40;
+            this.label18.Text = "Harvest Method Selection:";
             // 
             // label16
             // 
@@ -643,55 +695,6 @@ namespace FIA_Biosum_Manager
             this.label6.Size = new System.Drawing.Size(208, 48);
             this.label6.TabIndex = 14;
             this.label6.Text = "Minimum diameter for large log trees (Trees that require chainsaw felling)";
-            // 
-            // label18
-            // 
-            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.ForeColor = System.Drawing.Color.Black;
-            this.label18.Location = new System.Drawing.Point(22, 40);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(163, 16);
-            this.label18.TabIndex = 40;
-            this.label18.Text = "Harvest Method Selection:";
-            // 
-            // rdoTreatment
-            // 
-            this.rdoTreatment.AutoSize = true;
-            this.rdoTreatment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoTreatment.Location = new System.Drawing.Point(180, 37);
-            this.rdoTreatment.Name = "rdoTreatment";
-            this.rdoTreatment.Size = new System.Drawing.Size(158, 19);
-            this.rdoTreatment.TabIndex = 41;
-            this.rdoTreatment.TabStop = true;
-            this.rdoTreatment.Text = "Defined by treatment";
-            this.rdoTreatment.UseVisualStyleBackColor = true;
-            this.rdoTreatment.CheckedChanged += new System.EventHandler(this.rdoTreatment_CheckedChanged);
-            // 
-            // rdoLowestCost
-            // 
-            this.rdoLowestCost.AutoSize = true;
-            this.rdoLowestCost.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoLowestCost.Location = new System.Drawing.Point(350, 37);
-            this.rdoLowestCost.Name = "rdoLowestCost";
-            this.rdoLowestCost.Size = new System.Drawing.Size(161, 19);
-            this.rdoLowestCost.TabIndex = 42;
-            this.rdoLowestCost.TabStop = true;
-            this.rdoLowestCost.Text = "Lowest per acre cost ";
-            this.rdoLowestCost.UseVisualStyleBackColor = true;
-            this.rdoLowestCost.CheckedChanged += new System.EventHandler(this.rdoLowestCost_CheckedChanged);
-            // 
-            // rdoProcessorSpecified
-            // 
-            this.rdoProcessorSpecified.AutoSize = true;
-            this.rdoProcessorSpecified.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoProcessorSpecified.Location = new System.Drawing.Point(522, 37);
-            this.rdoProcessorSpecified.Name = "rdoProcessorSpecified";
-            this.rdoProcessorSpecified.Size = new System.Drawing.Size(127, 19);
-            this.rdoProcessorSpecified.TabIndex = 43;
-            this.rdoProcessorSpecified.TabStop = true;
-            this.rdoProcessorSpecified.Text = "Specified below";
-            this.rdoProcessorSpecified.UseVisualStyleBackColor = true;
-            this.rdoProcessorSpecified.CheckedChanged += new System.EventHandler(this.rdoProcessorSpecified_CheckedChanged);
             // 
             // uc_processor_scenario_harvest_method
             // 
