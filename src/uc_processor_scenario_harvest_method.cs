@@ -762,13 +762,13 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
             if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
             {
-                if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.LOWEST_COST.Value)
+                if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.LOWEST_COST))
                 {
                     this.rdoTreatment.Checked = false;
                     this.rdoProcessorSpecified.Checked = false;
                     this.rdoLowestCost.Checked = true;
                 }
-                else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.SELECTED.Value)
+                else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.SELECTED))
                 {
                     this.rdoTreatment.Checked = false;
                     this.rdoProcessorSpecified.Checked = true;
@@ -817,13 +817,13 @@ namespace FIA_Biosum_Manager
                 FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
                 if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
                 {
-                    if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.LOWEST_COST.Value)
+                    if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.LOWEST_COST))
                     {
                         this.rdoTreatment.Checked = false;
                         this.rdoProcessorSpecified.Checked = false;
                         this.rdoLowestCost.Checked = true;
                     }
-                    else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Value == HarvestMethodSelection.SELECTED.Value)
+                    else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.SELECTED))
                     {
                         this.rdoTreatment.Checked = false;
                         this.rdoProcessorSpecified.Checked = true;
@@ -1306,5 +1306,44 @@ namespace FIA_Biosum_Manager
         public static HarvestMethodSelection RX { get { return new HarvestMethodSelection("RX"); } }
         public static HarvestMethodSelection LOWEST_COST { get { return new HarvestMethodSelection("LOWEST_COST"); } }
         public static HarvestMethodSelection SELECTED { get { return new HarvestMethodSelection("SELECTED"); } }
+
+        public override bool Equals(object objInput)
+        {
+            // Is null?
+            if (Object.ReferenceEquals(null, objInput))
+            {
+                return false;
+            }
+
+            // Is the same object?
+            if (Object.ReferenceEquals(this, objInput))
+            {
+                return true;
+            }
+
+            // Is the same type?
+            if (objInput.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            // Is the value the same?
+            HarvestMethodSelection objSelect = objInput as HarvestMethodSelection;
+            return objSelect.Value == Value;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                // Choose large primes to avoid hashing collisions
+                const int HashingBase = (int)2166136261;
+                const int HashingMultiplier = 16777619;
+
+                int hash = HashingBase;
+                hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, Value) ? Value.GetHashCode() : 0);
+                return hash;
+            }
+        }
     }
 }
