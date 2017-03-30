@@ -13,6 +13,7 @@ namespace FIA_Biosum_Manager
         private string m_strTvvTableName = "TreeVolValLowSlope";
         private string m_strDebugFile =
             "";
+        private string m_strOpcostIdealTableName = "OpCost_Ideal_Output";
         //private ado_data_access p_oAdo;
         private System.Collections.Generic.List<tree> m_trees;
         private scenarioHarvestMethod m_scenarioHarvestMethod;
@@ -2174,6 +2175,50 @@ namespace FIA_Biosum_Manager
         }
 
         /// <summary>
+        /// An opcost_ideal object represents a line in the opcost_ideal_output table
+        /// This table is linked back to a tree using condId, rxCycle, rxPackage, and rx
+        /// </summary>
+        private class opcostIdeal
+        {
+            string _strCondId = "";
+            string _strRxCycle = "";
+            string _strRxPackage = "";
+            string _strRx = "";
+            string _strHarvestSystem = "";
+
+            public opcostIdeal(string condId, string rxCycle, string rxPackage, string rx,
+                               string harvestSystem)
+            {
+                _strCondId = condId;
+                _strRxCycle = rxCycle;
+                _strRxPackage = rxPackage;
+                _strRx = rx;
+                _strHarvestSystem = harvestSystem;
+            }
+
+            public string CondId
+            {
+                get { return _strCondId; }
+            }
+            public string Rx
+            {
+                get { return _strRx; }
+            }
+            public string RxCycle
+            {
+                get { return _strRxCycle; }
+            }
+            public string RxPackage
+            {
+                get { return _strRxPackage; }
+            }
+            public string HarvestSystem
+            {
+                get { return _strHarvestSystem; }
+            }
+        }
+
+        /// <summary>
         /// An treeVolValInput object represents a line in the tree vol val file
         /// The metrics are aggregated by conditionId, rxCycle, speciesGroup, and diameterGroup
         /// </summary>
@@ -2431,6 +2476,34 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblMinAvgTreeVolCf; }
             }
+        }
+
+        private System.Collections.Generic.IDictionary<String, opcostIdeal> loadOpcostIdeal()
+        {
+            System.Collections.Generic.IDictionary<String, opcostIdeal> dictOpcostIdeal =
+                new System.Collections.Generic.Dictionary<String, opcostIdeal>();
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT * FROM " +
+                                m_strOpcostTableName;
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    // We should only have one record
+                    m_oAdo.m_OleDbDataReader.Read();
+                    string strCondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
+                    string strRxPackage = Convert.ToString(m_oAdo.m_OleDbDataReader["rxPackage"]).Trim();
+                    string strRx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
+                    string strRxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
+                    string strHarvestSystem = Convert.ToString(m_oAdo.m_OleDbDataReader["harvestSystem"]).Trim();
+
+                    string key = strCondId + strRxPackage + strRx + strRxCycle;
+                    opcostIdeal newIdeal = new opcostIdeal(strCondId, strRxCycle, strRxPackage, strRx, strHarvestSystem)
+                    dictOpcostIdeal.Add(key, newIdeal);
+
+                }
+            }
+            return dictOpcostIdeal;
         }
 
     }
