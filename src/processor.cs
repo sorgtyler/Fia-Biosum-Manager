@@ -216,7 +216,7 @@ namespace FIA_Biosum_Manager
                         if (newTree.Slope < m_scenarioHarvestMethod.SteepSlopePct)
                         {
                             // assign low slope harvest method
-                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false &&
+                            if (m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.SELECTED) &&
                                 m_scenarioHarvestMethod.HarvestMethodLowSlope != null)
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodLowSlope;
@@ -229,7 +229,7 @@ namespace FIA_Biosum_Manager
                         else
                         {
                             // assign steep slope harvest method
-                            if (m_scenarioHarvestMethod.UseRxDefaultHarvestMethod == false &&
+                            if (m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.SELECTED) &&
                                 m_scenarioHarvestMethod.HarvestMethodSteepSlope != null)
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodSteepSlope;
@@ -1154,7 +1154,16 @@ namespace FIA_Biosum_Manager
                     double dblMinLgLogDbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_lg_log_dbh"]);
                     int intMinSlopePct = Convert.ToInt32(m_oAdo.m_OleDbDataReader["SteepSlope"]);
                     double dblMinDbhSteepSlope = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_dbh_steep_slope"]);
-                    string strUseRxDefaultHarvestMethodYN = Convert.ToString(m_oAdo.m_OleDbDataReader["UseRxDefaultHarvestMethodYN"]).Trim();
+                    string strHarvestMethodSelection = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSelection"]).Trim();
+                    HarvestMethodSelection objHarvestMethodSelection = HarvestMethodSelection.RX;
+                    if (strHarvestMethodSelection.Equals(HarvestMethodSelection.LOWEST_COST.Value))
+                    {
+                        objHarvestMethodSelection = HarvestMethodSelection.LOWEST_COST;
+                    }
+                    else if (strHarvestMethodSelection.Equals(HarvestMethodSelection.SELECTED.Value))
+                    {
+                        objHarvestMethodSelection = HarvestMethodSelection.SELECTED;
+                    }
                     string strHarvestMethodSteepSlope = Convert.ToString(m_oAdo.m_OleDbDataReader["HarvestMethodSteepSlope"]).Trim();
                     int intSaplingMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["SaplingMerchAsPercentOfTotalVol"]);
                     int intWoodlandMerchAsPercentOfTotalVol = Convert.ToInt16(m_oAdo.m_OleDbDataReader["WoodlandMerchAsPercentOfTotalVol"]);
@@ -1176,7 +1185,7 @@ namespace FIA_Biosum_Manager
                     returnVariables = new scenarioHarvestMethod(dblMinChipDbh, dblMinSmallLogDbh, dblMinLgLogDbh,
                         intMinSlopePct, dblMinDbhSteepSlope,
                         objHarvestMethodLowSlope, objHarvestMethodSteepSlope,
-                        intSaplingMerchAsPercentOfTotalVol, intWoodlandMerchAsPercentOfTotalVol, intCullPctThreshold, strUseRxDefaultHarvestMethodYN);
+                        intSaplingMerchAsPercentOfTotalVol, intWoodlandMerchAsPercentOfTotalVol, intCullPctThreshold, objHarvestMethodSelection);
                 }
             }
             return returnVariables;
@@ -1756,13 +1765,13 @@ namespace FIA_Biosum_Manager
             int _intSaplingMerchAsPercentOfTotalVol;
             int _intWoodlandMerchAsPercentOfTotalVol;
             int _intCullPctThreshold;
-            bool _blnUseRxDefaultHarvestMethod;
+            HarvestMethodSelection _objHarvestMethodSelection;
 
             public scenarioHarvestMethod(double minChipDbh, double minSmallLogDbh, double minLargeLogDbh, int steepSlopePct,
                                          double minDbhSteepSlope,
                                          harvestMethod harvestMethodLowSlope, harvestMethod harvestMethodSteepSlope,
                                          int saplingMerchAsPercentOfTotalVol,
-                                         int woodlandMerchAsPercentOfTotalVol, int cullPctThreshold, string useRxDefaultHarvestMethod)
+                                         int woodlandMerchAsPercentOfTotalVol, int cullPctThreshold, HarvestMethodSelection harvestMethodSelection)
             {
                 _dblMinSmallLogDbh = minSmallLogDbh;
                 _dblMinLargeLogDbh = minLargeLogDbh;
@@ -1774,14 +1783,7 @@ namespace FIA_Biosum_Manager
                 _intSaplingMerchAsPercentOfTotalVol = saplingMerchAsPercentOfTotalVol;
                 _intWoodlandMerchAsPercentOfTotalVol = woodlandMerchAsPercentOfTotalVol;
                 _intCullPctThreshold = cullPctThreshold;
-                if (useRxDefaultHarvestMethod.Trim().ToUpper() == "Y")
-                {
-                    _blnUseRxDefaultHarvestMethod = true;
-                }
-                else
-                {
-                    _blnUseRxDefaultHarvestMethod = false;
-                }
+                _objHarvestMethodSelection = harvestMethodSelection;
             }
 
             public double MinChipDbh
@@ -1824,9 +1826,9 @@ namespace FIA_Biosum_Manager
             {
                 get { return _intCullPctThreshold; }
             }
-            public bool UseRxDefaultHarvestMethod
+            public HarvestMethodSelection HarvMethodSelection
             {
-                get { return _blnUseRxDefaultHarvestMethod; }
+                get { return _objHarvestMethodSelection; }
             }
             // Overriding the ToString method for debugging purposes
             public override string ToString()
@@ -1841,11 +1843,11 @@ namespace FIA_Biosum_Manager
                 return string.Format("MinChipDbh: {0}, MinSmallLogDbh: {1}, MinLargeLogDbh: {2}, SteepSlopePct: {3}, MinDbhSteepSlope: {4}, " +
                     "HarvestMethodLowSlope: {5}, HarvestMethodSteepSlope: {6}, " +
                     "SaplingMerchAsPercentOfTotalVol: {7} WoodlandMerchAsPercentOfTotalVol: {8} CullPctThreshold: {9} " +
-                    "UseRxDefaultHarvestMethod: {10} ]",
+                    "HarvestMethodSelection: {10} ]",
                     _dblMinChipDbh, _dblMinSmallLogDbh, _dblMinLargeLogDbh, _intSteepSlopePct, _dblMinDbhSteepSlope,
                     strScenarioHarvestMethodLowSlope, strScenarioHarvestMethodSteepSlope,
                     _intSaplingMerchAsPercentOfTotalVol, _intWoodlandMerchAsPercentOfTotalVol, _intCullPctThreshold,
-                    Convert.ToString(_blnUseRxDefaultHarvestMethod));
+                    _objHarvestMethodSelection.Value);
             }
         }
 

@@ -5572,21 +5572,6 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                         }
                     }
-                        
-                    if (m_intError == 0)
-                    {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        m_intError = mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, false);
-
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        {
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createTreeVolValWorkTable return value: " + m_intError + "\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-                        }
-                    }
 
                     if (m_intError == 0)
                     {
@@ -5616,6 +5601,20 @@ namespace FIA_Biosum_Manager
                     {
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+                    if (m_intError == 0)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        m_intError = mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, false);
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createTreeVolValWorkTable return value: " + m_intError + "\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                        }
                     }
                     if (m_intError == 0)
                     {
