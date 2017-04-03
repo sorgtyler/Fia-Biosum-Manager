@@ -416,7 +416,7 @@ namespace FIA_Biosum_Manager
                             bPerformCheck = false;
                         }
                     }
-                        //5.7.7 is Processor redesign
+                    //5.7.7 is Processor redesign
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 7 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 7) &&
@@ -428,6 +428,19 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
+                    //5.7.8 updates harvest_costs and scenario_harvest_method tables
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 7 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 8) &&
+                           (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 7 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 8))
+                    {
+                        UpdateDatasources_5_7_8();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
+
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6) &&
                             (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
@@ -4668,6 +4681,28 @@ namespace FIA_Biosum_Manager
                 {
                     oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "override_YN", "CHAR", "1", "N");
                 }
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Making modifications to scenario_harvest_method table ...Stand by";
+
+            //open the scenario_processor_rule_definitions.mdb file
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
+            
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, "HarvestMethodSelection"))
+            {
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, "HarvestMethodSelection", "CHAR", "15");
+
+                // Populate column from old UseRxDefaultHarvestMethodYN column
+                oAdo.m_strSQL = "UPDATE " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " " +
+                                "SET HarvestMethodSelection = IIF(UseRxDefaultHarvestMethodYN = 'Y', 'RX','SPECIFIED')";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            }
+
+            // Drop the old UseRxDefaultHarvestMethodYN column
+            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName, "UseRxDefaultHarvestMethodYN"))
+            {
+               oAdo.m_strSQL = "ALTER TABLE " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " DROP COLUMN UseRxDefaultHarvestMethodYN";
+               oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             }
 
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
