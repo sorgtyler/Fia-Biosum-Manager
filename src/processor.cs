@@ -773,6 +773,19 @@ namespace FIA_Biosum_Manager
                 // create tree vol val work table (TreeVolValLowSlope); Re-use the sql from tree vol val but don't create the indexes
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, Tables.Processor.CreateTreeVolValSpeciesDiamGroupsTableSQL(m_strTvvTableName));
 
+                // load opcostIdeal into memory if user asked for low-cost harvest system
+                System.Collections.Generic.IDictionary<String, opcostIdeal> dictIdeal = new System.Collections.Generic.Dictionary<String, opcostIdeal>();
+                bool blnUseIdeal = false;
+                if (m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.LOWEST_COST))
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Load opcost_output_ideal into memory - " + System.DateTime.Now.ToString() + "\r\n");
+
+                    blnUseIdeal = true;
+                    //key: strCondId + strRxPackage + strRx + strRxCycle;
+                    dictIdeal = loadOpcostIdeal();
+                }
+                
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Read trees into tree vol val - " + System.DateTime.Now.ToString() + "\r\n");
 
@@ -781,6 +794,38 @@ namespace FIA_Biosum_Manager
                     new System.Collections.Generic.Dictionary<string, treeVolValInput>();
                 foreach (tree nextTree in m_trees)
                 {
+                    if (blnUseIdeal)
+                    {
+                        string strIdealKey = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
+                        opcostIdeal objIdeal = null;
+                        bool blnIdealFound = dictIdeal.TryGetValue(strIdealKey, out objIdeal);
+                        if (blnIdealFound)
+                        {
+                            harvestMethod objHarvestMethodLowSlope = null;
+                            harvestMethod objHarvestMethodSteepSlope = null;
+                            foreach (harvestMethod nextMethod in m_harvestMethodList)
+                            {
+                                if (nextMethod.Method.Equals(objIdeal.HarvestSystem) && !nextMethod.SteepSlope)
+                                {
+                                    objHarvestMethodLowSlope = nextMethod;
+                                }
+                                else if (nextMethod.Method.Equals(objIdeal.HarvestSystem) && nextMethod.SteepSlope)
+                                {
+                                    objHarvestMethodSteepSlope = nextMethod;
+                                }
+
+                                if (nextTree.Slope < m_scenarioHarvestMethod.SteepSlopePct)
+                                {
+                                    nextTree.LowestCostHarvestMethod = objHarvestMethodLowSlope;
+                                }
+                                else
+                                {
+                                    nextTree.LowestCostHarvestMethod = objHarvestMethodSteepSlope;
+                                }
+                            }
+                        }
+                    }
+                    
                     treeVolValInput nextInput = null;
                     string strKey = nextTree.CondId + strSeparator + nextTree.RxCycle + strSeparator + nextTree.DiamGroup + strSeparator + nextTree.SpeciesGroup;
                     bool blnFound = dictTvvInput.TryGetValue(strKey, out nextInput);
@@ -816,7 +861,7 @@ namespace FIA_Biosum_Manager
                     //metrics for chip trees
                     else if (nextTree.TreeType == OpCostTreeType.CT)
                     {
-                        if (nextTree.HarvestMethod.BiosumCategory == 1 || nextTree.HarvestMethod.BiosumCategory == 3)
+                        if (nextTree.BiosumCategory == 1 || nextTree.BiosumCategory == 3)
                         {
                             // Only bole is chipped; nonMerch goes to stand residue
                             nextInput.ChipVolCfPa = nextInput.ChipVolCfPa + nextTree.MerchVolCfPa;
@@ -834,7 +879,7 @@ namespace FIA_Biosum_Manager
                     //metrics for small and large trees
                     else if (nextTree.TreeType == OpCostTreeType.SL || nextTree.TreeType == OpCostTreeType.LL)
                     {
-                        if (nextTree.HarvestMethod.BiosumCategory == 1 || nextTree.HarvestMethod.BiosumCategory == 3)
+                        if (nextTree.BiosumCategory == 1 || nextTree.BiosumCategory == 3)
                         {
                             if (nextTree.IsNonCommercial || nextTree.IsCull)
                             {
@@ -852,7 +897,7 @@ namespace FIA_Biosum_Manager
                                 nextInput.TotalMerchValDpa = nextInput.TotalMerchValDpa + nextTree.MerchValDpa;
                             }
                         }
-                        else if (nextTree.HarvestMethod.BiosumCategory == 2)
+                        else if (nextTree.BiosumCategory == 2)
                         {
                             if (nextTree.IsNonCommercial || nextTree.IsCull)
                             {
@@ -870,7 +915,7 @@ namespace FIA_Biosum_Manager
                                 nextInput.TotalMerchValDpa = nextInput.TotalMerchValDpa + nextTree.MerchValDpa;
                             }
                         }
-                        else if (nextTree.HarvestMethod.BiosumCategory == 4)
+                        else if (nextTree.BiosumCategory == 4)
                         {
                             if (nextTree.TreeType == OpCostTreeType.SL)
                             {
@@ -909,7 +954,7 @@ namespace FIA_Biosum_Manager
                                 }
                             }
                         }
-                        else if (nextTree.HarvestMethod.BiosumCategory == 5)
+                        else if (nextTree.BiosumCategory == 5)
                         {
                             if (nextTree.IsNonCommercial || nextTree.IsCull)
                             {
@@ -1442,6 +1487,7 @@ namespace FIA_Biosum_Manager
             bool _blnIsCull;
             double _dblTravelTime;
             harvestMethod _objHarvestMethod;
+            harvestMethod _objLowestCostHarvestMethod;
 
             string _strDebugFile = "";
 
@@ -1620,6 +1666,11 @@ namespace FIA_Biosum_Manager
                 get { return _objHarvestMethod; }
                 set { _objHarvestMethod = value; }
             }
+            public harvestMethod LowestCostHarvestMethod
+            {
+                get { return _objLowestCostHarvestMethod; }
+                set { _objLowestCostHarvestMethod = value; }
+            }
             public double MerchValDpa
             {
                 get { return _dblMerchValDpa; }
@@ -1681,6 +1732,25 @@ namespace FIA_Biosum_Manager
             {
                 get { return _dblTravelTime; }
                 set {_dblTravelTime = value; }
+            }
+
+            public int BiosumCategory
+            {
+                get
+                {
+                    if (_objLowestCostHarvestMethod != null)
+                    {
+                        return _objLowestCostHarvestMethod.BiosumCategory;
+                    }
+                    else if (_objHarvestMethod != null)
+                    {
+                        return _objHarvestMethod.BiosumCategory;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
             }
             public string DebugFile
             {
@@ -2485,22 +2555,22 @@ namespace FIA_Biosum_Manager
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT * FROM " +
-                                m_strOpcostTableName;
+                                m_strOpcostIdealTableName;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
-                    // We should only have one record
-                    m_oAdo.m_OleDbDataReader.Read();
-                    string strCondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
-                    string strRxPackage = Convert.ToString(m_oAdo.m_OleDbDataReader["rxPackage"]).Trim();
-                    string strRx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
-                    string strRxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
-                    string strHarvestSystem = Convert.ToString(m_oAdo.m_OleDbDataReader["harvestSystem"]).Trim();
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strCondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
+                        string strRxPackage = Convert.ToString(m_oAdo.m_OleDbDataReader["rxPackage"]).Trim();
+                        string strRx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
+                        string strRxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
+                        string strHarvestSystem = Convert.ToString(m_oAdo.m_OleDbDataReader["harvest_system"]).Trim();
 
-                    string key = strCondId + strRxPackage + strRx + strRxCycle;
-                    opcostIdeal newIdeal = new opcostIdeal(strCondId, strRxCycle, strRxPackage, strRx, strHarvestSystem)
-                    dictOpcostIdeal.Add(key, newIdeal);
-
+                        string key = strCondId + strRxPackage + strRx + strRxCycle;
+                        opcostIdeal newIdeal = new opcostIdeal(strCondId, strRxCycle, strRxPackage, strRx, strHarvestSystem);
+                        dictOpcostIdeal.Add(key, newIdeal);
+                    }
                 }
             }
             return dictOpcostIdeal;
