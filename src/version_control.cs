@@ -4648,38 +4648,38 @@ namespace FIA_Biosum_Manager
                 }
                 oAdo.m_OleDbDataReader.Close();
             }
-            // Loop through the scenario_results.mdb looking for tree_vol_val_by_species_diam_groups table
+            // Loop through the scenario_results.mdb looking for harvest_costs table
             foreach (string strPath in lstScenarioDb)
             {
-                // Add columns to tree_vol_val_by_species_diam_groups table
+                // Add columns to harvest_costs table
                 oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "chip_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "chip_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "chip_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "chip_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "assumed_movein_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "assumed_movein_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "assumed_movein_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "assumed_movein_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_complete_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_complete_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_complete_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_complete_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_harvest_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_harvest_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_harvest_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_harvest_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_chip_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_chip_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_chip_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_chip_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_assumed_movein_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_assumed_movein_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "ideal_assumed_movein_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_assumed_movein_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "override_YN"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "override_YN"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, "override_YN", "CHAR", "1", "N");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "override_YN", "CHAR", "1", "N");
                 }
             }
 
