@@ -4099,11 +4099,11 @@ namespace FIA_Biosum_Manager
                             if (p_intError == 0)
                             {
 
-                                for (z = 0; z <= m_oPrePostDbFileItem_Collection.Item(x).m_oTableLinkItemCollection1.Count-1;z++)
+                                for (z = 0; z <= m_oPrePostDbFileItem_Collection.Item(y).m_oTableLinkItemCollection1.Count-1;z++)
                                 {
-                                    if (m_oPrePostDbFileItem_Collection.Item(x).m_oTableLinkItemCollection1.Item(z).TableName == "FVS_CASES")
+                                    if (m_oPrePostDbFileItem_Collection.Item(y).m_oTableLinkItemCollection1.Item(z).TableName == "FVS_CASES")
                                     {
-                                        strCasesTable = m_oPrePostDbFileItem_Collection.Item(x).m_oTableLinkItemCollection1.Item(z).LinkedTableName;
+                                        strCasesTable = m_oPrePostDbFileItem_Collection.Item(y).m_oTableLinkItemCollection1.Item(z).LinkedTableName;
                                         break;
                                     }
                                 }
