@@ -694,8 +694,8 @@ namespace FIA_Biosum_Manager
 			m_datasource = new Datasource();
 			m_datasource.LoadTableColumnNamesAndDataTypes=false;
 			m_datasource.LoadTableRecordCount=false;
-			m_datasource.m_strDataSourceMDBFile = ((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
-			m_datasource.m_strDataSourceTableName = "datasource";
+            m_datasource.m_strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
+            m_datasource.m_strDataSourceTableName = "datasource";
 			m_datasource.m_strScenarioId="";
 			m_datasource.populate_datasource_array();
 			

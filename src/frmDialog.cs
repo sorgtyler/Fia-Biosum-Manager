@@ -22,6 +22,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_sql_builder_new uc_sql_builder2;
 		public FIA_Biosum_Manager.frmDialog m_frmDialogCallingForm;
 		public FIA_Biosum_Manager.frmCoreScenario m_frmScenarioCallingForm;
+        public FIA_Biosum_Manager.frmProcessorScenario m_frmProcessorScenarioCallingForm;
 		public FIA_Biosum_Manager.frmMain m_frmMain;
 		public FIA_Biosum_Manager.uc_previous_expressions uc_previous_expressions1;
 		public FIA_Biosum_Manager.uc_scenario_merge_tables uc_merge_tables1;
@@ -131,6 +132,15 @@ namespace FIA_Biosum_Manager
 			InitializeComponent();
 			InitializeUserControls();
 		}
+        public frmDialog(FIA_Biosum_Manager.frmProcessorScenario p_frmProcessorScenarioCallingForm, FIA_Biosum_Manager.frmMain p_frmMain)
+        {
+            strCallingFormType = "PS";   //processor scenario
+            InitializeComponent();
+            this.m_frmProcessorScenarioCallingForm = p_frmProcessorScenarioCallingForm;
+            this.m_frmMain = p_frmMain;
+            InitializeUserControls();
+
+        }
 
 
 		/// <summary>

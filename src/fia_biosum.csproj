@@ -164,6 +164,9 @@
     <Compile Include="btnMainForm.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="uc_scenario_tree_groupings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="uc_processor_scenario_movein_costs.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -584,6 +587,9 @@
     <Content Include="table-select-row-icon.png" />
     <EmbeddedResource Include="btnMainForm.resx">
       <DependentUpon>btnMainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_scenario_tree_groupings.resx">
+      <DependentUpon>uc_scenario_tree_groupings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_processor_scenario_movein_costs.resx">
       <DependentUpon>uc_processor_scenario_movein_costs.cs</DependentUpon>
