@@ -176,10 +176,10 @@ namespace FIA_Biosum_Manager
 			
 			this.InitializeOleDbTransactionCommands();
 
-            this.m_ado.m_strSQL = "SELECT id, fvs_variant, spcd,fvs_species," + 
-				                          "fvs_common_name,fvs_input_spcd,user_spc_group," + 
-				                          "od_wgt,dry_to_green,common_name,genus,species," + 
-				                          "variety,subspecies,comments " + 
+            this.m_ado.m_strSQL = "SELECT id, fvs_variant, spcd,fvs_species," +
+                                          "fvs_common_name,fvs_input_spcd,WOODLAND_YN, " + 
+				                          "od_wgt,dry_to_green,common_name,genus,species," +
+                                          "variety,subspecies,comments " + 
 				                  "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " s " + 
 				                  "WHERE EXISTS (SELECT DISTINCT(spcd) " +
 				                                "FROM " + this.m_oQueries.m_oFIAPlot.m_strTreeTable + " t " + 
@@ -2167,7 +2167,7 @@ namespace FIA_Biosum_Manager
 		}
 		private void InitializeOleDbTransactionCommands()
 		{
-			 this.m_ado.m_strSQL = "select id, fvs_variant,spcd,fvs_species,fvs_common_name,fvs_input_spcd,user_spc_group,od_wgt,dry_to_green,common_name,genus,species,variety,subspecies,comments from " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
+            this.m_ado.m_strSQL = "select id, fvs_variant,spcd,fvs_species,fvs_common_name,fvs_input_spcd,WOODLAND_YN,od_wgt,dry_to_green,common_name,genus,species,variety,subspecies,comments from " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
 			//initialize the transaction object with the connection
 			this.m_ado.m_OleDbTransaction = this.m_ado.m_OleDbConnection.BeginTransaction();
 
@@ -2177,14 +2177,14 @@ namespace FIA_Biosum_Manager
 				this.m_ado.m_strSQL,
 				this.m_oQueries.m_oFvs.m_strTreeSpcTable);
 
-            this.m_ado.m_strSQL = "select fvs_variant, spcd, fvs_species,fvs_common_name,fvs_input_spcd,user_spc_group,od_wgt,dry_to_green,common_name,genus,species,variety,subspecies,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
+            this.m_ado.m_strSQL = "select fvs_variant, spcd, fvs_species,fvs_common_name,fvs_input_spcd,WOODLAND_YN,od_wgt,dry_to_green,common_name,genus,species,variety,subspecies,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
 			this.m_ado.ConfigureDataAdapterUpdateCommand(this.m_ado.m_OleDbConnection,
 				this.m_ado.m_OleDbDataAdapter,
 				this.m_ado.m_OleDbTransaction,
 				this.m_ado.m_strSQL,"select id from " + m_oQueries.m_oFvs.m_strTreeSpcTable,
 				m_oQueries.m_oFvs.m_strTreeSpcTable);
 
-			this.m_ado.m_strSQL = "select fvs_variant, spcd, common_name, fvs_species,fvs_common_name,fvs_input_spcd,user_spc_group,od_wgt,dry_to_green,genus,species,variety,subspecies,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
+            this.m_ado.m_strSQL = "select fvs_variant, spcd, common_name, fvs_species,fvs_common_name,fvs_input_spcd,WOODLAND_YN,od_wgt,dry_to_green,genus,species,variety,subspecies,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
 			this.m_ado.ConfigureDataAdapterDeleteCommand(this.m_ado.m_OleDbConnection,
 				this.m_ado.m_OleDbDataAdapter,
 				this.m_ado.m_OleDbTransaction,
@@ -2311,8 +2311,8 @@ namespace FIA_Biosum_Manager
 					p_uc.strSpCd = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("spcd")].ToString().Trim();
 					p_uc.strVariant = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_variant")].ToString().Trim();
 					p_uc.strFvsSpeciesCode = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_species")].ToString().Trim();
-					p_uc.strUserDefinedTreeSpeciesGroup = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("user_spc_group")].ToString().Trim();
-					p_uc.strTreeSpeciesOvenDryWeight = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("od_wgt")].ToString().Trim();
+                    p_uc.strWoodlandYN = this.m_dg[this.m_intCurrRow - 1, this.getGridColumn("WOODLAND_YN")].ToString().Trim();
+                    p_uc.strTreeSpeciesOvenDryWeight = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("od_wgt")].ToString().Trim();
 					p_uc.strDryToGreenWeightRatio = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("dry_to_green")].ToString().Trim();
 					p_uc.strCommonName = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("common_name")].ToString().Trim();
 					p_uc.strTreeSpeciesGenus = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("genus")].ToString().Trim();
@@ -2340,8 +2340,8 @@ namespace FIA_Biosum_Manager
 						p_row["species"] = p_uc.strTreeSpecies;
 						p_row["variety"] = p_uc.strTreeSpeciesVariety;
 						p_row["subspecies"] = p_uc.strTreeSpeciesSubSpecies;
-						p_row["user_spc_group"] = System.DBNull.Value ; //null;   //Convert.ToInt32(p_uc.strUserDefinedTreeSpeciesGroup);
-						if (p_uc.strTreeSpeciesOvenDryWeight.ToString().Length == 0)
+                        p_row["WOODLAND_YN"] = p_uc.strWoodlandYN;
+                        if (p_uc.strTreeSpeciesOvenDryWeight.ToString().Length == 0)
 						{
 							p_row["od_wgt"] = System.DBNull.Value;
 						}
@@ -2375,8 +2375,7 @@ namespace FIA_Biosum_Manager
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_variant")] = p_uc.strVariant;
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("spcd")] = p_uc.strSpCd;
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_species")] = p_uc.strFvsSpeciesCode;
-						if (p_uc.strUserDefinedTreeSpeciesGroup.Trim().Length > 0)
-							this.m_dg[this.m_intCurrRow-1,this.getGridColumn("user_spc_group")] = p_uc.strUserDefinedTreeSpeciesGroup;
+                        this.m_dg[this.m_intCurrRow - 1, this.getGridColumn("WOODLAND_YN")] = p_uc.strWoodlandYN;
 						if (p_uc.strTreeSpeciesOvenDryWeight.Trim().Length > 0)
 						{
 							if (p_uc.strTreeSpeciesOvenDryWeight.Trim().Length == 1 &&
