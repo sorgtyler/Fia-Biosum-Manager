@@ -1031,7 +1031,7 @@ namespace FIA_Biosum_Manager
             System.Collections.Generic.List<treeDiamGroup> listDiamGroups = new System.Collections.Generic.List<treeDiamGroup>();
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM " + Tables.Processor.DefaultTreeDiamGroupsTableName;
+                string strSQL = "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {

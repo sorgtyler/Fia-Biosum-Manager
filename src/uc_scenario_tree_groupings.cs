@@ -121,9 +121,9 @@ namespace FIA_Biosum_Manager
 
 		private void btnSave_Click(object sender, System.EventArgs e)
 		{
-			this.SaveScenarioNotes();
+            this.SaveTreeGroupings();
 		}
-		public void SaveScenarioNotes()
+		public void SaveTreeGroupings()
 		{
 			ado_data_access p_ado = new ado_data_access();
 			System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
@@ -137,19 +137,6 @@ namespace FIA_Biosum_Manager
 			string strSQL="";
 			strNotes=p_ado.FixString(strNotes,"'","''");
 			string strConn=p_ado.getMDBConnString(strFullPath.ToString(),"admin","");
-			//string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath.ToString() + ";User Id=admin;Password=;";
-			if (ScenarioType.Trim().ToUpper() == "CORE")
-			{
-				strSQL = "UPDATE scenario SET notes = '" + 
-					strNotes + 
-					"' WHERE trim(lcase(scenario_id)) = '" + ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower() + "';";
-			}
-			else
-			{
-				strSQL = "UPDATE scenario SET notes = '" + 
-					strNotes + 
-					"' WHERE trim(lcase(scenario_id)) = '" + this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower() + "';";
-			}
 			p_ado.SqlNonQuery(strConn,strSQL);
 			p_ado=null;
 		

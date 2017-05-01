@@ -1073,6 +1073,8 @@ namespace FIA_Biosum_Manager
         public HarvestCostItem_Collection m_oHarvestCostItem_Collection = new HarvestCostItem_Collection();
         public TreeSpeciesAndDbhDollarValuesItem_Collection m_oTreeSpeciesAndDbhDollarValuesItem_Collection
                = new TreeSpeciesAndDbhDollarValuesItem_Collection();
+        public TreeDiamGroupsItem_Collection m_oTreeDiamGroupsItem_Collection
+               = new TreeDiamGroupsItem_Collection();
 
         public ProcessorScenarioItem()
         {
@@ -1132,7 +1134,8 @@ namespace FIA_Biosum_Manager
             p_oDest.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Copy(
                 p_oSource.m_oTreeSpeciesAndDbhDollarValuesItem_Collection,
             ref p_oDest.m_oTreeSpeciesAndDbhDollarValuesItem_Collection, true);
-            
+            p_oDest.m_oTreeDiamGroupsItem_Collection.Copy(p_oSource.m_oTreeDiamGroupsItem_Collection,
+                ref p_oDest.m_oTreeDiamGroupsItem_Collection, true);
         }
        
         public class HarvestMethod
@@ -1551,6 +1554,103 @@ namespace FIA_Biosum_Manager
                 for (x = 0; x <= p_oSource.Count - 1; x++)
                 {
                     TreeSpeciesAndDbhDollarValuesItem oItem = new TreeSpeciesAndDbhDollarValuesItem();
+                    oItem.Copy(p_oSource.Item(x), oItem);
+                    p_oDest.Add(oItem);
+
+                }
+            }
+
+        }
+
+        public class TreeDiamGroupsItem
+        {
+            public TreeDiamGroupsItem()
+            {
+            }
+            private string _strDiamGroup = "";
+            public string DiamGroup
+            {
+                get { return _strDiamGroup; }
+                set { _strDiamGroup = value; }
+            }
+            private string _strMinDiam = "";
+            public string MinDiam
+            {
+                get { return _strMinDiam; }
+                set { _strMinDiam = value; }
+            }
+            private string _strMaxDiam = "";
+            public string MaxDiam
+            {
+                get { return _strMaxDiam; }
+                set { _strMaxDiam = value; }
+            }
+            private string _strDiamClass = "";
+            public string DiamClass
+            {
+                get { return _strDiamClass; }
+                set { _strDiamClass = value; }
+            }
+            public void Copy(TreeDiamGroupsItem p_oSource,
+                             TreeDiamGroupsItem p_oDest)
+            {
+                p_oDest.DiamGroup = p_oSource.DiamGroup;
+                p_oDest.MinDiam = p_oSource.MinDiam;
+                p_oDest.MaxDiam = p_oSource.MaxDiam;
+                p_oDest.DiamClass = p_oSource.DiamClass;
+            }
+        }
+
+        public class TreeDiamGroupsItem_Collection : System.Collections.CollectionBase
+        {
+            public TreeDiamGroupsItem_Collection()
+            {
+                //
+                // TODO: Add constructor logic here
+                //
+            }
+
+            public void Add(FIA_Biosum_Manager.ProcessorScenarioItem.TreeDiamGroupsItem m_TreeDiamGroupsItem)
+            {
+                // vérify if object is not already in
+                if (this.List.Contains(m_TreeDiamGroupsItem))
+                    throw new InvalidOperationException();
+
+                // adding it
+                this.List.Add(m_TreeDiamGroupsItem);
+
+                // return collection
+                //return this;
+            }
+            public void Remove(int index)
+            {
+                // Check to see if there is a widget at the supplied index.
+                if (index > Count - 1 || index < 0)
+                // If no widget exists, a messagebox is shown and the operation 
+                // is canColumned.
+                {
+                    System.Windows.Forms.MessageBox.Show("Index not valid!");
+                }
+                else
+                {
+                    List.RemoveAt(index);
+                }
+            }
+            public FIA_Biosum_Manager.ProcessorScenarioItem.TreeDiamGroupsItem Item(int Index)
+            {
+                // The appropriate item is retrieved from the List object and
+                // explicitly cast to the Widget type, then returned to the 
+                // caller.
+                return (FIA_Biosum_Manager.ProcessorScenarioItem.TreeDiamGroupsItem)List[Index];
+            }
+            public void Copy(TreeDiamGroupsItem_Collection p_oSource,
+                         ref TreeDiamGroupsItem_Collection p_oDest, bool p_bInitializeDest)
+            {
+                int x;
+                if (p_bInitializeDest) p_oDest.Clear();
+                for (x = 0; x <= p_oSource.Count - 1; x++)
+                {
+                    TreeDiamGroupsItem oItem = new TreeDiamGroupsItem();
                     oItem.Copy(p_oSource.Item(x), oItem);
                     p_oDest.Add(oItem);
 
@@ -2243,6 +2343,42 @@ namespace FIA_Biosum_Manager
 
                 }
             }
+            p_oAdo.m_OleDbDataReader.Close();
+        }
+
+        public void LoadTreeDiameterGroupValues(ado_data_access p_oAdo,
+                                                System.Data.OleDb.OleDbConnection p_oConn,
+                                                ProcessorScenarioItem p_oProcessorScenarioItem)
+        {
+            int x;
+            //REMOVE ANY EXISTING ITEMS
+            for (x = p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Count - 1; x >= 0; x--)
+            {
+                p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Remove(x);
+            }
+            //
+            //QUERY ALL DIAMETER GROUPS
+            //
+            p_oAdo.SqlQueryReader(p_oConn, "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + 
+                " WHERE TRIM(UCASE(scenario_id))='" + p_oProcessorScenarioItem.ScenarioId.Trim().ToUpper() + "'");
+
+
+            //
+            //CREATE A COLLECTION CONTAINING EACH DIAMETER GROUP
+            //
+            if (p_oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (p_oAdo.m_OleDbDataReader.Read())
+                {
+                    ProcessorScenarioItem.TreeDiamGroupsItem oItem = new ProcessorScenarioItem.TreeDiamGroupsItem();
+                    oItem.DiamGroup = p_oAdo.m_OleDbDataReader["diam_group"].ToString().Trim();
+                    oItem.DiamClass = p_oAdo.m_OleDbDataReader["diam_class"].ToString().Trim();
+                    oItem.MaxDiam = p_oAdo.m_OleDbDataReader["max_diam"].ToString().Trim();
+                    oItem.MinDiam = p_oAdo.m_OleDbDataReader["min_diam"].ToString().Trim();
+                    p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Add(oItem);
+                }
+            }
+
             p_oAdo.m_OleDbDataReader.Close();
         }
         public string ScenarioProperties(ProcessorScenarioItem p_oProcessorScenarioItem)

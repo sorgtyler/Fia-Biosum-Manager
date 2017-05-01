@@ -935,7 +935,7 @@ namespace FIA_Biosum_Manager
 					frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTableIndexes(p_oAdo,p_oConn,p_strTableName);
 					break;
 				case "TREE DIAMETER GROUPS":
-					frmMain.g_oTables.m_oProcessor.CreateTreeDiamGroupsTableIndexes(p_oAdo,p_oConn,p_strTableName);
+                    frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
 					break;
 				case "FVS TREE SPECIES":
 					frmMain.g_oTables.m_oReference.CreateFVSTreeSpeciesTableIndexes(p_oAdo,p_oConn,p_strTableName);
@@ -1037,7 +1037,7 @@ namespace FIA_Biosum_Manager
 					break;
 				case "TREE DIAMETER GROUPS":
 					oItem.VariableName="TreeDiameterGroupsTable";
-					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Processor.DefaultTreeDiamGroupsTableName;
+                    if (p_strTableName.Trim().Length == 0) p_strTableName = Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName;
 					break;
 				case "FVS TREE SPECIES":
 					oItem.VariableName="FvsTreeSpeciesTable";

@@ -2944,8 +2944,6 @@ namespace FIA_Biosum_Manager
             static public string DefaultHarvestCostsTableName { get { return "harvest_costs"; } }
             static public string DefaultAdditionalHarvestCostsTableName { get { return "additional_harvest_costs"; } }
             static public string DefaultAdditionalHarvestCostsTableDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultTreeDiamGroupsDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultTreeDiamGroupsTableName { get { return "tree_diam_groups"; } }
             static public string DefaultTreeSpeciesGroupsDbFile { get { return @"db\master.mdb"; } }
             static public string DefaultTreeSpeciesGroupsTableName { get { return "tree_species_groups"; } }
             static public string DefaultTreeSpeciesGroupsListDbFile { get { return @"db\master.mdb"; } }
@@ -3024,25 +3022,6 @@ namespace FIA_Biosum_Manager
                     "harvest_technique_40 CHAR(30))";
 
             }
-            public void CreateTreeDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
-            {
-                p_oAdo.SqlNonQuery(p_oConn, CreateTreeDiamGroupsTableSQL(p_strTableName));
-                CreateTreeDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
-
-            }
-            public void CreateTreeDiamGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
-            {
-                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "diam_group");
-            }
-            public string CreateTreeDiamGroupsTableSQL(string p_strTableName)
-            {
-                return "CREATE TABLE " + p_strTableName + " (" +
-                    "diam_group INTEGER DEFAULT 0," +
-                    "diam_class CHAR(15)," +
-                    "min_diam DOUBLE DEFAULT 0," +
-                    "max_diam DOUBLE DEFAULT 0)";
-            }
-
             public void CreateTreeSpeciesGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.SqlNonQuery(p_oConn, CreateTreeSpeciesGroupsTableSQL(p_strTableName));
@@ -3824,7 +3803,8 @@ namespace FIA_Biosum_Manager
 			static public string DefaultCostRevenueEscalatorsTableName {get {return "scenario_cost_revenue_escalators";}}
             static public string DefaultAdditionalHarvestCostsDbFile { get { return @"db\scenario_processor_rule_definitions.mdb"; } }
             static public string DefaultAdditionalHarvestCostsTableName { get { return "scenario_additional_harvest_costs"; } }
-
+            static public string DefaultTreeDiamGroupsDbFile { get { return @"db\scenario_processor_rule_definitions.mdb"; } }
+            static public string DefaultTreeDiamGroupsTableName { get { return "scenario_tree_diam_groups"; } }
 			
 			
 			public ProcessorScenarioRuleDefinitions()
@@ -3983,8 +3963,26 @@ namespace FIA_Biosum_Manager
                     "brush_cutting_cpa DOUBLE)";
 
             }
-           
 
+            public void CreateTreeDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateTreeDiamGroupsTableSQL(p_strTableName));
+                CreateTreeDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+            }
+            public void CreateTreeDiamGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "diam_group");
+            }
+            public string CreateTreeDiamGroupsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "scenario_id CHAR(20)," +
+                    "diam_group INTEGER DEFAULT 0," +
+                    "diam_class CHAR(15)," +
+                    "min_diam DOUBLE DEFAULT 0," +
+                    "max_diam DOUBLE DEFAULT 0)";
+            }
 
 		}
 		public class Reference

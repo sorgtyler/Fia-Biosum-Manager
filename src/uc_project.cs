@@ -997,7 +997,7 @@ namespace FIA_Biosum_Manager
                 //harvest costs extra costs table
                 frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(p_ado, p_ado.m_OleDbConnection, Tables.Processor.DefaultAdditionalHarvestCostsTableName);
 				//tree diameter groups table
-				frmMain.g_oTables.m_oProcessor.CreateTreeDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_diam_groups");
+				frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_diam_groups");
 				//tree species diam dollar values table
 				//frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesDollarValuesTable(p_ado,p_ado.m_OleDbConnection,"tree_species_diam_dollar_values");
 				//tree species groups list table

@@ -21,17 +21,20 @@ namespace FIA_Biosum_Manager
 		public int m_intDialogWd;
 		private System.Windows.Forms.ListView lstTreeDiam;
 		private int m_intError;
+        private string m_strError;
 		private System.Windows.Forms.Button btnDefault;
 		public System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Button btnClear;
 		private System.Windows.Forms.Button btnHelp;
 		private FIA_Biosum_Manager.ado_data_access m_ado;
-		private FIA_Biosum_Manager.Datasource m_datasource;
-		private string m_strMDBFile;
-		private string m_strTable;
 		private string m_strConn;
 		private System.Windows.Forms.Button btnDelete;
+
+        // scenario-specific variables
+        private string _strScenarioId = "";
+        private frmProcessorScenario _frmProcessorScenario = null;
+
 
 		/// <summary> 
 		/// Required designer variable.
@@ -49,6 +52,8 @@ namespace FIA_Biosum_Manager
 
 		}
 
+
+
 		/// <summary> 
 		/// Clean up any resources being used.
 		/// </summary>
@@ -63,16 +68,24 @@ namespace FIA_Biosum_Manager
 			}
 			base.Dispose( disposing );
 		}
+
+        public frmProcessorScenario ReferenceProcessorScenarioForm
+        {
+            get { return this._frmProcessorScenario; }
+            set { this._frmProcessorScenario = value; }
+        }
+        public string ScenarioId
+        {
+            get { return _strScenarioId; }
+            set { _strScenarioId = value; }
+        }
+
 		public void loadvalues()
 		{
-			string strId="";
+            string strId="";
 			string strMin="";
 			string strMax="";
 			string strDef="";
-
-			
-    
-
 			      
 			this.lstTreeDiam.Clear();
 			this.lstTreeDiam.Columns.Add("Group ID", 60, HorizontalAlignment.Left);
@@ -82,39 +95,36 @@ namespace FIA_Biosum_Manager
 
 			this.m_intError=0;
 
-			this.getTreeDiamGroupsDatasource();
+            ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+            m_ado = new ado_data_access();
+            string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
+            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
+                m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
 
-
-			if (this.m_intError==0)
-			{
-				m_strConn = m_ado.getMDBConnString(m_strMDBFile,"","");
-				m_ado.m_strSQL = "select * from " + m_strTable + " order by diam_group;";
-
-	
-
-           
-				m_ado.SqlQueryReader(m_strConn,m_ado.m_strSQL);
 				if (m_ado.m_intError==0)
 				{
 					try
 					{
 						//load up each row in the FIADB plot input table
-
-						while (m_ado.m_OleDbDataReader.Read())
-						{
-							strId="";
+                        int x;
+                        for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Count - 1; x++)
+                        {
+                            ProcessorScenarioItem.TreeDiamGroupsItem p_oTreeGroupsItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x);
+							
+                            strId="";
 							strMax="";
 							strMin="";
 							strDef="";
 							
-							//make sure the row is not null values
-							if (m_ado.m_OleDbDataReader[0] != System.DBNull.Value &&
-								m_ado.m_OleDbDataReader[0].ToString().Trim().Length > 0)
+                            //make sure the row is not null values
+							if (p_oTreeGroupsItem.DiamClass.Trim().Length > 0)
 							{
-								strId =m_ado.m_OleDbDataReader["diam_group"].ToString();
-								strMin = m_ado.m_OleDbDataReader["min_diam"].ToString();
-								strMax = m_ado.m_OleDbDataReader["max_diam"].ToString();
-								strDef = m_ado.m_OleDbDataReader["diam_class"].ToString();
+                                strId = p_oTreeGroupsItem.DiamGroup;
+								strMin = p_oTreeGroupsItem.MinDiam;
+                                strMax = p_oTreeGroupsItem.MaxDiam;
+                                strDef = p_oTreeGroupsItem.DiamClass;
 								this.lstTreeDiam.BeginUpdate();
 								System.Windows.Forms.ListViewItem listItem = new ListViewItem();
 								listItem.Text=strId;
@@ -127,7 +137,6 @@ namespace FIA_Biosum_Manager
 							}
 
 						}
-						m_ado.m_OleDbDataReader.Close();
 						if (this.lstTreeDiam.Items.Count > 0)
 						{                                                       
 							if (this.lstTreeDiam.SelectedItems.Count == 0)
@@ -142,15 +151,12 @@ namespace FIA_Biosum_Manager
 						this.m_intError=-1;
 						MessageBox.Show(caught.Message);
 					}
-					m_ado.m_OleDbConnection.Close();
 
 				}
 				else
 				{
 					this.m_intError=m_ado.m_intError;
 				}
-
-			}
 		}
 
 		#region Component Designer generated code
@@ -613,16 +619,7 @@ namespace FIA_Biosum_Manager
 					this.m_intError=-1;
 					return;
 				}
-			}
-			//should have a connection initialized in loadvalues module so check if okay
-			if (m_strConn.Trim().Length == 0)
-			{
-				MessageBox.Show("Error: No connection string to species diameter groups table","Tree Diameter Groups",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-				return;
-			}
-            
-
+			}            
 		}
 		public void savevalues()
 		{
@@ -638,16 +635,28 @@ namespace FIA_Biosum_Manager
 				string strDef;
 				string strId;
 
-				if (this.m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Closed)
-				{
-					this.m_ado.OpenConnection(this.m_strConn);
-					this.m_intError = this.m_ado.m_intError;
-				}
+                //
+                //OPEN CONNECTION TO DB FILE CONTAINING PROCESSOR SCENARIO TABLES
+                //
+                //scenario mdb connection
+                ado_data_access oAdo = new ado_data_access();
+                string strScenarioMDB =
+                    frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                    "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+                oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
+                if (oAdo.m_intError != 0)
+                {
+                    m_intError = oAdo.m_intError;
+                    m_strError = oAdo.m_strError;
+                    oAdo = null;
+                    return;
+                }
 
 				if (this.m_intError==0)
 				{
 					//delete the current records
-					this.m_ado.m_strSQL = "DELETE FROM " + this.m_strTable + ";";
+                    this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName +
+                        " WHERE TRIM(UCASE(scenario_id)) = '" + ScenarioId.Trim().ToUpper() + "'";
 					this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
 
 					if (this.m_ado.m_intError==0)
@@ -659,10 +668,10 @@ namespace FIA_Biosum_Manager
 							strMax = this.lstTreeDiam.Items[x].SubItems[2].Text;
 							strDef = this.lstTreeDiam.Items[x].SubItems[3].Text;
 
-							this.m_ado.m_strSQL = "INSERT INTO " + this.m_strTable +  " " + 
-								"(diam_group,diam_class,min_diam,max_diam) VALUES " + 
+                            this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " " + 
+								"(diam_group,diam_class,min_diam,max_diam,scenario_id) VALUES " + 
 								"(" + strId + ",'" + strDef.Trim() + "'," + 
-								strMin + "," + strMax + ");";
+								strMin + "," + strMax + ",'" + ScenarioId + "');";
 							this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
 							if (this.m_ado.m_intError != 0)
 							{
@@ -676,47 +685,8 @@ namespace FIA_Biosum_Manager
 						this.btnSave.Enabled=false;
 					}
 				}
-
-
 			}
 
-		}
-		private void getTreeDiamGroupsDatasource()
-		{
-
-		    m_ado = new ado_data_access();
-
-
-
-			//m_datasource = new Datasource(((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.txtRootDirectory.Text.Trim());
-
-
-			m_datasource = new Datasource();
-			m_datasource.LoadTableColumnNamesAndDataTypes=false;
-			m_datasource.LoadTableRecordCount=false;
-            m_datasource.m_strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
-            m_datasource.m_strDataSourceTableName = "datasource";
-			m_datasource.m_strScenarioId="";
-			m_datasource.populate_datasource_array();
-			
-
-			m_strMDBFile = m_datasource.getFullPathAndFile("TREE DIAMETER GROUPS");
-			m_strTable = m_datasource.getValidDataSourceTableName("TREE DIAMETER GROUPS");
-
-			if (m_strMDBFile.Trim().Length == 0)
-			{
-				MessageBox.Show("!!Tree Diameter Groups MDB File is not found!!",
-					"Tree Diameter Groups",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-			}
-			if (this.m_intError==0 && m_strTable.Trim().Length == 0)
-			{
-				MessageBox.Show("!!Tree Diameter Groups table is not found!!",
-					"Tree Diameter Groups",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-			}
 		}
 
 		private void btnDelete_Click(object sender, System.EventArgs e)

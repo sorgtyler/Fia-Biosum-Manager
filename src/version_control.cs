@@ -1088,8 +1088,8 @@ namespace FIA_Biosum_Manager
 							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
 								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
 								ReferenceProjectDirectory.Trim() + "\\db",
-								frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.Processor.DefaultTreeDiamGroupsDbFile),
-								Tables.Processor.DefaultTreeDiamGroupsTableName);
+								frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile),
+                                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName);
 							break;
 						case "TREATMENT PRESCRIPTIONS":
                             strDbFile = frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.FVS.DefaultRxTableDbFile);
@@ -1448,7 +1448,7 @@ namespace FIA_Biosum_Manager
 									frmMain.g_oTables.m_oReference.CreateOwnerGroupsTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.Reference.DefaultOwnerGroupsTableName);
 									break;
 								case "TREE DIAMETER GROUPS":
-									frmMain.g_oTables.m_oProcessor.CreateTreeDiamGroupsTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,"tree_diam_groups");
+                                    frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, "tree_diam_groups");
 									break;
 								case "TREATMENT PRESCRIPTIONS":
 									frmMain.g_oTables.m_oFvs.CreateRxTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.FVS.DefaultRxTableName);
@@ -1588,8 +1588,8 @@ namespace FIA_Biosum_Manager
 									frmMain.g_oTables.m_oReference.CreateOwnerGroupsTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "TREE DIAMETER GROUPS":
-									strTempTableName = Tables.Processor.DefaultTreeDiamGroupsTableName;
-									frmMain.g_oTables.m_oProcessor.CreateTreeDiamGroupsTable(oAdoCurrent,oConn,strTempTableName);
+									strTempTableName = Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName;
+									frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "TREATMENT PRESCRIPTIONS":
 									strTempTableName = Tables.FVS.DefaultRxTableName;

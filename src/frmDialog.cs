@@ -412,7 +412,8 @@ namespace FIA_Biosum_Manager
 			this.uc_tree_diam_groups_list1 = new uc_tree_diam_groups_list();
 			this.Controls.Add(this.uc_tree_diam_groups_list1);
 			this.uc_tree_diam_groups_list1.Visible = true;
-            
+            this.uc_tree_diam_groups_list1.ReferenceProcessorScenarioForm =
+                this.m_frmProcessorScenarioCallingForm;
 		}
 		public void Initialize_Plot_Tree_Diam_Edit_User_Control()
 		{
