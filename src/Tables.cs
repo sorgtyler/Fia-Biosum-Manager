@@ -3865,7 +3865,6 @@ namespace FIA_Biosum_Manager
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
 					"scenario_id CHAR(20)," + 
-					"UseRxDefaultHarvestMethodYN CHAR(1) DEFAULT 'Y'," + 
 					"HarvestMethodLowSlope CHAR(50)," +
 					"HarvestMethodSteepSlope CHAR(50)," + 
                     "MaxCableYardingDistance SINGLE," + 
@@ -3876,8 +3875,11 @@ namespace FIA_Biosum_Manager
 					"SteepSlope INTEGER," + 
 					"min_dbh_steep_slope SINGLE," + 
                     "ProcessLowSlopeYN CHAR(1) DEFAULT 'Y'," + 
-                    "ProcessSteepSlopeYN CHAR(1) DEFAULT 'Y')";
-
+                    "ProcessSteepSlopeYN CHAR(1) DEFAULT 'Y', " +
+                    "WoodlandMerchAsPercentOfTotalVol INTEGER, " +
+                    "SaplingMerchAsPercentOfTotalVol INTEGER, " +
+                    "CullPctThreshold INTEGER, " +
+                    "HarvestMethodSelection CHAR(15))";
 			}
 
             public void CreateScenarioMoveInCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
