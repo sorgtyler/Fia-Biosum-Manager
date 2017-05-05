@@ -28,7 +28,6 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnClear;
 		private System.Windows.Forms.Button btnHelp;
 		private FIA_Biosum_Manager.ado_data_access m_ado;
-		private string m_strConn;
 		private System.Windows.Forms.Button btnDelete;
 
         // scenario-specific variables
@@ -98,10 +97,10 @@ namespace FIA_Biosum_Manager
             ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
             m_ado = new ado_data_access();
             string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
             m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
             ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
-                m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
+                m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem, ScenarioId);
 
 				if (m_ado.m_intError==0)
 				{
@@ -688,6 +687,75 @@ namespace FIA_Biosum_Manager
 			}
 
 		}
+
+        public void copyvalues(string strSourceScenario, string strTargetScenario)
+        {
+            m_ado = new ado_data_access();
+            string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
+            m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
+            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
+                m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem, strSourceScenario);
+
+            //
+            //OPEN CONNECTION TO DB FILE CONTAINING PROCESSOR SCENARIO TABLES
+            //
+            //scenario mdb connection
+            ado_data_access oAdo = new ado_data_access();
+            string strScenarioMDB =
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
+            if (oAdo.m_intError != 0)
+            {
+                m_intError = oAdo.m_intError;
+                m_strError = oAdo.m_strError;
+                oAdo = null;
+                return;
+            }
+
+            if (this.m_intError == 0)
+            {
+                //delete the current records
+                this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName +
+                    " WHERE TRIM(UCASE(scenario_id)) = '" + strTargetScenario.Trim().ToUpper() + "'";
+                this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
+
+                if (this.m_ado.m_intError == 0)
+                {
+                    string strMin;
+				    string strMax;
+				    string strDef;
+				    string strId;
+                    for (int x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Count - 1; x++)
+
+                    {
+                        FIA_Biosum_Manager.ProcessorScenarioItem.TreeDiamGroupsItem oItem = 
+                            ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x);
+                        strId = oItem.DiamClass;
+                        strMin = this.lstTreeDiam.Items[x].SubItems[1].Text;
+                        strMax = this.lstTreeDiam.Items[x].SubItems[2].Text;
+                        strDef = this.lstTreeDiam.Items[x].SubItems[3].Text;
+
+                        this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " " +
+                            "(diam_group,diam_class,min_diam,max_diam,scenario_id) VALUES " +
+                            "(" + strId + ",'" + strDef.Trim() + "'," +
+                            strMin + "," + strMax + ",'" + ScenarioId + "');";
+                        this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
+                        if (this.m_ado.m_intError != 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+                this.m_ado.m_OleDbConnection.Close();
+                if (this.m_intError == 0 && this.m_ado.m_intError == 0)
+                {
+                    this.btnSave.Enabled = false;
+                }
+            }
+
+        }
 
 		private void btnDelete_Click(object sender, System.EventArgs e)
 		{

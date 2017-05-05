@@ -15,11 +15,11 @@ namespace FIA_Biosum_Manager
     {
 		private System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario=null;
 		private string _strScenarioType="processor";
         private Button BtnTreeDiameterGroups;
         private FIA_Biosum_Manager.frmDialog m_frmTreeDiam;       //processor tree diameter form
+
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -31,8 +31,26 @@ namespace FIA_Biosum_Manager
 			InitializeComponent();
 
 			// TODO: Add any initialization after the InitializeComponent call
-
 		}
+
+        public uc_scenario_tree_groupings(frmProcessorScenario ofrmProcessorScenario)
+        {
+            // This call is required by the Windows.Forms Form Designer.
+            InitializeComponent();
+
+            // TODO: Add any initialization after the InitializeComponent call
+            // Initialize Tree Diameter form
+            this.m_frmTreeDiam = new frmDialog(ofrmProcessorScenario, frmMain.g_oFrmMain);
+            this.m_frmTreeDiam.MaximizeBox = false;
+            this.m_frmTreeDiam.BackColor = System.Drawing.SystemColors.Control;
+            this.m_frmTreeDiam.Text = "Processor: Tree Diameter Groups";
+            // @ToDo: Not sure if we need this
+            //this.m_frmTreeDiam.MdiParent = ofrmProcessorScenario;
+            this.m_frmTreeDiam.Initialize_Plot_Tree_Diam_User_Control();
+
+            this.m_frmTreeDiam.Height = 0;
+            this.m_frmTreeDiam.Width = 0;
+        }
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -141,43 +159,6 @@ namespace FIA_Biosum_Manager
 			p_ado=null;
 		
 		}
-		public void LoadValues()
-		{
-			FIA_Biosum_Manager.ado_data_access oAdo = new ado_data_access();
-			string strScenarioDBDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + ScenarioType + "\\db";
-			string strScenarioFile = "scenario_" + ScenarioType + "_rule_definitions.mdb"; 
-			StringBuilder strScenarioFullPath = new StringBuilder(strScenarioDBDir);
-			strScenarioFullPath.Append("\\");
-			strScenarioFullPath.Append(strScenarioFile);
-			string strScenarioConn = oAdo.getMDBConnString(strScenarioFullPath.ToString(),"admin","");
-			oAdo.OpenConnection(strScenarioConn);
-			if (ScenarioType.Trim().ToUpper()=="CORE")
-			{
-				oAdo.m_strSQL = "SELECT notes FROM scenario WHERE TRIM(scenario_id)='" + this.ReferenceCoreScenarioForm.uc_scenario1.strScenarioId.Trim() + "'";
-			}
-			else
-			{
-				oAdo.m_strSQL = "SELECT notes FROM scenario WHERE TRIM(scenario_id)='" + this.ReferenceProcessorScenarioForm.uc_scenario1.strScenarioId.Trim() + "'";
-			}
-			oAdo.m_OleDbConnection.Close();
-			while (oAdo.m_OleDbConnection.State != System.Data.ConnectionState.Closed)
-			{
-				oAdo.m_OleDbConnection.Close();
-				System.Threading.Thread.Sleep(1000);
-			}
-			oAdo=null;
-		}
-
-		private void txtNotes_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
-		{
-			if (ScenarioType.Trim().ToUpper()=="CORE") ReferenceCoreScenarioForm.m_bSave=true;
-			else ReferenceProcessorScenarioForm.m_bSave=true;
-		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
-		{
-			get {return _frmScenario;}
-			set {_frmScenario=value;}
-		}
 		public FIA_Biosum_Manager.frmProcessorScenario ReferenceProcessorScenarioForm
 		{
 			get {return _frmProcessorScenario;}
@@ -188,20 +169,17 @@ namespace FIA_Biosum_Manager
 			get {return _strScenarioType;}
 			set {_strScenarioType=value;}
 		}
+        public FIA_Biosum_Manager.uc_tree_diam_groups_list uc_tree_diam_groups_list1
+        {
+            get 
+            { 
+                return m_frmTreeDiam.uc_tree_diam_groups_list1;  
+            }
+        }
 
         private void BtnTreeDiameterGroups_Click(object sender, EventArgs e)
         {
-                this.m_frmTreeDiam = new frmDialog((frmProcessorScenario)this.ParentForm,(frmMain)this.ParentForm.ParentForm);
-                this.m_frmTreeDiam.MaximizeBox = false;
-                this.m_frmTreeDiam.BackColor = System.Drawing.SystemColors.Control;
-                this.m_frmTreeDiam.Text = "Processor: Tree Diameter Groups";
-            // @ToDo: Not sure if we need this
-            //this.m_frmTreeDiam.MdiParent = this;
-                this.m_frmTreeDiam.Initialize_Plot_Tree_Diam_User_Control();
 
-
-                this.m_frmTreeDiam.Height = 0;
-                this.m_frmTreeDiam.Width = 0;
                 if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
                 {
                     for (int x = 1; ; x++)
@@ -231,8 +209,7 @@ namespace FIA_Biosum_Manager
 
                 }
 
-
-                this.m_frmTreeDiam.uc_tree_diam_groups_list1.loadvalues();
+                //this.m_frmTreeDiam.uc_tree_diam_groups_list1.loadvalues();
                 frmMain.g_sbpInfo.Text = "Ready";
                 this.m_frmTreeDiam.Show();
 

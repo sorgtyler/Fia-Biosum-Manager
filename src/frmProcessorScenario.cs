@@ -131,10 +131,8 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_run1.ReferenceProcessorScenarioForm = this;
             this.uc_processor_scenario_run1.ScenarioId = uc_scenario1.txtScenarioId.Text.Trim();
             //
-            //scenario notes
+            //tree diameter groupings
             //
-            this.uc_scenario_tree_groupings1 = new uc_scenario_tree_groupings();
-            this.tbTreeGroupings.Controls.Add(uc_scenario_tree_groupings1);
             uc_scenario_tree_groupings1.Dock = System.Windows.Forms.DockStyle.Fill;
             uc_scenario_tree_groupings1.ReferenceProcessorScenarioForm = this;
             uc_scenario_tree_groupings1.ScenarioType = "processor";
@@ -506,6 +504,9 @@ namespace FIA_Biosum_Manager
             this.tbTreeGroupings.TabIndex = 4;
             this.tbTreeGroupings.Text = "Tree Groupings";
             this.tbTreeGroupings.UseVisualStyleBackColor = true;
+            this.uc_scenario_tree_groupings1 = new uc_scenario_tree_groupings(this);
+            this.tbTreeGroupings.Controls.Add(uc_scenario_tree_groupings1);
+
             // 
             // frmProcessorScenario
             // 
@@ -678,7 +679,8 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.tabControlRules.Enabled)
 			{
-				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS")
+				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS" ||
+                    tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "TREE GROUPINGS")
 				{
                     if (m_bRulesFirstTime == true)
                     {
@@ -733,6 +735,9 @@ namespace FIA_Biosum_Manager
 		public void LoadRuleDefinitions()
 		{
             this.m_oProcessorScenarioItem.ScenarioId = uc_scenario1.txtScenarioId.Text.Trim();
+            this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.ReferenceProcessorScenarioForm = this;
+            frmMain.g_sbpInfo.Text = "Loading Tree Groupings Definitions...Stand By";
+            this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.loadvalues();
 			this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
             frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
             this.uc_processor_scenario_harvest_method1.loadvalues();
@@ -1037,7 +1042,6 @@ namespace FIA_Biosum_Manager
             frmTemp.Initialize_Processor_Scenario_Copy();
             frmTemp.Text = "FIA Biosum";
             if (m_oProcessorScenarioItem.ScenarioId.Trim().Length == 0) LoadRuleDefinitions();
-
             frmTemp.uc_processor_scenario_copy1.ReferenceCurrentScenarioItem = m_oProcessorScenarioItem;
             frmTemp.uc_processor_scenario_copy1.loadvalues();
             DialogResult result = frmTemp.ShowDialog(this);
@@ -1134,8 +1138,6 @@ namespace FIA_Biosum_Manager
             p_oDest.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Copy(
                 p_oSource.m_oTreeSpeciesAndDbhDollarValuesItem_Collection,
             ref p_oDest.m_oTreeSpeciesAndDbhDollarValuesItem_Collection, true);
-            p_oDest.m_oTreeDiamGroupsItem_Collection.Copy(p_oSource.m_oTreeDiamGroupsItem_Collection,
-                ref p_oDest.m_oTreeDiamGroupsItem_Collection, true);
         }
        
         public class HarvestMethod
@@ -2348,7 +2350,8 @@ namespace FIA_Biosum_Manager
 
         public void LoadTreeDiameterGroupValues(ado_data_access p_oAdo,
                                                 System.Data.OleDb.OleDbConnection p_oConn,
-                                                ProcessorScenarioItem p_oProcessorScenarioItem)
+                                                ProcessorScenarioItem p_oProcessorScenarioItem, 
+                                                string strCurrentScenario)
         {
             int x;
             //REMOVE ANY EXISTING ITEMS
@@ -2360,7 +2363,7 @@ namespace FIA_Biosum_Manager
             //QUERY ALL DIAMETER GROUPS
             //
             p_oAdo.SqlQueryReader(p_oConn, "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + 
-                " WHERE TRIM(UCASE(scenario_id))='" + p_oProcessorScenarioItem.ScenarioId.Trim().ToUpper() + "'");
+                " WHERE TRIM(UCASE(scenario_id))='" + strCurrentScenario.Trim().ToUpper() + "'");
 
 
             //
