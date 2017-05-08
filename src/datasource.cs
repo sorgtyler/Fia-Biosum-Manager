@@ -48,7 +48,6 @@ namespace FIA_Biosum_Manager
 															  "Condition",
 															  "Tree",
 															  "Owner Groups",
-															  "Tree Diameter Groups",
 															  "Treatment Prescriptions",
 															  "Treatment Prescriptions Assigned FVS Commands",
 															  "Treatment Prescriptions Harvest Cost Columns",
@@ -87,7 +86,6 @@ namespace FIA_Biosum_Manager
 															  "Condition",
 															  "Tree",
 															  "Owner Groups",
-															  "Tree Diameter Groups",
 															  "Treatment Prescriptions",
 															  "Treatment Prescriptions Assigned FVS Commands",
 															  "Treatment Prescriptions Harvest Cost Columns",
@@ -121,7 +119,6 @@ namespace FIA_Biosum_Manager
 															  "Condition",
 															  "Tree",
 															  "Owner Groups",
-															  "Tree Diameter Groups",
 															  "Treatment Prescriptions",
 															  "Treatment Prescriptions Assigned FVS Commands",
 															  "Treatment Prescriptions Harvest Cost Columns",
@@ -934,9 +931,6 @@ namespace FIA_Biosum_Manager
 				case "HARVEST COSTS":
 					frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTableIndexes(p_oAdo,p_oConn,p_strTableName);
 					break;
-				case "TREE DIAMETER GROUPS":
-                    frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
-					break;
 				case "FVS TREE SPECIES":
 					frmMain.g_oTables.m_oReference.CreateFVSTreeSpeciesTableIndexes(p_oAdo,p_oConn,p_strTableName);
 					break;
@@ -1034,10 +1028,6 @@ namespace FIA_Biosum_Manager
 				case "HARVEST COSTS":
 					oItem.VariableName="HarvestCostsTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Processor.DefaultHarvestCostsTableName;
-					break;
-				case "TREE DIAMETER GROUPS":
-					oItem.VariableName="TreeDiameterGroupsTable";
-                    if (p_strTableName.Trim().Length == 0) p_strTableName = Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName;
 					break;
 				case "FVS TREE SPECIES":
 					oItem.VariableName="FvsTreeSpeciesTable";

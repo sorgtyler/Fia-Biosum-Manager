@@ -996,8 +996,6 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(p_ado,p_ado.m_OleDbConnection,"harvest_costs");
                 //harvest costs extra costs table
                 frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(p_ado, p_ado.m_OleDbConnection, Tables.Processor.DefaultAdditionalHarvestCostsTableName);
-				//tree diameter groups table
-				frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_diam_groups");
 				//tree species diam dollar values table
 				//frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesDollarValuesTable(p_ado,p_ado.m_OleDbConnection,"tree_species_diam_dollar_values");
 				//tree species groups list table
@@ -1706,7 +1704,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioHarvestCostColumnsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestCostColumnsTableName);
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioAdditionalHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioMoveInCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName);
-
+            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName);
 			
 			oAdo.CloseConnection(oAdo.m_OleDbConnection);
 

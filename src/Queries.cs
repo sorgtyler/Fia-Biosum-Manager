@@ -174,7 +174,6 @@ namespace FIA_Biosum_Manager
 			public string m_strFvsTreeSpcRefTable;
 			public string m_strTreeSpcGrpTable;
 			public string m_strTreeSpcGrpListTable;
-			public string m_strTreeDbhGrpTable;
             public string m_strFVSWesternTreeSpeciesTable;
             public string m_strFVSEasternTreeSpeciesTable;
             public string m_strFVSPrePostSeqNumTable;
@@ -217,7 +216,6 @@ namespace FIA_Biosum_Manager
 				m_strFvsTreeSpcRefTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS TREE SPECIES");
 				m_strTreeSpcGrpTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("TREE SPECIES GROUPS");
 				m_strTreeSpcGrpListTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("TREE SPECIES GROUPS LIST");
-				m_strTreeDbhGrpTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("TREE DIAMETER GROUPS");
                 m_strFVSPrePostSeqNumTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS PRE-POST SEQNUM DEFINITIONS");
                 m_strFVSPrePostSeqNumRxPackageAssgnTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS PRE-POST SEQNUM TREATMENT PACKAGE ASSIGNMENTS");
 				
@@ -276,15 +274,6 @@ namespace FIA_Biosum_Manager
 				if (m_strTreeSpcGrpTable.Trim().Length == 0)
 				{
 					MessageBox.Show("!!Could not find tree species group table!!",
-						"FIA Biosum",
-						System.Windows.Forms.MessageBoxButtons.OK,
-						System.Windows.Forms.MessageBoxIcon.Exclamation);
-					ReferenceQueries.m_intError=-1;
-					return;
-				}
-				if (m_strTreeDbhGrpTable.Trim().Length == 0)
-				{
-					MessageBox.Show("!!Could not find tree diameter group table!!",
 						"FIA Biosum",
 						System.Windows.Forms.MessageBoxButtons.OK,
 						System.Windows.Forms.MessageBoxIcon.Exclamation);

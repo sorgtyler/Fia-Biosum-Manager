@@ -576,9 +576,6 @@ namespace FIA_Biosum_Manager
                                     case "HARVEST COSTS":
 										bCore = true;
 										break;
-									case "TREE DIAMETER GROUPS":
-										bCore = true;
-										break;
 									case "TREATMENT PRESCRIPTIONS":
 										bCore = true;
 										break;

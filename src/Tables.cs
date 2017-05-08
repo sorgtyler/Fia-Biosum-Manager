@@ -3966,17 +3966,17 @@ namespace FIA_Biosum_Manager
 
             }
 
-            public void CreateTreeDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateScenarioTreeDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
-                p_oAdo.SqlNonQuery(p_oConn, CreateTreeDiamGroupsTableSQL(p_strTableName));
-                CreateTreeDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
+                p_oAdo.SqlNonQuery(p_oConn, CreateScenarioTreeDiamGroupsTableSQL(p_strTableName));
+                CreateScenarioTreeDiamGroupsTableIndexes(p_oAdo, p_oConn, p_strTableName);
 
             }
-            public void CreateTreeDiamGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateScenarioTreeDiamGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "diam_group");
             }
-            public string CreateTreeDiamGroupsTableSQL(string p_strTableName)
+            public string CreateScenarioTreeDiamGroupsTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "scenario_id CHAR(20)," +
@@ -4045,7 +4045,6 @@ namespace FIA_Biosum_Manager
                      "fvs_common_name CHAR(50)," +
                      "fvs_variant CHAR(2)," +
                      "fvs_input_spcd INTEGER," +
-                     "user_spc_group INTEGER," +
                      "od_wgt SINGLE DEFAULT 0," +
                      "dry_to_green SINGLE DEFAULT 0," +
                      "dry_to_green_substitution_desc CHAR(255)," +
