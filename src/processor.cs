@@ -245,7 +245,9 @@ namespace FIA_Biosum_Manager
                         {
                             newTree.FvsCreatedTree = true;
                             // only use fvs_species from cut list if it is an FVS created tree
-                            newTree.SpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_species"]).Trim();
+                            // convert to int to get rid of leading 0
+                            int intSpcd = Convert.ToInt16(m_oAdo.m_OleDbDataReader["fvs_species"]);
+                            newTree.SpCd = Convert.ToString(intSpcd);
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
                         newTree.TravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_traveltime"]);
