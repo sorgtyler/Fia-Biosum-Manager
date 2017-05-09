@@ -199,9 +199,25 @@ namespace FIA_Biosum_Manager
                         newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
                         newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
                         newTree.VolTsGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volTsGrs"]);
-                        newTree.VolCfGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfGrs"]);
+                        // Special processing for saplings where volCfGrs may be null
+                        if (m_oAdo.m_OleDbDataReader["volCfGrs"] == System.DBNull.Value && newTree.IsSapling)
+                        {
+                            newTree.VolCfGrs = 0;
+                        }
+                        else
+                        {
+                            newTree.VolCfGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfGrs"]);
+                        }
                         newTree.DryBiot = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiot"]);
-                        newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
+                        // Special processing for saplings where drybiom may be null
+                        if (m_oAdo.m_OleDbDataReader["drybiom"] == System.DBNull.Value && newTree.IsSapling)
+                        {
+                            newTree.DryBiom = 0;
+                        }
+                        else
+                        {
+                            newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
+                        }
                         newTree.Slope = Convert.ToInt32(m_oAdo.m_OleDbDataReader["slope"]);
                         // find default harvest methods in prescription in case we need them
                         harvestMethod objDefaultHarvestMethodLowSlope = null;
