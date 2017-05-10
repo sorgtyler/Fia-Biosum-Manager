@@ -508,6 +508,12 @@ namespace FIA_Biosum_Manager
                     Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName,
                     strPath + Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsDbFile,
                     Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName);
+
+                p_oDao.CreateTableLink(
+                    p_DaoDatabase,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName,
+                    strPath + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName);
             }
             else
             {

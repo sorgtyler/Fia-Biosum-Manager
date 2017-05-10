@@ -2353,7 +2353,8 @@ namespace FIA_Biosum_Manager
             string strSqlList = "";
             double dblDBH;
 
-            m_oAdo.m_strSQL = "SELECT diam_group, min_diam FROM " + m_oQueries.m_oFvs.m_strTreeDbhGrpTable;
+            m_oAdo.m_strSQL = "SELECT diam_group, min_diam FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName +
+                " WHERE TRIM(scenario_id)='" + this.ScenarioId.Trim() + "' ";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
             m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);

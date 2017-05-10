@@ -113,6 +113,11 @@ namespace FIA_Biosum_Manager
 			oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                                  "scenario_tree_species_diam_dollar_values",
                                  strScenarioMDB,"scenario_tree_species_diam_dollar_values",true);
+            //link to tree species groups table
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                                 Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName,
+                                 strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName, true);    
+
 			oDao.m_DaoWorkspace.Close();
 			oDao=null;
 			//
@@ -318,9 +323,11 @@ namespace FIA_Biosum_Manager
 			//
 			//CREATE AND POPULATE WORK TABLE
 			//
+            //@ToDo: May update this to load from memory
 			m_oAdo.m_strSQL = "SELECT a.species_group,a.species_label,b.diam_group,b.diam_class INTO spcgrp_dbhgrp " + 
 				"FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," + 
-				this.m_oQueries.m_oFvs.m_strTreeDbhGrpTable + " b " + 
+				Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
+                "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " + 
 				"ORDER BY a.species_label, b.diam_group";
 			m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
 			//
@@ -328,8 +335,9 @@ namespace FIA_Biosum_Manager
 			//
 			m_oAdo.m_strSQL = "INSERT INTO scenario_tree_species_diam_dollar_values (scenario_id,species_group,diam_group) " + 
 				              "SELECT '" + ScenarioId.Trim() + "',a.species_group, b.diam_group " + 
-							  "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," + 
-				                        this.m_oQueries.m_oFvs.m_strTreeDbhGrpTable + " b " + 
+							  "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," +
+                                        Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
+                              "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " + 
 				              "ORDER BY a.species_label, b.diam_group";
 			m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
 

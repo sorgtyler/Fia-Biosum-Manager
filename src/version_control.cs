@@ -1443,12 +1443,8 @@ namespace FIA_Biosum_Manager
 								case "TREE":
 									frmMain.g_oTables.m_oFIAPlot.CreateTreeTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,frmMain.g_oTables.m_oFIAPlot.DefaultTreeTableName);
 									break;
-								
 								case "OWNER GROUPS":  
 									frmMain.g_oTables.m_oReference.CreateOwnerGroupsTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.Reference.DefaultOwnerGroupsTableName);
-									break;
-								case "TREE DIAMETER GROUPS":
-                                    frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, "tree_diam_groups");
 									break;
 								case "TREATMENT PRESCRIPTIONS":
 									frmMain.g_oTables.m_oFvs.CreateRxTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.FVS.DefaultRxTableName);
@@ -1582,14 +1578,9 @@ namespace FIA_Biosum_Manager
 									strTempTableName = frmMain.g_oTables.m_oFIAPlot.DefaultTreeTableName;
 									frmMain.g_oTables.m_oFIAPlot.CreateTreeTable(oAdoCurrent,oConn,strTempTableName);
 									break;
-								
 								case "OWNER GROUPS":  
 									strTempTableName = Tables.Reference.DefaultOwnerGroupsTableName;
 									frmMain.g_oTables.m_oReference.CreateOwnerGroupsTable(oAdoCurrent,oConn,strTempTableName);
-									break;
-								case "TREE DIAMETER GROUPS":
-									strTempTableName = Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName;
-									frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateTreeDiamGroupsTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "TREATMENT PRESCRIPTIONS":
 									strTempTableName = Tables.FVS.DefaultRxTableName;
