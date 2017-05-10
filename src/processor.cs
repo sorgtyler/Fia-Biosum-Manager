@@ -199,9 +199,25 @@ namespace FIA_Biosum_Manager
                         newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
                         newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
                         newTree.VolTsGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volTsGrs"]);
-                        newTree.VolCfGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfGrs"]);
+                        // Special processing for saplings where volCfGrs may be null
+                        if (m_oAdo.m_OleDbDataReader["volCfGrs"] == System.DBNull.Value && newTree.IsSapling)
+                        {
+                            newTree.VolCfGrs = 0;
+                        }
+                        else
+                        {
+                            newTree.VolCfGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfGrs"]);
+                        }
                         newTree.DryBiot = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiot"]);
-                        newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
+                        // Special processing for saplings where drybiom may be null
+                        if (m_oAdo.m_OleDbDataReader["drybiom"] == System.DBNull.Value && newTree.IsSapling)
+                        {
+                            newTree.DryBiom = 0;
+                        }
+                        else
+                        {
+                            newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
+                        }
                         newTree.Slope = Convert.ToInt32(m_oAdo.m_OleDbDataReader["slope"]);
                         // find default harvest methods in prescription in case we need them
                         harvestMethod objDefaultHarvestMethodLowSlope = null;
@@ -245,25 +261,55 @@ namespace FIA_Biosum_Manager
                         {
                             newTree.FvsCreatedTree = true;
                             // only use fvs_species from cut list if it is an FVS created tree
-                            newTree.SpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_species"]).Trim();
+                            // convert to int to get rid of leading 0
+                            int intSpcd = Convert.ToInt16(m_oAdo.m_OleDbDataReader["fvs_species"]);
+                            newTree.SpCd = Convert.ToString(intSpcd);
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
                         newTree.TravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_traveltime"]);
                         if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
                             newTree.YardingDistance = 0;
-                        else 
+                        else
                             newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
 
                         m_trees.Add(newTree);
                     }
                 }
+                //08-MAY-2017: Commenting this out for now until necessity of travel times sorted out
+                //else
+                //{
+                //    // No trees could be loaded; Check to see if travel times are there
+                //    strSQL = "SELECT MIN(TRAVEL_TIME) AS min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID";
+                //    m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                //    if (!m_oAdo.m_OleDbDataReader.HasRows)
+                //    {
+                //        System.Windows.MessageBox.Show("Required travel times have not been loaded for this variant/package.\r\nPlease load travel times and try again.",
+                //        "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                //        return -1;
+                //    }
+                //}
             }
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.loadTrees END \r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Loaded " + m_trees.Count + " trees \r\n");
+                if (m_trees != null)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//Loaded " + m_trees.Count + " trees \r\n");
+                }
+                else
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//No trees were loaded from the cut list. \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//This query didn't return any rows: \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, z.dbh, z.tpa, z.volCfNet, z.drybiot, \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.gis_yard_dist, t.min_traveltime FROM fvs_tree_IN_BM_P001_TREE_CUTLIST z, (SELECT MIN(TRAVEL_TIME) AS  \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID) t, (SELECT \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON  \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id = d.biosum_plot_id) c WHERE z.rxpackage='001' AND z.biosum_cond_id = c.biosum_cond_id AND \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.biosum_plot_id = t.biosum_plot_id AND mid(z.fvs_tree_id,1,2)='BM' \r\n");
+                }
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
             return 0;
@@ -273,7 +319,7 @@ namespace FIA_Biosum_Manager
         {
             if (m_trees == null)
             {
-                System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination. \r\n Auxillary tree data cannot be appended",
+                System.Windows.MessageBox.Show("No cut trees have been loaded for this scenario, variant, package combination.\r\nAuxillary tree data cannot be appended",
                     "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 return -1;
             }
