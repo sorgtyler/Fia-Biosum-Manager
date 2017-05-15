@@ -173,13 +173,11 @@ namespace FIA_Biosum_Manager
                 //                  "c.slope, p.elev, p.gis_yard_dist";
                 string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, z.dbh, z.tpa, " +
                                 "z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, " +
-                                "z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, c.gis_yard_dist, t.min_traveltime " +
+                                "z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, c.gis_yard_dist " +
                                 "FROM " + strTableName + " z, " +
-                                "(SELECT MIN(TRAVEL_TIME) AS min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID) t, " +
                                 "(SELECT p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON p.biosum_plot_id = d.biosum_plot_id) c " +
                                 "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
                                 "z.biosum_cond_id = c.biosum_cond_id AND " +
-                                "c.biosum_plot_id = t.biosum_plot_id AND " +
                                 "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "' ";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
@@ -266,7 +264,6 @@ namespace FIA_Biosum_Manager
                             newTree.SpCd = Convert.ToString(intSpcd);
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
-                        newTree.TravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_traveltime"]);
                         if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
                             newTree.YardingDistance = 0;
                         else
@@ -337,6 +334,12 @@ namespace FIA_Biosum_Manager
             System.Collections.Generic.IDictionary<string, speciesDiamValue> dictSpeciesDiamValues = loadSpeciesDiamValues(m_strScenarioId);
             //Load diameter groups into reference list
             System.Collections.Generic.List<treeDiamGroup> listDiamGroups = loadTreeDiamGroups();
+            System.Collections.Generic.IDictionary<string, double> dictTravelTimes = null;
+            if (m_scenarioMoveInCost.MoveInTimeMultiplier > 0)
+            {
+                //Load travel times
+                dictTravelTimes = loadTravelTimes();
+            }
 
             if (dictTreeSpecies == null)
             {
@@ -369,6 +372,7 @@ namespace FIA_Biosum_Manager
                 }
 
                 // Second pass at processing tree properties based on information from the cut list
+                System.Collections.Generic.IList<tree> lstRemovetrees = new System.Collections.Generic.List<tree>();
                 foreach (tree nextTree in m_trees)
                 {
                     if (!nextTree.FvsCreatedTree)
@@ -434,6 +438,26 @@ namespace FIA_Biosum_Manager
                         nextTree.IsCull = false;
                     }
                     
+                    //Populate travel_time from database
+                    if (dictTravelTimes != null)
+                    {
+                        double dblTravelTime = 0;
+                        if (dictTravelTimes.TryGetValue(nextTree.PlotId, out dblTravelTime))
+                        {
+                            nextTree.TravelTime = dblTravelTime;
+                        }
+                    }
+
+                    // Apply move-in hours modifiers
+                    if (m_scenarioMoveInCost.MoveInTimeMultiplier >= 0)
+                        nextTree.TravelTime = nextTree.TravelTime * m_scenarioMoveInCost.MoveInTimeMultiplier;
+                    if (m_scenarioMoveInCost.MoveInHoursAddend > 0)
+                        nextTree.TravelTime = nextTree.TravelTime + m_scenarioMoveInCost.MoveInHoursAddend;
+
+                    // Remove trees with no travel time if multiplier > 0
+                    if (m_scenarioMoveInCost.MoveInTimeMultiplier > 0 && nextTree.TravelTime == 0)
+                        lstRemovetrees.Add(nextTree);
+                    
                     //Assign OpCostTreeType
                     nextTree.TreeType = chooseOpCostTreeType(nextTree);
                     calculateVolumeAndWeight(nextTree);
@@ -445,7 +469,11 @@ namespace FIA_Biosum_Manager
                     //    frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: OpCost tree type, " +
                     //        strLogEntry + "\r\n");
                 }
+                foreach (tree objTree in lstRemovetrees)
+                {
+                    m_trees.Remove(objTree);
                 }
+              }
             }
             
             // Create the reconcilation table, if desired
@@ -568,17 +596,10 @@ namespace FIA_Biosum_Manager
                             double dblYardingDistance = nextTree.YardingDistance;
                             if (nextTree.YardingDistance < m_scenarioMoveInCost.YardDistThreshold)
                                 dblYardingDistance = m_scenarioMoveInCost.YardDistThreshold;
-
-                            // Apply move-in hours modifiers
-                            double dblMoveInHours = nextTree.TravelTime;
-                            if (m_scenarioMoveInCost.MoveInTimeMultiplier > 0)
-                                dblMoveInHours = dblMoveInHours * m_scenarioMoveInCost.MoveInTimeMultiplier;
-                            if (m_scenarioMoveInCost.MoveInHoursAddend > 0)
-                                dblMoveInHours = dblMoveInHours + m_scenarioMoveInCost.MoveInHoursAddend;
  
                             nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
                                                         nextTree.Rx, nextTree.RxYear, dblYardingDistance, nextTree.Elevation,
-                                                        nextTree.HarvestMethod, dblMoveInHours, m_scenarioMoveInCost.AssumedHarvestAreaAc);
+                                                        nextTree.HarvestMethod, nextTree.TravelTime, m_scenarioMoveInCost.AssumedHarvestAreaAc);
                             dictOpcostInput.Add(strStand, nextInput);
                         }
 
@@ -2620,6 +2641,30 @@ namespace FIA_Biosum_Manager
                 }
             }
             return dictOpcostIdeal;
+        }
+
+        private System.Collections.Generic.IDictionary<String, double> loadTravelTimes()
+        {
+            System.Collections.Generic.IDictionary<String, double> dictTravelTimes =
+                new System.Collections.Generic.Dictionary<String, double>();
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT MIN(TRAVEL_TIME) AS min_traveltime, BIOSUM_PLOT_ID " +
+                                "FROM " + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName + 
+                                " WHERE TRAVEL_TIME > 0 " +
+                                "GROUP BY BIOSUM_PLOT_ID";
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strPlotId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_plot_id"]).Trim();
+                        double dblTravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_traveltime"]);
+                        dictTravelTimes.Add(strPlotId, dblTravelTime);
+                    }
+                }
+            }
+            return dictTravelTimes;
         }
 
     }
