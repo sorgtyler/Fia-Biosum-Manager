@@ -709,6 +709,10 @@ namespace FIA_Biosum_Manager
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
              "scenario_tree_species_diam_dollar_values",
              strScenarioMDB, "scenario_tree_species_diam_dollar_values", true);
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName,
+                strScenarioMDB,
+            Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName, true);
             //link scenario results tables
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile, 
                 Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName,

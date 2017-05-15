@@ -271,6 +271,7 @@ namespace FIA_Biosum_Manager
 
          //bool blnRowDiff=false;
 
+         //15-MAY-2017: These tables were renamed and moved but this code is obsolete so it was not updated
          string strSqlTdg="SELECT * FROM TREE_DIAM_GROUPS";
          string strSqlTsg="SELECT * FROM TREE_SPECIES_GROUPS";
          string strSqlDelTdg="DELETE FROM TREE_DIAM_GROUPS";
