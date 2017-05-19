@@ -4610,7 +4610,7 @@ namespace FIA_Biosum_Manager
             //create env object so we can get the appDir
             env pEnv = new env();
             //open the project db file; db name is hard-coded
-            oAdo.OpenConnection(oAdo.getMDBConnString(pEnv.strAppDir + "\\db\\ref_master.mdb", "", ""));
+            oAdo.OpenConnection(oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\ref_master.mdb", "", ""));
             string strSQL = "select * from site_index_equations where FVS_VARIANT = '" + strVariant + "'";
             oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
             if (oAdo.m_OleDbDataReader.HasRows)
