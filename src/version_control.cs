@@ -1084,13 +1084,6 @@ namespace FIA_Biosum_Manager
 								"ref_master.mdb",
 								"owner_groups");
 							break;
-						case "TREE DIAMETER GROUPS":
-							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
-								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
-								ReferenceProjectDirectory.Trim() + "\\db",
-								frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile),
-                                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName);
-							break;
 						case "TREATMENT PRESCRIPTIONS":
                             strDbFile = frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.FVS.DefaultRxTableDbFile);
 							oAdo.m_strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
@@ -2685,9 +2678,6 @@ namespace FIA_Biosum_Manager
 								//case "HARVEST COSTS":
 								//	bCore = true;
 								//	break;
-								case "TREE DIAMETER GROUPS":
-									bCore = true;
-									break;
 								case "TREATMENT PRESCRIPTIONS":
 									bCore = true;
 									break;
@@ -2836,9 +2826,6 @@ namespace FIA_Biosum_Manager
                                 //case "HARVEST COSTS":
                                 //	bCore = true;
                                 //	break;
-                                case "TREE DIAMETER GROUPS":
-                                    bCore = true;
-                                    break;
                                 case "TREATMENT PRESCRIPTIONS":
                                     bCore = true;
                                     break;

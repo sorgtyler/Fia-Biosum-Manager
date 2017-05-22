@@ -1281,13 +1281,6 @@ namespace FIA_Biosum_Manager
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-						"('Tree Diameter Groups'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
-						"'master.mdb'," + 
-						"'tree_diam_groups');";
-					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
-
-					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 						"('Treatment Prescriptions'," + 
 						"'" + this.txtRootDirectory.Text.ToString().Trim()  + "\\db'," + 
 						"'fvsmaster.mdb'," + 

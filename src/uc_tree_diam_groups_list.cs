@@ -144,6 +144,7 @@ namespace FIA_Biosum_Manager
 							}
 						}
 						((frmDialog)this.ParentForm).Enabled=true;
+                        if (ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
 					}
 					catch (Exception caught)
 					{

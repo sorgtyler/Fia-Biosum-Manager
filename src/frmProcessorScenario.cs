@@ -39,6 +39,7 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.TabPage tbAddHarvestCosts;
 		private System.Windows.Forms.TabPage tbRun;
 		public bool m_bRulesFirstTime=true;
+        public bool m_bTreeGroupsFirstTime = true;
 		private System.Windows.Forms.TabPage tbHarvestMethod;
 		private FIA_Biosum_Manager.uc_processor_scenario_harvest_method uc_processor_scenario_harvest_method1;
         private FIA_Biosum_Manager.uc_processor_scenario_movein_costs uc_processor_scenario_movein_costs1;
@@ -2395,6 +2396,19 @@ namespace FIA_Biosum_Manager
             strLine = strLine + "Description\r\n";
             strLine = strLine + "---------------------\r\n";
             strLine = strLine + p_oProcessorScenarioItem.Description + "\r\n\r\n";
+            strLine = strLine + "Tree Diameter Groups\r\n";
+            strLine = strLine + "---------------------\r\n";
+            strLine = strLine + "--Group ID--    --Minimum Diameter--   --Maximum Diameter--    --Definition--   \r\n";
+            for (x = 0; x <= p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Count - 1; x++)
+            {
+                strLine = strLine + String.Format("{0,7}{1,19}{2, 24}{3,25}",
+                    p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x).DiamGroup,
+                    p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x).MinDiam,
+                    p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x).MaxDiam,
+                    p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x).DiamClass);
+                strLine = strLine + "\r\n";
+            }
+            strLine = strLine + "\r\n";
             strLine = strLine + "Harvest Method Low Slope\r\n";
             strLine = strLine + "-------------------------------\r\n";
             strLine = strLine + "Process Low Slope: ";
@@ -2476,7 +2490,7 @@ namespace FIA_Biosum_Manager
                 }
             }
 
-            strLine = strLine + "\r\nTree Specie And Diameter Group Market Value Assignment\r\n";
+            strLine = strLine + "\r\nTree Species And Diameter Group Market Value Assignment\r\n";
             strLine = strLine + "------------------------------------------------------------\r\n";
             strLine = strLine + "Chip Market Value (Dollars Per Green Ton): " + p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(0).ChipsDollarPerCubicFootValue + "\r\n\r\n";
             strLine = strLine + "--Species--              --Dia--         --EnergyWood-- --*MerchValue-- --ChipValue--\r\n";
