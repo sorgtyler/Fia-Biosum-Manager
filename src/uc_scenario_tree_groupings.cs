@@ -25,22 +25,26 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		public uc_scenario_tree_groupings()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+        //public uc_scenario_tree_groupings()
+        //{
+        //    // This call is required by the Windows.Forms Form Designer.
+        //    InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+        //    // TODO: Add any initialization after the InitializeComponent call
+        //}
 
-        public uc_scenario_tree_groupings(frmProcessorScenario ofrmProcessorScenario)
+        public uc_scenario_tree_groupings()
         {
             // This call is required by the Windows.Forms Form Designer.
             InitializeComponent();
 
             // TODO: Add any initialization after the InitializeComponent call
+        }
+
+        public void initTreeGroupingDialogs()
+        {
             // Initialize Tree Diameter form
-            this.m_frmTreeDiam = new frmDialog(ofrmProcessorScenario, frmMain.g_oFrmMain);
+            this.m_frmTreeDiam = new frmDialog(_frmProcessorScenario, frmMain.g_oFrmMain);
             this.m_frmTreeDiam.MaximizeBox = false;
             this.m_frmTreeDiam.BackColor = System.Drawing.SystemColors.Control;
             this.m_frmTreeDiam.Text = "Processor: Tree Diameter Groups";

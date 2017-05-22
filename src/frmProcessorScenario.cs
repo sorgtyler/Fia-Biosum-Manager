@@ -90,7 +90,7 @@ namespace FIA_Biosum_Manager
 			uc_scenario1.txtDescription.Enabled=true;
 			uc_scenario1.lblTitle.Text = "Scenario";
 			uc_scenario1.Dock = System.Windows.Forms.DockStyle.Fill;
-			uc_scenario1.ReferenceProcessorScenarioForm=this;
+			uc_scenario1.ReferenceProcessorScenarioForm=(frmProcessorScenario) this;
 			uc_scenario1.ScenarioType="processor";
 			//
 			//scenario datasource
@@ -137,6 +137,7 @@ namespace FIA_Biosum_Manager
             uc_scenario_tree_groupings1.Dock = System.Windows.Forms.DockStyle.Fill;
             uc_scenario_tree_groupings1.ReferenceProcessorScenarioForm = this;
             uc_scenario_tree_groupings1.ScenarioType = "processor";
+            uc_scenario_tree_groupings1.initTreeGroupingDialogs();
 
 
 
@@ -505,7 +506,7 @@ namespace FIA_Biosum_Manager
             this.tbTreeGroupings.TabIndex = 4;
             this.tbTreeGroupings.Text = "Tree Groupings";
             this.tbTreeGroupings.UseVisualStyleBackColor = true;
-            this.uc_scenario_tree_groupings1 = new uc_scenario_tree_groupings(this);
+            this.uc_scenario_tree_groupings1 = new uc_scenario_tree_groupings();
             this.tbTreeGroupings.Controls.Add(uc_scenario_tree_groupings1);
 
             // 
@@ -692,6 +693,21 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oFrmMain.Width,
                             frmMain.g_oFrmMain.Top);
                         LoadRuleDefinitions();
+                        frmMain.g_oFrmMain.DeactivateStandByAnimation();
+                    }
+                    else if (m_bTreeGroupsFirstTime == true)
+                    {
+                        // Reloading wood values page because tree groupings have changed
+                        frmMain.g_oFrmMain.ActivateStandByAnimation(
+                            frmMain.g_oFrmMain.WindowState,
+                            frmMain.g_oFrmMain.Left,
+                            frmMain.g_oFrmMain.Height,
+                            frmMain.g_oFrmMain.Width,
+                            frmMain.g_oFrmMain.Top);
+                        frmMain.g_sbpInfo.Text = "Loading Tree Groupings Definitions...Stand By";
+                        this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.loadvalues();
+                        frmMain.g_sbpInfo.Text = "Loading Scenario Merch and Chip Market Value Rule Definitions...Stand By";
+                        this.uc_processor_scenario_merch_chip_value1.loadvalues();
                         frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     }
 
@@ -2078,6 +2094,7 @@ namespace FIA_Biosum_Manager
             p_oAdo.m_strSQL = "SELECT a.species_label, b.diam_class " +
                               "FROM " + p_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," +
                                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
+                              "WHERE TRIM(b.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' " +
                               "ORDER BY a.species_label, b.diam_group";
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
             //

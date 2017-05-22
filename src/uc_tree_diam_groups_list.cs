@@ -144,7 +144,7 @@ namespace FIA_Biosum_Manager
 							}
 						}
 						((frmDialog)this.ParentForm).Enabled=true;
-                        if (ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
+                        ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = false;
 					}
 					catch (Exception caught)
 					{
@@ -324,13 +324,17 @@ namespace FIA_Biosum_Manager
 			if (this.btnSave.Enabled==true)
 			{
 				DialogResult result = MessageBox.Show("Save Changes Y/N","Tree Diameter Groups",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Question);
-				if (result == System.Windows.Forms.DialogResult.Yes)
-				{
-					this.savevalues();
-				}
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    this.savevalues();
+                }
+                else
+                {
+                    // Reload if we're not saving; Disposing of the form causes issues later if we re-open it
+                    this.loadvalues();
+                }
 			}
 			this.ParentForm.Close();
-			this.ParentForm.Dispose();
 		}
 
 		private void btnNew_Click(object sender, System.EventArgs e)
@@ -639,16 +643,15 @@ namespace FIA_Biosum_Manager
                 //OPEN CONNECTION TO DB FILE CONTAINING PROCESSOR SCENARIO TABLES
                 //
                 //scenario mdb connection
-                ado_data_access oAdo = new ado_data_access();
                 string strScenarioMDB =
                     frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
                     "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
-                if (oAdo.m_intError != 0)
+                m_ado.OpenConnection(m_ado.getMDBConnString(strScenarioMDB, "", ""));
+                if (m_ado.m_intError != 0)
                 {
-                    m_intError = oAdo.m_intError;
-                    m_strError = oAdo.m_strError;
-                    oAdo = null;
+                    m_intError = m_ado.m_intError;
+                    m_strError = m_ado.m_strError;
+                    m_ado = null;
                     return;
                 }
 
@@ -682,7 +685,8 @@ namespace FIA_Biosum_Manager
 					this.m_ado.m_OleDbConnection.Close();
 					if (this.m_intError==0 && this.m_ado.m_intError==0)
 					{
-						this.btnSave.Enabled=false;
+                        this.ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
+                        this.btnSave.Enabled=false;
 					}
 				}
 			}
