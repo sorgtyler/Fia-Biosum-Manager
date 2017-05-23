@@ -131,6 +131,27 @@ namespace FIA_Biosum_Manager
                     (m_oAdo, m_oAdo.m_OleDbConnection, m_oQueries,
                      ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
 
+                //REMOVE OLD CONTROLS FROM FORM IF THEY EXIST
+                string strName = "uc_processor_scenario_spc_dbh_group_value2";
+                if (this.pnlMerchValues.Controls[strName] != null)
+                {
+                    for (x = 2; x <= this.uc_processor_scenario_spc_dbh_group_value_collection1.Count; x++)
+                    {
+                        strName = "uc_processor_scenario_spc_dbh_group_value" + x;
+                        uc_processor_scenario_spc_dbh_group_value oItem = (uc_processor_scenario_spc_dbh_group_value) this.pnlMerchValues.Controls[strName];
+                        if (oItem != null)
+                        {
+                            this.pnlMerchValues.Controls.Remove(oItem);
+                        }
+                    }
+                }
+
+                //REMOVE OLD ITEMS FROM COLLECTION IF THEY EXIST
+                if (this.uc_processor_scenario_spc_dbh_group_value_collection1.Count > 0)
+                {
+                    this.uc_processor_scenario_spc_dbh_group_value_collection1.Clear();
+                }
+                
                 for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Count - 1; x++)
                 {
                     if (this.uc_processor_scenario_spc_dbh_group_value_collection1.Count == 0)
@@ -189,7 +210,6 @@ namespace FIA_Biosum_Manager
                             oItem.CubicFootDollarValue = this.m_oValidate.ReturnValue;
                             //
                             //USE AS ENERGY WOOD
-                            //
                             oItem.EnergyWood =
                                   ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).UseAsEnergyWood;
                             oItem.Name = "uc_processor_scenario_spc_dbh_group_value" + Convert.ToString(uc_processor_scenario_spc_dbh_group_value_collection1.Count + 1).Trim();

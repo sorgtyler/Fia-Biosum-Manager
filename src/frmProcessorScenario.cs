@@ -137,7 +137,7 @@ namespace FIA_Biosum_Manager
             uc_scenario_tree_groupings1.Dock = System.Windows.Forms.DockStyle.Fill;
             uc_scenario_tree_groupings1.ReferenceProcessorScenarioForm = this;
             uc_scenario_tree_groupings1.ScenarioType = "processor";
-            uc_scenario_tree_groupings1.initTreeGroupingDialogs();
+            uc_scenario_tree_groupings1. initTreeGroupingDialogs();
 
 
 
