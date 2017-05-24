@@ -1085,8 +1085,6 @@ namespace FIA_Biosum_Manager
                 
                 frmMain.g_sbpInfo.Text = "Ready";
                 m_bSave = true;
-                m_bRulesFirstTime = false;
-                m_bTreeGroupsFirstTime = false;
                 MessageBox.Show("Done");
             }
         }
