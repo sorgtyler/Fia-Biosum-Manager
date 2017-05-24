@@ -3803,7 +3803,7 @@ namespace FIA_Biosum_Manager
 			static public string DefaultCostRevenueEscalatorsTableName {get {return "scenario_cost_revenue_escalators";}}
             static public string DefaultAdditionalHarvestCostsDbFile { get { return @"db\scenario_processor_rule_definitions.mdb"; } }
             static public string DefaultAdditionalHarvestCostsTableName { get { return "scenario_additional_harvest_costs"; } }
-            static public string DefaultTreeDiamGroupsDbFile { get { return @"\processor\db\scenario_processor_rule_definitions.mdb"; } }
+            static public string DefaultTreeDiamGroupsDbFile { get { return @"\db\scenario_processor_rule_definitions.mdb"; } }
             static public string DefaultTreeDiamGroupsTableName { get { return "scenario_tree_diam_groups"; } }
 			
 			

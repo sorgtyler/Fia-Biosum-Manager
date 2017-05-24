@@ -256,6 +256,9 @@ namespace FIA_Biosum_Manager
 
                 this.m_oProcessorScenarioItem = m_oProcessorScenarioItem_Collection.Item(x);
 
+                ReferenceCurrentScenarioItem.m_oTreeDiamGroupsItem_Collection.Copy(m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection,
+                    ref ReferenceCurrentScenarioItem.m_oTreeDiamGroupsItem_Collection, true);
+
                 ReferenceCurrentScenarioItem.m_oEscalators.Copy(m_oProcessorScenarioItem.m_oEscalators, ReferenceCurrentScenarioItem.m_oEscalators);
 
                 ReferenceCurrentScenarioItem.m_oHarvestCostItem_Collection.Copy(
@@ -263,6 +266,8 @@ namespace FIA_Biosum_Manager
                 ref ReferenceCurrentScenarioItem.m_oHarvestCostItem_Collection, true);
 
                 ReferenceCurrentScenarioItem.m_oHarvestMethod.Copy(m_oProcessorScenarioItem.m_oHarvestMethod, ReferenceCurrentScenarioItem.m_oHarvestMethod);
+
+                ReferenceCurrentScenarioItem.m_oMoveInCosts.Copy(m_oProcessorScenarioItem.m_oMoveInCosts, ReferenceCurrentScenarioItem.m_oMoveInCosts);
 
                 ReferenceCurrentScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Copy(
                     m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection,

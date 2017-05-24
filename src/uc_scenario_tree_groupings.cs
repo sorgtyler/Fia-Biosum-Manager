@@ -25,14 +25,6 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-        //public uc_scenario_tree_groupings()
-        //{
-        //    // This call is required by the Windows.Forms Form Designer.
-        //    InitializeComponent();
-
-        //    // TODO: Add any initialization after the InitializeComponent call
-        //}
-
         public uc_scenario_tree_groupings()
         {
             // This call is required by the Windows.Forms Form Designer.
@@ -141,28 +133,6 @@ namespace FIA_Biosum_Manager
 			else this.ReferenceProcessorScenarioForm.Height=0;
 		}
 
-		private void btnSave_Click(object sender, System.EventArgs e)
-		{
-            this.SaveTreeGroupings();
-		}
-		public void SaveTreeGroupings()
-		{
-			ado_data_access p_ado = new ado_data_access();
-			System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
-            string strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
-            string strScenarioDir = strProjDir + "\\" + ScenarioType + "\\db";
-            string strFile = "scenario_" + ScenarioType + "_rule_definitions.mdb"; //((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectFile;
-			StringBuilder strFullPath = new StringBuilder(strScenarioDir);
-			strFullPath.Append("\\");
-			strFullPath.Append(strFile);
-            string strNotes = "";
-			string strSQL="";
-			strNotes=p_ado.FixString(strNotes,"'","''");
-			string strConn=p_ado.getMDBConnString(strFullPath.ToString(),"admin","");
-			p_ado.SqlNonQuery(strConn,strSQL);
-			p_ado=null;
-		
-		}
 		public FIA_Biosum_Manager.frmProcessorScenario ReferenceProcessorScenarioForm
 		{
 			get {return _frmProcessorScenario;}

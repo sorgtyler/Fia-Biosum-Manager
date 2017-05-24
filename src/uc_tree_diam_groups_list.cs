@@ -97,7 +97,7 @@ namespace FIA_Biosum_Manager
             ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
             m_ado = new ado_data_access();
             string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
+                "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
             m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
             ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
                 m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem, ScenarioId);
@@ -158,6 +158,70 @@ namespace FIA_Biosum_Manager
 					this.m_intError=m_ado.m_intError;
 				}
 		}
+
+        public void loadvalues_FromProperties()
+        {
+            string strId = "";
+            string strMin = "";
+            string strMax = "";
+            string strDef = "";
+
+            this.lstTreeDiam.Clear();
+            this.lstTreeDiam.Columns.Add("Group ID", 60, HorizontalAlignment.Left);
+            this.lstTreeDiam.Columns.Add("Minimum Diameter", 150, HorizontalAlignment.Left);
+            this.lstTreeDiam.Columns.Add("Maximum Diameter", 150, HorizontalAlignment.Left);
+            this.lstTreeDiam.Columns.Add("Definition", 200, HorizontalAlignment.Left);
+
+            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection != null)
+            {
+                try
+                {
+                    //load up each row from SCENARIO_TREE_DIAM_GROUPS table
+                    int x;
+                    for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Count - 1; x++)
+                    {
+                        ProcessorScenarioItem.TreeDiamGroupsItem p_oTreeGroupsItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x);
+
+                        strId = "";
+                        strMax = "";
+                        strMin = "";
+                        strDef = "";
+
+                        //make sure the row is not null values
+                        if (p_oTreeGroupsItem.DiamClass.Trim().Length > 0)
+                        {
+                            strId = p_oTreeGroupsItem.DiamGroup;
+                            strMin = p_oTreeGroupsItem.MinDiam;
+                            strMax = p_oTreeGroupsItem.MaxDiam;
+                            strDef = p_oTreeGroupsItem.DiamClass;
+                            this.lstTreeDiam.BeginUpdate();
+                            System.Windows.Forms.ListViewItem listItem = new ListViewItem();
+                            listItem.Text = strId;
+                            listItem.SubItems.Add(strMin);
+                            listItem.SubItems.Add(strMax);
+                            listItem.SubItems.Add(strDef);
+                            this.lstTreeDiam.Items.Add(listItem);
+                            this.lstTreeDiam.EndUpdate();
+                        }
+
+                    }
+                    if (this.lstTreeDiam.Items.Count > 0)
+                    {
+                        if (this.lstTreeDiam.SelectedItems.Count == 0)
+                        {
+                            this.lstTreeDiam.Items[this.lstTreeDiam.Items.Count - 1].Selected = true;
+                        }
+                    }
+                    ((frmDialog)this.ParentForm).Enabled = true;
+                    ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = false;
+                }
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    MessageBox.Show(caught.Message);
+                }
+            }
+        }
 
 		#region Component Designer generated code
 		/// <summary> 
@@ -646,23 +710,24 @@ namespace FIA_Biosum_Manager
                 string strScenarioMDB =
                     frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
                     "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-                m_ado.OpenConnection(m_ado.getMDBConnString(strScenarioMDB, "", ""));
-                if (m_ado.m_intError != 0)
+                ado_data_access oAdo = new ado_data_access();
+                oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
+                if (oAdo.m_intError != 0)
                 {
                     m_intError = m_ado.m_intError;
                     m_strError = m_ado.m_strError;
-                    m_ado = null;
+                    oAdo = null;
                     return;
                 }
 
 				if (this.m_intError==0)
 				{
 					//delete the current records
-                    this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName +
+                    oAdo.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName +
                         " WHERE TRIM(UCASE(scenario_id)) = '" + ScenarioId.Trim().ToUpper() + "'";
-					this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
-					if (this.m_ado.m_intError==0)
+                    if (oAdo.m_intError == 0)
 					{
 						for (x=0;x<=this.lstTreeDiam.Items.Count-1;x++)
 						{
@@ -671,24 +736,26 @@ namespace FIA_Biosum_Manager
 							strMax = this.lstTreeDiam.Items[x].SubItems[2].Text;
 							strDef = this.lstTreeDiam.Items[x].SubItems[3].Text;
 
-                            this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " " + 
+                            oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " " + 
 								"(diam_group,diam_class,min_diam,max_diam,scenario_id) VALUES " + 
 								"(" + strId + ",'" + strDef.Trim() + "'," + 
 								strMin + "," + strMax + ",'" + ScenarioId + "');";
-							this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
-							if (this.m_ado.m_intError != 0)
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                            if (oAdo.m_intError != 0)
 							{
 								break;
 							}
 						}
 					}
-					this.m_ado.m_OleDbConnection.Close();
-					if (this.m_intError==0 && this.m_ado.m_intError==0)
+                    if (this.m_intError == 0 && oAdo.m_intError == 0)
 					{
                         this.ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
                         this.btnSave.Enabled=false;
 					}
+
 				}
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                oAdo = null;
 			}
 
 		}
@@ -697,7 +764,7 @@ namespace FIA_Biosum_Manager
         {
             m_ado = new ado_data_access();
             string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
+                "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
             m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
             ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
                 m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem, strSourceScenario);
@@ -709,7 +776,7 @@ namespace FIA_Biosum_Manager
             ado_data_access oAdo = new ado_data_access();
             string strScenarioMDB =
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
+                "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
             oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
             if (oAdo.m_intError != 0)
             {
@@ -753,7 +820,7 @@ namespace FIA_Biosum_Manager
                         }
                     }
                 }
-                this.m_ado.m_OleDbConnection.Close();
+
                 if (this.m_intError == 0 && this.m_ado.m_intError == 0)
                 {
                     this.btnSave.Enabled = false;
