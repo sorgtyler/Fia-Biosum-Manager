@@ -1075,10 +1075,6 @@ namespace FIA_Biosum_Manager
 					oItem.VariableName="TreeSpeciesTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Reference.DefaultTreeSpeciesTableName;
 					break;
-				case "TREE SPECIES GROUPS":
-					oItem.VariableName="TreeSpeciesGroupsTable";
-					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Processor.DefaultTreeSpeciesGroupsTableName;
-					break;
 				case "PLOT AND CONDITION RECORD AUDIT":
 					oItem.VariableName="PlotCondAuditTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName;

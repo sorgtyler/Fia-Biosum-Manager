@@ -998,10 +998,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(p_ado, p_ado.m_OleDbConnection, Tables.Processor.DefaultAdditionalHarvestCostsTableName);
 				//tree species diam dollar values table
 				//frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesDollarValuesTable(p_ado,p_ado.m_OleDbConnection,"tree_species_diam_dollar_values");
-				//tree species groups list table
-				frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesGroupsListTable(p_ado,p_ado.m_OleDbConnection,"tree_species_groups_list");
-				//tree species groups table
-				frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_species_groups");
 				//tree vol val species diam table
 				frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_vol_val_by_species_diam_groups");
                 //biosum pop stratum adjustment factors table
@@ -1698,7 +1694,8 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioAdditionalHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioMoveInCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName);
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName);
-			
+            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsListTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
+            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName);
 			oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
 			oDao = null;

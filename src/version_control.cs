@@ -1093,24 +1093,6 @@ namespace FIA_Biosum_Manager
 								"'rx');";
 							oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 							break;
-                        case "TREE SPECIES GROUPS":
-							strDbFile = frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.Processor.DefaultTreeSpeciesGroupsDbFile);
-							oAdo.m_strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-								"('Tree Species Groups'," + 
-								"'" + ReferenceProjectDirectory.Trim() + "\\db'," + 
-								"'" + strDbFile.Trim() + "'," + 
-								"'tree_species_groups');";
-							oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
-							break;
-						case "TREE SPECIES GROUPS LIST":
-							strDbFile = frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.Processor.DefaultTreeSpeciesGroupsListDbFile);
-							oAdo.m_strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-								"('Tree Species Groups List'," + 
-								"'" + ReferenceProjectDirectory.Trim() + "\\db'," + 
-								"'" + strDbFile.Trim() + "'," + 
-								"'tree_species_groups_list');";
-							oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
-							break;
 						case "TREE SPECIES":
 							oAdo.m_strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 								"('Tree Species'," + 
@@ -1442,12 +1424,6 @@ namespace FIA_Biosum_Manager
 								case "TREATMENT PRESCRIPTIONS":
 									frmMain.g_oTables.m_oFvs.CreateRxTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.FVS.DefaultRxTableName);
 									break;
-								case "TREE SPECIES GROUPS":
-									frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesGroupsTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,"tree_species_groups");
-									break;
-								case "TREE SPECIES GROUPS LIST":
-									frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesGroupsListTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,"tree_species_groups_list");
-									break;
 								case "TREE SPECIES":
 									frmMain.g_oTables.m_oReference.CreateTreeSpeciesTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.Reference.DefaultFVSTreeSpeciesTableName);
 									break;
@@ -1578,14 +1554,6 @@ namespace FIA_Biosum_Manager
 								case "TREATMENT PRESCRIPTIONS":
 									strTempTableName = Tables.FVS.DefaultRxTableName;
 									frmMain.g_oTables.m_oFvs.CreateRxTable(oAdoCurrent,oConn,strTempTableName);
-									break;
-								case "TREE SPECIES GROUPS":
-									strTempTableName = Tables.Processor.DefaultTreeSpeciesGroupsTableName;
-									frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesGroupsTable(oAdoCurrent,oConn,strTempTableName);
-									break;
-								case "TREE SPECIES GROUPS LIST":
-									strTempTableName = Tables.Processor.DefaultTreeSpeciesGroupsListTableName;
-									frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesGroupsListTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "TREE SPECIES":
 									strTempTableName = Tables.Reference.DefaultTreeSpeciesTableName;

@@ -84,7 +84,9 @@ namespace FIA_Biosum_Manager
 		
 		string[] m_strFVSVariantsArray=null;
 
-
+        // scenario-specific variables
+        private string _strScenarioId = "";
+        private frmProcessorScenario _frmProcessorScenario = null;
         
 		public uc_tree_spc_groups(string p_strProjDir)
 		{
@@ -886,7 +888,8 @@ namespace FIA_Biosum_Manager
 			/****************************************************************************************
 			 **load any previous group assignments 
 			 ****************************************************************************************/
-			this.m_ado.SqlQueryReader(m_ado.m_OleDbConnection,"select * from " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable.Trim() + " order by species_group;");
+			this.m_ado.SqlQueryReader(m_ado.m_OleDbConnection,"select * from " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName +
+                " WHERE TRIM(UCASE(scenario_id))='" + _strScenarioId.Trim().ToUpper() + "' order by species_group");
 			if (this.m_ado.m_intError == 0)
 			{
 				/**************************************************************************************
@@ -915,8 +918,9 @@ namespace FIA_Biosum_Manager
 				this.m_ado.m_OleDbDataReader.Close();
 				//go through the species table and load its 
 				//group list box with the species common name
-				this.m_ado.m_strSQL = "SELECT DISTINCT common_name,species_group " + 
-					"FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpListTable + ";";
+                this.m_ado.m_strSQL = "SELECT DISTINCT common_name,species_group " +
+                    "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
+                    " WHERE TRIM(UCASE(scenario_id))='" + _strScenarioId.Trim().ToUpper() + " '";
 				this.m_ado.SqlQueryReader(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
 				if (this.m_ado.m_intError==0)
 				{
@@ -1377,6 +1381,7 @@ namespace FIA_Biosum_Manager
 						{
 							string str;
 							string strCommonName;
+                            int intSpCd;
 							int intSpcGrp;
 							string strSavedList="";
 							int intGrpCollection;
@@ -1384,22 +1389,16 @@ namespace FIA_Biosum_Manager
 							//delete the current groups
 
 							//delete all records from the tree species group table
-							this.m_ado.m_strSQL= "DELETE FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable + ";";
+                            this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName +
+                                " WHERE TRIM(UCASE(scenario_id))='" + _strScenarioId.Trim().ToUpper() + " '";
 							this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,m_ado.m_strSQL);
 							if (this.m_ado.m_intError!=0) return;
                         
 							//delete all records from the tree species group list table
-							this.m_ado.m_strSQL= "DELETE FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpListTable + ";";
+                            this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
+                                " WHERE TRIM(UCASE(scenario_id))='" + _strScenarioId.Trim().ToUpper() + " '";
 							this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,m_ado.m_strSQL);
 							if (this.m_ado.m_intError != 0) return;
-
-
-							//initialize the user_spc_group field to null in the tree species table
-							m_ado.m_strSQL = "UPDATE " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " " + 
-								"SET USER_SPC_GROUP = null;";
-							this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,m_ado.m_strSQL);
-
-							
 
 							if (this.m_ado.m_intError==0)
 							{
@@ -1413,28 +1412,31 @@ namespace FIA_Biosum_Manager
 										intSpcGrp = Convert.ToInt32(this.spc_common_name_collection1.Item(x).SpeciesGroupIndex);
 										strCommonName = this.spc_common_name_collection1.Item(x).SpeciesCommonName;
                                         strCommonName = m_ado.FixString(strCommonName.Trim(), "'", "''");
+                                        intSpCd = this.spc_common_name_collection1.Item(x).SpeciesCode;
 										intGrpCollection = Math.Abs(intSpcGrp / 6); 
 										strGrpLabel = this.spc_groupings_collection1.Item(intSpcGrp).GroupLabel;
 										strGrpLabel = strGrpLabel.Replace(' ','_');
 										str = "," + strGrpLabel.Trim() + ",";
 										if (strSavedList.IndexOf(str,0) < 0)
 										{
-											this.m_ado.m_strSQL = "INSERT INTO " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable + " " + 
-												"(SPECIES_GROUP,SPECIES_LABEL) VALUES " + 
-												"(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strGrpLabel.Trim() + "');";
+											this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " " + 
+												"(SPECIES_GROUP,SPECIES_LABEL,SCENARIO_ID) VALUES " + 
+												"(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strGrpLabel.Trim() + ",'" + _strScenarioId.Trim() + "');";
 											this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
 											strSavedList += str;
 										}
 
-										this.m_ado.m_strSQL = "INSERT INTO " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpListTable + " " + 
-											"(SPECIES_GROUP,common_name) VALUES " + 
-											"(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strCommonName + "');";
+                                        this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " " +
+                                            "(SPECIES_GROUP,common_name,SCENARIO_ID,SPCD) VALUES " +
+                                            "(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strCommonName + "'" + _strScenarioId.Trim() + "', " +
+                                            intSpCd + " );";
 										this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
 
-										this.m_ado.m_strSQL = "UPDATE " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " " + 
-											"SET USER_SPC_GROUP = " +  Convert.ToString(intSpcGrp + 1).Trim() + " " + 
-											"WHERE TRIM(UCASE(common_name)) = '" + strCommonName.Trim() + "';";
-										this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
+                                        // No longer updating tree_species tabe
+                                        //this.m_ado.m_strSQL = "UPDATE " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " " + 
+                                        //    "SET USER_SPC_GROUP = " +  Convert.ToString(intSpcGrp + 1).Trim() + " " + 
+                                        //    "WHERE TRIM(UCASE(common_name)) = '" + strCommonName.Trim() + "';";
+                                        //this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
 									}
 
 									

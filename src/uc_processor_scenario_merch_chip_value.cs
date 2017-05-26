@@ -113,12 +113,17 @@ namespace FIA_Biosum_Manager
 			oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                                  "scenario_tree_species_diam_dollar_values",
                                  strScenarioMDB,"scenario_tree_species_diam_dollar_values",true);
-            //link to tree species groups table
+            //link to tree diameter groups table
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                                  Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName,
-                                 strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName, true);    
+                                 strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName, true);
+            //link to tree species groups table
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                                 Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName,
+                                 strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName, true);    
 
-			oDao.m_DaoWorkspace.Close();
+			
+            oDao.m_DaoWorkspace.Close();
 			oDao=null;
 			//
 			//OPEN CONNECTION TO TEMP DB FILE
@@ -366,9 +371,10 @@ namespace FIA_Biosum_Manager
 			//
             //@ToDo: May update this to load from memory
 			m_oAdo.m_strSQL = "SELECT a.species_group,a.species_label,b.diam_group,b.diam_class INTO spcgrp_dbhgrp " + 
-				"FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," + 
+                "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
 				Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
-                "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " + 
+                "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " +
+                "AND TRIM(a.scenario_id)='" + this.ScenarioId.Trim() + "' " +
 				"ORDER BY a.species_label, b.diam_group";
 			m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
 			//
@@ -376,9 +382,10 @@ namespace FIA_Biosum_Manager
 			//
 			m_oAdo.m_strSQL = "INSERT INTO scenario_tree_species_diam_dollar_values (scenario_id,species_group,diam_group) " + 
 				              "SELECT '" + ScenarioId.Trim() + "',a.species_group, b.diam_group " + 
-							  "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," +
+                              "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
                                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
-                              "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " + 
+                              "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " +
+                              "AND TRIM(a.scenario_id)='" + this.ScenarioId.Trim() + "' " + 
 				              "ORDER BY a.species_label, b.diam_group";
 			m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
 

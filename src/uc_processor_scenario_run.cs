@@ -2249,8 +2249,9 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, Tables.ProcessorScenarioRun.CreateDiametersTableSQL(p_strDiametersTableName) + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
             if (m_oAdo.m_intError==0) 
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.CreateDiametersTableSQL(p_strDiametersTableName));
+            //This query should include the scenario if it's ever used again
             m_oAdo.m_strSQL = "SELECT species_group " +
-                              "FROM " + m_oQueries.m_oFvs.m_strTreeSpcGrpTable + " " +
+                              "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " " +
                               "ORDER BY species_group";
 
             if (m_oAdo.m_intError == 0)

@@ -2109,9 +2109,10 @@ namespace FIA_Biosum_Manager
             //QUERY ALL SPECIES AND DBH GROUPS
             //
             p_oAdo.m_strSQL = "SELECT a.species_label, b.diam_class " +
-                              "FROM " + p_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," +
+                              "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
                                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
                               "WHERE TRIM(b.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' " +
+                              "AND TRIM(a.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' " +
                               "ORDER BY a.species_label, b.diam_group";
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
             //
@@ -2137,10 +2138,12 @@ namespace FIA_Biosum_Manager
             //UPDATE MERCH AND CHIP DOLLAR VALUE
             //
             p_oAdo.m_strSQL = "SELECT a.species_group,a.species_label,b.diam_group,b.diam_class,c.wood_bin,c.merch_value,c.chip_value " +
-                "FROM " + p_oQueries.m_oFvs.m_strTreeSpcGrpTable + " a," +
+                "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
                 Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b, " +
                 "scenario_tree_species_diam_dollar_values c " +
                 "WHERE TRIM(c.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' AND " +
+                "TRIM(a.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' AND " +
+                "TRIM(b.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' AND " +
                       "c.species_group=a.species_group AND c.diam_group=b.diam_group " +
                 "ORDER BY a.species_label, b.diam_group";
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
