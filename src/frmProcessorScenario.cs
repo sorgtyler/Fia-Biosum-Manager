@@ -1059,7 +1059,19 @@ namespace FIA_Biosum_Manager
             frmDialog frmTemp = new frmDialog();
             frmTemp.Initialize_Processor_Scenario_Copy();
             frmTemp.Text = "FIA Biosum";
-            if (m_bRulesFirstTime == true) LoadRuleDefinitions();
+
+            if (m_bRulesFirstTime == true)
+            {
+                frmMain.g_oFrmMain.ActivateStandByAnimation(
+                frmMain.g_oFrmMain.WindowState,
+                frmMain.g_oFrmMain.Left,
+                frmMain.g_oFrmMain.Height,
+                frmMain.g_oFrmMain.Width,
+                frmMain.g_oFrmMain.Top);
+                LoadRuleDefinitions();
+                frmMain.g_oFrmMain.DeactivateStandByAnimation();
+            }
+
             frmTemp.uc_processor_scenario_copy1.ReferenceCurrentScenarioItem = m_oProcessorScenarioItem;
             frmTemp.uc_processor_scenario_copy1.loadvalues();
             DialogResult result = frmTemp.ShowDialog(this);
@@ -1779,7 +1791,7 @@ namespace FIA_Biosum_Manager
                 
                     ProcessorScenarioItem oItem = new ProcessorScenarioItem();
                     this.LoadGeneral(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
-                    this.LoadTreeDiameterGroupValues(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
+                    this.LoadTreeDiameterGroupValues(p_oQueries.m_strTempDbFile,p_strScenarioId, oItem);
                     this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, oItem);
                     this.LoadMoveInCosts(p_oQueries.m_strTempDbFile, oItem);
                     this.LoadSpeciesAndDiameterGroupDollarValues(

@@ -95,15 +95,11 @@ namespace FIA_Biosum_Manager
 			this.m_intError=0;
 
             ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
-            m_ado = new ado_data_access();
             string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
                 "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
-            m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
-            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
-                m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem, ScenarioId);
+            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(strDbFile,
+                ScenarioId, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
 
-				if (m_ado.m_intError==0)
-				{
 					try
 					{
 						//load up each row in the FIADB plot input table
@@ -151,12 +147,6 @@ namespace FIA_Biosum_Manager
 						this.m_intError=-1;
 						MessageBox.Show(caught.Message);
 					}
-
-				}
-				else
-				{
-					this.m_intError=m_ado.m_intError;
-				}
 		}
 
         public void loadvalues_FromProperties()
@@ -767,24 +757,7 @@ namespace FIA_Biosum_Manager
                 "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
             m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
             ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
-                m_ado.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem, strSourceScenario);
-
-            //
-            //OPEN CONNECTION TO DB FILE CONTAINING PROCESSOR SCENARIO TABLES
-            //
-            //scenario mdb connection
-            ado_data_access oAdo = new ado_data_access();
-            string strScenarioMDB =
-                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
-            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
-            if (oAdo.m_intError != 0)
-            {
-                m_intError = oAdo.m_intError;
-                m_strError = oAdo.m_strError;
-                oAdo = null;
-                return;
-            }
+                m_ado.m_OleDbConnection, strSourceScenario, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
 
             if (this.m_intError == 0)
             {
