@@ -53,10 +53,12 @@ namespace FIA_Biosum_Manager
             this.m_frmTreeSpeciesGroups.MaximizeBox = false;
             this.m_frmTreeSpeciesGroups.BackColor = System.Drawing.SystemColors.Control;
             this.m_frmTreeSpeciesGroups.Text = "Processor: Tree Species Groups";
-            this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1 = new uc_tree_spc_groups(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());
-
+            FIA_Biosum_Manager.uc_tree_spc_groups p_uc = new uc_tree_spc_groups(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());
+            this.m_frmTreeSpeciesGroups.Controls.Add(p_uc);
+            this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1 = p_uc;
             this.m_frmTreeSpeciesGroups.Height = 0;
             this.m_frmTreeSpeciesGroups.Width = 0;
+
         }
 
 		/// <summary> 
@@ -225,13 +227,13 @@ namespace FIA_Biosum_Manager
 
         private void BtnTreeSpeciesGroups_Click(object sender, EventArgs e)
         {
-            if (this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Top + this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Height > this.m_frmTreeSpeciesGroups.ClientSize.Height + 2)
+            if (this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Top + m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Height > this.m_frmTreeSpeciesGroups.ClientSize.Height + 2)
             {
                 for (int x = 1; ; x++)
                 {
                     this.m_frmTreeSpeciesGroups.Height = x;
-                    if (this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Top +
-                        this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Height <
+                    if (m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Top +
+                        m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Height <
                         this.m_frmTreeSpeciesGroups.ClientSize.Height)
                     {
                         break;
@@ -239,13 +241,13 @@ namespace FIA_Biosum_Manager
                 }
 
             }
-            if (this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Left + this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Width > this.m_frmTreeSpeciesGroups.ClientSize.Width + 2)
+            if (m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Left + m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Width > this.m_frmTreeSpeciesGroups.ClientSize.Width + 2)
             {
                 for (int x = 1; ; x++)
                 {
                     this.m_frmTreeSpeciesGroups.Width = x;
-                    if (this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Left +
-                        this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Width <
+                    if (m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Left +
+                        m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Width <
                         this.m_frmTreeSpeciesGroups.ClientSize.Width)
                     {
                         break;
@@ -254,13 +256,11 @@ namespace FIA_Biosum_Manager
 
             }
 
-            //this.m_frmTreeDiam.uc_tree_diam_groups_list1.loadvalues();
-            frmMain.g_sbpInfo.Text = "Ready";
-            this.m_frmTreeSpeciesGroups.Show();
-
+            //p_uc.loadvalues();
             this.m_frmTreeSpeciesGroups.Left = 0;
             this.m_frmTreeSpeciesGroups.Top = 0;
-            this.m_frmTreeSpeciesGroups.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.m_frmTreeSpeciesGroups.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.m_frmTreeSpeciesGroups.Show();
         }
         }
 }
