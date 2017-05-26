@@ -1059,7 +1059,7 @@ namespace FIA_Biosum_Manager
             frmDialog frmTemp = new frmDialog();
             frmTemp.Initialize_Processor_Scenario_Copy();
             frmTemp.Text = "FIA Biosum";
-            if (m_oProcessorScenarioItem.ScenarioId.Trim().Length == 0) LoadRuleDefinitions();
+            if (m_bRulesFirstTime == true) LoadRuleDefinitions();
             frmTemp.uc_processor_scenario_copy1.ReferenceCurrentScenarioItem = m_oProcessorScenarioItem;
             frmTemp.uc_processor_scenario_copy1.loadvalues();
             DialogResult result = frmTemp.ShowDialog(this);
@@ -1779,7 +1779,7 @@ namespace FIA_Biosum_Manager
                 
                     ProcessorScenarioItem oItem = new ProcessorScenarioItem();
                     this.LoadGeneral(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
-                    this.LoadTreeDiameterGroupValues(oAdo, oAdo.m_OleDbConnection, oItem, p_strScenarioId);
+                    this.LoadTreeDiameterGroupValues(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                     this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, oItem);
                     this.LoadMoveInCosts(p_oQueries.m_strTempDbFile, oItem);
                     this.LoadSpeciesAndDiameterGroupDollarValues(
@@ -2371,10 +2371,23 @@ namespace FIA_Biosum_Manager
             p_oAdo.m_OleDbDataReader.Close();
         }
 
+        public void LoadTreeDiameterGroupValues(string p_strDbFile, string p_strScenarioId, FIA_Biosum_Manager.ProcessorScenarioItem p_oProcessorScenarioItem)
+        {
+            ado_data_access oAdo = new ado_data_access();
+            oAdo.OpenConnection(oAdo.getMDBConnString(p_strDbFile, "", ""));
+            if (oAdo.m_intError == 0)
+            {
+                this.LoadTreeDiameterGroupValues(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, p_oProcessorScenarioItem);
+            }
+            m_intError = oAdo.m_intError;
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo = null;
+        }
+        
         public void LoadTreeDiameterGroupValues(ado_data_access p_oAdo,
                                                 System.Data.OleDb.OleDbConnection p_oConn,
-                                                ProcessorScenarioItem p_oProcessorScenarioItem, 
-                                                string strCurrentScenario)
+                                                string p_strScenarioId,
+                                                ProcessorScenarioItem p_oProcessorScenarioItem)
         {
             int x;
             //REMOVE ANY EXISTING ITEMS
@@ -2386,7 +2399,7 @@ namespace FIA_Biosum_Manager
             //QUERY ALL DIAMETER GROUPS
             //
             p_oAdo.SqlQueryReader(p_oConn, "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + 
-                " WHERE TRIM(UCASE(scenario_id))='" + strCurrentScenario.Trim().ToUpper() + "'");
+                " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'");
 
 
             //
