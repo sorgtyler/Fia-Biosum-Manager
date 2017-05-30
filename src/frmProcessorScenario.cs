@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace FIA_Biosum_Manager
 {
@@ -755,7 +756,8 @@ namespace FIA_Biosum_Manager
             this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.ReferenceProcessorScenarioForm = this;
             frmMain.g_sbpInfo.Text = "Loading Tree Groupings Definitions...Stand By";
             this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.loadvalues();
-			this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
+            this.uc_scenario_tree_groupings1.uc_tree_spc_groups1.loadvalues();
+ 			this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
             frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
             this.uc_processor_scenario_harvest_method1.loadvalues();
             this.uc_processor_scenario_movein_costs1.ReferenceProcessorScenarioForm = this;
@@ -1112,6 +1114,10 @@ namespace FIA_Biosum_Manager
                = new TreeSpeciesAndDbhDollarValuesItem_Collection();
         public TreeDiamGroupsItem_Collection m_oTreeDiamGroupsItem_Collection
                = new TreeDiamGroupsItem_Collection();
+        public SpcCommonNameItemCollection m_oSpcCommonNameItem_Collection
+               = new SpcCommonNameItemCollection();
+        public SpcGroupItemCollection m_oSpcGroupItem_Collection
+            = new SpcGroupItemCollection();
 
         public ProcessorScenarioItem()
         {
@@ -1596,7 +1602,6 @@ namespace FIA_Biosum_Manager
 
                 }
             }
-
         }
 
         public class TreeDiamGroupsItem
@@ -1695,6 +1700,163 @@ namespace FIA_Biosum_Manager
             }
 
         }
+        public class SpcCommonNameItem
+        {
+            private string _strCommonName = "";
+            private bool _bFVSOutput = false;
+            private string _strSpeciesGroupLabel = "";
+            private int _intSpeciesGroupIndex = -1;
+            private int _intSpeciesCode = -1;
+
+            public SpcCommonNameItem()
+            {
+            }
+            public string SpeciesCommonName
+            {
+                get { return _strCommonName; }
+                set { _strCommonName = value; }
+            }
+            public bool FVSOutput
+            {
+                get { return _bFVSOutput; }
+                set { _bFVSOutput = value; }
+            }
+            public string SpeciesGroupLabel
+            {
+                get { return _strSpeciesGroupLabel; }
+                set { _strSpeciesGroupLabel = value; }
+            }
+            public int SpeciesGroupIndex
+            {
+                get { return _intSpeciesGroupIndex; }
+                set { _intSpeciesGroupIndex = value; }
+            }
+            public int SpeciesCode
+            {
+                get { return _intSpeciesCode; }
+                set { _intSpeciesCode = value; }
+            }
+            public void Copy(SpcCommonNameItem p_oSource,
+                             SpcCommonNameItem p_oDest)
+            {
+                p_oDest.SpeciesCommonName = p_oSource.SpeciesCommonName;
+                p_oDest.SpeciesCode = p_oSource.SpeciesCode;
+                p_oDest.SpeciesGroupIndex = p_oSource.SpeciesGroupIndex;
+                p_oDest.SpeciesGroupLabel = p_oSource.SpeciesGroupLabel;
+            }
+        }
+        public class SpcCommonNameItemCollection : System.Collections.CollectionBase
+        {
+            public SpcCommonNameItemCollection()
+            {
+                //
+                // TODO: Add constructor logic here
+                //
+            }
+
+            public void Add(SpcCommonNameItem spc_common_name1)
+            {
+                // vérify if object is not already in
+                if (this.List.Contains(spc_common_name1))
+                    throw new InvalidOperationException();
+
+                // adding it
+                this.List.Add(spc_common_name1);
+
+                // return collection
+                //return this;
+            }
+            public void Remove(int index)
+            {
+                // Check to see if there is a widget at the supplied index.
+                if (index > Count - 1 || index < 0)
+                // If no widget exists, a messagebox is shown and the operation 
+                // is cancelled.
+                {
+                    System.Windows.Forms.MessageBox.Show("Index not valid!");
+                }
+                else
+                {
+                    List.RemoveAt(index);
+                }
+            }
+            public SpcCommonNameItem Item(int Index)
+            {
+                // The appropriate item is retrieved from the List object and
+                // explicitly cast to the Widget type, then returned to the 
+                // caller.
+                return (SpcCommonNameItem)List[Index];
+            }
+        }
+        public class SpcGroupItem
+        {
+
+            private string _strSpeciesGroupLabel = "";
+            private int _intSpeciesGrp = -1;
+
+            public SpcGroupItem()
+            {
+            }
+            public string SpeciesGroupLabel
+            {
+                get { return _strSpeciesGroupLabel; }
+                set { _strSpeciesGroupLabel = value; }
+            }
+            public int SpeciesGroup
+            {
+                get { return _intSpeciesGrp; }
+                set { _intSpeciesGrp = value; }
+            }
+            public void Copy(SpcGroupItem p_oSource,
+                             SpcGroupItem p_oDest)
+            {
+                p_oDest.SpeciesGroupLabel = p_oSource.SpeciesGroupLabel;
+                p_oDest.SpeciesGroup = p_oSource.SpeciesGroup;
+            }
+        }
+        public class SpcGroupItemCollection : System.Collections.CollectionBase
+        {
+            public SpcGroupItemCollection()
+            {
+                //
+                // TODO: Add constructor logic here
+                //
+            }
+
+            public void Add(SpcGroupItem spc_group_item1)
+            {
+                // vérify if object is not already in
+                if (this.List.Contains(spc_group_item1))
+                    throw new InvalidOperationException();
+
+                // adding it
+                this.List.Add(spc_group_item1);
+
+                // return collection
+                //return this;
+            }
+            public void Remove(int index)
+            {
+                // Check to see if there is a widget at the supplied index.
+                if (index > Count - 1 || index < 0)
+                // If no widget exists, a messagebox is shown and the operation 
+                // is cancelled.
+                {
+                    System.Windows.Forms.MessageBox.Show("Index not valid!");
+                }
+                else
+                {
+                    List.RemoveAt(index);
+                }
+            }
+            public SpcGroupItem Item(int Index)
+            {
+                // The appropriate item is retrieved from the List object and
+                // explicitly cast to the Widget type, then returned to the 
+                // caller.
+                return (SpcGroupItem)List[Index];
+            }
+        }
 
     }
     public class ProcessorScenarioItem_Collection : System.Collections.CollectionBase
@@ -1792,6 +1954,8 @@ namespace FIA_Biosum_Manager
                     ProcessorScenarioItem oItem = new ProcessorScenarioItem();
                     this.LoadGeneral(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                     this.LoadTreeDiameterGroupValues(p_oQueries.m_strTempDbFile,p_strScenarioId, oItem);
+
+                    this.LoadTreeSpeciesGroupValues(p_oQueries.m_strTempDbFile, p_strScenarioId, p_oQueries, oItem);
                     this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, oItem);
                     this.LoadMoveInCosts(p_oQueries.m_strTempDbFile, oItem);
                     this.LoadSpeciesAndDiameterGroupDollarValues(
@@ -2435,6 +2599,197 @@ namespace FIA_Biosum_Manager
 
             p_oAdo.m_OleDbDataReader.Close();
         }
+        public void LoadTreeSpeciesGroupValues(string p_strDbFile, string p_strScenarioId,
+            Queries p_oQueries, FIA_Biosum_Manager.ProcessorScenarioItem p_oProcessorScenarioItem)
+        {
+            ado_data_access oAdo = new ado_data_access();
+            oAdo.OpenConnection(oAdo.getMDBConnString(p_strDbFile, "", ""));
+            if (oAdo.m_intError == 0)
+            {
+                //CREATE LINKS TO SCENARIO RULES TABLES
+                dao_data_access oDao = new dao_data_access();
+                string strScenarioMDB = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                    "\\processor" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsDbFile;
+
+                oDao.CreateTableLink(p_strDbFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName,
+                    strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName, true);
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+
+                this.LoadTreeSpeciesGroupValues(oAdo, oAdo.m_OleDbConnection, p_oQueries, p_strScenarioId, 
+                    p_oProcessorScenarioItem);
+            }
+            m_intError = oAdo.m_intError;
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo = null;
+        }
+        public void LoadTreeSpeciesGroupValues(ado_data_access p_oAdo,
+                                        System.Data.OleDb.OleDbConnection p_oConn,
+                                        Queries p_oQueries, 
+                                        string p_strScenarioId,
+                                        ProcessorScenarioItem p_oProcessorScenarioItem)
+        {
+            int x;
+            //REMOVE ANY EXISTING ITEMS
+            for (x = p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x >= 0; x--)
+            {
+                p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Remove(x);
+            }
+			//get all the variants in the plot table
+            RxTools _oRxTools = new RxTools();
+            string[] strFVSVariantsArray = frmMain.g_oUtils.ConvertListToArray(_oRxTools.GetListOfFVSVariantsInPlotTable(p_oAdo, p_oConn, p_oQueries.m_oFIAPlot.m_strPlotTable), ",");
+            RxPackageItem_Collection _oRxPackage_Collection = new RxPackageItem_Collection();
+            _oRxTools.LoadAllRxPackageItems(_oRxPackage_Collection);
+
+            //create table links
+            if (p_oAdo.TableExist(p_oAdo.m_OleDbConnection, "fvsouttreetemp"))
+                p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, "DROP TABLE fvsouttreetemp");
+            if (p_oAdo.TableExist(p_oAdo.m_OleDbConnection, "fvsouttreetemp2"))
+                p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, "DROP TABLE fvsouttreetemp2");
+			//append the multiple fvsout tree tables into a single fvsout tree table
+            List<string> strSqlCommandList;
+
+            strSqlCommandList = Queries.Processor.AuditFvsOut_SelectIntoUnionOfFVSTreeTablesUsingListArray(
+                p_oAdo,
+                p_oConn,
+                "fvsouttreetemp2",
+                 _oRxPackage_Collection,
+                 strFVSVariantsArray,
+                "fvs_tree_id,fvs_variant,fvs_species");
+
+            for (x = 0; x <= strSqlCommandList.Count - 1; x++)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, strSqlCommandList[x]);
+            }
+
+            p_oAdo.m_strSQL = "SELECT DISTINCT * INTO fvsouttreetemp FROM fvsouttreetemp2";
+            p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
+
+            string strFvsOutTreeTable = "fvsouttreetemp";
+            
+			//GET ALL TREE SPECIES COMMON NAME
+			/**********************************************************************************
+			 **process all tree species in the tree species table and initialize the 
+			 **unassigned array variable
+			 **********************************************************************************/
+            p_oAdo.m_strSQL = "SELECT COUNT(*) FROM (SELECT DISTINCT common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0 )";
+            p_oAdo.m_strSQL = "SELECT DISTINCT common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0";
+            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
+            if (p_oAdo.m_OleDbDataReader.HasRows)
+			{
+                while (p_oAdo.m_OleDbDataReader.Read())
+				{
+                    ProcessorScenarioItem.SpcCommonNameItem spc_common_name1 = new ProcessorScenarioItem.SpcCommonNameItem();
+					spc_common_name1.SpeciesCommonName=p_oAdo.m_OleDbDataReader["common_name"].ToString().Trim();
+					spc_common_name1.SpeciesGroupLabel="";
+					spc_common_name1.SpeciesGroupIndex=-1;
+					spc_common_name1.FVSOutput=false;
+                    p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Add(spc_common_name1);
+				}
+			}
+            p_oAdo.m_OleDbDataReader.Close();
+
+            //ASSIGN A TREE SPECIES CODE TO THE SPECIES COMMON NAME
+            /**********************************************************************************
+             **process all tree species in the tree species table and initialize the 
+             **unassigned array variable
+             **********************************************************************************/
+            p_oAdo.m_strSQL = "SELECT DISTINCT spcd,common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0";
+            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
+            if (p_oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (p_oAdo.m_OleDbDataReader.Read())
+                {
+                    for (x = 0; x <= p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
+                    {
+                        if (p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName.Trim().ToUpper() ==
+                            p_oAdo.m_OleDbDataReader["common_name"].ToString().Trim().ToUpper())
+                        {
+                            p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCode = Convert.ToInt32(p_oAdo.m_OleDbDataReader["spcd"]);
+                            break;
+                        }
+
+                    }
+
+                }
+            }
+            p_oAdo.m_OleDbDataReader.Close();
+
+            //GET FVS OUTPUT TREE SPECIES COMMON NAME
+            /***************************************************************************
+             **process tree species records that match up between the fvs output tree 
+             **table, tree table, and tree species table
+             ***************************************************************************/
+            p_oAdo.m_strSQL = "SELECT DISTINCT t.spcd,f.fvs_variant " +
+                                  "INTO tree_spc_groups_temp " +
+                                  "FROM " + p_oQueries.m_oFIAPlot.m_strTreeTable + " t, " +
+                                            strFvsOutTreeTable + " f " +
+                                  "WHERE f.fvs_tree_id = t.fvs_tree_id";
+            p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
+
+            p_oAdo.m_strSQL = "SELECT DISTINCT s.common_name " +
+                "FROM tree_spc_groups_temp t," + p_oQueries.m_oFvs.m_strTreeSpcTable + " s, " +
+                p_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " fvs " +
+                "WHERE t.spcd = s.spcd AND " +
+                "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant)) AND " +
+                "TRIM(UCASE(fvs.fvs_species)) = TRIM(UCASE(s.fvs_species))";
+
+
+            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
+            if (p_oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (p_oAdo.m_OleDbDataReader.Read())
+                {
+                    for (x = 0; x <= p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
+                    {
+                        if (p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName.Trim().ToUpper() ==
+                            p_oAdo.m_OleDbDataReader["common_name"].ToString().Trim().ToUpper())
+                            p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).FVSOutput = true;
+
+                    }
+                }
+            }
+            p_oAdo.m_OleDbDataReader.Close();
+
+            //REMOVE ANY EXISTING ITEMS
+            for (x = p_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Count - 1; x >= 0; x--)
+            {
+                p_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Remove(x);
+            }
+
+            //LOAD USER SPECIES COMMON NAME GROUPING ASSIGNMENTS
+            /****************************************************************************************
+             **load any previous group assignments 
+             ****************************************************************************************/
+            p_oAdo.SqlQueryReader(p_oConn, "select * from " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName +
+                " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' order by species_group");
+            if (p_oAdo.m_intError == 0)
+            {
+                /**************************************************************************************
+                 **go through the species group table and assign values to the group label text box
+                 **************************************************************************************/
+                int intSpcGrp;
+                string strSpeciesLabel;
+                if (p_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (p_oAdo.m_OleDbDataReader.Read())
+                    {
+                        if (p_oAdo.m_OleDbDataReader["species_group"] != DBNull.Value)
+                        {
+                            intSpcGrp = Convert.ToInt32(p_oAdo.m_OleDbDataReader["species_group"]);
+                            strSpeciesLabel = Convert.ToString(p_oAdo.m_OleDbDataReader["species_label"]);
+                            ProcessorScenarioItem.SpcGroupItem oItem = new ProcessorScenarioItem.SpcGroupItem();
+                            oItem.SpeciesGroup = intSpcGrp;
+                            oItem.SpeciesGroupLabel = strSpeciesLabel;
+                            p_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Add(oItem);
+                        }
+                    }
+                }
+                p_oAdo.m_OleDbDataReader.Close();
+            }
+
+        }
+
         public string ScenarioProperties(ProcessorScenarioItem p_oProcessorScenarioItem)
         {
             int x;

@@ -58,7 +58,7 @@ namespace FIA_Biosum_Manager
             this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1 = p_uc;
             this.m_frmTreeSpeciesGroups.Height = 0;
             this.m_frmTreeSpeciesGroups.Width = 0;
-
+            p_uc.ReferenceProcessorScenarioForm = _frmProcessorScenario;
         }
 
 		/// <summary> 
