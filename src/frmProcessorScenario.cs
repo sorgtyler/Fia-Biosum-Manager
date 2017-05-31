@@ -1118,6 +1118,8 @@ namespace FIA_Biosum_Manager
                = new SpcCommonNameItemCollection();
         public SpcGroupItemCollection m_oSpcGroupItem_Collection
             = new SpcGroupItemCollection();
+        public SpcGroupListItemCollection m_oSpcGroupListItem_Collection
+             = new SpcGroupListItemCollection();
 
         public ProcessorScenarioItem()
         {
@@ -1857,7 +1859,82 @@ namespace FIA_Biosum_Manager
                 return (SpcGroupItem)List[Index];
             }
         }
+        public class SpcGroupListItem
+        {
+            private int _intSpeciesGrp = -1;
+            private string _strCommonName = "";
+            private int _intSpCd = -1;
+            
 
+            public SpcGroupListItem()
+            {
+            }
+            public string CommonName
+            {
+                get { return _strCommonName; }
+                set { _strCommonName = value; }
+            }
+            public int SpeciesGroup
+            {
+                get { return _intSpeciesGrp; }
+                set { _intSpeciesGrp = value; }
+            }
+            public int SpeciesCode
+            {
+                get { return _intSpCd; }
+                set { _intSpCd = value; }
+            }
+            public void Copy(SpcGroupListItem p_oSource,
+                             SpcGroupListItem p_oDest)
+            {
+                p_oDest.CommonName = p_oSource.CommonName;
+                p_oDest.SpeciesGroup = p_oSource.SpeciesGroup;
+                p_oDest.SpeciesCode = p_oSource.SpeciesCode;
+            }
+        }
+        public class SpcGroupListItemCollection : System.Collections.CollectionBase
+        {
+            public SpcGroupListItemCollection()
+            {
+                //
+                // TODO: Add constructor logic here
+                //
+            }
+
+            public void Add(SpcGroupListItem spc_group_item1)
+            {
+                // vérify if object is not already in
+                if (this.List.Contains(spc_group_item1))
+                    throw new InvalidOperationException();
+
+                // adding it
+                this.List.Add(spc_group_item1);
+
+                // return collection
+                //return this;
+            }
+            public void Remove(int index)
+            {
+                // Check to see if there is a widget at the supplied index.
+                if (index > Count - 1 || index < 0)
+                // If no widget exists, a messagebox is shown and the operation 
+                // is cancelled.
+                {
+                    System.Windows.Forms.MessageBox.Show("Index not valid!");
+                }
+                else
+                {
+                    List.RemoveAt(index);
+                }
+            }
+            public SpcGroupListItem Item(int Index)
+            {
+                // The appropriate item is retrieved from the List object and
+                // explicitly cast to the Widget type, then returned to the 
+                // caller.
+                return (SpcGroupListItem)List[Index];
+            }
+        }
     }
     public class ProcessorScenarioItem_Collection : System.Collections.CollectionBase
     {
@@ -2613,6 +2690,8 @@ namespace FIA_Biosum_Manager
 
                 oDao.CreateTableLink(p_strDbFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName,
                     strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName, true);
+                oDao.CreateTableLink(p_strDbFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName,
+                    strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName, true);
                 oDao.m_DaoWorkspace.Close();
                 oDao = null;
 
@@ -2761,8 +2840,9 @@ namespace FIA_Biosum_Manager
             /****************************************************************************************
              **load any previous group assignments 
              ****************************************************************************************/
-            p_oAdo.SqlQueryReader(p_oConn, "select * from " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName +
-                " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' order by species_group");
+            p_oAdo.m_strSQL = "select * from " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName +
+                " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' order by species_group";
+            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
             if (p_oAdo.m_intError == 0)
             {
                 /**************************************************************************************
@@ -2788,6 +2868,36 @@ namespace FIA_Biosum_Manager
                 p_oAdo.m_OleDbDataReader.Close();
             }
 
+            //REMOVE ANY EXISTING ITEMS
+            for (x = p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Count - 1; x >= 0; x--)
+            {
+                p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Remove(x);
+            }
+
+            //go through the species table and load its 
+            //group list box with the species common name
+            p_oAdo.m_strSQL = "SELECT DISTINCT common_name,species_group, spcd " +
+                "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
+                " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + " '";
+            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL); 
+            if (p_oAdo.m_intError == 0)
+            {
+                if (p_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (p_oAdo.m_OleDbDataReader.Read())
+                    {
+                        if (p_oAdo.m_OleDbDataReader["common_name"] != DBNull.Value)
+                        {
+                            ProcessorScenarioItem.SpcGroupListItem oItem = new ProcessorScenarioItem.SpcGroupListItem();
+                            oItem.SpeciesGroup = Convert.ToInt32(p_oAdo.m_OleDbDataReader["species_group"]);
+                            oItem.CommonName = Convert.ToString(p_oAdo.m_OleDbDataReader["common_name"]).Trim();
+                            oItem.SpeciesCode = Convert.ToInt32(p_oAdo.m_OleDbDataReader["spcd"]);
+                            p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Add(oItem);
+                        }
+                    }
+                }
+                p_oAdo.m_OleDbDataReader.Close();
+            }
         }
 
         public string ScenarioProperties(ProcessorScenarioItem p_oProcessorScenarioItem)

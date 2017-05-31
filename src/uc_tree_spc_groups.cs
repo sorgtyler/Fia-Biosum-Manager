@@ -774,44 +774,27 @@ namespace FIA_Biosum_Manager
                             if (this.btnPrev.Visible == false) this.btnPrev.Visible = true;
                         }
                      }
-                    //go through the species table and load its 
-                    //group list box with the species common name
-        //        this.m_ado.m_strSQL = "SELECT DISTINCT common_name,species_group " +
-        //            "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
-        //            " WHERE TRIM(UCASE(scenario_id))='" + _strScenarioId.Trim().ToUpper() + " '";
-        //        this.m_ado.SqlQueryReader(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
-        //        if (this.m_ado.m_intError==0)
-        //        {
-        //            if (this.m_ado.m_OleDbDataReader.HasRows)
-        //            {
-        //                while (this.m_ado.m_OleDbDataReader.Read())
-        //                {
-        //                    if (this.m_ado.m_OleDbDataReader["common_name"] != DBNull.Value)
-        //                    {
-        //                        this.spc_groupings_collection1.Item(Convert.ToInt32(this.m_ado.m_OleDbDataReader["species_group"]) - 1).m_lstGrp.Items.Add(Convert.ToString(this.m_ado.m_OleDbDataReader["common_name"]));
-        //                        index = this.spc_groupings_collection1.Item(Convert.ToInt32(this.m_ado.m_OleDbDataReader["species_group"]) - 1).m_lstGrp.Items.Count-1;
-        //                        for (x=0;x<=this.spc_common_name_collection1.Count-1;x++)
-        //                        {
-        //                            if (this.spc_common_name_collection1.Item(x).SpeciesCommonName.Trim().ToUpper() == 
-        //                                this.m_ado.m_OleDbDataReader["common_name"].ToString().Trim().ToUpper())
-        //                            {
-        //                                this.spc_common_name_collection1.Item(x).SpeciesGroupIndex=Convert.ToInt32(this.m_ado.m_OleDbDataReader["species_group"]) - 1;
-        //                                this.spc_common_name_collection1.Item(x).SpeciesGroupLabel=this.spc_groupings_collection1.Item(Convert.ToInt32(this.m_ado.m_OleDbDataReader["species_group"]) - 1).GroupLabel.ToString();
-        //                                if (this.spc_common_name_collection1.Item(x).FVSOutput)
-        //                                    this.spc_groupings_collection1.Item(Convert.ToInt32(this.m_ado.m_OleDbDataReader["species_group"]) - 1).m_lstGrp.Items[index] = this.spc_common_name_collection1.Item(x).SpeciesCommonName + "*";
+                //go through the species table and load its 
+                //group list box with the species common name
+                for (int y = 0; y <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Count - 1; y++)
+                {
+                    ProcessorScenarioItem.SpcGroupListItem p_oSpeciesGroupListItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Item(y);
 
-        //                            }
-
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            this.m_ado.m_OleDbDataReader.Close();
+                    this.spc_groupings_collection1.Item(p_oSpeciesGroupListItem.SpeciesGroup - 1).m_lstGrp.Items.Add(p_oSpeciesGroupListItem.CommonName);
+                    int index = this.spc_groupings_collection1.Item(p_oSpeciesGroupListItem.SpeciesGroup - 1).m_lstGrp.Items.Count-1;
+                    for (int x=0;x<=ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count-1;x++)
+                    {
+                        if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName.Trim().ToUpper() ==
+                            p_oSpeciesGroupListItem.CommonName.Trim().ToUpper())
+                        {
+                            ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupIndex=p_oSpeciesGroupListItem.SpeciesGroup - 1;
+                            ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupLabel = this.spc_groupings_collection1.Item(p_oSpeciesGroupListItem.SpeciesGroup - 1).GroupLabel.ToString();
+                            if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).FVSOutput)
+                                this.spc_groupings_collection1.Item(p_oSpeciesGroupListItem.SpeciesGroup - 1).m_lstGrp.Items[index] = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName + "*";
+                        }
+                    }
 					
-        //        }
-        //        else
-        //        {
-        //            this.m_intError = this.m_ado.m_intError;
+                 }
             }
         }
 		private void RemoveGroupAssignment(string p_strCommonName)
