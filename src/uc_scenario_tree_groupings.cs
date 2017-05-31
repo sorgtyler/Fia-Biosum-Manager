@@ -216,7 +216,6 @@ namespace FIA_Biosum_Manager
 
                 }
 
-                //this.m_frmTreeDiam.uc_tree_diam_groups_list1.loadvalues();
                 frmMain.g_sbpInfo.Text = "Ready";
                 this.m_frmTreeDiam.Show();
 
@@ -256,7 +255,6 @@ namespace FIA_Biosum_Manager
 
             }
 
-            //p_uc.loadvalues();
             this.m_frmTreeSpeciesGroups.Left = 0;
             this.m_frmTreeSpeciesGroups.Top = 0;
             this.m_frmTreeSpeciesGroups.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

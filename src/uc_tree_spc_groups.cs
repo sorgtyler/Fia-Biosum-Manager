@@ -796,6 +796,7 @@ namespace FIA_Biosum_Manager
 					
                  }
             }
+            this.loadUnassignedSpc();
         }
 		private void RemoveGroupAssignment(string p_strCommonName)
 		{
@@ -914,79 +915,79 @@ namespace FIA_Biosum_Manager
 				string strCommonName=this.lstCommonName.SelectedItems[0].ToString().Replace("*","");
 				this.spc_groupings_collection1.Item(p_intGroupListIndex).m_lstGrp.Items.Add(this.lstCommonName.SelectedItems[0].ToString().Trim());
 				this.lstCommonName.Items.Remove(this.lstCommonName.SelectedItems[0]);
-				
 
-                //for (int x=0;x<=this.spc_common_name_collection1.Count-1;x++)
-                //{
-                //    if (this.spc_common_name_collection1.Item(x).SpeciesCommonName.Trim().ToUpper() == 
-                //        strCommonName.Trim().ToUpper())
-                //    {
-                //        this.spc_common_name_collection1.Item(x).SpeciesGroupIndex=p_intGroupListIndex;
-                //        this.spc_common_name_collection1.Item(x).SpeciesGroupLabel=this.spc_groupings_collection1.Item(p_intGroupListIndex).m_txtGrp.Text;
-                //    }
-                //}
+
+                for (int x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
+                {
+                    if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName.Trim().ToUpper() ==
+                        strCommonName.Trim().ToUpper())
+                    {
+                        ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupIndex = p_intGroupListIndex;
+                        ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupLabel = this.spc_groupings_collection1.Item(p_intGroupListIndex).m_txtGrp.Text;
+                    }
+                }
 				if (this.btnSave.Enabled==false) this.btnSave.Enabled=true;
 			}
 		}
 		public void RemoveSpeciesCommonNameFromGroupAssignment(string p_strCommonName)
 		{
 			string strCommonName=p_strCommonName.Replace("*","");
-            //for (int x=0;x<=this.spc_common_name_collection1.Count-1;x++)
-            //{
-            //    if (this.spc_common_name_collection1.Item(x).SpeciesCommonName.Trim().ToUpper() == 
-            //        strCommonName.Trim().ToUpper())
-            //    {
-            //        this.spc_common_name_collection1.Item(x).SpeciesGroupIndex=-1;
-            //        this.spc_common_name_collection1.Item(x).SpeciesGroupLabel="";
-            //        AddSpeciesCommonNameToUnassignedList(x);
-            //    }
-            //}
+            for (int x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
+            {
+                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName.Trim().ToUpper() ==
+                    strCommonName.Trim().ToUpper())
+                {
+                    ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupIndex = -1;
+                    ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupLabel = "";
+                    AddSpeciesCommonNameToUnassignedList(x);
+                }
+            }
 		}
 		private void AddSpeciesCommonNameToUnassignedList(int index)
 		{
 			if (this.btnHwd.Enabled==false)
 			{
-                //if (this.spc_common_name_collection1.Item(index).SpeciesCode > 299)
-                //{
-                //    if (this.spc_common_name_collection1.Item(index).FVSOutput)
-                //    {
-                //        this.lstCommonName.Items.Add(this.spc_common_name_collection1.Item(index).SpeciesCommonName + "*");
-                //    }
-                //    else
-                //    {
-                //        if (this.chkFilterSpecies.Checked==false)
-                //            this.lstCommonName.Items.Add(this.spc_common_name_collection1.Item(index).SpeciesCommonName);
-                //    }
-                //}
+                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCode > 299)
+                {
+                    if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).FVSOutput)
+                    {
+                        this.lstCommonName.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCommonName + "*");
+                    }
+                    else
+                    {
+                        if (this.chkFilterSpecies.Checked == false)
+                            this.lstCommonName.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCommonName);
+                    }
+                }
 
 			}
 			else if (this.btnSwd.Enabled==false)
 			{
-                //if (this.spc_common_name_collection1.Item(index).SpeciesCode > 0 && 
-                //    this.spc_common_name_collection1.Item(index).SpeciesCode < 300)
-                //{
-                //    if (this.spc_common_name_collection1.Item(index).FVSOutput)
-                //    {
-                //        this.lstCommonName.Items.Add(this.spc_common_name_collection1.Item(index).SpeciesCommonName + "*");
-                //    }
-                //    else
-                //    {
-                //        if (this.chkFilterSpecies.Checked==false)
-                //            this.lstCommonName.Items.Add(this.spc_common_name_collection1.Item(index).SpeciesCommonName);
-                //    }
-                //}
+                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCode > 0 &&
+                    ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCode < 300)
+                {
+                    if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).FVSOutput)
+                    {
+                        this.lstCommonName.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCommonName + "*");
+                    }
+                    else
+                    {
+                        if (this.chkFilterSpecies.Checked == false)
+                            this.lstCommonName.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCommonName);
+                    }
+                }
 			}
 			else
 			{
-                //if (this.spc_common_name_collection1.Item(index).FVSOutput)
-                //{
-                //    this.lstCommonName.Items.Add(this.spc_common_name_collection1.Item(index).SpeciesCommonName + "*");
-                //}
-                //else
-                //{
-                //    if (this.chkFilterSpecies.Checked==false)
-                //        this.lstCommonName.Items.Add(this.spc_common_name_collection1.Item(index).SpeciesCommonName);
-                //}
+                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).FVSOutput)
+                {
+                    this.lstCommonName.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCommonName + "*");
+                }
+                else
+                {
+                    if (this.chkFilterSpecies.Checked == false)
+                        this.lstCommonName.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(index).SpeciesCommonName);
+                }
 			}
 
 		}
@@ -1039,13 +1040,13 @@ namespace FIA_Biosum_Manager
 		{
 			int x;
 			this.lstCommonName.Items.Clear();
-            //for (x=0;x<=this.spc_common_name_collection1.Count-1;x++)
-            //{
-            //    if (this.spc_common_name_collection1.Item(x).SpeciesGroupIndex < 0)
-            //    {
-            //        this.AddSpeciesCommonNameToUnassignedList(x);
-            //    }
-            //}
+            for (x = 0; x <= this.ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
+            {
+                if (this.ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupIndex < 0)
+                {
+                    this.AddSpeciesCommonNameToUnassignedList(x);
+                }
+            }
 		}
 
 		private void btnBoth_Click(object sender, System.EventArgs e)

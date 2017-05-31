@@ -216,24 +216,24 @@ namespace FIA_Biosum_Manager
 		private void frmDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
             
-			if (this.Text.Trim().ToUpper() == "PROCESSOR: TREE SPECIES GROUPS")
-			{
-                if (this.uc_tree_spc_groups1 != null &&
-                    this.uc_tree_spc_groups1.btnSave.Enabled == true)
-                {
+            //if (this.Text.Trim().ToUpper() == "PROCESSOR: TREE SPECIES GROUPS")
+            //{
+            //    if (this.uc_tree_spc_groups1 != null &&
+            //        this.uc_tree_spc_groups1.btnSave.Enabled == true)
+            //    {
 
-                    uc_tree_spc_groups1.btnClose_Click(sender, e);
-                    if (this.uc_tree_spc_groups1.btnSave.Enabled)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
+            //        uc_tree_spc_groups1.btnClose_Click(sender, e);
+            //        if (this.uc_tree_spc_groups1.btnSave.Enabled)
+            //        {
+            //            e.Cancel = true;
+            //            return;
+            //        }
                     
-                }
+            //    }
                 
-				this.Dispose();
-				return;
-			}
+            //    this.Dispose();
+            //    return;
+            //}
             if (uc_fvs_output_prepost_seqnum1 != null && uc_fvs_output_prepost_seqnum1.Exit==false)
             {
                 uc_fvs_output_prepost_seqnum1.CloseForm();
