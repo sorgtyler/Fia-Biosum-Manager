@@ -1876,7 +1876,7 @@ namespace FIA_Biosum_Manager
 							this.m_frmSpcGrp.BackColor = System.Drawing.SystemColors.Control;
 							this.m_frmSpcGrp.Text = "Processor: Tree Species Groups";
 							this.m_frmSpcGrp.MdiParent = this;
-							FIA_Biosum_Manager.uc_tree_spc_groups p_uc = new uc_tree_spc_groups(this.frmProject.uc_project1.txtRootDirectory.Text.Trim());
+							FIA_Biosum_Manager.uc_tree_spc_groups p_uc = new uc_tree_spc_groups();
 							if (p_uc.m_intError < 0) 
 							{
                                 this.DeactivateStandByAnimation();

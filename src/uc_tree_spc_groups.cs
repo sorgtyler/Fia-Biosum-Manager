@@ -57,9 +57,6 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnClearAll6;
 		private System.Windows.Forms.Button btnHelp;
 		public int m_intError=0;
-		private FIA_Biosum_Manager.ado_data_access m_ado;
-		private string m_strFvsOutTreeTable="";
-		private string m_strConn="";
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.Button btnHwd;
 		private System.Windows.Forms.Button btnSwd;
@@ -72,20 +69,17 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnGrp1;
 		private System.Windows.Forms.Button btnTreeAudit;
 		private int m_intCurrGroupSet=1;
-		private string m_strProjDir;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.CheckBox chkFilterSpecies;
 
 		Queries m_oQueries = new Queries();
-		RxTools m_oRxTools = new RxTools();
-		
-		string[] m_strFVSVariantsArray=null;
+        RxTools m_oRxTools = new RxTools();
 
         // scenario-specific variables
         private string _strScenarioId = "";
         private frmProcessorScenario _frmProcessorScenario = null;
         
-		public uc_tree_spc_groups(string p_strProjDir)
+		public uc_tree_spc_groups()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -99,8 +93,6 @@ namespace FIA_Biosum_Manager
 			this.grpbox5.Visible=false;
 			this.grpbox6.Visible=false;
 			this.DisplayGroupSet(1);
-
-			this.m_strProjDir = p_strProjDir;
 
 			this.m_oQueries = new Queries();
 			//load datasources
@@ -773,7 +765,9 @@ namespace FIA_Biosum_Manager
                             if (this.btnNext.Visible == false) this.btnNext.Visible = true;
                             if (this.btnPrev.Visible == false) this.btnPrev.Visible = true;
                         }
-                     }
+                        this.spc_groupings_collection1.Item(p_oSpeciesGroupItem.SpeciesGroup - 1).GroupLabel = p_oSpeciesGroupItem.SpeciesGroupLabel;
+
+                    }
                 //go through the species table and load its 
                 //group list box with the species common name
                 for (int y = 0; y <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Count - 1; y++)
@@ -1201,11 +1195,18 @@ namespace FIA_Biosum_Manager
 				{
 					int x=0;
 					//save to the species groups table
-					
 
-					m_ado.OpenConnection(m_strConn);
+                    //
+                    //OPEN CONNECTION TO DB FILE CONTAINING PROCESSOR SCENARIO TABLES
+                    //
+                    //scenario mdb connection
+                    string strScenarioMDB =
+                        frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                        "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+                    ado_data_access oAdo = new ado_data_access();
+                    oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
 
-					if (this.m_ado.m_intError==0)
+					if (oAdo.m_intError==0)
 					{
 						DialogResult result = MessageBox.Show("Save Tree Species Group Data? Y/N","Tree Species Groups",System.Windows.Forms.MessageBoxButtons.YesNoCancel,System.Windows.Forms.MessageBoxIcon.Question);
 						if (result == DialogResult.Yes)
@@ -1220,58 +1221,49 @@ namespace FIA_Biosum_Manager
 							//delete the current groups
 
 							//delete all records from the tree species group table
-                            this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName +
+                            oAdo.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName +
                                 " WHERE TRIM(UCASE(scenario_id))='" + _strScenarioId.Trim().ToUpper() + " '";
-							this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,m_ado.m_strSQL);
-							if (this.m_ado.m_intError!=0) return;
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                            if (oAdo.m_intError != 0) return;
                         
 							//delete all records from the tree species group list table
-                            this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
+                            oAdo.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
                                 " WHERE TRIM(UCASE(scenario_id))='" + _strScenarioId.Trim().ToUpper() + " '";
-							this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,m_ado.m_strSQL);
-							if (this.m_ado.m_intError != 0) return;
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
-							if (this.m_ado.m_intError==0)
+                            if (oAdo.m_intError == 0)
 							{
-								//for (x=0; x<= this.m_intTreeSpcTableRecordCount-1;x++)
-                                //for (x=0; x<=this.spc_common_name_collection1.Count-1;x++)
-                                //{
-                                //    if (this.spc_common_name_collection1.Item(x).SpeciesGroupIndex >=0)
-                                //    {
+                                for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
+                                {
+                                    if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupIndex >= 0)
+                                    {
+
+                                        intSpcGrp = Convert.ToInt32(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupIndex);
+                                        strCommonName = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName;
+                                        strCommonName = oAdo.FixString(strCommonName.Trim(), "'", "''");
+                                        intSpCd = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCode;
+                                        intGrpCollection = Math.Abs(intSpcGrp / 6);
+                                        strGrpLabel = this.spc_groupings_collection1.Item(intSpcGrp).GroupLabel;
+                                        strGrpLabel = strGrpLabel.Replace(' ', '_');
+                                        str = "," + strGrpLabel.Trim() + ",";
+                                        if (strSavedList.IndexOf(str, 0) < 0)
+                                        {
+                                            oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " " +
+                                                "(SPECIES_GROUP,SPECIES_LABEL,SCENARIO_ID) VALUES " +
+                                                "(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strGrpLabel.Trim() + "','" + _strScenarioId.Trim() + "');";
+                                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                                            strSavedList += str;
+                                        }
+
+                                        oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " " +
+                                            "(SPECIES_GROUP,common_name,SCENARIO_ID,SPCD) VALUES " +
+                                            "(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strCommonName + "','" + _strScenarioId.Trim() + "', " +
+                                            intSpCd + " );";
+                                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                                    }
 
 									
-                                //        intSpcGrp = Convert.ToInt32(this.spc_common_name_collection1.Item(x).SpeciesGroupIndex);
-                                //        strCommonName = this.spc_common_name_collection1.Item(x).SpeciesCommonName;
-                                //        strCommonName = m_ado.FixString(strCommonName.Trim(), "'", "''");
-                                //        intSpCd = this.spc_common_name_collection1.Item(x).SpeciesCode;
-                                //        intGrpCollection = Math.Abs(intSpcGrp / 6); 
-                                //        strGrpLabel = this.spc_groupings_collection1.Item(intSpcGrp).GroupLabel;
-                                //        strGrpLabel = strGrpLabel.Replace(' ','_');
-                                //        str = "," + strGrpLabel.Trim() + ",";
-                                //        if (strSavedList.IndexOf(str,0) < 0)
-                                //        {
-                                //            this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " " + 
-                                //                "(SPECIES_GROUP,SPECIES_LABEL,SCENARIO_ID) VALUES " + 
-                                //                "(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strGrpLabel.Trim() + ",'" + _strScenarioId.Trim() + "');";
-                                //            this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
-                                //            strSavedList += str;
-                                //        }
-
-                                //        this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " " +
-                                //            "(SPECIES_GROUP,common_name,SCENARIO_ID,SPCD) VALUES " +
-                                //            "(" + Convert.ToString(intSpcGrp + 1).Trim() + ",'" + strCommonName + "'" + _strScenarioId.Trim() + "', " +
-                                //            intSpCd + " );";
-                                //        this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
-
-                                //        // No longer updating tree_species tabe
-                                //        //this.m_ado.m_strSQL = "UPDATE " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " " + 
-                                //        //    "SET USER_SPC_GROUP = " +  Convert.ToString(intSpcGrp + 1).Trim() + " " + 
-                                //        //    "WHERE TRIM(UCASE(common_name)) = '" + strCommonName.Trim() + "';";
-                                //        //this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
-                                //    }
-
-									
-                                //}
+                                }
 								this.btnSave.Enabled=false;
 							}
 						}
@@ -1280,8 +1272,8 @@ namespace FIA_Biosum_Manager
                             this.ParentForm.DialogResult = DialogResult.Cancel;
                         }
 
-						if (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
-							m_ado.CloseConnection(m_ado.m_OleDbConnection);
+						if (oAdo.m_OleDbConnection.State == System.Data.ConnectionState.Open)
+                            oAdo.CloseConnection(oAdo.m_OleDbConnection);
 					}
 					
 				}
@@ -1564,44 +1556,44 @@ namespace FIA_Biosum_Manager
 			for (x=0;x<=this.spc_groupings_collection1.Count-1;x++)
 			{
 				this.spc_groupings_collection1.Item(x).m_lstGrp.Items.Clear();
-            //    for (y=0;y<=this.spc_common_name_collection1.Count-1;y++)
-            //    {
-            //        if (this.spc_common_name_collection1.Item(y).SpeciesGroupIndex >=0)
-            //        {
-            //            if (this.spc_groupings_collection1.Item(x).GroupingNumber-1 ==  
-            //                this.spc_common_name_collection1.Item(y).SpeciesGroupIndex)
-            //            {
-            //                if (p_bFilter)
-            //                {
-            //                    if (this.spc_common_name_collection1.Item(y).FVSOutput)
-            //                    {
-            //                        this.spc_groupings_collection1.Item(x).m_lstGrp.Items.Add(this.spc_common_name_collection1.Item(y).SpeciesCommonName + "*");
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    if (this.spc_common_name_collection1.Item(y).FVSOutput)
-            //                    {
-            //                        this.spc_groupings_collection1.Item(x).m_lstGrp.Items.Add(this.spc_common_name_collection1.Item(y).SpeciesCommonName + "*");
-            //                    }
-            //                    else
-            //                        this.spc_groupings_collection1.Item(x).m_lstGrp.Items.Add(this.spc_common_name_collection1.Item(y).SpeciesCommonName);
+                for (y = 0; y <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; y++)
+                {
+                    if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(y).SpeciesGroupIndex >= 0)
+                    {
+                        if (this.spc_groupings_collection1.Item(x).GroupingNumber - 1 ==
+                            ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(y).SpeciesGroupIndex)
+                        {
+                            if (p_bFilter)
+                            {
+                                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(y).FVSOutput)
+                                {
+                                    this.spc_groupings_collection1.Item(x).m_lstGrp.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(y).SpeciesCommonName + "*");
+                                }
+                            }
+                            else
+                            {
+                                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(y).FVSOutput)
+                                {
+                                    this.spc_groupings_collection1.Item(x).m_lstGrp.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(y).SpeciesCommonName + "*");
+                                }
+                                else
+                                    this.spc_groupings_collection1.Item(x).m_lstGrp.Items.Add(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(y).SpeciesCommonName);
 
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            ////
-            ////clear and load the unassigned list box
-            ////
-            //this.lstCommonName.Items.Clear();
-            //for (x=0;x<=this.spc_common_name_collection1.Count-1;x++)
-            //{
-            //    if (this.spc_common_name_collection1.Item(x).SpeciesGroupIndex<0)
-            //    {
-            //        this.AddSpeciesCommonNameToUnassignedList(x);	
-            //    }
+                            }
+                        }
+                    }
+                }
+            }
+            //
+            //clear and load the unassigned list box
+            //
+            this.lstCommonName.Items.Clear();
+            for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
+            {
+                if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesGroupIndex < 0)
+                {
+                    this.AddSpeciesCommonNameToUnassignedList(x);
+                }
             }
 
 		}

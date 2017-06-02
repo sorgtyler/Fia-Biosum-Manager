@@ -53,7 +53,7 @@ namespace FIA_Biosum_Manager
             this.m_frmTreeSpeciesGroups.MaximizeBox = false;
             this.m_frmTreeSpeciesGroups.BackColor = System.Drawing.SystemColors.Control;
             this.m_frmTreeSpeciesGroups.Text = "Processor: Tree Species Groups";
-            FIA_Biosum_Manager.uc_tree_spc_groups p_uc = new uc_tree_spc_groups(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());
+            FIA_Biosum_Manager.uc_tree_spc_groups p_uc = new uc_tree_spc_groups();
             this.m_frmTreeSpeciesGroups.Controls.Add(p_uc);
             this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1 = p_uc;
             this.m_frmTreeSpeciesGroups.Height = 0;

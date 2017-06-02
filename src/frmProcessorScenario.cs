@@ -2751,7 +2751,7 @@ namespace FIA_Biosum_Manager
 			 **process all tree species in the tree species table and initialize the 
 			 **unassigned array variable
 			 **********************************************************************************/
-            p_oAdo.m_strSQL = "SELECT COUNT(*) FROM (SELECT DISTINCT common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0 )";
+            //p_oAdo.m_strSQL = "SELECT COUNT(*) FROM (SELECT DISTINCT common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0 )";
             p_oAdo.m_strSQL = "SELECT DISTINCT common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0";
             p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
             if (p_oAdo.m_OleDbDataReader.HasRows)
@@ -2806,12 +2806,18 @@ namespace FIA_Biosum_Manager
                                   "WHERE f.fvs_tree_id = t.fvs_tree_id";
             p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
 
+            //p_oAdo.m_strSQL = "SELECT DISTINCT s.common_name " +
+            //    "FROM tree_spc_groups_temp t," + p_oQueries.m_oFvs.m_strTreeSpcTable + " s, " +
+            //    p_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " fvs " +
+            //    "WHERE t.spcd = s.spcd AND " +
+            //    "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant)) AND " +
+            //    "TRIM(UCASE(fvs.fvs_species)) = TRIM(UCASE(s.fvs_species))";
+
             p_oAdo.m_strSQL = "SELECT DISTINCT s.common_name " +
-                "FROM tree_spc_groups_temp t," + p_oQueries.m_oFvs.m_strTreeSpcTable + " s, " +
-                p_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " fvs " +
-                "WHERE t.spcd = s.spcd AND " +
-                "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant)) AND " +
-                "TRIM(UCASE(fvs.fvs_species)) = TRIM(UCASE(s.fvs_species))";
+                              "FROM tree_spc_groups_temp t, " + p_oQueries.m_oFvs.m_strTreeSpcTable + " s " +
+                              "WHERE t.spcd = s.spcd AND " +
+                              "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant))";
+
 
 
             p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
