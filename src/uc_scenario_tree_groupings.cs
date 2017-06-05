@@ -18,9 +18,12 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario=null;
 		private string _strScenarioType="processor";
         private Button BtnTreeDiameterGroups;
-        private FIA_Biosum_Manager.frmDialog m_frmTreeDiam;     //processor tree diameter form
+        private FIA_Biosum_Manager.frmDialog m_frmTreeDiamGroups;     //processor tree diameter form
         private Button BtnTreeSpeciesGroups;       
         private FIA_Biosum_Manager.frmDialog m_frmTreeSpeciesGroups;     //processor tree species groups form
+        private bool _bCopyScenarioTreeDiamGroups = false;
+        private bool _bCopyScenarioTreeSpeciesGroups = false;
+
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -32,33 +35,6 @@ namespace FIA_Biosum_Manager
             InitializeComponent();
 
             // TODO: Add any initialization after the InitializeComponent call
-        }
-
-        public void initTreeGroupingDialogs()
-        {
-            // Initialize Tree Diameter form
-            this.m_frmTreeDiam = new frmDialog(_frmProcessorScenario, frmMain.g_oFrmMain);
-            this.m_frmTreeDiam.MaximizeBox = false;
-            this.m_frmTreeDiam.BackColor = System.Drawing.SystemColors.Control;
-            this.m_frmTreeDiam.Text = "Processor: Tree Diameter Groups";
-            // @ToDo: Not sure if we need this
-            //this.m_frmTreeDiam.MdiParent = ofrmProcessorScenario;
-            this.m_frmTreeDiam.Initialize_Plot_Tree_Diam_User_Control();
-
-            this.m_frmTreeDiam.Height = 0;
-            this.m_frmTreeDiam.Width = 0;
-
-            // Initialize Tree Species Group form
-            this.m_frmTreeSpeciesGroups = new frmDialog(_frmProcessorScenario, frmMain.g_oFrmMain);
-            this.m_frmTreeSpeciesGroups.MaximizeBox = false;
-            this.m_frmTreeSpeciesGroups.BackColor = System.Drawing.SystemColors.Control;
-            this.m_frmTreeSpeciesGroups.Text = "Processor: Tree Species Groups";
-            FIA_Biosum_Manager.uc_tree_spc_groups p_uc = new uc_tree_spc_groups();
-            this.m_frmTreeSpeciesGroups.Controls.Add(p_uc);
-            this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1 = p_uc;
-            this.m_frmTreeSpeciesGroups.Height = 0;
-            this.m_frmTreeSpeciesGroups.Width = 0;
-            p_uc.ReferenceProcessorScenarioForm = _frmProcessorScenario;
         }
 
 		/// <summary> 
@@ -169,11 +145,21 @@ namespace FIA_Biosum_Manager
 			get {return _strScenarioType;}
 			set {_strScenarioType=value;}
 		}
+        public bool CopyScenarioTreeDiamGroups
+        {
+            get { return _bCopyScenarioTreeDiamGroups; }
+            set { _bCopyScenarioTreeDiamGroups = value; }
+        }
+        public bool CopyScenarioTreeSpeciesGroups
+        {
+            get { return _bCopyScenarioTreeSpeciesGroups; }
+            set { _bCopyScenarioTreeSpeciesGroups = value; }
+        }
         public FIA_Biosum_Manager.uc_tree_diam_groups_list uc_tree_diam_groups_list1
         {
             get 
             { 
-                return m_frmTreeDiam.uc_tree_diam_groups_list1;  
+                return m_frmTreeDiamGroups.uc_tree_diam_groups_list1;  
             }
         }
         public FIA_Biosum_Manager.uc_tree_spc_groups uc_tree_spc_groups1
@@ -187,28 +173,47 @@ namespace FIA_Biosum_Manager
         private void BtnTreeDiameterGroups_Click(object sender, EventArgs e)
         {
 
-                if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
+            frmMain.g_oFrmMain.ActivateStandByAnimation(
+                frmMain.g_oFrmMain.WindowState,
+                frmMain.g_oFrmMain.Left,
+                frmMain.g_oFrmMain.Height,
+                frmMain.g_oFrmMain.Width,
+                frmMain.g_oFrmMain.Top);
+
+            // Initialize Tree Diameter form
+            this.m_frmTreeDiamGroups = new frmDialog(_frmProcessorScenario, frmMain.g_oFrmMain);
+            this.m_frmTreeDiamGroups.MaximizeBox = false;
+            this.m_frmTreeDiamGroups.BackColor = System.Drawing.SystemColors.Control;
+            this.m_frmTreeDiamGroups.Text = "Processor: Tree Diameter Groups";
+            // @ToDo: Not sure if we need this
+            //this.m_frmTreeDiam.MdiParent = ofrmProcessorScenario;
+            this.m_frmTreeDiamGroups.Initialize_Plot_Tree_Diam_User_Control();
+
+            this.m_frmTreeDiamGroups.Height = 0;
+            this.m_frmTreeDiamGroups.Width = 0;    
+            
+            if (this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Top + this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Height > this.m_frmTreeDiamGroups.ClientSize.Height + 2)
                 {
                     for (int x = 1; ; x++)
                     {
-                        this.m_frmTreeDiam.Height = x;
-                        if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Top +
-                            this.m_frmTreeDiam.uc_tree_diam_groups_list1.Height <
-                            this.m_frmTreeDiam.ClientSize.Height)
+                        this.m_frmTreeDiamGroups.Height = x;
+                        if (this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Top +
+                            this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Height <
+                            this.m_frmTreeDiamGroups.ClientSize.Height)
                         {
                             break;
                         }
                     }
 
                 }
-                if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
+                if (this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Left + this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Width > this.m_frmTreeDiamGroups.ClientSize.Width + 2)
                 {
                     for (int x = 1; ; x++)
                     {
-                        this.m_frmTreeDiam.Width = x;
-                        if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Left +
-                            this.m_frmTreeDiam.uc_tree_diam_groups_list1.Width <
-                            this.m_frmTreeDiam.ClientSize.Width)
+                        this.m_frmTreeDiamGroups.Width = x;
+                        if (this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Left +
+                            this.m_frmTreeDiamGroups.uc_tree_diam_groups_list1.Width <
+                            this.m_frmTreeDiamGroups.ClientSize.Width)
                         {
                             break;
                         }
@@ -216,16 +221,41 @@ namespace FIA_Biosum_Manager
 
                 }
 
-                frmMain.g_sbpInfo.Text = "Ready";
-                this.m_frmTreeDiam.Show();
+                if (_bCopyScenarioTreeDiamGroups == false)
+                {
+                    m_frmTreeDiamGroups.uc_tree_diam_groups_list1.loadvalues();
+                }
+                else
+                {
+                    m_frmTreeDiamGroups.uc_tree_diam_groups_list1.loadvalues_FromProperties();
+                }
 
-                this.m_frmTreeDiam.Left = 0;
-                this.m_frmTreeDiam.Top = 0;
-                this.m_frmTreeDiam.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            }
+            frmMain.g_oFrmMain.DeactivateStandByAnimation();
+                
+            this.m_frmTreeDiamGroups.Show();
+            this.m_frmTreeDiamGroups.Left = 0;
+            this.m_frmTreeDiamGroups.Top = 0;
+            this.m_frmTreeDiamGroups.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+        }
 
         private void BtnTreeSpeciesGroups_Click(object sender, EventArgs e)
         {
+
+            frmMain.g_oFrmMain.ActivateStandByAnimation(
+                frmMain.g_oFrmMain.WindowState,
+                frmMain.g_oFrmMain.Left,
+                frmMain.g_oFrmMain.Height,
+                frmMain.g_oFrmMain.Width,
+                frmMain.g_oFrmMain.Top);
+
+            // Initialize Tree Species Group form
+            this.m_frmTreeSpeciesGroups = new frmDialog(_frmProcessorScenario, frmMain.g_oFrmMain);
+            this.m_frmTreeSpeciesGroups.MaximizeBox = false;
+            this.m_frmTreeSpeciesGroups.BackColor = System.Drawing.SystemColors.Control;
+            this.m_frmTreeSpeciesGroups.Text = "Processor: Tree Species Groups";
+            this.m_frmTreeSpeciesGroups.Initialize_Processor_Tree_Species_Groups();
+            this.m_frmTreeSpeciesGroups.Height = 0;
+            this.m_frmTreeSpeciesGroups.Width = 0;
             if (this.m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Top + m_frmTreeSpeciesGroups.uc_tree_spc_groups1.Height > this.m_frmTreeSpeciesGroups.ClientSize.Height + 2)
             {
                 for (int x = 1; ; x++)
@@ -255,6 +285,17 @@ namespace FIA_Biosum_Manager
 
             }
 
+            if (_bCopyScenarioTreeSpeciesGroups == false)
+            {
+                m_frmTreeSpeciesGroups.uc_tree_spc_groups1.loadvalues();
+            }
+            else
+            {
+                //@ToDo: Implement this method
+                //m_frmTreeSpeciesGroups.uc_tree_spc_groups1.loadvalues_FromProperties();
+            }
+
+            frmMain.g_oFrmMain.DeactivateStandByAnimation();
             this.m_frmTreeSpeciesGroups.Left = 0;
             this.m_frmTreeSpeciesGroups.Top = 0;
             this.m_frmTreeSpeciesGroups.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

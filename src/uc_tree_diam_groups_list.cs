@@ -79,6 +79,7 @@ namespace FIA_Biosum_Manager
             set { _strScenarioId = value; }
         }
 
+
 		public void loadvalues()
 		{
             string strId="";
@@ -140,7 +141,6 @@ namespace FIA_Biosum_Manager
 							}
 						}
 						((frmDialog)this.ParentForm).Enabled=true;
-                        ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = false;
 					}
 					catch (Exception caught)
 					{
@@ -203,7 +203,6 @@ namespace FIA_Biosum_Manager
                         }
                     }
                     ((frmDialog)this.ParentForm).Enabled = true;
-                    ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = false;
                 }
                 catch (Exception caught)
                 {
@@ -373,23 +372,19 @@ namespace FIA_Biosum_Manager
 		}
 		#endregion
 
-		private void btnClose_Click(object sender, System.EventArgs e)
-		{
-			if (this.btnSave.Enabled==true)
-			{
-				DialogResult result = MessageBox.Show("Save Changes Y/N","Tree Diameter Groups",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Question);
+        private void btnClose_Click(object sender, System.EventArgs e)
+        {
+            if (this.btnSave.Enabled == true)
+            {
+                DialogResult result = MessageBox.Show("Save Changes Y/N", "Tree Diameter Groups", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
                 if (result == System.Windows.Forms.DialogResult.Yes)
                 {
                     this.savevalues();
                 }
-                else
-                {
-                    // Reload if we're not saving; Disposing of the form causes issues later if we re-open it
-                    this.loadvalues();
-                }
-			}
-			this.ParentForm.Close();
-		}
+            }
+            this.ParentForm.Close();
+            this.ParentForm.Dispose();
+        }
 
 		private void btnNew_Click(object sender, System.EventArgs e)
 		{
@@ -739,7 +734,6 @@ namespace FIA_Biosum_Manager
 					}
                     if (this.m_intError == 0 && oAdo.m_intError == 0)
 					{
-                        this.ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
                         this.btnSave.Enabled=false;
 					}
 

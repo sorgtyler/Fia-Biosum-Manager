@@ -215,25 +215,25 @@ namespace FIA_Biosum_Manager
 
 		private void frmDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-            
-            //if (this.Text.Trim().ToUpper() == "PROCESSOR: TREE SPECIES GROUPS")
-            //{
-            //    if (this.uc_tree_spc_groups1 != null &&
-            //        this.uc_tree_spc_groups1.btnSave.Enabled == true)
-            //    {
 
-            //        uc_tree_spc_groups1.btnClose_Click(sender, e);
-            //        if (this.uc_tree_spc_groups1.btnSave.Enabled)
-            //        {
-            //            e.Cancel = true;
-            //            return;
-            //        }
-                    
-            //    }
-                
-            //    this.Dispose();
-            //    return;
-            //}
+            if (this.Text.Trim().ToUpper() == "PROCESSOR: TREE SPECIES GROUPS")
+            {
+                if (this.uc_tree_spc_groups1 != null &&
+                    this.uc_tree_spc_groups1.btnSave.Enabled == true)
+                {
+
+                    uc_tree_spc_groups1.btnClose_Click(sender, e);
+                    if (this.uc_tree_spc_groups1.btnSave.Enabled)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                }
+
+                this.Dispose();
+                return;
+            }
             if (uc_fvs_output_prepost_seqnum1 != null && uc_fvs_output_prepost_seqnum1.Exit==false)
             {
                 uc_fvs_output_prepost_seqnum1.CloseForm();
@@ -485,6 +485,16 @@ namespace FIA_Biosum_Manager
             uc_processor_scenario_copy1.Visible = true;
 
         }
+        public void Initialize_Processor_Tree_Species_Groups()
+        {
+            this.uc_tree_spc_groups1 = new uc_tree_spc_groups();
+            this.Controls.Add(this.uc_tree_spc_groups1);
+            this.uc_tree_spc_groups1.Visible = true;
+            this.uc_tree_spc_groups1.ReferenceProcessorScenarioForm =
+                this.m_frmProcessorScenarioCallingForm;
+        }
+
+
 		public void btnOK_Click(object sender, System.EventArgs e)
 		{
 		   this.DialogResult = System.Windows.Forms.DialogResult.OK;

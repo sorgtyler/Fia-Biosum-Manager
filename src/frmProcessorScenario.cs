@@ -40,7 +40,6 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.TabPage tbAddHarvestCosts;
 		private System.Windows.Forms.TabPage tbRun;
 		public bool m_bRulesFirstTime=true;
-        public bool m_bTreeGroupsFirstTime = true;
 		private System.Windows.Forms.TabPage tbHarvestMethod;
 		private FIA_Biosum_Manager.uc_processor_scenario_harvest_method uc_processor_scenario_harvest_method1;
         private FIA_Biosum_Manager.uc_processor_scenario_movein_costs uc_processor_scenario_movein_costs1;
@@ -138,7 +137,7 @@ namespace FIA_Biosum_Manager
             uc_scenario_tree_groupings1.Dock = System.Windows.Forms.DockStyle.Fill;
             uc_scenario_tree_groupings1.ReferenceProcessorScenarioForm = this;
             uc_scenario_tree_groupings1.ScenarioType = "processor";
-            uc_scenario_tree_groupings1. initTreeGroupingDialogs();
+            //uc_scenario_tree_groupings1. initTreeGroupingDialogs();
 
 
 
@@ -682,8 +681,7 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.tabControlRules.Enabled)
 			{
-				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS" ||
-                    tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "TREE GROUPINGS")
+				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS")
 				{
                     if (m_bRulesFirstTime == true)
                     {
@@ -696,22 +694,6 @@ namespace FIA_Biosum_Manager
                         LoadRuleDefinitions();
                         frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     }
-                    else if (m_bTreeGroupsFirstTime == true)
-                    {
-                        // Reloading wood values page because tree groupings have changed
-                        frmMain.g_oFrmMain.ActivateStandByAnimation(
-                            frmMain.g_oFrmMain.WindowState,
-                            frmMain.g_oFrmMain.Left,
-                            frmMain.g_oFrmMain.Height,
-                            frmMain.g_oFrmMain.Width,
-                            frmMain.g_oFrmMain.Top);
-                        frmMain.g_sbpInfo.Text = "Loading Tree Groupings Definitions...Stand By";
-                        this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.loadvalues();
-                        frmMain.g_sbpInfo.Text = "Loading Scenario Merch and Chip Market Value Rule Definitions...Stand By";
-                        this.uc_processor_scenario_merch_chip_value1.loadvalues();
-                        frmMain.g_oFrmMain.DeactivateStandByAnimation();
-                    }
-
 				}
 				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "NOTES")
 				{
@@ -753,10 +735,6 @@ namespace FIA_Biosum_Manager
 		public void LoadRuleDefinitions()
 		{
             this.m_oProcessorScenarioItem.ScenarioId = uc_scenario1.txtScenarioId.Text.Trim();
-            this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.ReferenceProcessorScenarioForm = this;
-            frmMain.g_sbpInfo.Text = "Loading Tree Groupings Definitions...Stand By";
-            this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.loadvalues();
-            this.uc_scenario_tree_groupings1.uc_tree_spc_groups1.loadvalues();
  			this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
             frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
             this.uc_processor_scenario_harvest_method1.loadvalues();
@@ -773,7 +751,6 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_run1.loadvalues();
             frmMain.g_sbpInfo.Text = "Ready";
 			this.m_bRulesFirstTime=false;
-            this.m_bTreeGroupsFirstTime = false;
 		}
 	
 		public void SaveRuleDefinitions()
@@ -789,7 +766,6 @@ namespace FIA_Biosum_Manager
                       this.Width,
                       this.Top);
 
-                this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.savevalues();
                 this.uc_processor_scenario_harvest_method1.savevalues();
                 this.m_intError = uc_processor_scenario_harvest_method1.m_intError;
                 this.uc_processor_scenario_movein_costs1.savevalues();
@@ -1081,9 +1057,10 @@ namespace FIA_Biosum_Manager
             {
                 frmMain.g_sbpInfo.Text = "Copying scenario rule definitions...Stand by";
 
-                this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.ReferenceProcessorScenarioForm = this;
-                frmMain.g_sbpInfo.Text = "Loading Tree Groupings Definitions...Stand By";
-                this.uc_scenario_tree_groupings1.uc_tree_diam_groups_list1.loadvalues_FromProperties();
+                // For tree groupings child forms, set flag that this is copied scenario; The form will call
+                // the appropriate load method
+                this.uc_scenario_tree_groupings1.CopyScenarioTreeDiamGroups = true;
+                this.uc_scenario_tree_groupings1.CopyScenarioTreeSpeciesGroups = true;
                 this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm = this;
                 frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
                 this.uc_processor_scenario_harvest_method1.loadvalues_FromProperties();
@@ -2031,7 +2008,6 @@ namespace FIA_Biosum_Manager
                     ProcessorScenarioItem oItem = new ProcessorScenarioItem();
                     this.LoadGeneral(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                     this.LoadTreeDiameterGroupValues(p_oQueries.m_strTempDbFile,p_strScenarioId, oItem);
-
                     this.LoadTreeSpeciesGroupValues(p_oQueries.m_strTempDbFile, p_strScenarioId, p_oQueries, oItem);
                     this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, oItem);
                     this.LoadMoveInCosts(p_oQueries.m_strTempDbFile, oItem);
