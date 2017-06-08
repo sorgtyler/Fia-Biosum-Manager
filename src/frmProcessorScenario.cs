@@ -1091,8 +1091,8 @@ namespace FIA_Biosum_Manager
                = new TreeSpeciesAndDbhDollarValuesItem_Collection();
         public TreeDiamGroupsItem_Collection m_oTreeDiamGroupsItem_Collection
                = new TreeDiamGroupsItem_Collection();
-        public SpcCommonNameItemCollection m_oSpcCommonNameItem_Collection
-               = new SpcCommonNameItemCollection();
+        //public SpcCommonNameItemCollection m_oSpcCommonNameItem_Collection
+        //       = new SpcCommonNameItemCollection();
         public SpcGroupItemCollection m_oSpcGroupItem_Collection
             = new SpcGroupItemCollection();
         public SpcGroupListItemCollection m_oSpcGroupListItem_Collection
@@ -2661,13 +2661,6 @@ namespace FIA_Biosum_Manager
             {
                 //CREATE LINKS TO SCENARIO RULES TABLES
                 dao_data_access oDao = new dao_data_access();
-                string strScenarioMDB = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                    "\\processor" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsDbFile;
-
-                oDao.CreateTableLink(p_strDbFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName,
-                    strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName, true);
-                oDao.CreateTableLink(p_strDbFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName,
-                    strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName, true);
                 oDao.m_DaoWorkspace.Close();
                 oDao = null;
 
@@ -2685,133 +2678,6 @@ namespace FIA_Biosum_Manager
                                         ProcessorScenarioItem p_oProcessorScenarioItem)
         {
             int x;
-            //REMOVE ANY EXISTING ITEMS
-            for (x = p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x >= 0; x--)
-            {
-                p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Remove(x);
-            }
-			//get all the variants in the plot table
-            RxTools _oRxTools = new RxTools();
-            string[] strFVSVariantsArray = frmMain.g_oUtils.ConvertListToArray(_oRxTools.GetListOfFVSVariantsInPlotTable(p_oAdo, p_oConn, p_oQueries.m_oFIAPlot.m_strPlotTable), ",");
-            RxPackageItem_Collection _oRxPackage_Collection = new RxPackageItem_Collection();
-            _oRxTools.LoadAllRxPackageItems(_oRxPackage_Collection);
-
-            //create table links
-            if (p_oAdo.TableExist(p_oAdo.m_OleDbConnection, "fvsouttreetemp"))
-                p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, "DROP TABLE fvsouttreetemp");
-            if (p_oAdo.TableExist(p_oAdo.m_OleDbConnection, "fvsouttreetemp2"))
-                p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, "DROP TABLE fvsouttreetemp2");
-			//append the multiple fvsout tree tables into a single fvsout tree table
-            List<string> strSqlCommandList;
-
-            strSqlCommandList = Queries.Processor.AuditFvsOut_SelectIntoUnionOfFVSTreeTablesUsingListArray(
-                p_oAdo,
-                p_oConn,
-                "fvsouttreetemp2",
-                 _oRxPackage_Collection,
-                 strFVSVariantsArray,
-                "fvs_tree_id,fvs_variant,fvs_species");
-
-            for (x = 0; x <= strSqlCommandList.Count - 1; x++)
-            {
-                p_oAdo.SqlNonQuery(p_oConn, strSqlCommandList[x]);
-            }
-
-            p_oAdo.m_strSQL = "SELECT DISTINCT * INTO fvsouttreetemp FROM fvsouttreetemp2";
-            p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
-
-            string strFvsOutTreeTable = "fvsouttreetemp";
-            
-			//GET ALL TREE SPECIES COMMON NAME
-			/**********************************************************************************
-			 **process all tree species in the tree species table and initialize the 
-			 **unassigned array variable
-			 **********************************************************************************/
-            //p_oAdo.m_strSQL = "SELECT COUNT(*) FROM (SELECT DISTINCT common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0 )";
-            p_oAdo.m_strSQL = "SELECT DISTINCT common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0";
-            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
-            if (p_oAdo.m_OleDbDataReader.HasRows)
-			{
-                while (p_oAdo.m_OleDbDataReader.Read())
-				{
-                    ProcessorScenarioItem.SpcCommonNameItem spc_common_name1 = new ProcessorScenarioItem.SpcCommonNameItem();
-					spc_common_name1.SpeciesCommonName=p_oAdo.m_OleDbDataReader["common_name"].ToString().Trim();
-					spc_common_name1.SpeciesGroupLabel="";
-					spc_common_name1.SpeciesGroupIndex=-1;
-					spc_common_name1.FVSOutput=false;
-                    p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Add(spc_common_name1);
-				}
-			}
-            p_oAdo.m_OleDbDataReader.Close();
-
-            //ASSIGN A TREE SPECIES CODE TO THE SPECIES COMMON NAME
-            /**********************************************************************************
-             **process all tree species in the tree species table and initialize the 
-             **unassigned array variable
-             **********************************************************************************/
-            p_oAdo.m_strSQL = "SELECT DISTINCT spcd,common_name FROM " + p_oQueries.m_oFvs.m_strTreeSpcTable + " WHERE spcd IS NOT NULL AND LEN(TRIM(common_name)) > 0";
-            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
-            if (p_oAdo.m_OleDbDataReader.HasRows)
-            {
-                while (p_oAdo.m_OleDbDataReader.Read())
-                {
-                    for (x = 0; x <= p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
-                    {
-                        if (p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName.Trim().ToUpper() ==
-                            p_oAdo.m_OleDbDataReader["common_name"].ToString().Trim().ToUpper())
-                        {
-                            p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCode = Convert.ToInt32(p_oAdo.m_OleDbDataReader["spcd"]);
-                            break;
-                        }
-
-                    }
-
-                }
-            }
-            p_oAdo.m_OleDbDataReader.Close();
-
-            //GET FVS OUTPUT TREE SPECIES COMMON NAME
-            /***************************************************************************
-             **process tree species records that match up between the fvs output tree 
-             **table, tree table, and tree species table
-             ***************************************************************************/
-            p_oAdo.m_strSQL = "SELECT DISTINCT t.spcd,f.fvs_variant " +
-                                  "INTO tree_spc_groups_temp " +
-                                  "FROM " + p_oQueries.m_oFIAPlot.m_strTreeTable + " t, " +
-                                            strFvsOutTreeTable + " f " +
-                                  "WHERE f.fvs_tree_id = t.fvs_tree_id";
-            p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
-
-            //p_oAdo.m_strSQL = "SELECT DISTINCT s.common_name " +
-            //    "FROM tree_spc_groups_temp t," + p_oQueries.m_oFvs.m_strTreeSpcTable + " s, " +
-            //    p_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " fvs " +
-            //    "WHERE t.spcd = s.spcd AND " +
-            //    "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant)) AND " +
-            //    "TRIM(UCASE(fvs.fvs_species)) = TRIM(UCASE(s.fvs_species))";
-
-            p_oAdo.m_strSQL = "SELECT DISTINCT s.common_name " +
-                              "FROM tree_spc_groups_temp t, " + p_oQueries.m_oFvs.m_strTreeSpcTable + " s " +
-                              "WHERE t.spcd = s.spcd AND " +
-                              "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant))";
-
-
-
-            p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
-            if (p_oAdo.m_OleDbDataReader.HasRows)
-            {
-                while (p_oAdo.m_OleDbDataReader.Read())
-                {
-                    for (x = 0; x <= p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Count - 1; x++)
-                    {
-                        if (p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).SpeciesCommonName.Trim().ToUpper() ==
-                            p_oAdo.m_OleDbDataReader["common_name"].ToString().Trim().ToUpper())
-                            p_oProcessorScenarioItem.m_oSpcCommonNameItem_Collection.Item(x).FVSOutput = true;
-
-                    }
-                }
-            }
-            p_oAdo.m_OleDbDataReader.Close();
-
             //REMOVE ANY EXISTING ITEMS
             for (x = p_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Count - 1; x >= 0; x--)
             {
