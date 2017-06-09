@@ -79,77 +79,7 @@ namespace FIA_Biosum_Manager
             set { _strScenarioId = value; }
         }
 
-
-		public void loadvalues()
-		{
-            string strId="";
-			string strMin="";
-			string strMax="";
-			string strDef="";
-			      
-			this.lstTreeDiam.Clear();
-			this.lstTreeDiam.Columns.Add("Group ID", 60, HorizontalAlignment.Left);
-			this.lstTreeDiam.Columns.Add("Minimum Diameter", 150, HorizontalAlignment.Left);
-			this.lstTreeDiam.Columns.Add("Maximum Diameter", 150, HorizontalAlignment.Left);
-			this.lstTreeDiam.Columns.Add("Definition", 200, HorizontalAlignment.Left);
-
-			this.m_intError=0;
-
-            ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
-            string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
-            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(strDbFile,
-                ScenarioId, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
-
-					try
-					{
-						//load up each row in the FIADB plot input table
-                        int x;
-                        for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Count - 1; x++)
-                        {
-                            ProcessorScenarioItem.TreeDiamGroupsItem p_oTreeGroupsItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x);
-							
-                            strId="";
-							strMax="";
-							strMin="";
-							strDef="";
-							
-                            //make sure the row is not null values
-							if (p_oTreeGroupsItem.DiamClass.Trim().Length > 0)
-							{
-                                strId = p_oTreeGroupsItem.DiamGroup;
-								strMin = p_oTreeGroupsItem.MinDiam;
-                                strMax = p_oTreeGroupsItem.MaxDiam;
-                                strDef = p_oTreeGroupsItem.DiamClass;
-								this.lstTreeDiam.BeginUpdate();
-								System.Windows.Forms.ListViewItem listItem = new ListViewItem();
-								listItem.Text=strId;
-								listItem.SubItems.Add(strMin);
-								listItem.SubItems.Add(strMax);
-								listItem.SubItems.Add(strDef);
-								this.lstTreeDiam.Items.Add(listItem);
-								this.lstTreeDiam.EndUpdate();
-								
-							}
-
-						}
-						if (this.lstTreeDiam.Items.Count > 0)
-						{                                                       
-							if (this.lstTreeDiam.SelectedItems.Count == 0)
-							{
-								this.lstTreeDiam.Items[this.lstTreeDiam.Items.Count-1].Selected=true;
-							}
-						}
-						((frmDialog)this.ParentForm).Enabled=true;
-					}
-					catch (Exception caught)
-					{
-						this.m_intError=-1;
-						MessageBox.Show(caught.Message);
-					}
-		}
-
-        public void loadvalues_FromProperties()
+        public void loadvalues()
         {
             string strId = "";
             string strMin = "";

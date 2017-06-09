@@ -221,14 +221,7 @@ namespace FIA_Biosum_Manager
 
                 }
 
-                if (_bCopyScenarioTreeDiamGroups == false)
-                {
-                    m_frmTreeDiamGroups.uc_tree_diam_groups_list1.loadvalues();
-                }
-                else
-                {
-                    m_frmTreeDiamGroups.uc_tree_diam_groups_list1.loadvalues_FromProperties();
-                }
+            m_frmTreeDiamGroups.uc_tree_diam_groups_list1.loadvalues();
 
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
                 

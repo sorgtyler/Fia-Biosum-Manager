@@ -894,11 +894,11 @@ namespace FIA_Biosum_Manager
             }
             this.m_ado.m_OleDbDataReader.Close();
 			
-            ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
-            string strScenarioMDB = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\processor" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsDbFile;
-            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeSpeciesGroupValues(strScenarioMDB,
-                ScenarioId, m_oQueries, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
+            //ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+            //string strScenarioMDB = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+            //    "\\processor" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsDbFile;
+            //ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeSpeciesGroupValues(strScenarioMDB,
+            //    ScenarioId, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
 
              //LOAD USER SPECIES COMMON NAME GROUPING ASSIGNMENTS
             /****************************************************************************************

@@ -40,6 +40,7 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.TabPage tbAddHarvestCosts;
 		private System.Windows.Forms.TabPage tbRun;
 		public bool m_bRulesFirstTime=true;
+        public bool m_bTreeGroupsFirstTime = true;
 		private System.Windows.Forms.TabPage tbHarvestMethod;
 		private FIA_Biosum_Manager.uc_processor_scenario_harvest_method uc_processor_scenario_harvest_method1;
         private FIA_Biosum_Manager.uc_processor_scenario_movein_costs uc_processor_scenario_movein_costs1;
@@ -695,6 +696,20 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     }
 				}
+                if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "TREE GROUPINGS")
+                {
+                    if (m_bTreeGroupsFirstTime == true)
+                    {
+                        frmMain.g_oFrmMain.ActivateStandByAnimation(
+                            frmMain.g_oFrmMain.WindowState,
+                            frmMain.g_oFrmMain.Left,
+                            frmMain.g_oFrmMain.Height,
+                            frmMain.g_oFrmMain.Width,
+                            frmMain.g_oFrmMain.Top);
+                        LoadTreeGroupings();
+                        frmMain.g_oFrmMain.DeactivateStandByAnimation();
+                    }
+                }
 				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "NOTES")
 				{
 					if (((Control)this.tbNotes).Enabled)
@@ -784,6 +799,17 @@ namespace FIA_Biosum_Manager
 			frmMain.g_sbpInfo.Text = "Ready";
 
 		}
+        public void LoadTreeGroupings()
+        {
+            string strScenarioMDB = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                "\\processor" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsDbFile;
+            string strScenario = uc_scenario1.txtScenarioId.Text.Trim();
+            this.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(strScenarioMDB, 
+                strScenario, this.m_oProcessorScenarioItem);
+            this.m_oProcessorScenarioTools.LoadTreeSpeciesGroupValues(strScenarioMDB, strScenario,
+                this.m_oProcessorScenarioItem);
+            this.m_bTreeGroupsFirstTime = false;
+        }
 		public void EnableTabPage(System.Windows.Forms.TabPage p_oTabPage,bool p_bEnable)
 		{
 			frmMain.g_oDelegate.SetControlPropertyValue((Control)p_oTabPage,"Enabled",p_bEnable);	
@@ -2008,7 +2034,7 @@ namespace FIA_Biosum_Manager
                     ProcessorScenarioItem oItem = new ProcessorScenarioItem();
                     this.LoadGeneral(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                     this.LoadTreeDiameterGroupValues(p_oQueries.m_strTempDbFile,p_strScenarioId, oItem);
-                    this.LoadTreeSpeciesGroupValues(p_oQueries.m_strTempDbFile, p_strScenarioId, p_oQueries, oItem);
+                    this.LoadTreeSpeciesGroupValues(p_oQueries.m_strTempDbFile, p_strScenarioId, oItem);
                     this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, oItem);
                     this.LoadMoveInCosts(p_oQueries.m_strTempDbFile, oItem);
                     this.LoadSpeciesAndDiameterGroupDollarValues(
@@ -2653,7 +2679,7 @@ namespace FIA_Biosum_Manager
             p_oAdo.m_OleDbDataReader.Close();
         }
         public void LoadTreeSpeciesGroupValues(string p_strDbFile, string p_strScenarioId,
-            Queries p_oQueries, FIA_Biosum_Manager.ProcessorScenarioItem p_oProcessorScenarioItem)
+            FIA_Biosum_Manager.ProcessorScenarioItem p_oProcessorScenarioItem)
         {
             ado_data_access oAdo = new ado_data_access();
             oAdo.OpenConnection(oAdo.getMDBConnString(p_strDbFile, "", ""));
@@ -2664,7 +2690,7 @@ namespace FIA_Biosum_Manager
                 oDao.m_DaoWorkspace.Close();
                 oDao = null;
 
-                this.LoadTreeSpeciesGroupValues(oAdo, oAdo.m_OleDbConnection, p_oQueries, p_strScenarioId, 
+                this.LoadTreeSpeciesGroupValues(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, 
                     p_oProcessorScenarioItem);
             }
             m_intError = oAdo.m_intError;
@@ -2673,7 +2699,6 @@ namespace FIA_Biosum_Manager
         }
         public void LoadTreeSpeciesGroupValues(ado_data_access p_oAdo,
                                         System.Data.OleDb.OleDbConnection p_oConn,
-                                        Queries p_oQueries, 
                                         string p_strScenarioId,
                                         ProcessorScenarioItem p_oProcessorScenarioItem)
         {
