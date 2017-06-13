@@ -2306,7 +2306,7 @@ namespace FIA_Biosum_Manager
                 if (p_dao1.m_intError == 0) p_dao1.CreateTableLink(this.m_strTempMDBFile, "fiadb_tree_input", strFIADBDbFile, str2.Trim());
                 //tree regional biomass
                 str2 = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox)cmbFiadbTreeRegionalBiomassTable, "Text", false);
-                if (p_dao1.m_intError == 0) p_dao1.CreateTableLink(this.m_strTempMDBFile, "fiadb_treeRegionalBiomass_input", strFIADBDbFile, str2.Trim());
+                if (p_dao1.m_intError == 0 && str2.Trim().Length > 0 && str2.Trim() != "<Optional Table>") p_dao1.CreateTableLink(this.m_strTempMDBFile, "fiadb_treeRegionalBiomass_input", strFIADBDbFile, str2.Trim());
                 //site tree
                 str2 = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox)cmbFiadbSiteTreeTable, "Text", false);
                 if (p_dao1.m_intError == 0) p_dao1.CreateTableLink(this.m_strTempMDBFile, "fiadb_site_tree_input", strFIADBDbFile, str2.Trim());
@@ -2372,8 +2372,11 @@ namespace FIA_Biosum_Manager
                     m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
                     m_ado.m_strSQL = "DELETE FROM " + this.m_strTreeTable + " WHERE biosum_status_cd=9;";
                     m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                    m_ado.m_strSQL = "DELETE FROM " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd=9;";
-                    m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
+                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 && m_ado.TableExist(m_connTempMDBFile,m_strTreeRegionalBiomassTable))
+                    {
+                        m_ado.m_strSQL = "DELETE FROM " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd=9;";
+                        m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
+                    }
                     m_ado.m_strSQL = "DELETE FROM " + this.m_strSiteTreeTable + " WHERE biosum_status_cd=9;";
                     m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
 
@@ -2731,16 +2734,20 @@ namespace FIA_Biosum_Manager
                     m_ado.m_strSQL = "INSERT INTO " + this.m_strTreeTable + " (biosum_cond_id,biosum_status_cd," + strFields + ") " +
                         "SELECT TRIM(biosum_cond_id),biosum_status_cd," + strFields + " FROM temptree";
                     this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
-
-                    m_ado.m_strSQL = "INSERT INTO " + this.m_strTreeRegionalBiomassTable + "  " +
-                        "SELECT s.tre_cn,s.statecd," +
-                        "s.regional_drybiot,s.regional_drybiom," +
-                        "9 AS biosum_status_cd FROM fiadb_treeRegionalBiomass_input s " +
-                        "INNER JOIN " + this.m_strTreeTable + " t " +
-                        "ON t.cn = s.tre_cn WHERE t.biosum_status_cd=9";
-                    if (m_ado.m_intError == 0)
-                        this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
-                    m_intError = m_ado.m_intError;
+                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 && 
+                        m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable) && 
+                        m_ado.TableExist(m_connTempMDBFile,"fiadb_treeRegionalBiomass_input"))
+                    {
+                        m_ado.m_strSQL = "INSERT INTO " + this.m_strTreeRegionalBiomassTable + "  " +
+                            "SELECT s.tre_cn,s.statecd," +
+                            "s.regional_drybiot,s.regional_drybiom," +
+                            "9 AS biosum_status_cd FROM fiadb_treeRegionalBiomass_input s " +
+                            "INNER JOIN " + this.m_strTreeTable + " t " +
+                            "ON t.cn = s.tre_cn WHERE t.biosum_status_cd=9";
+                        if (m_ado.m_intError == 0)
+                            this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
+                        m_intError = m_ado.m_intError;
+                    }
                 }
                 if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
                 {
@@ -2823,7 +2830,12 @@ namespace FIA_Biosum_Manager
                     m_intAddedPlotRows = (int)this.m_ado.getRecordCount(this.m_connTempMDBFile, "select count(*) from " + this.m_strPlotTable + " WHERE biosum_status_cd=9", m_strPlotTable);
                     m_intAddedCondRows = (int)this.m_ado.getRecordCount(this.m_connTempMDBFile, "select count(*) from " + this.m_strCondTable + " WHERE biosum_status_cd=9", m_strCondTable);
                     m_intAddedTreeRows = (int)this.m_ado.getRecordCount(this.m_connTempMDBFile, "select count(*) from " + this.m_strTreeTable + " WHERE biosum_status_cd=9", m_strTreeTable);
-                    m_intAddedTreeRegionalBiomassRows = (int)this.m_ado.getRecordCount(this.m_connTempMDBFile, "select count(*) from " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd=9", m_strTreeRegionalBiomassTable);
+
+                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 && m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable))
+                        m_intAddedTreeRegionalBiomassRows = (int)this.m_ado.getRecordCount(this.m_connTempMDBFile, "select count(*) from " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd=9", m_strTreeRegionalBiomassTable);
+                    else
+                        m_intAddedTreeRegionalBiomassRows = 0;
+
                     m_intAddedSiteTreeRows = (int)this.m_ado.getRecordCount(this.m_connTempMDBFile, "select count(*) from " + this.m_strSiteTreeTable + " WHERE biosum_status_cd=9", m_strSiteTreeTable);
 
                     this.m_strSQL = " UPDATE " + this.m_strPlotTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9";
@@ -2834,8 +2846,11 @@ namespace FIA_Biosum_Manager
                     this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
                     this.m_strSQL = " UPDATE " + this.m_strPopEvalTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
                     this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
-                    this.m_strSQL = " UPDATE " + this.m_strTreeRegionalBiomassTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-                    this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
+                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 && m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable))
+                    {
+                        this.m_strSQL = " UPDATE " + this.m_strTreeRegionalBiomassTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
+                        this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
+                    }
                     this.m_strSQL = " UPDATE " + this.m_strPopStratumTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
                     this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
                     this.m_strSQL = " UPDATE " + this.m_strPpsaTable + " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
@@ -2884,8 +2899,11 @@ namespace FIA_Biosum_Manager
                     this.m_strSQL = "DELETE FROM " + this.m_strTreeTable + " WHERE biosum_status_cd = 9;";
                     this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
                     //delete added cond records since error occured
-                    this.m_strSQL = "DELETE FROM " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd = 9;";
-                    this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
+                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 && m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable))
+                    {
+                        this.m_strSQL = "DELETE FROM " + this.m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd = 9;";
+                        this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
+                    }
                     this.m_strSQL = "DELETE FROM " + this.m_strPopEvalTable + " WHERE biosum_status_cd = 9;";
                     this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
                     this.m_strSQL = "DELETE FROM " + this.m_strPopStratumTable + " WHERE biosum_status_cd = 9;";
@@ -3019,7 +3037,7 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//----------------------COND AND TREE COLUMN UPDATES-----------------------//\r\n");
                
-                SetThermValue(m_frmTherm.progressBar1,"Maximum",41);
+                SetThermValue(m_frmTherm.progressBar1,"Maximum",42);
                 SetThermValue(m_frmTherm.progressBar1, "Minimum", 0);
                 SetThermValue(m_frmTherm.progressBar1, "Value", 0);
                 
@@ -3167,26 +3185,153 @@ namespace FIA_Biosum_Manager
 
 					p_ado.SqlNonQuery(this.m_connTempMDBFile,p_ado.m_strSQL);
 
-                    SetLabelValue(m_frmTherm.lblMsg,"Text", "Updating Tree drybiom and drybiot Columns...Stand By");
+                    //
+                    //drybiot,drybiom,voltsgrs processing
+                    //
+                    //check if records exist in the tree_regional_drybio table
+                    SetLabelValue(m_frmTherm.lblMsg, "Text", "Updating Tree drybiom,drybiot,voltsgrs Columns...Stand By");
                     frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
+                    if (this.m_strTreeRegionalBiomassTable.Trim().Length > 0 &&
+                       p_ado.TableExist(m_connTempMDBFile, this.m_strTreeRegionalBiomassTable.Trim()) &&
+                       (int)p_ado.getRecordCount(m_connTempMDBFile, "SELECT COUNT(*) FROM (SELECT TOP 1 * FROM " + m_strTreeRegionalBiomassTable + ")", m_strTreeRegionalBiomassTable) > 0)
+                    {
 
-	
-					//update tree drybiom and drybiot columns 
-					p_ado.m_strSQL = "UPDATE " + this.m_strTreeTable + " t " + 
-						"INNER JOIN " + this.m_strTreeRegionalBiomassTable + " drb " + 
-						"ON t.cn = drb.tre_cn " + 
-						"SET drybiom = IIF(drb.regional_drybiom IS NOT NULL,drb.regional_drybiom,null)," + 
-						    "drybiot = IIF(drb.regional_drybiot IS NOT NULL,drb.regional_drybiot,null)";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_ado.m_strSQL + "\r\n");
-					p_ado.SqlNonQuery(this.m_connTempMDBFile,p_ado.m_strSQL);
 
+                        //update tree drybiom and drybiot columns 
+                        p_ado.m_strSQL = "UPDATE " + this.m_strTreeTable + " t " +
+                            "INNER JOIN " + this.m_strTreeRegionalBiomassTable + " drb " +
+                            "ON t.cn = drb.tre_cn " +
+                            "SET drybiom = IIF(drb.regional_drybiom IS NOT NULL,drb.regional_drybiom,null)," +
+                                "drybiot = IIF(drb.regional_drybiot IS NOT NULL,drb.regional_drybiot,null)";
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, m_ado.m_strSQL + "\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+                    }
+                   
+                        SetLabelValue(m_frmTherm.lblMsg, "Text", "Start Oracle Services...Stand By");
+                        frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
+                        FIADB.Oracle.Services m_oOracleServices = new FIADB.Oracle.Services();
+                        m_oOracleServices.Start();
+                        SetThermValue(m_frmTherm.progressBar1, "Value", 2);
+
+                        if (m_oOracleServices.m_oTree == null) MessageBox.Show("m_oTree==null");
+                        m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
+                        //if (m_strGridTableSource.Trim() != Tables.FVS.DefaultOracleInputVolumesTable)
+                        //{
+                        //step 5 - delete and create work tables
+                        if (p_ado.TableExist(this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputVolumesTable))
+                            p_ado.SqlNonQuery(this.m_connTempMDBFile, "DROP TABLE " + Tables.FVS.DefaultOracleInputVolumesTable);
+                        frmMain.g_oTables.m_oFvs.CreateOracleInputBiosumVolumesTable(p_ado, this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputVolumesTable);
+
+                        if (p_ado.TableExist(this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputFCSVolumesTable))
+                            p_ado.SqlNonQuery(this.m_connTempMDBFile, "DROP TABLE " + Tables.FVS.DefaultOracleInputFCSVolumesTable);
+                        frmMain.g_oTables.m_oFvs.CreateOracleInputFCSBiosumVolumesTable(p_ado, this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputFCSVolumesTable);
+
+
+                        strColumns = "STATECD,COUNTYCD,PLOT,INVYR,TREE,SPCD,DIA,HT," +
+                                   "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,TRE_CN,CND_CN,PLT_CN,VOL_LOC_GRP";
+
+
+                        strValues = "STATECD," +
+                                    "COUNTYCD," +
+                                    "CINT(MID(BIOSUM_COND_ID,16,5)) AS PLOT," +
+                                    "INVYR,TREE,SPCD,IIF(DIA IS NOT NULL,ROUND(DIA,2),DIA),HT,ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL," +
+                                    "CN AS TRE_CN," +
+                                    "BIOSUM_COND_ID AS CND_CN," +
+                                    "MID(BIOSUM_COND_ID,1,LEN(BIOSUM_COND_ID)-1) AS PLT_CN,'' AS VOL_LOC_GRP";
+
+                        //insert records
+                        p_ado.m_strSQL = Queries.FVS.VolumesAndBiomass.FIAPlotInput_BuildInputTableForVolumeCalculation_Step1(Tables.FVS.DefaultOracleInputFCSVolumesTable, m_strTreeTable,strColumns,strValues);
+
+                       // p_ado.m_strSQL = "INSERT INTO " + Tables.FVS.DefaultOracleInputFCSVolumesTable + " " +
+                       //                  "(" + strColumns + ") SELECT " + strValues + " FROM " + m_strTreeTable;
+                        
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+
+
+                       // p_ado.m_strSQL = "UPDATE " + Tables.FVS.DefaultOracleInputFCSVolumesTable + " f INNER JOIN " + m_strCondTable + " c ON f.CND_CN = c.BIOSUM_COND_ID SET f.vol_loc_grp=IIF(INSTR(1,c.vol_loc_grp,'22') > 0,'S26LEOR',c.vol_loc_grp)";
+                        p_ado.m_strSQL = Queries.FVS.VolumesAndBiomass.FIAPlotInput_BuildInputTableForVolumeCalculation_Step2(Tables.FVS.DefaultOracleInputFCSVolumesTable, m_strTreeTable,m_strPlotTable,m_strCondTable);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+
+
+                        p_ado.m_strSQL = Queries.FVS.VolumesAndBiomass.FIAPlotInput_BuildInputTableForVolumeCalculation_Step3(Tables.FVS.DefaultOracleInputFCSVolumesTable, m_strCondTable);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+
+                        //populate treeclcd column
+                        if (p_ado.TableExist(m_connTempMDBFile, "CULL_TOTAL_WORK_TABLE"))
+                            p_ado.SqlNonQuery(m_connTempMDBFile, "DROP TABLE CULL_TOTAL_WORK_TABLE");
+
+                        p_ado.m_strSQL = Queries.FVS.VolumesAndBiomass.FIAPlotInput_BuildInputTableForVolumeCalculation_Step4(
+                                          "cull_total_work_table",
+                                          Tables.FVS.DefaultOracleInputFCSVolumesTable);
+                       
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+
+
+                        p_ado.m_strSQL = Queries.FVS.VolumesAndBiomass.PNWRS.FIAPlotInput_BuildInputTableForVolumeCalculation_Step5(
+                            "cull_total_work_table", Tables.FVS.DefaultOracleInputFCSVolumesTable);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+
+
+                        p_ado.m_strSQL = Queries.FVS.VolumesAndBiomass.PNWRS.FIAPlotInput_BuildInputTableForVolumeCalculation_Step6(
+                                       "cull_total_work_table", Tables.FVS.DefaultOracleInputFCSVolumesTable);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+
+                        p_ado.m_strSQL = "INSERT INTO fcs_biosum_volume (" + strColumns + ") SELECT " + strColumns + " FROM " + Tables.FVS.DefaultOracleInputFCSVolumesTable;
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                        p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+                        SetThermValue(m_frmTherm.progressBar1, "Value", 3);
+
+
+                        SetLabelValue(m_frmTherm.lblMsg, "Text", "Wait For Oracle Volume Compilation To Complete...Stand By");
+                        frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
+
+                        m_oOracleServices.m_oTree.GetBiosumVolumes();
+
+                        SetThermValue(m_frmTherm.progressBar1, "Value", 4);
+
+                        if (m_oOracleServices.m_intError == 0)
+                        {
+                            SetLabelValue(m_frmTherm.lblMsg, "Text", "Update tree VOLTSGRS column with Oracle Calculated Values...Stand By");
+                            frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
+                            string strConn = m_connTempMDBFile.ConnectionString;
+                            p_ado.CloseConnection(m_connTempMDBFile);
+                            p_ado.OpenConnection(strConn, ref m_connTempMDBFile);
+                            p_ado.m_strSQL = "UPDATE " + m_strTreeTable + " t " +
+                                             "INNER JOIN fcs_biosum_volume f " +
+                                             "ON t.cn = f.tre_cn " +
+                                             "SET t.VOLTSGRS = f.VOLTSGRS_CALC," +
+                                                 "t.DRYBIOT  = IIF(t.DRYBIOT IS NULL,f.DRYBIOT_CALC,t.DRYBIOT)," +
+                                                 "t.DRYBIOM  = IIF(t.DRYBIOM IS NULL,f.DRYBIOM_CALC,t.DRYBIOM)";
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
+                            p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
+
+                        }
+                        SetThermValue(m_frmTherm.progressBar1, "Value", 5);
+  
+
+                    
+                
 
                 SetLabelValue(m_frmTherm.lblMsg,"Text", "Updating Condition Table Columns...Stand By");
                 frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
 
 				
-                SetThermValue(m_frmTherm.progressBar1, "Value", 1);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 6);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 
@@ -3210,7 +3355,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 2);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 7);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3225,7 +3370,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 3);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 8);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 
@@ -3254,7 +3399,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 4);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 9);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3269,7 +3414,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 5);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 10);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 
@@ -3298,7 +3443,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 6);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 11);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3313,7 +3458,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 7);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 12);
                 
 
                 //vol_ac_grs_ft3
@@ -3343,7 +3488,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 8);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 13);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3358,7 +3503,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 9);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 14);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3387,7 +3532,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 10);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 15);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3402,7 +3547,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 11);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 16);
 
 
 
@@ -3433,7 +3578,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 12);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 17);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3448,7 +3593,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value",13);
+                SetThermValue(m_frmTherm.progressBar1, "Value",18);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3475,7 +3620,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 14);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 19);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3490,7 +3635,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 15);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 20);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 
@@ -3518,7 +3663,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 16);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 21);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3533,7 +3678,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 17);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 22);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					//hardwood ba_ft2_ac
@@ -3559,7 +3704,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 18);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 23);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 					p_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
@@ -3574,7 +3719,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 19);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 24);
 
 				//volcsgrs  
 				//gross sawlog
@@ -3601,7 +3746,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 20);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 25);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3619,7 +3764,7 @@ namespace FIA_Biosum_Manager
 					//MessageBox.Show(strTime);
 
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 21);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 26);
 
 
 				//swd_volcsgrs      
@@ -3648,7 +3793,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 22);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 27);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3665,7 +3810,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 23);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 28);
 
 				//hwd_volcsgrs      
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
@@ -3693,7 +3838,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 24);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 29);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 
@@ -3709,7 +3854,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 25);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 30);
 
 
 
@@ -3743,7 +3888,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 26);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 31);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3761,7 +3906,7 @@ namespace FIA_Biosum_Manager
 					//MessageBox.Show(strTime);
 
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 27);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 32);
 
 
 				//swd_qmd_tot_cm      
@@ -3789,7 +3934,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 28);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 33);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3806,7 +3951,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 29);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 34);
 
 				//hwd_qmd_tot_cm    
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
@@ -3833,7 +3978,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 30);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 35);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 
@@ -3849,7 +3994,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 31);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 36);
 
 
 
@@ -3881,7 +4026,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 32);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 37);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3899,7 +4044,7 @@ namespace FIA_Biosum_Manager
 					//MessageBox.Show(strTime);
 
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 33);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 38);
 
 
 				//hwd_vol_ac_grs_stem_ttl_ft
@@ -3929,7 +4074,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 34);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 39);
 
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
@@ -3946,7 +4091,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 35);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 40);
 
 				//swd_vol_ac_grs_stem_ttl_ft     
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
@@ -3975,7 +4120,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 36);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 41);
                 if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
 				{
 
@@ -3991,95 +4136,7 @@ namespace FIA_Biosum_Manager
 					strTime += " " + System.DateTime.Now.ToString();
 					//MessageBox.Show(strTime);
 				}
-                SetThermValue(m_frmTherm.progressBar1, "Value", 37);
-                //
-                //VOLTSGRS column update
-                //
-                SetLabelValue(m_frmTherm.lblMsg, "Text", "Start Oracle Services...Stand By");
-                frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                FIADB.Oracle.Services m_oOracleServices = new FIADB.Oracle.Services();
-                m_oOracleServices.Start();
-                SetThermValue(m_frmTherm.progressBar1, "Value", 38);
-
-                if (m_oOracleServices.m_oTree == null) MessageBox.Show("m_oTree==null");
-                m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
-                //if (m_strGridTableSource.Trim() != Tables.FVS.DefaultOracleInputVolumesTable)
-                //{
-                    //step 5 - delete and create work tables
-                    if (p_ado.TableExist(this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputVolumesTable))
-                        p_ado.SqlNonQuery(this.m_connTempMDBFile, "DROP TABLE " + Tables.FVS.DefaultOracleInputVolumesTable);
-                    frmMain.g_oTables.m_oFvs.CreateOracleInputBiosumVolumesTable(p_ado, this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputVolumesTable);
-
-                    if (p_ado.TableExist(this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputFCSVolumesTable))
-                        p_ado.SqlNonQuery(this.m_connTempMDBFile, "DROP TABLE " + Tables.FVS.DefaultOracleInputFCSVolumesTable);
-                    frmMain.g_oTables.m_oFvs.CreateOracleInputFCSBiosumVolumesTable(p_ado, this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputFCSVolumesTable);
-
-                   
-
-                    //step 6 - insert records
-                    strColumns = "STATECD,COUNTYCD,PLOT,INVYR,TREE,SPCD,DIA,HT," +
-                                "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,TRE_CN,CND_CN,PLT_CN,VOL_LOC_GRP";
-
-
-                    strValues = "STATECD," +
-                                "COUNTYCD," +
-                                "CINT(MID(BIOSUM_COND_ID,16,5)) AS PLOT," +
-                                "INVYR,TREE,SPCD,IIF(DIA IS NOT NULL,ROUND(DIA,2),DIA),HT,ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL," +
-                                "CN AS TRE_CN," +
-                                "BIOSUM_COND_ID AS CND_CN," +
-                                "MID(BIOSUM_COND_ID,1,LEN(BIOSUM_COND_ID)-1) AS PLT_CN,'' AS VOL_LOC_GRP";
-
-                    p_ado.m_strSQL = "INSERT INTO " + Tables.FVS.DefaultOracleInputFCSVolumesTable + " " +
-                                     "(" + strColumns + ") SELECT " + strValues + " FROM " + m_strTreeTable;
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
-                    p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
-              
-                    
-                    p_ado.m_strSQL = "UPDATE " + Tables.FVS.DefaultOracleInputFCSVolumesTable + " f INNER JOIN " + m_strCondTable + " c ON f.CND_CN = c.BIOSUM_COND_ID SET f.vol_loc_grp=IIF(INSTR(1,c.vol_loc_grp,'22') > 0,'S26LEOR',c.vol_loc_grp)";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
-                    p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
-                    
-
-                p_ado.m_strSQL = "INSERT INTO fcs_biosum_volume (" + strColumns + ") SELECT " + strColumns + " FROM " + Tables.FVS.DefaultOracleInputFCSVolumesTable;
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,p_ado.m_strSQL + "\r\n\r\n");
-                p_ado.SqlNonQuery(this.m_connTempMDBFile,p_ado.m_strSQL);
-                SetThermValue(m_frmTherm.progressBar1, "Value", 39);
-               
-               
-                SetLabelValue(m_frmTherm.lblMsg, "Text", "Wait For Oracle Volume Compilation To Complete...Stand By");
-                frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-               
-                m_oOracleServices.m_oTree.GetBiosumVolumes();
-
-                SetThermValue(m_frmTherm.progressBar1, "Value", 40);
-
-                if (m_oOracleServices.m_intError == 0)
-                {
-                    SetLabelValue(m_frmTherm.lblMsg, "Text", "Update tree VOLTSGRS column with Oracle Calculated Values...Stand By");
-                    frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                    string strConn = m_connTempMDBFile.ConnectionString;
-                    p_ado.CloseConnection(m_connTempMDBFile);
-                    p_ado.OpenConnection(strConn,ref m_connTempMDBFile);
-                    p_ado.m_strSQL = "UPDATE " + m_strTreeTable + " t " +
-                                     "INNER JOIN fcs_biosum_volume f " +
-                                     "ON t.cn = f.tre_cn " +
-                                     "SET t.VOLTSGRS = f.VOLTSGRS_CALC";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
-                    p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
-                   
-                }
-                SetThermValue(m_frmTherm.progressBar1, "Value", 41);
-  
-
-
-       
-			
-
-           
+                SetThermValue(m_frmTherm.progressBar1, "Value", 42);
 			//----------------------PLOT COLUMN UPDATES-----------------------//
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//----------------------PLOT COLUMN UPDATES-----------------------//\r\n");
@@ -6770,6 +6827,10 @@ namespace FIA_Biosum_Manager
 								this.cmbFiadbTreeRegionalBiomassTable.Items.Clear();
 								this.cmbFiadbTreeTable.Items.Clear();
 								this.cmbFiadbSiteTreeTable.Items.Clear();
+
+                                cmbFiadbTreeRegionalBiomassTable.Items.Add("<Optional Table>");
+                                cmbFiadbTreeRegionalBiomassTable.Text = "<Optional Table>";
+
 								for (int x=0; x <= tempDao.m_DaoDatabase.TableDefs.Count - 1; x++)
 								{
 									
