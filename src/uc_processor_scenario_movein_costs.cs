@@ -181,7 +181,7 @@ namespace FIA_Biosum_Manager
             this.txtMoveInAddend.Name = "txtMoveInAddend";
             this.txtMoveInAddend.Size = new System.Drawing.Size(45, 20);
             this.txtMoveInAddend.TabIndex = 65;
-            this.txtMoveInAddend.Text = "0.0";
+            this.txtMoveInAddend.Text = "1.0";
             this.txtMoveInAddend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMoveInHoursAddend_KeyPress);
             this.txtMoveInAddend.Leave += new System.EventHandler(this.txtMoveInHoursAddend_Leave);
             // 
@@ -213,7 +213,7 @@ namespace FIA_Biosum_Manager
             this.txtMoveInTimeMultiplier.Name = "txtMoveInTimeMultiplier";
             this.txtMoveInTimeMultiplier.Size = new System.Drawing.Size(45, 20);
             this.txtMoveInTimeMultiplier.TabIndex = 62;
-            this.txtMoveInTimeMultiplier.Text = "1.0";
+            this.txtMoveInTimeMultiplier.Text = "0.0";
             this.txtMoveInTimeMultiplier.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMoveInTimeMultiplier_KeyPress);
             this.txtMoveInTimeMultiplier.Leave += new System.EventHandler(this.txtMoveInTimeMultiplier_Leave);
             // 

@@ -339,6 +339,15 @@ namespace FIA_Biosum_Manager
             {
                 //Load travel times
                 dictTravelTimes = loadTravelTimes();
+
+                //Abort if travel times have not been loaded
+                if (dictTravelTimes.Count == 0)
+                {
+                    System.Windows.MessageBox.Show("Move-in Time Multiplier is set to 0 but there are no valid entries in the travel_time table. " +
+                        "This is not a valid configuration. Process halted!",
+                        "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    return -1;
+                }
             }
 
             if (dictTreeSpecies == null)
