@@ -1645,6 +1645,60 @@ namespace FIA_Biosum_Manager
                            "FROM " + p_strInputVolumesTable;
 
                 }
+                public static string FIAPlotInput_BuildInputTableForVolumeCalculation_Step1(string p_strInputVolumesTable,string p_strFIATreeTable,string p_strColumns,string p_strValues)
+                {
+                    return  "INSERT INTO " + p_strInputVolumesTable + " " +
+                            "(" + p_strColumns + ") SELECT " + p_strValues + " FROM " + p_strFIATreeTable;
+                }
+                public static string FIAPlotInput_BuildInputTableForVolumeCalculation_Step2(
+                                        string p_strInputVolumesTable,
+                                        string p_strFIATreeTable,
+                                        string p_strFIAPlotTable,
+                                        string p_strFIACondTable)
+                {
+                    return "UPDATE " + p_strInputVolumesTable + " i " +
+                           "INNER JOIN ((" + p_strFIATreeTable + " t " +
+                                        "INNER JOIN " + p_strFIACondTable + " c " +
+                                        "ON t.biosum_cond_id=c.biosum_cond_id) " +
+                                        "INNER JOIN " + p_strFIAPlotTable + " p " +
+                                        "ON p.biosum_plot_id=c.biosum_plot_id) " +
+                           "ON i.tre_cn=t.cn " +
+                           "SET i.spcd=t.spcd," +
+                               "i.statuscd=IIF(t.statuscd IS NULL,1,t.statuscd)," +
+                               "i.treeclcd=t.treeclcd," +
+                               "i.cull=IIF(t.cull IS NULL,0,t.cull)," +
+                               "i.roughcull=IIF(t.roughcull IS NULL,0,t.roughcull)," +
+                               "i.decaycd=IIF(t.decaycd IS NULL,0,t.decaycd)";
+                }
+                public static string FIAPlotInput_BuildInputTableForVolumeCalculation_Step3(
+                                        string p_strInputVolumesTable,
+                                        string p_strFIACondTable)
+                {
+                    return "UPDATE " + p_strInputVolumesTable + " i " +
+                                      "INNER JOIN " + p_strFIACondTable + " c " +
+                                      "ON i.cnd_cn=c.biosum_cond_id " +
+                                      "SET i.vol_loc_grp=IIF(INSTR(1,c.vol_loc_grp,'22') > 0,'S26LEOR',c.vol_loc_grp)," +
+                                          "i.statuscd=IIF(i.statuscd IS NULL,1,i.statuscd)," +
+                                          "i.cull=IIF(i.cull IS NULL,0,i.cull)," +
+                                          "i.roughcull=IIF(i.roughcull IS NULL,0,i.roughcull)," +
+                                          "i.decaycd=IIF(i.decaycd IS NULL,0,i.decaycd)";
+                }
+                public static string FIAPlotInput_BuildInputTableForVolumeCalculation_Step4(
+                                    string p_strCullTable,
+                                    string p_strInputVolumesTable)
+                {
+                    return "SELECT tre_cn, IIF(cull IS NOT NULL AND roughcull IS NOT NULL, cull + roughcull," +
+                                      "IIF(cull IS NOT NULL,cull," +
+                                      "IIF(roughcull IS NOT NULL, roughcull,0))) AS totalcull " +
+                           "INTO " + p_strCullTable + " " +
+                           "FROM " + p_strInputVolumesTable;
+
+                }
+               //public static string FIAPlotInput_BuildInputTableForVolumeCalculation_Step2(string p_strInputVolumesTable, string p_strFIACondTable)
+               // {
+               //     return "UPDATE " + p_strInputVolumesTable + " f INNER JOIN " + p_strFIACondTable + " c ON f.CND_CN = c.BIOSUM_COND_ID SET f.vol_loc_grp=IIF(INSTR(1,c.vol_loc_grp,'22') > 0,'S26LEOR',c.vol_loc_grp)";
+               // }
+
                 public class PNWRS
                 {
                     public PNWRS()
@@ -1686,6 +1740,44 @@ namespace FIA_Biosum_Manager
                                           "ON a.id=b.id " +
                                           "SET a.treeclcd=" +
                                           "IIF(a.DecayCd > 1,4,IIF(a.dbh < 9 AND a.SpCd < 300,4,a.treeclcd)) " +
+                                          "WHERE a.treeclcd=3 AND a.statuscd=2 AND a.SpCd NOT IN (62,65,66,106,133,138,304,321,322,475,756,758,990)";
+                    }
+                    /// <summary>
+                    /// Update the TREECLCD column for all trees 
+                    /// by comparing SPCD,ROUGHCULL,STATUSCD and TOTALCULL columns
+                    /// </summary>
+                    /// <param name="p_strCullTable"></param>
+                    /// <param name="p_strInputVolumesTable"></param>
+                    /// <returns></returns>
+                    public static string FIAPlotInput_BuildInputTableForVolumeCalculation_Step5(
+                                         string p_strCullTable,
+                                         string p_strInputVolumesTable)
+                    {
+                        return "UPDATE " + p_strInputVolumesTable + " a " +
+                                          "INNER JOIN " + p_strCullTable + " b " +
+                                          "ON TRIM(a.tre_cn)=TRIM(b.tre_cn) " +
+                                          "SET a.treeclcd=" +
+                                          "IIF(a.SpCd IN (62,65,66,106,133,138,304,321,322,475,756,758,990),3," +
+                                          "IIF(a.StatusCd=2,3," +
+                                          "IIF(b.totalcull < 75,2," +
+                                          "IIF(a.roughcull > 37.5,3,4))))";
+                    }
+                    /// <summary>
+                    /// Update the TREECLCD column for TREECLCD=3 and dead trees 
+                    /// by comparing SPCD,DBH,STATUSCD and DECAYCD columns
+                    /// </summary>
+                    /// <param name="p_strCullTable"></param>
+                    /// <param name="p_strInputVolumesTable"></param>
+                    /// <returns></returns>
+                    public static string FIAPlotInput_BuildInputTableForVolumeCalculation_Step6(
+                                         string p_strCullTable,
+                                         string p_strInputVolumesTable)
+                    {
+                        return "UPDATE " + p_strInputVolumesTable + " a " +
+                                          "INNER JOIN " + p_strCullTable + " b " +
+                                          "ON TRIM(a.tre_cn)=TRIM(b.tre_cn) " +
+                                          "SET a.treeclcd=" +
+                                          "IIF(a.DecayCd > 1,4,IIF(a.DIA < 9 AND a.SpCd < 300,4,a.treeclcd)) " +
                                           "WHERE a.treeclcd=3 AND a.statuscd=2 AND a.SpCd NOT IN (62,65,66,106,133,138,304,321,322,475,756,758,990)";
                     }
                 }
@@ -1755,6 +1847,8 @@ namespace FIA_Biosum_Manager
                                "f.drybiom=o.DRYBIOM_CALC," + 
                                "f.voltsgrs=o.VOLTSGRS_CALC" ;
                 }
+
+               
                 
 
 
