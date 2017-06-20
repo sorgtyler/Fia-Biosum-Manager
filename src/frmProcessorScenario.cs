@@ -1298,13 +1298,13 @@ namespace FIA_Biosum_Manager
                 get { return _strAssumedHarvestAreaAc; }
                 set { _strAssumedHarvestAreaAc = value; }
             }
-            private string _strMoveInTimeMultiplier = "1";
+            private string _strMoveInTimeMultiplier = "0";
             public string MoveInTimeMultiplier
             {
                 get { return _strMoveInTimeMultiplier; }
                 set { _strMoveInTimeMultiplier = value; }
             }
-            private string _strMoveInHoursAddend = "0";
+            private string _strMoveInHoursAddend = "1";
             public string MoveInHoursAddend
             {
                 get { return _strMoveInHoursAddend; }

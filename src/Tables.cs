@@ -1422,8 +1422,8 @@ namespace FIA_Biosum_Manager
 					"scenario_id CHAR(20)," + 
 					"chip_mkt_val_pgt DOUBLE DEFAULT 0," + 
 					"road_haul_cost_pgt_per_hour DOUBLE DEFAULT 0," + 
-					"water_barring_roads_cpa DOUBLE," + 
-					"brush_cutting_cpa DOUBLE," + 
+					"water_barring_roads_cpa DOUBLE," +
+          "brush_cutting_cpa DOUBLE," + 
 					"rail_haul_cost_pgt_per_mile DOUBLE DEFAULT 0," + 
 					"rail_chip_transfer_pgt_per_hour DOUBLE DEFAULT 0," + 
 					"rail_merch_transfer_pgt_per_hour DOUBLE DEFAULT 0)";
@@ -1938,6 +1938,7 @@ namespace FIA_Biosum_Manager
                     "TREECLCD BYTE," + 
                     "ROUGHCULL DOUBLE," + 
                     "CULL DOUBLE," +
+                    "DECAYCD BYTE," + 
                     "TRE_CN CHAR(34)," +
                     "CND_CN CHAR(34)," +
                     "PLT_CN CHAR(34)," +
@@ -2974,8 +2975,8 @@ namespace FIA_Biosum_Manager
                     "ideal_chip_cpa DOUBLE ," +
                     "ideal_assumed_movein_cpa DOUBLE ," +
                     "harvest_cpa_warning_msg CHAR(240)," +
-                    "water_barring_roads_cpa DOUBLE," +
-                    "brush_cutting_cpa DOUBLE," +
+										"water_barring_roads_cpa DOUBLE," +
+                    "brush_cutting_cpa DOUBLE," +                     
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "override_YN CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
@@ -2994,7 +2995,7 @@ namespace FIA_Biosum_Manager
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "biosum_cond_id CHAR(25)," +
-                    "rx CHAR(3)," +
+                    "rx CHAR(3)," + 
                     "water_barring_roads_cpa DOUBLE," +
                     "brush_cutting_cpa DOUBLE)";
 
@@ -3933,7 +3934,7 @@ namespace FIA_Biosum_Manager
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "scenario_id CHAR(20)," +
                     "biosum_cond_id CHAR(25)," +
-                    "rx CHAR(3)," +
+                    "rx CHAR(3)," + 
                     "water_barring_roads_cpa DOUBLE," +
                     "brush_cutting_cpa DOUBLE)";
 

@@ -5536,7 +5536,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Load trees from cut list...Stand By");
                     y++;
                     frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                    processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper(), m_oAdo);
+                    processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper(), m_oAdo, m_oQueries);
                     m_intError = mainProcessor.loadTrees(strVariant, strRxPackage);
 
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
