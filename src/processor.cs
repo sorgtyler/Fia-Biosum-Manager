@@ -9,10 +9,10 @@ namespace FIA_Biosum_Manager
     {
         private string m_strScenarioId = "";
         private ado_data_access  m_oAdo;
+        private Queries m_oQueries;
         private string m_strOpcostTableName = "OpCost_Input";
         private string m_strTvvTableName = "TreeVolValLowSlope";
-        private string m_strDebugFile =
-            "";
+        private string m_strDebugFile ="";
         private string m_strOpcostIdealTableName = "OpCost_Ideal_Output";
         //private ado_data_access p_oAdo;
         private System.Collections.Generic.List<tree> m_trees;
@@ -22,11 +22,12 @@ namespace FIA_Biosum_Manager
         private System.Collections.Generic.IList<harvestMethod> m_harvestMethodList;
         private escalators m_escalators;
 
-        public processor(string strDebugFile, string strScenarioId, ado_data_access oAdo)
+        public processor(string strDebugFile, string strScenarioId, ado_data_access oAdo, Queries oQueries)
         {
             m_strDebugFile = strDebugFile;
             m_strScenarioId = strScenarioId;
             m_oAdo = oAdo;
+            m_oQueries = oQueries;
         }
         
         public Queries init()
@@ -154,6 +155,9 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
             
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
+            string strPlotTableName = m_oQueries.m_oFIAPlot.m_strPlotTable;
+            string strCondTableName = m_oQueries.m_oFIAPlot.m_strCondTable;
+
             if (m_oAdo.m_intError == 0)
             {
                 //string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
@@ -175,7 +179,8 @@ namespace FIA_Biosum_Manager
                                 "z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, " +
                                 "z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, c.gis_yard_dist " +
                                 "FROM " + strTableName + " z, " +
-                                "(SELECT p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON p.biosum_plot_id = d.biosum_plot_id) c " +
+                                "(SELECT p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM " + 
+                                strPlotTableName + " p INNER JOIN " + strCondTableName + " d ON p.biosum_plot_id = d.biosum_plot_id) c " +
                                 "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
                                 "z.biosum_cond_id = c.biosum_cond_id AND " +
                                 "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "' ";
@@ -272,19 +277,6 @@ namespace FIA_Biosum_Manager
                         m_trees.Add(newTree);
                     }
                 }
-                //08-MAY-2017: Commenting this out for now until necessity of travel times sorted out
-                //else
-                //{
-                //    // No trees could be loaded; Check to see if travel times are there
-                //    strSQL = "SELECT MIN(TRAVEL_TIME) AS min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID";
-                //    m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
-                //    if (!m_oAdo.m_OleDbDataReader.HasRows)
-                //    {
-                //        System.Windows.MessageBox.Show("Required travel times have not been loaded for this variant/package.\r\nPlease load travel times and try again.",
-                //        "FIA Biosum", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                //        return -1;
-                //    }
-                //}
             }
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -361,8 +353,9 @@ namespace FIA_Biosum_Manager
             if (m_oAdo.m_intError == 0)
             {
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
+            string strTreeTableName = m_oQueries.m_oFIAPlot.m_strTreeTable;
             string strSQL = "SELECT DISTINCT t.fvs_tree_id, t.spcd " +
-                    "FROM tree t, " + strTableName + " z " +
+                    "FROM " + strTreeTableName + " t, " + strTableName + " z " +
                     "WHERE t.fvs_tree_id = z.fvs_tree_id " +
                     "AND z.rxpackage='" + p_strRxPackage + "' " +
                     "AND mid(t.fvs_tree_id,1,2)='" + p_strVariant + "' " +
@@ -505,7 +498,8 @@ namespace FIA_Biosum_Manager
         {
             if (p_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT fvs_tree_id, tree, cn from tree where fvs_tree_id is not null";
+                string strTreeTableName = m_oQueries.m_oFIAPlot.m_strTreeTable;
+                string strSQL = "SELECT fvs_tree_id, tree, cn from " + strTreeTableName + " where fvs_tree_id is not null";
   
                 p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, strSQL);
                 if (p_oAdo.m_OleDbDataReader.HasRows)
@@ -1107,7 +1101,7 @@ namespace FIA_Biosum_Manager
             System.Collections.Generic.List<treeDiamGroup> listDiamGroups = new System.Collections.Generic.List<treeDiamGroup>();
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM " + Tables.Processor.DefaultTreeDiamGroupsTableName;
+                string strSQL = "SELECT * FROM " + this.m_oQueries.m_oFvs.m_strTreeDbhGrpTable;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -1129,7 +1123,8 @@ namespace FIA_Biosum_Manager
                 new System.Collections.Generic.Dictionary<String, treeSpecies>();
             if (m_oAdo.m_intError == 0)
             {
-                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultTreeSpeciesTableName, "WOODLAND_YN"))
+                string strTreeSpeciesTableName = this.m_oQueries.m_oFvs.m_strTreeSpcTable;
+                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, strTreeSpeciesTableName, "WOODLAND_YN"))
                 {
                     System.Windows.Forms.MessageBox.Show("The WOODLAND_YN field is missing from the tree_species table. " +
                                     "The most likely cause is having an outdated tree_species table. " +
@@ -1139,8 +1134,8 @@ namespace FIA_Biosum_Manager
                     return null;
                 }
                 
-                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " + 
-                                Tables.Reference.DefaultTreeSpeciesTableName +
+                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " +
+                                strTreeSpeciesTableName +
                                 " WHERE FVS_VARIANT = '" + p_strVariant + "' " +
                                 "AND SPCD IS NOT NULL " +
                                 "AND USER_SPC_GROUP IS NOT NULL " +
@@ -1222,7 +1217,7 @@ namespace FIA_Biosum_Manager
                 new System.Collections.Generic.Dictionary<String, prescription>();
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT * FROM " + Tables.FVS.DefaultRxTableName;
+                string strSQL = "SELECT * FROM " + m_oQueries.m_oFvs.m_strRxTable;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -1372,9 +1367,9 @@ namespace FIA_Biosum_Manager
             {
                 // Check to see if the biosum_category column exists in the harvest method table; If not
                 // throw an error and exit the function; Processor won't work without this value
-                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.Reference.DefaultHarvestMethodsTableName, "min_tpa"))
+                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, m_oQueries.m_oReference.m_strRefHarvestMethodTable, "min_tpa"))
                 {
-                    string strErrMsg = "Your project contains an obsolete version of the " + Tables.Reference.DefaultHarvestMethodsTableName +
+                    string strErrMsg = "Your project contains an obsolete version of the " + m_oQueries.m_oReference.m_strRefHarvestMethodTable +
                                        " table that does not contain the 'min_tpa' field. Copy a new version of this table into your project from the" +
                                        " BioSum installation directory before trying to run Processor.";
                     System.Windows.Forms.MessageBox.Show(strErrMsg, "FIA Biosum",
@@ -1382,7 +1377,7 @@ namespace FIA_Biosum_Manager
                     return harvestMethodList;
                 }
 
-                string strSQL = "SELECT * FROM " + Tables.Reference.DefaultHarvestMethodsTableName;
+                string strSQL = "SELECT * FROM " + m_oQueries.m_oReference.m_strRefHarvestMethodTable;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
