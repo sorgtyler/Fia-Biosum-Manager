@@ -30,10 +30,8 @@ namespace FIA_Biosum_Manager
             m_oQueries = oQueries;
         }
         
-        public Queries init()
-        {
-            Queries p_oQueries = new Queries();
-            
+        public void init()
+        {            
             //
             //CREATE LINK IN TEMP MDB TO ALL PROCESSOR SCENARIO TABLES
             //
@@ -57,47 +55,40 @@ namespace FIA_Biosum_Manager
             //
             //LOAD PROJECT DATATASOURCES INFO
             //
-            p_oQueries.m_oFvs.LoadDatasource = true;
-            p_oQueries.m_oReference.LoadDatasource = true;
-            p_oQueries.m_oProcessor.LoadDatasource = true;
-            p_oQueries.LoadDatasources(true, "processor", m_strScenarioId);
+            m_oQueries.m_oFvs.LoadDatasource = true;
+            m_oQueries.m_oReference.LoadDatasource = true;
+            m_oQueries.m_oProcessor.LoadDatasource = true;
+            m_oQueries.LoadDatasources(true, "processor", m_strScenarioId);
 
             //link to all the scenario rule definition tables
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                 "scenario_cost_revenue_escalators",
                 strScenarioMDB, "scenario_cost_revenue_escalators", true);
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                 "scenario_additional_harvest_costs",
                 strScenarioMDB, "scenario_additional_harvest_costs", true);
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                "scenario_harvest_cost_columns",
                strScenarioMDB, "scenario_harvest_cost_columns", true);
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
               "scenario_harvest_method",
               strScenarioMDB, "scenario_harvest_method", true);
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                 Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName,
                 strScenarioMDB, 
                 Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName, true);
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
              "scenario_tree_species_diam_dollar_values",
              strScenarioMDB, "scenario_tree_species_diam_dollar_values", true);
             //link scenario results tables
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                 Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName,
                 strScenarioResultsMDB,
                 Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, true);
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName,
                 strScenarioResultsMDB,
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, true);
-
-            // link gis travel_timetable
-            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
-                frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName,
-                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableDbFile,
-                frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName, true);
-
 
             oDao.m_DaoDbEngine.Idle(1);
             oDao.m_DaoDbEngine.Idle(8);
@@ -114,14 +105,12 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "START: CreateTableLinksToFVSOutTreeListTables - " + System.DateTime.Now.ToString() + "\r\n");
             RxTools oRxTools = new RxTools();
-            oRxTools.CreateTableLinksToFVSOutTreeListTables(p_oQueries, p_oQueries.m_strTempDbFile);
+            oRxTools.CreateTableLinksToFVSOutTreeListTables(m_oQueries, m_oQueries.m_strTempDbFile);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "END: CreateTableLinksToFVSOutTreeListTables - " + System.DateTime.Now.ToString() + "\r\n");
 
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(p_oQueries.m_strTempDbFile, "", ""));
- 
-            return p_oQueries;
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
         }
         
         public int loadTrees(string p_strVariant, string p_strRxPackage)
