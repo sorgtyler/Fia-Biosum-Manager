@@ -692,6 +692,11 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oFrmMain.Height,
                             frmMain.g_oFrmMain.Width,
                             frmMain.g_oFrmMain.Top);
+                        if (m_bTreeGroupsFirstTime == true)
+                        {
+                            // Load tree groupings so they are there for the wood values tab
+                            LoadTreeGroupings();
+                        }
                         LoadRuleDefinitions();
                         frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     }
@@ -1705,94 +1710,6 @@ namespace FIA_Biosum_Manager
             }
 
         }
-        public class SpcCommonNameItem
-        {
-            private string _strCommonName = "";
-            private bool _bFVSOutput = false;
-            private string _strSpeciesGroupLabel = "";
-            private int _intSpeciesGroupIndex = -1;
-            private int _intSpeciesCode = -1;
-
-            public SpcCommonNameItem()
-            {
-            }
-            public string SpeciesCommonName
-            {
-                get { return _strCommonName; }
-                set { _strCommonName = value; }
-            }
-            public bool FVSOutput
-            {
-                get { return _bFVSOutput; }
-                set { _bFVSOutput = value; }
-            }
-            public string SpeciesGroupLabel
-            {
-                get { return _strSpeciesGroupLabel; }
-                set { _strSpeciesGroupLabel = value; }
-            }
-            public int SpeciesGroupIndex
-            {
-                get { return _intSpeciesGroupIndex; }
-                set { _intSpeciesGroupIndex = value; }
-            }
-            public int SpeciesCode
-            {
-                get { return _intSpeciesCode; }
-                set { _intSpeciesCode = value; }
-            }
-            public void Copy(SpcCommonNameItem p_oSource,
-                             SpcCommonNameItem p_oDest)
-            {
-                p_oDest.SpeciesCommonName = p_oSource.SpeciesCommonName;
-                p_oDest.SpeciesCode = p_oSource.SpeciesCode;
-                p_oDest.SpeciesGroupIndex = p_oSource.SpeciesGroupIndex;
-                p_oDest.SpeciesGroupLabel = p_oSource.SpeciesGroupLabel;
-            }
-        }
-        public class SpcCommonNameItemCollection : System.Collections.CollectionBase
-        {
-            public SpcCommonNameItemCollection()
-            {
-                //
-                // TODO: Add constructor logic here
-                //
-            }
-
-            public void Add(SpcCommonNameItem spc_common_name1)
-            {
-                // vérify if object is not already in
-                if (this.List.Contains(spc_common_name1))
-                    throw new InvalidOperationException();
-
-                // adding it
-                this.List.Add(spc_common_name1);
-
-                // return collection
-                //return this;
-            }
-            public void Remove(int index)
-            {
-                // Check to see if there is a widget at the supplied index.
-                if (index > Count - 1 || index < 0)
-                // If no widget exists, a messagebox is shown and the operation 
-                // is cancelled.
-                {
-                    System.Windows.Forms.MessageBox.Show("Index not valid!");
-                }
-                else
-                {
-                    List.RemoveAt(index);
-                }
-            }
-            public SpcCommonNameItem Item(int Index)
-            {
-                // The appropriate item is retrieved from the List object and
-                // explicitly cast to the Widget type, then returned to the 
-                // caller.
-                return (SpcCommonNameItem)List[Index];
-            }
-        }
         public class SpcGroupItem
         {
 
@@ -2349,46 +2266,24 @@ namespace FIA_Biosum_Manager
                 p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Remove(x);
             }
             //
-            //QUERY ALL SPECIES AND DBH GROUPS
-            //
-            p_oAdo.m_strSQL = "SELECT a.species_label, b.diam_class " +
-                              "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
-                                        Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
-                              "WHERE TRIM(b.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' " +
-                              "AND TRIM(a.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' " +
-                              "ORDER BY a.species_label, b.diam_group";
-            p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
-            //
             //CREATE A COLLECTION CONTAINING EACH SPECIES AND DBH GROUP COMBINATION
             //
-            if (p_oAdo.m_OleDbDataReader.HasRows)
+            foreach (ProcessorScenarioItem.SpcGroupItem objSpcGroup in p_oProcessorScenarioItem.m_oSpcGroupItem_Collection)
             {
-                while (p_oAdo.m_OleDbDataReader.Read())
+                foreach (ProcessorScenarioItem.TreeDiamGroupsItem objDiamGroup in p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection)
                 {
-                
-                    if (p_oAdo.m_OleDbDataReader["species_label"] != System.DBNull.Value &&
-                        p_oAdo.m_OleDbDataReader["species_label"].ToString().Trim().Length > 0)
-                    {
-                        ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem oItem = new ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem();
-                        oItem.SpeciesGroup = p_oAdo.m_OleDbDataReader["species_label"].ToString().Trim();
-                        oItem.DbhGroup = p_oAdo.m_OleDbDataReader["diam_class"].ToString().Trim();
-                        p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Add(oItem);
-                    }
+                    ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem oItem = new ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem();
+                    oItem.SpeciesGroup = objSpcGroup.SpeciesGroupLabel;
+                    oItem.DbhGroup = objDiamGroup.DiamClass;
+                    p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Add(oItem);
                 }
             }
-            p_oAdo.m_OleDbDataReader.Close();
             //
             //UPDATE MERCH AND CHIP DOLLAR VALUE
             //
-            p_oAdo.m_strSQL = "SELECT a.species_group,a.species_label,b.diam_group,b.diam_class,c.wood_bin,c.merch_value,c.chip_value " +
-                "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
-                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b, " +
-                "scenario_tree_species_diam_dollar_values c " +
-                "WHERE TRIM(c.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' AND " +
-                "TRIM(a.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' AND " +
-                "TRIM(b.scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "' AND " +
-                      "c.species_group=a.species_group AND c.diam_group=b.diam_group " +
-                "ORDER BY a.species_label, b.diam_group";
+            p_oAdo.m_strSQL = "SELECT wood_bin,merch_value,chip_value,species_group,diam_group " +
+                "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesDollarValuesTableName +
+                " WHERE TRIM(scenario_id)='" + p_oProcessorScenarioItem.ScenarioId.Trim() + "'"; 
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
             if (p_oAdo.m_OleDbDataReader.HasRows)
             {
@@ -2399,15 +2294,33 @@ namespace FIA_Biosum_Manager
                     string strMerchValue = "0.00";
                     string strChipValue = "0.00";
                     string strWoodBin = "";
-                    if (p_oAdo.m_OleDbDataReader["species_label"] != System.DBNull.Value &&
-                        p_oAdo.m_OleDbDataReader["species_label"].ToString().Trim().Length > 0)
+
+                    if (p_oAdo.m_OleDbDataReader["species_group"] != System.DBNull.Value)
                     {
-                        strSpcGrp = p_oAdo.m_OleDbDataReader["species_label"].ToString().Trim();
+                        int intSpcGrp = (int) p_oAdo.m_OleDbDataReader["species_group"];
+                        foreach (ProcessorScenarioItem.SpcGroupItem objSpcGroup in p_oProcessorScenarioItem.m_oSpcGroupItem_Collection)
+                        {
+
+                            if (objSpcGroup.SpeciesGroup == intSpcGrp)
+                            {
+                                strSpcGrp = objSpcGroup.SpeciesGroupLabel.Trim();
+                                break; // Exit for loop when we've found the species group
+                            }
+                        }
                     }
-                    if (p_oAdo.m_OleDbDataReader["diam_class"] != System.DBNull.Value &&
-                        p_oAdo.m_OleDbDataReader["diam_class"].ToString().Trim().Length > 0)
+                    if (p_oAdo.m_OleDbDataReader["diam_group"] != System.DBNull.Value &&
+                        p_oAdo.m_OleDbDataReader["diam_group"].ToString().Trim().Length > 0)
                     {
-                        strDbhGrp = p_oAdo.m_OleDbDataReader["diam_class"].ToString().Trim();
+                        string strDiamGroup = p_oAdo.m_OleDbDataReader["diam_group"].ToString().Trim();
+                        foreach (ProcessorScenarioItem.TreeDiamGroupsItem objTreeDiam in p_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection)
+                        {
+
+                            if (objTreeDiam.DiamGroup.Equals(strDiamGroup))
+                            {
+                                strDbhGrp = objTreeDiam.DiamClass.Trim();
+                                break; // Exit for loop when we've found the diameter group
+                            }
+                        }
                     }
                     if (p_oAdo.m_OleDbDataReader["merch_value"] != System.DBNull.Value &&
                         p_oAdo.m_OleDbDataReader["merch_value"].ToString().Trim().Length > 0)
@@ -2428,7 +2341,8 @@ namespace FIA_Biosum_Manager
                     {
                         for (x = 0; x <= p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Count - 1; x++)
                         {
-                            
+                            string tempSpGrp = p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).SpeciesGroup;
+                            string tempDbhGrp = p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).DbhGroup;
                             //merch value is associated with each dbh and spc group
                             if (strSpcGrp.ToUpper() ==
                                 p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(x).SpeciesGroup.Trim().ToUpper() &&

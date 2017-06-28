@@ -113,16 +113,6 @@ namespace FIA_Biosum_Manager
 			oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                                  "scenario_tree_species_diam_dollar_values",
                                  strScenarioMDB,"scenario_tree_species_diam_dollar_values",true);
-            //link to tree diameter groups table
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
-                                 Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName,
-                                 strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName, true);
-            //link to tree species groups table
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
-                                 Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName,
-                                 strScenarioMDB, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName, true);    
-
-			
             oDao.m_DaoWorkspace.Close();
 			oDao=null;
 			//
@@ -369,25 +359,31 @@ namespace FIA_Biosum_Manager
 			//
 			//CREATE AND POPULATE WORK TABLE
 			//
-            //@ToDo: May update this to load from memory
-			m_oAdo.m_strSQL = "SELECT a.species_group,a.species_label,b.diam_group,b.diam_class INTO spcgrp_dbhgrp " + 
-                "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
-				Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
-                "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " +
-                "AND TRIM(a.scenario_id)='" + this.ScenarioId.Trim() + "' " +
-				"ORDER BY a.species_label, b.diam_group";
-			m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
-			//
-			//INSERT SCENARIO RECORDS
-			//
-			m_oAdo.m_strSQL = "INSERT INTO scenario_tree_species_diam_dollar_values (scenario_id,species_group,diam_group) " + 
-				              "SELECT '" + ScenarioId.Trim() + "',a.species_group, b.diam_group " + 
-                              "FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " a," +
-                                        Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " b " +
-                              "WHERE TRIM(b.scenario_id)='" + this.ScenarioId.Trim() + "' " +
-                              "AND TRIM(a.scenario_id)='" + this.ScenarioId.Trim() + "' " + 
-				              "ORDER BY a.species_label, b.diam_group";
-			m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
+            m_oAdo.m_strSQL = "CREATE TABLE spcgrp_dbhgrp (" +
+                    "species_group INTEGER," +
+                    "species_label CHAR(50)," +
+                    "diam_group INTEGER," +
+                    "diam_class CHAR(15))";
+            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+            foreach (ProcessorScenarioItem.SpcGroupItem objSpcGroup in ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupItem_Collection)
+            {
+                foreach (ProcessorScenarioItem.TreeDiamGroupsItem objDiamGroup in ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection)
+                {
+                    // INITIALIZE RECORDS IN WORK TABLE
+                    m_oAdo.m_strSQL = "INSERT INTO spcgrp_dbhgrp (species_group,species_label, diam_group, diam_class) " +
+                        "VALUES (" + objSpcGroup.SpeciesGroup + ",'" + objSpcGroup.SpeciesGroupLabel + "'," + 
+                        objDiamGroup.DiamGroup + ",'" + objDiamGroup.DiamClass + "')";
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    //
+                    //INSERT SCENARIO RECORDS
+                    //
+                    m_oAdo.m_strSQL = "INSERT INTO scenario_tree_species_diam_dollar_values (scenario_id,species_group,diam_group) " +
+                                    "VALUES ('" + ScenarioId.Trim() + "'," + objSpcGroup.SpeciesGroup + "," +
+                                    objDiamGroup.DiamGroup + ")";
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                }
+            }
 
 			//
 			//UPDATE SCENARIO RECORDS WITH MERCH AND CHIP VALUES
