@@ -9,9 +9,9 @@ using System.Collections.Generic;
 namespace FIA_Biosum_Manager
 {
 	/// <summary>
-	/// Summary description for uc_tree_spc_groups.
+    /// Summary description for uc_processor_scenario_tree_spc_groups.
 	/// </summary>
-	public class uc_tree_spc_groups : System.Windows.Forms.UserControl
+	public class uc_processor_scenario_tree_spc_groups : System.Windows.Forms.UserControl
 	{
 		public System.Windows.Forms.Label lblTitle;
 		public System.Windows.Forms.ListBox lstCommonName;
@@ -88,7 +88,7 @@ namespace FIA_Biosum_Manager
         private string _strScenarioId = "";
         private frmProcessorScenario _frmProcessorScenario = null;
         
-		public uc_tree_spc_groups()
+		public uc_processor_scenario_tree_spc_groups()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -714,11 +714,11 @@ namespace FIA_Biosum_Manager
             this.chkFilterSpecies.Text = "Show only species found in the FVS Tree tables";
             this.chkFilterSpecies.CheckStateChanged += new System.EventHandler(this.chkFilterSpecies_CheckStateChanged);
             // 
-            // uc_tree_spc_groups
+            // uc_processor_scenario_tree_spc_groups
             // 
             this.AutoScroll = true;
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_tree_spc_groups";
+            this.Name = "uc_processor_scenario_tree_spc_groups";
             this.Size = new System.Drawing.Size(776, 592);
             this.groupBox1.ResumeLayout(false);
             this.grpbox6.ResumeLayout(false);
@@ -1434,8 +1434,8 @@ namespace FIA_Biosum_Manager
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show("!!Error!! \n" + 
-						"Module - uc_tree_spc_groups:savevalues() \n" + 
+					MessageBox.Show("!!Error!! \n" +
+                        "Module - uc_processor_scenario_tree_spc_groups:savevalues() \n" + 
 						"Err Msg - " + e.Message,
 						"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
 						System.Windows.Forms.MessageBoxIcon.Exclamation);
@@ -1506,7 +1506,8 @@ namespace FIA_Biosum_Manager
 		private void btnSave_Click(object sender, System.EventArgs e)
 		{
 			this.savevalues();
-
+            // Force reload of components that use tree groups since they changed in db
+            ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
 		}
 		/// <summary>
 		/// all items in the list box are  contantenated to a comma delimited string
@@ -1759,12 +1760,12 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.Button m_btnClearAll;
 		public System.Windows.Forms.ListBox m_lstGrp;
 		public System.Windows.Forms.TextBox m_txtGrp;
-		public FIA_Biosum_Manager.uc_tree_spc_groups m_uc_tree_spc_groups1;
+        public FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups m_uc_processor_scenario_tree_spc_groups1;
 		private int _intGroupingNumber=1;
-		public spc_groupings(FIA_Biosum_Manager.uc_tree_spc_groups p_uc_tree_spc_groups)
+        public spc_groupings(FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups p_processor_scenario_tree_spc_groups)
 		{
 			this.Visible=false;
-			this.m_uc_tree_spc_groups1 = p_uc_tree_spc_groups;
+            this.m_uc_processor_scenario_tree_spc_groups1 = p_processor_scenario_tree_spc_groups;
 			this.m_btnRemove = new Button();
 			this.m_btnClearAll = new Button();
 			this.m_lstGrp = new ListBox();
@@ -1791,10 +1792,10 @@ namespace FIA_Biosum_Manager
 
 			if (this.m_lstGrp.SelectedItems.Count > 0)
 			{
-				this.m_uc_tree_spc_groups1.RemoveSpeciesCommonNameFromGroupAssignment(this.m_lstGrp.SelectedItems[0].ToString());
+                this.m_uc_processor_scenario_tree_spc_groups1.RemoveSpeciesCommonNameFromGroupAssignment(this.m_lstGrp.SelectedItems[0].ToString());
 
 				this.m_lstGrp.Items.Remove(this.m_lstGrp.SelectedItems[0].ToString());
-				if (this.m_uc_tree_spc_groups1.btnSave.Enabled==false) this.m_uc_tree_spc_groups1.btnSave.Enabled=true;
+                if (this.m_uc_processor_scenario_tree_spc_groups1.btnSave.Enabled == false) this.m_uc_processor_scenario_tree_spc_groups1.btnSave.Enabled = true;
 			}
 			//MessageBox.Show("btnRemove " + this._intGroupingNumber.ToString());
 
@@ -1805,11 +1806,11 @@ namespace FIA_Biosum_Manager
 			{
 				for (int x=0;x<=this.m_lstGrp.Items.Count-1;x++)
 				{
-					this.m_uc_tree_spc_groups1.RemoveSpeciesCommonNameFromGroupAssignment(this.m_lstGrp.Items[x].ToString());
+                    this.m_uc_processor_scenario_tree_spc_groups1.RemoveSpeciesCommonNameFromGroupAssignment(this.m_lstGrp.Items[x].ToString());
 
 				}
 				this.m_lstGrp.Items.Clear();
-				if (this.m_uc_tree_spc_groups1.btnSave.Enabled==false) this.m_uc_tree_spc_groups1.btnSave.Enabled=true;
+                if (this.m_uc_processor_scenario_tree_spc_groups1.btnSave.Enabled == false) this.m_uc_processor_scenario_tree_spc_groups1.btnSave.Enabled = true;
 			}
 			
 		}

@@ -8,9 +8,9 @@ using System.Windows.Forms;
 namespace FIA_Biosum_Manager
 {
 	/// <summary>
-	/// Summary description for uc_tree_diam_groups_list.
+	/// Summary description for uc_processor_scenario_tree_diam_groups_list.
 	/// </summary>
-	public class uc_tree_diam_groups_list : System.Windows.Forms.UserControl
+	public class uc_processor_scenario_tree_diam_groups_list : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Label lblTitle;
@@ -40,7 +40,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		public uc_tree_diam_groups_list()
+		public uc_processor_scenario_tree_diam_groups_list()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -291,10 +291,10 @@ namespace FIA_Biosum_Manager
 			this.btnDelete.Text = "Delete";
 			this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
 			// 
-			// uc_tree_diam_groups_list
+			// uc_processor_scenario_tree_diam_groups_list
 			// 
 			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_tree_diam_groups_list";
+            this.Name = "uc_processor_scenario_tree_diam_groups_list";
 			this.Size = new System.Drawing.Size(568, 304);
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -310,6 +310,8 @@ namespace FIA_Biosum_Manager
                 if (result == System.Windows.Forms.DialogResult.Yes)
                 {
                     this.savevalues();
+                    // Force reload of components that use tree groups since they changed in db
+                    ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
                 }
             }
             this.ParentForm.Close();
@@ -350,9 +352,9 @@ namespace FIA_Biosum_Manager
 			frmTemp.Text = "Database: Tree Diameter Groups (New)";
 			frmTemp.Initialize_Plot_Tree_Diam_Edit_User_Control();
 
-			frmTemp.uc_tree_diam_groups_edit1.txtGroupId = strId;
-			frmTemp.uc_tree_diam_groups_edit1.txtMaximumDiameter = strMax;
-			frmTemp.uc_tree_diam_groups_edit1.txtMinimumDiameter = strMin;
+			frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtGroupId = strId;
+			frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMaximumDiameter = strMax;
+			frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMinimumDiameter = strMin;
 
 
 			//frmTemp.MdiParent = this;
@@ -361,13 +363,13 @@ namespace FIA_Biosum_Manager
 
 			frmTemp.Height=0;
 			frmTemp.Width=0;
-			if (frmTemp.uc_tree_diam_groups_edit1.Top + frmTemp.uc_tree_diam_groups_edit1.Height > frmTemp.ClientSize.Height + 2)
+			if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Top + frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Height > frmTemp.ClientSize.Height + 2)
 			{
 				for (int x=1;;x++)
 				{
 					frmTemp.Height = x;
-					if (frmTemp.uc_tree_diam_groups_edit1.Top + 
-						frmTemp.uc_tree_diam_groups_edit1.Height < 
+					if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Top + 
+						frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Height < 
 						frmTemp.ClientSize.Height)
 					{
 						break;
@@ -375,13 +377,13 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			if (frmTemp.uc_tree_diam_groups_edit1.Left + frmTemp.uc_tree_diam_groups_edit1.Width > frmTemp.ClientSize.Width + 2)
+			if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Left + frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Width > frmTemp.ClientSize.Width + 2)
 			{
 				for (int x=1;;x++)
 				{
 					frmTemp.Width = x;
-					if (frmTemp.uc_tree_diam_groups_edit1.Left + 
-						frmTemp.uc_tree_diam_groups_edit1.Width < 
+					if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Left + 
+						frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Width < 
 						frmTemp.ClientSize.Width)
 					{
 						break;
@@ -396,13 +398,13 @@ namespace FIA_Biosum_Manager
             System.Windows.Forms.DialogResult result = frmTemp.ShowDialog();
 			if (result==System.Windows.Forms.DialogResult.OK)
 			{
-				strMax = frmTemp.uc_tree_diam_groups_edit1.txtMaximumDiameter.Trim();
+				strMax = frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMaximumDiameter.Trim();
 				//remove the period if it is the last character
 				if (strMax.IndexOf(".") == strMax.Length-1)
 				{
 					strMax = strMax.Replace(".","");
 				}
-				strMin = frmTemp.uc_tree_diam_groups_edit1.txtMinimumDiameter.Trim();
+				strMin = frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMinimumDiameter.Trim();
 				//remove the period if it is the last character
 				if (strMin.IndexOf(".") == strMin.Length-1)
 				{
@@ -410,7 +412,7 @@ namespace FIA_Biosum_Manager
 				}
 				this.lstTreeDiam.BeginUpdate();
 				System.Windows.Forms.ListViewItem listItem = new ListViewItem();
-				listItem.Text=frmTemp.uc_tree_diam_groups_edit1.txtGroupId;
+				listItem.Text=frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtGroupId;
 				listItem.SubItems.Add(strMin);
 				listItem.SubItems.Add(strMax);
 				listItem.SubItems.Add(strMin + " - " + strMax);
@@ -501,20 +503,20 @@ namespace FIA_Biosum_Manager
 			frmTemp.Text = "Database: Tree Diameter Groups (Edit)";
 			frmTemp.Initialize_Plot_Tree_Diam_Edit_User_Control();
 
-			frmTemp.uc_tree_diam_groups_edit1.txtGroupId = strId;
-			frmTemp.uc_tree_diam_groups_edit1.txtMaximumDiameter = strMax;
-			frmTemp.uc_tree_diam_groups_edit1.txtMinimumDiameter = strMin;
+			frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtGroupId = strId;
+			frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMaximumDiameter = strMax;
+			frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMinimumDiameter = strMin;
 
 
 			frmTemp.Height=0;
 			frmTemp.Width=0;
-			if (frmTemp.uc_tree_diam_groups_edit1.Top + frmTemp.uc_tree_diam_groups_edit1.Height > frmTemp.ClientSize.Height + 2)
+			if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Top + frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Height > frmTemp.ClientSize.Height + 2)
 			{
 				for (int x=1;;x++)
 				{
 					frmTemp.Height = x;
-					if (frmTemp.uc_tree_diam_groups_edit1.Top + 
-						frmTemp.uc_tree_diam_groups_edit1.Height < 
+					if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Top + 
+						frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Height < 
 						frmTemp.ClientSize.Height)
 					{
 						break;
@@ -522,13 +524,13 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			if (frmTemp.uc_tree_diam_groups_edit1.Left + frmTemp.uc_tree_diam_groups_edit1.Width > frmTemp.ClientSize.Width + 2)
+			if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Left + frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Width > frmTemp.ClientSize.Width + 2)
 			{
 				for (int x=1;;x++)
 				{
 					frmTemp.Width = x;
-					if (frmTemp.uc_tree_diam_groups_edit1.Left + 
-						frmTemp.uc_tree_diam_groups_edit1.Width < 
+					if (frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Left + 
+						frmTemp.uc_processor_scenario_tree_diam_groups_edit1.Width < 
 						frmTemp.ClientSize.Width)
 					{
 						break;
@@ -543,13 +545,13 @@ namespace FIA_Biosum_Manager
 			System.Windows.Forms.DialogResult result = frmTemp.ShowDialog();
 			if (result==System.Windows.Forms.DialogResult.OK)
 			{
-				strMax = frmTemp.uc_tree_diam_groups_edit1.txtMaximumDiameter.Trim();
+				strMax = frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMaximumDiameter.Trim();
 				//remove the period if it is the last character
 				if (strMax.IndexOf(".") == strMax.Length-1)
 				{
 					strMax = strMax.Replace(".","");
 				}
-				strMin = frmTemp.uc_tree_diam_groups_edit1.txtMinimumDiameter.Trim();
+				strMin = frmTemp.uc_processor_scenario_tree_diam_groups_edit1.txtMinimumDiameter.Trim();
 				//remove the period if it is the last character
 				if (strMin.IndexOf(".") == strMin.Length-1)
 				{
@@ -571,6 +573,8 @@ namespace FIA_Biosum_Manager
 		private void btnSave_Click(object sender, System.EventArgs e)
 		{
 		  this.savevalues();
+          // Force reload of components that use tree groups since they changed in db
+          ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
 		}
 		private void val_data()
 		{

@@ -1663,13 +1663,13 @@ namespace FIA_Biosum_Manager
 
 							this.m_frmTreeDiam.Height=0;
 							this.m_frmTreeDiam.Width=0;
-							if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
+							if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
 							{
 								for (int x=1;;x++)
 								{
 									this.m_frmTreeDiam.Height = x;
-									if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Top + 
-										this.m_frmTreeDiam.uc_tree_diam_groups_list1.Height < 
+									if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + 
+										this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height < 
 										this.m_frmTreeDiam.ClientSize.Height)
 									{
 										break;
@@ -1677,13 +1677,13 @@ namespace FIA_Biosum_Manager
 								}
 
 							}
-							if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
+							if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
 							{
 								for (int x=1;;x++)
 								{
 									this.m_frmTreeDiam.Width = x;
-									if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Left + 
-										this.m_frmTreeDiam.uc_tree_diam_groups_list1.Width < 
+									if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + 
+										this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width < 
 										this.m_frmTreeDiam.ClientSize.Width)
 									{
 										break;
@@ -1693,7 +1693,7 @@ namespace FIA_Biosum_Manager
 							}
 							
 
-							this.m_frmTreeDiam.uc_tree_diam_groups_list1.loadvalues();	
+							this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.loadvalues();	
 	  
 							frmMain.g_sbpInfo.Text = "Ready";
 							this.m_frmTreeDiam.Show();
@@ -1814,13 +1814,13 @@ namespace FIA_Biosum_Manager
 
 							this.m_frmTreeDiam.Height=0;
 							this.m_frmTreeDiam.Width=0;
-							if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
+							if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
 							{
 								for (int x=1;;x++)
 								{
 									this.m_frmTreeDiam.Height = x;
-									if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Top + 
-										this.m_frmTreeDiam.uc_tree_diam_groups_list1.Height < 
+									if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + 
+										this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height < 
 										this.m_frmTreeDiam.ClientSize.Height)
 									{
 										break;
@@ -1828,13 +1828,13 @@ namespace FIA_Biosum_Manager
 								}
 
 							}
-							if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
+							if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
 							{
 								for (int x=1;;x++)
 								{
 									this.m_frmTreeDiam.Width = x;
-									if (this.m_frmTreeDiam.uc_tree_diam_groups_list1.Left + 
-										this.m_frmTreeDiam.uc_tree_diam_groups_list1.Width < 
+									if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + 
+										this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width < 
 										this.m_frmTreeDiam.ClientSize.Width)
 									{
 										break;
@@ -1844,7 +1844,7 @@ namespace FIA_Biosum_Manager
 							}
 							
 
-							this.m_frmTreeDiam.uc_tree_diam_groups_list1.loadvalues();		
+							this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.loadvalues();		
 							frmMain.g_sbpInfo.Text = "Ready";
 							this.m_frmTreeDiam.Show();
 
@@ -1876,7 +1876,7 @@ namespace FIA_Biosum_Manager
 							this.m_frmSpcGrp.BackColor = System.Drawing.SystemColors.Control;
 							this.m_frmSpcGrp.Text = "Processor: Tree Species Groups";
 							this.m_frmSpcGrp.MdiParent = this;
-							FIA_Biosum_Manager.uc_tree_spc_groups p_uc = new uc_tree_spc_groups();
+							FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups p_uc = new uc_processor_scenario_tree_spc_groups();
 							if (p_uc.m_intError < 0) 
 							{
                                 this.DeactivateStandByAnimation();
@@ -1884,7 +1884,7 @@ namespace FIA_Biosum_Manager
 								return;
 							}
 							this.m_frmSpcGrp.Controls.Add(p_uc);
-                            this.m_frmSpcGrp.uc_tree_spc_groups1 = p_uc;
+                            this.m_frmSpcGrp.uc_processor_scenario_tree_spc_groups1 = p_uc;
 							this.m_frmSpcGrp.Height=0;
 							this.m_frmSpcGrp.Width=0;
 							if (p_uc.Top + p_uc.Height > this.m_frmSpcGrp.ClientSize.Height + 2)
@@ -3424,7 +3424,7 @@ namespace FIA_Biosum_Manager
                     else if (child.Text.IndexOf("Processor: Tree Diameter Groups") >= 0)
                     {
                         FIA_Biosum_Manager.frmDialog temp = ((FIA_Biosum_Manager.frmDialog)child);
-                        if (temp.uc_tree_diam_groups_list1.btnSave.Enabled)
+                        if (temp.uc_processor_scenario_tree_diam_groups_list1.btnSave.Enabled)
                         {
                             if (bPromptMsg == false && p_bPrompt)
                             {
@@ -3435,7 +3435,7 @@ namespace FIA_Biosum_Manager
                                 }
                                 else bPromptMsg = true;
                             }
-                            temp.uc_tree_diam_groups_list1.savevalues();
+                            temp.uc_processor_scenario_tree_diam_groups_list1.savevalues();
                         }
                     }
 				}

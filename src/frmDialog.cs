@@ -35,9 +35,9 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_plot_add_edit uc_plot_add_edit1;
 		public FIA_Biosum_Manager.uc_plot_input uc_plot_input1;
 		public FIA_Biosum_Manager.uc_project_notes uc_project_notes1;
-		public FIA_Biosum_Manager.uc_tree_diam_groups_list uc_tree_diam_groups_list1;
-		public FIA_Biosum_Manager.uc_tree_diam_groups_edit uc_tree_diam_groups_edit1;
-		public FIA_Biosum_Manager.uc_tree_spc_groups uc_tree_spc_groups1;
+		public FIA_Biosum_Manager.uc_processor_scenario_tree_diam_groups_list uc_processor_scenario_tree_diam_groups_list1;
+		public FIA_Biosum_Manager.uc_processor_scenario_tree_diam_groups_edit uc_processor_scenario_tree_diam_groups_edit1;
+		public FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups uc_processor_scenario_tree_spc_groups1;
 		public FIA_Biosum_Manager.uc_rx_list uc_rx_list1; 
 		public FIA_Biosum_Manager.uc_rx_edit uc_rx_edit1;
 		public FIA_Biosum_Manager.uc_rx_package_list uc_rx_package_list1;
@@ -218,12 +218,12 @@ namespace FIA_Biosum_Manager
 
             if (this.Text.Trim().ToUpper() == "PROCESSOR: TREE SPECIES GROUPS")
             {
-                if (this.uc_tree_spc_groups1 != null &&
-                    this.uc_tree_spc_groups1.btnSave.Enabled == true)
+                if (this.uc_processor_scenario_tree_spc_groups1 != null &&
+                    this.uc_processor_scenario_tree_spc_groups1.btnSave.Enabled == true)
                 {
 
-                    uc_tree_spc_groups1.btnClose_Click(sender, e);
-                    if (this.uc_tree_spc_groups1.btnSave.Enabled)
+                    uc_processor_scenario_tree_spc_groups1.btnClose_Click(sender, e);
+                    if (this.uc_processor_scenario_tree_spc_groups1.btnSave.Enabled)
                     {
                         e.Cancel = true;
                         return;
@@ -409,18 +409,18 @@ namespace FIA_Biosum_Manager
 		public void Initialize_Plot_Tree_Diam_User_Control()
 		{
 
-			this.uc_tree_diam_groups_list1 = new uc_tree_diam_groups_list();
-			this.Controls.Add(this.uc_tree_diam_groups_list1);
-			this.uc_tree_diam_groups_list1.Visible = true;
-            this.uc_tree_diam_groups_list1.ReferenceProcessorScenarioForm =
+			this.uc_processor_scenario_tree_diam_groups_list1 = new uc_processor_scenario_tree_diam_groups_list();
+			this.Controls.Add(this.uc_processor_scenario_tree_diam_groups_list1);
+			this.uc_processor_scenario_tree_diam_groups_list1.Visible = true;
+            this.uc_processor_scenario_tree_diam_groups_list1.ReferenceProcessorScenarioForm =
                 this.m_frmProcessorScenarioCallingForm;
 		}
 		public void Initialize_Plot_Tree_Diam_Edit_User_Control()
 		{
 
-			this.uc_tree_diam_groups_edit1 = new uc_tree_diam_groups_edit();
-			this.Controls.Add(this.uc_tree_diam_groups_edit1);
-			this.uc_tree_diam_groups_edit1.Visible = true;
+			this.uc_processor_scenario_tree_diam_groups_edit1 = new uc_processor_scenario_tree_diam_groups_edit();
+			this.Controls.Add(this.uc_processor_scenario_tree_diam_groups_edit1);
+			this.uc_processor_scenario_tree_diam_groups_edit1.Visible = true;
             
 		}
 		
@@ -487,10 +487,10 @@ namespace FIA_Biosum_Manager
         }
         public void Initialize_Processor_Tree_Species_Groups()
         {
-            this.uc_tree_spc_groups1 = new uc_tree_spc_groups();
-            this.Controls.Add(this.uc_tree_spc_groups1);
-            this.uc_tree_spc_groups1.Visible = true;
-            this.uc_tree_spc_groups1.ReferenceProcessorScenarioForm =
+            this.uc_processor_scenario_tree_spc_groups1 = new uc_processor_scenario_tree_spc_groups();
+            this.Controls.Add(this.uc_processor_scenario_tree_spc_groups1);
+            this.uc_processor_scenario_tree_spc_groups1.Visible = true;
+            this.uc_processor_scenario_tree_spc_groups1.ReferenceProcessorScenarioForm =
                 this.m_frmProcessorScenarioCallingForm;
         }
 
@@ -664,15 +664,15 @@ namespace FIA_Biosum_Manager
 				return this.uc_plot_fvs_variant_edit1;
 			}
 		}
-		public FIA_Biosum_Manager.uc_tree_spc_groups TreeSpcGroupsUserControl
+		public FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups TreeSpcGroupsUserControl
 		{
 			set
 			{
-				this.uc_tree_spc_groups1 = value;
+				this.uc_processor_scenario_tree_spc_groups1 = value;
 			}
 			get
 			{
-				return this.uc_tree_spc_groups1;
+				return this.uc_processor_scenario_tree_spc_groups1;
 			}
 		}
 		public FIA_Biosum_Manager.uc_contact_edit ContactsEditUserControl

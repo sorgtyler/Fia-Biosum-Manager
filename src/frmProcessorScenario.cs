@@ -684,6 +684,7 @@ namespace FIA_Biosum_Manager
 			{
 				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS")
 				{
+                    // Loading the rule definitions for the first time
                     if (m_bRulesFirstTime == true)
                     {
                         frmMain.g_oFrmMain.ActivateStandByAnimation(
@@ -698,6 +699,22 @@ namespace FIA_Biosum_Manager
                             LoadTreeGroupings();
                         }
                         LoadRuleDefinitions();
+                        frmMain.g_oFrmMain.DeactivateStandByAnimation();
+                    }
+                    // The tree groups have changed so we need to reload the wood values tab
+                    else if (m_bTreeGroupsFirstTime == true)
+                    {
+                        frmMain.g_oFrmMain.ActivateStandByAnimation(
+                            frmMain.g_oFrmMain.WindowState,
+                            frmMain.g_oFrmMain.Left,
+                            frmMain.g_oFrmMain.Height,
+                            frmMain.g_oFrmMain.Width,
+                            frmMain.g_oFrmMain.Top);
+
+                        // Load tree groupings so they are there for the wood values tab
+                        LoadTreeGroupings();
+                        frmMain.g_sbpInfo.Text = "Loading Scenario Merch and Chip Market Value Rule Definitions...Stand By";
+                        this.uc_processor_scenario_merch_chip_value1.loadvalues();
                         frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     }
 				}

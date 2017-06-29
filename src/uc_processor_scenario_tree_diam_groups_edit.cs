@@ -8,9 +8,9 @@ using System.Windows.Forms;
 namespace FIA_Biosum_Manager
 {
 	/// <summary>
-	/// Summary description for uc_tree_diam_groups_edit.
+	/// Summary description for uc_processor_scenario_tree_diam_groups_edit.
 	/// </summary>
-	public class uc_tree_diam_groups_edit : System.Windows.Forms.UserControl
+	public class uc_processor_scenario_tree_diam_groups_edit : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Label lblTitle;
@@ -33,7 +33,7 @@ namespace FIA_Biosum_Manager
         /// <summary>
         /// user class for adding and editing tree diameter groups
         /// </summary>
-		public uc_tree_diam_groups_edit()
+		public uc_processor_scenario_tree_diam_groups_edit()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -236,10 +236,10 @@ namespace FIA_Biosum_Manager
 			this.lblTitle.TabIndex = 0;
 			this.lblTitle.Text = "Tree Diameter Groups Edit";
 			// 
-			// uc_tree_diam_groups_edit
+            // uc_processor_scenario_tree_diam_groups_edit
 			// 
 			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_tree_diam_groups_edit";
+			this.Name = "uc_processor_scenario_tree_diam_groups_edit";
 			this.Size = new System.Drawing.Size(480, 304);
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);

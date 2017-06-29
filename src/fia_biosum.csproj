@@ -553,13 +553,13 @@
     <Compile Include="uc_textbox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_tree_diam_groups_edit.cs">
+    <Compile Include="uc_processor_scenario_tree_diam_groups_edit.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_tree_diam_groups_list.cs">
+    <Compile Include="uc_processor_scenario_tree_diam_groups_list.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_tree_spc_groups.cs">
+    <Compile Include="uc_processor_scenario_tree_spc_groups.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_scenario_processor_scenario_select.cs">
@@ -891,14 +891,16 @@
     <EmbeddedResource Include="uc_textbox.resx">
       <DependentUpon>uc_textbox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_tree_diam_groups_edit.resx">
-      <DependentUpon>uc_tree_diam_groups_edit.cs</DependentUpon>
+    <EmbeddedResource Include="uc_processor_scenario_tree_diam_groups_edit.resx">
+      <DependentUpon>uc_processor_scenario_tree_diam_groups_edit.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_tree_diam_groups_list.resx">
-      <DependentUpon>uc_tree_diam_groups_list.cs</DependentUpon>
+    <EmbeddedResource Include="uc_processor_scenario_tree_diam_groups_list.resx">
+      <DependentUpon>uc_processor_scenario_tree_diam_groups_list.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_tree_spc_groups.resx">
-      <DependentUpon>uc_tree_spc_groups.cs</DependentUpon>
+    <EmbeddedResource Include="uc_processor_scenario_tree_spc_groups.resx">
+      <DependentUpon>uc_processor_scenario_tree_spc_groups.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_scenario_processor_scenario_select.resx">
       <DependentUpon>uc_scenario_processor_scenario_select.cs</DependentUpon>
