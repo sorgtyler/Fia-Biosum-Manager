@@ -908,7 +908,8 @@ namespace FIA_Biosum_Manager
             /**************************************************************************************
              **go through the species group table and assign values to the group label text box
              **************************************************************************************/
-                if (this.ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Count > 0)
+            this._strScenarioId = this.ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.ScenarioId;    
+            if (this.ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Count > 0)
                 {
                     for (x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Count - 1; x++)
                     {

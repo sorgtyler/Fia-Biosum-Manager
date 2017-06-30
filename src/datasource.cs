@@ -520,6 +520,12 @@ namespace FIA_Biosum_Manager
                     Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName,
                     strPath + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListDbFile,
                     Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName);
+
+                p_oDao.CreateTableLink(
+                    p_DaoDatabase,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName,
+                    strPath + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListDbFile,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
             }
             else
             {

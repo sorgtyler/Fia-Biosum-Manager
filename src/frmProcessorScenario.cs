@@ -720,17 +720,9 @@ namespace FIA_Biosum_Manager
 				}
                 if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "TREE GROUPINGS")
                 {
-                    if (m_bTreeGroupsFirstTime == true)
-                    {
-                        frmMain.g_oFrmMain.ActivateStandByAnimation(
-                            frmMain.g_oFrmMain.WindowState,
-                            frmMain.g_oFrmMain.Left,
-                            frmMain.g_oFrmMain.Height,
-                            frmMain.g_oFrmMain.Width,
-                            frmMain.g_oFrmMain.Top);
-                        LoadTreeGroupings();
-                        frmMain.g_oFrmMain.DeactivateStandByAnimation();
-                    }
+                    // We load the tree groupings (maybe) when user clicks a button on uc_scenario_tree_groupings.cs
+                    // This way we reload from the database if user saved a change and went right back in
+                    // without returning to the main Processor scenario page.
                 }
 				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "NOTES")
 				{
@@ -823,9 +815,10 @@ namespace FIA_Biosum_Manager
 		}
         public void LoadTreeGroupings()
         {
+            string strScenario = uc_scenario1.txtScenarioId.Text.Trim();
+            this.m_oProcessorScenarioItem.ScenarioId = strScenario;
             string strScenarioMDB = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
                 "\\processor" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsDbFile;
-            string strScenario = uc_scenario1.txtScenarioId.Text.Trim();
             this.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(strScenarioMDB, 
                 strScenario, this.m_oProcessorScenarioItem);
             this.m_oProcessorScenarioTools.LoadTreeSpeciesGroupValues(strScenarioMDB, strScenario,
@@ -2616,11 +2609,6 @@ namespace FIA_Biosum_Manager
             oAdo.OpenConnection(oAdo.getMDBConnString(p_strDbFile, "", ""));
             if (oAdo.m_intError == 0)
             {
-                //CREATE LINKS TO SCENARIO RULES TABLES
-                dao_data_access oDao = new dao_data_access();
-                oDao.m_DaoWorkspace.Close();
-                oDao = null;
-
                 this.LoadTreeSpeciesGroupValues(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, 
                     p_oProcessorScenarioItem);
             }

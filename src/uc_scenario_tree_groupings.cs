@@ -221,7 +221,14 @@ namespace FIA_Biosum_Manager
 
                 }
 
-            m_frmTreeDiamGroups.uc_processor_scenario_tree_diam_groups_list1.loadvalues();
+            if (_bCopyScenarioTreeDiamGroups == false)
+            {
+                if (ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime == true)
+                {
+                    ReferenceProcessorScenarioForm.LoadTreeGroupings();
+                }
+                m_frmTreeDiamGroups.uc_processor_scenario_tree_diam_groups_list1.loadvalues();
+            }
 
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
                 
@@ -277,9 +284,13 @@ namespace FIA_Biosum_Manager
                 }
 
             }
-
+            
             if (_bCopyScenarioTreeSpeciesGroups == false)
             {
+                if (ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime == true)
+                {
+                    ReferenceProcessorScenarioForm.LoadTreeGroupings();
+                }
                 m_frmTreeSpeciesGroups.uc_processor_scenario_tree_spc_groups1.loadvalues();
             }
             else

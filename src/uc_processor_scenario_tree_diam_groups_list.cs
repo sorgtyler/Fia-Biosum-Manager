@@ -92,6 +92,7 @@ namespace FIA_Biosum_Manager
             this.lstTreeDiam.Columns.Add("Maximum Diameter", 150, HorizontalAlignment.Left);
             this.lstTreeDiam.Columns.Add("Definition", 200, HorizontalAlignment.Left);
 
+            this._strScenarioId = this.ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.ScenarioId; 
             if (ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection != null)
             {
                 try
