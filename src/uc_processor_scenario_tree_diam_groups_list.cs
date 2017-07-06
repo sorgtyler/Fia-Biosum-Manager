@@ -576,6 +576,8 @@ namespace FIA_Biosum_Manager
 		  this.savevalues();
           // Force reload of components that use tree groups since they changed in db
           ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
+          // Copied values have been saved
+          ReferenceProcessorScenarioForm.m_bTreeGroupsCopied = false;
 		}
 		private void val_data()
 		{
@@ -678,58 +680,6 @@ namespace FIA_Biosum_Manager
 			}
 
 		}
-
-        public void copyvalues(string strSourceScenario, string strTargetScenario)
-        {
-            m_ado = new ado_data_access();
-            string strDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsDbFile;
-            m_ado.OpenConnection(m_ado.getMDBConnString(strDbFile, "", ""));
-            ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadTreeDiameterGroupValues(m_ado,
-                m_ado.m_OleDbConnection, strSourceScenario, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
-
-            if (this.m_intError == 0)
-            {
-                //delete the current records
-                this.m_ado.m_strSQL = "DELETE FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName +
-                    " WHERE TRIM(UCASE(scenario_id)) = '" + strTargetScenario.Trim().ToUpper() + "'";
-                this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-
-                if (this.m_ado.m_intError == 0)
-                {
-                    string strMin;
-				    string strMax;
-				    string strDef;
-				    string strId;
-                    for (int x = 0; x <= ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Count - 1; x++)
-
-                    {
-                        FIA_Biosum_Manager.ProcessorScenarioItem.TreeDiamGroupsItem oItem = 
-                            ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection.Item(x);
-                        strId = oItem.DiamClass;
-                        strMin = this.lstTreeDiam.Items[x].SubItems[1].Text;
-                        strMax = this.lstTreeDiam.Items[x].SubItems[2].Text;
-                        strDef = this.lstTreeDiam.Items[x].SubItems[3].Text;
-
-                        this.m_ado.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " " +
-                            "(diam_group,diam_class,min_diam,max_diam,scenario_id) VALUES " +
-                            "(" + strId + ",'" + strDef.Trim() + "'," +
-                            strMin + "," + strMax + ",'" + ScenarioId + "');";
-                        this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-                        if (this.m_ado.m_intError != 0)
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                if (this.m_intError == 0 && this.m_ado.m_intError == 0)
-                {
-                    this.btnSave.Enabled = false;
-                }
-            }
-
-        }
 
 		private void btnDelete_Click(object sender, System.EventArgs e)
 		{

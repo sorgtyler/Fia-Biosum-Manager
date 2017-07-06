@@ -1509,6 +1509,8 @@ namespace FIA_Biosum_Manager
 			this.savevalues();
             // Force reload of components that use tree groups since they changed in db
             ReferenceProcessorScenarioForm.m_bTreeGroupsFirstTime = true;
+            // Copied values have been saved
+            ReferenceProcessorScenarioForm.m_bTreeGroupsCopied = false;
 		}
 		/// <summary>
 		/// all items in the list box are  contantenated to a comma delimited string

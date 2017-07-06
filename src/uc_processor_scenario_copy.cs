@@ -272,6 +272,18 @@ namespace FIA_Biosum_Manager
                 ReferenceCurrentScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Copy(
                     m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection,
                 ref ReferenceCurrentScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection, true);
+
+                ReferenceCurrentScenarioItem.m_oTreeDiamGroupsItem_Collection.Copy(
+                    m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection,
+                ref ReferenceCurrentScenarioItem.m_oTreeDiamGroupsItem_Collection, true);
+
+                ReferenceCurrentScenarioItem.m_oSpcGroupItem_Collection.Copy(
+                    m_oProcessorScenarioItem.m_oSpcGroupItem_Collection,
+                ref ReferenceCurrentScenarioItem.m_oSpcGroupItem_Collection, true);
+
+                ReferenceCurrentScenarioItem.m_oSpcGroupListItem_Collection.Copy(
+                    m_oProcessorScenarioItem.m_oSpcGroupListItem_Collection,
+                ref ReferenceCurrentScenarioItem.m_oSpcGroupListItem_Collection, true);
                
                 _frmDialog.DialogResult = DialogResult.OK;
                 _frmDialog.Close();

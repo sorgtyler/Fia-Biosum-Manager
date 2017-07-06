@@ -41,6 +41,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.TabPage tbRun;
 		public bool m_bRulesFirstTime=true;
         public bool m_bTreeGroupsFirstTime = true;
+        public bool m_bTreeGroupsCopied = false;
 		private System.Windows.Forms.TabPage tbHarvestMethod;
 		private FIA_Biosum_Manager.uc_processor_scenario_harvest_method uc_processor_scenario_harvest_method1;
         private FIA_Biosum_Manager.uc_processor_scenario_movein_costs uc_processor_scenario_movein_costs1;
@@ -693,7 +694,8 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oFrmMain.Height,
                             frmMain.g_oFrmMain.Width,
                             frmMain.g_oFrmMain.Top);
-                        if (m_bTreeGroupsFirstTime == true)
+                        if (m_bTreeGroupsFirstTime == true && 
+                            m_bTreeGroupsCopied == false)
                         {
                             // Load tree groupings so they are there for the wood values tab
                             LoadTreeGroupings();
@@ -702,7 +704,8 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oFrmMain.DeactivateStandByAnimation();
                     }
                     // The tree groups have changed so we need to reload the wood values tab
-                    else if (m_bTreeGroupsFirstTime == true)
+                    else if (m_bTreeGroupsFirstTime == true &&
+                             m_bTreeGroupsCopied == false)
                     {
                         frmMain.g_oFrmMain.ActivateStandByAnimation(
                             frmMain.g_oFrmMain.WindowState,
@@ -807,6 +810,10 @@ namespace FIA_Biosum_Manager
                 if (m_intError == 0) m_intError=uc_processor_scenario_additional_harvest_cost_columns1.m_intError;
                 frmMain.g_oFrmMain.DeactivateStandByAnimation();
 			}
+            if (m_bTreeGroupsCopied == true)
+            {
+                this.uc_scenario_tree_groupings1.saveTreeGroupings_FromProperties();
+            }
             this.uc_scenario_notes1.SaveScenarioNotes();
 			this.uc_scenario1.UpdateDescription();
 			this.m_bSave=false;
@@ -1100,8 +1107,7 @@ namespace FIA_Biosum_Manager
 
                 // For tree groupings child forms, set flag that this is copied scenario; The form will call
                 // the appropriate load method
-                this.uc_scenario_tree_groupings1.CopyScenarioTreeDiamGroups = true;
-                this.uc_scenario_tree_groupings1.CopyScenarioTreeSpeciesGroups = true;
+                m_bTreeGroupsCopied = true;
                 this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm = this;
                 frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
                 this.uc_processor_scenario_harvest_method1.loadvalues_FromProperties();
@@ -1132,8 +1138,6 @@ namespace FIA_Biosum_Manager
                = new TreeSpeciesAndDbhDollarValuesItem_Collection();
         public TreeDiamGroupsItem_Collection m_oTreeDiamGroupsItem_Collection
                = new TreeDiamGroupsItem_Collection();
-        //public SpcCommonNameItemCollection m_oSpcCommonNameItem_Collection
-        //       = new SpcCommonNameItemCollection();
         public SpcGroupItemCollection m_oSpcGroupItem_Collection
             = new SpcGroupItemCollection();
         public SpcGroupListItemCollection m_oSpcGroupListItem_Collection
@@ -1788,6 +1792,18 @@ namespace FIA_Biosum_Manager
                 // caller.
                 return (SpcGroupItem)List[Index];
             }
+            public void Copy(SpcGroupItemCollection p_oSource,
+             ref SpcGroupItemCollection p_oDest, bool p_bInitializeDest)
+            {
+                int x;
+                if (p_bInitializeDest) p_oDest.Clear();
+                for (x = 0; x <= p_oSource.Count - 1; x++)
+                {
+                    SpcGroupItem oItem = new SpcGroupItem();
+                    oItem.Copy(p_oSource.Item(x), oItem);
+                    p_oDest.Add(oItem);
+                }
+            }
         }
         public class SpcGroupListItem
         {
@@ -1863,6 +1879,18 @@ namespace FIA_Biosum_Manager
                 // explicitly cast to the Widget type, then returned to the 
                 // caller.
                 return (SpcGroupListItem)List[Index];
+            }
+            public void Copy(SpcGroupListItemCollection p_oSource,
+                                ref SpcGroupListItemCollection p_oDest, bool p_bInitializeDest)
+            {
+                int x;
+                if (p_bInitializeDest) p_oDest.Clear();
+                for (x = 0; x <= p_oSource.Count - 1; x++)
+                {
+                    SpcGroupListItem oItem = new SpcGroupListItem();
+                    oItem.Copy(p_oSource.Item(x), oItem);
+                    p_oDest.Add(oItem);
+                }
             }
         }
     }
