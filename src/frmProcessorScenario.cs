@@ -2685,7 +2685,7 @@ namespace FIA_Biosum_Manager
                         if (p_oAdo.m_OleDbDataReader["species_group"] != DBNull.Value)
                         {
                             intSpcGrp = Convert.ToInt32(p_oAdo.m_OleDbDataReader["species_group"]);
-                            strSpeciesLabel = Convert.ToString(p_oAdo.m_OleDbDataReader["species_label"]);
+                            strSpeciesLabel = Convert.ToString(p_oAdo.m_OleDbDataReader["species_label"]).Trim();
                             ProcessorScenarioItem.SpcGroupItem oItem = new ProcessorScenarioItem.SpcGroupItem();
                             oItem.SpeciesGroup = intSpcGrp;
                             oItem.SpeciesGroupLabel = strSpeciesLabel;

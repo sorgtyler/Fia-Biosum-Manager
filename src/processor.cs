@@ -1139,13 +1139,13 @@ namespace FIA_Biosum_Manager
                     return null;
                 }
                 
-                //@ToDo: Get tree species from new scenario table
-                string strSQL = "SELECT DISTINCT SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " +
-                                strTreeSpeciesTableName +
-                                " WHERE FVS_VARIANT = '" + p_strVariant + "' " +
-                                "AND SPCD IS NOT NULL " +
-                                "AND USER_SPC_GROUP IS NOT NULL " +
-                                "GROUP BY SPCD, USER_SPC_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN";
+                string strSQL = "SELECT DISTINCT s.SPCD, s.SPECIES_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " +
+                         strTreeSpeciesTableName + " t, " +
+                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " s " +
+                         "WHERE t.spcd = s.spcd AND FVS_VARIANT = '" + p_strVariant + "' " +
+                         "AND S.SPCD IS NOT NULL AND S.SPECIES_GROUP IS NOT NULL " +
+                         "AND TRIM(UCASE(S.scenario_id)) = '" + m_strScenarioId.Trim().ToUpper() + "' " +
+                         "GROUP BY s.SPCD, s.SPECIES_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -1160,7 +1160,7 @@ namespace FIA_Biosum_Manager
                                 System.Windows.Forms.MessageBoxIcon.Error);
                             return null;
                         }
-                        int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["USER_SPC_GROUP"]);
+                        int intSpcGroup = Convert.ToInt32(m_oAdo.m_OleDbDataReader["SPECIES_GROUP"]);
                         double dblOdWgt = Convert.ToDouble(m_oAdo.m_OleDbDataReader["OD_WGT"]);
                         double dblDryToGreen = Convert.ToDouble(m_oAdo.m_OleDbDataReader["Dry_to_Green"]);
                         string strIsWoodlandSpecies = Convert.ToString(m_oAdo.m_OleDbDataReader["WOODLAND_YN"]).Trim();

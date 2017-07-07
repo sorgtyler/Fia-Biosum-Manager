@@ -712,7 +712,11 @@ namespace FIA_Biosum_Manager
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                 Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName,
                 strScenarioMDB,
-            Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName, true);
+                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName, true);
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName,
+                strScenarioMDB,
+                Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName, true);
             //link scenario results tables
             oDao.CreateTableLink(m_oQueries.m_strTempDbFile, 
                 Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName,
@@ -5553,7 +5557,8 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                         bool blnCreateReconcileTreesTable = false;
                         // print reconcile trees table if debug at highest level; This will be in temporary .accdb
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2) { blnCreateReconcileTreesTable = true; }
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            blnCreateReconcileTreesTable = true;
                         m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, blnCreateReconcileTreesTable);
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
