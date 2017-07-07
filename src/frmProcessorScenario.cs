@@ -575,7 +575,15 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oFrmMain.ActivateStandByAnimation(
                         this.WindowState, this.Left, this.Height, this.Width, this.Top);
                     if (m_bRulesFirstTime == true)
+                    {
+                        if (m_bTreeGroupsFirstTime == true &&
+                            m_bTreeGroupsCopied == false)
+                        {
+                            // Load tree groupings so they are there for the wood values tab
+                            LoadTreeGroupings();
+                        }
                         LoadRuleDefinitions();
+                    }
                     else
                         SaveRuleDefinitions();
                     FIA_Biosum_Manager.frmDialog frmTemp = new frmDialog();
