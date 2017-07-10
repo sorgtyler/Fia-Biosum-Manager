@@ -2570,10 +2570,11 @@ namespace FIA_Biosum_Manager
 			{
 				this.AuditOvenDryGreenWtRatio();
 			}
-            else if (this.cmbAudit.Text.Trim() == "Assess Data Readiness: Check If a 2-Character FVS Tree Species Value is Assigned To Each Tree Species Table Record")
-            {
-                this.AuditAssignFvsSpcAlphaChar();
-            }
+            //LCB - Hiding; No longer needed with species groups changes
+            //else if (this.cmbAudit.Text.Trim() == "Assess Data Readiness: Check If a 2-Character FVS Tree Species Value is Assigned To Each Tree Species Table Record")
+            //{
+            //    this.AuditAssignFvsSpcAlphaChar();
+            //}
 			frmMain.g_sbpInfo.Text = "Ready";
 			
 			
@@ -3417,7 +3418,7 @@ namespace FIA_Biosum_Manager
 			}
 			else
 			{
-               this.cmbAudit.Items.Add("Assess Data Readiness: Check If a 2-Character FVS Tree Species Value is Assigned To Each Tree Species Table Record");
+               //this.cmbAudit.Items.Add("Assess Data Readiness: Check If a 2-Character FVS Tree Species Value is Assigned To Each Tree Species Table Record");
 			   this.cmbAudit.Items.Add("Assess Data Readiness: Check If Each FIA Tree Spc, FVS Variant, And FVS Tree Spc Combination Is In The Tree Spc Table");
 			   this.cmbAudit.Items.Add("Assess Data Readiness: Check If Oven Dry Weight And Green Weight Conversion Ratios Exist In The Tree Spc Table");
 			   this.cmbAudit.SelectedIndex = 0;
@@ -3429,8 +3430,8 @@ namespace FIA_Biosum_Manager
 		private void lstAudit_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if (this.lstAudit.SelectedItems.Count==0) return;
-			if (cmbAudit.Text.Trim()=="Assess Data Readiness: Check If Oven Dry Weight And Green Weight Conversion Ratios Exist In The Tree Spc Table" ||
-                cmbAudit.Text.Trim() == "Assess Data Readiness: Check If a 2-Character FVS Tree Species Value is Assigned To Each Tree Species Table Record")
+			if (cmbAudit.Text.Trim()=="Assess Data Readiness: Check If Oven Dry Weight And Green Weight Conversion Ratios Exist In The Tree Spc Table")
+                //cmbAudit.Text.Trim() == "Assess Data Readiness: Check If a 2-Character FVS Tree Species Value is Assigned To Each Tree Species Table Record")
 			{
 				
 				

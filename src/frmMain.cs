@@ -106,9 +106,9 @@ namespace FIA_Biosum_Manager
 		//PROCESSOR panel and buttons
 		public System.Windows.Forms.Panel m_pnlProcessor;
         public FIA_Biosum_Manager.btnMainForm m_btnProcessorStart;
-		public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeDiam;
-		public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpcGrps;
-		public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpc;
+		//public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeDiam;
+        //public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpcGrps;
+        public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpc;
 		//public FIA_Biosum_Manager.btnMainForm m_btnProcessorFrcs;
         public FIA_Biosum_Manager.btnMainForm m_btnProcessorOpcost;
 
@@ -3453,195 +3453,6 @@ namespace FIA_Biosum_Manager
     		this.btnMain1.BackColor = System.Drawing.Color.LightGray;
 		}
 		
-		/// <summary>
-		/// Create the buttons on the GIS,FRCS,PROCESSOR,CORE,FVS and DATABASE panels
-		/// </summary>
-		/// <param name="p_pnl"></param>
-		private void CreateMainFormPanelButtons(System.Windows.Forms.Panel p_pnl)
-		{
-			int x=0;
-		    FIA_Biosum_Manager.btnMainForm btnLeftMenu;
-            FIA_Biosum_Manager.btnMainFormCollection btnCollection;
-
-			btnCollection = new btnMainFormCollection();
-			//first destroy any current buttons
-			switch (p_pnl.Name.Trim().ToUpper())
-			{
-				case "DATABASE":
-					for (x=0;x<=6;x++)
-					{
-						btnLeftMenu = new btnMainForm(this);
-						p_pnl.Controls.Add(btnLeftMenu);
-						btnCollection.Add(btnLeftMenu);
-                        btnLeftMenu.Size = this.btnMain1.Size;
-						btnLeftMenu.Left = this.btnMain1.Left;
-						btnLeftMenu.Name = "btnLeftMenu" + x.ToString().Trim();
-						if (x==0)
-						{
-							btnLeftMenu.Top = this.btnMain1.Top;
-							btnLeftMenu.TabIndex = this.btnMain1.TabIndex;
-						}
-						else
-						{
-							btnLeftMenu.Top = btnCollection.Item(x-1).Top + btnCollection.Item(x-1).Height + 2;
-							btnLeftMenu.TabIndex = btnCollection.Item(x-1).TabIndex + 1;
-						}
-
-						if (x==0)
-						{
-							btnLeftMenu.Top = this.btnMain1.Top;
-							btnLeftMenu.TabIndex = this.btnMain1.TabIndex;
-							btnLeftMenu.Text = "Plot Data";
-
-						}
-						else if (x==1)
-						{
-							btnLeftMenu.Text = "Tree Diameter Groups";
-						}
-						else if (x==2)
-						{
-							btnLeftMenu.Text = "Tree Species Groups";
-						}
-						else if (x==3)
-						{
-                           btnLeftMenu.Text = "Rx";
-						}
-						else if (x==4)
-						{
-						   btnLeftMenu.Text = "Manage Tables";
-						}
-						else if (x==5)
-						{
-						  btnLeftMenu.Text = "Convert OR/CA Previous Study";
-						}
-						else if (x==6)
-						{
-						  btnLeftMenu.Text = "Generate Travel Times";
-						}
-						btnLeftMenu.Visible=true;
-						btnLeftMenu.Enabled=true;
-					}
-					
-					
-					break;
-				case "CORE":
-					for (x=0;x<=1;x++)
-					{
-						btnLeftMenu = new btnMainForm(this);
-						this.panel1.Controls.Add(btnLeftMenu);
-						btnCollection.Add(btnLeftMenu);
-						btnLeftMenu.Size = this.btnMain1.Size;
-						btnLeftMenu.Left = this.btnMain1.Left;
-						btnLeftMenu.Name = "btnMainForm" + x.ToString().Trim();
-						if (x==0)
-						{
-							btnLeftMenu.Top = this.btnMain1.Top;
-							btnLeftMenu.TabIndex = this.btnMain1.TabIndex;
-						}
-						else
-						{
-							btnLeftMenu.Top = btnCollection.Item(x-1).Top + btnCollection.Item(x-1).Height + 2;
-							btnLeftMenu.TabIndex = btnCollection.Item(x-1).TabIndex + 1;
-
-						}
-
-						if (x==0)
-						{
-							btnLeftMenu.Text = "Case Study Scenario";
-
-						}
-						else if (x==1)
-						{
-							btnLeftMenu.Text = "Join Data From Multiple Scenarios";
-						}
-						else if (x==2)
-						{
-							btnLeftMenu.Text = "Tree Species Groups";
-						}
-						else if (x==3)
-						{
-							btnLeftMenu.Text = "Rx";
-						}
-						else if (x==4)
-						{
-							btnLeftMenu.Text = "Manage Tables";
-						}
-						else if (x==5)
-						{
-							btnLeftMenu.Text = "Convert OR/CA Previous Study";
-						}
-						else if (x==6)
-						{
-							btnLeftMenu.Text = "Generate Travel Times";
-						}
-						btnLeftMenu.Visible=true;
-						btnLeftMenu.Enabled=true;
-					}
-
-					break;
-				case "FRCS":
-					break;
-				case "FVS":
-					break;
-				case "PROCESSOR":
-					for (x=0;x<=0;x++)
-					{
-						btnLeftMenu = new btnMainForm(this);
-						this.panel1.Controls.Add(btnLeftMenu);
-						btnCollection.Add(btnLeftMenu);
-						btnLeftMenu.Size = this.btnMain1.Size;
-						btnLeftMenu.Left = this.btnMain1.Left;
-						btnLeftMenu.Name = "btnMainForm" + x.ToString().Trim();
-						if (x==0)
-						{
-							btnLeftMenu.Top = this.btnMain1.Top;
-							btnLeftMenu.TabIndex = this.btnMain1.TabIndex;
-						}
-						else
-						{
-							btnLeftMenu.Top = btnCollection.Item(x-1).Top + btnCollection.Item(x-1).Height + 2;
-							btnLeftMenu.TabIndex = btnCollection.Item(x-1).TabIndex + 1;
-
-						}
-
-						if (x==0)
-						{
-							btnLeftMenu.Text = "Start Biosum Processor";
-
-						}
-						else if (x==1)
-						{
-							btnLeftMenu.Text = "Join Data From Multiple Scenarios";
-						}
-						else if (x==2)
-						{
-							btnLeftMenu.Text = "Tree Species Groups";
-						}
-						else if (x==3)
-						{
-							btnLeftMenu.Text = "Rx";
-						}
-						else if (x==4)
-						{
-							btnLeftMenu.Text = "Manage Tables";
-						}
-						else if (x==5)
-						{
-							btnLeftMenu.Text = "Convert OR/CA Previous Study";
-						}
-						else if (x==6)
-						{
-							btnLeftMenu.Text = "Generate Travel Times";
-						}
-						btnLeftMenu.Visible=true;
-						btnLeftMenu.Enabled=true;
-					}
-
-					break;
-				case "GIS":
-					break;
-			}
-		}
 		private void InitializeMainFormPanelsAndButtons()
 		{
 			
@@ -3673,44 +3484,25 @@ namespace FIA_Biosum_Manager
 			this.m_pnlProcessor.Visible=false;
 			this.m_pnlCore.Name="PROCESSOR";
 
-
-			//tree diameter groups button
-			this.m_btnProcessorTreeDiam = new btnMainForm(this);
-			this.m_pnlProcessor.Controls.Add(this.m_btnProcessorTreeDiam);
-			this.m_btnProcessorTreeDiam.Size = this.btnMain1.Size;
-			this.m_btnProcessorTreeDiam.Location = this.btnMain1.Location;   //this.m_btnDbPlotData.Left;
-			this.m_btnProcessorTreeDiam.Text = "Tree Diameter Groups";
-			this.m_btnProcessorTreeDiam.strToolTip = "Step 1 - Assign Tree Species And Diameter Groups";
-
-
 			//tree species
 			this.m_btnProcessorTreeSpc = new btnMainForm(this);
 			this.m_pnlProcessor.Controls.Add(this.m_btnProcessorTreeSpc);
 			this.m_btnProcessorTreeSpc.Size = this.btnMain1.Size;
+            this.m_btnProcessorTreeSpc.Location = this.btnMain1.Location;
 			this.m_btnProcessorTreeSpc.Left  = this.btnMain1.Left;
-			this.m_btnProcessorTreeSpc.Top = this.m_btnProcessorTreeDiam.Top + this.m_btnProcessorTreeDiam.Height  + 5;
 			this.m_btnProcessorTreeSpc.Text = "Tree Species";
-			this.m_btnProcessorTreeSpc.strToolTip = "Step 2 - Assess Data Readiness For These 2 Items: \n" + 
+			this.m_btnProcessorTreeSpc.strToolTip = "Step 1 - Assess Data Readiness For These 2 Items: \n" + 
 				                                             "1)Check If Each FIA Tree Species Code, FVS Variant, And FVS Species Code Combination Is Present In The Tree Species Table \n" + 
 				                                             "2)Check If Oven Dry Weight And Green Weight Conversion Ratios Exist";
-
-			//tree species group button
-			this.m_btnProcessorTreeSpcGrps = new btnMainForm(this);
-			this.m_pnlProcessor.Controls.Add(this.m_btnProcessorTreeSpcGrps);
-			this.m_btnProcessorTreeSpcGrps.Size = this.btnMain1.Size;
-			this.m_btnProcessorTreeSpcGrps.Left  = this.btnMain1.Left;   //this.m_btnDbPlotData.Left;
-			this.m_btnProcessorTreeSpcGrps.Top = this.m_btnProcessorTreeSpc.Top + this.m_btnProcessorTreeSpc.Height  + 5;
-			this.m_btnProcessorTreeSpcGrps.Text = "Tree Species Groups";
-			this.m_btnProcessorTreeSpcGrps.strToolTip = "Step 3 - Assign Tree Species Groups";
-
+            
             //start OPCOST
             this.m_btnProcessorOpcost = new btnMainForm(this);
             this.m_pnlProcessor.Controls.Add(this.m_btnProcessorOpcost);
             this.m_btnProcessorOpcost.Size = this.btnMain1.Size;
             this.m_btnProcessorOpcost.Left = this.btnMain1.Left;   //this.m_btnDbPlotData.Left;
-            this.m_btnProcessorOpcost.Top = this.m_btnProcessorTreeSpcGrps.Top + this.m_btnProcessorTreeSpcGrps.Height + 5;
+            this.m_btnProcessorOpcost.Top = this.m_btnProcessorTreeSpc.Top + this.m_btnProcessorTreeSpc.Height + 5;
             this.m_btnProcessorOpcost.Text = "OPCOST";
-            this.m_btnProcessorOpcost.strToolTip = "Step 4 - Edit OPCOST Settings";
+            this.m_btnProcessorOpcost.strToolTip = "Step 2 - Edit OPCOST Settings";
 
 			//start biosum processor button
 			
@@ -3721,7 +3513,7 @@ namespace FIA_Biosum_Manager
 			this.m_btnProcessorStart.Left = this.m_btnProcessorOpcost.Left;
 			this.m_btnProcessorStart.Top = this.m_btnProcessorOpcost.Top + this.m_btnProcessorOpcost.Height + 5;
 			this.m_btnProcessorStart.Text = "Start Biosum Processor";
-			this.m_btnProcessorStart.strToolTip = "Step 5 - Execute Processor";
+			this.m_btnProcessorStart.strToolTip = "Step 3 - Execute Processor";
 	     	
 
 			//DATABASE PANEL AND BUTTONS

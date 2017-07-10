@@ -2752,6 +2752,35 @@ namespace FIA_Biosum_Manager
                 strLine = strLine + "\r\n";
             }
             strLine = strLine + "\r\n";
+            strLine = strLine + "Tree Species Groups\r\n";
+            strLine = strLine + "---------------------\r\n";
+            strLine = strLine + "--Group ID--     --Label--                 --Common Name--      --FIA spcd-- \r\n";
+            // Cache species groups items in dictionary so we can get the label for each species
+            IDictionary<String, String> _dictSpcGroupLabels =
+                new Dictionary<String, String>();
+            for (x = 0; x <= p_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Count - 1; x++)
+            {
+                ProcessorScenarioItem.SpcGroupItem _oItem = p_oProcessorScenarioItem.m_oSpcGroupItem_Collection.Item(x);
+                if (!_dictSpcGroupLabels.ContainsKey(Convert.ToString(_oItem.SpeciesGroup)))
+                    _dictSpcGroupLabels.Add(Convert.ToString(_oItem.SpeciesGroup), _oItem.SpeciesGroupLabel);
+            }
+            for (x = 0; x <= p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Count - 1; x++)
+            {
+                string _strLabel = "Missing";
+                ProcessorScenarioItem.SpcGroupListItem _oItem = p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Item(x);
+                if (_dictSpcGroupLabels.ContainsKey(Convert.ToString(_oItem.SpeciesGroup)))
+                {
+                    _strLabel = _dictSpcGroupLabels[Convert.ToString(_oItem.SpeciesGroup)];
+                }
+                    
+                strLine = strLine + String.Format("{0,7}{1,19}{2, 32}{3,16}",
+                        p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Item(x).SpeciesGroup,
+                        _strLabel,
+                        p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Item(x).CommonName,
+                        p_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Item(x).SpeciesCode);
+                        strLine = strLine + "\r\n";
+            }
+            strLine = strLine + "\r\n";
             strLine = strLine + "Harvest Method Low Slope\r\n";
             strLine = strLine + "-------------------------------\r\n";
             strLine = strLine + "Process Low Slope: ";
