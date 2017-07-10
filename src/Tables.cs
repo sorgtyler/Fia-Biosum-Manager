@@ -3948,7 +3948,9 @@ namespace FIA_Biosum_Manager
             }
             public void CreateScenarioTreeDiamGroupsTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
-                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "diam_group");
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "diam_group,scenario_id");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_ScenarioId", "scenario_id");
+
             }
             public string CreateScenarioTreeDiamGroupsTableSQL(string p_strTableName)
             {

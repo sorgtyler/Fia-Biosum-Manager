@@ -83,6 +83,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		public void PerformVersionCheck()
         {
+            UpdateDatasources_5_7_9();
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
@@ -449,9 +450,7 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                   
                }
-               
             }
 
             if (bPerformCheck)
@@ -4653,6 +4652,123 @@ namespace FIA_Biosum_Manager
 
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
+
+        private void UpdateDatasources_5_7_9()
+        {
+            ado_data_access oAdo = new ado_data_access();
+            string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db";
+            
+            //open the scenario_processor_rule_definitions.mdb file so we can add the new tree groupings tables
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
+
+            // SCENARIO_TREE_DIAM_GROUPS
+            if (!oAdo.TableExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName))
+            {
+                frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeDiamGroupsTable(oAdo, oAdo.m_OleDbConnection,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName);
+            }
+            // SCENARIO_TREE_SPECIES_GROUPS_LIST
+            if (!oAdo.TableExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName))
+            {
+                frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsListTable(oAdo, oAdo.m_OleDbConnection,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
+            }
+            // SCENARIO_TREE_SPECIES_GROUPS
+            if (!oAdo.TableExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName))
+            {
+                frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsTable(oAdo, oAdo.m_OleDbConnection,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName);
+            }
+
+            //retrieve paths for all scenarios in the project and put them in list
+            List<string> lstScenarioDb = new List<string>();
+            oAdo.m_strSQL = "SELECT path from scenario";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strPath = "";
+                    if (oAdo.m_OleDbDataReader["path"] != System.DBNull.Value)
+                        strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                    if (!String.IsNullOrEmpty(strPath))
+                    {
+                         if (System.IO.Directory.Exists(strPath))
+                            lstScenarioDb.Add(strPath);
+                    }
+                }
+            }
+
+            // Loop through the scenario_results.mdb looking for harvest_costs table
+            foreach (string strPath in lstScenarioDb)
+            {
+                string[] strSplit = strPath.Split(new Char[] {'\\'});
+                string strScenarioId = strSplit[strSplit.Length - 1];
+                string strTreeDiamGroupsPath = "";
+                string strTreeDiamGroupsMdb = "";
+                string strTreeDiamGroupsTable = "";
+                
+                // Get paths to old tables from scenario_datasource table
+                string strSQL = "SELECT * FROM " + Tables.Scenario.DefaultScenarioDatasourceTableName +
+                    " WHERE TRIM(UCASE(scenario_id))='" + strScenarioId.Trim().ToUpper() + "'";
+                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+                if (oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strTableType = oAdo.m_OleDbDataReader["table_type"].ToString().Trim();
+                        switch (strTableType.ToUpper())
+                        {
+                            case "TREE DIAMETER GROUPS":
+                                strTreeDiamGroupsPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                                strTreeDiamGroupsMdb = oAdo.m_OleDbDataReader["file"].ToString().Trim();
+                                strTreeDiamGroupsTable = oAdo.m_OleDbDataReader["table_name"].ToString().Trim();
+                            break;
+                        }
+                    }
+                }
+
+                // Read tree diameter groups into memory so we can transfer them to the new table
+                ProcessorScenarioItem.TreeDiamGroupsItem_Collection _objTreeDiamCollection = new ProcessorScenarioItem.TreeDiamGroupsItem_Collection();
+                oAdo.OpenConnection(oAdo.getMDBConnString(strTreeDiamGroupsPath + "\\" + strTreeDiamGroupsMdb, "", ""));
+
+                strSQL = "SELECT * FROM " + strTreeDiamGroupsTable;
+                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+                if (oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (oAdo.m_OleDbDataReader.Read())
+                    {
+                        ProcessorScenarioItem.TreeDiamGroupsItem _objTreeDiamItem = new ProcessorScenarioItem.TreeDiamGroupsItem();
+                        _objTreeDiamItem.DiamGroup = Convert.ToString(oAdo.m_OleDbDataReader["diam_group"]).Trim();
+                        _objTreeDiamItem.DiamClass = Convert.ToString(oAdo.m_OleDbDataReader["diam_class"]).Trim();
+                        _objTreeDiamItem.MinDiam = Convert.ToString(oAdo.m_OleDbDataReader["min_diam"]).Trim();
+                        _objTreeDiamItem.MaxDiam = Convert.ToString(oAdo.m_OleDbDataReader["max_diam"]).Trim();
+                        _objTreeDiamCollection.Add(_objTreeDiamItem);
+                    }
+                }
+
+                // Switch connection back to the scenario db so we can write the diameter groups
+                oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioDir + "\\scenario_processor_rule_definitions.mdb", "", ""));
+
+                for (int x = 0; x <= _objTreeDiamCollection.Count - 1; x++)
+                {
+                    FIA_Biosum_Manager.ProcessorScenarioItem.TreeDiamGroupsItem oItem = _objTreeDiamCollection.Item(x);
+                    string strId = oItem.DiamGroup;
+                    string strMin = oItem.MinDiam;
+                    string strMax = oItem.MaxDiam;
+                    string strDef = oItem.DiamClass;
+
+                    oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " " +
+                        "(diam_group,diam_class,min_diam,max_diam,scenario_id) VALUES " +
+                        "(" + strId + ",'" + strDef.Trim() + "'," +
+                        strMin + "," + strMax + ",'" + strScenarioId.Trim() + "');";
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                } 
+
+            }
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+        }
+
 
         public string ReferenceProjectDirectory
 		{
