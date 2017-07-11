@@ -2278,6 +2278,45 @@ namespace FIA_Biosum_Manager
             get { return this._bDisplayErrors; }
         }
 
+        public bool RenameField(string p_strDatabase, string p_strTable, string p_strOldFieldName, string p_strNewFieldName)
+        {
+
+            this.m_intError = 0;
+            this.m_strError = "";
+
+
+            try
+            {
+                //If the table doesn't exist, we can't delete the column
+                if (!TableExists(p_strDatabase, p_strTable))
+                {
+                    return false;
+                }
+                this.OpenDb(p_strDatabase);
+                Microsoft.Office.Interop.Access.Dao.Field fld = this.m_DaoDatabase.TableDefs[p_strTable].Fields[p_strOldFieldName];
+                if (fld != null)
+                {
+                    fld.Name = p_strNewFieldName;
+                }
+                else
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception err)
+            {
+                m_intError = -1;
+                m_strError = err.Message;
+                MessageBox.Show(this.m_strError);
+                return false;
+            }
+            finally
+            {
+                this.m_DaoDatabase.Close();
+            }
+        }
+
     }
 }
 
