@@ -2314,6 +2314,7 @@ namespace FIA_Biosum_Manager
             finally
             {
                 this.m_DaoDatabase.Close();
+                this.m_DaoDatabase = null;
             }
         }
 
