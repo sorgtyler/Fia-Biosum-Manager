@@ -598,9 +598,9 @@ namespace FIA_Biosum_Manager
 							}
 							else
 							{
-							    strColumnsToEditArray = new string[2];
-								strColumnsToEditArray[0] = "water_barring_roads_cpa";
-								strColumnsToEditArray[1] = "brush_cutting_cpa";
+							    //strColumnsToEditArray = new string[2];
+								//strColumnsToEditArray[0] = "water_barring_roads_cpa";
+								//strColumnsToEditArray[1] = "brush_cutting_cpa";
 							}
 						    
 							strAllColumnsList = p_ado.getFieldNames(strConn,"select * from " + strHvstCostsTableName);

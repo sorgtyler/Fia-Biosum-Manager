@@ -645,21 +645,21 @@ namespace FIA_Biosum_Manager
 			this.m_intError=0;
 			this.lstCol.BeginUpdate();
 
-			this.lstCol.Items.Add("");
-			this.lstCol.Items[0].SubItems.Add(ScenarioId);
-			lstCol.Items[0].UseItemStyleForSubItems=false;
-			this.lstCol.Items[0].SubItems.Add("water_barring_roads_cpa");
-			this.lstCol.Items[0].SubItems.Add(" ");
-			this.m_oLvAlternateRowColors.AddRow();
-			this.m_oLvAlternateRowColors.AddColumns(0,lstCol.Columns.Count);
+			//this.lstCol.Items.Add("");
+			//this.lstCol.Items[0].SubItems.Add(ScenarioId);
+			//lstCol.Items[0].UseItemStyleForSubItems=false;
+			//this.lstCol.Items[0].SubItems.Add("water_barring_roads_cpa");
+			//this.lstCol.Items[0].SubItems.Add(" ");
+			//this.m_oLvAlternateRowColors.AddRow();
+			//this.m_oLvAlternateRowColors.AddColumns(0,lstCol.Columns.Count);
             
-			this.lstCol.Items.Add("");
-			this.lstCol.Items[1].SubItems.Add(ScenarioId);
-			lstCol.Items[1].UseItemStyleForSubItems=false;
-			this.lstCol.Items[1].SubItems.Add("brush_cutting_cpa");
-			this.lstCol.Items[1].SubItems.Add(" ");
-			this.m_oLvAlternateRowColors.AddRow();
-			this.m_oLvAlternateRowColors.AddColumns(1,lstCol.Columns.Count);
+			//this.lstCol.Items.Add("");
+			//this.lstCol.Items[1].SubItems.Add(ScenarioId);
+			//lstCol.Items[1].UseItemStyleForSubItems=false;
+			//this.lstCol.Items[1].SubItems.Add("brush_cutting_cpa");
+			//this.lstCol.Items[1].SubItems.Add(" ");
+			//this.m_oLvAlternateRowColors.AddRow();
+			//this.m_oLvAlternateRowColors.AddColumns(1,lstCol.Columns.Count);
 
 
 			this.lstCol.EndUpdate();

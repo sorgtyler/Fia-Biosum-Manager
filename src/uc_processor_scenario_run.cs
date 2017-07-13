@@ -5310,10 +5310,10 @@ namespace FIA_Biosum_Manager
                         //Insert a placeholder row with default values
                         m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultHarvestCostsTableName + " " +
                             "(biosum_cond_id, rxpackage, rx, rxcycle, " +
-                            "complete_cpa, harvest_cpa, water_barring_roads_cpa, brush_cutting_cpa, " +
+                            "complete_cpa, harvest_cpa," +
                             "DateTimeCreated, place_holder) " +
                             "VALUES ('" + cond_id + "', '" + rxpackage + "', '" + rx + "', '" + strRxCycle + "', " +
-                            intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder + ", " + intValuePlaceholder +
+                            intValuePlaceholder + ", " + intValuePlaceholder + "," +
                             ", '" + m_strDateTimeCreated + "', 'Y')";
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
