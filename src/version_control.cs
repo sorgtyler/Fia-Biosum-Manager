@@ -4657,7 +4657,7 @@ namespace FIA_Biosum_Manager
         {
             frmMain.g_sbpInfo.Text = "Version Update: Moving tree groupings to Processor scenario database...Stand by";
             ado_data_access oAdo = new ado_data_access();
-            dao_data_access oDao = new dao_data_access();
+            dao_data_access oDao = null;
             string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db";
             
             //open the scenario_processor_rule_definitions.mdb file so we can add the new tree groupings tables
@@ -4702,8 +4702,6 @@ namespace FIA_Biosum_Manager
             }
 
             // Loop through the scenario_results.mdb looking for harvest_costs table
-            // Store the paths/table names for tree species tables so we know where to update USER_SPC_GROUP
-            IDictionary<String, String> dictTreeSpeciesTables = new Dictionary<String, String>();
             // Store the paths/table names for tree diameter groups and tree species groups tables so we know where to rename them
             IDictionary<String, String> dictTablesToRename = new Dictionary<String, String>();
 
@@ -4754,6 +4752,17 @@ namespace FIA_Biosum_Manager
                                 break;
                         }
                     }
+                }
+
+                // Rename USER_SPC_GROUP column to USER_SPC_GROUP_578 to avoid dao errors later
+                string strUserSpcGroup = "USER_SPC_GROUP_578";
+                oAdo.OpenConnection(m_oAdo.getMDBConnString(strTreeSpeciesPath + "\\" + strTreeSpeciesMdb, "", ""));
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strTreeSpeciesTable, strUserSpcGroup))
+                {
+                    oDao = new dao_data_access();
+                    oDao.RenameField(strTreeSpeciesPath + "\\" + strTreeSpeciesMdb, strTreeSpeciesTable, "USER_SPC_GROUP", strUserSpcGroup);
+                    oDao.m_DaoWorkspace.Close();
+                    oDao = null;
                 }
 
                 // Read tree diameter groups into memory so we can transfer them to the new table
@@ -4808,11 +4817,13 @@ namespace FIA_Biosum_Manager
                                      System.Windows.Forms.MessageBoxIcon.Error);
 
                 }
-
                 // Add link for tree_species table to tree_species_group_list directory to prep for querying
                 string strLinkedTreeSpeciesTable = "tree_species_worktable";
-                oDao.CreateTableLink(strSpeciesGroupsListPath, strLinkedTreeSpeciesTable, 
+                oDao = new dao_data_access();
+                oDao.CreateTableLink(strSpeciesGroupsListPath, strLinkedTreeSpeciesTable,
                     strTreeSpeciesPath + "\\" + strTreeSpeciesMdb, strTreeSpeciesTable);
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
 
                 // Read tree diameter groups into memory so we can transfer them to the new table
                 oAdo.OpenConnection(oAdo.getMDBConnString(strSpeciesGroupsListPath, "", ""));
@@ -4822,7 +4833,7 @@ namespace FIA_Biosum_Manager
 
                     strSQL = "SELECT DISTINCT l.species_group,  l.common_name, t.spcd " + 
                         "FROM " + strSpeciesGroupsListTable + " l, " + strLinkedTreeSpeciesTable + " t " +
-                        "WHERE t.USER_SPC_GROUP = l.species_group AND TRIM(l.common_name) = TRIM(t.common_name)";
+                        "WHERE t." + strUserSpcGroup + " = l.species_group AND TRIM(l.common_name) = TRIM(t.common_name)";
                     oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
                     if (oAdo.m_OleDbDataReader.HasRows)
                     {
@@ -4869,11 +4880,6 @@ namespace FIA_Biosum_Manager
                 {
                     strSQL = "DROP TABLE " + strLinkedTreeSpeciesTable;
                     oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
-                }
-                //add tree_species table to rename list
-                if (!dictTreeSpeciesTables.ContainsKey(strTreeSpeciesPath + "\\" + strTreeSpeciesMdb))
-                {
-                    dictTreeSpeciesTables.Add(strTreeSpeciesPath + "\\" + strTreeSpeciesMdb, strTreeSpeciesTable);
                 }
 
                 // Read tree species groups into memory so we can transfer them to the new table
@@ -4922,13 +4928,22 @@ namespace FIA_Biosum_Manager
                 }
             }
 
-            foreach (string strKey in dictTreeSpeciesTables.Keys)
+            if (oAdo != null)
             {
-                string strTableName = dictTreeSpeciesTables[strKey];
-                oDao.RenameField(strKey, strTableName, "USER_SPC_GROUP", "USER_SPC_GROUP_578");
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                oAdo = null;
             }
-            oDao.m_DaoWorkspace.Close();
-            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            
+            System.Threading.Thread.Sleep(4000);
+            string strFormat = "MMddyyyy";
+            string strSuffix = "_ver_control_" + DateTime.Now.ToString(strFormat);
+            foreach (string strKey in dictTablesToRename.Keys)
+            {
+                oDao = new dao_data_access();
+                oDao.RenameTable(strKey, dictTablesToRename[strKey], dictTablesToRename[strKey] + strSuffix, false);
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
         }
 
 
