@@ -446,7 +446,7 @@ namespace FIA_Biosum_Manager
 			this.btnDefault.Size = new System.Drawing.Size(114, 32);
 			this.btnDefault.TabIndex = 2;
 			this.btnDefault.Text = "Use Default Values";
-			this.btnDefault.Click += new System.EventHandler(this.btnDefault_Click);
+			//this.btnDefault.Click += new System.EventHandler(this.btnDefault_Click);
 			// 
 			// btnNew
 			// 
@@ -632,18 +632,18 @@ namespace FIA_Biosum_Manager
 			frmTemp.Dispose();
 		}
 
-		private void btnDefault_Click(object sender, System.EventArgs e)
-		{
-			this.lstCol.Clear();
+        //private void btnDefault_Click(object sender, System.EventArgs e)
+        //{
+        //    this.lstCol.Clear();
 			
-			this.lstCol.Columns.Add("",2,HorizontalAlignment.Left);
-			this.lstCol.Columns.Add("Scenario",60,HorizontalAlignment.Left);
-			this.lstCol.Columns.Add("Harvest Cost Component", 200, HorizontalAlignment.Left);
-			this.lstCol.Columns.Add("Description", 300, HorizontalAlignment.Left);
+        //    this.lstCol.Columns.Add("",2,HorizontalAlignment.Left);
+        //    this.lstCol.Columns.Add("Scenario",60,HorizontalAlignment.Left);
+        //    this.lstCol.Columns.Add("Harvest Cost Component", 200, HorizontalAlignment.Left);
+        //    this.lstCol.Columns.Add("Description", 300, HorizontalAlignment.Left);
 			
-			this.m_oLvAlternateRowColors.InitializeRowCollection();
-			this.m_intError=0;
-			this.lstCol.BeginUpdate();
+        //    this.m_oLvAlternateRowColors.InitializeRowCollection();
+        //    this.m_intError=0;
+        //    this.lstCol.BeginUpdate();
 
 			//this.lstCol.Items.Add("");
 			//this.lstCol.Items[0].SubItems.Add(ScenarioId);
@@ -662,11 +662,11 @@ namespace FIA_Biosum_Manager
 			//this.m_oLvAlternateRowColors.AddColumns(1,lstCol.Columns.Count);
 
 
-			this.lstCol.EndUpdate();
-			if (this.btnSave.Enabled==false) this.btnSave.Enabled=true;
+        //    this.lstCol.EndUpdate();
+        //    if (this.btnSave.Enabled==false) this.btnSave.Enabled=true;
 
-            this.lstCol.Columns[COLUMN_FIELD].Width = -1;
-		}
+        //    this.lstCol.Columns[COLUMN_FIELD].Width = -1;
+        //}
 
 		private void btnClear_Click(object sender, System.EventArgs e)
 		{

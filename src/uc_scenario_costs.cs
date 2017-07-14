@@ -690,66 +690,66 @@ namespace FIA_Biosum_Manager
 			
 		}
 
-		private void btnHarvestCostColumns_Click(object sender, System.EventArgs e)
-		{
+        //private void btnHarvestCostColumns_Click(object sender, System.EventArgs e)
+        //{
 			
-			int y;
-			FIA_Biosum_Manager.frmDialog frmTemp = new frmDialog();
-			frmTemp.MaximizeBox = true;
-			frmTemp.BackColor = System.Drawing.SystemColors.Control;
-			frmTemp.Initialize_Scenario_Harvest_Costs_Column_List_Control();
+        //    int y;
+        //    FIA_Biosum_Manager.frmDialog frmTemp = new frmDialog();
+        //    frmTemp.MaximizeBox = true;
+        //    frmTemp.BackColor = System.Drawing.SystemColors.Control;
+        //    frmTemp.Initialize_Scenario_Harvest_Costs_Column_List_Control();
 
-			frmTemp.uc_scenario_harvest_cost_column_list1.ReferenceCoreScenarioForm=this.ReferenceCoreScenarioForm;
+        //    frmTemp.uc_scenario_harvest_cost_column_list1.ReferenceCoreScenarioForm=this.ReferenceCoreScenarioForm;
 			
 
            
 			
 
-			frmTemp.Height=0;
-			frmTemp.Width=0;
-			if (frmTemp.Top + frmTemp.uc_scenario_harvest_cost_column_list1.Height > frmTemp.ClientSize.Height + 2)
-			{
-				for (y=1;;y++)
-				{
-					frmTemp.Height = y;
-					if (frmTemp.uc_scenario_harvest_cost_column_list1.Top + 
-						frmTemp.uc_scenario_harvest_cost_column_list1.Height < 
-						frmTemp.ClientSize.Height)
-					{
-						break;
-					}
-				}
+        //    frmTemp.Height=0;
+        //    frmTemp.Width=0;
+        //    if (frmTemp.Top + frmTemp.uc_scenario_harvest_cost_column_list1.Height > frmTemp.ClientSize.Height + 2)
+        //    {
+        //        for (y=1;;y++)
+        //        {
+        //            frmTemp.Height = y;
+        //            if (frmTemp.uc_scenario_harvest_cost_column_list1.Top + 
+        //                frmTemp.uc_scenario_harvest_cost_column_list1.Height < 
+        //                frmTemp.ClientSize.Height)
+        //            {
+        //                break;
+        //            }
+        //        }
 
-			}
-			if (frmTemp.uc_scenario_harvest_cost_column_list1.Left + frmTemp.uc_scenario_harvest_cost_column_list1.Width > frmTemp.ClientSize.Width + 2)
-			{
-				for (y=1;;y++)
-				{
-					frmTemp.Width = y;
-					if (frmTemp.uc_scenario_harvest_cost_column_list1.Left + 
-						frmTemp.uc_scenario_harvest_cost_column_list1.Width < 
-						frmTemp.ClientSize.Width)
-					{
-						break;
-					}
-				}
+        //    }
+        //    if (frmTemp.uc_scenario_harvest_cost_column_list1.Left + frmTemp.uc_scenario_harvest_cost_column_list1.Width > frmTemp.ClientSize.Width + 2)
+        //    {
+        //        for (y=1;;y++)
+        //        {
+        //            frmTemp.Width = y;
+        //            if (frmTemp.uc_scenario_harvest_cost_column_list1.Left + 
+        //                frmTemp.uc_scenario_harvest_cost_column_list1.Width < 
+        //                frmTemp.ClientSize.Width)
+        //            {
+        //                break;
+        //            }
+        //        }
 
-			}
-			frmTemp.Left = 0;
-			frmTemp.Top = 0;
+        //    }
+        //    frmTemp.Left = 0;
+        //    frmTemp.Top = 0;
       
-			frmTemp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-			frmTemp.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			frmTemp.uc_scenario_harvest_cost_column_list1.m_bFirstTime=false;
-			frmTemp.uc_scenario_harvest_cost_column_list1.Dock = System.Windows.Forms.DockStyle.Fill;		
+        //    frmTemp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+        //    frmTemp.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+        //    frmTemp.uc_scenario_harvest_cost_column_list1.m_bFirstTime=false;
+        //    frmTemp.uc_scenario_harvest_cost_column_list1.Dock = System.Windows.Forms.DockStyle.Fill;		
 			
-			frmTemp.uc_scenario_harvest_cost_column_list1.loadvalues();
-            frmTemp.Text = "Harvest Cost Columns";
-			System.Windows.Forms.DialogResult result = frmTemp.ShowDialog();
-			if (result==System.Windows.Forms.DialogResult.OK)
-			{
-			}
-		}
+        //    frmTemp.uc_scenario_harvest_cost_column_list1.loadvalues();
+        //    frmTemp.Text = "Harvest Cost Columns";
+        //    System.Windows.Forms.DialogResult result = frmTemp.ShowDialog();
+        //    if (result==System.Windows.Forms.DialogResult.OK)
+        //    {
+        //    }
+        //}
         
 		private void panel1_Resize(object sender, System.EventArgs e)
 		{
