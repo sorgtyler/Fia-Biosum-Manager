@@ -2131,9 +2131,7 @@ namespace FIA_Biosum_Manager
 
 					
 					strCol = this.m_dg.TableStyles[0].GridColumnStyles[this.m_intPopupColumn].HeaderText.Trim();
-                    if (strCol.ToUpper() == "WATER_BARRING_ROADS_CPA" ||
-                        strCol.ToUpper() == "BRUSH_CUTTING_CPA" ||
-                        ((frmGridView)this.ParentForm).HarvestCostColumns)
+                    if (((frmGridView)this.ParentForm).HarvestCostColumns)
                     {
 
                         //------------text box------------//

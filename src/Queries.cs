@@ -1721,7 +1721,7 @@ namespace FIA_Biosum_Manager
                     {
                         return "UPDATE " + p_strInputVolumesTable + " a " +
                                           "INNER JOIN " + p_strCullTable + " b " +
-                                          "ON TRIM(a.tre_cn)=TRIM(b.tre_cn) " +
+                                          "ON a.tre_cn=b.tre_cn " +
                                           "SET a.treeclcd=" +
                                           "IIF(a.SpCd IN (62,65,66,106,133,138,304,321,322,475,756,758,990),3," +
                                           "IIF(a.StatusCd=2,3," +
@@ -1741,7 +1741,7 @@ namespace FIA_Biosum_Manager
                     {
                         return "UPDATE " + p_strInputVolumesTable + " a " +
                                           "INNER JOIN " + p_strCullTable + " b " +
-                                          "ON TRIM(a.tre_cn)=TRIM(b.tre_cn) " +
+                                          "ON a.tre_cn=b.tre_cn " +
                                           "SET a.treeclcd=" +
                                           "IIF(a.DecayCd > 1,4,IIF(a.DIA < 9 AND a.SpCd < 300,4,a.treeclcd)) " +
                                           "WHERE a.treeclcd=3 AND a.statuscd=2 AND a.SpCd NOT IN (62,65,66,106,133,138,304,321,322,475,756,758,990)";

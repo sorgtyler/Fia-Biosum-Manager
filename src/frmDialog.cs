@@ -52,7 +52,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_plot_fvs_variant_edit uc_plot_fvs_variant_edit1;
 		public FIA_Biosum_Manager.uc_contact_edit uc_contact_edit1;
 		public FIA_Biosum_Manager.uc_db uc_db1;
-		public FIA_Biosum_Manager.uc_scenario_harvest_cost_column_list uc_scenario_harvest_cost_column_list1;
+		//public FIA_Biosum_Manager.uc_scenario_harvest_cost_column_list uc_scenario_harvest_cost_column_list1;
 		public FIA_Biosum_Manager.uc_scenario_harvest_cost_column_edit uc_scenario_harvest_cost_column_edit1;
 		private bool _bDispose=false;
 		private bool _bMinimizeMainForm=false;
@@ -369,13 +369,13 @@ namespace FIA_Biosum_Manager
             this.Text = "FVS: Define Table PRE/POST Sequence Numbers";
 			uc_fvs_output_prepost_seqnum1.Visible=true;
 		}
-		public void Initialize_Scenario_Harvest_Costs_Column_List_Control()
-		{
-			this.uc_scenario_harvest_cost_column_list1 = new uc_scenario_harvest_cost_column_list();
-			this.Controls.Add(this.uc_scenario_harvest_cost_column_list1);
-			uc_scenario_harvest_cost_column_list1.ReferenceDialog=this;
-			this.uc_scenario_harvest_cost_column_list1.Visible=true;
-		}
+        //public void Initialize_Scenario_Harvest_Costs_Column_List_Control()
+        //{
+        //    this.uc_scenario_harvest_cost_column_list1 = new uc_scenario_harvest_cost_column_list();
+        //    this.Controls.Add(this.uc_scenario_harvest_cost_column_list1);
+        //    uc_scenario_harvest_cost_column_list1.ReferenceDialog=this;
+        //    this.uc_scenario_harvest_cost_column_list1.Visible=true;
+        //}
 		public void Initialize_Scenario_Harvest_Costs_Column_Edit_Control()
 		{
 			this.uc_scenario_harvest_cost_column_edit1 = new uc_scenario_harvest_cost_column_edit();
