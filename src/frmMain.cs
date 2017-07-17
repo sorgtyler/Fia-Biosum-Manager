@@ -1799,142 +1799,142 @@ namespace FIA_Biosum_Manager
 			{
 				switch (strText.Trim().ToUpper())
 				{
-					case "TREE DIAMETER GROUPS":
-						//check to see if the form has already been loaded
-						if (this.IsChildWindowVisible("Processor: Tree Diameter Groups") == false) 
-						{
-							frmMain.g_sbpInfo.Text = "Loading Tree Diameter Groups...Stand By";
-							this.m_frmTreeDiam = new frmDialog(this);
-							this.m_frmTreeDiam.MaximizeBox = false;
-							this.m_frmTreeDiam.BackColor = System.Drawing.SystemColors.Control;
-							this.m_frmTreeDiam.Text = "Processor: Tree Diameter Groups";
-							this.m_frmTreeDiam.MdiParent = this;
-							this.m_frmTreeDiam.Initialize_Plot_Tree_Diam_User_Control();
+                    //case "TREE DIAMETER GROUPS":
+                    //    //check to see if the form has already been loaded
+                    //    if (this.IsChildWindowVisible("Processor: Tree Diameter Groups") == false) 
+                    //    {
+                    //        frmMain.g_sbpInfo.Text = "Loading Tree Diameter Groups...Stand By";
+                    //        this.m_frmTreeDiam = new frmDialog(this);
+                    //        this.m_frmTreeDiam.MaximizeBox = false;
+                    //        this.m_frmTreeDiam.BackColor = System.Drawing.SystemColors.Control;
+                    //        this.m_frmTreeDiam.Text = "Processor: Tree Diameter Groups";
+                    //        this.m_frmTreeDiam.MdiParent = this;
+                    //        this.m_frmTreeDiam.Initialize_Plot_Tree_Diam_User_Control();
 
 
-							this.m_frmTreeDiam.Height=0;
-							this.m_frmTreeDiam.Width=0;
-							if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
-							{
-								for (int x=1;;x++)
-								{
-									this.m_frmTreeDiam.Height = x;
-									if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + 
-										this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height < 
-										this.m_frmTreeDiam.ClientSize.Height)
-									{
-										break;
-									}
-								}
+                    //        this.m_frmTreeDiam.Height=0;
+                    //        this.m_frmTreeDiam.Width=0;
+                    //        if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
+                    //        {
+                    //            for (int x=1;;x++)
+                    //            {
+                    //                this.m_frmTreeDiam.Height = x;
+                    //                if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + 
+                    //                    this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height < 
+                    //                    this.m_frmTreeDiam.ClientSize.Height)
+                    //                {
+                    //                    break;
+                    //                }
+                    //            }
 
-							}
-							if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
-							{
-								for (int x=1;;x++)
-								{
-									this.m_frmTreeDiam.Width = x;
-									if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + 
-										this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width < 
-										this.m_frmTreeDiam.ClientSize.Width)
-									{
-										break;
-									}
-								}
+                    //        }
+                    //        if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
+                    //        {
+                    //            for (int x=1;;x++)
+                    //            {
+                    //                this.m_frmTreeDiam.Width = x;
+                    //                if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + 
+                    //                    this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width < 
+                    //                    this.m_frmTreeDiam.ClientSize.Width)
+                    //                {
+                    //                    break;
+                    //                }
+                    //            }
 
-							}
+                    //        }
 							
 
-							this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.loadvalues();		
-							frmMain.g_sbpInfo.Text = "Ready";
-							this.m_frmTreeDiam.Show();
+                    //        this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.loadvalues();		
+                    //        frmMain.g_sbpInfo.Text = "Ready";
+                    //        this.m_frmTreeDiam.Show();
 
-							this.m_frmTreeDiam.Left = 0;
-							this.m_frmTreeDiam.Top = 0;
-							this.m_frmTreeDiam.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-						}
-						else
-						{
-							if (this.m_frmTreeDiam.WindowState == System.Windows.Forms.FormWindowState.Minimized)
-								this.m_frmTreeDiam.WindowState = System.Windows.Forms.FormWindowState.Normal;
+                    //        this.m_frmTreeDiam.Left = 0;
+                    //        this.m_frmTreeDiam.Top = 0;
+                    //        this.m_frmTreeDiam.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+                    //    }
+                    //    else
+                    //    {
+                    //        if (this.m_frmTreeDiam.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                    //            this.m_frmTreeDiam.WindowState = System.Windows.Forms.FormWindowState.Normal;
 
-							this.m_frmTreeDiam.Focus();
+                    //        this.m_frmTreeDiam.Focus();
 					
-						}
-						break;
+                    //    }
+                    //    break;
 					case "TREE SPECIES":
 						this.LoadProcessorTreeSpcForm(this,"Processor");
 						break;
-					case "TREE SPECIES GROUPS":
-						//check to see if the form has already been loaded
-						if (this.IsChildWindowVisible("Processor: Tree Species Groups") == false) 
-						{
-                            ActivateStandByAnimation(this.WindowState,
-                                this.Left, this.Height, this.Width, this.Top);
-							frmMain.g_sbpInfo.Text = "Loading Tree Species Groups...Stand By";
-							this.m_frmSpcGrp = new frmDialog(this);
-							this.m_frmSpcGrp.MaximizeBox = false;
-							this.m_frmSpcGrp.BackColor = System.Drawing.SystemColors.Control;
-							this.m_frmSpcGrp.Text = "Processor: Tree Species Groups";
-							this.m_frmSpcGrp.MdiParent = this;
-							FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups p_uc = new uc_processor_scenario_tree_spc_groups();
-							if (p_uc.m_intError < 0) 
-							{
-                                this.DeactivateStandByAnimation();
-								this.m_frmSpcGrp.Dispose();
-								return;
-							}
-							this.m_frmSpcGrp.Controls.Add(p_uc);
-                            this.m_frmSpcGrp.uc_processor_scenario_tree_spc_groups1 = p_uc;
-							this.m_frmSpcGrp.Height=0;
-							this.m_frmSpcGrp.Width=0;
-							if (p_uc.Top + p_uc.Height > this.m_frmSpcGrp.ClientSize.Height + 2)
-							{
-								for (int x=1;;x++)
-								{
-									this.m_frmSpcGrp.Height = x;
-									if (p_uc.Top + 
-										p_uc.Height < 
-										this.m_frmSpcGrp.ClientSize.Height)
-									{
-										break;
-									}
-								}
+                    //case "TREE SPECIES GROUPS":
+                    //    //check to see if the form has already been loaded
+                    //    if (this.IsChildWindowVisible("Processor: Tree Species Groups") == false) 
+                    //    {
+                    //        ActivateStandByAnimation(this.WindowState,
+                    //            this.Left, this.Height, this.Width, this.Top);
+                    //        frmMain.g_sbpInfo.Text = "Loading Tree Species Groups...Stand By";
+                    //        this.m_frmSpcGrp = new frmDialog(this);
+                    //        this.m_frmSpcGrp.MaximizeBox = false;
+                    //        this.m_frmSpcGrp.BackColor = System.Drawing.SystemColors.Control;
+                    //        this.m_frmSpcGrp.Text = "Processor: Tree Species Groups";
+                    //        this.m_frmSpcGrp.MdiParent = this;
+                    //        FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups p_uc = new uc_processor_scenario_tree_spc_groups();
+                    //        if (p_uc.m_intError < 0) 
+                    //        {
+                    //            this.DeactivateStandByAnimation();
+                    //            this.m_frmSpcGrp.Dispose();
+                    //            return;
+                    //        }
+                    //        this.m_frmSpcGrp.Controls.Add(p_uc);
+                    //        this.m_frmSpcGrp.uc_processor_scenario_tree_spc_groups1 = p_uc;
+                    //        this.m_frmSpcGrp.Height=0;
+                    //        this.m_frmSpcGrp.Width=0;
+                    //        if (p_uc.Top + p_uc.Height > this.m_frmSpcGrp.ClientSize.Height + 2)
+                    //        {
+                    //            for (int x=1;;x++)
+                    //            {
+                    //                this.m_frmSpcGrp.Height = x;
+                    //                if (p_uc.Top + 
+                    //                    p_uc.Height < 
+                    //                    this.m_frmSpcGrp.ClientSize.Height)
+                    //                {
+                    //                    break;
+                    //                }
+                    //            }
 
-							}
-							if (p_uc.Left + p_uc.Width > this.m_frmSpcGrp.ClientSize.Width + 2)
-							{
-								for (int x=1;;x++)
-								{
-									this.m_frmSpcGrp.Width = x;
-									if (p_uc.Left + 
-										p_uc.Width < 
-										this.m_frmSpcGrp.ClientSize.Width)
-									{
-										break;
-									}
-								}
+                    //        }
+                    //        if (p_uc.Left + p_uc.Width > this.m_frmSpcGrp.ClientSize.Width + 2)
+                    //        {
+                    //            for (int x=1;;x++)
+                    //            {
+                    //                this.m_frmSpcGrp.Width = x;
+                    //                if (p_uc.Left + 
+                    //                    p_uc.Width < 
+                    //                    this.m_frmSpcGrp.ClientSize.Width)
+                    //                {
+                    //                    break;
+                    //                }
+                    //            }
 
-							}
+                    //        }
 							
 
-							p_uc.loadvalues();	
-							this.m_frmSpcGrp.DisposeOfFormWhenClosing = true;
-							this.m_frmSpcGrp.Left = 0;
-							this.m_frmSpcGrp.Top = 0;
-							this.m_frmSpcGrp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-							frmMain.g_sbpInfo.Text = "Ready";
-                            DeactivateStandByAnimation();
-							this.m_frmSpcGrp.Show();
-						}
-						else
-						{
-							if (this.m_frmSpcGrp.WindowState == System.Windows.Forms.FormWindowState.Minimized)
-								this.m_frmSpcGrp.WindowState = System.Windows.Forms.FormWindowState.Normal;
+                    //        p_uc.loadvalues();	
+                    //        this.m_frmSpcGrp.DisposeOfFormWhenClosing = true;
+                    //        this.m_frmSpcGrp.Left = 0;
+                    //        this.m_frmSpcGrp.Top = 0;
+                    //        this.m_frmSpcGrp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+                    //        frmMain.g_sbpInfo.Text = "Ready";
+                    //        DeactivateStandByAnimation();
+                    //        this.m_frmSpcGrp.Show();
+                    //    }
+                    //    else
+                    //    {
+                    //        if (this.m_frmSpcGrp.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                    //            this.m_frmSpcGrp.WindowState = System.Windows.Forms.FormWindowState.Normal;
 
-							this.m_frmSpcGrp.Focus();
+                    //        this.m_frmSpcGrp.Focus();
 					
-						}
-						break;
+                    //    }
+                    //    break;
 					case "START FRCS":
 						//write project directory to the fiabiosum_project_path.txt file
 						System.Diagnostics.Process proc = new System.Diagnostics.Process();

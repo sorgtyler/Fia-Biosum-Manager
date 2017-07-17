@@ -1363,22 +1363,6 @@ namespace FIA_Biosum_Manager
                         "'" + Tables.FVS.DefaultFVSPrePostSeqNumRxPackageAssgnTable + "');";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
 
-
-					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-						"('Tree Species Groups'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
-						"'master.mdb'," + 
-						"'tree_species_groups');";
-					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
-
-					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-						"('Tree Species Groups List'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
-						"'master.mdb'," + 
-						"'tree_species_groups_list');";
-					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
-
-
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 						"('Tree Species'," + 
 						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
