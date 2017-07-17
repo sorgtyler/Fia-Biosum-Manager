@@ -83,7 +83,6 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		public void PerformVersionCheck()
         {
-            UpdateDatasources_5_7_9();
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
@@ -438,6 +437,18 @@ namespace FIA_Biosum_Manager
                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 8))
                     {
                         UpdateDatasources_5_7_8();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
+                    //5.7.9 moves tree diam and species groups into scenario-specific tables
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 7 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 9) &&
+                           (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 7 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 9))
+                    {
+                        UpdateDatasources_5_7_9();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
@@ -4657,7 +4668,7 @@ namespace FIA_Biosum_Manager
         {
             frmMain.g_sbpInfo.Text = "Version Update: Moving tree groupings to Processor scenario database...Stand by";
             ado_data_access oAdo = new ado_data_access();
-            dao_data_access oDao = null;
+            dao_data_access oDao = new dao_data_access();
             string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db";
             
             //open the scenario_processor_rule_definitions.mdb file so we can add the new tree groupings tables
@@ -4701,9 +4712,7 @@ namespace FIA_Biosum_Manager
                 }
             }
 
-            // Loop through the scenario_results.mdb looking for harvest_costs table
-            // Store the paths/table names for tree diameter groups and tree species groups tables so we know where to rename them
-            IDictionary<String, String> dictTablesToRename = new Dictionary<String, String>();
+            // Loop through the scenario_results.mdb transferring data for each existing scenario
 
             foreach (string strPath in lstScenarioDb)
             {
@@ -4759,10 +4768,7 @@ namespace FIA_Biosum_Manager
                 oAdo.OpenConnection(m_oAdo.getMDBConnString(strTreeSpeciesPath + "\\" + strTreeSpeciesMdb, "", ""));
                 if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strTreeSpeciesTable, strUserSpcGroup))
                 {
-                    oDao = new dao_data_access();
                     oDao.RenameField(strTreeSpeciesPath + "\\" + strTreeSpeciesMdb, strTreeSpeciesTable, "USER_SPC_GROUP", strUserSpcGroup);
-                    oDao.m_DaoWorkspace.Close();
-                    oDao = null;
                 }
 
                 // Read tree diameter groups into memory so we can transfer them to the new table
@@ -4771,7 +4777,7 @@ namespace FIA_Biosum_Manager
                 {
                     ProcessorScenarioItem.TreeDiamGroupsItem_Collection _objTreeDiamCollection = new ProcessorScenarioItem.TreeDiamGroupsItem_Collection();
 
-                    strSQL = "SELECT * FROM " + strTreeDiamGroupsTable;
+                    strSQL = "SELECT * FROM " + strTreeDiamGroupsTable + " ORDER BY MIN_DIAM";
                     oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
                     if (oAdo.m_OleDbDataReader.HasRows)
                     {
@@ -4803,10 +4809,6 @@ namespace FIA_Biosum_Manager
                             strMin + "," + strMax + ",'" + strScenarioId.Trim() + "')";
                         oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
                     }
-                    if (!dictTablesToRename.ContainsKey(strTreeDiamGroupsPath + "\\" + strTreeDiamGroupsMdb))
-                    {
-                        dictTablesToRename.Add(strTreeDiamGroupsPath + "\\" + strTreeDiamGroupsMdb, strTreeDiamGroupsTable);
-                    }
                 }
                 else
                 {
@@ -4819,11 +4821,8 @@ namespace FIA_Biosum_Manager
                 }
                 // Add link for tree_species table to tree_species_group_list directory to prep for querying
                 string strLinkedTreeSpeciesTable = "tree_species_worktable";
-                oDao = new dao_data_access();
                 oDao.CreateTableLink(strSpeciesGroupsListPath, strLinkedTreeSpeciesTable,
                     strTreeSpeciesPath + "\\" + strTreeSpeciesMdb, strTreeSpeciesTable);
-                oDao.m_DaoWorkspace.Close();
-                oDao = null;
 
                 // Read tree diameter groups into memory so we can transfer them to the new table
                 oAdo.OpenConnection(oAdo.getMDBConnString(strSpeciesGroupsListPath, "", ""));
@@ -4859,10 +4858,6 @@ namespace FIA_Biosum_Manager
                                         "(" + oItem.SpeciesGroup + ",'" + oItem.CommonName + "','" + strScenarioId + "', " +
                                         oItem.SpeciesCode + " )";
                         oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
-                    }
-                    if (!dictTablesToRename.ContainsKey(strSpeciesGroupsListPath))
-                    {
-                        dictTablesToRename.Add(strSpeciesGroupsListPath, strSpeciesGroupsListTable);
                     }
                 }
                 else
@@ -4912,10 +4907,6 @@ namespace FIA_Biosum_Manager
                                        "(" + oItem.SpeciesGroup + ",'" + oItem.SpeciesGroupLabel + "','" + strScenarioId.Trim() + "')";
                         oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
                     }
-                    if (!dictTablesToRename.ContainsKey(strSpeciesGroupsPath + "\\" + strSpeciesGroupsMdb))
-                    {
-                        dictTablesToRename.Add(strSpeciesGroupsPath + "\\" + strSpeciesGroupsMdb, strSpeciesGroupsTable);
-                    }
                 }
                 else
                 {
@@ -4928,19 +4919,24 @@ namespace FIA_Biosum_Manager
                 }
             }
 
+            frmMain.g_sbpInfo.Text = "Version Update: Update Core Analysis data sources table...Stand by";
+            string strCoreMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioDatasourceTableDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strCoreMdb, "", ""));
+            oAdo.m_strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioDatasourceTableName +
+                " WHERE TRIM(UCASE(table_type)) = 'TREE DIAMETER GROUPS' OR" +
+                " TRIM(UCASE(table_type)) = 'TREE SPECIES GROUPS'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            
             if (oAdo != null)
             {
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
                 oAdo = null;
             }
-            
-            System.Threading.Thread.Sleep(4000);
-            string strFormat = "MMddyyyy";
-            string strSuffix = "_ver_control_" + DateTime.Now.ToString(strFormat);
-            foreach (string strKey in dictTablesToRename.Keys)
+
+            if (oDao != null)
             {
-                oDao = new dao_data_access();
-                oDao.RenameTable(strKey, dictTablesToRename[strKey], dictTablesToRename[strKey] + strSuffix, false);
                 oDao.m_DaoWorkspace.Close();
                 oDao = null;
             }

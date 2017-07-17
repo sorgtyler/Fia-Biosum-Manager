@@ -2617,7 +2617,7 @@ namespace FIA_Biosum_Manager
             //QUERY ALL DIAMETER GROUPS
             //
             p_oAdo.SqlQueryReader(p_oConn, "SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + 
-                " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'");
+                " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' ORDER BY DIAM_GROUP");
 
 
             //
