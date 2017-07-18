@@ -87,6 +87,11 @@ namespace FIA_Biosum_Manager
         // scenario-specific variables
         private string _strScenarioId = "";
         private frmProcessorScenario _frmProcessorScenario = null;
+        // Help system variables
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultProcessorXPSFile;
+
         
 		public uc_processor_scenario_tree_spc_groups()
 		{
@@ -116,7 +121,7 @@ namespace FIA_Biosum_Manager
 
             this.m_ado = new ado_data_access();
             spc_common_name_collection1 = new spc_common_name_collection();
-
+            this.m_oEnv = new env();
 		}
 
 		/// <summary> 
@@ -302,11 +307,13 @@ namespace FIA_Biosum_Manager
             // 
             // btnHelp
             // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.btnHelp.Location = new System.Drawing.Point(8, 554);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(56, 24);
             this.btnHelp.TabIndex = 56;
             this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // btnAdd
             // 
@@ -1756,6 +1763,15 @@ namespace FIA_Biosum_Manager
             }
 
 		}
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "PROCESSOR", "TREE_SPECIES_GROUPS" });
+        }
 	}
 	public class spc_groupings : System.Windows.Forms.GroupBox
 	{

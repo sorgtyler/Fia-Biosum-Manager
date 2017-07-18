@@ -340,6 +340,11 @@ namespace FIA_Biosum_Manager
 			lvwColumnSorter = new ListViewColumnSorter();
 			this.lstRequiredTables.ListViewItemSorter = lvwColumnSorter;
 
+            // Disable help button since core analysis help doesn't exist yet
+            if (this.ScenarioType.Trim().ToUpper() == "CORE")
+            {
+                this.tlbBtnHelp.Enabled = false;
+            }
 
 			System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
 			strConn = p_ado.getMDBConnString(this.m_strDataSourceMDBFile,"","");
@@ -1649,11 +1654,27 @@ namespace FIA_Biosum_Manager
 
         public void showHelp()
         {
+            string strParent = "";
+            string strChild = "";
+            if (this.lblTitle.Text == ("Project Data Sources"))
+            {
+                m_xpsFile = Help.DefaultDatabaseXPSFile;
+                strParent = "DATABASE";
+                strChild = "PROJECT_DATA_SOURCES";
+            }
+            else if (this.ScenarioType.Trim().ToUpper() == "PROCESSOR")
+            {
+                m_xpsFile = Help.DefaultProcessorXPSFile;
+                strParent = "PROCESSOR";
+                strChild = "PROCESSOR_DATA_SOURCES";
+            }
+            
             if (m_oHelp == null)
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "DATABASE", "PROJECT_DATA_SOURCES" });
+            if (!String.IsNullOrEmpty(strParent))
+                m_oHelp.ShowHelp(new string[] { strParent, strChild });
         }
 		
 		
