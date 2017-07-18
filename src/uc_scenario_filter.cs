@@ -220,7 +220,7 @@ namespace FIA_Biosum_Manager
             this.grpboxSQL.Size = new System.Drawing.Size(600, 225);
             this.grpboxSQL.TabIndex = 11;
             this.grpboxSQL.TabStop = false;
-            this.grpboxSQL.Text = "Current Plot SQL";
+            this.grpboxSQL.Text = "Attribute Filter";
             // 
             // btnAudit
             // 
@@ -335,6 +335,7 @@ namespace FIA_Biosum_Manager
                     this.txtCurrentSQL.Text = this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.PlotTableSQLFilter;
                 }
                 this.grpboxYardDist.Hide();
+                this.grpboxSQL.Text = "Plot Attribute Filter";
             }
             else
             {
@@ -355,7 +356,7 @@ namespace FIA_Biosum_Manager
                     this.m_strCurrentYardDist = this.txtYardDist.Text;
                     this.m_strCurrentYardDist2 = this.txtYardDist2.Text;
                 }
-                
+                this.grpboxSQL.Text = "Condition Attribute Filter";
             }
             if (p_bScenarioCopy==false)
                 this.m_strCurrentSQL = this.txtCurrentSQL.Text;
