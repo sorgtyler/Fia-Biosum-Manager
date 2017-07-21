@@ -386,7 +386,7 @@ namespace FIA_Biosum_Manager
             this.grpboxMDBFiadbInput.Controls.Add(this.btnMDBFiadbInputCancel);
             this.grpboxMDBFiadbInput.Location = new System.Drawing.Point(15, 56);
             this.grpboxMDBFiadbInput.Name = "grpboxMDBFiadbInput";
-            this.grpboxMDBFiadbInput.Size = new System.Drawing.Size(672, 360);
+            this.grpboxMDBFiadbInput.Size = new System.Drawing.Size(1075, 360);
             this.grpboxMDBFiadbInput.TabIndex = 35;
             this.grpboxMDBFiadbInput.TabStop = false;
             this.grpboxMDBFiadbInput.Text = "FIADB Microsoft Access Database File Input";
@@ -653,7 +653,7 @@ namespace FIA_Biosum_Manager
             this.lstFIADBInv.Location = new System.Drawing.Point(16, 32);
             this.lstFIADBInv.MultiSelect = false;
             this.lstFIADBInv.Name = "lstFIADBInv";
-            this.lstFIADBInv.Size = new System.Drawing.Size(640, 280);
+            this.lstFIADBInv.Size = new System.Drawing.Size(1050, 280);
             this.lstFIADBInv.TabIndex = 30;
             this.lstFIADBInv.UseCompatibleStateImageBehavior = false;
             this.lstFIADBInv.View = System.Windows.Forms.View.Details;
@@ -1346,7 +1346,8 @@ namespace FIA_Biosum_Manager
 		}
 		private void Initialize()
 		{
-			this.m_DialogWd = this.Width + 10;
+            this.Width = 1100;
+            this.m_DialogWd = this.Width + 10;
 			this.m_DialogHt = this.groupBox1.Top + this.grpboxMDBFiadbInput.Top + this.grpboxMDBFiadbInput.Height + 100 ;
 
 		
@@ -5371,12 +5372,12 @@ namespace FIA_Biosum_Manager
 			      
 			this.lstFIADBInv.Clear();
 			this.lstFIADBInv.Columns.Add("EvalId", 50, HorizontalAlignment.Left);
-			this.lstFIADBInv.Columns.Add("RsCd", 50, HorizontalAlignment.Left);
+			this.lstFIADBInv.Columns.Add("RsCd", 30, HorizontalAlignment.Left);
 			this.lstFIADBInv.Columns.Add("StateCd", 50, HorizontalAlignment.Left);
-			this.lstFIADBInv.Columns.Add("Location_Nm", 100, HorizontalAlignment.Left);
-			this.lstFIADBInv.Columns.Add("Eval_Descr", 300, HorizontalAlignment.Left);
-			this.lstFIADBInv.Columns.Add("ReportYear", 200, HorizontalAlignment.Left);
-			this.lstFIADBInv.Columns.Add("Notes", 200, HorizontalAlignment.Left);
+			this.lstFIADBInv.Columns.Add("Location_Nm", 75, HorizontalAlignment.Left);
+			this.lstFIADBInv.Columns.Add("Eval_Descr", 400, HorizontalAlignment.Left);
+			this.lstFIADBInv.Columns.Add("ReportYear", 300, HorizontalAlignment.Left);
+			this.lstFIADBInv.Columns.Add("Notes", 125, HorizontalAlignment.Left);
 //			this.m_strFIADBEvalId="";
 //			this.m_strFIADBRsCd="";
 			this.m_intError=0;
