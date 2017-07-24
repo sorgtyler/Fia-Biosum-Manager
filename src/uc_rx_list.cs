@@ -46,7 +46,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.RxItemFvsCommandItem_Collection m_oRxItemFvsCommandItem_Collection = new RxItemFvsCommandItem_Collection();
 		private System.Windows.Forms.Button btnProperties;
 		private frmMain _frmMain=null;
-		private frmDialog _frmDialog=null;
+        private frmDialog _frmDialog = null;
         
 	
 
@@ -1316,7 +1316,9 @@ namespace FIA_Biosum_Manager
 			return strDesc;
 		}
 
-		private void btnProperties_Click(object sender, System.EventArgs e)
+		//Note: The HTML properties page takes too long to load; This has been replaced by
+        //RxTools.TreatmentProperties()
+        private void btnProperties_ClickHtml(object sender, System.EventArgs e)
 		{
 			if  (this.lstRx.Items.Count==0) return;
 
@@ -1363,6 +1365,45 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "FVS", "RX_TREATMENT_LIST" });
+        }
+
+        private void btnProperties_Click(object sender, EventArgs e)
+        {
+            if (this.lstRx.Items.Count == 0) return;
+
+            frmMain.g_sbpInfo.Text = "Creating Rx Properties Report...Stand By";
+            FIA_Biosum_Manager.RxItem_Collection oColl = new RxItem_Collection();
+            for (int x = 0; x <= m_oRxItem_Collection.Count - 1; x++)
+            {
+                if (m_oRxItem_Collection.Item(x).Delete == false)
+                {
+                    RxItem oItem = new RxItem();
+                    oItem.CopyProperties(m_oRxItem_Collection.Item(x), oItem);
+                    if (oItem.m_oFvsCommandItem_Collection1 != null)
+                    {
+                        for (int y = 0; y <= oItem.m_oFvsCommandItem_Collection1.Count - 1; y++)
+                        {
+                            if (oItem.m_oFvsCommandItem_Collection1.Item(y).Delete == true)
+                            {
+                                oItem.m_oFvsCommandItem_Collection1.Remove(y);
+                            }
+                        }
+                    }
+                    oColl.Add(oItem);
+
+                }
+            }
+            
+            FIA_Biosum_Manager.frmDialog frmTemp = new frmDialog();
+            frmTemp.Text = "FIA Biosum";
+            frmTemp.AutoScroll = false;
+            uc_textbox uc_textbox1 = new uc_textbox();
+            frmTemp.Controls.Add(uc_textbox1);
+            uc_textbox1.Dock = DockStyle.Fill;
+            uc_textbox1.lblTitle.Text = "Treatment Properties";
+            uc_textbox1.TextValue = m_oRxTools.TreatmentProperties(oColl);
+            frmTemp.Show();
+
         }
 		
 		
@@ -3179,6 +3220,65 @@ namespace FIA_Biosum_Manager
 			
 			
 		
+        }
+
+        public string TreatmentProperties(FIA_Biosum_Manager.RxItem_Collection p_oColl)
+        {
+            string strLine = "";
+            int x,y;
+
+            strLine = "Project: " + frmMain.g_oFrmMain.frmProject.uc_project1.txtProjectId.Text + "\r\n";
+            strLine = strLine + "-------------------------------------------------\r\n\r\n";
+
+            if (p_oColl.Count == 0)
+            {
+                strLine = strLine + "No Treatments Defined \r\n\r\n";
+            }
+
+            for (x = 0; x <= p_oColl.Count - 1; x++)
+            {
+                strLine = strLine + "Treatment " + p_oColl.Item(x).RxId + "\r\n";
+                strLine = strLine + "---------------------------------------------\r\n";
+                strLine = strLine + "Category: " + p_oColl.Item(x).Category + "\r\n";
+                strLine = strLine + "Subcategory: " + p_oColl.Item(x).SubCategory + "\r\n";
+                strLine = strLine + "Description: " + p_oColl.Item(x).Description + "\r\n";
+                strLine = strLine + "Harvest Method Low Slope: " + p_oColl.Item(x).HarvestMethodLowSlope + "\r\n";
+                strLine = strLine + "Steep Slope Harvest Method: " + p_oColl.Item(x).HarvestMethodSteepSlope + "\r\n";
+                strLine = strLine + "Package Member: " + p_oColl.Item(x).RxPackageMemberList + "\r\n";
+                strLine = strLine + "Associated Harvest Cost Columns: \r\n";
+                if (p_oColl.Item(x).ReferenceHarvestCostColumnCollection == null ||
+                    p_oColl.Item(x).ReferenceHarvestCostColumnCollection.Count == 0)
+                {
+                    strLine = strLine + "None Defined \r\n";
+                }
+                else
+                {
+                    for (y = 0; y <= p_oColl.Item(x).ReferenceHarvestCostColumnCollection.Count - 1; y++)
+                    {
+
+                        if (p_oColl.Item(x).RxId ==
+                            p_oColl.Item(x).ReferenceHarvestCostColumnCollection.Item(y).RxId)
+                        {
+                            strLine = strLine + "Cost Component: " + p_oColl.Item(x).ReferenceHarvestCostColumnCollection.Item(y).HarvestCostColumn + "\r\n";
+                            if (p_oColl.Item(x).ReferenceHarvestCostColumnCollection.Item(y).Description.Trim().Length != 0)
+                            {
+                                strLine = strLine + "Description: " + p_oColl.Item(x).ReferenceHarvestCostColumnCollection.Item(y).Description;
+                            }
+                            else
+                            {
+                                strLine = strLine + "Description: ";
+                            }
+                            strLine = strLine + "\r\n";
+                        }
+
+                    }
+                }
+
+                strLine = strLine + "\r\n\r\n";
+            }
+
+            strLine = strLine + "\r\n\r\nEOF";
+            return strLine;
         }
 
 	}
