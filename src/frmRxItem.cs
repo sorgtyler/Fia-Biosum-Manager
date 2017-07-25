@@ -614,19 +614,18 @@ namespace FIA_Biosum_Manager
 					}
 				}
 			}
-					
-
-				
 			
 			oRxCollection.Add(oRxItem);
-			project_properties_html_report oRpt = new project_properties_html_report();
-			oRpt.ProcessTreatments=true;
-			oRpt.ProcessPackages=false;
-			oRpt.ProjectName = frmMain.g_oFrmMain.frmProject.uc_project1.txtProjectId.Text;
-			oRpt.ReportHeader = "FIA Biosum Treatment Properties";
-			oRpt.WindowTitle = "FIA Biosum Treatment Properties";
-			oRpt.RxCollection = oRxCollection;
-			oRpt.CreateReport();
+            FIA_Biosum_Manager.frmDialog frmTemp = new frmDialog();
+            frmTemp.Text = "FIA Biosum";
+            frmTemp.AutoScroll = false;
+            uc_textbox uc_textbox1 = new uc_textbox();
+            frmTemp.Controls.Add(uc_textbox1);
+            uc_textbox1.Dock = DockStyle.Fill;
+            uc_textbox1.lblTitle.Text = "Treatment Properties";
+            RxTools oRxTools = new RxTools();
+            uc_textbox1.TextValue = oRxTools.TreatmentProperties(oRxCollection);
+            frmTemp.Show();
 			frmMain.g_sbpInfo.Text = "Ready";
 
 		}

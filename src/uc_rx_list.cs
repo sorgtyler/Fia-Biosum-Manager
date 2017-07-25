@@ -3281,6 +3281,74 @@ namespace FIA_Biosum_Manager
             return strLine;
         }
 
+        public string PackageProperties(FIA_Biosum_Manager.RxPackageItem_Collection p_oRxPkgColl,
+                                        FIA_Biosum_Manager.RxItem_Collection p_oRxColl)
+        {
+            string strLine = "";
+            int x, y;
+
+            strLine = "Project: " + frmMain.g_oFrmMain.frmProject.uc_project1.txtProjectId.Text + "\r\n";
+            strLine = strLine + "-------------------------------------------------\r\n\r\n";
+
+            if (p_oRxPkgColl.Count == 0)
+            {
+                strLine = strLine + "No Packages Defined \r\n\r\n";
+            }
+
+            for (x = 0; x <= p_oRxPkgColl.Count - 1; x++)
+            {
+                strLine = strLine + "Package " + p_oRxPkgColl.Item(x).RxPackageId + "\r\n";
+                strLine = strLine + "---------------------------------------------\r\n";
+                strLine = strLine + "Description: " + p_oRxPkgColl.Item(x).Description + "\r\n";
+                strLine = strLine + "Treatment Cycle Length: " + p_oRxPkgColl.Item(x).RxCycleLength + "\r\n";
+                strLine = strLine + "KCP/KEY File: " + p_oRxPkgColl.Item(x).KcpFile.Trim() + "\r\n";
+                strLine = strLine + "Treatment Schedule: \r\n";
+                strLine = strLine + "Year   Rx        Harvest Method   Steep Slope     Description \r\n";
+                strLine = strLine + "                                  Harvest Method\r\n";
+                string strSimulationYear = "";
+                if (p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim().Length > 0)
+                    strSimulationYear = p_oRxPkgColl.Item(x).SimulationYear1Rx;
+                string strHarvestMethodLowSlope = "";
+                string strHarvestMethodSteepSlope = "";
+                string strDescription = "";
+                if (p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim().Length > 0)
+                {
+                    for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                    {
+                        if (p_oRxColl.Item(y).RxId.Trim() ==
+                            p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim())
+                        {
+                            if (p_oRxColl.Item(y).HarvestMethodLowSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodLowSlope = p_oRxColl.Item(y).HarvestMethodLowSlope;
+                            }
+                            if (p_oRxColl.Item(y).HarvestMethodSteepSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodSteepSlope = p_oRxColl.Item(y).HarvestMethodSteepSlope;
+                            }
+                            if (p_oRxColl.Item(y).Description.Trim().Length > 0)
+                            {
+                                strDescription = "  " + p_oRxColl.Item(y).Description;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,17}{4,0}",
+                    " 00",
+                    strSimulationYear,
+                    strHarvestMethodLowSlope,
+                    strHarvestMethodSteepSlope,
+                    strDescription);
+
+                strLine = strLine + "\r\n\r\n";
+            }
+
+            strLine = strLine + "\r\n\r\nEOF";
+            return strLine;
+        }
+
 	}
 	/*********************************************************************************************************
 	 **RX Item                          
