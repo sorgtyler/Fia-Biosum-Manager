@@ -3305,6 +3305,7 @@ namespace FIA_Biosum_Manager
                 strLine = strLine + "Treatment Schedule: \r\n";
                 strLine = strLine + "Year   Rx        Harvest Method   Steep Slope     Description \r\n";
                 strLine = strLine + "                                  Harvest Method\r\n";
+                //year 00 row
                 string strSimulationYear = "";
                 if (p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim().Length > 0)
                     strSimulationYear = p_oRxPkgColl.Item(x).SimulationYear1Rx;
@@ -3340,7 +3341,52 @@ namespace FIA_Biosum_Manager
                     strSimulationYear,
                     strHarvestMethodLowSlope,
                     strHarvestMethodSteepSlope,
-                    strDescription);
+                    strDescription) + "\r\n";
+
+                //year 10 row
+                if (p_oRxPkgColl.Item(x).SimulationYear2Rx.Trim().Length > 0)
+                {
+                    strSimulationYear = p_oRxPkgColl.Item(x).SimulationYear2Rx;
+                }
+                else
+                {
+                    strSimulationYear = "";
+                }
+                // Reset variables to blanks
+                strHarvestMethodLowSlope = "";
+                strHarvestMethodSteepSlope = "";
+                strDescription = "";
+                if (p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim().Length > 0)
+                {
+                    for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                    {
+                        if (p_oRxColl.Item(y).RxId.Trim() ==
+                            p_oRxPkgColl.Item(x).SimulationYear2Rx.Trim())
+                        {
+                            if (p_oRxColl.Item(y).HarvestMethodLowSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodLowSlope = p_oRxColl.Item(y).HarvestMethodLowSlope;
+                            }
+                            if (p_oRxColl.Item(y).HarvestMethodSteepSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodSteepSlope = p_oRxColl.Item(y).HarvestMethodSteepSlope;
+                            }
+                            if (p_oRxColl.Item(y).Description.Trim().Length > 0)
+                            {
+                                strDescription = "  " + p_oRxColl.Item(y).Description;
+                            }
+                            break;
+                        }
+                    }
+                }
+                
+                
+                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,17}{4,0}",
+                    " " + Convert.ToString(p_oRxPkgColl.Item(x).RxCycleLength * 1).PadLeft(2, '0'),
+                    strSimulationYear,
+                    strHarvestMethodLowSlope,
+                    strHarvestMethodSteepSlope,
+                    strDescription) + "\r\n";
 
                 strLine = strLine + "\r\n\r\n";
             }
