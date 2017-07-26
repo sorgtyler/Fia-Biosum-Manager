@@ -3285,7 +3285,7 @@ namespace FIA_Biosum_Manager
                                         FIA_Biosum_Manager.RxItem_Collection p_oRxColl)
         {
             string strLine = "";
-            int x, y;
+            int x, y, z;
 
             strLine = "Project: " + frmMain.g_oFrmMain.frmProject.uc_project1.txtProjectId.Text + "\r\n";
             strLine = strLine + "-------------------------------------------------\r\n\r\n";
@@ -3303,8 +3303,8 @@ namespace FIA_Biosum_Manager
                 strLine = strLine + "Treatment Cycle Length: " + p_oRxPkgColl.Item(x).RxCycleLength + "\r\n";
                 strLine = strLine + "KCP/KEY File: " + p_oRxPkgColl.Item(x).KcpFile.Trim() + "\r\n";
                 strLine = strLine + "Treatment Schedule: \r\n";
-                strLine = strLine + "Year   Rx        Harvest Method   Steep Slope     Description \r\n";
-                strLine = strLine + "                                  Harvest Method\r\n";
+                strLine = strLine + "Year   Rx        Harvest Method     Steep Slope      Description \r\n";
+                strLine = strLine + "                                    Harvest Method\r\n";
                 //year 00 row
                 string strSimulationYear = "";
                 if (p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim().Length > 0)
@@ -3329,14 +3329,14 @@ namespace FIA_Biosum_Manager
                             }
                             if (p_oRxColl.Item(y).Description.Trim().Length > 0)
                             {
-                                strDescription = "  " + p_oRxColl.Item(y).Description;
+                                strDescription = "   " + p_oRxColl.Item(y).Description;
                             }
                             break;
                         }
                     }
                 }
 
-                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,17}{4,0}",
+                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,19}{4,0}",
                     " 00",
                     strSimulationYear,
                     strHarvestMethodLowSlope,
@@ -3356,7 +3356,7 @@ namespace FIA_Biosum_Manager
                 strHarvestMethodLowSlope = "";
                 strHarvestMethodSteepSlope = "";
                 strDescription = "";
-                if (p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim().Length > 0)
+                if (p_oRxPkgColl.Item(x).SimulationYear2Rx.Trim().Length > 0)
                 {
                     for (y = 0; y <= p_oRxColl.Count - 1; y++)
                     {
@@ -3373,20 +3373,272 @@ namespace FIA_Biosum_Manager
                             }
                             if (p_oRxColl.Item(y).Description.Trim().Length > 0)
                             {
-                                strDescription = "  " + p_oRxColl.Item(y).Description;
+                                strDescription = "   " + p_oRxColl.Item(y).Description;
                             }
                             break;
                         }
                     }
                 }
                 
-                
-                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,17}{4,0}",
-                    " " + Convert.ToString(p_oRxPkgColl.Item(x).RxCycleLength * 1).PadLeft(2, '0'),
+                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,19}{4,0}",
+                    Convert.ToString(p_oRxPkgColl.Item(x).RxCycleLength * 1).PadLeft(2, '0').PadLeft(3),
                     strSimulationYear,
                     strHarvestMethodLowSlope,
                     strHarvestMethodSteepSlope,
                     strDescription) + "\r\n";
+
+                //year 20 row
+                if (p_oRxPkgColl.Item(x).SimulationYear3Rx.Trim().Length > 0)
+                {
+                    strSimulationYear = p_oRxPkgColl.Item(x).SimulationYear3Rx;
+                }
+                else
+                {
+                    strSimulationYear = "";
+                }
+                // Reset variables to blanks
+                strHarvestMethodLowSlope = "";
+                strHarvestMethodSteepSlope = "";
+                strDescription = "";
+                if (p_oRxPkgColl.Item(x).SimulationYear3Rx.Trim().Length > 0)
+                {
+                    for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                    {
+                        if (p_oRxColl.Item(y).RxId.Trim() ==
+                            p_oRxPkgColl.Item(x).SimulationYear3Rx.Trim())
+                        {
+                            if (p_oRxColl.Item(y).HarvestMethodLowSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodLowSlope = p_oRxColl.Item(y).HarvestMethodLowSlope;
+                            }
+                            if (p_oRxColl.Item(y).HarvestMethodSteepSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodSteepSlope = p_oRxColl.Item(y).HarvestMethodSteepSlope;
+                            }
+                            if (p_oRxColl.Item(y).Description.Trim().Length > 0)
+                            {
+                                strDescription = "   " + p_oRxColl.Item(y).Description;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,19}{4,0}",
+                    Convert.ToString(p_oRxPkgColl.Item(x).RxCycleLength * 2).PadLeft(2, '0').PadLeft(3),
+                    strSimulationYear,
+                    strHarvestMethodLowSlope,
+                    strHarvestMethodSteepSlope,
+                    strDescription) + "\r\n";
+
+                //year 30 row
+                if (p_oRxPkgColl.Item(x).SimulationYear4Rx.Trim().Length > 0)
+                {
+                    strSimulationYear = p_oRxPkgColl.Item(x).SimulationYear4Rx;
+                }
+                else
+                {
+                    strSimulationYear = "";
+                }
+                // Reset variables to blanks
+                strHarvestMethodLowSlope = "";
+                strHarvestMethodSteepSlope = "";
+                strDescription = "";
+                if (p_oRxPkgColl.Item(x).SimulationYear4Rx.Trim().Length > 0)
+                {
+                    for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                    {
+                        if (p_oRxColl.Item(y).RxId.Trim() ==
+                            p_oRxPkgColl.Item(x).SimulationYear4Rx.Trim())
+                        {
+                            if (p_oRxColl.Item(y).HarvestMethodLowSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodLowSlope = p_oRxColl.Item(y).HarvestMethodLowSlope;
+                            }
+                            if (p_oRxColl.Item(y).HarvestMethodSteepSlope.Trim().Length > 0)
+                            {
+                                strHarvestMethodSteepSlope = p_oRxColl.Item(y).HarvestMethodSteepSlope;
+                            }
+                            if (p_oRxColl.Item(y).Description.Trim().Length > 0)
+                            {
+                                strDescription = "   " + p_oRxColl.Item(y).Description;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                strLine = strLine + String.Format("{0,2}{1,6}{2,22}{3,19}{4,0}",
+                    Convert.ToString(p_oRxPkgColl.Item(x).RxCycleLength * 3).PadLeft(2, '0').PadLeft(3),
+                    strSimulationYear,
+                    strHarvestMethodLowSlope,
+                    strHarvestMethodSteepSlope,
+                    strDescription) + "\r\n";
+
+                strLine = strLine + "Associated HarvestCostColumns: \r\n";
+                //see if any harvest cost columns in the package
+                bool bHarvestColumnsExist = false;
+                for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                {
+                    if (p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection != null &&
+                        p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Count > 0)
+                    {
+
+                        if (p_oRxColl.Item(y).RxId.Trim() ==
+                                        p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim() ||
+                                        p_oRxColl.Item(y).RxId.Trim() ==
+                                        p_oRxPkgColl.Item(x).SimulationYear2Rx.Trim() ||
+                                        p_oRxColl.Item(y).RxId.Trim() ==
+                                        p_oRxPkgColl.Item(x).SimulationYear3Rx.Trim() ||
+                                        p_oRxColl.Item(y).RxId.Trim() ==
+                                        p_oRxPkgColl.Item(x).SimulationYear4Rx.Trim())
+                        {
+                            bHarvestColumnsExist = true; break;
+                        }
+
+
+                    }
+                    if (bHarvestColumnsExist == true) break;
+                }
+                if (bHarvestColumnsExist == false)
+                {
+                    strLine = strLine + "None Defined \r\n";
+                }
+                else
+                {
+                    strLine = strLine + " Rx   Simulation        Harvest Cost     Description \r\n";
+                    strLine = strLine + "         Cycle             Column \r\n";
+
+                    int intCycle;
+                    for (intCycle = 1; intCycle <= 4; intCycle++)
+                    {
+                        bHarvestColumnsExist = false;
+                        if (intCycle == 1)
+                        {
+                            for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                            {
+                                if (p_oRxPkgColl.Item(x).SimulationYear1Rx.Trim() ==
+                                    p_oRxColl.Item(y).RxId.Trim())
+                                {
+                                    if (p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection != null &&
+                                    p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Count > 0)
+                                    {
+                                        bHarvestColumnsExist = true;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        else if (intCycle == 2)
+                        {
+                            for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                            {
+                                if (p_oRxPkgColl.Item(x).SimulationYear2Rx.Trim() ==
+                                    p_oRxColl.Item(y).RxId.Trim())
+                                {
+                                    if (p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection != null &&
+                                    p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Count > 0)
+                                    {
+                                        bHarvestColumnsExist = true;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        else if (intCycle == 3)
+                        {
+                            for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                            {
+                                if (p_oRxPkgColl.Item(x).SimulationYear3Rx.Trim() ==
+                                    p_oRxColl.Item(y).RxId.Trim())
+                                {
+                                    if (p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection != null &&
+                                    p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Count > 0)
+                                    {
+                                        bHarvestColumnsExist = true;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (y = 0; y <= p_oRxColl.Count - 1; y++)
+                            {
+                                if (p_oRxPkgColl.Item(x).SimulationYear4Rx.Trim() ==
+                                    p_oRxColl.Item(y).RxId.Trim())
+                                {
+                                    if (p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection != null &&
+                                        p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Count > 0)
+                                    {
+                                        bHarvestColumnsExist = true;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        if (bHarvestColumnsExist)
+                        {
+                            System.Collections.Generic.IList<string> lstHarvestCostColumns =
+                                new System.Collections.Generic.List<string>();
+                            System.Collections.Generic.IList<string> lstHarvestCostColumnDesc =
+                                new System.Collections.Generic.List<string>();
+
+                            //rx
+                            string strRx = "";
+                            if (p_oRxColl.Item(y).RxId.Trim().Trim().Length != 0)
+                            {
+                                strRx = p_oRxColl.Item(y).RxId.Trim();
+                            }
+                            //SimYear
+                            string strCycle = "";
+                            if (intCycle.ToString().Trim().Length > 0)
+                            {
+                                strCycle = intCycle.ToString().Trim();
+                            }
+                            for (z = 0; z <= p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Count - 1; z++)
+                            {
+                                if (p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Item(z).HarvestCostColumn.Trim().Length > 0)
+                                {
+
+                                    lstHarvestCostColumns.Add(p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Item(z).HarvestCostColumn.Trim());
+                                    if (p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Item(z).Description.Trim().Length > 0)
+                                    {
+                                        lstHarvestCostColumnDesc.Add(p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Item(z).HarvestCostColumn.Trim() + "=" +
+                                                                     p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Item(z).Description.Trim());
+                      
+                                    }
+                                    else
+                                    {
+                                        lstHarvestCostColumnDesc.Add(p_oRxColl.Item(y).ReferenceHarvestCostColumnCollection.Item(z).HarvestCostColumn.Trim() + "=No Description Given");  
+                                    }
+                                }
+                            }
+
+                            //Harvest Cost Rows
+                            string strDescrPadding = Convert.ToString(lstHarvestCostColumnDesc[0].Length + 7);
+                            strLine = strLine + String.Format("{0,3}{1,9}{2,22}{3," + strDescrPadding + "}",
+                                      strRx,
+                                      strCycle,
+                                      lstHarvestCostColumns[0],
+                                      lstHarvestCostColumnDesc[0]) + "\r\n";
+                            for (z = 0; z < lstHarvestCostColumns.Count; z++)
+                            {
+                                // We don't want to do anything unless z > 0 because we already handled the 0 row
+                                if (z > 0)
+                                {
+                                    strDescrPadding = Convert.ToString(lstHarvestCostColumnDesc[z].Length + 7);
+                                    strLine = strLine + String.Format("{0,34}{1," + strDescrPadding + "}",
+                                        lstHarvestCostColumns[z],
+                                        lstHarvestCostColumnDesc[z]) + "\r\n";
+                                }
+                                
+                            }
+
+                        }
+                    }	
+                }
+
 
                 strLine = strLine + "\r\n\r\n";
             }
