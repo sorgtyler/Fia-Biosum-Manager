@@ -3475,7 +3475,7 @@ namespace FIA_Biosum_Manager
                     strHarvestMethodSteepSlope,
                     strDescription) + "\r\n";
 
-                strLine = strLine + "Associated HarvestCostColumns: \r\n";
+                strLine = strLine + "Associated Harvest Cost Columns: \r\n";
                 //see if any harvest cost columns in the package
                 bool bHarvestColumnsExist = false;
                 for (y = 0; y <= p_oRxColl.Count - 1; y++)

@@ -595,15 +595,17 @@ namespace FIA_Biosum_Manager
 			FIA_Biosum_Manager.RxPackageItem_Collection oRxPackageCollection = new RxPackageItem_Collection();
 			oRxPackageCollection.Add(this.m_oRxPackageItem);
 
-			FIA_Biosum_Manager.project_properties_html_report oRpt = new project_properties_html_report();
-			oRpt.ProcessTreatments=false;
-			oRpt.ProcessPackages=true;
-			oRpt.RxCollection = oRxColl;
-			oRpt.RxPackageCollection = oRxPackageCollection;
-			oRpt.ReportHeader = "FIA Biosum Treatment Package";
-			oRpt.WindowTitle = "FIA Biosum Treatment Package Properties";
-			oRpt.ProjectName = frmMain.g_oFrmMain.frmProject.uc_project1.txtProjectId.Text;
-			oRpt.CreateReport();
+            FIA_Biosum_Manager.frmDialog frmTemp = new frmDialog();
+            frmTemp.Text = "FIA Biosum";
+            frmTemp.AutoScroll = false;
+            uc_textbox uc_textbox1 = new uc_textbox();
+            frmTemp.Controls.Add(uc_textbox1);
+            uc_textbox1.Dock = DockStyle.Fill;
+            uc_textbox1.lblTitle.Text = "Package Properties";
+            RxTools oRxTools = new RxTools();
+            uc_textbox1.TextValue = oRxTools.PackageProperties(oRxPackageCollection, oRxColl);
+            frmTemp.Show();
+
 			frmMain.g_sbpInfo.Text = "Ready";
 
 
