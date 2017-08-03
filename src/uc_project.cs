@@ -915,7 +915,7 @@ namespace FIA_Biosum_Manager
 				//contacts table
 				frmMain.g_oTables.m_oProject.CreateContactsTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectContactsTableName);
 				//datasource table
-				frmMain.g_oTables.m_oProject.CreateDatasourceTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectDatasourceTableName);
+				frmMain.g_oTables.m_oProject.CreateDatasourceTable(p_ado,p_ado.m_OleDbConnection,Tables.Project.DefaultProjectDatasourceTableName);
 				//form_travel_times table
 				frmMain.g_oTables.m_oProject.CreateTravelTimesFormTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectTravelTimesFormTableName);
 				//links_category table

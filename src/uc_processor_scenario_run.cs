@@ -5323,7 +5323,7 @@ namespace FIA_Biosum_Manager
                             "complete_cpa, harvest_cpa," +
                             "DateTimeCreated, place_holder) " +
                             "VALUES ('" + cond_id + "', '" + rxpackage + "', '" + rx + "', '" + strRxCycle + "', " +
-                            intValuePlaceholder + ", " + intValuePlaceholder + "," +
+                            intValuePlaceholder + ", " + intValuePlaceholder +
                             ", '" + m_strDateTimeCreated + "', 'Y')";
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)

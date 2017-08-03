@@ -4922,6 +4922,15 @@ namespace FIA_Biosum_Manager
                 " TRIM(UCASE(table_type)) = 'TREE SPECIES GROUPS'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
+            frmMain.g_sbpInfo.Text = "Version Update: Update Project data sources table...Stand by";
+            string strProjectMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.Project.DefaultProjectDatasourceTableDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strProjectMdb, "", ""));
+            oAdo.m_strSQL = "DELETE * FROM " + Tables.Project.DefaultProjectDatasourceTableName +
+                " WHERE TRIM(UCASE(table_type)) = 'TREE DIAMETER GROUPS' OR" +
+                " TRIM(UCASE(table_type)) = 'TREE SPECIES GROUPS' OR" +
+                " TRIM(UCASE(table_type)) = 'TREE SPECIES GROUPS LIST'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             
             if (oAdo != null)
             {

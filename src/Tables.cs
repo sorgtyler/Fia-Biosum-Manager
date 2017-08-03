@@ -51,8 +51,8 @@ namespace FIA_Biosum_Manager
 			public string DefaultProjectProcessorScenarioTableName {get {return "processor_scenario";}}
 			public string DefaultProjectContactsTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectContactsTableName {get {return "contacts";}}
-			public string DefaultProjectDatasourceTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectDatasourceTableName {get {return "datasource";}}
+			static public string DefaultProjectDatasourceTableDbFile {get {return @"db\project.mdb";}}
+			static public string DefaultProjectDatasourceTableName {get {return "datasource";}}
 			public string DefaultProjectTravelTimesFormTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectTravelTimesFormTableName {get {return "form_travel_times";}}
 			public Project()
