@@ -60,7 +60,12 @@ namespace FIA_Biosum_Manager
         private ToolBarButton btnScenarioCopy;
         private TabPage tbMoveInCosts;
         private TabPage tbTreeGroupings;
-        
+        private Button btnHelp;
+
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultProcessorXPSFile;
+        private string m_helpChapter = "PROCESSOR_DESCRIPTION";
         
         public string m_strError = "";
 		
@@ -74,6 +79,8 @@ namespace FIA_Biosum_Manager
 			{
 				this.Width = p_frmMain.Width - p_frmMain.grpboxLeft.Width  - 10;
 			}
+
+            this.m_oEnv = new env();
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
@@ -183,22 +190,25 @@ namespace FIA_Biosum_Manager
             this.tbDesc = new System.Windows.Forms.TabPage();
             this.tbNotes = new System.Windows.Forms.TabPage();
             this.tbDataSources = new System.Windows.Forms.TabPage();
+            this.tbTreeGroupings = new System.Windows.Forms.TabPage();
+            this.uc_scenario_tree_groupings1 = new FIA_Biosum_Manager.uc_scenario_tree_groupings();
             this.tbRules = new System.Windows.Forms.TabPage();
             this.tabControlRules = new System.Windows.Forms.TabControl();
             this.tbHarvestMethod = new System.Windows.Forms.TabPage();
-            this.tbMoveInCosts = new System.Windows.Forms.TabPage();
-            this.tbWoodValue = new System.Windows.Forms.TabPage();
-            this.tbEscalators = new System.Windows.Forms.TabPage();
-            this.tbAddHarvestCosts = new System.Windows.Forms.TabPage();
-            this.tbRun = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_harvest_method1 = new FIA_Biosum_Manager.uc_processor_scenario_harvest_method();
+            this.tbMoveInCosts = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_movein_costs1 = new FIA_Biosum_Manager.uc_processor_scenario_movein_costs();
+            this.tbWoodValue = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_merch_chip_value1 = new FIA_Biosum_Manager.uc_processor_scenario_merch_chip_value();
+            this.tbEscalators = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_escalators1 = new FIA_Biosum_Manager.uc_processor_scenario_escalators();
+            this.tbAddHarvestCosts = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_additional_harvest_cost_columns1 = new FIA_Biosum_Manager.uc_processor_scenario_additional_harvest_cost_columns();
+            this.tbRun = new System.Windows.Forms.TabPage();
             this.uc_processor_scenario_run1 = new FIA_Biosum_Manager.uc_processor_scenario_run();
-            this.tbTreeGroupings = new System.Windows.Forms.TabPage();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.tabControlScenario.SuspendLayout();
+            this.tbTreeGroupings.SuspendLayout();
             this.tbRules.SuspendLayout();
             this.tabControlRules.SuspendLayout();
             this.tbHarvestMethod.SuspendLayout();
@@ -342,6 +352,25 @@ namespace FIA_Biosum_Manager
             this.tbDataSources.Text = "Data Sources";
             this.tbDataSources.Visible = false;
             // 
+            // tbTreeGroupings
+            // 
+            this.tbTreeGroupings.Controls.Add(this.uc_scenario_tree_groupings1);
+            this.tbTreeGroupings.Location = new System.Drawing.Point(4, 22);
+            this.tbTreeGroupings.Name = "tbTreeGroupings";
+            this.tbTreeGroupings.Size = new System.Drawing.Size(899, 449);
+            this.tbTreeGroupings.TabIndex = 4;
+            this.tbTreeGroupings.Text = "Tree Groupings";
+            this.tbTreeGroupings.UseVisualStyleBackColor = true;
+            // 
+            // uc_scenario_tree_groupings1
+            // 
+            this.uc_scenario_tree_groupings1.Location = new System.Drawing.Point(0, 0);
+            this.uc_scenario_tree_groupings1.Name = "uc_scenario_tree_groupings1";
+            this.uc_scenario_tree_groupings1.ReferenceProcessorScenarioForm = null;
+            this.uc_scenario_tree_groupings1.ScenarioType = "processor";
+            this.uc_scenario_tree_groupings1.Size = new System.Drawing.Size(664, 424);
+            this.uc_scenario_tree_groupings1.TabIndex = 0;
+            // 
             // tbRules
             // 
             this.tbRules.Controls.Add(this.tabControlRules);
@@ -382,6 +411,17 @@ namespace FIA_Biosum_Manager
             this.tbHarvestMethod.Text = "Harvest Method";
             this.tbHarvestMethod.UseVisualStyleBackColor = true;
             // 
+            // uc_processor_scenario_harvest_method1
+            // 
+            this.uc_processor_scenario_harvest_method1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_processor_scenario_harvest_method1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uc_processor_scenario_harvest_method1.Location = new System.Drawing.Point(0, 0);
+            this.uc_processor_scenario_harvest_method1.Name = "uc_processor_scenario_harvest_method1";
+            this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm = null;
+            this.uc_processor_scenario_harvest_method1.ScenarioId = "";
+            this.uc_processor_scenario_harvest_method1.Size = new System.Drawing.Size(891, 423);
+            this.uc_processor_scenario_harvest_method1.TabIndex = 0;
+            // 
             // tbMoveInCosts
             // 
             this.tbMoveInCosts.Controls.Add(this.uc_processor_scenario_movein_costs1);
@@ -391,6 +431,15 @@ namespace FIA_Biosum_Manager
             this.tbMoveInCosts.TabIndex = 2;
             this.tbMoveInCosts.Text = "Move-in Costs";
             this.tbMoveInCosts.UseVisualStyleBackColor = true;
+            // 
+            // uc_processor_scenario_movein_costs1
+            // 
+            this.uc_processor_scenario_movein_costs1.Location = new System.Drawing.Point(0, 0);
+            this.uc_processor_scenario_movein_costs1.Name = "uc_processor_scenario_movein_costs1";
+            this.uc_processor_scenario_movein_costs1.ReferenceProcessorScenarioForm = null;
+            this.uc_processor_scenario_movein_costs1.ScenarioId = "";
+            this.uc_processor_scenario_movein_costs1.Size = new System.Drawing.Size(696, 448);
+            this.uc_processor_scenario_movein_costs1.TabIndex = 0;
             // 
             // tbWoodValue
             // 
@@ -403,6 +452,17 @@ namespace FIA_Biosum_Manager
             this.tbWoodValue.UseVisualStyleBackColor = true;
             this.tbWoodValue.Visible = false;
             // 
+            // uc_processor_scenario_merch_chip_value1
+            // 
+            this.uc_processor_scenario_merch_chip_value1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_processor_scenario_merch_chip_value1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uc_processor_scenario_merch_chip_value1.Location = new System.Drawing.Point(0, 0);
+            this.uc_processor_scenario_merch_chip_value1.Name = "uc_processor_scenario_merch_chip_value1";
+            this.uc_processor_scenario_merch_chip_value1.ReferenceProcessorScenarioForm = null;
+            this.uc_processor_scenario_merch_chip_value1.ScenarioId = "";
+            this.uc_processor_scenario_merch_chip_value1.Size = new System.Drawing.Size(891, 423);
+            this.uc_processor_scenario_merch_chip_value1.TabIndex = 0;
+            // 
             // tbEscalators
             // 
             this.tbEscalators.Controls.Add(this.uc_processor_scenario_escalators1);
@@ -414,6 +474,17 @@ namespace FIA_Biosum_Manager
             this.tbEscalators.UseVisualStyleBackColor = true;
             this.tbEscalators.Visible = false;
             // 
+            // uc_processor_scenario_escalators1
+            // 
+            this.uc_processor_scenario_escalators1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_processor_scenario_escalators1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uc_processor_scenario_escalators1.Location = new System.Drawing.Point(0, 0);
+            this.uc_processor_scenario_escalators1.Name = "uc_processor_scenario_escalators1";
+            this.uc_processor_scenario_escalators1.ReferenceProcessorScenarioForm = null;
+            this.uc_processor_scenario_escalators1.ScenarioId = "";
+            this.uc_processor_scenario_escalators1.Size = new System.Drawing.Size(891, 423);
+            this.uc_processor_scenario_escalators1.TabIndex = 0;
+            // 
             // tbAddHarvestCosts
             // 
             this.tbAddHarvestCosts.Controls.Add(this.uc_processor_scenario_additional_harvest_cost_columns1);
@@ -424,6 +495,17 @@ namespace FIA_Biosum_Manager
             this.tbAddHarvestCosts.Text = "Supplemental Harvest Costs";
             this.tbAddHarvestCosts.UseVisualStyleBackColor = true;
             this.tbAddHarvestCosts.Visible = false;
+            // 
+            // uc_processor_scenario_additional_harvest_cost_columns1
+            // 
+            this.uc_processor_scenario_additional_harvest_cost_columns1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_processor_scenario_additional_harvest_cost_columns1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uc_processor_scenario_additional_harvest_cost_columns1.Location = new System.Drawing.Point(0, 0);
+            this.uc_processor_scenario_additional_harvest_cost_columns1.Name = "uc_processor_scenario_additional_harvest_cost_columns1";
+            this.uc_processor_scenario_additional_harvest_cost_columns1.ReferenceProcessorScenarioForm = null;
+            this.uc_processor_scenario_additional_harvest_cost_columns1.ScenarioId = "";
+            this.uc_processor_scenario_additional_harvest_cost_columns1.Size = new System.Drawing.Size(891, 423);
+            this.uc_processor_scenario_additional_harvest_cost_columns1.TabIndex = 0;
             // 
             // tbRun
             // 
@@ -437,59 +519,6 @@ namespace FIA_Biosum_Manager
             this.tbRun.Text = "Run";
             this.tbRun.Visible = false;
             // 
-            // uc_processor_scenario_harvest_method1
-            // 
-            this.uc_processor_scenario_harvest_method1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_processor_scenario_harvest_method1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uc_processor_scenario_harvest_method1.Location = new System.Drawing.Point(0, 0);
-            this.uc_processor_scenario_harvest_method1.Name = "uc_processor_scenario_harvest_method1";
-            this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm = null;
-            this.uc_processor_scenario_harvest_method1.ScenarioId = "";
-            this.uc_processor_scenario_harvest_method1.Size = new System.Drawing.Size(891, 423);
-            this.uc_processor_scenario_harvest_method1.TabIndex = 0;
-            // 
-            // uc_processor_scenario_movein_costs1
-            // 
-            this.uc_processor_scenario_movein_costs1.Location = new System.Drawing.Point(0, 0);
-            this.uc_processor_scenario_movein_costs1.Name = "uc_processor_scenario_movein_costs1";
-            this.uc_processor_scenario_movein_costs1.ReferenceProcessorScenarioForm = null;
-            this.uc_processor_scenario_movein_costs1.ScenarioId = "";
-            this.uc_processor_scenario_movein_costs1.Size = new System.Drawing.Size(696, 448);
-            this.uc_processor_scenario_movein_costs1.TabIndex = 0;
-            // 
-            // uc_processor_scenario_merch_chip_value1
-            // 
-            this.uc_processor_scenario_merch_chip_value1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_processor_scenario_merch_chip_value1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uc_processor_scenario_merch_chip_value1.Location = new System.Drawing.Point(0, 0);
-            this.uc_processor_scenario_merch_chip_value1.Name = "uc_processor_scenario_merch_chip_value1";
-            this.uc_processor_scenario_merch_chip_value1.ReferenceProcessorScenarioForm = null;
-            this.uc_processor_scenario_merch_chip_value1.ScenarioId = "";
-            this.uc_processor_scenario_merch_chip_value1.Size = new System.Drawing.Size(891, 423);
-            this.uc_processor_scenario_merch_chip_value1.TabIndex = 0;
-            // 
-            // uc_processor_scenario_escalators1
-            // 
-            this.uc_processor_scenario_escalators1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_processor_scenario_escalators1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uc_processor_scenario_escalators1.Location = new System.Drawing.Point(0, 0);
-            this.uc_processor_scenario_escalators1.Name = "uc_processor_scenario_escalators1";
-            this.uc_processor_scenario_escalators1.ReferenceProcessorScenarioForm = null;
-            this.uc_processor_scenario_escalators1.ScenarioId = "";
-            this.uc_processor_scenario_escalators1.Size = new System.Drawing.Size(891, 423);
-            this.uc_processor_scenario_escalators1.TabIndex = 0;
-            // 
-            // uc_processor_scenario_additional_harvest_cost_columns1
-            // 
-            this.uc_processor_scenario_additional_harvest_cost_columns1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_processor_scenario_additional_harvest_cost_columns1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uc_processor_scenario_additional_harvest_cost_columns1.Location = new System.Drawing.Point(0, 0);
-            this.uc_processor_scenario_additional_harvest_cost_columns1.Name = "uc_processor_scenario_additional_harvest_cost_columns1";
-            this.uc_processor_scenario_additional_harvest_cost_columns1.ReferenceProcessorScenarioForm = null;
-            this.uc_processor_scenario_additional_harvest_cost_columns1.ScenarioId = "";
-            this.uc_processor_scenario_additional_harvest_cost_columns1.Size = new System.Drawing.Size(891, 423);
-            this.uc_processor_scenario_additional_harvest_cost_columns1.TabIndex = 0;
-            // 
             // uc_processor_scenario_run1
             // 
             this.uc_processor_scenario_run1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -500,24 +529,24 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_run1.Size = new System.Drawing.Size(891, 423);
             this.uc_processor_scenario_run1.TabIndex = 0;
             // 
-            // tbTreeGroupings
+            // btnHelp
             // 
-            this.tbTreeGroupings.Location = new System.Drawing.Point(4, 22);
-            this.tbTreeGroupings.Name = "tbTreeGroupings";
-            this.tbTreeGroupings.Size = new System.Drawing.Size(899, 449);
-            this.tbTreeGroupings.TabIndex = 4;
-            this.tbTreeGroupings.Text = "Tree Groupings";
-            this.tbTreeGroupings.UseVisualStyleBackColor = true;
-            this.uc_scenario_tree_groupings1 = new uc_scenario_tree_groupings();
-            this.tbTreeGroupings.Controls.Add(uc_scenario_tree_groupings1);
-
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(4, 544);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 47;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // frmProcessorScenario
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(907, 582);
+            this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.tabControlScenario);
             this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.tlbScenario);
             this.Name = "frmProcessorScenario";
             this.Text = "Processor Scenario";
@@ -525,6 +554,7 @@ namespace FIA_Biosum_Manager
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmProcessorScenario_FormClosing);
             this.Resize += new System.EventHandler(this.frmProcessorScenario_Resize);
             this.tabControlScenario.ResumeLayout(false);
+            this.tbTreeGroupings.ResumeLayout(false);
             this.tbRules.ResumeLayout(false);
             this.tabControlRules.ResumeLayout(false);
             this.tbHarvestMethod.ResumeLayout(false);
@@ -693,6 +723,8 @@ namespace FIA_Biosum_Manager
 			{
 				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS")
 				{
+                    btnHelp.Show();
+                    SetHelpChapterForRulesTab();
                     // Loading the rule definitions for the first time
                     if (m_bRulesFirstTime == true)
                     {
@@ -731,13 +763,15 @@ namespace FIA_Biosum_Manager
 				}
                 if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "TREE GROUPINGS")
                 {
+                    btnHelp.Hide();
                     // We load the tree groupings (maybe) when user clicks a button on uc_scenario_tree_groupings.cs
                     // This way we reload from the database if user saved a change and went right back in
                     // without returning to the main Processor scenario page.
                 }
 				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "NOTES")
 				{
-					if (((Control)this.tbNotes).Enabled)
+                    btnHelp.Hide();
+                    if (((Control)this.tbNotes).Enabled)
 					{
 						this.uc_scenario_notes1.lblTitle.Text = "Notes";
 					}
@@ -748,7 +782,9 @@ namespace FIA_Biosum_Manager
 				}
 				else if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "DESCRIPTION")
 				{
-					if (((Control)this.tbDesc).Enabled)
+                    btnHelp.Show();
+                    m_helpChapter = "PROCESSOR_DESCRIPTION";
+                    if (((Control)this.tbDesc).Enabled)
 					{
 						this.uc_scenario1.lblTitle.Text = "Description";
 					}
@@ -759,7 +795,8 @@ namespace FIA_Biosum_Manager
 				}
 				else if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "DATA SOURCES")
 				{
-					if (((Control)this.tbDataSources).Enabled)
+                    btnHelp.Hide();
+                    if (((Control)this.tbDataSources).Enabled)
 					{
 						this.uc_datasource1.lblTitle.Text = "Scenario Datasource";
 					}
@@ -975,6 +1012,7 @@ namespace FIA_Biosum_Manager
 				this.tabControlScenario.Top = this.tlbScenario.Top + this.tlbScenario.Height + 2;
 				this.tabControlScenario.Height = this.btnClose.Top - this.tabControlScenario.Top - 2;
 				this.tabControlScenario.Width = this.ClientSize.Width;
+                this.btnHelp.Top = this.ClientSize.Height - this.btnHelp.Height - 2;
 
 				
 			}
@@ -995,7 +1033,36 @@ namespace FIA_Biosum_Manager
 		private void tabControlRules_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 		  // MessageBox.Show(tabControlRules.SelectedTab.Text);
+            SetHelpChapterForRulesTab();
 		}
+
+        private void SetHelpChapterForRulesTab()
+        {
+            if (tabControlRules.SelectedTab.Text.Trim().ToUpper() == "MOVE-IN COSTS")
+            {
+                m_helpChapter = "MOVEIN_COSTS";
+            }
+            else if (tabControlRules.SelectedTab.Text.Trim().ToUpper() == "HARVEST METHOD")
+            {
+                m_helpChapter = "HARVEST_METHOD";
+            }
+            else if (tabControlRules.SelectedTab.Text.Trim().ToUpper() == "WOOD VALUE")
+            {
+                m_helpChapter = "WOOD_VALUE";
+            }
+            else if (tabControlRules.SelectedTab.Text.Trim().ToUpper() == "ESCALATORS")
+            {
+                m_helpChapter = "ESCALATORS";
+            }
+            else if (tabControlRules.SelectedTab.Text.Trim().ToUpper() == "SUPPLEMENTAL HARVEST COSTS")
+            {
+                m_helpChapter = "SUPPLEMENTAL_HARVEST_COSTS";
+            }
+            else if (tabControlRules.SelectedTab.Text.Trim().ToUpper() == "RUN")
+            {
+                m_helpChapter = "RUN_PROCESSOR";
+            }
+        }
 
 		private void tabControlRules_DrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
 		{
@@ -1132,6 +1199,18 @@ namespace FIA_Biosum_Manager
                 frmMain.g_sbpInfo.Text = "Ready";
                 m_bSave = true;
                 MessageBox.Show("Done");
+            }
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(m_helpChapter))
+            {
+                if (m_oHelp == null)
+                {
+                    m_oHelp = new Help(m_xpsFile, m_oEnv);
+                }
+                m_oHelp.ShowHelp(new string[] { "PROCESSOR", m_helpChapter });
             }
         }
 
