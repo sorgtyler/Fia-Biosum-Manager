@@ -492,6 +492,11 @@ namespace FIA_Biosum_Manager
             this.uc_processor_scenario_tree_spc_groups1.Visible = true;
             this.uc_processor_scenario_tree_spc_groups1.ReferenceProcessorScenarioForm =
                 this.m_frmProcessorScenarioCallingForm;
+
+            // Set minimum size so that form can be resized larger, but not so small that controls are no longer visible
+            Size minimumSize = new Size(this.uc_processor_scenario_tree_spc_groups1.Width + 20,
+                                        this.uc_processor_scenario_tree_spc_groups1.Height + 40);
+            this.MinimumSize = (minimumSize);
         }
 
 

@@ -281,7 +281,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
             this.m_frmTreeSpeciesGroups.Left = 0;
             this.m_frmTreeSpeciesGroups.Top = 0;
-            this.m_frmTreeSpeciesGroups.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.m_frmTreeSpeciesGroups.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.m_frmTreeSpeciesGroups.Show();
         }
 
