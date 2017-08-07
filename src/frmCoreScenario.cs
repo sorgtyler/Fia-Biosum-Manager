@@ -1421,13 +1421,13 @@ namespace FIA_Biosum_Manager
 					//open scenario
 					//
 				case 0:
-					frmMain.g_oFrmMain.OpenCoreScenario("Open");
+					frmMain.g_oFrmMain.OpenCoreScenario("Open", this);
 					break;
 					//
 					//new scenario
 					//
 				case 1:
-					frmMain.g_oFrmMain.OpenCoreScenario("New");
+					frmMain.g_oFrmMain.OpenCoreScenario("New", this);
 					break;
 				case 2:
 					this.SaveRuleDefinitions();

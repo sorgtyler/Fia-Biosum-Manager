@@ -1271,7 +1271,7 @@ namespace FIA_Biosum_Manager
 			
 			return this.frmProject.uc_project1.m_strProjectDirectory;
 		}
-		public void OpenCoreScenario(string p_strType)
+        public void OpenCoreScenario(string p_strType, frmCoreScenario p_frmCoreScenario)
 		{
 			this.m_frmScenario = new frmCoreScenario();
 			DialogResult result;
@@ -1309,6 +1309,7 @@ namespace FIA_Biosum_Manager
 			else
 			{
 				this.m_frmScenario.InitializeNewScenario();
+                this.m_frmScenario.MinimizeBox = false;
 							 
 				result = this.m_frmScenario.ShowDialog();
 				if (result == DialogResult.OK)
@@ -1328,11 +1329,14 @@ namespace FIA_Biosum_Manager
                     oFrmScenario.tlbScenario.Buttons[7].Visible = true; //copy
 					oFrmScenario.MdiParent = this;
 					oFrmScenario.Show();
+                    if (p_frmCoreScenario != null)
+                    {
+                        p_frmCoreScenario.DialogResult = DialogResult.Cancel;
+                    }
 				}
 				
 
-			}
-			
+			}			
 
 
 		}
@@ -1507,12 +1511,12 @@ namespace FIA_Biosum_Manager
 						frmMain.g_oFrmMain=this;
 						if (intCount>0)
 						{
-							OpenCoreScenario("Open");
+							OpenCoreScenario("Open", null);
 						}
 						else
 						{
 
-							OpenCoreScenario("New");
+							OpenCoreScenario("New", null);
 						}
 					}
 				
