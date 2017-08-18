@@ -1251,7 +1251,7 @@ namespace FIA_Biosum_Manager
         {
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", false);
-            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules,"tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", false);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond,tbMoveInCosts", false);
             string strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
             if (!System.IO.Directory.Exists(strPath))
                 System.IO.Directory.CreateDirectory(strPath);
@@ -5177,7 +5177,8 @@ namespace FIA_Biosum_Manager
             uc_filesize_monitor2.EndMonitoringFile();
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tlbScenario, "Enabled", true);
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", true);
-            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", true);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbTreeGroupings", true);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond,tbMoveInCosts", true);
             //frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tlbScenario,"Enabled",true);
             //frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tabControlRules, "Enabled", true);
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tabControlScenario, "Enabled", true);
@@ -5347,7 +5348,8 @@ namespace FIA_Biosum_Manager
         {
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", false);
-            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", false);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbTreeGroupings", false);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond,tbMoveInCosts", false);
             string strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
             if (!System.IO.Directory.Exists(strPath))
                 System.IO.Directory.CreateDirectory(strPath);
