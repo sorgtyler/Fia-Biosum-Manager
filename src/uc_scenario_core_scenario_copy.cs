@@ -256,6 +256,8 @@ namespace FIA_Biosum_Manager
 
                 this.m_oCoreAnalysisScenarioItem = m_oCoreAnalysisScenarioItem_Collection.Item(x);
 
+                ReferenceCurrentScenarioItem.Description = m_oCoreAnalysisScenarioItem.Description;
+                ReferenceCurrentScenarioItem.Notes = m_oCoreAnalysisScenarioItem.Notes;
                 ReferenceCurrentScenarioItem.m_oCondTableSQLFilter = m_oCoreAnalysisScenarioItem.m_oCondTableSQLFilter;
                 ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection, ref ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection, true);
                 ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oOptimizationVariableItem_Collection, ref ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection, true);
