@@ -1103,7 +1103,7 @@ namespace FIA_Biosum_Manager
 			p_frmTherm.lblMsg.Text = "Rule Definitions: Cost And Revenue Data";
 			p_frmTherm.lblMsg.Refresh();
 			this.uc_scenario_costs1.loadvalues();
-            this.uc_scenario_processor_scenario_select1.loadvalues();
+            this.uc_scenario_processor_scenario_select1.loadvalues(false);
 			p_frmTherm.progressBar1.Value=6;
 			p_frmTherm.lblMsg.Text = "Rule Definitions: Plot Filter Data";
 			p_frmTherm.lblMsg.Refresh();
@@ -1496,7 +1496,7 @@ namespace FIA_Biosum_Manager
                 
                 
                 this.uc_scenario_costs1.loadvalues();
-                this.uc_scenario_processor_scenario_select1.loadvalues();
+                this.uc_scenario_processor_scenario_select1.loadvalues(true);
                 
                 
                 this.uc_scenario_filter1.loadvalues(true);
