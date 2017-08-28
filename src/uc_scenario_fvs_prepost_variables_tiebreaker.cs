@@ -1543,15 +1543,21 @@ namespace FIA_Biosum_Manager
 		}
 		public void Audit()
 		{
-			string str="";
-			
-			int x;
+			int x = 0;
 			this.m_intError=0;
 			this.m_strError="Audit Results \r\n";
 			this.m_strError=m_strError + "-------------\r\n\r\n";
 
-			x=this.uc_scenario_treatment_intensity1.Val_Intensity(false);
-			if (x<0)
+            // Only validate treatment intensity if it is checked
+            foreach (ListViewItem itemRow in this.lvFVSVariablesTieBreakerValues.CheckedItems)
+            {
+                if (itemRow.SubItems[COLUMN_METHOD].Text.Trim().Equals("Treatment Intensity"))
+                {
+                    x=this.uc_scenario_treatment_intensity1.Val_Intensity(false);
+                }
+            }
+
+            if (x<0)
 			{
                 if (x == -1) m_strError = m_strError + "No treatments defined\r\n";
                 else if (x == -2) m_strError = m_strError + "Treatment intensity ratings must be unique\r\n";
