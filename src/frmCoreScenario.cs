@@ -1133,6 +1133,13 @@ namespace FIA_Biosum_Manager
 
             if (m_lrulesfirsttime == false)
             {
+                frmMain.g_oFrmMain.ActivateStandByAnimation(
+                    this.WindowState,
+                    this.Left,
+                    this.Height,
+                    this.Width,
+                    this.Top);
+                
                 savestatus = this.uc_scenario_fvs_prepost_variables_effective1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_fvs_prepost_optimization1.savevalues();
@@ -1151,39 +1158,16 @@ namespace FIA_Biosum_Manager
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
                 this.uc_scenario_processor_scenario_select1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-            }
-            else
-            {
-                m_oCoreAnalysisScenarioItem.ScenarioId = this.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+
+                frmMain.g_oFrmMain.DeactivateStandByAnimation();
             }
 			this.uc_scenario_notes1.SaveScenarioNotes();
             if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
 			this.uc_scenario1.UpdateDescription();
             if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-
-            Queries oQueries = new Queries();
-            this.m_oCoreAnalysisScenarioTools.LoadAll(
-                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\core\\db\\scenario_core_rule_definitions.mdb",
-                oQueries, m_oCoreAnalysisScenarioItem.ScenarioId,
-                m_oCoreAnalysisScenarioItem_Collection);
-            //find the current scenario
-            for (x = 0; x <= m_oCoreAnalysisScenarioItem_Collection.Count - 1; x++)
-            {
-                if (m_oCoreAnalysisScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
-                    m_oCoreAnalysisScenarioItem.ScenarioId.Trim().ToUpper())
-                    break;
-            }
-            if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-
-            this.m_oCoreAnalysisScenarioItem.Copy(m_oCoreAnalysisScenarioItem_Collection.Item(x), m_oSavCoreAnalysisScenarioItem);
-            if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-            this.m_oCoreAnalysisScenarioItem = m_oCoreAnalysisScenarioItem_Collection.Item(x);
-
             
 			this.m_bSave=false;
 			frmMain.g_sbpInfo.Text = "Ready";
-
 		}
 		
 
