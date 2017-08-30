@@ -1377,6 +1377,132 @@ namespace FIA_Biosum_Manager
 				strSQL = "DELETE * FROM scenario_datasource WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
 				p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);				
 			}
+            {
+                strSQL = "DELETE * FROM scenario_datasource WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+            }
+            if (p_ado.m_intError == 0)
+            {
+                // This table exists in both PROCESSOR and CORE scenario rule definitions
+                strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestCostColumnsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+            }
+            if (p_strScenarioType.Equals("processor"))
+            {
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultCostRevenueEscalatorsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultHarvestMethodTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultMoveInCostsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultRxHarvestMethodTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeDiamGroupsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesDollarValuesTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+            }
+            else
+            {
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+                if (p_ado.m_intError == 0)
+                {
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                }
+            }
 			if (p_ado.m_intError==0)
 			{
 				strSQL = p_strScenarioId + " was successfully deleted from the scenario tables. Do you wish to delete the scenario file and directory (Y/N)?";
