@@ -1505,25 +1505,18 @@ namespace FIA_Biosum_Manager
             }
 			if (p_ado.m_intError==0)
 			{
-				strSQL = p_strScenarioId + " was successfully deleted from the scenario tables. Do you wish to delete the scenario file and directory (Y/N)?";
-				result = MessageBox.Show(strSQL,"Delete Scenario", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-				switch (result) 
-				{
-					case DialogResult.Yes:
-						
-						try 
-						{
-							System.IO.Directory.Delete(strScenarioPath,true);
-						}
-						catch (Exception err)
-						{
-							MessageBox.Show(err.Message);
-						}
-						break;
-					case DialogResult.No:
-						break;
-				}                
-
+                try
+                {
+                    // Delete scenario output folder
+                    System.IO.Directory.Delete(strScenarioPath, true);
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show(err.Message);
+                }
+                
+                strSQL = p_strScenarioId + " was successfully deleted.";
+                result = MessageBox.Show(strSQL, "Delete Scenario", MessageBoxButtons.OK);
 			}
 			p_ado.CloseConnection(p_ado.m_OleDbConnection);
 			p_ado = null;
