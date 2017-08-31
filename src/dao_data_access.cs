@@ -22,7 +22,8 @@ namespace FIA_Biosum_Manager
         public string m_strError;
         public string m_strTable;
         private bool _bDisplayErrors = true;
-
+        private string m_strDebugFile = Environment.GetEnvironmentVariable("tmp").Trim() + "\\biosum_dao_debug.txt";
+        private bool m_bDebug=false;
 
 
 
@@ -31,14 +32,40 @@ namespace FIA_Biosum_Manager
             //
             // TODO: Add constructor logic here
             //
+            if (m_bDebug)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//dao_data_access.constructor\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
 
+            if (m_bDebug) frmMain.g_oUtils.WriteText(m_strDebugFile, "this.m_DaoDbEngine = new Microsoft.Office.Interop.Access.Dao.DBEngineClass()\r\n");
             this.m_DaoDbEngine = new Microsoft.Office.Interop.Access.Dao.DBEngineClass();
+            if (m_bDebug) frmMain.g_oUtils.WriteText(m_strDebugFile, "m_DaoDbEngine.DefaultType = Convert.ToInt32(Microsoft.Office.Interop.Access.Dao.WorkspaceTypeEnum.dbUseJet)\r\n");
             this.m_DaoDbEngine.DefaultType = Convert.ToInt32(Microsoft.Office.Interop.Access.Dao.WorkspaceTypeEnum.dbUseJet);
+            if (m_bDebug) frmMain.g_oUtils.WriteText(m_strDebugFile, "m_DaoWorkspace = this.m_DaoDbEngine.CreateWorkspace('Replication', 'admin', '', Microsoft.Office.Interop.Access.Dao.WorkspaceTypeEnum.dbUseJet);\r\n");
             this.m_DaoWorkspace = this.m_DaoDbEngine.CreateWorkspace("Replication", "admin", "", Microsoft.Office.Interop.Access.Dao.WorkspaceTypeEnum.dbUseJet);
-           
+            if (m_bDebug)
+            {
+                this.WriteText(m_strDebugFile, "DAO version:" + m_DaoDbEngine.Version + "\r\n");
+                this.WriteText(m_strDebugFile, "DAO Default Type:" + m_DaoDbEngine.DefaultType.ToString() + "\r\n");
+                Type oType = m_DaoDbEngine.GetType();
+                this.WriteText(m_strDebugFile, "GetType.AssemblyQualifiedName=" + oType.AssemblyQualifiedName.ToString() + "\r\n");
+                this.WriteText(m_strDebugFile, "GetType.Name=" + oType.Name.ToString() + "\r\n");
+                this.WriteText(m_strDebugFile, "GetType.GUID=" + oType.GUID.ToString() + "\r\n");
+                this.WriteText(m_strDebugFile, "GetType.Assembly.FullName=" + oType.Assembly.FullName.ToString() + "\r\n");
+                this.WriteText(m_strDebugFile, "GetType.Assembly.Location=" + oType.Assembly.Location.ToString() + "\r\n");
+                this.WriteText(m_strDebugFile, "GetType.Assembly.CodeBase=" + oType.Assembly.CodeBase.ToString() + "\r\n");
+            }
         }
         ~dao_data_access()
         {
+            if (m_bDebug)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//dao_data_access.destructor\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
             try
             {
                 this.m_DaoWorkspace.Close();
@@ -64,6 +91,7 @@ namespace FIA_Biosum_Manager
             try
             {
                 p_DaoDatabase = this.m_DaoDbEngine.Workspaces[0].OpenDatabase(strFullPath, false, false, string.Empty);
+                
             }
             catch
             {
@@ -623,9 +651,17 @@ namespace FIA_Biosum_Manager
         }
         public void CreateOracleXETableLink(string strDsn, string strUserId, string strPW, string strTableSchema, string strTableSource, string strMDBFileDestination, string strTableDestination)
         {
+            if (m_bDebug)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//dao_data_access.CreateOracleXETableLink\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n\r\n");
 
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Passed Parameters\r\n------------------\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "DSN=" + strDsn + "\r\nUserId=" + strUserId + "\r\nPassword=" + strPW + "\r\nOracleTableSchema=" + strTableSchema + "\r\nOracleTableSource=" + strTableSource + "\r\nDestinationMDBFile=" + strMDBFileDestination + "\r\nMDBTableLinkName=" + strTableDestination + "\r\n");
+            }
             string strConnect = "ODBC;DSN=" + strDsn + ";UID=" + strUserId + ";PWD=" + strPW + ";DBQ=XE;";
-
+            if (m_bDebug) frmMain.g_oUtils.WriteText(m_strDebugFile, "odbc connection string=" + strConnect + "\r\n");
             this.m_intError = 0;
             this.m_strError = "";
             /********************************************************
@@ -1542,6 +1578,12 @@ namespace FIA_Biosum_Manager
         public void CreateMDB(string strFullPath)
         {
             Microsoft.Office.Interop.Access.Dao.Database p_DaoDatabase;
+            if (m_bDebug)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//dao_data_access.CreateMDB\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
             this.m_intError = 0;
             this.m_strError = "";
             try
@@ -2271,13 +2313,6 @@ namespace FIA_Biosum_Manager
             m_DaoField = null;
             m_DaoTableDef = null;
         }
-
-        public bool DisplayErrors
-        {
-            set { this._bDisplayErrors = value; }
-            get { return this._bDisplayErrors; }
-        }
-
         public bool RenameField(string p_strDatabase, string p_strTable, string p_strOldFieldName, string p_strNewFieldName)
         {
 
@@ -2316,6 +2351,35 @@ namespace FIA_Biosum_Manager
                 this.m_DaoDatabase.Close();
                 this.m_DaoDatabase = null;
             }
+        }
+
+
+        public bool DisplayErrors
+        {
+            set { this._bDisplayErrors = value; }
+            get { return this._bDisplayErrors; }
+        }
+
+        private void WriteText(string p_strTextFile, string p_strText)
+        {
+            System.IO.FileStream oTextFileStream;
+            System.IO.StreamWriter oTextStreamWriter;
+
+            if (!System.IO.File.Exists(p_strTextFile))
+            {
+                oTextFileStream = new System.IO.FileStream(p_strTextFile, System.IO.FileMode.Create,
+                    System.IO.FileAccess.Write);
+            }
+            else
+            {
+                oTextFileStream = new System.IO.FileStream(p_strTextFile, System.IO.FileMode.Append,
+                    System.IO.FileAccess.Write);
+            }
+
+            oTextStreamWriter = new System.IO.StreamWriter(oTextFileStream);
+            oTextStreamWriter.Write(p_strText);
+            oTextStreamWriter.Close();
+            oTextFileStream.Close();
         }
 
     }
