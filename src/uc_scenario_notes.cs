@@ -194,6 +194,26 @@ namespace FIA_Biosum_Manager
 			this.txtNotes.Text = strNotes;
 		}
 
+        public void loadvalues_FromProperties()
+        {
+            if (ScenarioType.Trim().ToUpper() == "CORE")
+            {
+                FIA_Biosum_Manager.CoreAnalysisScenarioItem oItem = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem;
+                this.txtNotes.Text = oItem.Notes.Trim();
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.Notes))
+                {
+                    FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
+                    this.txtNotes.Text = oItem.Notes.Trim();
+                }
+            }
+
+
+        }
+
+
 		private void txtNotes_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
 			if (ScenarioType.Trim().ToUpper()=="CORE") ReferenceCoreScenarioForm.m_bSave=true;

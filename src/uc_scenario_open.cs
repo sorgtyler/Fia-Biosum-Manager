@@ -579,9 +579,6 @@ namespace FIA_Biosum_Manager
 									case "TREATMENT PRESCRIPTIONS":
 										bCore = true;
 										break;
-									case "TREE SPECIES GROUPS":
-										bCore = true;
-									    break;
 									case "TREE VOLUMES AND VALUES BY SPECIES AND DIAMETER GROUPS":
 										bCore = true;
 										break;

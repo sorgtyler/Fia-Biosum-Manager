@@ -1103,7 +1103,7 @@ namespace FIA_Biosum_Manager
 			p_frmTherm.lblMsg.Text = "Rule Definitions: Cost And Revenue Data";
 			p_frmTherm.lblMsg.Refresh();
 			this.uc_scenario_costs1.loadvalues();
-            this.uc_scenario_processor_scenario_select1.loadvalues();
+            this.uc_scenario_processor_scenario_select1.loadvalues(false);
 			p_frmTherm.progressBar1.Value=6;
 			p_frmTherm.lblMsg.Text = "Rule Definitions: Plot Filter Data";
 			p_frmTherm.lblMsg.Refresh();
@@ -1131,55 +1131,43 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicCurrentStep = 1;
 
-			if (m_lrulesfirsttime==false)
-			{
-				savestatus=this.uc_scenario_fvs_prepost_variables_effective1.savevalues();
+            if (m_lrulesfirsttime == false)
+            {
+                frmMain.g_oFrmMain.ActivateStandByAnimation(
+                    this.WindowState,
+                    this.Left,
+                    this.Height,
+                    this.Width,
+                    this.Top);
+                
+                savestatus = this.uc_scenario_fvs_prepost_variables_effective1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-				savestatus=this.uc_scenario_fvs_prepost_optimization1.savevalues();
+                savestatus = this.uc_scenario_fvs_prepost_optimization1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-				savestatus=this.uc_scenario_fvs_prepost_variables_tiebreaker1.savevalues();
+                savestatus = this.uc_scenario_fvs_prepost_variables_tiebreaker1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-				savestatus=this.uc_scenario_owner_groups1.savevalues();
+                savestatus = this.uc_scenario_owner_groups1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-				savestatus=this.uc_scenario_costs1.savevalues();
+                savestatus = this.uc_scenario_costs1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-				savestatus=this.uc_scenario_psite1.savevalues();
+                savestatus = this.uc_scenario_psite1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-				savestatus=this.uc_scenario_filter1.savevalues();
+                savestatus = this.uc_scenario_filter1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-				savestatus=this.uc_scenario_cond_filter1.savevalues();
+                savestatus = this.uc_scenario_cond_filter1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
                 this.uc_scenario_processor_scenario_select1.savevalues();
                 if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-			}
+
+                frmMain.g_oFrmMain.DeactivateStandByAnimation();
+            }
 			this.uc_scenario_notes1.SaveScenarioNotes();
             if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
 			this.uc_scenario1.UpdateDescription();
             if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-
-            Queries oQueries = new Queries();
-            this.m_oCoreAnalysisScenarioTools.LoadAll(
-                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\core\\db\\scenario_core_rule_definitions.mdb",
-                oQueries, m_oCoreAnalysisScenarioItem.ScenarioId,
-                m_oCoreAnalysisScenarioItem_Collection);
-            //find the current scenario
-            for (x = 0; x <= m_oCoreAnalysisScenarioItem_Collection.Count - 1; x++)
-            {
-                if (m_oCoreAnalysisScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
-                    m_oCoreAnalysisScenarioItem.ScenarioId.Trim().ToUpper())
-                    break;
-            }
-            if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-
-            this.m_oCoreAnalysisScenarioItem.Copy(m_oCoreAnalysisScenarioItem_Collection.Item(x), m_oSavCoreAnalysisScenarioItem);
-            if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
-            this.m_oCoreAnalysisScenarioItem = m_oCoreAnalysisScenarioItem_Collection.Item(x);
-
             
 			this.m_bSave=false;
 			frmMain.g_sbpInfo.Text = "Ready";
-
 		}
 		
 
@@ -1483,13 +1471,16 @@ namespace FIA_Biosum_Manager
                 frmMain.g_sbpInfo.Text = "Copying scenario rule definitions...Stand by";
 
                 this.uc_scenario_fvs_prepost_variables_effective1.loadvalues_FromProperties();
-                
-                
+
+                this.uc_scenario1.txtDescription.Text = m_oCoreAnalysisScenarioItem.Description;
+                frmMain.g_sbpInfo.Text = "Loading Scenario Notes...Stand By";
+                this.uc_scenario_notes1.ReferenceCoreScenarioForm = this;
+                this.uc_scenario_notes1.loadvalues_FromProperties();
                 this.uc_scenario_owner_groups1.loadvalues();
                 
                 
                 this.uc_scenario_costs1.loadvalues();
-                this.uc_scenario_processor_scenario_select1.loadvalues();
+                this.uc_scenario_processor_scenario_select1.loadvalues(true);
                 
                 
                 this.uc_scenario_filter1.loadvalues(true);
@@ -1899,14 +1890,18 @@ namespace FIA_Biosum_Manager
             get { return _strOwnerGroupCdList; }
             set { _strOwnerGroupCdList = value; }
         }
-        
-        
-        
+               
         private string _strPlotTableSQLFilter = "";
         public string PlotTableSQLFilter
         {
             get {return _strPlotTableSQLFilter;}
             set {_strPlotTableSQLFilter=value;}
+        }
+        private string _strNotes = "";
+        public string Notes
+        {
+            get { return _strNotes; }
+            set { _strNotes = value; }
         }
         public struct ConditionTableSQLFilter
         {
@@ -1923,6 +1918,7 @@ namespace FIA_Biosum_Manager
             p_oDest.PlotTableSQLFilter = p_oSource.PlotTableSQLFilter;
             p_oDest.ScenarioId = p_oSource.ScenarioId;
             p_oDest.Description = p_oSource.Description;
+            p_oDest.Notes = p_oSource.Notes;
             p_oDest.m_oEffectiveVariablesItem_Collection.Copy(
                 p_oSource.m_oEffectiveVariablesItem_Collection,
             ref p_oDest.m_oEffectiveVariablesItem_Collection, true);
@@ -2774,7 +2770,13 @@ namespace FIA_Biosum_Manager
                         {
                             p_oCoreAnalysisScenarioItem.DbFileName = p_oAdo.m_OleDbDataReader["file"].ToString().Trim();
                         }
-
+                        //
+                        //NOTES
+                        //
+                        if (p_oAdo.m_OleDbDataReader["notes"] != System.DBNull.Value)
+                        {
+                            p_oCoreAnalysisScenarioItem.Notes = p_oAdo.m_OleDbDataReader["notes"].ToString().Trim();
+                        }
 
                     }
                     p_oAdo.m_OleDbDataReader.Close();

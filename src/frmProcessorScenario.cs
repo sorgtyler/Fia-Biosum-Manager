@@ -1183,6 +1183,10 @@ namespace FIA_Biosum_Manager
                 // For tree groupings child forms, set flag that this is copied scenario; The form will call
                 // the appropriate load method
                 m_bTreeGroupsCopied = true;
+                this.uc_scenario1.txtDescription.Text = m_oProcessorScenarioItem.Description;
+                this.uc_scenario_notes1.ReferenceProcessorScenarioForm = this;
+                frmMain.g_sbpInfo.Text = "Loading Scenario Notes...Stand By";
+                this.uc_scenario_notes1.loadvalues_FromProperties();
                 this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm = this;
                 frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
                 this.uc_processor_scenario_harvest_method1.loadvalues_FromProperties();
@@ -1270,6 +1274,13 @@ namespace FIA_Biosum_Manager
             get { return _bSelected; }
             set { _bSelected = value; }
         }
+
+        private string _strNotes = "";
+        public string Notes
+        {
+            get { return _strNotes; }
+            set { _strNotes = value; }
+        }
         public void Copy(ProcessorScenarioItem p_oSource,
                          ProcessorScenarioItem p_oDest)
         {
@@ -1279,6 +1290,7 @@ namespace FIA_Biosum_Manager
             p_oDest.Description = p_oSource.Description;
             p_oDest.DisplayFullDetailsYN = p_oSource.DisplayFullDetailsYN;
             p_oDest.Selected = p_oSource.Selected;
+            p_oDest.Notes = p_oSource.Notes;
             p_oDest.m_oTreeDiamGroupsItem_Collection.Copy(p_oSource.m_oTreeDiamGroupsItem_Collection,
             ref p_oDest.m_oTreeDiamGroupsItem_Collection, true);
             p_oDest.m_oEscalators.Copy(p_oSource.m_oEscalators, p_oDest.m_oEscalators);
@@ -2141,6 +2153,13 @@ namespace FIA_Biosum_Manager
                         if (p_oAdo.m_OleDbDataReader["file"] != System.DBNull.Value)
                         {
                             p_oProcessorScenarioItem.DbFileName = p_oAdo.m_OleDbDataReader["file"].ToString().Trim();
+                        }
+                        //
+                        //NOTES
+                        //
+                        if (p_oAdo.m_OleDbDataReader["notes"] != System.DBNull.Value)
+                        {
+                            p_oProcessorScenarioItem.Notes = p_oAdo.m_OleDbDataReader["notes"].ToString().Trim();
                         }
 
 

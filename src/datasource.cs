@@ -809,8 +809,6 @@ namespace FIA_Biosum_Manager
 					p_dao.CreatePrimaryKeyIndex(p_strMDBPathAndFile,p_strTable,"id");
 					p_dao.CreateAutoNumber(p_strMDBPathAndFile,p_strTable,"id");
 					break;
-				case "TREE DIAMETER GROUPS":
-					break;
 				case "FVS TREE SPECIES":
 					break;
 				case "TREATMENT PRESCRIPTIONS":
@@ -875,8 +873,6 @@ namespace FIA_Biosum_Manager
 					break;
 				case "HARVEST COSTS":
 					p_dao.CreatePrimaryKeyIndex(p_dao.m_DaoDatabase,p_strTable,"biosum_cond_id,rx");
-					break;
-				case "TREE DIAMETER GROUPS":
 					break;
 				case "FVS TREE SPECIES":
 					break;

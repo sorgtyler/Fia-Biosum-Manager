@@ -234,478 +234,479 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
-																													 "",
-																													 "FVS Variable",
-																													 "Not Defined",
-																													 "Not Defined",
-																													 "Not Defined"}, -1);
-			System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
-																													 "",
-																													 "Treatment Intensity",
-																													 "NA",
-																													 "NA",
-																													 "NA"}, -1);
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity = new System.Windows.Forms.GroupBox();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
-			this.btnFVSVariablesTieBreakerTreatmentIntensityPrev = new System.Windows.Forms.Button();
-			this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
-			this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
-			this.btnFVSVariablesTieBreakerTreatmentIntensityCancel = new System.Windows.Forms.Button();
-			this.grpboxFVSVariablesTieBreakerVariable = new System.Windows.Forms.GroupBox();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.grpboxFVSVariablesTieBreakerVariableValueSource = new System.Windows.Forms.GroupBox();
-			this.cmbFVSVariablesTieBreakerVariableValueSource = new System.Windows.Forms.ComboBox();
-			this.grpMaxMin = new System.Windows.Forms.GroupBox();
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin = new System.Windows.Forms.RadioButton();
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax = new System.Windows.Forms.RadioButton();
-			this.grpboxFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.GroupBox();
-			this.btnFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.Button();
-			this.lstFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.ListBox();
-			this.grpFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.GroupBox();
-			this.lblFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.Label();
-			this.btnFVSVariablesTieBreakerVariableClear = new System.Windows.Forms.Button();
-			this.btnFVSVariablesTieBreakerVariableDone = new System.Windows.Forms.Button();
-			this.btnFVSVariablesTieBreakerVariableCancel = new System.Windows.Forms.Button();
-			this.btnFVSVariablesTieBreakerVariableNext = new System.Windows.Forms.Button();
-			this.grpboxFVSVariablesTieBreaker = new System.Windows.Forms.GroupBox();
-			this.pnlTieBreaker = new System.Windows.Forms.Panel();
-			this.grpboxFVSVariablesTieBreakerValues = new System.Windows.Forms.GroupBox();
-			this.lvFVSVariablesTieBreakerValues = new System.Windows.Forms.ListView();
-			this.lvColChecked = new System.Windows.Forms.ColumnHeader();
-			this.lvColMethod = new System.Windows.Forms.ColumnHeader();
-			this.lvColFVSVariableName = new System.Windows.Forms.ColumnHeader();
-			this.lvColFieldSource = new System.Windows.Forms.ColumnHeader();
-			this.lvColMinMax = new System.Windows.Forms.ColumnHeader();
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
-			this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.SuspendLayout();
-			this.panel2.SuspendLayout();
-			this.grpboxFVSVariablesTieBreakerVariable.SuspendLayout();
-			this.panel1.SuspendLayout();
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.SuspendLayout();
-			this.grpMaxMin.SuspendLayout();
-			this.grpboxFVSVariablesTieBreakerVariableValues.SuspendLayout();
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.SuspendLayout();
-			this.grpboxFVSVariablesTieBreaker.SuspendLayout();
-			this.pnlTieBreaker.SuspendLayout();
-			this.grpboxFVSVariablesTieBreakerValues.SuspendLayout();
-			this.groupBox3.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-			this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerTreatmentIntensity);
-			this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariable);
-			this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreaker);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(900, 2000);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Resize += new System.EventHandler(this.groupBox1_Resize);
-			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
-			// 
-			// grpboxFVSVariablesTieBreakerTreatmentIntensity
-			// 
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.BackColor = System.Drawing.SystemColors.Control;
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Controls.Add(this.panel2);
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.ForeColor = System.Drawing.Color.Black;
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Location = new System.Drawing.Point(16, 1016);
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Name = "grpboxFVSVariablesTieBreakerTreatmentIntensity";
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Size = new System.Drawing.Size(872, 448);
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.TabIndex = 35;
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.TabStop = false;
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Text = "Treatment Intensity";
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreakerTreatmentIntensity_Resize);
-			// 
-			// panel2
-			// 
-			this.panel2.AutoScroll = true;
-			this.panel2.Controls.Add(this.uc_scenario_treatment_intensity1);
-			this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev);
-			this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityClear);
-			this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityDone);
-			this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityCancel);
-			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel2.Location = new System.Drawing.Point(3, 18);
-			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(866, 427);
-			this.panel2.TabIndex = 12;
-			// 
-			// uc_scenario_treatment_intensity1
-			// 
-			this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
-			this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 8);
-			this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
-			this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
-			this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 344);
-			this.uc_scenario_treatment_intensity1.TabIndex = 13;
-			this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
-			// 
-			// btnFVSVariablesTieBreakerTreatmentIntensityPrev
-			// 
-			this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Location = new System.Drawing.Point(528, 376);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Name = "btnFVSVariablesTieBreakerTreatmentIntensityPrev";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Size = new System.Drawing.Size(88, 40);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.TabIndex = 12;
-			this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Text = "<--Previous";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev_Click);
-			// 
-			// btnFVSVariablesTieBreakerTreatmentIntensityClear
-			// 
-			this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Location = new System.Drawing.Point(24, 376);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Name = "btnFVSVariablesTieBreakerTreatmentIntensityClear";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Size = new System.Drawing.Size(72, 40);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityClear.TabIndex = 5;
-			this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Text = "Clear";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityClear_Click);
-			// 
-			// btnFVSVariablesTieBreakerTreatmentIntensityDone
-			// 
-			this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Location = new System.Drawing.Point(352, 376);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Name = "btnFVSVariablesTieBreakerTreatmentIntensityDone";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Size = new System.Drawing.Size(88, 40);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityDone.TabIndex = 11;
-			this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Text = "Done";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityDone_Click);
-			// 
-			// btnFVSVariablesTieBreakerTreatmentIntensityCancel
-			// 
-			this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Location = new System.Drawing.Point(440, 376);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Name = "btnFVSVariablesTieBreakerTreatmentIntensityCancel";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Size = new System.Drawing.Size(88, 40);
-			this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.TabIndex = 9;
-			this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Text = "Cancel";
-			this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityCancel_Click);
-			// 
-			// grpboxFVSVariablesTieBreakerVariable
-			// 
-			this.grpboxFVSVariablesTieBreakerVariable.BackColor = System.Drawing.SystemColors.Control;
-			this.grpboxFVSVariablesTieBreakerVariable.Controls.Add(this.panel1);
-			this.grpboxFVSVariablesTieBreakerVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.grpboxFVSVariablesTieBreakerVariable.ForeColor = System.Drawing.Color.Black;
-			this.grpboxFVSVariablesTieBreakerVariable.Location = new System.Drawing.Point(16, 544);
-			this.grpboxFVSVariablesTieBreakerVariable.Name = "grpboxFVSVariablesTieBreakerVariable";
-			this.grpboxFVSVariablesTieBreakerVariable.Size = new System.Drawing.Size(872, 448);
-			this.grpboxFVSVariablesTieBreakerVariable.TabIndex = 34;
-			this.grpboxFVSVariablesTieBreakerVariable.TabStop = false;
-			this.grpboxFVSVariablesTieBreakerVariable.Text = "FVS Variable";
-			// 
-			// panel1
-			// 
-			this.panel1.AutoScroll = true;
-			this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValueSource);
-			this.panel1.Controls.Add(this.grpMaxMin);
-			this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValues);
-			this.panel1.Controls.Add(this.grpFVSVariablesTieBreakerVariableValuesSelected);
-			this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableClear);
-			this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableDone);
-			this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableCancel);
-			this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableNext);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(3, 18);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(866, 427);
-			this.panel1.TabIndex = 12;
-			// 
-			// grpboxFVSVariablesTieBreakerVariableValueSource
-			// 
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.Controls.Add(this.cmbFVSVariablesTieBreakerVariableValueSource);
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.Location = new System.Drawing.Point(8, 296);
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.Name = "grpboxFVSVariablesTieBreakerVariableValueSource";
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.Size = new System.Drawing.Size(344, 72);
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.TabIndex = 19;
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.TabStop = false;
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.Text = "Post Treatment Variable Or Pre/Post Treatment Change";
-			// 
-			// cmbFVSVariablesTieBreakerVariableValueSource
-			// 
-			this.cmbFVSVariablesTieBreakerVariableValueSource.Items.AddRange(new object[] {
-																							  "Post Value",
-																							  "Post - Pre  Change Value"});
-			this.cmbFVSVariablesTieBreakerVariableValueSource.Location = new System.Drawing.Point(16, 40);
-			this.cmbFVSVariablesTieBreakerVariableValueSource.Name = "cmbFVSVariablesTieBreakerVariableValueSource";
-			this.cmbFVSVariablesTieBreakerVariableValueSource.Size = new System.Drawing.Size(320, 24);
-			this.cmbFVSVariablesTieBreakerVariableValueSource.TabIndex = 0;
-			this.cmbFVSVariablesTieBreakerVariableValueSource.Text = "Post Value";
-			// 
-			// grpMaxMin
-			// 
-			this.grpMaxMin.Controls.Add(this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin);
-			this.grpMaxMin.Controls.Add(this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax);
-			this.grpMaxMin.Location = new System.Drawing.Point(360, 296);
-			this.grpMaxMin.Name = "grpMaxMin";
-			this.grpMaxMin.Size = new System.Drawing.Size(464, 64);
-			this.grpMaxMin.TabIndex = 18;
-			this.grpMaxMin.TabStop = false;
-			this.grpMaxMin.Text = "Aggregate Setting For Tie Breaker Variable";
-			// 
-			// rdoFVSVariablesTieBreakerVariableValuesSelectedMin
-			// 
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Location = new System.Drawing.Point(256, 16);
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Name = "rdoFVSVariablesTieBreakerVariableValuesSelectedMin";
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Size = new System.Drawing.Size(176, 40);
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.TabIndex = 14;
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Text = "Minimum";
-			// 
-			// rdoFVSVariablesTieBreakerVariableValuesSelectedMax
-			// 
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Checked = true;
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Location = new System.Drawing.Point(32, 16);
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Name = "rdoFVSVariablesTieBreakerVariableValuesSelectedMax";
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Size = new System.Drawing.Size(176, 40);
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.TabIndex = 12;
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.TabStop = true;
-			this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Text = "Maximum";
-			// 
-			// grpboxFVSVariablesTieBreakerVariableValues
-			// 
-			this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.btnFVSVariablesTieBreakerVariableValues);
-			this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.lstFVSVariablesTieBreakerVariableValues);
-			this.grpboxFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
-			this.grpboxFVSVariablesTieBreakerVariableValues.Name = "grpboxFVSVariablesTieBreakerVariableValues";
-			this.grpboxFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(816, 216);
-			this.grpboxFVSVariablesTieBreakerVariableValues.TabIndex = 0;
-			this.grpboxFVSVariablesTieBreakerVariableValues.TabStop = false;
-			this.grpboxFVSVariablesTieBreakerVariableValues.Text = "Tie Breaker Variable List";
-			// 
-			// btnFVSVariablesTieBreakerVariableValues
-			// 
-			this.btnFVSVariablesTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.btnFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(448, 32);
-			this.btnFVSVariablesTieBreakerVariableValues.Name = "btnFVSVariablesTieBreakerVariableValues";
-			this.btnFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(184, 144);
-			this.btnFVSVariablesTieBreakerVariableValues.TabIndex = 1;
-			this.btnFVSVariablesTieBreakerVariableValues.Text = "Select";
-			this.btnFVSVariablesTieBreakerVariableValues.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableValues_Click);
-			// 
-			// lstFVSVariablesTieBreakerVariableValues
-			// 
-			this.lstFVSVariablesTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lstFVSVariablesTieBreakerVariableValues.ItemHeight = 16;
-			this.lstFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
-			this.lstFVSVariablesTieBreakerVariableValues.Name = "lstFVSVariablesTieBreakerVariableValues";
-			this.lstFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(424, 180);
-			this.lstFVSVariablesTieBreakerVariableValues.TabIndex = 0;
-			// 
-			// grpFVSVariablesTieBreakerVariableValuesSelected
-			// 
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.Controls.Add(this.lblFVSVariablesTieBreakerVariableValuesSelected);
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.Location = new System.Drawing.Point(8, 240);
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.Name = "grpFVSVariablesTieBreakerVariableValuesSelected";
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.Size = new System.Drawing.Size(816, 51);
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.TabIndex = 4;
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.TabStop = false;
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.Text = "Selected Tie Breaker Variable";
-			// 
-			// lblFVSVariablesTieBreakerVariableValuesSelected
-			// 
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Location = new System.Drawing.Point(3, 18);
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Name = "lblFVSVariablesTieBreakerVariableValuesSelected";
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Size = new System.Drawing.Size(810, 30);
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.TabIndex = 2;
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = "Not Defined";
-			// 
-			// btnFVSVariablesTieBreakerVariableClear
-			// 
-			this.btnFVSVariablesTieBreakerVariableClear.Location = new System.Drawing.Point(24, 376);
-			this.btnFVSVariablesTieBreakerVariableClear.Name = "btnFVSVariablesTieBreakerVariableClear";
-			this.btnFVSVariablesTieBreakerVariableClear.Size = new System.Drawing.Size(72, 40);
-			this.btnFVSVariablesTieBreakerVariableClear.TabIndex = 5;
-			this.btnFVSVariablesTieBreakerVariableClear.Text = "Clear";
-			this.btnFVSVariablesTieBreakerVariableClear.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableClear_Click);
-			// 
-			// btnFVSVariablesTieBreakerVariableDone
-			// 
-			this.btnFVSVariablesTieBreakerVariableDone.Location = new System.Drawing.Point(352, 376);
-			this.btnFVSVariablesTieBreakerVariableDone.Name = "btnFVSVariablesTieBreakerVariableDone";
-			this.btnFVSVariablesTieBreakerVariableDone.Size = new System.Drawing.Size(88, 40);
-			this.btnFVSVariablesTieBreakerVariableDone.TabIndex = 11;
-			this.btnFVSVariablesTieBreakerVariableDone.Text = "Done";
-			this.btnFVSVariablesTieBreakerVariableDone.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableDone_Click);
-			// 
-			// btnFVSVariablesTieBreakerVariableCancel
-			// 
-			this.btnFVSVariablesTieBreakerVariableCancel.Location = new System.Drawing.Point(440, 376);
-			this.btnFVSVariablesTieBreakerVariableCancel.Name = "btnFVSVariablesTieBreakerVariableCancel";
-			this.btnFVSVariablesTieBreakerVariableCancel.Size = new System.Drawing.Size(88, 40);
-			this.btnFVSVariablesTieBreakerVariableCancel.TabIndex = 9;
-			this.btnFVSVariablesTieBreakerVariableCancel.Text = "Cancel";
-			this.btnFVSVariablesTieBreakerVariableCancel.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableCancel_Click);
-			// 
-			// btnFVSVariablesTieBreakerVariableNext
-			// 
-			this.btnFVSVariablesTieBreakerVariableNext.Location = new System.Drawing.Point(616, 376);
-			this.btnFVSVariablesTieBreakerVariableNext.Name = "btnFVSVariablesTieBreakerVariableNext";
-			this.btnFVSVariablesTieBreakerVariableNext.Size = new System.Drawing.Size(88, 40);
-			this.btnFVSVariablesTieBreakerVariableNext.TabIndex = 8;
-			this.btnFVSVariablesTieBreakerVariableNext.Text = "Next-->";
-			this.btnFVSVariablesTieBreakerVariableNext.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableNext_Click);
-			// 
-			// grpboxFVSVariablesTieBreaker
-			// 
-			this.grpboxFVSVariablesTieBreaker.BackColor = System.Drawing.SystemColors.Control;
-			this.grpboxFVSVariablesTieBreaker.Controls.Add(this.pnlTieBreaker);
-			this.grpboxFVSVariablesTieBreaker.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.grpboxFVSVariablesTieBreaker.ForeColor = System.Drawing.Color.Black;
-			this.grpboxFVSVariablesTieBreaker.Location = new System.Drawing.Point(16, 56);
-			this.grpboxFVSVariablesTieBreaker.Name = "grpboxFVSVariablesTieBreaker";
-			this.grpboxFVSVariablesTieBreaker.Size = new System.Drawing.Size(872, 448);
-			this.grpboxFVSVariablesTieBreaker.TabIndex = 33;
-			this.grpboxFVSVariablesTieBreaker.TabStop = false;
-			this.grpboxFVSVariablesTieBreaker.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreaker_Resize);
-			// 
-			// pnlTieBreaker
-			// 
-			this.pnlTieBreaker.AutoScroll = true;
-			this.pnlTieBreaker.Controls.Add(this.grpboxFVSVariablesTieBreakerValues);
-			this.pnlTieBreaker.Controls.Add(this.groupBox3);
-			this.pnlTieBreaker.Controls.Add(this.btnFVSVariablesTieBreakerEdit);
-			this.pnlTieBreaker.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.pnlTieBreaker.Location = new System.Drawing.Point(3, 18);
-			this.pnlTieBreaker.Name = "pnlTieBreaker";
-			this.pnlTieBreaker.Size = new System.Drawing.Size(866, 427);
-			this.pnlTieBreaker.TabIndex = 70;
-			// 
-			// grpboxFVSVariablesTieBreakerValues
-			// 
-			this.grpboxFVSVariablesTieBreakerValues.Controls.Add(this.lvFVSVariablesTieBreakerValues);
-			this.grpboxFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(8, 16);
-			this.grpboxFVSVariablesTieBreakerValues.Name = "grpboxFVSVariablesTieBreakerValues";
-			this.grpboxFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(840, 152);
-			this.grpboxFVSVariablesTieBreakerValues.TabIndex = 67;
-			this.grpboxFVSVariablesTieBreakerValues.TabStop = false;
-			this.grpboxFVSVariablesTieBreakerValues.Text = "Step 1: Define Tie Breakers";
-			// 
-			// lvFVSVariablesTieBreakerValues
-			// 
-			this.lvFVSVariablesTieBreakerValues.CheckBoxes = true;
-			this.lvFVSVariablesTieBreakerValues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																											 this.lvColChecked,
-																											 this.lvColMethod,
-																											 this.lvColFVSVariableName,
-																											 this.lvColFieldSource,
-																											 this.lvColMinMax});
-			this.lvFVSVariablesTieBreakerValues.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lvFVSVariablesTieBreakerValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lvFVSVariablesTieBreakerValues.GridLines = true;
-			this.lvFVSVariablesTieBreakerValues.HideSelection = false;
-			listViewItem1.Checked = true;
-			listViewItem1.StateImageIndex = 1;
-			listViewItem2.Checked = true;
-			listViewItem2.StateImageIndex = 1;
-			this.lvFVSVariablesTieBreakerValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-																										   listViewItem1,
-																										   listViewItem2});
-			this.lvFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(3, 18);
-			this.lvFVSVariablesTieBreakerValues.MultiSelect = false;
-			this.lvFVSVariablesTieBreakerValues.Name = "lvFVSVariablesTieBreakerValues";
-			this.lvFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(834, 131);
-			this.lvFVSVariablesTieBreakerValues.TabIndex = 67;
-			this.lvFVSVariablesTieBreakerValues.View = System.Windows.Forms.View.Details;
-			this.lvFVSVariablesTieBreakerValues.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvFVSVariablesTieBreakerValues_MouseUp);
-			this.lvFVSVariablesTieBreakerValues.SelectedIndexChanged += new System.EventHandler(this.lvFVSVariablesTieBreakerValues_SelectedIndexChanged);
-			this.lvFVSVariablesTieBreakerValues.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvFVSVariablesTieBreakerValues_ItemCheck);
-			// 
-			// lvColChecked
-			// 
-			this.lvColChecked.Text = "";
-			this.lvColChecked.Width = 21;
-			// 
-			// lvColMethod
-			// 
-			this.lvColMethod.Text = "Method";
-			this.lvColMethod.Width = 176;
-			// 
-			// lvColFVSVariableName
-			// 
-			this.lvColFVSVariableName.Text = "FVS Variable";
-			this.lvColFVSVariableName.Width = 249;
-			// 
-			// lvColFieldSource
-			// 
-			this.lvColFieldSource.Text = "Value Source";
-			this.lvColFieldSource.Width = 169;
-			// 
-			// lvColMinMax
-			// 
-			this.lvColMinMax.Text = "Max/Min";
-			this.lvColMinMax.Width = 166;
-			// 
-			// groupBox3
-			// 
-			this.groupBox3.Controls.Add(this.btnFVSVariablesTieBreakerAudit);
-			this.groupBox3.Location = new System.Drawing.Point(24, 312);
-			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(832, 72);
-			this.groupBox3.TabIndex = 69;
-			this.groupBox3.TabStop = false;
-			this.groupBox3.Text = "Step 2: Audit";
-			// 
-			// btnFVSVariablesTieBreakerAudit
-			// 
-			this.btnFVSVariablesTieBreakerAudit.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.btnFVSVariablesTieBreakerAudit.Location = new System.Drawing.Point(16, 24);
-			this.btnFVSVariablesTieBreakerAudit.Name = "btnFVSVariablesTieBreakerAudit";
-			this.btnFVSVariablesTieBreakerAudit.Size = new System.Drawing.Size(800, 32);
-			this.btnFVSVariablesTieBreakerAudit.TabIndex = 0;
-			this.btnFVSVariablesTieBreakerAudit.Text = "Audit";
-			this.btnFVSVariablesTieBreakerAudit.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerAudit_Click);
-			// 
-			// btnFVSVariablesTieBreakerEdit
-			// 
-			this.btnFVSVariablesTieBreakerEdit.BackColor = System.Drawing.SystemColors.Control;
-			this.btnFVSVariablesTieBreakerEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.btnFVSVariablesTieBreakerEdit.ForeColor = System.Drawing.Color.Black;
-			this.btnFVSVariablesTieBreakerEdit.Location = new System.Drawing.Point(376, 176);
-			this.btnFVSVariablesTieBreakerEdit.Name = "btnFVSVariablesTieBreakerEdit";
-			this.btnFVSVariablesTieBreakerEdit.Size = new System.Drawing.Size(128, 40);
-			this.btnFVSVariablesTieBreakerEdit.TabIndex = 36;
-			this.btnFVSVariablesTieBreakerEdit.Text = "Edit";
-			this.btnFVSVariablesTieBreakerEdit.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerEdit_Click);
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(3, 16);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Size = new System.Drawing.Size(894, 32);
-			this.lblTitle.TabIndex = 27;
-			this.lblTitle.Text = "Tie Breaker Settings";
-			// 
-			// uc_scenario_fvs_prepost_variables_tiebreaker
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_scenario_fvs_prepost_variables_tiebreaker";
-			this.Size = new System.Drawing.Size(900, 2000);
-			this.groupBox1.ResumeLayout(false);
-			this.grpboxFVSVariablesTieBreakerTreatmentIntensity.ResumeLayout(false);
-			this.panel2.ResumeLayout(false);
-			this.grpboxFVSVariablesTieBreakerVariable.ResumeLayout(false);
-			this.panel1.ResumeLayout(false);
-			this.grpboxFVSVariablesTieBreakerVariableValueSource.ResumeLayout(false);
-			this.grpMaxMin.ResumeLayout(false);
-			this.grpboxFVSVariablesTieBreakerVariableValues.ResumeLayout(false);
-			this.grpFVSVariablesTieBreakerVariableValuesSelected.ResumeLayout(false);
-			this.grpboxFVSVariablesTieBreaker.ResumeLayout(false);
-			this.pnlTieBreaker.ResumeLayout(false);
-			this.grpboxFVSVariablesTieBreakerValues.ResumeLayout(false);
-			this.groupBox3.ResumeLayout(false);
-			this.ResumeLayout(false);
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            "",
+            "FVS Variable",
+            "Not Defined",
+            "Not Defined",
+            "Not Defined"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            "",
+            "Treatment Intensity",
+            "NA",
+            "NA",
+            "NA"}, -1);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
+            this.btnFVSVariablesTieBreakerTreatmentIntensityPrev = new System.Windows.Forms.Button();
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
+            this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
+            this.btnFVSVariablesTieBreakerTreatmentIntensityCancel = new System.Windows.Forms.Button();
+            this.grpboxFVSVariablesTieBreakerVariable = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.grpboxFVSVariablesTieBreakerVariableValueSource = new System.Windows.Forms.GroupBox();
+            this.cmbFVSVariablesTieBreakerVariableValueSource = new System.Windows.Forms.ComboBox();
+            this.grpMaxMin = new System.Windows.Forms.GroupBox();
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin = new System.Windows.Forms.RadioButton();
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax = new System.Windows.Forms.RadioButton();
+            this.grpboxFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.GroupBox();
+            this.btnFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.Button();
+            this.lstFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.ListBox();
+            this.grpFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.GroupBox();
+            this.lblFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.Label();
+            this.btnFVSVariablesTieBreakerVariableClear = new System.Windows.Forms.Button();
+            this.btnFVSVariablesTieBreakerVariableDone = new System.Windows.Forms.Button();
+            this.btnFVSVariablesTieBreakerVariableCancel = new System.Windows.Forms.Button();
+            this.btnFVSVariablesTieBreakerVariableNext = new System.Windows.Forms.Button();
+            this.grpboxFVSVariablesTieBreaker = new System.Windows.Forms.GroupBox();
+            this.pnlTieBreaker = new System.Windows.Forms.Panel();
+            this.grpboxFVSVariablesTieBreakerValues = new System.Windows.Forms.GroupBox();
+            this.lvFVSVariablesTieBreakerValues = new System.Windows.Forms.ListView();
+            this.lvColChecked = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvColMethod = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvColFVSVariableName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvColFieldSource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvColMinMax = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
+            this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.grpboxFVSVariablesTieBreakerVariable.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.SuspendLayout();
+            this.grpMaxMin.SuspendLayout();
+            this.grpboxFVSVariablesTieBreakerVariableValues.SuspendLayout();
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.SuspendLayout();
+            this.grpboxFVSVariablesTieBreaker.SuspendLayout();
+            this.pnlTieBreaker.SuspendLayout();
+            this.grpboxFVSVariablesTieBreakerValues.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerTreatmentIntensity);
+            this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariable);
+            this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreaker);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(900, 2000);
+            this.groupBox1.TabIndex = 1;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            this.groupBox1.Resize += new System.EventHandler(this.groupBox1_Resize);
+            // 
+            // grpboxFVSVariablesTieBreakerTreatmentIntensity
+            // 
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.BackColor = System.Drawing.SystemColors.Control;
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Controls.Add(this.panel2);
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.ForeColor = System.Drawing.Color.Black;
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Location = new System.Drawing.Point(16, 1016);
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Name = "grpboxFVSVariablesTieBreakerTreatmentIntensity";
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Size = new System.Drawing.Size(872, 448);
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.TabIndex = 35;
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.TabStop = false;
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Text = "Treatment Intensity";
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreakerTreatmentIntensity_Resize);
+            // 
+            // panel2
+            // 
+            this.panel2.AutoScroll = true;
+            this.panel2.Controls.Add(this.uc_scenario_treatment_intensity1);
+            this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev);
+            this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityClear);
+            this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityDone);
+            this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityCancel);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(3, 18);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(866, 427);
+            this.panel2.TabIndex = 12;
+            // 
+            // uc_scenario_treatment_intensity1
+            // 
+            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 8);
+            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
+            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
+            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 344);
+            this.uc_scenario_treatment_intensity1.TabIndex = 13;
+            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
+            // 
+            // btnFVSVariablesTieBreakerTreatmentIntensityPrev
+            // 
+            this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Location = new System.Drawing.Point(528, 376);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Name = "btnFVSVariablesTieBreakerTreatmentIntensityPrev";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Size = new System.Drawing.Size(88, 40);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.TabIndex = 12;
+            this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Text = "<--Previous";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityPrev.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev_Click);
+            // 
+            // btnFVSVariablesTieBreakerTreatmentIntensityClear
+            // 
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Location = new System.Drawing.Point(24, 376);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Name = "btnFVSVariablesTieBreakerTreatmentIntensityClear";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Size = new System.Drawing.Size(72, 40);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.TabIndex = 5;
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Text = "Clear";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityClear_Click);
+            // 
+            // btnFVSVariablesTieBreakerTreatmentIntensityDone
+            // 
+            this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Location = new System.Drawing.Point(352, 376);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Name = "btnFVSVariablesTieBreakerTreatmentIntensityDone";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Size = new System.Drawing.Size(88, 40);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityDone.TabIndex = 11;
+            this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Text = "Done";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityDone.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityDone_Click);
+            // 
+            // btnFVSVariablesTieBreakerTreatmentIntensityCancel
+            // 
+            this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Location = new System.Drawing.Point(440, 376);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Name = "btnFVSVariablesTieBreakerTreatmentIntensityCancel";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Size = new System.Drawing.Size(88, 40);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.TabIndex = 9;
+            this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Text = "Cancel";
+            this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityCancel_Click);
+            // 
+            // grpboxFVSVariablesTieBreakerVariable
+            // 
+            this.grpboxFVSVariablesTieBreakerVariable.BackColor = System.Drawing.SystemColors.Control;
+            this.grpboxFVSVariablesTieBreakerVariable.Controls.Add(this.panel1);
+            this.grpboxFVSVariablesTieBreakerVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpboxFVSVariablesTieBreakerVariable.ForeColor = System.Drawing.Color.Black;
+            this.grpboxFVSVariablesTieBreakerVariable.Location = new System.Drawing.Point(16, 544);
+            this.grpboxFVSVariablesTieBreakerVariable.Name = "grpboxFVSVariablesTieBreakerVariable";
+            this.grpboxFVSVariablesTieBreakerVariable.Size = new System.Drawing.Size(872, 448);
+            this.grpboxFVSVariablesTieBreakerVariable.TabIndex = 34;
+            this.grpboxFVSVariablesTieBreakerVariable.TabStop = false;
+            this.grpboxFVSVariablesTieBreakerVariable.Text = "FVS Variable";
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValueSource);
+            this.panel1.Controls.Add(this.grpMaxMin);
+            this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValues);
+            this.panel1.Controls.Add(this.grpFVSVariablesTieBreakerVariableValuesSelected);
+            this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableClear);
+            this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableDone);
+            this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableCancel);
+            this.panel1.Controls.Add(this.btnFVSVariablesTieBreakerVariableNext);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 18);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(866, 427);
+            this.panel1.TabIndex = 12;
+            // 
+            // grpboxFVSVariablesTieBreakerVariableValueSource
+            // 
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.Controls.Add(this.cmbFVSVariablesTieBreakerVariableValueSource);
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.Location = new System.Drawing.Point(8, 296);
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.Name = "grpboxFVSVariablesTieBreakerVariableValueSource";
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.Size = new System.Drawing.Size(344, 72);
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.TabIndex = 19;
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.TabStop = false;
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.Text = "Post Treatment Variable Or Pre/Post Treatment Change";
+            // 
+            // cmbFVSVariablesTieBreakerVariableValueSource
+            // 
+            this.cmbFVSVariablesTieBreakerVariableValueSource.Items.AddRange(new object[] {
+            "Post Value",
+            "Post - Pre  Change Value"});
+            this.cmbFVSVariablesTieBreakerVariableValueSource.Location = new System.Drawing.Point(16, 40);
+            this.cmbFVSVariablesTieBreakerVariableValueSource.Name = "cmbFVSVariablesTieBreakerVariableValueSource";
+            this.cmbFVSVariablesTieBreakerVariableValueSource.Size = new System.Drawing.Size(320, 24);
+            this.cmbFVSVariablesTieBreakerVariableValueSource.TabIndex = 0;
+            this.cmbFVSVariablesTieBreakerVariableValueSource.Text = "Post Value";
+            // 
+            // grpMaxMin
+            // 
+            this.grpMaxMin.Controls.Add(this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin);
+            this.grpMaxMin.Controls.Add(this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax);
+            this.grpMaxMin.Location = new System.Drawing.Point(360, 296);
+            this.grpMaxMin.Name = "grpMaxMin";
+            this.grpMaxMin.Size = new System.Drawing.Size(464, 64);
+            this.grpMaxMin.TabIndex = 18;
+            this.grpMaxMin.TabStop = false;
+            this.grpMaxMin.Text = "Aggregate Setting For Tie Breaker Variable";
+            // 
+            // rdoFVSVariablesTieBreakerVariableValuesSelectedMin
+            // 
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Location = new System.Drawing.Point(256, 16);
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Name = "rdoFVSVariablesTieBreakerVariableValuesSelectedMin";
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Size = new System.Drawing.Size(176, 40);
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.TabIndex = 14;
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Text = "Minimum";
+            // 
+            // rdoFVSVariablesTieBreakerVariableValuesSelectedMax
+            // 
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Checked = true;
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Location = new System.Drawing.Point(32, 16);
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Name = "rdoFVSVariablesTieBreakerVariableValuesSelectedMax";
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Size = new System.Drawing.Size(176, 40);
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.TabIndex = 12;
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.TabStop = true;
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Text = "Maximum";
+            // 
+            // grpboxFVSVariablesTieBreakerVariableValues
+            // 
+            this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.btnFVSVariablesTieBreakerVariableValues);
+            this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.lstFVSVariablesTieBreakerVariableValues);
+            this.grpboxFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
+            this.grpboxFVSVariablesTieBreakerVariableValues.Name = "grpboxFVSVariablesTieBreakerVariableValues";
+            this.grpboxFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(816, 216);
+            this.grpboxFVSVariablesTieBreakerVariableValues.TabIndex = 0;
+            this.grpboxFVSVariablesTieBreakerVariableValues.TabStop = false;
+            this.grpboxFVSVariablesTieBreakerVariableValues.Text = "Tie Breaker Variable List";
+            // 
+            // btnFVSVariablesTieBreakerVariableValues
+            // 
+            this.btnFVSVariablesTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(448, 32);
+            this.btnFVSVariablesTieBreakerVariableValues.Name = "btnFVSVariablesTieBreakerVariableValues";
+            this.btnFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(184, 144);
+            this.btnFVSVariablesTieBreakerVariableValues.TabIndex = 1;
+            this.btnFVSVariablesTieBreakerVariableValues.Text = "Select";
+            this.btnFVSVariablesTieBreakerVariableValues.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableValues_Click);
+            // 
+            // lstFVSVariablesTieBreakerVariableValues
+            // 
+            this.lstFVSVariablesTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSVariablesTieBreakerVariableValues.ItemHeight = 16;
+            this.lstFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
+            this.lstFVSVariablesTieBreakerVariableValues.Name = "lstFVSVariablesTieBreakerVariableValues";
+            this.lstFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(424, 180);
+            this.lstFVSVariablesTieBreakerVariableValues.TabIndex = 0;
+            // 
+            // grpFVSVariablesTieBreakerVariableValuesSelected
+            // 
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.Controls.Add(this.lblFVSVariablesTieBreakerVariableValuesSelected);
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.Location = new System.Drawing.Point(8, 240);
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.Name = "grpFVSVariablesTieBreakerVariableValuesSelected";
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.Size = new System.Drawing.Size(816, 51);
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.TabIndex = 4;
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.TabStop = false;
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.Text = "Selected Tie Breaker Variable";
+            // 
+            // lblFVSVariablesTieBreakerVariableValuesSelected
+            // 
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Location = new System.Drawing.Point(3, 18);
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Name = "lblFVSVariablesTieBreakerVariableValuesSelected";
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Size = new System.Drawing.Size(810, 30);
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.TabIndex = 2;
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = "Not Defined";
+            // 
+            // btnFVSVariablesTieBreakerVariableClear
+            // 
+            this.btnFVSVariablesTieBreakerVariableClear.Location = new System.Drawing.Point(24, 376);
+            this.btnFVSVariablesTieBreakerVariableClear.Name = "btnFVSVariablesTieBreakerVariableClear";
+            this.btnFVSVariablesTieBreakerVariableClear.Size = new System.Drawing.Size(72, 40);
+            this.btnFVSVariablesTieBreakerVariableClear.TabIndex = 5;
+            this.btnFVSVariablesTieBreakerVariableClear.Text = "Clear";
+            this.btnFVSVariablesTieBreakerVariableClear.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableClear_Click);
+            // 
+            // btnFVSVariablesTieBreakerVariableDone
+            // 
+            this.btnFVSVariablesTieBreakerVariableDone.Location = new System.Drawing.Point(352, 376);
+            this.btnFVSVariablesTieBreakerVariableDone.Name = "btnFVSVariablesTieBreakerVariableDone";
+            this.btnFVSVariablesTieBreakerVariableDone.Size = new System.Drawing.Size(88, 40);
+            this.btnFVSVariablesTieBreakerVariableDone.TabIndex = 11;
+            this.btnFVSVariablesTieBreakerVariableDone.Text = "Done";
+            this.btnFVSVariablesTieBreakerVariableDone.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableDone_Click);
+            // 
+            // btnFVSVariablesTieBreakerVariableCancel
+            // 
+            this.btnFVSVariablesTieBreakerVariableCancel.Location = new System.Drawing.Point(440, 376);
+            this.btnFVSVariablesTieBreakerVariableCancel.Name = "btnFVSVariablesTieBreakerVariableCancel";
+            this.btnFVSVariablesTieBreakerVariableCancel.Size = new System.Drawing.Size(88, 40);
+            this.btnFVSVariablesTieBreakerVariableCancel.TabIndex = 9;
+            this.btnFVSVariablesTieBreakerVariableCancel.Text = "Cancel";
+            this.btnFVSVariablesTieBreakerVariableCancel.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableCancel_Click);
+            // 
+            // btnFVSVariablesTieBreakerVariableNext
+            // 
+            this.btnFVSVariablesTieBreakerVariableNext.Location = new System.Drawing.Point(616, 376);
+            this.btnFVSVariablesTieBreakerVariableNext.Name = "btnFVSVariablesTieBreakerVariableNext";
+            this.btnFVSVariablesTieBreakerVariableNext.Size = new System.Drawing.Size(88, 40);
+            this.btnFVSVariablesTieBreakerVariableNext.TabIndex = 8;
+            this.btnFVSVariablesTieBreakerVariableNext.Text = "Next-->";
+            this.btnFVSVariablesTieBreakerVariableNext.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableNext_Click);
+            // 
+            // grpboxFVSVariablesTieBreaker
+            // 
+            this.grpboxFVSVariablesTieBreaker.BackColor = System.Drawing.SystemColors.Control;
+            this.grpboxFVSVariablesTieBreaker.Controls.Add(this.pnlTieBreaker);
+            this.grpboxFVSVariablesTieBreaker.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpboxFVSVariablesTieBreaker.ForeColor = System.Drawing.Color.Black;
+            this.grpboxFVSVariablesTieBreaker.Location = new System.Drawing.Point(16, 56);
+            this.grpboxFVSVariablesTieBreaker.Name = "grpboxFVSVariablesTieBreaker";
+            this.grpboxFVSVariablesTieBreaker.Size = new System.Drawing.Size(872, 448);
+            this.grpboxFVSVariablesTieBreaker.TabIndex = 33;
+            this.grpboxFVSVariablesTieBreaker.TabStop = false;
+            this.grpboxFVSVariablesTieBreaker.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreaker_Resize);
+            // 
+            // pnlTieBreaker
+            // 
+            this.pnlTieBreaker.AutoScroll = true;
+            this.pnlTieBreaker.Controls.Add(this.grpboxFVSVariablesTieBreakerValues);
+            this.pnlTieBreaker.Controls.Add(this.groupBox3);
+            this.pnlTieBreaker.Controls.Add(this.btnFVSVariablesTieBreakerEdit);
+            this.pnlTieBreaker.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlTieBreaker.Location = new System.Drawing.Point(3, 18);
+            this.pnlTieBreaker.Name = "pnlTieBreaker";
+            this.pnlTieBreaker.Size = new System.Drawing.Size(866, 427);
+            this.pnlTieBreaker.TabIndex = 70;
+            // 
+            // grpboxFVSVariablesTieBreakerValues
+            // 
+            this.grpboxFVSVariablesTieBreakerValues.Controls.Add(this.lvFVSVariablesTieBreakerValues);
+            this.grpboxFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(8, 16);
+            this.grpboxFVSVariablesTieBreakerValues.Name = "grpboxFVSVariablesTieBreakerValues";
+            this.grpboxFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(840, 152);
+            this.grpboxFVSVariablesTieBreakerValues.TabIndex = 67;
+            this.grpboxFVSVariablesTieBreakerValues.TabStop = false;
+            this.grpboxFVSVariablesTieBreakerValues.Text = "Step 1: Define Tie Breakers";
+            // 
+            // lvFVSVariablesTieBreakerValues
+            // 
+            this.lvFVSVariablesTieBreakerValues.CheckBoxes = true;
+            this.lvFVSVariablesTieBreakerValues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvColChecked,
+            this.lvColMethod,
+            this.lvColFVSVariableName,
+            this.lvColFieldSource,
+            this.lvColMinMax});
+            this.lvFVSVariablesTieBreakerValues.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvFVSVariablesTieBreakerValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lvFVSVariablesTieBreakerValues.GridLines = true;
+            this.lvFVSVariablesTieBreakerValues.HideSelection = false;
+            listViewItem1.Checked = true;
+            listViewItem1.StateImageIndex = 1;
+            listViewItem2.StateImageIndex = 0;
+            this.lvFVSVariablesTieBreakerValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2});
+            this.lvFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(3, 18);
+            this.lvFVSVariablesTieBreakerValues.MultiSelect = false;
+            this.lvFVSVariablesTieBreakerValues.Name = "lvFVSVariablesTieBreakerValues";
+            this.lvFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(834, 131);
+            this.lvFVSVariablesTieBreakerValues.TabIndex = 67;
+            this.lvFVSVariablesTieBreakerValues.UseCompatibleStateImageBehavior = false;
+            this.lvFVSVariablesTieBreakerValues.View = System.Windows.Forms.View.Details;
+            this.lvFVSVariablesTieBreakerValues.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvFVSVariablesTieBreakerValues_ItemCheck);
+            this.lvFVSVariablesTieBreakerValues.SelectedIndexChanged += new System.EventHandler(this.lvFVSVariablesTieBreakerValues_SelectedIndexChanged);
+            this.lvFVSVariablesTieBreakerValues.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvFVSVariablesTieBreakerValues_MouseUp);
+            // 
+            // lvColChecked
+            // 
+            this.lvColChecked.Text = "";
+            this.lvColChecked.Width = 21;
+            // 
+            // lvColMethod
+            // 
+            this.lvColMethod.Text = "Method";
+            this.lvColMethod.Width = 176;
+            // 
+            // lvColFVSVariableName
+            // 
+            this.lvColFVSVariableName.Text = "FVS Variable";
+            this.lvColFVSVariableName.Width = 249;
+            // 
+            // lvColFieldSource
+            // 
+            this.lvColFieldSource.Text = "Value Source";
+            this.lvColFieldSource.Width = 169;
+            // 
+            // lvColMinMax
+            // 
+            this.lvColMinMax.Text = "Max/Min";
+            this.lvColMinMax.Width = 166;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.btnFVSVariablesTieBreakerAudit);
+            this.groupBox3.Location = new System.Drawing.Point(24, 312);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(832, 72);
+            this.groupBox3.TabIndex = 69;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Step 2: Audit";
+            // 
+            // btnFVSVariablesTieBreakerAudit
+            // 
+            this.btnFVSVariablesTieBreakerAudit.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFVSVariablesTieBreakerAudit.Location = new System.Drawing.Point(16, 24);
+            this.btnFVSVariablesTieBreakerAudit.Name = "btnFVSVariablesTieBreakerAudit";
+            this.btnFVSVariablesTieBreakerAudit.Size = new System.Drawing.Size(800, 32);
+            this.btnFVSVariablesTieBreakerAudit.TabIndex = 0;
+            this.btnFVSVariablesTieBreakerAudit.Text = "Audit";
+            this.btnFVSVariablesTieBreakerAudit.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerAudit_Click);
+            // 
+            // btnFVSVariablesTieBreakerEdit
+            // 
+            this.btnFVSVariablesTieBreakerEdit.BackColor = System.Drawing.SystemColors.Control;
+            this.btnFVSVariablesTieBreakerEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFVSVariablesTieBreakerEdit.ForeColor = System.Drawing.Color.Black;
+            this.btnFVSVariablesTieBreakerEdit.Location = new System.Drawing.Point(376, 176);
+            this.btnFVSVariablesTieBreakerEdit.Name = "btnFVSVariablesTieBreakerEdit";
+            this.btnFVSVariablesTieBreakerEdit.Size = new System.Drawing.Size(128, 40);
+            this.btnFVSVariablesTieBreakerEdit.TabIndex = 36;
+            this.btnFVSVariablesTieBreakerEdit.Text = "Edit";
+            this.btnFVSVariablesTieBreakerEdit.UseVisualStyleBackColor = false;
+            this.btnFVSVariablesTieBreakerEdit.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerEdit_Click);
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(3, 16);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(894, 32);
+            this.lblTitle.TabIndex = 27;
+            this.lblTitle.Text = "Tie Breaker Settings";
+            // 
+            // uc_scenario_fvs_prepost_variables_tiebreaker
+            // 
+            this.Controls.Add(this.groupBox1);
+            this.Name = "uc_scenario_fvs_prepost_variables_tiebreaker";
+            this.Size = new System.Drawing.Size(900, 2000);
+            this.groupBox1.ResumeLayout(false);
+            this.grpboxFVSVariablesTieBreakerTreatmentIntensity.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.grpboxFVSVariablesTieBreakerVariable.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.grpboxFVSVariablesTieBreakerVariableValueSource.ResumeLayout(false);
+            this.grpMaxMin.ResumeLayout(false);
+            this.grpboxFVSVariablesTieBreakerVariableValues.ResumeLayout(false);
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.ResumeLayout(false);
+            this.grpboxFVSVariablesTieBreaker.ResumeLayout(false);
+            this.pnlTieBreaker.ResumeLayout(false);
+            this.grpboxFVSVariablesTieBreakerValues.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -1543,15 +1544,21 @@ namespace FIA_Biosum_Manager
 		}
 		public void Audit()
 		{
-			string str="";
-			
-			int x;
+			int x = 0;
 			this.m_intError=0;
 			this.m_strError="Audit Results \r\n";
 			this.m_strError=m_strError + "-------------\r\n\r\n";
 
-			x=this.uc_scenario_treatment_intensity1.Val_Intensity(false);
-			if (x<0)
+            // Only validate treatment intensity if it is checked
+            foreach (ListViewItem itemRow in this.lvFVSVariablesTieBreakerValues.CheckedItems)
+            {
+                if (itemRow.SubItems[COLUMN_METHOD].Text.Trim().Equals("Treatment Intensity"))
+                {
+                    x=this.uc_scenario_treatment_intensity1.Val_Intensity(false);
+                }
+            }
+
+            if (x<0)
 			{
                 if (x == -1) m_strError = m_strError + "No treatments defined\r\n";
                 else if (x == -2) m_strError = m_strError + "Treatment intensity ratings must be unique\r\n";
