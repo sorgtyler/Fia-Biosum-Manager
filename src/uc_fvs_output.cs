@@ -7940,9 +7940,11 @@ namespace FIA_Biosum_Manager
 
 		private void btnViewLogFile_Click(object sender, System.EventArgs e)
 		{
-			if (this.lstFvsOutput.SelectedItems.Count==0) return;
-
-			
+            if (this.lstFvsOutput.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No Rows Are Selected", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
 
 			string strSearch = this.lstFvsOutput.SelectedItems[0].SubItems[COL_MDBOUT].Text.Trim().ToUpper().Replace(".MDB","_BIOSUM.ACCDB") + "_AUDIT_*.txt";
 			
@@ -8002,8 +8004,11 @@ namespace FIA_Biosum_Manager
 
 		private void btnAuditDb_Click(object sender, System.EventArgs e)
 		{
-
-			if (this.lstFvsOutput.SelectedItems.Count==0) return;
+            if (this.lstFvsOutput.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No Rows Are Selected", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
 
             string strConn = "";
 
@@ -8021,6 +8026,8 @@ namespace FIA_Biosum_Manager
 			{
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
 				oAdo=null;
+                string strWarnMessage = "Unable to open table '" + this.m_strFVSSummaryAuditYearCountsTable + "' in '" + strOutDirAndFile + "'. The Audit Pre/Post tables cannot be displayed.";
+                MessageBox.Show(strWarnMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
 				return;
 			}
 
