@@ -3175,11 +3175,15 @@ namespace FIA_Biosum_Manager
             p_oAdo.SqlNonQuery(p_oConn, Tables.CoreScenarioRuleDefinitions.CreateScenarioRxIntensityTableSQL("rxtemp"));
             for (x = 0; x <= strRxArray.Length - 1; x++)
             {
-                p_oAdo.SqlNonQuery(p_oConn,"INSERT INTO rxtemp (scenario_id,rx) VALUES ('" + p_strScenarioId + "'," + strRxArray[x].Trim() + ")");
+                // SET THE DEFAULT TREATMENT INTENSITY TO BE THE SAME AS RX SO IT IS ALWAYS UNIQUE AND NEVER NULL
+                int intIntensity = -1;
+                char[] charsToTrim = {' ', '\'' };
+                bool bResult = Int32.TryParse(strRxArray[x].Trim(charsToTrim), out intIntensity);
+                p_oAdo.SqlNonQuery(p_oConn, "INSERT INTO rxtemp (scenario_id,rx,rx_intensity) VALUES ('" + p_strScenarioId + "'," + strRxArray[x].Trim() + ", " + intIntensity + " )");
             }
             p_oAdo.m_strSQL = "INSERT INTO scenario_rx_intensity " +
-                             "(scenario_id,rx) " +
-                             "SELECT a.scenario_id, a.RX " +
+                             "(scenario_id,rx,rx_intensity) " +
+                             "SELECT a.scenario_id, a.RX, a.rx_intensity " +
                              "FROM rxtemp a " +
                              "WHERE NOT EXISTS (SELECT b.scenario_id,b.rx " +
                                                "FROM scenario_rx_intensity b " +

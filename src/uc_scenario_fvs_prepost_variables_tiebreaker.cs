@@ -884,7 +884,7 @@ namespace FIA_Biosum_Manager
                 }
                 this.m_oSavTieBreakerCollection.Copy(this.m_oOldTieBreakerCollection, ref this.m_oSavTieBreakerCollection, true);
             }
-            this.uc_scenario_treatment_intensity1.loadgrid();
+            this.uc_scenario_treatment_intensity1.loadgrid(true);
 
         }	
 		public void loadvalues(System.Windows.Forms.ListBox p_oListBox)
@@ -1033,7 +1033,7 @@ namespace FIA_Biosum_Manager
 			this.m_strError=oAdo.m_strError;
 			oAdo=null;
 			
-			this.uc_scenario_treatment_intensity1.loadgrid();
+			this.uc_scenario_treatment_intensity1.loadgrid(false);
 			
 		}
 		public int savevalues()

@@ -179,7 +179,7 @@ namespace FIA_Biosum_Manager
 			
 		}
 
-		public void loadgrid()
+        public void loadgrid(bool p_bScenarioCopy)
 		{
 			string[]  strDeleteSQL = new string[25];
 			string strSQL="";
@@ -472,10 +472,26 @@ namespace FIA_Biosum_Manager
 				// make the dataGrid use our new tablestyle and bind it to our table
 				this.dataGrid1.TableStyles.Clear();
 				this.dataGrid1.TableStyles.Add(tableStyle);
-
-
-                    					
-				this.dataGrid1.DataSource = firstView;  
+                
+                // If this is a copied scenario, we will have a reference form to get the values
+                if (p_bScenarioCopy == true)
+                {
+                    if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oRxIntensityItem_Collection != null)
+                    {
+                        CoreAnalysisScenarioItem.RxIntensityItem_Collection oRxIntensityItem_Collection = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oRxIntensityItem_Collection;
+                        for (int i = 0; i < firstView.Count - 1; ++i)
+                        {
+                            for (x = 0; x <= oRxIntensityItem_Collection.Count - 1; x++)
+                            {
+                                if (oRxIntensityItem_Collection.Item(x).Rx.Equals(firstView[i]["rx"]))
+                                {
+                                    firstView[i]["rx_intensity"] = oRxIntensityItem_Collection.Item(x).RxIntensity;
+                                }
+                             }
+                        }
+                    }
+                }
+				this.dataGrid1.DataSource = firstView;
 				this.dataGrid1.Expand(-1);
 				
 

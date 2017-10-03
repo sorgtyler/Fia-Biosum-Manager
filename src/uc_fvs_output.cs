@@ -5066,8 +5066,6 @@ namespace FIA_Biosum_Manager
 			string strRx="";
             System.Windows.Forms.ListView oLv = (System.Windows.Forms.ListView)frmMain.g_oDelegate.GetListView(this.lstFvsOutput, false);
             System.Windows.Forms.ListViewItem oLvItem = null;
-            
-		
 
 			Tables oTables = new Tables();
 			
@@ -5841,9 +5839,18 @@ namespace FIA_Biosum_Manager
 
 			if (DisplayAuditMessage)
 			{
-				if (m_intError==0) this.m_strError=m_strError + "Passed Audit";
-				else m_strError = m_strError + "\r\n\r\n" + "Failed Audit";
-				MessageBox.Show(m_strError,"FIA Biosum");
+                if (m_intError == 0) this.m_strError = m_strError + "Passed Audit";
+                else m_strError = m_strError + "\r\n\r\n" + "Failed Audit";
+                //MessageBox.Show(m_strError,"FIA Biosum");
+                FIA_Biosum_Manager.frmDialog frmTemp = new frmDialog();
+                frmTemp.Text = "FIA Biosum";
+                frmTemp.AutoScroll = false;
+                uc_textboxWithButtons uc_textbox1 = new uc_textboxWithButtons();
+                frmTemp.Controls.Add(uc_textbox1);
+                uc_textbox1.lblTitle.Text = "Audit Results";
+                uc_textbox1.TextValue = m_strError;
+                frmTemp.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+                frmTemp.ShowDialog();
 			}
 
             if (m_bDebug)
@@ -7933,9 +7940,11 @@ namespace FIA_Biosum_Manager
 
 		private void btnViewLogFile_Click(object sender, System.EventArgs e)
 		{
-			if (this.lstFvsOutput.SelectedItems.Count==0) return;
-
-			
+            if (this.lstFvsOutput.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No Rows Are Selected", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
 
 			string strSearch = this.lstFvsOutput.SelectedItems[0].SubItems[COL_MDBOUT].Text.Trim().ToUpper().Replace(".MDB","_BIOSUM.ACCDB") + "_AUDIT_*.txt";
 			
@@ -7995,8 +8004,11 @@ namespace FIA_Biosum_Manager
 
 		private void btnAuditDb_Click(object sender, System.EventArgs e)
 		{
-
-			if (this.lstFvsOutput.SelectedItems.Count==0) return;
+            if (this.lstFvsOutput.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No Rows Are Selected", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
 
             string strConn = "";
 
@@ -8014,6 +8026,8 @@ namespace FIA_Biosum_Manager
 			{
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
 				oAdo=null;
+                string strWarnMessage = "Unable to open table '" + this.m_strFVSSummaryAuditYearCountsTable + "' in '" + strOutDirAndFile + "'. The Audit Pre/Post tables cannot be displayed.";
+                MessageBox.Show(strWarnMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
 				return;
 			}
 
