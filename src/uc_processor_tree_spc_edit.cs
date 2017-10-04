@@ -26,21 +26,14 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.TextBox txtSpCd;
 		private System.Windows.Forms.TextBox txtCommon;
 		private int m_intError=0;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;
-		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.Label lblWoodlandSpeciesYN;
-		private System.Windows.Forms.TextBox txtOvenDryWt;
-		private System.Windows.Forms.TextBox txtGreenWt;
+        private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.TextBox txtGenus;
 		private System.Windows.Forms.TextBox txtSpecies;
 		private System.Windows.Forms.TextBox txtVariety;
 		private System.Windows.Forms.TextBox txtSubspecies;
-		private FIA_Biosum_Manager.txtNumeric _txtOvenDryWt;
-		private FIA_Biosum_Manager.txtNumeric _txtGreenWt;
 		private System.Windows.Forms.TextBox txtConvertToSpCd;
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.ComboBox cmbFvsSpCd;
@@ -61,22 +54,7 @@ namespace FIA_Biosum_Manager
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			_txtOvenDryWt = new txtNumeric(2,2);
-			_txtGreenWt = new txtNumeric(2,2);
-			this.groupBox1.Controls.Add(_txtOvenDryWt);
-			this.groupBox1.Controls.Add(_txtGreenWt);
 
-            _txtOvenDryWt.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			_txtGreenWt.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			_txtOvenDryWt.Size = this.txtOvenDryWt.Size;
-			_txtOvenDryWt.Location = this.txtOvenDryWt.Location;
-			this.txtOvenDryWt.Visible=false;
-			_txtOvenDryWt.Visible=true;
-
-			_txtGreenWt.Size = this.txtGreenWt.Size;
-			_txtGreenWt.Location = this.txtGreenWt.Location;
-			this.txtGreenWt.Visible=false;
-			_txtGreenWt.Visible=true;
             m_ado = p_ado;
 			if (p_strVariant.Trim().Length > 0)
 			{
@@ -141,14 +119,9 @@ namespace FIA_Biosum_Manager
             this.txtVariety = new System.Windows.Forms.TextBox();
             this.txtSpecies = new System.Windows.Forms.TextBox();
             this.txtGenus = new System.Windows.Forms.TextBox();
-            this.txtGreenWt = new System.Windows.Forms.TextBox();
-            this.txtOvenDryWt = new System.Windows.Forms.TextBox();
-            this.lblWoodlandSpeciesYN = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.txtCommon = new System.Windows.Forms.TextBox();
             this.txtSpCd = new System.Windows.Forms.TextBox();
@@ -178,14 +151,9 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Controls.Add(this.txtVariety);
             this.groupBox1.Controls.Add(this.txtSpecies);
             this.groupBox1.Controls.Add(this.txtGenus);
-            this.groupBox1.Controls.Add(this.txtGreenWt);
-            this.groupBox1.Controls.Add(this.txtOvenDryWt);
-            this.groupBox1.Controls.Add(this.lblWoodlandSpeciesYN);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.txtCommon);
             this.groupBox1.Controls.Add(this.txtSpCd);
@@ -279,7 +247,7 @@ namespace FIA_Biosum_Manager
             // txtSubspecies
             // 
             this.txtSubspecies.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSubspecies.Location = new System.Drawing.Point(280, 309);
+            this.txtSubspecies.Location = new System.Drawing.Point(280, 277);
             this.txtSubspecies.MaxLength = 50;
             this.txtSubspecies.Name = "txtSubspecies";
             this.txtSubspecies.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -289,7 +257,7 @@ namespace FIA_Biosum_Manager
             // txtVariety
             // 
             this.txtVariety.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtVariety.Location = new System.Drawing.Point(280, 279);
+            this.txtVariety.Location = new System.Drawing.Point(280, 247);
             this.txtVariety.MaxLength = 50;
             this.txtVariety.Name = "txtVariety";
             this.txtVariety.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -299,7 +267,7 @@ namespace FIA_Biosum_Manager
             // txtSpecies
             // 
             this.txtSpecies.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSpecies.Location = new System.Drawing.Point(280, 248);
+            this.txtSpecies.Location = new System.Drawing.Point(280, 216);
             this.txtSpecies.MaxLength = 50;
             this.txtSpecies.Name = "txtSpecies";
             this.txtSpecies.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -316,42 +284,9 @@ namespace FIA_Biosum_Manager
             this.txtGenus.Size = new System.Drawing.Size(296, 23);
             this.txtGenus.TabIndex = 25;
             // 
-            // txtGreenWt
-            // 
-            this.txtGreenWt.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtGreenWt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtGreenWt.Location = new System.Drawing.Point(280, 369);
-            this.txtGreenWt.MaxLength = 2;
-            this.txtGreenWt.Name = "txtGreenWt";
-            this.txtGreenWt.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.txtGreenWt.Size = new System.Drawing.Size(112, 23);
-            this.txtGreenWt.TabIndex = 24;
-            // 
-            // txtOvenDryWt
-            // 
-            this.txtOvenDryWt.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtOvenDryWt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtOvenDryWt.Location = new System.Drawing.Point(280, 339);
-            this.txtOvenDryWt.MaxLength = 2;
-            this.txtOvenDryWt.Name = "txtOvenDryWt";
-            this.txtOvenDryWt.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.txtOvenDryWt.Size = new System.Drawing.Size(112, 23);
-            this.txtOvenDryWt.TabIndex = 23;
-            // 
-            // lblWoodlandSpeciesYN
-            // 
-            this.lblWoodlandSpeciesYN.BackColor = System.Drawing.Color.White;
-            this.lblWoodlandSpeciesYN.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWoodlandSpeciesYN.Location = new System.Drawing.Point(280, 216);
-            this.lblWoodlandSpeciesYN.Name = "lblWoodlandSpeciesYN";
-            this.lblWoodlandSpeciesYN.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblWoodlandSpeciesYN.Size = new System.Drawing.Size(40, 24);
-            this.lblWoodlandSpeciesYN.TabIndex = 21;
-            this.lblWoodlandSpeciesYN.Text = "N";
-            // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(104, 309);
+            this.label12.Location = new System.Drawing.Point(104, 277);
             this.label12.Name = "label12";
             this.label12.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.label12.Size = new System.Drawing.Size(160, 16);
@@ -360,7 +295,7 @@ namespace FIA_Biosum_Manager
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(104, 279);
+            this.label11.Location = new System.Drawing.Point(104, 247);
             this.label11.Name = "label11";
             this.label11.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.label11.Size = new System.Drawing.Size(160, 16);
@@ -369,30 +304,12 @@ namespace FIA_Biosum_Manager
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(80, 252);
+            this.label10.Location = new System.Drawing.Point(80, 220);
             this.label10.Name = "label10";
             this.label10.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.label10.Size = new System.Drawing.Size(184, 16);
             this.label10.TabIndex = 18;
             this.label10.Text = "Species";
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(40, 369);
-            this.label9.Name = "label9";
-            this.label9.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label9.Size = new System.Drawing.Size(224, 16);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "Dry To Green Weight Ratio";
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(104, 339);
-            this.label8.Name = "label8";
-            this.label8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label8.Size = new System.Drawing.Size(160, 16);
-            this.label8.TabIndex = 16;
-            this.label8.Text = "Oven Dry Weight";
             // 
             // label7
             // 
@@ -401,7 +318,6 @@ namespace FIA_Biosum_Manager
             this.label7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.label7.Size = new System.Drawing.Size(232, 16);
             this.label7.TabIndex = 15;
-            this.label7.Text = "Woodland Species";
             // 
             // txtCommon
             // 
@@ -761,12 +677,6 @@ namespace FIA_Biosum_Manager
 			set	{ this.txtSpCd.Text = value; }
 			get { return this.txtSpCd.Text.ToString(); }
 		}
-		
-		public string strWoodlandYN
-		{
-			set	{ this.lblWoodlandSpeciesYN.Text = value; }
-			get { return this.lblWoodlandSpeciesYN.Text.ToString(); }
-		}
 		public string strCommonName
 		{
 			set	{ this.txtCommon.Text = value; }
@@ -781,16 +691,6 @@ namespace FIA_Biosum_Manager
 		{
 			set	{ this.cmbFvsSpCd.Text  = value; }
 			get { return this.cmbFvsSpCd.Text.Trim().Substring(0,2).ToString(); }
-		}
-		public string strTreeSpeciesOvenDryWeight
-		{
-			set	{ this._txtOvenDryWt.Text  = value; }
-			get { return this._txtOvenDryWt.Text.ToString(); }
-		}
-		public string strDryToGreenWeightRatio
-		{
-			set	{ this._txtGreenWt.Text  = value; }
-			get { return this._txtGreenWt.Text.ToString(); }
 		}
 		public string strTreeSpeciesGenus
 		{
