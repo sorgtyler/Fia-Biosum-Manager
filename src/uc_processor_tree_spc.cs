@@ -2747,16 +2747,14 @@ namespace FIA_Biosum_Manager
 				             "SET w.fvs_species_two_letter_code = fvs.fvs_species";
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 
-
-
-
-			oAdo.m_strSQL= "DELETE FROM spcd_variant_temp_work_table w " + 
-				"WHERE EXISTS (SELECT spcd,fvs_variant,fvs_input_spcd " + 
-							  "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " s " + 
-							  "WHERE  w.treetable_spcd = s.spcd AND " + 
-							         "TRIM(w.fvsouttable_fvs_variant)=TRIM(s.fvs_variant) AND " + 
-				                     "(VAL(w.fvsouttable_spcd)= s.spcd OR VAL(w.fvsouttable_spcd) = s.fvs_input_spcd) AND " +
-					                 "w.fvs_species_two_letter_code IS NULL OR LEN(TRIM(w.fvs_species_two_letter_code))=0)"; 
+            oAdo.m_strSQL = "DELETE FROM spcd_variant_temp_work_table w " +
+                           "WHERE EXISTS (SELECT s.spcd,s.fvs_variant,f.fvs_species,s.fvs_input_spcd " +
+                           "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " s, " +
+                           this.m_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " f " +
+                           "WHERE  w.treetable_spcd = s.spcd " +
+                           "AND TRIM(w.fvsouttable_fvs_variant)=TRIM(s.fvs_variant) " +
+                           "AND s.fvs_input_spcd = f.spcd AND TRIM(s.fvs_variant) = TRIM(f.fvs_variant) " +
+                           "AND (VAL(w.fvsouttable_spcd)= s.spcd OR VAL(w.fvsouttable_spcd) = s.fvs_input_spcd))";
 
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 
