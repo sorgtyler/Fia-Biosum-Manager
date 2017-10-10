@@ -41,6 +41,7 @@ namespace FIA_Biosum_Manager
 		private string m_strVariant;
         private string m_strConvertToSpCd;
         private string m_strFvsSpeciesCode;
+        private System.Collections.Generic.IDictionary<String, String> m_dictFvsCommonName;
         private ado_data_access m_ado;
         private TextBox txtFvsCommonName;
         private Label label8;
@@ -58,21 +59,29 @@ namespace FIA_Biosum_Manager
             m_ado = p_ado;
 			if (p_strVariant.Trim().Length > 0)
 			{
-				p_ado.m_strSQL = "SELECT  spcd,fvs_species,common_name " + 
+				p_ado.m_strSQL = "SELECT  spcd,fvs_species,common_name,fvs_common_name " + 
 					"FROM " + p_strFvsTreeSpcTable + " " + 
 					"WHERE LEN(TRIM(fvs_species)) > 0 AND " + 
 					"LEN(TRIM(common_name)) > 0 AND " + 
 					"TRIM(fvs_variant) = '" + p_strVariant.Trim() +  "' order by spcd;";
 			
 				p_ado.SqlQueryReader(p_ado.m_OleDbConnection,p_ado.m_OleDbTransaction,p_ado.m_strSQL);
+                // Populate reference dictionary of spcd and fvs_common_name from fvs_tree_species
+                m_dictFvsCommonName = new System.Collections.Generic.Dictionary<String, String>();
 				if (p_ado.m_OleDbDataReader.HasRows)
 				{
 					while (p_ado.m_OleDbDataReader.Read())
 					{
-						this.cmbFvsSpCd.Items.Add(Convert.ToString(p_ado.m_OleDbDataReader["fvs_species"]) + " - " + Convert.ToString(p_ado.m_OleDbDataReader["spcd"]) + " - " + Convert.ToString(p_ado.m_OleDbDataReader["common_name"]));
+                        string strMySpCd = Convert.ToString(p_ado.m_OleDbDataReader["spcd"]);
+                        this.cmbFvsSpCd.Items.Add(Convert.ToString(p_ado.m_OleDbDataReader["fvs_species"]) + " - " + strMySpCd + " - " + Convert.ToString(p_ado.m_OleDbDataReader["common_name"]));
 
+                        if (!m_dictFvsCommonName.ContainsKey(strMySpCd))
+                        {
+                            m_dictFvsCommonName.Add(strMySpCd, Convert.ToString(p_ado.m_OleDbDataReader["fvs_common_name"]));
+                        }
 					}
 				}
+
 				p_ado.m_OleDbDataReader.Close();
 			}
             this.m_strFvsTreeSpcTable = p_strFvsTreeSpcTable;
@@ -564,7 +573,10 @@ namespace FIA_Biosum_Manager
 				{
 
 				    this.cmbFvsSpCd.Items.Clear();
-					m_ado.m_strSQL = "SELECT  spcd,fvs_species,common_name " + 
+                    // cache convertToSpcd
+                    string strMyConvertToSpcd = m_strConvertToSpCd;
+                    this.m_dictFvsCommonName.Clear();
+					m_ado.m_strSQL = "SELECT  spcd,fvs_species,common_name,fvs_common_name " + 
 						"FROM " + m_strFvsTreeSpcTable + " " + 
 						"WHERE LEN(TRIM(fvs_species)) > 0 AND " + 
 						"LEN(TRIM(common_name)) > 0 AND " + 
@@ -575,9 +587,15 @@ namespace FIA_Biosum_Manager
 					{
 						while (m_ado.m_OleDbDataReader.Read())
 						{
-							this.cmbFvsSpCd.Items.Add(Convert.ToString(m_ado.m_OleDbDataReader["fvs_species"]) + " - " + Convert.ToString(m_ado.m_OleDbDataReader["spcd"]) + " - " + Convert.ToString(m_ado.m_OleDbDataReader["common_name"]));
-
+                            string strMySpCd = Convert.ToString(m_ado.m_OleDbDataReader["spcd"]);
+                            this.cmbFvsSpCd.Items.Add(Convert.ToString(m_ado.m_OleDbDataReader["fvs_species"]) + " - " + strMySpCd + " - " + Convert.ToString(m_ado.m_OleDbDataReader["common_name"]));
+                            if (!m_dictFvsCommonName.ContainsKey(strMySpCd))
+                            {
+                                m_dictFvsCommonName.Add(strMySpCd, Convert.ToString(m_ado.m_OleDbDataReader["fvs_common_name"]));
+                            }
 						}
+
+                        this.strConvertToSpCd = strMyConvertToSpcd;
 					}
 					m_ado.m_OleDbDataReader.Close();
 				}
@@ -665,13 +683,17 @@ namespace FIA_Biosum_Manager
         {
             m_strFvsSpeciesCode = "";
             m_strConvertToSpCd = "";
+            txtFvsCommonName.Text = "";
             if (this.cmbFvsSpCd.Text.Trim().Length > 0)
             {
                 m_strFvsSpeciesCode = this.cmbFvsSpCd.Text.Trim().Substring(0, 2).ToString();
                 int intFirstDash = this.cmbFvsSpCd.Text.IndexOf("-", 0);
                 int intSecondDash = this.cmbFvsSpCd.Text.IndexOf("-", intFirstDash + 1);
                 m_strConvertToSpCd = this.cmbFvsSpCd.Text.Substring(intFirstDash + 1, intSecondDash - intFirstDash - 1).Trim();
-                //m_strFvsCommonName = this.cmbFvsSpCd.Text.Substring(intSecondDash + 1, this.cmbFvsSpCd.Text.Trim().Length - intSecondDash - 1).Trim();
+                if (m_dictFvsCommonName.ContainsKey(m_strConvertToSpCd))
+                {
+                    txtFvsCommonName.Text = m_dictFvsCommonName[m_strConvertToSpCd];
+                }
             }
         }
 
