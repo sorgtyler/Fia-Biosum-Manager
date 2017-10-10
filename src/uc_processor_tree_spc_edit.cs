@@ -33,17 +33,16 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.TextBox txtGenus;
 		private System.Windows.Forms.TextBox txtSpecies;
 		private System.Windows.Forms.TextBox txtVariety;
-		private System.Windows.Forms.TextBox txtSubspecies;
-		private System.Windows.Forms.TextBox txtConvertToSpCd;
-		private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox txtSubspecies;
 		private System.Windows.Forms.ComboBox cmbFvsSpCd;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label14;
 		private string m_strFvsTreeSpcTable;
 		private string m_strVariant;
-		private ado_data_access m_ado;
-		private System.Windows.Forms.Label label15;
-		private System.Windows.Forms.TextBox txtFvsCommonName;
+        private string m_strConvertToSpCd;
+        private string m_strFvsCommonName;
+        private string m_strFvsSpeciesCode;
+        private ado_data_access m_ado;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -108,11 +107,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtFvsCommonName = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.txtConvertToSpCd = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
             this.cmbFvsSpCd = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtSubspecies = new System.Windows.Forms.TextBox();
@@ -140,11 +135,7 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtFvsCommonName);
-            this.groupBox1.Controls.Add(this.label15);
             this.groupBox1.Controls.Add(this.label14);
-            this.groupBox1.Controls.Add(this.txtConvertToSpCd);
-            this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.cmbFvsSpCd);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtSubspecies);
@@ -172,33 +163,14 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.groupBox1.Size = new System.Drawing.Size(624, 608);
+            this.groupBox1.Size = new System.Drawing.Size(624, 475);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            // 
-            // txtFvsCommonName
-            // 
-            this.txtFvsCommonName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFvsCommonName.Location = new System.Drawing.Point(287, 520);
-            this.txtFvsCommonName.MaxLength = 50;
-            this.txtFvsCommonName.Name = "txtFvsCommonName";
-            this.txtFvsCommonName.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.txtFvsCommonName.Size = new System.Drawing.Size(296, 23);
-            this.txtFvsCommonName.TabIndex = 39;
-            // 
-            // label15
-            // 
-            this.label15.Location = new System.Drawing.Point(32, 525);
-            this.label15.Name = "label15";
-            this.label15.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label15.Size = new System.Drawing.Size(248, 16);
-            this.label15.TabIndex = 38;
-            this.label15.Text = "FVS Tree Species Common Name";
             // 
             // label14
             // 
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(24, 404);
+            this.label14.Location = new System.Drawing.Point(15, 317);
             this.label14.Name = "label14";
             this.label14.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.label14.Size = new System.Drawing.Size(584, 37);
@@ -207,28 +179,9 @@ namespace FIA_Biosum_Manager
     " FVS input files, it will translate the tree species code to the tree species co" +
     "de defined below.";
             // 
-            // txtConvertToSpCd
-            // 
-            this.txtConvertToSpCd.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtConvertToSpCd.Location = new System.Drawing.Point(288, 486);
-            this.txtConvertToSpCd.MaxLength = 3;
-            this.txtConvertToSpCd.Name = "txtConvertToSpCd";
-            this.txtConvertToSpCd.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.txtConvertToSpCd.Size = new System.Drawing.Size(56, 23);
-            this.txtConvertToSpCd.TabIndex = 34;
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(32, 486);
-            this.label13.Name = "label13";
-            this.label13.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label13.Size = new System.Drawing.Size(248, 16);
-            this.label13.TabIndex = 35;
-            this.label13.Text = "FVS Input FIA Tree Species Code";
-            // 
             // cmbFvsSpCd
             // 
-            this.cmbFvsSpCd.Location = new System.Drawing.Point(288, 448);
+            this.cmbFvsSpCd.Location = new System.Drawing.Point(279, 361);
             this.cmbFvsSpCd.Name = "cmbFvsSpCd";
             this.cmbFvsSpCd.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cmbFvsSpCd.Size = new System.Drawing.Size(296, 24);
@@ -237,7 +190,7 @@ namespace FIA_Biosum_Manager
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(120, 448);
+            this.label4.Location = new System.Drawing.Point(111, 361);
             this.label4.Name = "label4";
             this.label4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.label4.Size = new System.Drawing.Size(160, 16);
@@ -388,7 +341,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(312, 553);
+            this.btnCancel.Location = new System.Drawing.Point(321, 401);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(88, 48);
             this.btnCancel.TabIndex = 6;
@@ -397,7 +350,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(224, 553);
+            this.btnOK.Location = new System.Drawing.Point(233, 401);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(88, 48);
             this.btnOK.TabIndex = 5;
@@ -465,7 +418,7 @@ namespace FIA_Biosum_Manager
             // 
             this.Controls.Add(this.groupBox1);
             this.Name = "uc_processor_tree_spc_edit";
-            this.Size = new System.Drawing.Size(624, 608);
+            this.Size = new System.Drawing.Size(624, 475);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -563,25 +516,6 @@ namespace FIA_Biosum_Manager
 				this.txtSpCd.Focus();
 				return;
 			}
-
-			if (this.txtConvertToSpCd.Text.Trim().Length == 0) 
-			{
-			}
-			else
-			{
-				if (Convert.ToInt32(this.txtSpCd.Text) > 299)
-				{
-					
-				}
-				else if (Convert.ToInt32(this.txtSpCd.Text) < 300)
-				{
-					
-				}
-			}
-
-
-
-
 		}
 
 		private void btnCancel_Click(object sender, System.EventArgs e)
@@ -625,47 +559,6 @@ namespace FIA_Biosum_Manager
 				}
 			}
 		}
-
-		private void cmbFvsSpCd_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			string strSpCd="";
-			//string strFvsSpCd="";
-			string strCommonName="";
-			int intFirstDash=0;
-			int intSecondDash = 0;
-			if (this.cmbFvsSpCd.Text.Trim().Length > 0)
-			{
-				this.m_strVariant = this.cmbVariant.Text.Trim().Substring(0,2).ToString();
-
-				if (m_strVariant.Trim().Length > 0)
-				{
-				   intFirstDash = this.cmbFvsSpCd.Text.IndexOf("-",0);
-                   intSecondDash = this.cmbFvsSpCd.Text.IndexOf("-", intFirstDash+1);
-				   strSpCd = this.cmbFvsSpCd.Text.Substring(intFirstDash + 1, intSecondDash - intFirstDash - 1).Trim();
-				   strCommonName = this.cmbFvsSpCd.Text.Substring(intSecondDash + 1, this.cmbFvsSpCd.Text.Trim().Length -  intSecondDash - 1).Trim();
-					if (strSpCd.Trim().Length > 0)
-					{
-                   
-					
-						m_ado.m_strSQL = "SELECT  spcd,fvs_common_name " + 
-							"FROM " + m_strFvsTreeSpcTable + " " + 
-							"WHERE TRIM(fvs_variant) = '" + m_strVariant.Trim() +  "' AND " + 
-							"      TRIM(common_name) = '" + strCommonName.Trim() + "' AND " + 
-							"spcd = " + strSpCd + ";";
-			            
-						m_ado.SqlQueryReader(m_ado.m_OleDbConnection,m_ado.m_OleDbTransaction,m_ado.m_strSQL);
-						if (m_ado.m_OleDbDataReader.HasRows)
-						{
-							m_ado.m_OleDbDataReader.Read();
-							this.txtConvertToSpCd.Text = Convert.ToString(m_ado.m_OleDbDataReader["spcd"]);
-                            this.txtFvsCommonName.Text = Convert.ToString(m_ado.m_OleDbDataReader["fvs_common_name"]);
-						}
-						m_ado.m_OleDbDataReader.Close();
-					}
-				}
-
-			}
-		}
 	
 		public string strId
 		{
@@ -687,10 +580,27 @@ namespace FIA_Biosum_Manager
 			set	{ this.cmbVariant.Text = value; }
 			get { return this.cmbVariant.Text.Trim().Substring(0,2).ToString(); }
 		}
-		public string strFvsSpeciesCode
+        public string strConvertToSpCd
 		{
-			set	{ this.cmbFvsSpCd.Text  = value; }
-			get { return this.cmbFvsSpCd.Text.Trim().Substring(0,2).ToString(); }
+			set	
+            {
+                m_strConvertToSpCd = value;
+                if (value != null)
+                {
+                    for (int i = 0; i < this.cmbFvsSpCd.Items.Count; i++)
+                    {
+                        string strFvsSpeciesText = this.cmbFvsSpCd.GetItemText(this.cmbFvsSpCd.Items[i]);
+                        int intFirstDash = strFvsSpeciesText.IndexOf("-", 0);
+                        int intSecondDash = strFvsSpeciesText.IndexOf("-", intFirstDash + 1);
+                        string strNextSpeciesCode = strFvsSpeciesText.Substring(intFirstDash + 1, intSecondDash - intFirstDash - 1).Trim();
+                        if (value.Equals(strNextSpeciesCode))
+                        {
+                            this.cmbFvsSpCd.SelectedIndex = i;
+                        }
+                    }
+                }
+            }
+			get { return m_strConvertToSpCd; }
 		}
 		public string strTreeSpeciesGenus
 		{
@@ -712,21 +622,36 @@ namespace FIA_Biosum_Manager
 			set	{ this.txtSubspecies.Text  = value; }
 			get { return this.txtSubspecies.Text.ToString(); }
 		}
-		public string strConvertToSpCd
-		{
-			set	{ this.txtConvertToSpCd.Text = value; }
-			get { return this.txtConvertToSpCd.Text.ToString(); }
-		}
-		public string strFvsCommonName
-		{
-			set	{ this.txtFvsCommonName.Text = value; }
-			get { return this.txtFvsCommonName.Text.ToString(); }
-		}
-		
 
+        public string strFvsCommonName
+        {
+            get {
+                return m_strFvsCommonName;
+            }
+        }
 
+        public string strFvsSpeciesCode
+        {
+            get
+            {
+                return m_strFvsSpeciesCode;
+            }
+        }
 
-		
+        private void cmbFvsSpCd_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            m_strFvsCommonName = "";
+            m_strFvsSpeciesCode = "";
+            m_strConvertToSpCd = "";
+            if (this.cmbFvsSpCd.Text.Trim().Length > 0)
+            {
+                m_strFvsSpeciesCode = this.cmbFvsSpCd.Text.Trim().Substring(0, 2).ToString();
+                int intFirstDash = this.cmbFvsSpCd.Text.IndexOf("-", 0);
+                int intSecondDash = this.cmbFvsSpCd.Text.IndexOf("-", intFirstDash + 1);
+                m_strConvertToSpCd = this.cmbFvsSpCd.Text.Substring(intFirstDash + 1, intSecondDash - intFirstDash - 1).Trim();
+                m_strFvsCommonName = this.cmbFvsSpCd.Text.Substring(intSecondDash + 1, this.cmbFvsSpCd.Text.Trim().Length - intSecondDash - 1).Trim();
+            }
+        }
 
 	}
 }
