@@ -56,7 +56,10 @@ namespace FIA_Biosum_Manager
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-            m_ado = p_ado;
+            m_ado = p_ado;                
+            // Populate reference dictionary of spcd and fvs_common_name from fvs_tree_species
+            m_dictFvsCommonName = new System.Collections.Generic.Dictionary<String, String>();
+
 			if (p_strVariant.Trim().Length > 0)
 			{
 				p_ado.m_strSQL = "SELECT  spcd,fvs_species,common_name,fvs_common_name " + 
@@ -66,8 +69,6 @@ namespace FIA_Biosum_Manager
 					"TRIM(fvs_variant) = '" + p_strVariant.Trim() +  "' order by spcd;";
 			
 				p_ado.SqlQueryReader(p_ado.m_OleDbConnection,p_ado.m_OleDbTransaction,p_ado.m_strSQL);
-                // Populate reference dictionary of spcd and fvs_common_name from fvs_tree_species
-                m_dictFvsCommonName = new System.Collections.Generic.Dictionary<String, String>();
 				if (p_ado.m_OleDbDataReader.HasRows)
 				{
 					while (p_ado.m_OleDbDataReader.Read())
@@ -80,7 +81,38 @@ namespace FIA_Biosum_Manager
                             m_dictFvsCommonName.Add(strMySpCd, Convert.ToString(p_ado.m_OleDbDataReader["fvs_common_name"]));
                         }
 					}
+
 				}
+
+                // Only show fvs variants on the form that exist in the fvs_tree_species table
+                p_ado.m_strSQL = "SELECT distinct fvs_variant " +
+                    "FROM " + p_strFvsTreeSpcTable + " ";
+                p_ado.SqlQueryReader(p_ado.m_OleDbConnection, p_ado.m_OleDbTransaction, p_ado.m_strSQL);
+                if (p_ado.m_OleDbDataReader.HasRows)
+                {
+                    // Copy all the combo box items into dictionary with variant as key
+                    System.Collections.Generic.IDictionary<String, String> dictVariantItems = 
+                        new System.Collections.Generic.Dictionary<String, String>();
+                    for (int i = 0; i < this.cmbVariant.Items.Count; i++)
+                    {
+                        string strKey = this.cmbVariant.GetItemText(this.cmbVariant.Items[i]).Substring(0, 2);
+                        if (!dictVariantItems.ContainsKey(strKey))
+                        {
+                            dictVariantItems.Add(strKey, this.cmbVariant.GetItemText(this.cmbVariant.Items[i]));
+                        }
+                    }
+                    // Clear combo box items
+                    this.cmbVariant.Items.Clear();
+                    while (p_ado.m_OleDbDataReader.Read())
+                    {
+                        string strNextVariant = Convert.ToString(p_ado.m_OleDbDataReader["fvs_variant"]).Trim();
+                        // Only add combo box items back that are in the fvs_species table
+                        if (dictVariantItems.ContainsKey(strNextVariant))
+                        {
+                            this.cmbVariant.Items.Add(dictVariantItems[strNextVariant]);
+                        }
+                    }
+                }
 
 				p_ado.m_OleDbDataReader.Close();
 			}
@@ -117,6 +149,8 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtFvsCommonName = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.cmbFvsSpCd = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -140,8 +174,6 @@ namespace FIA_Biosum_Manager
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.txtFvsCommonName = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -180,6 +212,25 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Size = new System.Drawing.Size(624, 500);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // txtFvsCommonName
+            // 
+            this.txtFvsCommonName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFvsCommonName.Location = new System.Drawing.Point(279, 393);
+            this.txtFvsCommonName.MaxLength = 50;
+            this.txtFvsCommonName.Name = "txtFvsCommonName";
+            this.txtFvsCommonName.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtFvsCommonName.Size = new System.Drawing.Size(296, 23);
+            this.txtFvsCommonName.TabIndex = 38;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(14, 393);
+            this.label8.Name = "label8";
+            this.label8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label8.Size = new System.Drawing.Size(256, 16);
+            this.label8.TabIndex = 37;
+            this.label8.Text = "FVS Tree Species Common Name";
             // 
             // label14
             // 
@@ -320,6 +371,7 @@ namespace FIA_Biosum_Manager
             "CS - Central States",
             "EC - Eastside Cascades",
             "EM - Eastern Montana",
+            "IE - Inland Empire",
             "KT - Kootenai/Kaniksu/Tally Lake",
             "LS - Lake States",
             "NC - Northern California (Klamath Mountains)",
@@ -332,8 +384,7 @@ namespace FIA_Biosum_Manager
             "TT - Tetons",
             "UT - Utah",
             "WC - Weside Cascades",
-            "WS - Westside Sierra Nevada",
-            ""});
+            "WS - Westside Sierra Nevada"});
             this.cmbVariant.Location = new System.Drawing.Point(280, 88);
             this.cmbVariant.Name = "cmbVariant";
             this.cmbVariant.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -427,25 +478,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(618, 24);
             this.lblTitle.TabIndex = 2;
             this.lblTitle.Text = "Processor Tree Species Edit";
-            // 
-            // txtFvsCommonName
-            // 
-            this.txtFvsCommonName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFvsCommonName.Location = new System.Drawing.Point(279, 393);
-            this.txtFvsCommonName.MaxLength = 50;
-            this.txtFvsCommonName.Name = "txtFvsCommonName";
-            this.txtFvsCommonName.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.txtFvsCommonName.Size = new System.Drawing.Size(296, 23);
-            this.txtFvsCommonName.TabIndex = 38;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(14, 393);
-            this.label8.Name = "label8";
-            this.label8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label8.Size = new System.Drawing.Size(256, 16);
-            this.label8.TabIndex = 37;
-            this.label8.Text = "FVS Tree Species Common Name";
             // 
             // uc_processor_tree_spc_edit
             // 
@@ -619,7 +651,25 @@ namespace FIA_Biosum_Manager
 		}
 		public string strVariant
 		{
-			set	{ this.cmbVariant.Text = value; }
+			set	
+            {
+
+                if (value != null)
+                {
+                    for (int i = 0; i < this.cmbVariant.Items.Count; i++)
+                    {
+                        if (value.Equals(this.cmbVariant.GetItemText(this.cmbVariant.Items[i]).Trim().Substring(0, 2).ToString()))
+                        {
+                            this.cmbVariant.SelectedIndex = i;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    this.cmbVariant.SelectedIndex = -1;
+                }
+            }
 			get { return this.cmbVariant.Text.Trim().Substring(0,2).ToString(); }
 		}
         public string strConvertToSpCd
@@ -638,6 +688,7 @@ namespace FIA_Biosum_Manager
                         if (value.Equals(strNextSpeciesCode))
                         {
                             this.cmbFvsSpCd.SelectedIndex = i;
+                            return;
                         }
                     }
                 }
