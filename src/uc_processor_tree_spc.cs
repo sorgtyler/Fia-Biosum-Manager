@@ -14,16 +14,9 @@ namespace FIA_Biosum_Manager
 	public class uc_processor_tree_spc : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
-		public System.Windows.Forms.Label lblTitle;
-		private System.Windows.Forms.DataGrid m_dg;
+        public System.Windows.Forms.Label lblTitle;
 		private System.Windows.Forms.GroupBox grpboxAudit;
-		public System.Windows.Forms.ListView lstAudit;
-		private System.Windows.Forms.GroupBox grpBoxTreeSpc;
-		public System.Windows.Forms.Button btnDelete;
-		private System.Windows.Forms.Button btnNew;
-		private System.Windows.Forms.Button btnEdit;
-		public System.Windows.Forms.Button btnSave;
-		private System.Windows.Forms.Button btnCancel;
+        public System.Windows.Forms.ListView lstAudit;
 		private System.Windows.Forms.Button btnHelp;
 		private System.Windows.Forms.Button btnClose;
 		private System.Windows.Forms.Button btnAuditAdd;
@@ -96,6 +89,13 @@ namespace FIA_Biosum_Manager
         private string m_xpsFile = Help.DefaultFvsXPSFile;
 
         private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_processor_audit_debug.txt";
+        private GroupBox grpBoxTreeSpc;
+        public Button btnDelete;
+        private Button btnNew;
+        private Button btnEdit;
+        public Button btnSave;
+        private Button btnCancel;
+        private DataGrid m_dg;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -169,8 +169,7 @@ namespace FIA_Biosum_Manager
 		public void loadvalues()
 		{
 			string strColumnName="";
-			this.InitializePopup();
-            getUniqueTreeSpCd();				                                         
+			this.InitializePopup();			                                         
 			this.m_ado.m_DataSet = new DataSet("tree_species");
 			this.m_ado.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
 			
@@ -186,9 +185,9 @@ namespace FIA_Biosum_Manager
             //                                    "WHERE s.spcd=t.spcd) " + 
             //                                    "ORDER BY fvs_variant, spcd;";
 
-            this.m_ado.m_strSQL = "SELECT s.id, s.fvs_variant, s.spcd, " +
-                                  "f.fvs_common_name,s.fvs_input_spcd,f.fvs_species, " +
-                                  "s.common_name,s.genus, s.species,s.variety, s.subspecies,comments " +
+            this.m_ado.m_strSQL = "SELECT s.fvs_variant, s.spcd, s.common_name, " +
+                                  "s.fvs_input_spcd, f.fvs_species, f.fvs_common_name, " +
+                                  "s.genus, s.species, comments, s.id " +
                                   "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " s, " +
                                   this.m_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " f " +
                                   "WHERE EXISTS (SELECT DISTINCT(spcd) FROM " + this.m_oQueries.m_oFIAPlot.m_strTreeTable + " t WHERE s.spcd=t.spcd) " +
@@ -252,7 +251,7 @@ namespace FIA_Biosum_Manager
 					for(int i = 0; i < numCols; ++i)
 					{
 						strColumnName = this.m_ado.m_DataSet.Tables["tree_species"].Columns[i].ColumnName;
-						if (strColumnName.Trim().ToUpper() == "COMMON_NAME" || strColumnName.Trim().ToUpper() == "SPECIES" || strColumnName.Trim().ToUpper() == "VARIETY" || strColumnName.Trim().ToUpper() == "SUBSPECIES")
+						if (strColumnName.Trim().ToUpper() == "COMMON_NAME" || strColumnName.Trim().ToUpper() == "SPECIES")
 						{
 							aColumnTextColumn = new TreeSpcAudit_DataGridColoredTextBoxColumn(true,false,this);
 							aColumnTextColumn.TextBox.MaxLength=50;
@@ -320,7 +319,11 @@ namespace FIA_Biosum_Manager
 					this.m_dg.TableStyles.Clear();
 					this.m_dg.TableStyles.Add(tableStyle);
 
-					this.m_dg.DataSource = this.m_dv;  
+                    string strCaption = "                                                       FIA" +
+                                        "                                                FVS Input" +
+                                        "                                                          FIA";
+                    this.m_dg.CaptionText = strCaption;
+                    this.m_dg.DataSource = this.m_dv;  
 
 					if (this.m_ado.m_DataSet.Tables["tree_species"].Rows.Count > 0)
 					{
@@ -504,7 +507,7 @@ namespace FIA_Biosum_Manager
 						frmTemp.txtNumeric = p_txtDefault;
 						frmTemp.strCallingFormType="TN";
 					}
-					else if (strCol.ToUpper() == "SPECIES" || strCol.ToUpper() == "COMMON_NAME" || strCol.ToUpper() == "VARIETY" || strCol.ToUpper() == "SUBSPECIES" || strCol.ToUpper() == "GENUS")
+					else if (strCol.ToUpper() == "SPECIES" || strCol.ToUpper() == "COMMON_NAME" || strCol.ToUpper() == "GENUS")
 					{
 						//------------text box------------//
 						//instatiate numeric text class
@@ -1665,8 +1668,6 @@ namespace FIA_Biosum_Manager
             string strCommonName = "";
             string strGenus = "";
             string strSpc = "";
-            string strVariety = "";
-            string strSubSpc = "";
             string strID = "";
             string strVariant="";
            
@@ -1763,7 +1764,7 @@ namespace FIA_Biosum_Manager
                         if (this.lstAudit.Items[x].Checked == true)
                         {
                             //get the species information if a record with the same species already exists
-                            this.m_ado.m_strSQL = "SELECT DISTINCT common_name,genus,species,variety,subspecies " +
+                            this.m_ado.m_strSQL = "SELECT DISTINCT common_name,genus,species " +
                                 "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " t " +
                                 "WHERE SPCD = " + this.lstAudit.Items[x].SubItems[1].Text.Trim() + ";";
 
@@ -1772,8 +1773,6 @@ namespace FIA_Biosum_Manager
                             strCommonName = "";
                             strGenus = "";
                             strSpc = "";
-                            strVariety = "";
-                            strSubSpc = "";
 
                             if (this.m_ado.m_OleDbDataReader.HasRows)
                             {
@@ -1784,12 +1783,7 @@ namespace FIA_Biosum_Manager
                                     if (this.m_ado.m_OleDbDataReader["genus"] != System.DBNull.Value)
                                         strGenus = Convert.ToString(this.m_ado.m_OleDbDataReader["genus"]).Trim();
                                     if (this.m_ado.m_OleDbDataReader["species"] != System.DBNull.Value)
-                                        strSpc = Convert.ToString(this.m_ado.m_OleDbDataReader["species"]).Trim();
-                                    if (this.m_ado.m_OleDbDataReader["variety"] != System.DBNull.Value)
-                                        strVariety = Convert.ToString(this.m_ado.m_OleDbDataReader["variety"]).Trim();
-                                    if (this.m_ado.m_OleDbDataReader["subspecies"] != System.DBNull.Value)
-                                        strSubSpc = Convert.ToString(this.m_ado.m_OleDbDataReader["subspecies"]).Trim();
-                                }
+                                        strSpc = Convert.ToString(this.m_ado.m_OleDbDataReader["species"]).Trim();                                }
                             }
                             this.m_ado.m_OleDbDataReader.Close();
 
@@ -1811,8 +1805,6 @@ namespace FIA_Biosum_Manager
                             p_row["common_name"] = strCommonName;
                             p_row["genus"] = strGenus;
                             p_row["species"] = strSpc;
-                            p_row["variety"] = strVariety;
-                            p_row["subspecies"] = strSubSpc;
 
                             this.m_ado.m_DataSet.Tables["tree_species"].Rows.Add(p_row);
                             p_row = null;
@@ -2128,7 +2120,7 @@ namespace FIA_Biosum_Manager
 		}
 		private void InitializeOleDbTransactionCommands()
 		{
-            this.m_ado.m_strSQL = "select id, fvs_variant,spcd,fvs_input_spcd,common_name,genus,species,variety,subspecies,comments from " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
+            this.m_ado.m_strSQL = "select id, fvs_variant,spcd,fvs_input_spcd,common_name,genus,species,comments from " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
 			//initialize the transaction object with the connection
 			this.m_ado.m_OleDbTransaction = this.m_ado.m_OleDbConnection.BeginTransaction();
 
@@ -2138,14 +2130,14 @@ namespace FIA_Biosum_Manager
 				this.m_ado.m_strSQL,
 				this.m_oQueries.m_oFvs.m_strTreeSpcTable);
 
-            this.m_ado.m_strSQL = "select fvs_variant, spcd,fvs_input_spcd,common_name,genus,species,variety,subspecies,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
+            this.m_ado.m_strSQL = "select fvs_variant, spcd,fvs_input_spcd,common_name,genus,species,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
 			this.m_ado.ConfigureDataAdapterUpdateCommand(this.m_ado.m_OleDbConnection,
 				this.m_ado.m_OleDbDataAdapter,
 				this.m_ado.m_OleDbTransaction,
 				this.m_ado.m_strSQL,"select id from " + m_oQueries.m_oFvs.m_strTreeSpcTable,
 				m_oQueries.m_oFvs.m_strTreeSpcTable);
 
-            this.m_ado.m_strSQL = "select fvs_variant, spcd, common_name,fvs_input_spcd,genus,species,variety,subspecies,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
+            this.m_ado.m_strSQL = "select fvs_variant, spcd, common_name,fvs_input_spcd,genus,species,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
 			this.m_ado.ConfigureDataAdapterDeleteCommand(this.m_ado.m_OleDbConnection,
 				this.m_ado.m_OleDbDataAdapter,
 				this.m_ado.m_OleDbTransaction,
@@ -2274,8 +2266,6 @@ namespace FIA_Biosum_Manager
 					p_uc.strCommonName = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("common_name")].ToString().Trim();
 					p_uc.strTreeSpeciesGenus = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("genus")].ToString().Trim();
 					p_uc.strTreeSpecies = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("species")].ToString().Trim();
-					p_uc.strTreeSpeciesVariety = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("variety")].ToString().Trim();
-					p_uc.strTreeSpeciesSubSpecies = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("subspecies")].ToString().Trim();
 					p_uc.strConvertToSpCd = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_input_spcd")].ToString().Trim();
 				}
 				System.Windows.Forms.DialogResult result = frmTemp.ShowDialog();
@@ -2293,8 +2283,6 @@ namespace FIA_Biosum_Manager
 						p_row["common_name"] = p_uc.strCommonName;
 						p_row["genus"] = p_uc.strTreeSpeciesGenus;
 						p_row["species"] = p_uc.strTreeSpecies;
-						p_row["variety"] = p_uc.strTreeSpeciesVariety;
-						p_row["subspecies"] = p_uc.strTreeSpeciesSubSpecies;
 						if (p_uc.strConvertToSpCd.Trim().Length == 0)
 						{
 							p_row["fvs_input_spcd"] = System.DBNull.Value;
@@ -2316,8 +2304,6 @@ namespace FIA_Biosum_Manager
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("common_name")] = p_uc.strCommonName;
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("genus")] = p_uc.strTreeSpeciesGenus;
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("species")] = p_uc.strTreeSpecies;
-						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("variety")] = p_uc.strTreeSpeciesVariety;
-						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("subspecies")]= p_uc.strTreeSpeciesSubSpecies;
 						if (p_uc.strConvertToSpCd.Trim().Length == 0)
 						{
 							this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_input_spcd")] = System.DBNull.Value;
@@ -3060,11 +3046,7 @@ namespace FIA_Biosum_Manager
         //        oAdo.SqlNonQuery(oAdo.m_OleDbConnection,"DROP TABLE missing_values");
 
         //}
-		private void getUniqueTreeSpCd()
-		{
 
-
-		}	
 		/// <summary>
 		/// find the table field in the grid by matching the field name with the column header
 		/// </summary>

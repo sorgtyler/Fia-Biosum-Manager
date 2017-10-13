@@ -4053,13 +4053,8 @@ namespace FIA_Biosum_Manager
                      "species CHAR(50)," +
                      "variety CHAR(50)," +
                      "subspecies CHAR(50)," +
-                     "fvs_species CHAR(2)," +
-                     "fvs_common_name CHAR(50)," +
                      "fvs_variant CHAR(2)," +
                      "fvs_input_spcd INTEGER," +
-                     "od_wgt SINGLE DEFAULT 0," +
-                     "dry_to_green SINGLE DEFAULT 0," +
-                     "dry_to_green_substitution_desc CHAR(255)," +
                      "comments CHAR(200))";
             }
             public void CreateFVSCommandsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
