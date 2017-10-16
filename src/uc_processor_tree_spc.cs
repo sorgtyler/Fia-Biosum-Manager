@@ -318,10 +318,10 @@ namespace FIA_Biosum_Manager
 					if (frmMain.g_oGridViewFont != null) this.m_dg.Font = frmMain.g_oGridViewFont;
 					this.m_dg.TableStyles.Clear();
 					this.m_dg.TableStyles.Add(tableStyle);
-
-                    string strCaption = "                                                       FIA" +
-                                        "                                                FVS Input" +
-                                        "                                                          FIA";
+                
+                    string strCaption = "                                 |                    FIA" +
+                                        "                      |                           FVS Input" +
+                                        "                           |                              FIA";
                     this.m_dg.CaptionText = strCaption;
                     this.m_dg.DataSource = this.m_dv;  
 
@@ -3307,6 +3307,8 @@ namespace FIA_Biosum_Manager
 					
 				
 			}
+
+
 			
 		}
 		private void TextBox_Enter(object sender, EventArgs e)
@@ -3322,8 +3324,7 @@ namespace FIA_Biosum_Manager
 					if (this.uc_processor_tree_spc1.btnSave.Enabled==false) this.uc_processor_tree_spc1.btnSave.Enabled=true;
 				}
 			}
-		}
-		
+		}		
 		     
 	}
 }

@@ -145,6 +145,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblFvsCommonName = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.cmbFvsSpCd = new System.Windows.Forms.ComboBox();
@@ -165,7 +166,6 @@ namespace FIA_Biosum_Manager
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.lblFvsCommonName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -200,6 +200,16 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Size = new System.Drawing.Size(624, 450);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // lblFvsCommonName
+            // 
+            this.lblFvsCommonName.BackColor = System.Drawing.SystemColors.Control;
+            this.lblFvsCommonName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFvsCommonName.Location = new System.Drawing.Point(280, 332);
+            this.lblFvsCommonName.Name = "lblFvsCommonName";
+            this.lblFvsCommonName.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblFvsCommonName.Size = new System.Drawing.Size(296, 24);
+            this.lblFvsCommonName.TabIndex = 39;
             // 
             // label8
             // 
@@ -296,6 +306,7 @@ namespace FIA_Biosum_Manager
             this.txtSpCd.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.txtSpCd.Size = new System.Drawing.Size(56, 23);
             this.txtSpCd.TabIndex = 1;
+            this.txtSpCd.Validating += new System.ComponentModel.CancelEventHandler(this.txtSpCd_Validating);
             this.txtSpCd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSpCd_KeyDown);
             this.txtSpCd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSpCd_KeyPress);
             // 
@@ -419,16 +430,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 2;
             this.lblTitle.Text = "Processor Tree Species Edit";
             // 
-            // lblFvsCommonName
-            // 
-            this.lblFvsCommonName.BackColor = System.Drawing.SystemColors.Control;
-            this.lblFvsCommonName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFvsCommonName.Location = new System.Drawing.Point(280, 332);
-            this.lblFvsCommonName.Name = "lblFvsCommonName";
-            this.lblFvsCommonName.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblFvsCommonName.Size = new System.Drawing.Size(296, 24);
-            this.lblFvsCommonName.TabIndex = 39;
-            // 
             // uc_processor_tree_spc_edit
             // 
             this.Controls.Add(this.groupBox1);
@@ -531,6 +532,15 @@ namespace FIA_Biosum_Manager
 				this.txtSpCd.Focus();
 				return;
 			}
+            if (this.cmbFvsSpCd.Text.Trim().Length == 0)
+            {
+                MessageBox.Show("!!Select An FVS Tree Species!!", "FIA Biosum",
+                                 System.Windows.Forms.MessageBoxButtons.OK,
+                                 System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                this.cmbFvsSpCd.Focus();
+                return;
+            }
 		}
 
 		private void btnCancel_Click(object sender, System.EventArgs e)
@@ -634,6 +644,7 @@ namespace FIA_Biosum_Manager
 			set	
             {
                 m_intConvertToSpCd = value;
+                this.cmbFvsSpCd.SelectedIndex = -1;
                 if (value > 0)
                 {
                     for (int i = 0; i < this.cmbFvsSpCd.Items.Count; i++)
@@ -694,9 +705,21 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void label11_Click(object sender, EventArgs e)
+        private void txtSpCd_Validating(object sender,
+                                        System.ComponentModel.CancelEventArgs e)
         {
-
+            intConvertToSpCd = -1;
+            // Set the convertToSpCd to same as spcd user entered, if possible
+            if (txtSpCd.Text.Length > 0)
+            {
+                bool bIsInt = false;
+                int intMySpCd = -1;
+                bIsInt = Int32.TryParse(txtSpCd.Text, out intMySpCd);
+                if (bIsInt == true)
+                {
+                    intConvertToSpCd = intMySpCd;
+                }
+            }
         }
 
 	}
