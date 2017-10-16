@@ -1129,23 +1129,15 @@ namespace FIA_Biosum_Manager
             if (m_oAdo.m_intError == 0)
             {
                 string strTreeSpeciesTableName = this.m_oQueries.m_oFvs.m_strTreeSpcTable;
-                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, strTreeSpeciesTableName, "WOODLAND_YN"))
-                {
-                    System.Windows.Forms.MessageBox.Show("The WOODLAND_YN field is missing from the tree_species table. " +
-                                    "The most likely cause is having an outdated tree_species table. " +
-                                    "Please check the migration instructions for v5.7.7.", 
-                                    "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, 
-                                    System.Windows.Forms.MessageBoxIcon.Error);
-                    return null;
-                }
-                
-                string strSQL = "SELECT DISTINCT s.SPCD, s.SPECIES_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " +
+                string strSQL = "SELECT DISTINCT s.SPCD, s.SPECIES_GROUP, f.od_wgt, f.Dry_to_Green, f.WOODLAND_YN FROM " +
                          strTreeSpeciesTableName + " t, " +
-                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " s " +
-                         "WHERE t.spcd = s.spcd AND FVS_VARIANT = '" + p_strVariant + "' " +
+                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " s, " +
+                         Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + " f " +
+                         "WHERE t.spcd = s.spcd AND t.spcd = f.spcd and f.spcd = s.spcd " +
+                         "AND FVS_VARIANT = '" + p_strVariant + "' " +
                          "AND S.SPCD IS NOT NULL AND S.SPECIES_GROUP IS NOT NULL " +
                          "AND TRIM(UCASE(S.scenario_id)) = '" + m_strScenarioId.Trim().ToUpper() + "' " +
-                         "GROUP BY s.SPCD, s.SPECIES_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN";
+                         "GROUP BY s.SPCD, s.SPECIES_GROUP, f.OD_WGT, f.Dry_to_Green, f.WOODLAND_YN";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {

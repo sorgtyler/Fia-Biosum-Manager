@@ -191,6 +191,7 @@ namespace FIA_Biosum_Manager
         public const int OLDPROJDIR = 1;
 
 		public static string g_strAppVer = "5.7.9";
+        public static string g_strBiosumDataDir = "\\FIABiosum";
 		private System.Windows.Forms.MenuItem mnuSettings;
         private MenuItem mnuTools;
         private MenuItem mnuToolsFCS;

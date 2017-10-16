@@ -3288,6 +3288,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeHwdBinLowSlopeTableName { get { return "Hwd_BinsLowSlope"; } }
             static public string DefaultTreeBinSteepSlopeTableName { get { return "BinsSteepSlope"; } }
             static public string DefaultTreeHwdBinSteepSlopeTableName { get { return "Hwd_BinsSteepSlope"; } }
+            static public string DefaultFiaTreeSpeciesRefTableName { get { return "FIA_TREE_SPECIES_REF"; } }
 
 			public ProcessorScenarioRun()
 			{
@@ -4028,7 +4029,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultFVSEasternTreeSpeciesTableName { get { return "FVS_EasternTreeSpeciesTranslator"; } }
             static public string DefaultTreeMacroPlotBreakPointDiaTableDbFile { get { return @"db\ref_master.mdb"; } }
             static public string DefaultTreeMacroPlotBreakPointDiaTableName { get { return "TreeMacroPlotBreakPointDia"; } }
-
+            static public string DefaultBiosumReferenceDbFile { get { return "biosum_ref.accdb"; } }
 
 
 
