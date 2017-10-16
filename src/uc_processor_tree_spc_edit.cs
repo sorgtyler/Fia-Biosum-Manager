@@ -35,12 +35,12 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label label14;
 		private string m_strFvsTreeSpcTable;
 		private string m_strVariant;
-        private string m_strConvertToSpCd;
+        private int m_intConvertToSpCd;
         private string m_strFvsSpeciesCode;
         private System.Collections.Generic.IDictionary<String, String> m_dictFvsCommonName;
         private ado_data_access m_ado;
-        private TextBox txtFvsCommonName;
         private Label label8;
+        private Label lblFvsCommonName;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -70,7 +70,7 @@ namespace FIA_Biosum_Manager
 					while (p_ado.m_OleDbDataReader.Read())
 					{
                         string strMySpCd = Convert.ToString(p_ado.m_OleDbDataReader["spcd"]);
-                        this.cmbFvsSpCd.Items.Add(Convert.ToString(p_ado.m_OleDbDataReader["fvs_species"]) + " - " + strMySpCd + " - " + Convert.ToString(p_ado.m_OleDbDataReader["common_name"]));
+                        this.cmbFvsSpCd.Items.Add(strMySpCd + " - " + Convert.ToString(p_ado.m_OleDbDataReader["common_name"]) + " - " + p_ado.m_OleDbDataReader["fvs_species"]);
 
                         if (!m_dictFvsCommonName.ContainsKey(strMySpCd))
                         {
@@ -145,7 +145,6 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtFvsCommonName = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.cmbFvsSpCd = new System.Windows.Forms.ComboBox();
@@ -166,12 +165,13 @@ namespace FIA_Biosum_Manager
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.lblFvsCommonName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtFvsCommonName);
+            this.groupBox1.Controls.Add(this.lblFvsCommonName);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.cmbFvsSpCd);
@@ -200,16 +200,6 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Size = new System.Drawing.Size(624, 450);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            // 
-            // txtFvsCommonName
-            // 
-            this.txtFvsCommonName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFvsCommonName.Location = new System.Drawing.Point(279, 332);
-            this.txtFvsCommonName.MaxLength = 50;
-            this.txtFvsCommonName.Name = "txtFvsCommonName";
-            this.txtFvsCommonName.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.txtFvsCommonName.Size = new System.Drawing.Size(296, 23);
-            this.txtFvsCommonName.TabIndex = 38;
             // 
             // label8
             // 
@@ -345,9 +335,9 @@ namespace FIA_Biosum_Manager
             // 
             // lblID
             // 
-            this.lblID.BackColor = System.Drawing.Color.White;
+            this.lblID.BackColor = System.Drawing.SystemColors.Control;
             this.lblID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblID.Location = new System.Drawing.Point(280, 56);
+            this.lblID.Location = new System.Drawing.Point(280, 63);
             this.lblID.Name = "lblID";
             this.lblID.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblID.Size = new System.Drawing.Size(64, 24);
@@ -428,6 +418,16 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(618, 24);
             this.lblTitle.TabIndex = 2;
             this.lblTitle.Text = "Processor Tree Species Edit";
+            // 
+            // lblFvsCommonName
+            // 
+            this.lblFvsCommonName.BackColor = System.Drawing.SystemColors.Control;
+            this.lblFvsCommonName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFvsCommonName.Location = new System.Drawing.Point(280, 332);
+            this.lblFvsCommonName.Name = "lblFvsCommonName";
+            this.lblFvsCommonName.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblFvsCommonName.Size = new System.Drawing.Size(296, 24);
+            this.lblFvsCommonName.TabIndex = 39;
             // 
             // uc_processor_tree_spc_edit
             // 
@@ -556,7 +556,11 @@ namespace FIA_Biosum_Manager
 
 				    this.cmbFvsSpCd.Items.Clear();
                     // cache convertToSpcd
-                    string strMyConvertToSpcd = m_strConvertToSpCd;
+                    int intMyConvertToSpcd = -1;
+                    if (m_intConvertToSpCd > 0)
+                    {
+                        intMyConvertToSpcd = m_intConvertToSpCd;
+                    }
                     this.m_dictFvsCommonName.Clear();
 					m_ado.m_strSQL = "SELECT  spcd,fvs_species,common_name,fvs_common_name " + 
 						"FROM " + m_strFvsTreeSpcTable + " " + 
@@ -570,14 +574,17 @@ namespace FIA_Biosum_Manager
 						while (m_ado.m_OleDbDataReader.Read())
 						{
                             string strMySpCd = Convert.ToString(m_ado.m_OleDbDataReader["spcd"]);
-                            this.cmbFvsSpCd.Items.Add(Convert.ToString(m_ado.m_OleDbDataReader["fvs_species"]) + " - " + strMySpCd + " - " + Convert.ToString(m_ado.m_OleDbDataReader["common_name"]));
+                            this.cmbFvsSpCd.Items.Add(strMySpCd + " - " + Convert.ToString(m_ado.m_OleDbDataReader["common_name"]) + " - " + m_ado.m_OleDbDataReader["fvs_species"]);
                             if (!m_dictFvsCommonName.ContainsKey(strMySpCd))
                             {
                                 m_dictFvsCommonName.Add(strMySpCd, Convert.ToString(m_ado.m_OleDbDataReader["fvs_common_name"]));
                             }
 						}
 
-                        this.strConvertToSpCd = strMyConvertToSpcd;
+                        if (intMyConvertToSpcd > 0)
+                        {
+                            this.intConvertToSpCd = intMyConvertToSpcd;
+                        }
 					}
 					m_ado.m_OleDbDataReader.Close();
 				}
@@ -622,20 +629,20 @@ namespace FIA_Biosum_Manager
             }
 			get { return this.cmbVariant.Text.Trim().Substring(0,2).ToString(); }
 		}
-        public string strConvertToSpCd
+        public int intConvertToSpCd
 		{
 			set	
             {
-                m_strConvertToSpCd = value;
-                if (value != null)
+                m_intConvertToSpCd = value;
+                if (value > 0)
                 {
                     for (int i = 0; i < this.cmbFvsSpCd.Items.Count; i++)
                     {
                         string strFvsSpeciesText = this.cmbFvsSpCd.GetItemText(this.cmbFvsSpCd.Items[i]);
+                        int intNextSpeciesCode = -1;
                         int intFirstDash = strFvsSpeciesText.IndexOf("-", 0);
-                        int intSecondDash = strFvsSpeciesText.IndexOf("-", intFirstDash + 1);
-                        string strNextSpeciesCode = strFvsSpeciesText.Substring(intFirstDash + 1, intSecondDash - intFirstDash - 1).Trim();
-                        if (value.Equals(strNextSpeciesCode))
+                        Int32.TryParse(strFvsSpeciesText.Substring(0, intFirstDash - 1), out intNextSpeciesCode);
+                        if (value == intNextSpeciesCode)
                         {
                             this.cmbFvsSpCd.SelectedIndex = i;
                             return;
@@ -643,7 +650,7 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-			get { return m_strConvertToSpCd; }
+			get { return m_intConvertToSpCd; }
 		}
 		public string strTreeSpeciesGenus
 		{
@@ -657,8 +664,8 @@ namespace FIA_Biosum_Manager
 		}
         public string strFvsCommonName
         {
-            set { this.txtFvsCommonName.Text = value; }
-            get { return this.txtFvsCommonName.Text.ToString(); }
+            set { this.lblFvsCommonName.Text = value; }
+            get { return this.lblFvsCommonName.Text.ToString(); }
         }
 
         public string strFvsSpeciesCode
@@ -672,17 +679,17 @@ namespace FIA_Biosum_Manager
         private void cmbFvsSpCd_SelectedIndexChanged(object sender, EventArgs e)
         {
             m_strFvsSpeciesCode = "";
-            m_strConvertToSpCd = "";
-            txtFvsCommonName.Text = "";
+            m_intConvertToSpCd = -1;
+            lblFvsCommonName.Text = "";
             if (this.cmbFvsSpCd.Text.Trim().Length > 0)
             {
-                m_strFvsSpeciesCode = this.cmbFvsSpCd.Text.Trim().Substring(0, 2).ToString();
                 int intFirstDash = this.cmbFvsSpCd.Text.IndexOf("-", 0);
+                Int32.TryParse(this.cmbFvsSpCd.Text.Trim().Substring(0, intFirstDash -1), out m_intConvertToSpCd);
                 int intSecondDash = this.cmbFvsSpCd.Text.IndexOf("-", intFirstDash + 1);
-                m_strConvertToSpCd = this.cmbFvsSpCd.Text.Substring(intFirstDash + 1, intSecondDash - intFirstDash - 1).Trim();
-                if (m_dictFvsCommonName.ContainsKey(m_strConvertToSpCd))
+                m_strFvsSpeciesCode = this.cmbFvsSpCd.Text.Substring(intSecondDash + 1, this.cmbFvsSpCd.Text.Trim().Length - intSecondDash - 1).Trim();
+                if (m_dictFvsCommonName.ContainsKey(m_intConvertToSpCd.ToString()))
                 {
-                    txtFvsCommonName.Text = m_dictFvsCommonName[m_strConvertToSpCd];
+                    lblFvsCommonName.Text = m_dictFvsCommonName[m_intConvertToSpCd.ToString()];
                 }
             }
         }

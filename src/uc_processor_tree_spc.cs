@@ -2266,7 +2266,7 @@ namespace FIA_Biosum_Manager
 					p_uc.strCommonName = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("common_name")].ToString().Trim();
 					p_uc.strTreeSpeciesGenus = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("genus")].ToString().Trim();
 					p_uc.strTreeSpecies = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("species")].ToString().Trim();
-					p_uc.strConvertToSpCd = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_input_spcd")].ToString().Trim();
+                    p_uc.intConvertToSpCd = Convert.ToInt32(this.m_dg[this.m_intCurrRow - 1, this.getGridColumn("fvs_input_spcd")]);
 				}
 				System.Windows.Forms.DialogResult result = frmTemp.ShowDialog();
 				if (result==System.Windows.Forms.DialogResult.OK)
@@ -2283,13 +2283,13 @@ namespace FIA_Biosum_Manager
 						p_row["common_name"] = p_uc.strCommonName;
 						p_row["genus"] = p_uc.strTreeSpeciesGenus;
 						p_row["species"] = p_uc.strTreeSpecies;
-						if (p_uc.strConvertToSpCd.Trim().Length == 0)
+                        if (p_uc.intConvertToSpCd < 1)
 						{
 							p_row["fvs_input_spcd"] = System.DBNull.Value;
 						}
 						else
 						{
-							p_row["fvs_input_spcd"] = Convert.ToInt32(p_uc.strConvertToSpCd);
+                            p_row["fvs_input_spcd"] = p_uc.intConvertToSpCd;
 						}
 						this.m_ado.m_DataSet.Tables["tree_species"].Rows.Add(p_row);
 						p_row=null;
@@ -2304,13 +2304,13 @@ namespace FIA_Biosum_Manager
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("common_name")] = p_uc.strCommonName;
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("genus")] = p_uc.strTreeSpeciesGenus;
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("species")] = p_uc.strTreeSpecies;
-						if (p_uc.strConvertToSpCd.Trim().Length == 0)
+                        if (p_uc.intConvertToSpCd < 1)
 						{
 							this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_input_spcd")] = System.DBNull.Value;
 						}
 						else
 						{
-							this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_input_spcd")] = p_uc.strConvertToSpCd;
+							this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_input_spcd")] = p_uc.intConvertToSpCd;
 						}
 						
 						this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_common_name")] = p_uc.strFvsCommonName;
