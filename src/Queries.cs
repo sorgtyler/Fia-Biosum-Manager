@@ -84,6 +84,9 @@ namespace FIA_Biosum_Manager
 			{
 				
 			}
+            // 18-OCT-2017 issue #98: if an error occurs in LoadLimitedDatasources due to 
+            // dao 'too many client tasks' this.m_oDataSource.m_intError will be < 0 and we could 
+            // trap it here if we wanted to. The error originates in populate_datasource_array()
 			if (this.m_oFvs.LoadDatasource) this.m_oFvs.LoadDatasources();
 			if (this.m_oFIAPlot.LoadDatasource) this.m_oFIAPlot.LoadDatasources();
 			if (this.m_oReference.LoadDatasource) this.m_oReference.LoadDatasources();

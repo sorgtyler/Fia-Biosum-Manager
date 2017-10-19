@@ -8112,6 +8112,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oLvAlternateColors.DelegateListViewItem(lstFvsOutput.SelectedItems[0]);
 
+                // Enable/Disable Open Audit Pre/Post Table button
                 string strDbFile = this.lstFvsOutput.SelectedItems[0].SubItems[COL_MDBOUT].Text.Trim();
                 strDbFile = strDbFile.Replace(".MDB", "_BIOSUM.ACCDB");
                 string strOutDirAndFile = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)this.txtOutDir, "Text", false);
@@ -8121,6 +8122,17 @@ namespace FIA_Biosum_Manager
                    btnAuditDb.Enabled = true;
                 else
                    btnAuditDb.Enabled = false;
+
+                //Enable/Disable Open Post Audit Log button
+                btnViewPostLogFile.Enabled = false;
+                string strDirectory = this.txtOutDir.Text.Trim() + "\\" + lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim() + "\\BiosumCalc";
+                if (System.IO.Directory.Exists(strDirectory) == true)
+                {
+                    string strSearch = "??_P???_TREE_CUTLIST.MDB_audit*.txt";
+                    string[] strFiles = System.IO.Directory.GetFiles(strDirectory, strSearch);
+                    if (strFiles.Length > 0)
+                        btnViewPostLogFile.Enabled = true;
+                }
             }
 
 		}
@@ -8149,11 +8161,18 @@ namespace FIA_Biosum_Manager
 
         private void btnViewPostLogFile_Click(object sender, EventArgs e)
         {
-            
+
+            if (this.lstFvsOutput.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No Rows Are Selected", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            // This search string is also used in lstFvsOutput_SelectedIndexChanged
             string strSearch =  "??_P???_TREE_CUTLIST.MDB_audit*.txt";
 
             string strDirectory = this.txtOutDir.Text.Trim() + "\\" + lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim() + "\\BiosumCalc";
-
+            
             string[] strFiles = System.IO.Directory.GetFiles(strDirectory, strSearch);
 
             FIA_Biosum_Manager.frmDialog oDlg = new frmDialog();
