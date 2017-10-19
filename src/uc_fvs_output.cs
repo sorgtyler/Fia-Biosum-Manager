@@ -2299,21 +2299,23 @@ namespace FIA_Biosum_Manager
                                 }
                                 else
                                 {
-                                    
-                                        oAdo.m_strSQL = "INSERT INTO PRE_" + strFVSOutTable + " " +
-                                           "(rxpackage,rx,rxcycle,fvs_variant," + strSourceColumnsReservedWordFormattedList + ") " +
-                                           "SELECT '" + p_strPackage + "' AS rxpackage," +
-                                                  "'" + strRx + "' AS rx," +
-                                                  "'" + strCycle + "' AS rxcycle," +
-                                                  "'" + p_strVariant + "' AS fvs_variant," +
-                                                 strFormattedSelectColumnList + " " +
-                                          "FROM " + strFVSOutTableLink + " a," +
-                                             "(SELECT standid,year,removal_code " +
-                                              "FROM " + strFVSOutSeqNumMatrixTableLink + " " +
-                                              "WHERE CYCLE" + strCycle + "_PRE_YN='Y')  AS b " +
-                                          "WHERE a.standid=b.standid AND a.year=b.year AND a.removal_code=b.removal_code";
-                                    
+
+                                    oAdo.m_strSQL = "INSERT INTO PRE_" + strFVSOutTable + " " +
+                                       "(rxpackage,rx,rxcycle,fvs_variant," + strSourceColumnsReservedWordFormattedList + ") " +
+                                       "SELECT '" + p_strPackage + "' AS rxpackage," +
+                                              "'" + strRx + "' AS rx," +
+                                              "'" + strCycle + "' AS rxcycle," +
+                                              "'" + p_strVariant + "' AS fvs_variant," +
+                                             strFormattedSelectColumnList + " " +
+                                      "FROM " + strFVSOutTableLink + " a," +
+                                         "(SELECT standid,year,removal_code " +
+                                          "FROM " + strFVSOutSeqNumMatrixTableLink + " " +
+                                          "WHERE CYCLE" + strCycle + "_PRE_YN='Y')  AS b " +
+                                      "WHERE a.standid=b.standid AND a.year=b.year AND a.removal_code=b.removal_code";
+
                                 }
+                                
+                                
 
 
 
@@ -8018,44 +8020,51 @@ namespace FIA_Biosum_Manager
 			string strOutDirAndFile = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)this.txtOutDir,"Text",false);
 			strOutDirAndFile=strOutDirAndFile.Trim()  + "\\" + lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim();	
 			strOutDirAndFile = strOutDirAndFile  + "\\" + strDbFile;
-			ado_data_access oAdo = new ado_data_access();
-            strConn = oAdo.getMDBConnString(strOutDirAndFile, "", "");
-            oAdo.OpenConnection(strConn);
+            if (System.IO.File.Exists(strOutDirAndFile))
+            {
+                ado_data_access oAdo = new ado_data_access();
+                strConn = oAdo.getMDBConnString(strOutDirAndFile, "", "");
+                oAdo.OpenConnection(strConn);
 
-			if (!oAdo.TableExist(oAdo.m_OleDbConnection,this.m_strFVSSummaryAuditYearCountsTable)) 
-			{
+                if (!oAdo.TableExist(oAdo.m_OleDbConnection, this.m_strFVSSummaryAuditYearCountsTable))
+                {
+                    oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                    oAdo = null;
+                    string strWarnMessage = "No PRE/POST audit tables exist in the file " + strOutDirAndFile + ". The Audit Pre/Post tables cannot be displayed.";
+                    MessageBox.Show(strWarnMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                FIA_Biosum_Manager.frmGridView oFrm = new frmGridView();
+
+
+
+                //oAdo.m_strSQL = "SELECT * FROM " + this.m_strFVSSummaryAuditYearCountsTable;
+                //oFrm.LoadDataSet(oAdo.m_OleDbConnection,strConn,oAdo.m_strSQL, this.m_strFVSSummaryAuditYearCountsTable);
+
+
+
+                oFrm.Text = "Database: Browse (Pre/Post Audit Tables)";
+                if (m_strFVSAuditTables != null)
+                {
+                    for (int x = 0; x <= m_strFVSAuditTables.Count - 1; x++)
+                    {
+                        if (oAdo.TableExist(oAdo.m_OleDbConnection, m_strFVSAuditTables[x].Trim()))
+                        {
+                            oFrm.LoadDataSet(oAdo.m_OleDbConnection, strConn, "SELECT * FROM " + m_strFVSAuditTables[x].Trim(), m_strFVSAuditTables[x].Trim());
+                        }
+                    }
+                }
+
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
-				oAdo=null;
-                string strWarnMessage = "Unable to open table '" + this.m_strFVSSummaryAuditYearCountsTable + "' in '" + strOutDirAndFile + "'. The Audit Pre/Post tables cannot be displayed.";
-                MessageBox.Show(strWarnMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-				return;
-			}
-
-			FIA_Biosum_Manager.frmGridView oFrm = new frmGridView();
-			
-
-			
-			//oAdo.m_strSQL = "SELECT * FROM " + this.m_strFVSSummaryAuditYearCountsTable;
-			//oFrm.LoadDataSet(oAdo.m_OleDbConnection,strConn,oAdo.m_strSQL, this.m_strFVSSummaryAuditYearCountsTable);
-		
-			
-			
-			oFrm.Text = "Database: Browse (Pre/Post Audit Tables)";
-			if (m_strFVSAuditTables!=null)
-			{
-				for (int x=0;x<=m_strFVSAuditTables.Count-1;x++)
-				{
-					if (oAdo.TableExist(oAdo.m_OleDbConnection,m_strFVSAuditTables[x].Trim()))
-					{
-                        oFrm.LoadDataSet(oAdo.m_OleDbConnection,strConn, "SELECT * FROM " + m_strFVSAuditTables[x].Trim(), m_strFVSAuditTables[x].Trim());
-					}
-				}
-			}
-            
-            oAdo.CloseConnection(oAdo.m_OleDbConnection);
-			oFrm.TileGridViews();
-			oFrm.Show();
-			oFrm.Focus();
+                oFrm.TileGridViews();
+                oFrm.Show();
+                oFrm.Focus();
+            }
+            else
+            {
+                MessageBox.Show("The file " + strOutDirAndFile + " does not exist");
+            }
 		}
 		private void UpdateTherm(System.Windows.Forms.ProgressBar p_oPb,int p_intCurrentStep,int p_intTotalSteps)
 		{
@@ -8099,8 +8108,21 @@ namespace FIA_Biosum_Manager
 
 		private void lstFvsOutput_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			if (this.lstFvsOutput.SelectedItems.Count > 0)
-				m_oLvAlternateColors.DelegateListViewItem(lstFvsOutput.SelectedItems[0]);
+            if (this.lstFvsOutput.SelectedItems.Count > 0)
+            {
+                m_oLvAlternateColors.DelegateListViewItem(lstFvsOutput.SelectedItems[0]);
+
+                string strDbFile = this.lstFvsOutput.SelectedItems[0].SubItems[COL_MDBOUT].Text.Trim();
+                strDbFile = strDbFile.Replace(".MDB", "_BIOSUM.ACCDB");
+                string strOutDirAndFile = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)this.txtOutDir, "Text", false);
+                strOutDirAndFile = strOutDirAndFile.Trim() + "\\" + lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim();
+                strOutDirAndFile = strOutDirAndFile + "\\" + strDbFile;
+                if (System.IO.File.Exists(strOutDirAndFile))
+                   btnAuditDb.Enabled = true;
+                else
+                   btnAuditDb.Enabled = false;
+            }
+
 		}
 
 	
@@ -8128,9 +8150,9 @@ namespace FIA_Biosum_Manager
         private void btnViewPostLogFile_Click(object sender, EventArgs e)
         {
             
-            string strSearch =  "??_TREE_CUTLIST.MDB_audit*.txt";
+            string strSearch =  "??_P???_TREE_CUTLIST.MDB_audit*.txt";
 
-            string strDirectory = this.txtOutDir.Text.Trim() + "\\treelists";
+            string strDirectory = this.txtOutDir.Text.Trim() + "\\" + lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim() + "\\BiosumCalc";
 
             string[] strFiles = System.IO.Directory.GetFiles(strDirectory, strSearch);
 
