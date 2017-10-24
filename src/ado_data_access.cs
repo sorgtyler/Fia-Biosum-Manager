@@ -1006,6 +1006,7 @@ namespace FIA_Biosum_Manager
                 p_strColumnName.Trim().ToUpper() == "USE" ||
                 p_strColumnName.Trim().ToUpper() == "YEAR" ||
                 p_strColumnName.Trim().ToUpper() == "DESC" ||
+                p_strColumnName.Trim().ToUpper() == "TO" ||
                 p_strColumnName.Trim().ToUpper() == "AS")
             {
                 p_strColumnName = "`" + p_strColumnName.Trim() + "`";
