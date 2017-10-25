@@ -395,8 +395,14 @@ namespace FIA_Biosum_Manager
 			
 			for (x=0; x <= this.m_intNumberOfTables - 1; x++)
 			{
-					if (this.m_strDataSource[x,TABLESTATUS].Trim().ToUpper()=="F" &&
-						  this.m_strDataSource[x,FILESTATUS].Trim().ToUpper()=="F")
+                string strFileStatus = this.m_strDataSource[x, FILESTATUS];
+                if (strFileStatus != null)
+                    strFileStatus = strFileStatus.Trim().ToUpper();
+                string strTableStatus = this.m_strDataSource[x, TABLESTATUS];
+                if (strTableStatus != null)
+                    strTableStatus = strTableStatus.Trim().ToUpper();
+                if (strTableStatus=="F" &&
+					strFileStatus=="F")
 					{
 						if (strTempMDB.Trim().Length == 0)
 						{
@@ -725,12 +731,18 @@ namespace FIA_Biosum_Manager
 			int x;
 			for (x=0; x<= this.m_intNumberOfTables-1;x++)
 			{
-				if (strTableType.Trim().ToUpper() == 
+                string strFileStatus = this.m_strDataSource[x, FILESTATUS];
+                if (strFileStatus != null)
+                    strFileStatus = strFileStatus.Trim().ToUpper();
+                string strTableStatus = this.m_strDataSource[x, TABLESTATUS];
+                if (strTableStatus != null)
+                    strTableStatus = strTableStatus.Trim().ToUpper();
+                if (strTableType.Trim().ToUpper() == 
 					this.m_strDataSource[x,TABLETYPE].Trim().ToUpper()
 					&&
-					this.m_strDataSource[x,FILESTATUS].Trim().ToUpper() =="F" 
+					strFileStatus =="F" 
 					&&
-					this.m_strDataSource[x,TABLESTATUS].Trim().ToUpper() == "F")
+					strTableStatus == "F")
 				{
 					return this.m_strDataSource[x,TABLE].Trim();
 				}
