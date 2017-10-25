@@ -250,52 +250,17 @@ namespace FIA_Biosum_Manager
 					 ************************************************/
 					for(int i = 0; i < numCols; ++i)
 					{
-						strColumnName = this.m_ado.m_DataSet.Tables["tree_species"].Columns[i].ColumnName;
-						if (strColumnName.Trim().ToUpper() == "COMMON_NAME" || strColumnName.Trim().ToUpper() == "SPECIES")
-						{
-							aColumnTextColumn = new TreeSpcAudit_DataGridColoredTextBoxColumn(true,false,this);
-							aColumnTextColumn.TextBox.MaxLength=50;
-							aColumnTextColumn.ReadOnly=false;
-						}
-						else if (strColumnName.Trim().ToUpper() == "GENUS")
-						{
-							aColumnTextColumn = new TreeSpcAudit_DataGridColoredTextBoxColumn(true,false,this);
-							aColumnTextColumn.TextBox.MaxLength=20;
-							aColumnTextColumn.ReadOnly=false;
-						}
-						else if (strColumnName.Trim().ToUpper() == "fvs_input_spcd")
-						{
-							/******************************************************************
-							**create a new instance of the DataGridColoredTextBoxColumn class
-							******************************************************************/
-							aColumnTextColumn = new TreeSpcAudit_DataGridColoredTextBoxColumn(true,true,this);
-							aColumnTextColumn.TextBox.MaxLength=3;
-							aColumnTextColumn.ReadOnly=false;
-						}
-						else if (strColumnName.Trim().ToUpper() == "COMMENTS")
-						{
-							aColumnTextColumn = new TreeSpcAudit_DataGridColoredTextBoxColumn(true,false,this);
-							aColumnTextColumn.TextBox.MaxLength=200;
-							aColumnTextColumn.ReadOnly=false;
-						}
-						else
-						{
-							/******************************************************************
-							 **create a new instance of the DataGridColoredTextBoxColumn class
-							 ******************************************************************/
-							aColumnTextColumn = new TreeSpcAudit_DataGridColoredTextBoxColumn(false,false,this);
-							/***********************************
-							 **all columns are read-only except
-							 **the edit columns
-							 ***********************************/
-							aColumnTextColumn.ReadOnly=true;
+                        strColumnName = this.m_ado.m_DataSet.Tables["tree_species"].Columns[i].ColumnName;
 
-						}
-
-						
-
+					    /******************************************************************
+					    **create a new instance of the DataGridColoredTextBoxColumn class
+						******************************************************************/
+						aColumnTextColumn = new TreeSpcAudit_DataGridColoredTextBoxColumn(false,false,this);
+						/***********************************
+						**all columns are read-only
+						***********************************/
+						aColumnTextColumn.ReadOnly=true;
 						aColumnTextColumn.HeaderText = strColumnName;
-
 				 				    
 						/********************************************************************
 						 **assign the mappingname property the data sets column name
