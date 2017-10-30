@@ -78,7 +78,8 @@ namespace FIA_Biosum_Manager
 															  "Population Stratum",
 															  "Population Plot Stratum Assignment",
                                                               "BIOSUM Pop Stratum Adjustment Factors",
-															  "Site Tree"};
+															  "Site Tree",
+                                                              Datasource.TableTypes.FiaTreeSpeciesReference};
 
         public static string[] g_strCoreDatasourceTableTypesArray = {"Plot",
 															  "Condition",
@@ -1231,8 +1232,12 @@ namespace FIA_Biosum_Manager
 
 		}
 
+        public class TableTypes
+        {
+            static public string FvsTreeSpecies = "FVS Tree Species";
+            static public string FiaTreeSpeciesReference = "FIA Tree Species Reference";
+        }
 		
-		
-      
 	}
+
 }

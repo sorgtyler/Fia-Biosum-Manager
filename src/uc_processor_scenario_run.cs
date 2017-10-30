@@ -726,14 +726,6 @@ namespace FIA_Biosum_Manager
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName,
                 strScenarioResultsMDB,
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, true);
-            //
-            //LOAD REQUIRED DATASOURCES FROM APPS DIRECTORY
-            //
-            string strBiosumReferenceMDB = frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
-                frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
-                Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName,
-                strBiosumReferenceMDB, Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName, true);
 
             oDao.m_DaoDbEngine.Idle(1);
             oDao.m_DaoDbEngine.Idle(8);
