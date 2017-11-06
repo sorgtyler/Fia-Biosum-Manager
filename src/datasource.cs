@@ -202,6 +202,9 @@ namespace FIA_Biosum_Manager
  	    ///</summary>
 		public void populate_datasource_array()
 		{
+            macrosubst oMacroSub = new macrosubst();
+            oMacroSub.ReferenceGeneralMacroSubstitutionVariableCollection = frmMain.g_oGeneralMacroSubstitutionVariable_Collection;
+            
             int intRecCnt=0;    		
 			string strPathAndFile="";
 			string strSQL="";
@@ -251,7 +254,8 @@ namespace FIA_Biosum_Manager
 					this.m_strDataSource[x,TABLETYPE] = oDataReader["table_type"].ToString().Trim();
 					this.m_strDataSource[x,PATH] = oDataReader["path"].ToString().Trim();
 					this.m_strDataSource[x,MDBFILE] = oDataReader["file"].ToString().Trim();
-					strPathAndFile = oDataReader["path"].ToString().Trim() + "\\" + oDataReader["file"].ToString().Trim();
+                    strPathAndFile = oMacroSub.GeneralTranslateVariableSubstitution(oDataReader["path"].ToString().Trim()) + 
+                        "\\" + oDataReader["file"].ToString().Trim();
 					if (System.IO.File.Exists(strPathAndFile) == true) 
 					{
 						this.m_strDataSource[x,FILESTATUS] = "F";
@@ -382,11 +386,13 @@ namespace FIA_Biosum_Manager
 		///</summary>
 		public string CreateMDBAndTableDataSourceLinks()
 		{
-			string strTempMDB="";
+			macrosubst oMacroSub = new macrosubst();
+            oMacroSub.ReferenceGeneralMacroSubstitutionVariableCollection = frmMain.g_oGeneralMacroSubstitutionVariable_Collection;
+            string strTempMDB="";
 			int x;
 			
 			FIA_Biosum_Manager.env p_env = new env();
-      this.m_intNumberOfValidTables=0;
+            this.m_intNumberOfValidTables=0;
       
 			//used to get the temporary random file name
 			utils p_utils = new utils();
@@ -418,7 +424,7 @@ namespace FIA_Biosum_Manager
 						}
 						p_dao.CreateTableLink(strTempMDB,
 							this.m_strDataSource[x,TABLE].Trim(),
-							this.m_strDataSource[x,PATH].Trim() + "\\" +
+							oMacroSub.GeneralTranslateVariableSubstitution(this.m_strDataSource[x,PATH].Trim()) + "\\" +
 							     this.m_strDataSource[x,MDBFILE].Trim(),
 							this.m_strDataSource[x,TABLE].Trim());
 						this.m_intNumberOfValidTables++;

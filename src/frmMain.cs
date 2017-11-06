@@ -404,8 +404,13 @@ namespace FIA_Biosum_Manager
             oItem.VariableSubstitutionString = "";
             g_oGeneralMacroSubstitutionVariable_Collection.Add(oItem);
 
+            oItem = new GeneralMacroSubstitutionVariableItem();
+            oItem.Description = "Application Data Folder";
+            oItem.Index = 2;
+            oItem.VariableName = "AppData";
+            oItem.VariableSubstitutionString = frmMain.g_oEnv.strApplicationDataDirectory;
+            g_oGeneralMacroSubstitutionVariable_Collection.Add(oItem);
 
-   
 		}
 
 		/// <summary>

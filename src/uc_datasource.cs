@@ -317,7 +317,10 @@ namespace FIA_Biosum_Manager
 
 		public void LoadValues()
 		{
-			string strPathAndFile="";
+            macrosubst oMacroSub = new macrosubst();
+            oMacroSub.ReferenceGeneralMacroSubstitutionVariableCollection = frmMain.g_oGeneralMacroSubstitutionVariable_Collection;
+            
+            string strPathAndFile="";
 			string strSQL="";
 			string strConn="";
 			//string strTable="";
@@ -399,7 +402,8 @@ namespace FIA_Biosum_Manager
 						this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,uc_datasource.PATH,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
 						this.lstRequiredTables.Items[x].SubItems.Add(oDataReader["file"].ToString());
 						this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,uc_datasource.MDBFILE,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
-						strPathAndFile = oDataReader["path"].ToString().Trim() + "\\" + oDataReader["file"].ToString().Trim();
+                        strPathAndFile = oMacroSub.GeneralTranslateVariableSubstitution(oDataReader["path"].ToString().Trim()) + 
+                            "\\" + oDataReader["file"].ToString().Trim();
 						if (System.IO.File.Exists(strPathAndFile) == true) 
 						{
 							ListViewItem.ListViewSubItem FileStatusSubItem = 
@@ -504,8 +508,10 @@ namespace FIA_Biosum_Manager
 		
 		public void populate_listview_grid()
 		{
-             		
-         
+
+            macrosubst oMacroSub = new macrosubst();
+            oMacroSub.ReferenceGeneralMacroSubstitutionVariableCollection = frmMain.g_oGeneralMacroSubstitutionVariable_Collection;
+
 			string strPathAndFile="";
 			string strSQL="";
 			string strConn="";
@@ -585,7 +591,8 @@ namespace FIA_Biosum_Manager
 						this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,PATH,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
 						this.lstRequiredTables.Items[x].SubItems.Add(oDataReader["file"].ToString());
 						this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,MDBFILE,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
-						strPathAndFile = oDataReader["path"].ToString().Trim() + "\\" + oDataReader["file"].ToString().Trim();
+                        strPathAndFile = oMacroSub.GeneralTranslateVariableSubstitution(oDataReader["path"].ToString().Trim()) 
+                            + "\\" + oDataReader["file"].ToString().Trim();
 						if (System.IO.File.Exists(strPathAndFile) == true) 
 						{
 							ListViewItem.ListViewSubItem FileStatusSubItem = 
