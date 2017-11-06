@@ -528,7 +528,9 @@ namespace FIA_Biosum_Manager
                                 case "TREATMENT PRESCRIPTIONS HARVEST COST COLUMNS":
                                     if (ScenarioType=="processor") bCore = true;
                                     break;
-								
+                                case "FIA TREE SPECIES REFERENCE":
+                                    if (ScenarioType=="processor") bCore = true;
+                                    break;
 
 								default:
 									break;

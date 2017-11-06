@@ -1530,8 +1530,23 @@ namespace FIA_Biosum_Manager
 
 		private void lstRequiredTables_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			if (lstRequiredTables.SelectedItems.Count > 0)
-				this.m_oLvRowColors.DelegateListViewItem(lstRequiredTables.SelectedItems[0]);
+            if (lstRequiredTables.SelectedItems.Count > 0)
+            {
+                this.m_oLvRowColors.DelegateListViewItem(lstRequiredTables.SelectedItems[0]);
+                string strSelectedPath = lstRequiredTables.SelectedItems[0].SubItems[PATH].Text.Trim();
+                if (!String.IsNullOrEmpty(strSelectedPath))
+                {
+                    // Disable Edit button if this is an AppData data source
+                    String strAppData = "@@AppData@@".ToUpper();
+                    if (strSelectedPath.Trim().ToUpper().IndexOf(strAppData) > -1)
+                    {
+                        tlbBtnEdit.Enabled = false;
+                        return;
+                    }
+                }
+
+            }
+            tlbBtnEdit.Enabled = true;
 		}
 
 		private void toolBar1_Click(object sender, System.EventArgs e)

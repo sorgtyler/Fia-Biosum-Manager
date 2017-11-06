@@ -61,7 +61,7 @@ namespace FIA_Biosum_Manager
                                                               "FVS PRE-POST SeqNum Definitions",
                                                               "FVS PRE-POST SeqNum Treatment Package Assign", 
 															  "Tree Species",
-															  "FVS Tree Species",
+															  Datasource.TableTypes.FvsTreeSpecies,
                                                               "FVS Western Tree Species Translator",
                                                               "FVS Eastern Tree Species Translator",
 															  "Travel Times",

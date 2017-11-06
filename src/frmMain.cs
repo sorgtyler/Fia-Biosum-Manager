@@ -411,6 +411,12 @@ namespace FIA_Biosum_Manager
             oItem.VariableSubstitutionString = frmMain.g_oEnv.strApplicationDataDirectory;
             g_oGeneralMacroSubstitutionVariable_Collection.Add(oItem);
 
+            string strSourceFile = frmMain.g_oEnv.strAppDir + "\\db\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
+            string strDestFile = frmMain.g_oEnv.strApplicationDataDirectory.Trim() + 
+                frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
+            if (System.IO.File.Exists(strDestFile) == false)
+                System.IO.File.Copy(strSourceFile, strDestFile);
+
 		}
 
 		/// <summary>
