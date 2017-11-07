@@ -1633,90 +1633,10 @@ namespace FIA_Biosum_Manager
             string strCommonName = "";
             string strGenus = "";
             string strSpc = "";
-            string strID = "";
-            string strVariant="";
-           
-            
 
-            
-            if (btnAuditAdd.Text == "Attempt to Auto Assign 2-Letter FVS Species")
-            {
-                int intUpdateCount = 0;
-                List<string> strList = new List<string>();
-                CurrencyManager oCM;
-                string strFVSAlphaSpCd = "";
-
-                oCM = (CurrencyManager)this.BindingContext[this.m_dg.DataSource, this.m_dg.DataMember];
-                for (x = 0; x <= lstAudit.CheckedItems.Count - 1; x++)
-                {
-                    strID = lstAudit.CheckedItems[x].Text.Trim();
-                    strSpc = lstAudit.CheckedItems[x].SubItems[2].Text.Trim();
-                    strVariant = lstAudit.CheckedItems[x].SubItems[1].Text.Trim();
-                    m_ado.m_strSQL = "SELECT DISTINCT fvs_species " + 
-                                     "FROM " + m_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " " + 
-                                     "WHERE spcd=" + strSpc + " AND " + 
-                                           "fvs_variant='" + strVariant + "'";
-                    strFVSAlphaSpCd = (string)m_ado.getSingleStringValueFromSQLQuery(m_ado.m_OleDbConnection, this.m_ado.m_OleDbTransaction,m_ado.m_strSQL, m_oQueries.m_oFvs.m_strFvsTreeSpcRefTable);
-                    if (strFVSAlphaSpCd.Trim().Length > 0)
-                    {
-                        
-                        string strSearchValue = this.lstAudit.SelectedItems[0].SubItems[0].Text.Trim();
-                        for (y = 0; x <= oCM.Count - 1; x++)
-                        {
-                            string strCellValue = this.m_dg[y, 0].ToString().Trim();
-                            if (strCellValue == strID)
-                            {
-                                this.m_dg[y - 1, this.getGridColumn("fvs_species")] = strFVSAlphaSpCd;
-                                strList.Add(strID);
-                                intUpdateCount++;
-                                break;
-                            }
-
-                        }
-
-                        
-                        
-
-                    }
-
-                }
-                if (intUpdateCount > 0)
-                {
-                    this.m_dg.SetDataBinding(this.m_dv, "");
-                    this.m_dg.Update();
-                    for (x = lstAudit.Items.Count - 1; x >= 0; x--)
-                    {
-                        for (y = 0; y <= strList.Count - 1; y++)
-                        {
-                            if (strList[y].Trim() == lstAudit.Items[x].Text.Trim())
-                            {
-                                lstAudit.Items.Remove(lstAudit.Items[x]);
-                                strList.Remove(strList[y]);
-                                break;
-                            }
-                        }
-                    }
-                    MessageBox.Show(intUpdateCount + " records in the grid view were updated", "FIA Biosum");
-                    if (this.btnSave.Enabled == false) this.btnSave.Enabled = true;
-                    if (this.btnDelete.Enabled == false) this.btnDelete.Enabled = true;
-                    if (this.btnEdit.Enabled == false) this.btnEdit.Enabled = true;
-
-                }
-                else
-                {
-                    MessageBox.Show("0 records in the grid view were updated", "FIA Biosum");
-                }
-                oCM = null;
-                strList.Clear();
-                strList = null;
-                
-            }
-            else
-            {
-                
-                if (this.btnSave.Enabled == false) this.btnSave.Enabled = true;
-                if (this.btnDelete.Enabled == false) this.btnDelete.Enabled = true;
-                if (this.btnEdit.Enabled == false) this.btnEdit.Enabled = true;
+            if (this.btnSave.Enabled == false) this.btnSave.Enabled = true;
+            if (this.btnDelete.Enabled == false) this.btnDelete.Enabled = true;
+            if (this.btnEdit.Enabled == false) this.btnEdit.Enabled = true;
                
                 try
                 {
@@ -1756,20 +1676,21 @@ namespace FIA_Biosum_Manager
                             p_row["id"] = intId;
                             p_row["fvs_variant"] = this.lstAudit.Items[x].Text;
                             p_row["spcd"] = Convert.ToInt32(this.lstAudit.Items[x].SubItems[1].Text);
-                            if (this.lstAudit.Columns.Count == 4)
+                            if (this.lstAudit.Columns.Count == 5)
                             {
                                 p_row["fvs_species"] = this.lstAudit.Items[x].SubItems[3].Text;  //fvs tree species 2 character code
                                 p_row["fvs_input_spcd"] = Convert.ToString(Convert.ToInt32(this.lstAudit.Items[x].SubItems[2].Text));
                             }
-                            if (this.lstAudit.Columns.Count == 3)
+                            if (this.lstAudit.Columns.Count == 4)
                             {
-                                p_row["fvs_species"] = this.lstAudit.Items[x].SubItems[2].Text;  //fvs tree species numeric code
-                                p_row["fvs_input_spcd"] = this.lstAudit.Items[x].SubItems[1].Text;
+                                p_row["fvs_species"] = this.lstAudit.Items[x].SubItems[3].Text;  //fvs tree species numeric code
+                                p_row["fvs_input_spcd"] = this.lstAudit.Items[x].SubItems[2].Text;
                             }
 
                             p_row["common_name"] = strCommonName;
                             p_row["genus"] = strGenus;
                             p_row["species"] = strSpc;
+                            p_row["comments"] = "Added during tree species audit " + DateTime.Now.ToString("MMddyyyy");
 
                             this.m_ado.m_DataSet.Tables["tree_species"].Rows.Add(p_row);
                             p_row = null;
@@ -1792,7 +1713,6 @@ namespace FIA_Biosum_Manager
 
                     this.m_intError = -1;
                 }
-            }
 
 		}
 
