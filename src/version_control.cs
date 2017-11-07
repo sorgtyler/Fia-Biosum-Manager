@@ -452,6 +452,18 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
+                    //5.7.10 restructures tree_species table and moves reference tables into user's %appData% directory
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 7 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 10) &&
+                            (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 7 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 10))
+                    {
+                        UpdateDatasources_5_7_10();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
 
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6) &&
@@ -4944,6 +4956,58 @@ namespace FIA_Biosum_Manager
                 oDao = null;
             }
         }
+
+        private void UpdateDatasources_5_7_10()
+        {
+            frmMain.g_sbpInfo.Text = "Version Update: Renaming obsolete tree species diameter and groups tables ...Stand by";
+            ado_data_access oAdo = new ado_data_access();
+            dao_data_access oDao = new dao_data_access();
+
+            // Query for the paths/tables from scenario_datasource that we need to rename
+            string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
+            string strScenarioMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            string strSQL = "SELECT distinct path, file, table_name " +
+                            "FROM scenario_datasource " +
+                            "WHERE table_type in ('TREE DIAMETER GROUPS','TREE SPECIES GROUPS')";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMdb, "", ""));
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strPathAndFile = Convert.ToString(oAdo.m_OleDbDataReader["path"]).Trim() +
+                                            "\\" + Convert.ToString(oAdo.m_OleDbDataReader["file"]).Trim();
+                    string strTable = Convert.ToString(oAdo.m_OleDbDataReader["table_name"]).Trim();
+                    //if (oDao.TableExists(strPathAndFile, strTable))
+                    //{
+                        oDao.RenameTable(strPathAndFile, strTable, strTable + strTableSuffix, true);
+                    //}
+                }
+            }
+
+            // Delete entries from scenario_datasource after renaming tables
+            strSQL = "DELETE FROM " + Tables.Scenario.DefaultScenarioDatasourceTableName +
+                     " WHERE TRIM(UCASE(table_type)) = 'TREE DIAMETER GROUPS' OR" +
+                     " TRIM(UCASE(table_type)) = 'TREE SPECIES GROUPS'";
+
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+
+
+
+            if (oAdo != null)
+            {
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                oAdo = null;
+            }
+
+            if (oDao != null)
+            {
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
+        }
+
 
 
         public string ReferenceProjectDirectory
