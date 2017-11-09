@@ -4978,23 +4978,106 @@ namespace FIA_Biosum_Manager
                     string strPathAndFile = Convert.ToString(oAdo.m_OleDbDataReader["path"]).Trim() +
                                             "\\" + Convert.ToString(oAdo.m_OleDbDataReader["file"]).Trim();
                     string strTable = Convert.ToString(oAdo.m_OleDbDataReader["table_name"]).Trim();
-                    //if (oDao.TableExists(strPathAndFile, strTable))
-                    //{
-                        oDao.RenameTable(strPathAndFile, strTable, strTable + strTableSuffix, true);
-                    //}
+                    if (oDao.TableExists(strPathAndFile, strTable))
+                    {
+                        oDao.RenameTable(strPathAndFile, strTable, strTable + strTableSuffix, true, false);
+                    }
                 }
             }
 
             // Delete entries from scenario_datasource after renaming tables
-            strSQL = "DELETE FROM " + Tables.Scenario.DefaultScenarioDatasourceTableName +
+            oAdo.m_strSQL = "DELETE FROM " + Tables.Scenario.DefaultScenarioDatasourceTableName +
                      " WHERE TRIM(UCASE(table_type)) = 'TREE DIAMETER GROUPS' OR" +
                      " TRIM(UCASE(table_type)) = 'TREE SPECIES GROUPS'";
 
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
+            // Rename tree groups list table in master.mdb if it exists; It isn't managed in the scenario_datasource table
+            string strTargetMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\master.mdb";
+            string strTargetTable = "tree_species_groups_list";
+            if (oDao.TableExists(strTargetMdb, strTargetTable))
+            {
+                oDao.RenameTable(strTargetMdb, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            }
 
+            //rename and replace ref_master.mdb tree_species table
+            frmMain.g_sbpInfo.Text = "Version Update: Rename and replace tree species table ...Stand by";
 
+            // Load project data sources table
+            FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oDs.m_strDataSourceTableName = "datasource";
+            oDs.m_strScenarioId = "";
+            oDs.LoadTableColumnNamesAndDataTypes = false;
+            oDs.LoadTableRecordCount = false;
+            oDs.populate_datasource_array();
 
+            // Extract table properties from data sources table; Assume still under the old name
+            int intTreeSpeciesTable = oDs.getValidTableNameRow("Tree Species");
+            string strDirectoryPath = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            string strFileName = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+            string strFileStatus = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            strTargetTable = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            string strTableStatus = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+
+            strTargetMdb = strDirectoryPath + "\\" + strFileName;
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                oDao.RenameTable(strTargetMdb, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            }
+
+            //Rename and copy new tree species table into place
+            string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\ref_master.mdb";
+            oDao.CreateTableLink(strTargetMdb, strTargetTable + "_worktable", strSourceDbFile, strTargetTable);
+
+            //copy contents of new tree species table into place
+            strSQL = "SELECT * INTO " + strTargetTable + " FROM " + strTargetTable + "_worktable";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strTargetMdb, "", ""));
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+
+            //drop the tree species table link
+            if (oAdo.TableExist(oAdo.m_OleDbConnection, strTargetTable + "_worktable"))
+            {
+                strSQL = "DROP TABLE " + strTargetTable + "_worktable";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+            }
+
+            //rename fvs_tree_species table and re-map to %appData%
+            frmMain.g_sbpInfo.Text = "Version Update: Rename and remap fvs tree species table ...Stand by";
+
+            int intFvsTreeSpeciesTable = oDs.getValidTableNameRow("FVS Tree Species");
+            strDirectoryPath = oDs.m_strDataSource[intFvsTreeSpeciesTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strFileName = oDs.m_strDataSource[intFvsTreeSpeciesTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            strFileStatus = oDs.m_strDataSource[intFvsTreeSpeciesTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            strTargetTable = oDs.m_strDataSource[intFvsTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            strTableStatus = oDs.m_strDataSource[intFvsTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            strTargetMdb = strDirectoryPath + "\\" + strFileName;
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                oDao.RenameTable(strTargetMdb, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            }
+
+            string strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            strSQL = "UPDATE datasource " +
+                     "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
+                     "WHERE TABLE_TYPE = '" + Datasource.TableTypes.FvsTreeSpecies + "'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+
+            //new datasource table entries for fia_tree_species_ref table
+            frmMain.g_sbpInfo.Text = "Version Update: Add datasource entries for new FIA Tree Species Reference table ...Stand by";
+            strSQL = "INSERT INTO datasource " +
+                     "(table_type,Path,file,table_name) " +
+                     "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
+                     "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" + 
+                     Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "')";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+
+            // Refresh datasource array after change
+            oDs.populate_datasource_array();
+
+ 
             if (oAdo != null)
             {
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);

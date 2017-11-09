@@ -6003,7 +6003,7 @@ namespace FIA_Biosum_Manager
             //PROCESS THE BASEYEAR AND STANDARD POTFIRE TABLES INTO ONE FVS_POTFIRE TABLE
             //
             oDao.OpenDb(p_strAuditDbFile);
-            oDao.RenameTable(oDao.m_DaoDatabase, strPotFireTable,m_strPotFireStandardLinkedTableName,true);
+            oDao.RenameTable(oDao.m_DaoDatabase, strPotFireTable,m_strPotFireStandardLinkedTableName,true,true);
             oDao.CreateTableLink(oDao.m_DaoDatabase,m_strPotFireBaseYearLinkedTableName, strPotFireBaseYearFile,strPotFireTable,true);
             oDao.m_DaoDatabase.Close();
             oDao.m_DaoWorkspace.Close();
