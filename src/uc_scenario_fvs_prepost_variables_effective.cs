@@ -1640,7 +1640,8 @@ namespace FIA_Biosum_Manager
             //
             //effective variables
             //
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
+            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Count > 0 &&
+                ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
             {
                 for (x = 0; x <= NUMBER_OF_VARIABLES - 1; x++)
                 {
