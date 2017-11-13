@@ -5077,7 +5077,31 @@ namespace FIA_Biosum_Manager
             // Refresh datasource array after change
             oDs.populate_datasource_array();
 
- 
+            //new datasource table entries for each scenario
+            //retrieve paths for all scenarios in the project and put them in list
+            string strProcessorMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strProcessorMdb,"",""));
+            oAdo.m_strSQL = "SELECT distinct scenario_id from scenario";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strScenario = "";
+                    if (oAdo.m_OleDbDataReader["scenario_id"] != System.DBNull.Value)
+                        strScenario = oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim();
+                    if (!String.IsNullOrEmpty(strScenario))
+                    {
+                        strSQL = "INSERT INTO scenario_datasource (table_type, path, file, table_name, scenario_id) " +
+                                 "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
+                                 "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" +
+                                 Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "', '" + strScenario + "')";
+                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                    }
+                }
+                oAdo.m_OleDbDataReader.Close();
+            }
+
             if (oAdo != null)
             {
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
