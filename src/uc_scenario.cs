@@ -289,7 +289,8 @@ namespace FIA_Biosum_Manager
 			this.btnOpen.Enabled = true;
 			this.lblNewScenario.Visible = true;
 			this.txtScenarioId.Visible = true;
-			intscenario = getScenarioCount() + 1;
+			//intscenario = getScenarioCount() + 1;
+            intscenario = getNextScenarioId();
 			this.txtScenarioId.Text = "scenario" + intscenario.ToString();
 			this.txtScenarioPath.Text = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + ScenarioType + "\\" + this.txtScenarioId.Text;
 			this.txtScenarioId.Focus();
@@ -313,6 +314,49 @@ namespace FIA_Biosum_Manager
 			return intCount;
 
 		}
+        private int getNextScenarioId()
+        {
+            System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
+            string strProjDir = frmMain.g_oFrmMain.getProjectDirectory();
+            string strScenarioDir = strProjDir + "\\" + ScenarioType + "\\db";
+            string strFile = "scenario_" + ScenarioType + "_rule_definitions.mdb";
+            System.Text.StringBuilder strFullPath = new System.Text.StringBuilder(strScenarioDir);
+            strFullPath.Append("\\");
+            strFullPath.Append(strFile);
+            ado_data_access oAdo = new ado_data_access();
+            string strConn = oAdo.getMDBConnString(strFullPath.ToString(), "admin", "");
+            oAdo.OpenConnection(strConn);
+            string strSQL = "SELECT scenario_id from " + Tables.Scenario.DefaultScenarioTableName;
+
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            int intReturn = 0;
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    System.Collections.Generic.List<string> treeList =
+                        new System.Collections.Generic.List<string>();
+                    string strScenario = Convert.ToString(oAdo.m_OleDbDataReader["scenario_id"]).Trim();
+                    if (!String.IsNullOrEmpty(strScenario))
+                    {
+                        string[] arrName = strScenario.Split("scenario".ToCharArray());
+                        if (arrName != null && arrName.Length > 8)
+                        {
+                            int intTest = -1;
+                            if (Int32.TryParse(arrName[8], out intTest))
+                            {
+                                if (intTest > intReturn)
+                                {
+                                    intReturn = intTest;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            return intReturn;
+        }
 		private void btnFolder_Click(object sender, System.EventArgs e)
 		{
 		
