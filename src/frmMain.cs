@@ -89,6 +89,7 @@ namespace FIA_Biosum_Manager
         public System.Windows.Forms.Panel m_pnlCore;
 		public FIA_Biosum_Manager.btnMainForm m_btnCoreScenario;
 		public FIA_Biosum_Manager.btnMainForm m_btnCoreMerge;
+        public FIA_Biosum_Manager.btnMainForm m_btnCoreUserVariables;
 
 
 		public System.Windows.Forms.Panel m_pnlFrcs;
@@ -121,6 +122,7 @@ namespace FIA_Biosum_Manager
         
 
 		private FIA_Biosum_Manager.frmDialog m_frmCoreMerge;      //core analysis merge scenarios form
+        private FIA_Biosum_Manager.frmDialog m_frmCoreUserVariables;      //user pre/post variables form
 		private FIA_Biosum_Manager.frmDialog m_frmPlotData;       //plot data form
 		private FIA_Biosum_Manager.frmCoreScenario m_frmScenario;     //core analysis scenario form
 		private FIA_Biosum_Manager.frmProcessorScenario m_frmProcessorScenario; //processor scenario form
@@ -1610,7 +1612,44 @@ namespace FIA_Biosum_Manager
 
 			if (this.btnCoreAnalysis.Enabled == false) 
 			{
-				if (strText.Trim().ToUpper() == "CASE STUDY SCENARIO") 
+                if (strText.Trim().ToUpper() == "DEFINE PRE/POST VARIABLES")
+                {
+                    //check to see if the form has already been loaded
+                    if (this.IsChildWindowVisible("Core Analysis: Define Pre/Post Variables") == false)
+                    {
+
+                        this.m_frmCoreUserVariables = new frmDialog(this);
+                        this.m_frmCoreUserVariables.MaximizeBox = false;
+                        this.m_frmCoreUserVariables.MinimizeBox = false;
+                        this.m_frmCoreUserVariables.BackColor = System.Drawing.SystemColors.Control;
+                        this.m_frmCoreUserVariables.Text = "Core Analysis: Define Pre/Post Variables";
+                        this.m_frmCoreUserVariables.MdiParent = this;
+                        this.m_frmCoreUserVariables.Initialize_Core_User_Variables_User_Control();
+
+                        this.m_frmCoreUserVariables.DisposeOfFormWhenClosing = true;
+                                          
+                        this.m_frmCoreUserVariables.Width = this.m_frmCoreUserVariables.uc_core_scenario_weighted_average1.m_DialogWd;
+                        this.m_frmCoreUserVariables.Height = this.m_frmCoreUserVariables.uc_core_scenario_weighted_average1.m_DialogHt;
+                        this.m_frmCoreUserVariables.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+                        this.m_frmCoreUserVariables.uc_core_scenario_weighted_average1.Top = 0;
+                        this.m_frmCoreUserVariables.uc_core_scenario_weighted_average1.Left = 0;
+
+                        this.m_frmCoreUserVariables.uc_core_scenario_weighted_average1.Visible = true;
+                        this.m_frmCoreUserVariables.MinimizeMainForm = true;
+                        this.m_frmCoreUserVariables.ParentControl = frmMain.g_oFrmMain;
+                        this.m_frmCoreUserVariables.Show();
+
+                    }
+                    else
+                    {
+                        if (this.m_frmCoreMerge.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                            this.m_frmCoreMerge.WindowState = System.Windows.Forms.FormWindowState.Normal;
+
+                        this.m_frmCoreMerge.Focus();
+
+                    }
+                }
+                else if (strText.Trim().ToUpper() == "CASE STUDY SCENARIO") 
 				{
 					
 					System.Text.StringBuilder strFullPath;
@@ -3585,11 +3624,18 @@ namespace FIA_Biosum_Manager
             this.PanelProperties(this.panel1,ref this.m_pnlCore);
 			this.m_pnlCore.Visible=false;
 			this.m_pnlCore.Name="CORE";
+            //user-defined PRE/POST variables
+            this.m_btnCoreUserVariables = new btnMainForm(this);
+            this.m_pnlCore.Controls.Add(this.m_btnCoreUserVariables);
+            this.m_btnCoreUserVariables.Size = this.btnMain1.Size;
+            this.m_btnCoreUserVariables.Location = this.btnMain1.Location;
+            this.m_btnCoreUserVariables.Text = "Define Pre/Post Variables";
 			//case study scenario
 			this.m_btnCoreScenario = new btnMainForm(this);
 			this.m_pnlCore.Controls.Add(this.m_btnCoreScenario);
 			this.m_btnCoreScenario.Size = this.btnMain1.Size;
-			this.m_btnCoreScenario.Location = this.btnMain1.Location;
+            this.m_btnCoreScenario.Left = this.m_btnCoreUserVariables.Left;
+            this.m_btnCoreScenario.Top = this.m_btnCoreUserVariables.Top + this.m_btnCoreUserVariables.Height + 5;
 			this.m_btnCoreScenario.Text = "Case Study Scenario";
 			//merge scenarios
 			this.m_btnCoreMerge = new btnMainForm(this);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -99,10 +99,10 @@
     <Reference Include="Devart.Data.Oracle.Entity, Version=8.3.146.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Devart\dotConnect\Oracle\Entity\EF4\Devart.Data.Oracle.Entity.dll</HintPath>
     </Reference>
-<Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-<SpecificVersion>False</SpecificVersion>
-<HintPath>bin\Debug\EntityFramework.dll</HintPath>   
-</Reference>
+    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -164,6 +164,9 @@
     </Compile>
     <Compile Include="btnMainForm.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="uc_core_scenario_fvs_weighted_average.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_textboxWithButtons.cs">
       <SubType>UserControl</SubType>
@@ -591,6 +594,9 @@
     <Content Include="table-select-row-icon.png" />
     <EmbeddedResource Include="btnMainForm.resx">
       <DependentUpon>btnMainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_core_scenario_fvs_weighted_average.resx">
+      <DependentUpon>uc_core_scenario_fvs_weighted_average.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_textboxWithButtons.resx">
       <DependentUpon>uc_textboxWithButtons.cs</DependentUpon>
