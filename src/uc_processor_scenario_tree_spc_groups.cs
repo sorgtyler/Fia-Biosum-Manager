@@ -799,7 +799,7 @@ namespace FIA_Biosum_Manager
                 "fvsouttreetemp2",
                  m_oRxPackage_Collection,
                  m_strFVSVariantsArray,
-                "fvs_tree_id,fvs_variant,fvs_species");
+                "fvs_tree_id,fvs_variant,fvs_species,FvsCreatedTree_YN");
 
             for (x = 0; x <= strSqlCommandList.Count - 1; x++)
             {
@@ -874,12 +874,6 @@ namespace FIA_Biosum_Manager
                                   "WHERE f.fvs_tree_id = t.fvs_tree_id";
             this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
 
-            //this.m_ado.m_strSQL = "SELECT DISTINCT s.common_name " +
-            //    "FROM tree_spc_groups_temp t," + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " s, " +
-            //    this.m_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " fvs " +
-            //    "WHERE t.spcd = s.spcd AND " +
-            //    "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant)) AND " +
-            //    "TRIM(UCASE(fvs.fvs_species)) = TRIM(UCASE(s.fvs_species))";
             m_ado.m_strSQL = "SELECT DISTINCT s.common_name " +
                   "FROM tree_spc_groups_temp t, " + m_oQueries.m_oFvs.m_strTreeSpcTable + " s " +
                   "WHERE t.spcd = s.spcd AND " +
@@ -899,6 +893,34 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
+
+            //GET FVS OUTPUT TREE SPECIES COMMON NAME FOR FVS-CREATED TREES
+            /***************************************************************************
+             **process tree species records that match up between the fvs output tree 
+             **table and tree species table for fvs-created tree species that may be missing from the tree table
+             ***************************************************************************/
+            m_ado.m_strSQL = "SELECT DISTINCT s.common_name " +
+                  "FROM " + this.m_strFvsOutTreeTable + " t, " + m_oQueries.m_oFvs.m_strTreeSpcTable + " s " +
+                  "WHERE val(t.fvs_species) = val(s.spcd) AND " +
+                  "t.FvsCreatedTree_YN = 'Y' AND " +
+                  "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant))";
+
+            this.m_ado.SqlQueryReader(m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
+            if (this.m_ado.m_OleDbDataReader.HasRows)
+            {
+                while (this.m_ado.m_OleDbDataReader.Read())
+                {
+                    for (x = 0; x <= this.spc_common_name_collection1.Count - 1; x++)
+                    {
+                        if (this.spc_common_name_collection1.Item(x).SpeciesCommonName.Trim().ToUpper() ==
+                            this.m_ado.m_OleDbDataReader["common_name"].ToString().Trim().ToUpper())
+                            this.spc_common_name_collection1.Item(x).FVSOutput = true;
+
+                    }
+                }
+            }
+
+
             this.m_ado.m_OleDbDataReader.Close();
 			
             //ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();

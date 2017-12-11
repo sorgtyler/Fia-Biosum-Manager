@@ -78,12 +78,16 @@ namespace FIA_Biosum_Manager
 			if (p_bLimited)
 			{
 				LoadLimitedDatasources(p_strScenarioType,p_strScenarioId);
-				
 			}
-			else
-			{
-				
-			}
+            if (this.m_oDataSource.m_intError < 0)
+            {
+                // An error has occurred in LoadLimitedDatasources likely due to dao 'too many client tasks'
+                // The error originates in populate_datasource_array()
+                MessageBox.Show("An error occurred while loading data sources! Close the current window " +
+                                "and try again. If the problem persists, close and restart FIA Biosum Manager.",
+                                "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
 			if (this.m_oFvs.LoadDatasource) this.m_oFvs.LoadDatasources();
 			if (this.m_oFIAPlot.LoadDatasource) this.m_oFIAPlot.LoadDatasources();
 			if (this.m_oReference.LoadDatasource) this.m_oReference.LoadDatasources();

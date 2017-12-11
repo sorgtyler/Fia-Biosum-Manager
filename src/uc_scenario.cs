@@ -43,7 +43,6 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario;
 		private string _strScenarioType="core";
 		
-		
 		// public FIA_Biosum_Manager.frmScenario frmscenario1;
 		/// <summary> 
 		/// Required designer variable.
@@ -282,37 +281,62 @@ namespace FIA_Biosum_Manager
 		public void NewScenario()
 		{
 			
-			int intscenario;
-			
-			
 			this.btnCancel.Enabled = true;
 			this.btnOpen.Enabled = true;
 			this.lblNewScenario.Visible = true;
 			this.txtScenarioId.Visible = true;
-			intscenario = getScenarioCount() + 1;
-			this.txtScenarioId.Text = "scenario" + intscenario.ToString();
+			//intscenario = getScenarioCount() + 1;
+            string strScenario = getNextScenarioId();
+            this.txtScenarioId.Text = strScenario;
 			this.txtScenarioPath.Text = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + ScenarioType + "\\" + this.txtScenarioId.Text;
 			this.txtScenarioId.Focus();
 			this.txtDescription.Enabled=true;
 			this.txtDescription.Text = "";
-		}
-		private int getScenarioCount()
-		{
-			System.Text.StringBuilder strFullPath;
-	          
-			System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
-			string strProjDir = frmMain.g_oFrmMain.getProjectDirectory();
-			string strScenarioDir = strProjDir + "\\" + ScenarioType + "\\db";
-			string strFile = "scenario_" + ScenarioType + "_rule_definitions.mdb"; 
-			strFullPath = new System.Text.StringBuilder(strScenarioDir);
-			strFullPath.Append("\\");
-			strFullPath.Append(strFile);
-			ado_data_access oAdo = new ado_data_access();
-			string strConn=oAdo.getMDBConnString(strFullPath.ToString(),"admin","");
-			int intCount = Convert.ToInt32(oAdo.getRecordCount(strConn,"select count(*) from scenario","scenario"));
-			return intCount;
 
 		}
+        private string getNextScenarioId()
+        {
+            System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
+            string strProjDir = frmMain.g_oFrmMain.getProjectDirectory();
+            string strScenarioDir = strProjDir + "\\" + ScenarioType + "\\db";
+            string strFile = "scenario_" + ScenarioType + "_rule_definitions.mdb";
+            System.Text.StringBuilder strFullPath = new System.Text.StringBuilder(strScenarioDir);
+            strFullPath.Append("\\");
+            strFullPath.Append(strFile);
+            ado_data_access oAdo = new ado_data_access();
+            string strConn = oAdo.getMDBConnString(strFullPath.ToString(), "admin", "");
+            oAdo.OpenConnection(strConn);
+            string strSQL = "SELECT scenario_id from " + Tables.Scenario.DefaultScenarioTableName;
+            System.Collections.Generic.IList<string> lstExistingScenarios = new System.Collections.Generic.List<string>();
+
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                // Load all of the existing scenarios into a list we can query
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strScenario = Convert.ToString(oAdo.m_OleDbDataReader["scenario_id"]).Trim();
+                    if (!String.IsNullOrEmpty(strScenario))
+                    {
+                        lstExistingScenarios.Add(strScenario);
+                    }
+                }
+            }
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+
+            int i = 1;
+            string strTestName = "scenario" + Convert.ToString(i);
+            
+            // keep incrementing the scenario name until we find one that doesn't exist
+            while (i < lstExistingScenarios.Count)
+            {
+                strTestName = "scenario" + Convert.ToString(i);
+                if (! lstExistingScenarios.Contains(strTestName))
+                    break;
+                i++;
+            }
+            return strTestName;
+        }
 		private void btnFolder_Click(object sender, System.EventArgs e)
 		{
 		
