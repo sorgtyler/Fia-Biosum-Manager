@@ -2327,7 +2327,160 @@ namespace FIA_Biosum_Manager
                   "CYCLE4_POST_YN CHAR(1))";
 
             }
+           
+            public static class Audit
+            {
+                public static class Post
+                {
 
+                    public static string CreateFVSPostAuditCutlistERROR_OUTPUTtableSQL(string p_strTableName)
+                    {
+                        return "CREATE TABLE " + p_strTableName + " (" +
+                            "FVS_TREE_FILE CHAR(26)," +
+                            "COLUMN_NAME CHAR(30)," +
+                            "ERROR_DESC CHAR(60)," + 
+                            "id LONG," +
+                            "biosum_cond_id CHAR(25)," +
+                            "rxpackage CHAR(3)," +
+                            "rx CHAR(3)," +
+                            "rxcycle CHAR(1)," +
+                            "rxyear CHAR(4)," +
+                            "fvs_variant CHAR(2)," +
+                            "cut_leave CHAR(1)," +
+                            "fvs_species CHAR(6)," +
+                            "tpa DOUBLE," +
+                            "dbh DOUBLE," +
+                            "ht DOUBLE," +
+                            "estht DOUBLE," +
+                            "pctcr DOUBLE," +
+                            "volcfnet DOUBLE," +
+                            "volcfgrs DOUBLE," +
+                            "volcsgrs DOUBLE," +
+                            "drybiom DOUBLE," +
+                            "drybiot DOUBLE," +
+                            "voltsgrs DOUBLE," +
+                            "fvs_tree_id CHAR(10)," +
+                            "FvsCreatedTree_YN CHAR(1) DEFAULT 'N'," +
+                            "DateTimeCreated CHAR(22))";
+
+                    }
+                    /// <summary>
+                    /// Creates the POST-FVS audit table that DETAILS items in the BIOSUM FVS_TREE table
+                    /// that are not found in other tables. For example, a BIOSUM_COND_ID in the 
+                    /// BIOSUM FVS_TREE table should also exist in the BIOSUM CONDITION table. If it does not
+                    /// then this table will be used to document the error.
+                    /// </summary>
+                    /// <param name="p_strTableName"></param>
+                    /// <returns></returns>
+                    public static string CreateFVSPostAuditCutlistNOTFOUND_ERRORtableSQL(string p_strTableName)
+                    {
+                        return "CREATE TABLE " + p_strTableName + " (" +
+                            "FVS_TREE_FILE CHAR(26)," +
+                            "COLUMN_NAME CHAR(30)," +
+                            "NOTFOUND_VALUE CHAR(50)," +
+                            "ERROR_DESC CHAR(60)," +
+                            "id LONG," +
+                            "biosum_cond_id CHAR(25)," +
+                            "rxpackage CHAR(3)," +
+                            "rx CHAR(3)," +
+                            "rxcycle CHAR(1)," +
+                            "rxyear CHAR(4)," +
+                            "fvs_variant CHAR(2)," +
+                            "cut_leave CHAR(1)," +
+                            "fvs_species CHAR(6)," +
+                            "tpa DOUBLE," +
+                            "dbh DOUBLE," +
+                            "ht DOUBLE," +
+                            "estht DOUBLE," +
+                            "pctcr DOUBLE," +
+                            "volcfnet DOUBLE," +
+                            "volcfgrs DOUBLE," +
+                            "volcsgrs DOUBLE," +
+                            "drybiom DOUBLE," +
+                            "drybiot DOUBLE," +
+                            "voltsgrs DOUBLE," +
+                            "fvs_tree_id CHAR(10)," +
+                            "FvsCreatedTree_YN CHAR(1) DEFAULT 'N'," +
+                            "DateTimeCreated CHAR(22))";
+
+                    }
+                    /// <summary>
+                    ///Creates the POST-FVS audit table that SUMMARIZES the validation of the BIOSUM FVS_TREE table data 
+                    /// </summary>
+                    /// <param name="p_strTableName"></param>
+                    /// <returns></returns>
+                    public static string CreateFVSPostAuditCutlistSUMMARYtableSQL(string p_strTableName)
+                    {
+                        return "CREATE TABLE " + p_strTableName + " (" +
+                          "[INDEX] CHAR(3)," +
+                          "FVS_TREE_FILE CHAR(26)," +
+                          "COLUMN_NAME CHAR(30)," +
+                          "NOVALUE_ERROR CHAR(5)," +
+                          "NF_IN_COND_TABLE_ERROR CHAR(5)," +
+                          "NF_IN_PLOT_TABLE_ERROR CHAR(5)," +
+                          "VALUE_ERROR CHAR(20)," +
+                          "NF_IN_RX_TABLE_ERROR CHAR(5)," +
+                          "NF_RXPACKAGE_RXCYCLE_RX_ERROR CHAR(5)," +
+                          "NF_IN_RXPACKAGE_TABLE_ERROR CHAR(5)," +
+                          "NF_IN_TREE_TABLE_ERROR CHAR(5)," +
+                          "TREE_SPECIES_CHANGE_WARNING CHAR(5)," +
+                          "CREATED_DATE DATETIME)";
+                    }
+                    /// <summary>
+                    ///Create the audit table used to check the tree data after appending FVS CUTLIST table data to the BIOSUM FVS_TREE table.
+                    ///The purpose of the table is to contain matching FVS trees to FIA trees (by FVS_TREE_ID) to determine these items: 
+                    ///1. Check if treatment cycle 1 FVS tree column data match FIA tree column data (ERROR item);
+                    ///2. Check if the FVS tree species is different than the FIA tree species (WARNING item) 
+                    /// </summary>
+                    /// <param name="p_strTableName">Table name to create</param>
+                    /// <param name="p_strDescriptionColumnName">Name of the column that will hold the warning or error description</param>
+                    /// <returns></returns>
+                    public static string CreateFVSPostAuditCutlistFVSFIA_TREEMATCHINGtableSQL(string p_strTableName,string p_strDescriptionColumnName)
+                    {
+                        return "CREATE TABLE " + p_strTableName + " (" +
+                            "FVS_TREE_FILE CHAR(26)," +
+                            "COLUMN_NAME CHAR(30)," +
+                             p_strDescriptionColumnName + " CHAR(100)," + 
+                            "ID LONG," +
+                            "BIOSUM_COND_ID CHAR(25)," +
+                            "RXCYCLE CHAR(1)," +
+                            "FVS_TREE_FVS_TREE_ID CHAR(10)," +
+                            "FIA_TREE_FVS_TREE_ID CHAR(10)," +
+                            "FVS_TREE_SPCD INTEGER," + 
+                            "FIA_TREE_SPCD INTEGER," + 
+                            "FVS_TREE_DIA  SINGLE," + 
+                            "FIA_TREE_DIA SINGLE," + 
+                            "FVS_TREE_ESTHT DOUBLE," +
+                            "FIA_TREE_ESTHT DOUBLE," +
+                            "FVS_TREE_ACTUALHT DOUBLE," +
+                            "FIA_TREE_ACTUALHT DOUBLE," +
+                            "FVS_TREE_CR DOUBLE," +
+                            "FIA_TREE_CR DOUBLE," +
+                            "FVS_TREE_VOLCSGRS DOUBLE," +
+                            "FIA_TREE_VOLCSGRS DOUBLE," +
+                            "FVS_TREE_VOLCFGRS DOUBLE," +
+                            "FIA_TREE_VOLCFGRS DOUBLE," + 
+                            "FVS_TREE_VOLCFNET DOUBLE," +
+                            "FIA_TREE_VOLCFNET DOUBLE," +
+                            "FVS_TREE_VOLTSGRS DOUBLE," +
+                            "FIA_TREE_VOLTSGRS DOUBLE," +
+                            "FVS_TREE_DRYBIOT DOUBLE," +
+                            "FIA_TREE_DRYBIOT DOUBLE," +
+                            "FVS_TREE_DRYBIOM DOUBLE," +
+                            "FIA_TREE_DRYBIOM DOUBLE," +
+                            "FIA_TREE_STATUSCD BYTE," +
+                            "FIA_TREE_TREECLCD BYTE," +
+                            "FIA_TREE_CULL  DOUBLE," +
+                            "FIA_TREE_ROUGHCULL DOUBLE," +
+                            "FVSCREATEDTREE_YN CHAR(1) DEFAULT 'N')";
+
+                   
+                    }
+                }
+                public static class Pre
+                {
+                }
+            }
 
 
 
