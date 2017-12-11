@@ -67,14 +67,14 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.btnOK = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.btnOK = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -89,13 +89,33 @@ namespace FIA_Biosum_Manager
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.btnOK);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(3, 292);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(669, 30);
+            this.panel2.TabIndex = 31;
+            // 
+            // btnOK
+            // 
+            this.btnOK.Location = new System.Drawing.Point(568, 3);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.TabIndex = 0;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 48);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(660, 235);
+            this.panel1.Size = new System.Drawing.Size(669, 274);
             this.panel1.TabIndex = 32;
             // 
             // textBox1
@@ -109,7 +129,7 @@ namespace FIA_Biosum_Manager
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(660, 235);
+            this.textBox1.Size = new System.Drawing.Size(669, 274);
             this.textBox1.TabIndex = 1;
             // 
             // lblTitle
@@ -123,34 +143,15 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 30;
             this.lblTitle.Text = "TextBox";
             // 
-            // btnOK
-            // 
-            this.btnOK.Location = new System.Drawing.Point(568, 3);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 0;
-            this.btnOK.Text = "OK";
-            this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.btnOK);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(3, 292);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(669, 30);
-            this.panel2.TabIndex = 31;
-            // 
             // uc_textboxWithButtons
             // 
             this.Controls.Add(this.groupBox1);
             this.Name = "uc_textboxWithButtons";
             this.Size = new System.Drawing.Size(675, 325);
             this.groupBox1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
