@@ -66,7 +66,6 @@ namespace FIA_Biosum_Manager
         public Panel pnlDetails;
         private TextBox textBox17;
         private Label label7;
-        private Button button2;
         private Button button1;
         private Panel panel2;
         private Label label6;
@@ -110,6 +109,7 @@ namespace FIA_Biosum_Manager
         private Button btnCancelSummary;
         private ColumnHeader vName;
         private ColumnHeader vDescription;
+        private Button BtnHelp;
         private ListViewAlternateBackgroundColors m_oLvAlternateColors = new FIA_Biosum_Manager.ListViewAlternateBackgroundColors();
 
 
@@ -186,17 +186,19 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpboxSummary = new System.Windows.Forms.GroupBox();
             this.pnlSummary = new System.Windows.Forms.Panel();
+            this.btnCancelSummary = new System.Windows.Forms.Button();
             this.btnProperties = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnNew = new System.Windows.Forms.Button();
             this.lstVariables = new System.Windows.Forms.ListView();
+            this.vName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.vDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.textBox17 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
@@ -230,9 +232,7 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.btnCancelSummary = new System.Windows.Forms.Button();
-            this.vName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.vDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.BtnHelp = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpboxSummary.SuspendLayout();
             this.pnlSummary.SuspendLayout();
@@ -284,6 +284,15 @@ namespace FIA_Biosum_Manager
             this.pnlSummary.Size = new System.Drawing.Size(850, 451);
             this.pnlSummary.TabIndex = 12;
             // 
+            // btnCancelSummary
+            // 
+            this.btnCancelSummary.Location = new System.Drawing.Point(411, 360);
+            this.btnCancelSummary.Name = "btnCancelSummary";
+            this.btnCancelSummary.Size = new System.Drawing.Size(114, 32);
+            this.btnCancelSummary.TabIndex = 13;
+            this.btnCancelSummary.Text = "Cancel";
+            this.btnCancelSummary.Click += new System.EventHandler(this.btnCancelSummary_Click);
+            // 
             // btnProperties
             // 
             this.btnProperties.Location = new System.Drawing.Point(291, 360);
@@ -326,6 +335,16 @@ namespace FIA_Biosum_Manager
             this.lstVariables.UseCompatibleStateImageBehavior = false;
             this.lstVariables.View = System.Windows.Forms.View.Details;
             // 
+            // vName
+            // 
+            this.vName.Text = "Variable Name";
+            this.vName.Width = 200;
+            // 
+            // vDescription
+            // 
+            this.vDescription.Text = "Description";
+            this.vDescription.Width = 400;
+            // 
             // grpboxDetails
             // 
             this.grpboxDetails.BackColor = System.Drawing.SystemColors.Control;
@@ -343,11 +362,11 @@ namespace FIA_Biosum_Manager
             // pnlDetails
             // 
             this.pnlDetails.AutoScroll = true;
+            this.pnlDetails.Controls.Add(this.BtnHelp);
             this.pnlDetails.Controls.Add(this.textBox18);
             this.pnlDetails.Controls.Add(this.label8);
             this.pnlDetails.Controls.Add(this.textBox17);
             this.pnlDetails.Controls.Add(this.label7);
-            this.pnlDetails.Controls.Add(this.button2);
             this.pnlDetails.Controls.Add(this.button1);
             this.pnlDetails.Controls.Add(this.panel2);
             this.pnlDetails.Controls.Add(this.btnDetailsCancel);
@@ -395,17 +414,9 @@ namespace FIA_Biosum_Manager
             this.label7.TabIndex = 79;
             this.label7.Text = "Weighted average variable name:";
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(501, 405);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(64, 24);
-            this.button2.TabIndex = 78;
-            this.button2.Text = "Save";
-            // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(571, 405);
+            this.button1.Location = new System.Drawing.Point(634, 402);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(76, 24);
             this.button1.TabIndex = 77;
@@ -642,7 +653,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnDetailsCancel
             // 
-            this.btnDetailsCancel.Location = new System.Drawing.Point(653, 405);
+            this.btnDetailsCancel.Location = new System.Drawing.Point(716, 402);
             this.btnDetailsCancel.Name = "btnDetailsCancel";
             this.btnDetailsCancel.Size = new System.Drawing.Size(64, 24);
             this.btnDetailsCancel.TabIndex = 75;
@@ -752,24 +763,14 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
-            // btnCancelSummary
+            // BtnHelp
             // 
-            this.btnCancelSummary.Location = new System.Drawing.Point(411, 360);
-            this.btnCancelSummary.Name = "btnCancelSummary";
-            this.btnCancelSummary.Size = new System.Drawing.Size(114, 32);
-            this.btnCancelSummary.TabIndex = 13;
-            this.btnCancelSummary.Text = "Cancel";
-            this.btnCancelSummary.Click += new System.EventHandler(this.btnCancelSummary_Click);
-            // 
-            // vName
-            // 
-            this.vName.Text = "Variable Name";
-            this.vName.Width = 200;
-            // 
-            // vDescription
-            // 
-            this.vDescription.Text = "Description";
-            this.vDescription.Width = 400;
+            this.BtnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelp.Location = new System.Drawing.Point(565, 402);
+            this.BtnHelp.Name = "BtnHelp";
+            this.BtnHelp.Size = new System.Drawing.Size(64, 24);
+            this.BtnHelp.TabIndex = 87;
+            this.BtnHelp.Text = "Help";
             // 
             // uc_core_scenario_weighted_average
             // 
