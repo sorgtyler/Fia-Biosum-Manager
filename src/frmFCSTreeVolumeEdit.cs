@@ -35,9 +35,11 @@ namespace FIA_Biosum_Manager
     const int COL_TREECLCD = 18;
     const int COL_CULL = 20;
     const int COL_ROUGHCULL = 21;
-    const int COL_TRECN = 23;
-    const int COL_PLTCN = 24;
-    const int COL_CNDCN = 25;
+    const int COL_DECAYCD = 22;
+    const int COL_TOTAGE = 23;
+    const int COL_TRECN = 24;
+    const int COL_PLTCN = 25;
+    const int COL_CNDCN = 26;
     
     private System.Windows.Forms.Button btnTreeVolBatch;
     private System.Windows.Forms.Panel panel1;
@@ -1050,7 +1052,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.SetStatusBarPanelTextValue(frmMain.g_sbpInfo.Parent, 1, "Create Access Table Link To BIOSUM_VOLUME Oracle Table...Stand By");
             strWorkDbFile = m_strTempDBFile;
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            oDao.CreateOracleXETableLink("FIA Biosum Oracle Services", "FCS", "fcs", "FCS", "BIOSUM_VOLUME", strWorkDbFile, "fcs_biosum_volume");
+            oDao.CreateOracleXETableLink("FIA Biosum Oracle Services", "fcs_biosum", "fcs", "FCS_BIOSUM", "BIOSUM_VOLUME", strWorkDbFile, "fcs_biosum_volume");
             oDao.m_DaoWorkspace.Close();
             oDao = null;
             
@@ -1086,13 +1088,13 @@ namespace FIA_Biosum_Manager
                 //step 6 - insert records
                 frmMain.g_oDelegate.SetStatusBarPanelTextValue(frmMain.g_sbpInfo.Parent, 1, "Prepare Tree Data For Oracle...Stand By");
                 strColumns = "STATECD,COUNTYCD,PLOT,INVYR,VOL_LOC_GRP,TREE,SPCD,DIA,HT," +
-                            "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,TRE_CN,CND_CN,PLT_CN";
+                            "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,DECAYCD,TOTAGE,TRE_CN,CND_CN,PLT_CN";
 
 
                 strValues = "CINT(MID(BIOSUM_COND_ID,6,2)) AS STATECD," +
                             "CINT(MID(BIOSUM_COND_ID,12,3)) AS COUNTYCD," +
                             "CINT(MID(BIOSUM_COND_ID,16,5)) AS PLOT," +
-                            "INVYR,VOL_LOC_GRP,ID AS TREE,SPCD,DBH AS DIA,HT,ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL," +
+                            "INVYR,VOL_LOC_GRP,ID AS TREE,SPCD,DBH AS DIA,HT,ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,DECAYCD,TOTAGE," +
                             "CSTR(ID) AS TRE_CN," +
                             "BIOSUM_COND_ID AS CND_CN," +
                             "MID(BIOSUM_COND_ID,1,LEN(BIOSUM_COND_ID)-1) AS PLT_CN";
@@ -1106,7 +1108,7 @@ namespace FIA_Biosum_Manager
             else
             {
                 strColumns = "STATECD,COUNTYCD,PLOT,INVYR,VOL_LOC_GRP,TREE,SPCD,DIA,HT," +
-                            "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,TRE_CN,CND_CN,PLT_CN";
+                            "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,DECAYCD,TOTAGE,TRE_CN,CND_CN,PLT_CN";
                 intThermValue++;
                 UpdateThermPercent(0, intRecordCount + 8, intThermValue);
             }
@@ -1391,6 +1393,8 @@ namespace FIA_Biosum_Manager
                    "cr," +
                    "cull," +
                    "IIF(roughcull IS NULL,0,roughcull) AS roughcull," +
+                   "decaycd," +
+                   "totage," +
                    "fvs_tree_id," +
                    "biosum_cond_id " +
              "FROM " + Tables.FVS.DefaultOracleInputVolumesTable, this.cmbDatasource.Text.Trim());
@@ -1433,6 +1437,8 @@ namespace FIA_Biosum_Manager
                    "cr," +
                    "cull," +
                    "IIF(roughcull IS NULL,0,roughcull) AS roughcull," +
+                   "decaycd," +
+                   "totage," +
                    "fvs_tree_id," +
                    "biosum_cond_id " +
              "FROM TreeSample", "TreeSample");
@@ -1485,6 +1491,7 @@ namespace FIA_Biosum_Manager
                                      "IIF(t.cull IS NULL,0,ROUND(t.cull,0)) AS cull," + 
                                      "IIF(t.roughcull IS NULL,0,ROUND(t.roughcull,0)) AS roughcull," + 
                                      "IIF(t.decaycd IS NULL,0,t.decaycd) AS decaycd," + 
+                                     "t.totage, " + 
                                      "t.fvs_tree_id " + 
                              "FROM " + m_oQueries.m_oFIAPlot.m_strTreeTable + " t," + 
                                        m_oQueries.m_oFIAPlot.m_strCondTable + " c," + 
@@ -1567,6 +1574,8 @@ namespace FIA_Biosum_Manager
                    "cr," +
                    "cull," +
                    "IIF(roughcull IS NULL,0,roughcull) AS roughcull," +
+                   "decaycd," + 
+                   "totage," +
                    "fvs_tree_id," +
                    "biosum_cond_id " +
              "FROM Tree_Work_Table", m_oQueries.m_oFIAPlot.m_strTreeTable);
@@ -1698,7 +1707,7 @@ namespace FIA_Biosum_Manager
                  this.Top);
             FIA_Biosum_Manager.dao_data_access oDao = new FIA_Biosum_Manager.dao_data_access();
             oDao.CreateMDB(strFile);
-            oDao.CreateOracleXETableLink("FIA Biosum Oracle Services", "FCS", "fcs", "FCS", "BIOSUM_VOLUME", strFile, "fcs_biosum_volume");
+            oDao.CreateOracleXETableLink("FIA Biosum Oracle Services", "fcs_biosum", "fcs", "FCS_BIOSUM", "BIOSUM_VOLUME", strFile, "fcs_biosum_volume");
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
             if (oDao.TableExists(strFile, "fcs_biosum_volume"))
             {
