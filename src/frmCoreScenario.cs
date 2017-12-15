@@ -1127,7 +1127,7 @@ namespace FIA_Biosum_Manager
             int x;
 
 			frmMain.g_sbpInfo.Text = "Saving scenario rule definitions...Stand by";
-            FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicMaximumSteps = 13;
+            FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicMaximumSteps = 12;
             FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicCurrentStep = 1;
 

@@ -1901,6 +1901,7 @@ namespace FIA_Biosum_Manager
                     "cull DOUBLE," +
                     "roughcull DOUBLE," +
                     "decaycd BYTE," + 
+                    "totage DOUBLE," +
                     "volcfnet DOUBLE," +
                     "volcfgrs DOUBLE," +
                     "volcsgrs DOUBLE," +
@@ -1939,6 +1940,7 @@ namespace FIA_Biosum_Manager
                     "ROUGHCULL DOUBLE," + 
                     "CULL DOUBLE," +
                     "DECAYCD BYTE," + 
+                    "TOTAGE DOUBLE," +
                     "TRE_CN CHAR(34)," +
                     "CND_CN CHAR(34)," +
                     "PLT_CN CHAR(34)," +
