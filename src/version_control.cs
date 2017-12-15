@@ -452,15 +452,14 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    //5.7.10 restructures tree_species table and moves reference tables into user's %appData% directory
+                    //5.8.0 restructures tree_species table and moves reference tables into user's %appData% directory
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
-                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 7 &&
-                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 10) &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 0) &&
                             (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
-                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 7 &&
-                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 10))
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) == 7 ))
                     {
-                        UpdateDatasources_5_7_10();
+                        UpdateDatasources_5_8_0();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
@@ -4957,7 +4956,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void UpdateDatasources_5_7_10()
+        private void UpdateDatasources_5_8_0()
         {
             frmMain.g_sbpInfo.Text = "Version Update: Renaming obsolete tree species diameter and groups tables ...Stand by";
             ado_data_access oAdo = new ado_data_access();
