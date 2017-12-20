@@ -906,9 +906,13 @@ namespace FIA_Biosum_Manager
                  **species can be converted to a species code within the 
                  **family genus.
                  **************************************************************/
-				this.m_ado.m_strSQL = "SELECT spcd,fvs_input_spcd,fvs_species " + 
-					"FROM " + this.m_strTreeSpcTable + " " + 
-					"WHERE trim(ucase(fvs_variant)) = '" + this.m_strVariant.Trim() + "';";
+                this.m_ado.m_strSQL = "SELECT t.spcd,t.fvs_input_spcd,f.fvs_species " +
+                    "FROM " + this.m_strTreeSpcTable + " t, " + this.m_strFVSTreeSpcTable + " f " +
+                    "WHERE t.fvs_input_spcd = f.spcd " +
+                    "AND t.fvs_variant = f.fvs_variant " +
+                    "AND trim(ucase(t.fvs_variant)) = '" + this.m_strVariant.Trim() + "';";
+
+
 				this.m_ado.SqlQueryReader(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
 
 				x=0;

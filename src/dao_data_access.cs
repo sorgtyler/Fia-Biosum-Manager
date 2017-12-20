@@ -151,7 +151,8 @@ namespace FIA_Biosum_Manager
 
             return p_bResult;
         }
-        public bool RenameTable(Microsoft.Office.Interop.Access.Dao.Database p_DaoDatabase, string p_strTable, string p_strNewTable, bool p_bDelete)
+        public bool RenameTable(Microsoft.Office.Interop.Access.Dao.Database p_DaoDatabase, string p_strTable, 
+                                string p_strNewTable, bool p_bDelete, bool p_bRefreshLink)
         {
 
             this.m_intError = 0;
@@ -176,7 +177,8 @@ namespace FIA_Biosum_Manager
                     if (m_DaoDatabase.TableDefs[x].Name.ToLower().Trim() == p_strTable.ToLower().Trim())
                     {
                         m_DaoDatabase.TableDefs[x].Name = p_strNewTable.Trim();
-                        m_DaoDatabase.TableDefs[x].RefreshLink();
+                        if (p_bRefreshLink)
+                            m_DaoDatabase.TableDefs[x].RefreshLink();
                         break;
                     }
                 }
@@ -195,7 +197,8 @@ namespace FIA_Biosum_Manager
 
 
         }
-        public bool RenameTable(string strMDBPathAndFile, string p_strTable, string p_strNewTable, bool p_bDelete)
+        public bool RenameTable(string strMDBPathAndFile, string p_strTable, string p_strNewTable, 
+                                bool p_bDelete, bool p_bRefreshLink)
         {
 
             this.m_intError = 0;
@@ -206,7 +209,7 @@ namespace FIA_Biosum_Manager
 
             if (m_intError != 0) return false;
 
-            bReturn = RenameTable(m_DaoDatabase, p_strTable, p_strNewTable, p_bDelete);
+            bReturn = RenameTable(m_DaoDatabase, p_strTable, p_strNewTable, p_bDelete, p_bRefreshLink);
 
             this.m_DaoDatabase.Close();
             this.m_DaoDatabase = null;

@@ -2326,7 +2326,7 @@ namespace FIA_Biosum_Manager
                     {
                         System.Threading.Thread.Sleep(2000 * z);
                         p_dao1.m_intError = 0;
-                        p_dao1.CreateOracleXETableLink("FIA Biosum Oracle Services", "FCS", "fcs", "FCS", "BIOSUM_VOLUME", m_strTempMDBFile.Trim(), "fcs_biosum_volume");
+                        p_dao1.CreateOracleXETableLink("FIA Biosum Oracle Services", "fcs_biosum", "fcs", "FCS_BIOSUM", "BIOSUM_VOLUME", m_strTempMDBFile.Trim(), "fcs_biosum_volume");
                         if (p_dao1.m_intError == 0) break;
                     }
                     if (p_dao1.m_intError != 0)

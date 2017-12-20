@@ -87,7 +87,7 @@ namespace FIA_Biosum_Manager
                                 "and try again. If the problem persists, close and restart FIA Biosum Manager.",
                                 "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return;
-            }
+			}
 			if (this.m_oFvs.LoadDatasource) this.m_oFvs.LoadDatasources();
 			if (this.m_oFIAPlot.LoadDatasource) this.m_oFIAPlot.LoadDatasources();
 			if (this.m_oReference.LoadDatasource) this.m_oReference.LoadDatasources();
@@ -215,7 +215,7 @@ namespace FIA_Biosum_Manager
 				m_strRxPackageFvsCmdOrderTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("TREATMENT PACKAGE FVS COMMANDS ORDER");
 				m_strTreeSpcTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("TREE SPECIES");
 				m_strFvsTreeTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS TREE LIST FOR PROCESSOR");
-				m_strFvsTreeSpcRefTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS TREE SPECIES");
+				m_strFvsTreeSpcRefTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName(Datasource.TableTypes.FvsTreeSpecies.ToUpper());
                 m_strFVSPrePostSeqNumTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS PRE-POST SEQNUM DEFINITIONS");
                 m_strFVSPrePostSeqNumRxPackageAssgnTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS PRE-POST SEQNUM TREATMENT PACKAGE ASSIGNMENTS");
 				
@@ -2972,10 +2972,10 @@ namespace FIA_Biosum_Manager
                             string p_strBiosumVolumesTable)
                 {
                     string strColumns = "STATECD,COUNTYCD,PLOT,INVYR,VOL_LOC_GRP,TREE,SPCD,DIA,HT," +
-                                        "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,TRE_CN,CND_CN,PLT_CN";
+                                        "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,DECAYCD,TOTAGE,TRE_CN,CND_CN,PLT_CN";
                       
                     string strValues = "CINT(MID(BIOSUM_COND_ID,6,2)) AS STATECD,CINT(MID(BIOSUM_COND_ID,12,3)) AS COUNTYCD,CINT(MID(BIOSUM_COND_ID,16,5)) AS PLOT," +
-                                       "INVYR,VOL_LOC_GRP,ID AS TREE,SPCD,DBH AS DIA,HT,ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL," +
+                                       "INVYR,VOL_LOC_GRP,ID AS TREE,SPCD,DBH AS DIA,HT,ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,DECAYCD,TOTAGE," +
                                        "CSTR(ID) AS TRE_CN,BIOSUM_COND_ID AS CND_CN,MID(BIOSUM_COND_ID,1,LEN(BIOSUM_COND_ID)-1) AS PLT_CN";
 
                     return "INSERT INTO " + p_strBiosumVolumesTable + " " +
@@ -2994,7 +2994,7 @@ namespace FIA_Biosum_Manager
                             string p_strOracleFCSBiosumVolumesLinkedTable)
                 {
                     string strColumns = "STATECD,COUNTYCD,PLOT,INVYR,VOL_LOC_GRP,TREE,SPCD,DIA,HT," +
-                                        "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,TRE_CN,CND_CN,PLT_CN";
+                                        "ACTUALHT,CR,STATUSCD,TREECLCD,ROUGHCULL,CULL,DECAYCD,TOTAGE,TRE_CN,CND_CN,PLT_CN";
 
                     
                     return "INSERT INTO " + p_strOracleFCSBiosumVolumesLinkedTable + " " +
