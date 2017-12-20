@@ -1612,17 +1612,17 @@ namespace FIA_Biosum_Manager
 
 			if (this.btnCoreAnalysis.Enabled == false) 
 			{
-                if (strText.Trim().ToUpper() == "DEFINE PRE/POST VARIABLES")
+                if (strText.Trim().ToUpper() == "DEFINE CALCULATED VARIABLES")
                 {
                     //check to see if the form has already been loaded
-                    if (this.IsChildWindowVisible("Core Analysis: Define Pre/Post Variables") == false)
+                    if (this.IsChildWindowVisible("Core Analysis: Define Calculated Variables") == false)
                     {
 
                         this.m_frmCoreUserVariables = new frmDialog(this);
                         this.m_frmCoreUserVariables.MaximizeBox = false;
                         this.m_frmCoreUserVariables.MinimizeBox = false;
                         this.m_frmCoreUserVariables.BackColor = System.Drawing.SystemColors.Control;
-                        this.m_frmCoreUserVariables.Text = "Core Analysis: Define Pre/Post Variables";
+                        this.m_frmCoreUserVariables.Text = "Core Analysis: Define Calculated Variables";
                         this.m_frmCoreUserVariables.MdiParent = this;
                         this.m_frmCoreUserVariables.Initialize_Core_User_Variables_User_Control();
 
@@ -3629,7 +3629,7 @@ namespace FIA_Biosum_Manager
             this.m_pnlCore.Controls.Add(this.m_btnCoreUserVariables);
             this.m_btnCoreUserVariables.Size = this.btnMain1.Size;
             this.m_btnCoreUserVariables.Location = this.btnMain1.Location;
-            this.m_btnCoreUserVariables.Text = "Define Pre/Post Variables";
+            this.m_btnCoreUserVariables.Text = "Define Calculated Variables";
 			//case study scenario
 			this.m_btnCoreScenario = new btnMainForm(this);
 			this.m_pnlCore.Controls.Add(this.m_btnCoreScenario);
