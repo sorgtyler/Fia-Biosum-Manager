@@ -204,7 +204,15 @@ namespace FIA_Biosum_Manager
                         newTree.RxYear = Convert.ToString(m_oAdo.m_OleDbDataReader["rxYear"]).Trim();
                         newTree.Dbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["dbh"]);
                         newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
-                        newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
+                        // Special processing for saplings where volCfNet may be null
+                        if (m_oAdo.m_OleDbDataReader["volCfNet"] == System.DBNull.Value && newTree.IsSapling)
+                        {
+                            newTree.VolCfNet = 0;
+                        }
+                        else
+                        {
+                            newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
+                        }
                         newTree.VolTsGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volTsGrs"]);
                         // Special processing for saplings where volCfGrs may be null
                         if (m_oAdo.m_OleDbDataReader["volCfGrs"] == System.DBNull.Value && newTree.IsSapling)
@@ -433,9 +441,13 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Missing species diam values for diamGroup|speciesGroup " +
                                 strSpeciesDiamKey + " - " + System.DateTime.Now.ToString() + "\r\n");
                     }
-
+                    // saplings are never cull
+                    if (nextTree.IsSapling == true)
+                    {
+                        nextTree.IsCull = false;
+                    }
                     // set cull pct based on scenarioHarvestMethod.cullPctThreshold
-                    if (nextTree.VolCfNet < ((100 - m_scenarioHarvestMethod.CullPctThreshold) * nextTree.VolCfGrs / 100))
+                    else if (nextTree.VolCfNet < ((100 - m_scenarioHarvestMethod.CullPctThreshold) * nextTree.VolCfGrs / 100))
                     {
                         nextTree.IsCull = true;
                     }

@@ -5096,11 +5096,24 @@ namespace FIA_Biosum_Manager
                         strScenario = oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim();
                     if (!String.IsNullOrEmpty(strScenario))
                     {
-                        strSQL = "INSERT INTO scenario_datasource (table_type, path, file, table_name, scenario_id) " +
-                                 "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
-                                 "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" +
-                                 Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "', '" + strScenario + "')";
-                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                        // Load scenario data sources table
+                        FIA_Biosum_Manager.Datasource oScenarioDs = new Datasource();
+                        oDs.m_strDataSourceMDBFile = strProcessorMdb;
+                        oDs.m_strDataSourceTableName = "scenario_datasource";
+                        oDs.m_strScenarioId = strScenario;
+                        oDs.LoadTableColumnNamesAndDataTypes = false;
+                        oDs.LoadTableRecordCount = false;
+                        oDs.populate_datasource_array();
+                        int intFiaSpeciesRef = oDs.getValidTableNameRow(Datasource.TableTypes.FiaTreeSpeciesReference);
+                        if (intFiaSpeciesRef < 1)
+                        {
+
+                            strSQL = "INSERT INTO scenario_datasource (table_type, path, file, table_name, scenario_id) " +
+                                     "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
+                                     "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" +
+                                     Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "', '" + strScenario + "')";
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                        }
                     }
                 }
                 oAdo.m_OleDbDataReader.Close();
