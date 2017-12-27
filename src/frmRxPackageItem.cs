@@ -467,7 +467,7 @@ namespace FIA_Biosum_Manager
                         if (m_strAction == "new")
                             ReferenceUserControlRxPackageList.AddItem(ReferenceRxPackageItem);
                         else
-                            ReferenceUserControlRxPackageList.UpdateItem(ReferenceRxPackageItem);     
+                            ReferenceUserControlRxPackageList.UpdateItem(ReferenceRxPackageItem, this.uc_rx_package_edit1.m_bSave);     
 						this.DialogResult = DialogResult.OK;
 						this.Close();
 					}
