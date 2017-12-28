@@ -43,6 +43,9 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.GroupBox grpboxDetails;
 
 		public bool m_bSave=false;
+        //list view associated classes
+        private ListViewEmbeddedControls.ListViewEx m_lvEx;
+
 
 
 		const int COLUMN_CHECKBOX=0;
@@ -67,28 +70,6 @@ namespace FIA_Biosum_Manager
         private TextBox textBox17;
         private Label label7;
         private Button button1;
-        private Panel panel2;
-        private Label label6;
-        private TextBox textBox9;
-        private TextBox textBox10;
-        private TextBox textBox11;
-        private TextBox textBox12;
-        private TextBox textBox13;
-        private TextBox textBox14;
-        private TextBox textBox15;
-        private TextBox textBox16;
-        private TextBox textBox8;
-        private TextBox textBox7;
-        private TextBox textBox6;
-        private TextBox textBox5;
-        private TextBox textBox4;
-        private TextBox textBox3;
-        private TextBox textBox2;
-        private TextBox textBox1;
-        private Label label4;
-        private Label label5;
-        private Label label3;
-        private Label label2;
         private Button btnDetailsCancel;
         private GroupBox groupBox4;
         private ComboBox comboBox1;
@@ -110,7 +91,12 @@ namespace FIA_Biosum_Manager
         private ColumnHeader vName;
         private ColumnHeader vDescription;
         private Button BtnHelp;
+        public ListView lstWeights;
         private ListViewAlternateBackgroundColors m_oLvAlternateColors = new FIA_Biosum_Manager.ListViewAlternateBackgroundColors();
+        private ListViewColumnSorter lvwColumnSorter;
+        private const int COL_YEAR = 0;
+        private const int COL_SEQNUM = 1;
+        private const int COL_WEIGHT = 2;
 
 
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
@@ -159,6 +145,8 @@ namespace FIA_Biosum_Manager
             m_oLvAlternateColors.AddRow();
             m_oLvAlternateColors.AddColumns(1, lstVariables.Columns.Count);
             this.m_oLvAlternateColors.ListView();
+
+            this.loadvalues();
 		}
 
 		/// <summary> 
@@ -195,33 +183,12 @@ namespace FIA_Biosum_Manager
             this.vDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
+            this.BtnHelp = new System.Windows.Forms.Button();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.textBox17 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.label6 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.textBox12 = new System.Windows.Forms.TextBox();
-            this.textBox13 = new System.Windows.Forms.TextBox();
-            this.textBox14 = new System.Windows.Forms.TextBox();
-            this.textBox15 = new System.Windows.Forms.TextBox();
-            this.textBox16 = new System.Windows.Forms.TextBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.btnDetailsCancel = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -232,13 +199,12 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.BtnHelp = new System.Windows.Forms.Button();
+            this.lstWeights = new System.Windows.Forms.ListView();
             this.groupBox1.SuspendLayout();
             this.grpboxSummary.SuspendLayout();
             this.pnlSummary.SuspendLayout();
             this.grpboxDetails.SuspendLayout();
             this.pnlDetails.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -362,13 +328,13 @@ namespace FIA_Biosum_Manager
             // pnlDetails
             // 
             this.pnlDetails.AutoScroll = true;
+            this.pnlDetails.Controls.Add(this.lstWeights);
             this.pnlDetails.Controls.Add(this.BtnHelp);
             this.pnlDetails.Controls.Add(this.textBox18);
             this.pnlDetails.Controls.Add(this.label8);
             this.pnlDetails.Controls.Add(this.textBox17);
             this.pnlDetails.Controls.Add(this.label7);
             this.pnlDetails.Controls.Add(this.button1);
-            this.pnlDetails.Controls.Add(this.panel2);
             this.pnlDetails.Controls.Add(this.btnDetailsCancel);
             this.pnlDetails.Controls.Add(this.groupBox4);
             this.pnlDetails.Controls.Add(this.groupBox3);
@@ -380,6 +346,15 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Name = "pnlDetails";
             this.pnlDetails.Size = new System.Drawing.Size(850, 451);
             this.pnlDetails.TabIndex = 70;
+            // 
+            // BtnHelp
+            // 
+            this.BtnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelp.Location = new System.Drawing.Point(565, 402);
+            this.BtnHelp.Name = "BtnHelp";
+            this.BtnHelp.Size = new System.Drawing.Size(64, 24);
+            this.BtnHelp.TabIndex = 87;
+            this.BtnHelp.Text = "Help";
             // 
             // textBox18
             // 
@@ -421,235 +396,6 @@ namespace FIA_Biosum_Manager
             this.button1.Size = new System.Drawing.Size(76, 24);
             this.button1.TabIndex = 77;
             this.button1.Text = "Calculate";
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.label6);
-            this.panel2.Controls.Add(this.textBox9);
-            this.panel2.Controls.Add(this.textBox10);
-            this.panel2.Controls.Add(this.textBox11);
-            this.panel2.Controls.Add(this.textBox12);
-            this.panel2.Controls.Add(this.textBox13);
-            this.panel2.Controls.Add(this.textBox14);
-            this.panel2.Controls.Add(this.textBox15);
-            this.panel2.Controls.Add(this.textBox16);
-            this.panel2.Controls.Add(this.textBox8);
-            this.panel2.Controls.Add(this.textBox7);
-            this.panel2.Controls.Add(this.textBox6);
-            this.panel2.Controls.Add(this.textBox5);
-            this.panel2.Controls.Add(this.textBox4);
-            this.panel2.Controls.Add(this.textBox3);
-            this.panel2.Controls.Add(this.textBox2);
-            this.panel2.Controls.Add(this.textBox1);
-            this.panel2.Controls.Add(this.label4);
-            this.panel2.Controls.Add(this.label5);
-            this.panel2.Controls.Add(this.label3);
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Location = new System.Drawing.Point(16, 172);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(293, 175);
-            this.panel2.TabIndex = 76;
-            // 
-            // label6
-            // 
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(10, 148);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(167, 24);
-            this.label6.TabIndex = 89;
-            this.label6.Text = "Note: Weights must total 1";
-            // 
-            // textBox9
-            // 
-            this.textBox9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox9.Location = new System.Drawing.Point(225, 120);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(49, 22);
-            this.textBox9.TabIndex = 88;
-            this.textBox9.Text = "0.225";
-            this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox10
-            // 
-            this.textBox10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox10.Location = new System.Drawing.Point(225, 36);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(49, 22);
-            this.textBox10.TabIndex = 87;
-            this.textBox10.Text = "0.1";
-            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox11
-            // 
-            this.textBox11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox11.Location = new System.Drawing.Point(225, 64);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(49, 22);
-            this.textBox11.TabIndex = 86;
-            this.textBox11.Text = "0.15";
-            this.textBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox12
-            // 
-            this.textBox12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox12.Location = new System.Drawing.Point(225, 92);
-            this.textBox12.Name = "textBox12";
-            this.textBox12.Size = new System.Drawing.Size(49, 22);
-            this.textBox12.TabIndex = 85;
-            this.textBox12.Text = "0.1";
-            this.textBox12.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox13
-            // 
-            this.textBox13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox13.Location = new System.Drawing.Point(158, 64);
-            this.textBox13.Name = "textBox13";
-            this.textBox13.Size = new System.Drawing.Size(49, 22);
-            this.textBox13.TabIndex = 84;
-            this.textBox13.Text = "22";
-            this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox14
-            // 
-            this.textBox14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox14.Location = new System.Drawing.Point(158, 92);
-            this.textBox14.Name = "textBox14";
-            this.textBox14.Size = new System.Drawing.Size(49, 22);
-            this.textBox14.TabIndex = 83;
-            this.textBox14.Text = "31";
-            this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox15
-            // 
-            this.textBox15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox15.Location = new System.Drawing.Point(158, 120);
-            this.textBox15.Name = "textBox15";
-            this.textBox15.Size = new System.Drawing.Size(49, 22);
-            this.textBox15.TabIndex = 82;
-            this.textBox15.Text = "32";
-            this.textBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox16
-            // 
-            this.textBox16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox16.Location = new System.Drawing.Point(158, 36);
-            this.textBox16.Name = "textBox16";
-            this.textBox16.Size = new System.Drawing.Size(49, 22);
-            this.textBox16.TabIndex = 81;
-            this.textBox16.Text = "21";
-            this.textBox16.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox8
-            // 
-            this.textBox8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox8.Location = new System.Drawing.Point(80, 120);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(49, 22);
-            this.textBox8.TabIndex = 80;
-            this.textBox8.Text = "0.15";
-            this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox7
-            // 
-            this.textBox7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox7.Location = new System.Drawing.Point(80, 36);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(49, 22);
-            this.textBox7.TabIndex = 79;
-            this.textBox7.Text = "0.025";
-            this.textBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox6
-            // 
-            this.textBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox6.Location = new System.Drawing.Point(80, 64);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(49, 22);
-            this.textBox6.TabIndex = 78;
-            this.textBox6.Text = "0.15";
-            this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox5
-            // 
-            this.textBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox5.Location = new System.Drawing.Point(80, 92);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(49, 22);
-            this.textBox5.TabIndex = 77;
-            this.textBox5.Text = "0.1";
-            this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox4
-            // 
-            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.Location = new System.Drawing.Point(13, 64);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(49, 22);
-            this.textBox4.TabIndex = 76;
-            this.textBox4.Text = "6";
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox3
-            // 
-            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(13, 92);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(49, 22);
-            this.textBox3.TabIndex = 75;
-            this.textBox3.Text = "11";
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(13, 120);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(49, 22);
-            this.textBox2.TabIndex = 74;
-            this.textBox2.Text = "12";
-            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(13, 36);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(49, 22);
-            this.textBox1.TabIndex = 73;
-            this.textBox1.Text = "1";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(222, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 24);
-            this.label4.TabIndex = 72;
-            this.label4.Text = "Weight";
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(165, 10);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 24);
-            this.label5.TabIndex = 71;
-            this.label5.Text = "Year";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(86, 10);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 24);
-            this.label3.TabIndex = 70;
-            this.label3.Text = "Weight";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(18, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 24);
-            this.label2.TabIndex = 69;
-            this.label2.Text = "Year";
             // 
             // btnDetailsCancel
             // 
@@ -763,14 +509,19 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
-            // BtnHelp
+            // lstWeights
             // 
-            this.BtnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelp.Location = new System.Drawing.Point(565, 402);
-            this.BtnHelp.Name = "BtnHelp";
-            this.BtnHelp.Size = new System.Drawing.Size(64, 24);
-            this.BtnHelp.TabIndex = 87;
-            this.BtnHelp.Text = "Help";
+            this.lstWeights.CheckBoxes = true;
+            this.lstWeights.GridLines = true;
+            this.lstWeights.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstWeights.HideSelection = false;
+            this.lstWeights.Location = new System.Drawing.Point(17, 174);
+            this.lstWeights.MultiSelect = false;
+            this.lstWeights.Name = "lstWeights";
+            this.lstWeights.Size = new System.Drawing.Size(350, 150);
+            this.lstWeights.TabIndex = 88;
+            this.lstWeights.UseCompatibleStateImageBehavior = false;
+            this.lstWeights.View = System.Windows.Forms.View.Details;
             // 
             // uc_core_scenario_weighted_average
             // 
@@ -783,8 +534,6 @@ namespace FIA_Biosum_Manager
             this.grpboxDetails.ResumeLayout(false);
             this.pnlDetails.ResumeLayout(false);
             this.pnlDetails.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -798,38 +547,69 @@ namespace FIA_Biosum_Manager
 
 
         }
-        public void loadvalues(System.Windows.Forms.ListBox p_oListBox)
+        public void loadvalues()
 		{
 			
 			this.m_intError=0;
 			this.m_strError="";
 
-			int x,y;
+            //
+            //INSTANTIATE EXTENDED LISTVIEW OBJECT
+            //
+            m_lvEx = new ListViewEmbeddedControls.ListViewEx();
+            m_lvEx.MouseUp += new System.Windows.Forms.MouseEventHandler(m_lvEx_MouseUp);
+            m_lvEx.SelectedIndexChanged += new System.EventHandler(m_lvEx_SelectedIndexChanged);
+            m_lvEx.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(m_lvEx_ColumnClick);
+            this.pnlDetails.Controls.Add(m_lvEx);
+            m_lvEx.Size = this.lstWeights.Size;
+            m_lvEx.Location = this.lstWeights.Location;
+            //m_lvEx.CheckBoxes = true;
+            m_lvEx.AllowColumnReorder = false;
+            m_lvEx.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            m_lvEx.FullRowSelect = false;
+            m_lvEx.MultiSelect = false;
+            m_lvEx.GridLines = true;
+            this.m_lvEx.HideSelection = false;
+            m_lvEx.View = System.Windows.Forms.View.Details;
+            this.lstWeights.Hide();
 
-			//
-			//load previous scenario values
-			//
-			if (this.m_bFirstTime)
-			{
-				ado_data_access oAdo = new ado_data_access();
-				string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
-				string strScenarioMDB = 
-					frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-					"\\core\\db\\scenario_core_rule_definitions.mdb";
-				oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
-                if (oAdo.m_intError == 0)
-                {
+            //
+            //INITIALIZE LISTVIEW ALTERNATE ROW COLORS
+            //
+            System.Windows.Forms.ListViewItem entryListItem = null;
+            this.m_oLvAlternateColors.InitializeRowCollection();
+            this.m_oLvAlternateColors.ReferenceAlternateBackgroundColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
+            this.m_oLvAlternateColors.ReferenceAlternateForegroundColor = frmMain.g_oGridViewRowForegroundColor;
+            this.m_oLvAlternateColors.ReferenceBackgroundColor = frmMain.g_oGridViewRowBackgroundColor;
+            this.m_oLvAlternateColors.ReferenceForegroundColor = frmMain.g_oGridViewRowForegroundColor;
+            this.m_oLvAlternateColors.ReferenceSelectedRowBackgroundColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
+            this.m_oLvAlternateColors.ReferenceListView = m_lvEx;
+            this.m_oLvAlternateColors.CustomFullRowSelect = true;
+            m_oLvAlternateColors.ColumnsToNotUpdate(COL_YEAR.ToString());
+            m_oLvAlternateColors.ColumnsToNotUpdate(COL_SEQNUM.ToString());
+            if (frmMain.g_oGridViewFont != null) m_lvEx.Font = frmMain.g_oGridViewFont;
+            //
+            //ASSIGN LISTVIEW COLUMN LABELS
+            //
+            m_lvEx.Show();
+            this.m_lvEx.Clear();
+            this.m_lvEx.Columns.Add("Year", 100, HorizontalAlignment.Right);
+            this.m_lvEx.Columns.Add("Sequence Number", 125, HorizontalAlignment.Right);
+            this.m_lvEx.Columns.Add("Weight", 100, HorizontalAlignment.Right);
+            // Create an instance of a ListView column sorter and assign it 
+            // to the ListView control.
+            lvwColumnSorter = new ListViewColumnSorter();
+            this.m_lvEx.ListViewItemSorter = lvwColumnSorter;
+            //
+            //TEMPORARILY ADD ITEMS
+            //
+            entryListItem = m_lvEx.Items.Add("1");
+            entryListItem.UseItemStyleForSubItems = false;
+            this.m_oLvAlternateColors.AddRow();
+            this.m_oLvAlternateColors.AddColumns(m_lvEx.Items.Count - 1, m_lvEx.Columns.Count);
+            entryListItem.SubItems.Add("2");
+            entryListItem.SubItems.Add("0.025");
 
-                }
-				this.m_intError=oAdo.m_intError;
-				this.m_strError=oAdo.m_strError;
-                oAdo.CloseConnection(oAdo.m_OleDbConnection);
-                oAdo.m_OleDbConnection.Dispose();
-				oAdo=null;
-				this.m_bFirstTime=false;
-			}
-
-			
 		}
 
 		public int savevalues()
@@ -1135,6 +915,67 @@ namespace FIA_Biosum_Manager
             this.grpboxDetails.Hide();
             //@ToDo: Add code to clear fields on details screen
         }
-	
+
+
+        private void m_lvEx_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            int x;
+            try
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    int intRowHt = this.m_lvEx.Items[0].Bounds.Height;
+                    double dblRow = (double)(e.Y / intRowHt);
+                    this.m_lvEx.Items[m_lvEx.TopItem.Index + (int)dblRow - 1].Selected = true;
+                    this.m_oLvAlternateColors.DelegateListViewItem(m_lvEx.Items[m_lvEx.TopItem.Index + (int)dblRow - 1]);
+
+
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void m_lvEx_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            if (m_lvEx.SelectedItems.Count > 0)
+                m_oLvAlternateColors.DelegateListViewItem(m_lvEx.SelectedItems[0]);
+        }
+        private void m_lvEx_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+        {
+            int x, y;
+
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == lvwColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (lvwColumnSorter.Order == SortOrder.Ascending)
+                {
+                    lvwColumnSorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    lvwColumnSorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                lvwColumnSorter.SortColumn = e.Column;
+                lvwColumnSorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            this.m_lvEx.Sort();
+            //reinitialize the alternate row colors
+            for (x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
+            {
+                for (y = 0; y <= this.m_lvEx.Columns.Count - 1; y++)
+                {
+                    m_oLvAlternateColors.ListViewSubItem(this.m_lvEx.Items[x].Index, y, this.m_lvEx.Items[this.m_lvEx.Items[x].Index].SubItems[y], false);
+                }
+            }
+        }
 	}
 }
