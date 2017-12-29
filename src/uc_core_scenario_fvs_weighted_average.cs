@@ -62,7 +62,7 @@ namespace FIA_Biosum_Manager
         private bool m_bIgnoreListViewItemCheck = false;
         private System.Windows.Forms.GroupBox grpboxSummary;
 		private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors=new ListViewAlternateBackgroundColors();
-        private ValidateNumericValues m_oValidate = new ValidateNumericValues();
+         private ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private string m_strLastValue = "";
         private FIA_Biosum_Manager.frmMain m_frmMain;
         public int m_DialogHt;
@@ -85,20 +85,40 @@ namespace FIA_Biosum_Manager
         private Panel pnlSummary;
         private Button btnProperties;
         private Button btnDelete;
-        private Button btnNew;
+        private Button btnNewFvs;
         private ListView lstVariables;
         private Button btnCancelSummary;
         private ColumnHeader vName;
         private ColumnHeader vDescription;
         private Button BtnHelp;
-        public ListView lstWeights;
         private ListViewAlternateBackgroundColors m_oLvAlternateColors = new FIA_Biosum_Manager.ListViewAlternateBackgroundColors();
         private ListViewColumnSorter lvwColumnSorter;
-        private const int COL_YEAR = 0;
-        private const int COL_SEQNUM = 1;
-        private const int COL_WEIGHT = 2;
-
-
+        private const int COL_YEAR = 1;
+        private const int COL_SEQNUM = 2;
+        private Button btnNewEcon;
+        private DataGridViewTextBoxColumn Year;
+        private DataGridViewTextBoxColumn SeqNum;
+        private DataGridViewTextBoxColumn Weight;
+        private GroupBox grpEconomicVariable;
+        public Panel panel1;
+        private DataGridView dataGridView1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private Button button2;
+        private TextBox textBox1;
+        private Label label1;
+        private TextBox textBox2;
+        private Label label2;
+        private Button button3;
+        private Button button4;
+        private GroupBox groupBox7;
+        private ListBox listBox2;
+        private GroupBox groupBox8;
+        private ListBox listBox3;
+        private Label label3;
+        private Label label4;
+        private DataGridView dgWeights;
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -146,6 +166,33 @@ namespace FIA_Biosum_Manager
             m_oLvAlternateColors.AddColumns(1, lstVariables.Columns.Count);
             this.m_oLvAlternateColors.ListView();
 
+
+            var row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "1", "1", "0.025");
+            dgWeights.Rows.Add(row);
+            row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "6", "2", "0.15");
+            dgWeights.Rows.Add(row);
+            row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "11", "3", "0.1");
+            dgWeights.Rows.Add(row);
+            row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "12", "4", "0.15");
+            dgWeights.Rows.Add(row);
+            row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "21", "5", "0.1");
+            dgWeights.Rows.Add(row);
+            row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "22", "6", "0.15");
+            dgWeights.Rows.Add(row);
+            row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "31", "7", "0.1");
+            dgWeights.Rows.Add(row);
+            row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
+            row.CreateCells(dgWeights, "32", "8", "0.225");
+            dgWeights.Rows.Add(row);
+
+
             this.loadvalues();
 		}
 
@@ -171,18 +218,25 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpboxSummary = new System.Windows.Forms.GroupBox();
             this.pnlSummary = new System.Windows.Forms.Panel();
             this.btnCancelSummary = new System.Windows.Forms.Button();
             this.btnProperties = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
-            this.btnNew = new System.Windows.Forms.Button();
+            this.btnNewFvs = new System.Windows.Forms.Button();
             this.lstVariables = new System.Windows.Forms.ListView();
             this.vName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.vDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
+            this.dgWeights = new System.Windows.Forms.DataGridView();
             this.BtnHelp = new System.Windows.Forms.Button();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -199,20 +253,49 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.lstWeights = new System.Windows.Forms.ListView();
+            this.Year = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SeqNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnNewEcon = new System.Windows.Forms.Button();
+            this.grpEconomicVariable = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button2 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.listBox2 = new System.Windows.Forms.ListBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.listBox3 = new System.Windows.Forms.ListBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxSummary.SuspendLayout();
             this.pnlSummary.SuspendLayout();
             this.grpboxDetails.SuspendLayout();
             this.pnlDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgWeights)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.grpEconomicVariable.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.groupBox7.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.grpEconomicVariable);
             this.groupBox1.Controls.Add(this.grpboxSummary);
             this.groupBox1.Controls.Add(this.grpboxDetails);
             this.groupBox1.Controls.Add(this.lblTitle);
@@ -239,10 +322,11 @@ namespace FIA_Biosum_Manager
             // pnlSummary
             // 
             this.pnlSummary.AutoScroll = true;
+            this.pnlSummary.Controls.Add(this.btnNewEcon);
             this.pnlSummary.Controls.Add(this.btnCancelSummary);
             this.pnlSummary.Controls.Add(this.btnProperties);
             this.pnlSummary.Controls.Add(this.btnDelete);
-            this.pnlSummary.Controls.Add(this.btnNew);
+            this.pnlSummary.Controls.Add(this.btnNewFvs);
             this.pnlSummary.Controls.Add(this.lstVariables);
             this.pnlSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlSummary.Location = new System.Drawing.Point(3, 18);
@@ -252,7 +336,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnCancelSummary
             // 
-            this.btnCancelSummary.Location = new System.Drawing.Point(411, 360);
+            this.btnCancelSummary.Location = new System.Drawing.Point(491, 360);
             this.btnCancelSummary.Name = "btnCancelSummary";
             this.btnCancelSummary.Size = new System.Drawing.Size(114, 32);
             this.btnCancelSummary.TabIndex = 13;
@@ -261,7 +345,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnProperties
             // 
-            this.btnProperties.Location = new System.Drawing.Point(291, 360);
+            this.btnProperties.Location = new System.Drawing.Point(371, 360);
             this.btnProperties.Name = "btnProperties";
             this.btnProperties.Size = new System.Drawing.Size(114, 32);
             this.btnProperties.TabIndex = 12;
@@ -270,20 +354,20 @@ namespace FIA_Biosum_Manager
             // btnDelete
             // 
             this.btnDelete.Enabled = false;
-            this.btnDelete.Location = new System.Drawing.Point(221, 360);
+            this.btnDelete.Location = new System.Drawing.Point(301, 360);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(64, 32);
             this.btnDelete.TabIndex = 11;
             this.btnDelete.Text = "Delete";
             // 
-            // btnNew
+            // btnNewFvs
             // 
-            this.btnNew.Location = new System.Drawing.Point(151, 360);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(64, 32);
-            this.btnNew.TabIndex = 4;
-            this.btnNew.Text = "New";
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            this.btnNewFvs.Location = new System.Drawing.Point(169, 360);
+            this.btnNewFvs.Name = "btnNewFvs";
+            this.btnNewFvs.Size = new System.Drawing.Size(126, 32);
+            this.btnNewFvs.TabIndex = 4;
+            this.btnNewFvs.Text = "New FVS Variable";
+            this.btnNewFvs.Click += new System.EventHandler(this.btnNew_Click);
             // 
             // lstVariables
             // 
@@ -322,13 +406,13 @@ namespace FIA_Biosum_Manager
             this.grpboxDetails.Size = new System.Drawing.Size(856, 472);
             this.grpboxDetails.TabIndex = 32;
             this.grpboxDetails.TabStop = false;
-            this.grpboxDetails.Text = "Weighted Average";
+            this.grpboxDetails.Text = "Weighted FVS Variable";
             this.grpboxDetails.Resize += new System.EventHandler(this.grpboxFVSVariablesPrePost_Resize);
             // 
             // pnlDetails
             // 
             this.pnlDetails.AutoScroll = true;
-            this.pnlDetails.Controls.Add(this.lstWeights);
+            this.pnlDetails.Controls.Add(this.dgWeights);
             this.pnlDetails.Controls.Add(this.BtnHelp);
             this.pnlDetails.Controls.Add(this.textBox18);
             this.pnlDetails.Controls.Add(this.label8);
@@ -346,6 +430,21 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Name = "pnlDetails";
             this.pnlDetails.Size = new System.Drawing.Size(850, 451);
             this.pnlDetails.TabIndex = 70;
+            // 
+            // dgWeights
+            // 
+            this.dgWeights.AllowUserToAddRows = false;
+            this.dgWeights.AllowUserToDeleteRows = false;
+            this.dgWeights.AllowUserToResizeRows = false;
+            this.dgWeights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgWeights.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Year,
+            this.SeqNum,
+            this.Weight});
+            this.dgWeights.Location = new System.Drawing.Point(18, 172);
+            this.dgWeights.Name = "dgWeights";
+            this.dgWeights.Size = new System.Drawing.Size(350, 150);
+            this.dgWeights.TabIndex = 88;
             // 
             // BtnHelp
             // 
@@ -509,19 +608,250 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
-            // lstWeights
+            // Year
             // 
-            this.lstWeights.CheckBoxes = true;
-            this.lstWeights.GridLines = true;
-            this.lstWeights.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lstWeights.HideSelection = false;
-            this.lstWeights.Location = new System.Drawing.Point(17, 174);
-            this.lstWeights.MultiSelect = false;
-            this.lstWeights.Name = "lstWeights";
-            this.lstWeights.Size = new System.Drawing.Size(350, 150);
-            this.lstWeights.TabIndex = 88;
-            this.lstWeights.UseCompatibleStateImageBehavior = false;
-            this.lstWeights.View = System.Windows.Forms.View.Details;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Year.DefaultCellStyle = dataGridViewCellStyle4;
+            this.Year.FillWeight = 80F;
+            this.Year.HeaderText = "YEAR";
+            this.Year.Name = "Year";
+            this.Year.ReadOnly = true;
+            this.Year.Width = 80;
+            // 
+            // SeqNum
+            // 
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SeqNum.DefaultCellStyle = dataGridViewCellStyle5;
+            this.SeqNum.HeaderText = "SEQ NUM";
+            this.SeqNum.Name = "SeqNum";
+            this.SeqNum.ReadOnly = true;
+            // 
+            // Weight
+            // 
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
+            this.Weight.DefaultCellStyle = dataGridViewCellStyle6;
+            this.Weight.HeaderText = "WEIGHT";
+            this.Weight.Name = "Weight";
+            // 
+            // btnNewEcon
+            // 
+            this.btnNewEcon.Location = new System.Drawing.Point(14, 360);
+            this.btnNewEcon.Name = "btnNewEcon";
+            this.btnNewEcon.Size = new System.Drawing.Size(148, 32);
+            this.btnNewEcon.TabIndex = 14;
+            this.btnNewEcon.Text = "New Econ Variable";
+            // 
+            // grpEconomicVariable
+            // 
+            this.grpEconomicVariable.BackColor = System.Drawing.SystemColors.Control;
+            this.grpEconomicVariable.Controls.Add(this.panel1);
+            this.grpEconomicVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpEconomicVariable.ForeColor = System.Drawing.Color.Black;
+            this.grpEconomicVariable.Location = new System.Drawing.Point(6, 1027);
+            this.grpEconomicVariable.Name = "grpEconomicVariable";
+            this.grpEconomicVariable.Size = new System.Drawing.Size(856, 472);
+            this.grpEconomicVariable.TabIndex = 36;
+            this.grpEconomicVariable.TabStop = false;
+            this.grpEconomicVariable.Text = "Weighted Economic Variable";
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.dataGridView1);
+            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.textBox2);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.button3);
+            this.panel1.Controls.Add(this.button4);
+            this.panel1.Controls.Add(this.groupBox7);
+            this.panel1.Controls.Add(this.groupBox8);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 18);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(850, 451);
+            this.panel1.TabIndex = 70;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3});
+            this.dataGridView1.Location = new System.Drawing.Point(18, 172);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(350, 150);
+            this.dataGridView1.TabIndex = 88;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridViewTextBoxColumn1.FillWeight = 80F;
+            this.dataGridViewTextBoxColumn1.HeaderText = "YEAR";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.Width = 80;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn2.HeaderText = "SEQ NUM";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
+            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle3;
+            this.dataGridViewTextBoxColumn3.HeaderText = "WEIGHT";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            // 
+            // button2
+            // 
+            this.button2.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.button2.Location = new System.Drawing.Point(565, 402);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(64, 24);
+            this.button2.TabIndex = 87;
+            this.button2.Text = "Help";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(231, 386);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(259, 40);
+            this.textBox1.TabIndex = 86;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(13, 389);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(212, 24);
+            this.label1.TabIndex = 85;
+            this.label1.Text = "Description:";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox2.Location = new System.Drawing.Point(231, 357);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(259, 22);
+            this.textBox2.TabIndex = 84;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(13, 360);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(212, 24);
+            this.label2.TabIndex = 79;
+            this.label2.Text = "Weighted average variable name:";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(634, 402);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(76, 24);
+            this.button3.TabIndex = 77;
+            this.button3.Text = "Calculate";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(716, 402);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(64, 24);
+            this.button4.TabIndex = 75;
+            this.button4.Text = "Cancel";
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.listBox2);
+            this.groupBox7.Location = new System.Drawing.Point(440, 7);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(200, 133);
+            this.groupBox7.TabIndex = 72;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "FVS Variable(s)";
+            // 
+            // listBox2
+            // 
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.ItemHeight = 16;
+            this.listBox2.Items.AddRange(new object[] {
+            "Canopy_Density",
+            "Canopy_Ht",
+            "Crown_Index",
+            "Fire_Type_Mod",
+            "PTorch_Sev",
+            "PTorch_Mod",
+            "Torch_Index",
+            ""});
+            this.listBox2.Location = new System.Drawing.Point(6, 21);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(181, 100);
+            this.listBox2.TabIndex = 70;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.listBox3);
+            this.groupBox8.Location = new System.Drawing.Point(10, 3);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(200, 133);
+            this.groupBox8.TabIndex = 71;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Variable source";
+            // 
+            // listBox3
+            // 
+            this.listBox3.FormattingEnabled = true;
+            this.listBox3.ItemHeight = 16;
+            this.listBox3.Items.AddRange(new object[] {
+            "Total Volume",
+            "Merch Volume",
+            "Chip Volume",
+            "Net Revenue",
+            "Gross Costs"});
+            this.listBox3.Location = new System.Drawing.Point(6, 21);
+            this.listBox3.Name = "listBox3";
+            this.listBox3.Size = new System.Drawing.Size(181, 100);
+            this.listBox3.TabIndex = 70;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(157, 145);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(302, 24);
+            this.label3.TabIndex = 69;
+            this.label3.Text = "FVS_POTFIRE.PTorch_Sev";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(11, 144);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(151, 24);
+            this.label4.TabIndex = 68;
+            this.label4.Text = "Selected FVS Variable:";
             // 
             // uc_core_scenario_weighted_average
             // 
@@ -534,9 +864,16 @@ namespace FIA_Biosum_Manager
             this.grpboxDetails.ResumeLayout(false);
             this.pnlDetails.ResumeLayout(false);
             this.pnlDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgWeights)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.grpEconomicVariable.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -553,62 +890,6 @@ namespace FIA_Biosum_Manager
 			this.m_intError=0;
 			this.m_strError="";
 
-            //
-            //INSTANTIATE EXTENDED LISTVIEW OBJECT
-            //
-            m_lvEx = new ListViewEmbeddedControls.ListViewEx();
-            m_lvEx.MouseUp += new System.Windows.Forms.MouseEventHandler(m_lvEx_MouseUp);
-            m_lvEx.SelectedIndexChanged += new System.EventHandler(m_lvEx_SelectedIndexChanged);
-            m_lvEx.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(m_lvEx_ColumnClick);
-            this.pnlDetails.Controls.Add(m_lvEx);
-            m_lvEx.Size = this.lstWeights.Size;
-            m_lvEx.Location = this.lstWeights.Location;
-            //m_lvEx.CheckBoxes = true;
-            m_lvEx.AllowColumnReorder = false;
-            m_lvEx.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            m_lvEx.FullRowSelect = false;
-            m_lvEx.MultiSelect = false;
-            m_lvEx.GridLines = true;
-            this.m_lvEx.HideSelection = false;
-            m_lvEx.View = System.Windows.Forms.View.Details;
-            this.lstWeights.Hide();
-
-            //
-            //INITIALIZE LISTVIEW ALTERNATE ROW COLORS
-            //
-            System.Windows.Forms.ListViewItem entryListItem = null;
-            this.m_oLvAlternateColors.InitializeRowCollection();
-            this.m_oLvAlternateColors.ReferenceAlternateBackgroundColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
-            this.m_oLvAlternateColors.ReferenceAlternateForegroundColor = frmMain.g_oGridViewRowForegroundColor;
-            this.m_oLvAlternateColors.ReferenceBackgroundColor = frmMain.g_oGridViewRowBackgroundColor;
-            this.m_oLvAlternateColors.ReferenceForegroundColor = frmMain.g_oGridViewRowForegroundColor;
-            this.m_oLvAlternateColors.ReferenceSelectedRowBackgroundColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
-            this.m_oLvAlternateColors.ReferenceListView = m_lvEx;
-            this.m_oLvAlternateColors.CustomFullRowSelect = true;
-            m_oLvAlternateColors.ColumnsToNotUpdate(COL_YEAR.ToString());
-            m_oLvAlternateColors.ColumnsToNotUpdate(COL_SEQNUM.ToString());
-            if (frmMain.g_oGridViewFont != null) m_lvEx.Font = frmMain.g_oGridViewFont;
-            //
-            //ASSIGN LISTVIEW COLUMN LABELS
-            //
-            m_lvEx.Show();
-            this.m_lvEx.Clear();
-            this.m_lvEx.Columns.Add("Year", 100, HorizontalAlignment.Right);
-            this.m_lvEx.Columns.Add("Sequence Number", 125, HorizontalAlignment.Right);
-            this.m_lvEx.Columns.Add("Weight", 100, HorizontalAlignment.Right);
-            // Create an instance of a ListView column sorter and assign it 
-            // to the ListView control.
-            lvwColumnSorter = new ListViewColumnSorter();
-            this.m_lvEx.ListViewItemSorter = lvwColumnSorter;
-            //
-            //TEMPORARILY ADD ITEMS
-            //
-            entryListItem = m_lvEx.Items.Add("1");
-            entryListItem.UseItemStyleForSubItems = false;
-            this.m_oLvAlternateColors.AddRow();
-            this.m_oLvAlternateColors.AddColumns(m_lvEx.Items.Count - 1, m_lvEx.Columns.Count);
-            entryListItem.SubItems.Add("2");
-            entryListItem.SubItems.Add("0.025");
 
 		}
 
