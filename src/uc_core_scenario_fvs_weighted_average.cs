@@ -205,6 +205,13 @@ namespace FIA_Biosum_Manager
             row = (DataGridViewRow)dgEcon.RowTemplate.Clone();
             row.CreateCells(dgEcon, "2", "1");
             dgEcon.Rows.Add(row);
+            row = (DataGridViewRow)dgEcon.RowTemplate.Clone();
+            row.CreateCells(dgEcon, "3", "1");
+            dgEcon.Rows.Add(row);
+            row = (DataGridViewRow)dgEcon.RowTemplate.Clone();
+            row.CreateCells(dgEcon, "4", "1");
+            dgEcon.Rows.Add(row);
+
 
             this.loadvalues();
 		}
