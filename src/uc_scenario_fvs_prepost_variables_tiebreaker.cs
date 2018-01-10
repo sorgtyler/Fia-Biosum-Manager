@@ -204,6 +204,8 @@ namespace FIA_Biosum_Manager
 			this.m_oLvRowColors.AddColumns(0,this.lvFVSVariablesTieBreakerValues.Columns.Count);
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(1,this.lvFVSVariablesTieBreakerValues.Columns.Count);
+            this.m_oLvRowColors.AddRow();
+            this.m_oLvRowColors.AddColumns(2, this.lvFVSVariablesTieBreakerValues.Columns.Count);
 			this.m_oLvRowColors.ListView();
 
 
@@ -246,6 +248,12 @@ namespace FIA_Biosum_Manager
             "NA",
             "NA",
             "NA"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
+            "",
+            "Economic Variable",
+            "Not Defined",
+            "Not Defined",
+            "Not Defined"}, -1);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpboxFVSVariablesTieBreakerTreatmentIntensity = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -605,9 +613,11 @@ namespace FIA_Biosum_Manager
             listViewItem1.Checked = true;
             listViewItem1.StateImageIndex = 1;
             listViewItem2.StateImageIndex = 0;
+            listViewItem3.StateImageIndex = 0;
             this.lvFVSVariablesTieBreakerValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
-            listViewItem2});
+            listViewItem2,
+            listViewItem3});
             this.lvFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(3, 18);
             this.lvFVSVariablesTieBreakerValues.MultiSelect = false;
             this.lvFVSVariablesTieBreakerValues.Name = "lvFVSVariablesTieBreakerValues";

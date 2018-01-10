@@ -105,14 +105,9 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors=new ListViewAlternateBackgroundColors();
         private ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private Label label1;
-        private GroupBox grpMaxMinVariable;
-        private RadioButton rdoOptimizationMinimumAvg;
-        private RadioButton rdoOptimizationMaximumAvg;
-        private RadioButton rdoOptimizationMinimumTotal;
-        private RadioButton rdoOptimizationMaximumTotal;
-        private GroupBox grpIncludeCycles;
-        private RadioButton rdoAllCycles;
-        private RadioButton rdoOptimizationCycle1;
+        private GroupBox grpBoxOptimizationNetRevenue;
+        private ComboBox cboEconVariable;
+        private TextBox txtRevenueDescr;
         private string m_strLastValue = "";
 
 		public class VariableItem
@@ -238,8 +233,8 @@ namespace FIA_Biosum_Manager
             m_oValidate.TestForMaxMin = false;
             m_oValidate.MinValue = -1000;
             m_oValidate.TestForMin = true;
-         
-			
+
+            this.cboEconVariable.SelectedIndex = 0;
 
 			
 
@@ -318,14 +313,9 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.grpIncludeCycles = new System.Windows.Forms.GroupBox();
-            this.rdoAllCycles = new System.Windows.Forms.RadioButton();
-            this.rdoOptimizationCycle1 = new System.Windows.Forms.RadioButton();
-            this.grpMaxMinVariable = new System.Windows.Forms.GroupBox();
-            this.rdoOptimizationMinimumTotal = new System.Windows.Forms.RadioButton();
-            this.rdoOptimizationMaximumTotal = new System.Windows.Forms.RadioButton();
-            this.rdoOptimizationMinimumAvg = new System.Windows.Forms.RadioButton();
-            this.rdoOptimizationMaximumAvg = new System.Windows.Forms.RadioButton();
+            this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
+            this.cboEconVariable = new System.Windows.Forms.ComboBox();
+            this.txtRevenueDescr = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationFVSVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -341,14 +331,12 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationSettingsPostPre.SuspendLayout();
             this.grpFilter.SuspendLayout();
             this.grpMaxMin.SuspendLayout();
-            this.grpIncludeCycles.SuspendLayout();
-            this.grpMaxMinVariable.SuspendLayout();
+            this.grpBoxOptimizationNetRevenue.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Controls.Add(this.grpMaxMinVariable);
             this.groupBox1.Controls.Add(this.grpboxOptimizationFVSVariable);
             this.groupBox1.Controls.Add(this.grpboxOptimization);
             this.groupBox1.Controls.Add(this.grpboxOptimizationSettings);
@@ -635,12 +623,11 @@ namespace FIA_Biosum_Manager
             // pnlFVSVariablesPrePostVariable
             // 
             this.pnlFVSVariablesPrePostVariable.AutoScroll = true;
-            this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpIncludeCycles);
+            this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpBoxOptimizationNetRevenue);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.btnOptimiztionPrev);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpboxOptimizationSettingsPostPre);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpFilter);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpMaxMin);
-            this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpMaxMinVariable);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.lblOptimizationVariable);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.btnOptimiztionDone);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.btnOptimiztionCancel);
@@ -672,6 +659,7 @@ namespace FIA_Biosum_Manager
             // 
             // cmbOptimizationSettingsPostPreValue
             // 
+            this.cmbOptimizationSettingsPostPreValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbOptimizationSettingsPostPreValue.Items.AddRange(new object[] {
             "Post Value",
             "Post - Pre  Change Value"});
@@ -679,7 +667,6 @@ namespace FIA_Biosum_Manager
             this.cmbOptimizationSettingsPostPreValue.Name = "cmbOptimizationSettingsPostPreValue";
             this.cmbOptimizationSettingsPostPreValue.Size = new System.Drawing.Size(320, 24);
             this.cmbOptimizationSettingsPostPreValue.TabIndex = 0;
-            this.cmbOptimizationSettingsPostPreValue.Text = "Post Value";
             // 
             // grpFilter
             // 
@@ -706,7 +693,7 @@ namespace FIA_Biosum_Manager
             // 
             // chkEnableFilter
             // 
-            this.chkEnableFilter.Location = new System.Drawing.Point(48, 25);
+            this.chkEnableFilter.Location = new System.Drawing.Point(46, 22);
             this.chkEnableFilter.Name = "chkEnableFilter";
             this.chkEnableFilter.Size = new System.Drawing.Size(112, 32);
             this.chkEnableFilter.TabIndex = 17;
@@ -721,9 +708,9 @@ namespace FIA_Biosum_Manager
             ">=",
             "<=",
             "<>"});
-            this.cmbOptimizationOperator.Location = new System.Drawing.Point(232, 25);
+            this.cmbOptimizationOperator.Location = new System.Drawing.Point(237, 26);
             this.cmbOptimizationOperator.Name = "cmbOptimizationOperator";
-            this.cmbOptimizationOperator.Size = new System.Drawing.Size(88, 32);
+            this.cmbOptimizationOperator.Size = new System.Drawing.Size(83, 32);
             this.cmbOptimizationOperator.TabIndex = 16;
             this.cmbOptimizationOperator.Text = ">";
             // 
@@ -741,9 +728,9 @@ namespace FIA_Biosum_Manager
             // 
             this.grpMaxMin.Controls.Add(this.rdoOptimizationMinimum);
             this.grpMaxMin.Controls.Add(this.rdoOptimizationMaximum);
-            this.grpMaxMin.Location = new System.Drawing.Point(80, 197);
+            this.grpMaxMin.Location = new System.Drawing.Point(82, 147);
             this.grpMaxMin.Name = "grpMaxMin";
-            this.grpMaxMin.Size = new System.Drawing.Size(464, 80);
+            this.grpMaxMin.Size = new System.Drawing.Size(464, 45);
             this.grpMaxMin.TabIndex = 17;
             this.grpMaxMin.TabStop = false;
             this.grpMaxMin.Text = "Aggregate Setting";
@@ -804,82 +791,37 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
             // 
-            // grpIncludeCycles
+            // grpBoxOptimizationNetRevenue
             // 
-            this.grpIncludeCycles.Controls.Add(this.rdoAllCycles);
-            this.grpIncludeCycles.Controls.Add(this.rdoOptimizationCycle1);
-            this.grpIncludeCycles.Location = new System.Drawing.Point(80, 133);
-            this.grpIncludeCycles.Name = "grpIncludeCycles";
-            this.grpIncludeCycles.Size = new System.Drawing.Size(464, 48);
-            this.grpIncludeCycles.TabIndex = 22;
-            this.grpIncludeCycles.TabStop = false;
-            this.grpIncludeCycles.Text = "Include cycles";
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cboEconVariable);
+            this.grpBoxOptimizationNetRevenue.Location = new System.Drawing.Point(80, 208);
+            this.grpBoxOptimizationNetRevenue.Name = "grpBoxOptimizationNetRevenue";
+            this.grpBoxOptimizationNetRevenue.Size = new System.Drawing.Size(464, 69);
+            this.grpBoxOptimizationNetRevenue.TabIndex = 22;
+            this.grpBoxOptimizationNetRevenue.TabStop = false;
+            this.grpBoxOptimizationNetRevenue.Text = "Net Revenue Calculation";
+            this.grpBoxOptimizationNetRevenue.Visible = false;
             // 
-            // rdoAllCycles
+            // cboEconVariable
             // 
-            this.rdoAllCycles.Checked = true;
-            this.rdoAllCycles.Location = new System.Drawing.Point(256, 16);
-            this.rdoAllCycles.Name = "rdoAllCycles";
-            this.rdoAllCycles.Size = new System.Drawing.Size(176, 24);
-            this.rdoAllCycles.TabIndex = 14;
-            this.rdoAllCycles.TabStop = true;
-            this.rdoAllCycles.Text = "All Cycles";
+            this.cboEconVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboEconVariable.Items.AddRange(new object[] {
+            "net_revenue_1"});
+            this.cboEconVariable.Location = new System.Drawing.Point(16, 24);
+            this.cboEconVariable.Name = "cboEconVariable";
+            this.cboEconVariable.Size = new System.Drawing.Size(110, 24);
+            this.cboEconVariable.TabIndex = 20;
             // 
-            // rdoOptimizationCycle1
+            // txtRevenueDescr
             // 
-            this.rdoOptimizationCycle1.Location = new System.Drawing.Point(32, 16);
-            this.rdoOptimizationCycle1.Name = "rdoOptimizationCycle1";
-            this.rdoOptimizationCycle1.Size = new System.Drawing.Size(176, 24);
-            this.rdoOptimizationCycle1.TabIndex = 12;
-            this.rdoOptimizationCycle1.Text = "Cycle 1";
-            // 
-            // grpMaxMinVariable
-            // 
-            this.grpMaxMinVariable.Controls.Add(this.rdoOptimizationMinimumAvg);
-            this.grpMaxMinVariable.Controls.Add(this.rdoOptimizationMaximumAvg);
-            this.grpMaxMinVariable.Controls.Add(this.rdoOptimizationMinimumTotal);
-            this.grpMaxMinVariable.Controls.Add(this.rdoOptimizationMaximumTotal);
-            this.grpMaxMinVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpMaxMinVariable.ForeColor = System.Drawing.Color.Black;
-            this.grpMaxMinVariable.Location = new System.Drawing.Point(22, 1455);
-            this.grpMaxMinVariable.Name = "grpMaxMinVariable";
-            this.grpMaxMinVariable.Size = new System.Drawing.Size(464, 80);
-            this.grpMaxMinVariable.TabIndex = 36;
-            this.grpMaxMinVariable.TabStop = false;
-            this.grpMaxMinVariable.Text = "Aggregate Setting";
-            // 
-            // rdoOptimizationMinimumTotal
-            // 
-            this.rdoOptimizationMinimumTotal.Location = new System.Drawing.Point(256, 16);
-            this.rdoOptimizationMinimumTotal.Name = "rdoOptimizationMinimumTotal";
-            this.rdoOptimizationMinimumTotal.Size = new System.Drawing.Size(176, 24);
-            this.rdoOptimizationMinimumTotal.TabIndex = 14;
-            this.rdoOptimizationMinimumTotal.Text = "Minimum Total";
-            // 
-            // rdoOptimizationMaximumTotal
-            // 
-            this.rdoOptimizationMaximumTotal.Checked = true;
-            this.rdoOptimizationMaximumTotal.Location = new System.Drawing.Point(32, 16);
-            this.rdoOptimizationMaximumTotal.Name = "rdoOptimizationMaximumTotal";
-            this.rdoOptimizationMaximumTotal.Size = new System.Drawing.Size(176, 24);
-            this.rdoOptimizationMaximumTotal.TabIndex = 12;
-            this.rdoOptimizationMaximumTotal.Text = "Maximum Total";
-            // 
-            // rdoOptimizationMinimumAvg
-            // 
-            this.rdoOptimizationMinimumAvg.Location = new System.Drawing.Point(256, 45);
-            this.rdoOptimizationMinimumAvg.Name = "rdoOptimizationMinimumAvg";
-            this.rdoOptimizationMinimumAvg.Size = new System.Drawing.Size(176, 24);
-            this.rdoOptimizationMinimumAvg.TabIndex = 16;
-            this.rdoOptimizationMinimumAvg.Text = "Minimum Average";
-            // 
-            // rdoOptimizationMaximumAvg
-            // 
-            this.rdoOptimizationMaximumAvg.Location = new System.Drawing.Point(32, 45);
-            this.rdoOptimizationMaximumAvg.Name = "rdoOptimizationMaximumAvg";
-            this.rdoOptimizationMaximumAvg.Size = new System.Drawing.Size(176, 24);
-            this.rdoOptimizationMaximumAvg.TabIndex = 15;
-            this.rdoOptimizationMaximumAvg.Text = "Maximum Average";
+            this.txtRevenueDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtRevenueDescr.Location = new System.Drawing.Point(189, 21);
+            this.txtRevenueDescr.Multiline = true;
+            this.txtRevenueDescr.Name = "txtRevenueDescr";
+            this.txtRevenueDescr.Size = new System.Drawing.Size(259, 40);
+            this.txtRevenueDescr.TabIndex = 87;
+            this.txtRevenueDescr.Text = "Sums net revenue across all 4 cycles";
             // 
             // uc_scenario_fvs_prepost_optimization
             // 
@@ -902,8 +844,8 @@ namespace FIA_Biosum_Manager
             this.grpFilter.ResumeLayout(false);
             this.grpFilter.PerformLayout();
             this.grpMaxMin.ResumeLayout(false);
-            this.grpIncludeCycles.ResumeLayout(false);
-            this.grpMaxMinVariable.ResumeLayout(false);
+            this.grpBoxOptimizationNetRevenue.ResumeLayout(false);
+            this.grpBoxOptimizationNetRevenue.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -1015,6 +957,17 @@ namespace FIA_Biosum_Manager
 			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
 			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
+            // New row for economic weighted variables
+            CreateListViewOptimizationRow();
+            this.m_oLvRowColors.AddRow();
+            this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count - 1, lvOptimizationListValues.Columns.Count);
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Variable";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
 
 			//
@@ -1739,15 +1692,13 @@ namespace FIA_Biosum_Manager
 				btnOptimiztionPrev.Hide();
 				this.lblOptimizationVariable.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
 				grpboxOptimizationSettingsPostPre.Hide();
-                grpMaxMinVariable.Hide();
-                grpMaxMin.BringToFront();
 			}
 			else
 			{
 				btnOptimiztionPrev.Show();
 				this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
 				this.grpboxOptimizationFVSVariable.Show();
-				//grpboxOptimizationSettingsPostPre.Show();
+				//this.grpboxOptimizationSettingsPostPre.Show();
 				if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_VALUESOURCE].Text.Trim()=="POST")
 					this.cmbOptimizationSettingsPostPreValue.Text = 
 						this.cmbOptimizationSettingsPostPreValue.Items[0].ToString().Trim();
@@ -1991,12 +1942,11 @@ namespace FIA_Biosum_Manager
 
 		private void btnOptimizationFVSVariableNext_Click(object sender, System.EventArgs e)
 		{
-			this.grpboxOptimizationFVSVariable.Hide();
-            //overlay grpMaxMin with grpMaxMinVariable
-            grpMaxMin.Hide();
-            grpMaxMinVariable.Location = grpMaxMin.Location;
-            grpMaxMinVariable.Show();
+            this.grpboxOptimizationSettingsPostPre.Show();
+            this.grpboxOptimizationFVSVariable.Hide();
 			this.grpboxOptimizationSettings.Show();
+            this.grpBoxOptimizationNetRevenue.Show();
+
 		}
 
 		private void btnOptimiztionPrev_Click(object sender, System.EventArgs e)
