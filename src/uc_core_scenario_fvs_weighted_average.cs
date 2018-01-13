@@ -71,7 +71,7 @@ namespace FIA_Biosum_Manager
         private Label label7;
         private Button button1;
         private Button btnFvsDetailsCancel;
-        private GroupBox groupBox4;
+        private GroupBox grpBoxFvsBaseline;
         private ComboBox comboBox1;
         private GroupBox groupBox3;
         private ListBox listBox1;
@@ -119,6 +119,8 @@ namespace FIA_Biosum_Manager
         private Label label6;
         private TextBox textBox3;
         private Label label5;
+        private GroupBox grpBoxEconBaseline;
+        private ComboBox comboBox2;
         private DataGridView dgWeights;
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
@@ -238,14 +240,16 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle36 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle37 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle38 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle39 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle40 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.dgEcon = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -272,6 +276,8 @@ namespace FIA_Biosum_Manager
             this.vDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.dgWeights = new System.Windows.Forms.DataGridView();
             this.Year = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SeqNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -283,7 +289,7 @@ namespace FIA_Biosum_Manager
             this.label7 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.btnFvsDetailsCancel = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.grpBoxFvsBaseline = new System.Windows.Forms.GroupBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -292,10 +298,8 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.grpBoxEconBaseline = new System.Windows.Forms.GroupBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -306,9 +310,10 @@ namespace FIA_Biosum_Manager
             this.grpboxDetails.SuspendLayout();
             this.pnlDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgWeights)).BeginInit();
-            this.groupBox4.SuspendLayout();
+            this.grpBoxFvsBaseline.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.grpBoxEconBaseline.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -342,6 +347,7 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.grpBoxEconBaseline);
             this.panel1.Controls.Add(this.textBox4);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.dgEcon);
@@ -361,6 +367,26 @@ namespace FIA_Biosum_Manager
             this.panel1.Size = new System.Drawing.Size(850, 451);
             this.panel1.TabIndex = 70;
             // 
+            // textBox4
+            // 
+            this.textBox4.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox4.Location = new System.Drawing.Point(393, 301);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(121, 22);
+            this.textBox4.TabIndex = 92;
+            this.textBox4.Text = "4.0";
+            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(387, 279);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(139, 24);
+            this.label6.TabIndex = 91;
+            this.label6.Text = "TOTAL WEIGHTS";
+            // 
             // dgEcon
             // 
             this.dgEcon.AllowUserToAddRows = false;
@@ -377,9 +403,9 @@ namespace FIA_Biosum_Manager
             // 
             // dataGridViewTextBoxColumn1
             // 
-            dataGridViewCellStyle36.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle36.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle36;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewTextBoxColumn1.FillWeight = 80F;
             this.dataGridViewTextBoxColumn1.HeaderText = "CYCLE";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
@@ -388,11 +414,11 @@ namespace FIA_Biosum_Manager
             // 
             // dataGridViewTextBoxColumn3
             // 
-            dataGridViewCellStyle37.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle37.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle37.SelectionBackColor = System.Drawing.Color.Red;
-            dataGridViewCellStyle37.SelectionForeColor = System.Drawing.Color.White;
-            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle37;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewTextBoxColumn3.HeaderText = "WEIGHT";
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             // 
@@ -460,7 +486,7 @@ namespace FIA_Biosum_Manager
             // groupBox8
             // 
             this.groupBox8.Controls.Add(this.listBox3);
-            this.groupBox8.Location = new System.Drawing.Point(10, 3);
+            this.groupBox8.Location = new System.Drawing.Point(208, 7);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(200, 133);
             this.groupBox8.TabIndex = 71;
@@ -623,7 +649,7 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Controls.Add(this.label7);
             this.pnlDetails.Controls.Add(this.button1);
             this.pnlDetails.Controls.Add(this.btnFvsDetailsCancel);
-            this.pnlDetails.Controls.Add(this.groupBox4);
+            this.pnlDetails.Controls.Add(this.grpBoxFvsBaseline);
             this.pnlDetails.Controls.Add(this.groupBox3);
             this.pnlDetails.Controls.Add(this.groupBox2);
             this.pnlDetails.Controls.Add(this.LblSelectedVariable);
@@ -633,6 +659,26 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Name = "pnlDetails";
             this.pnlDetails.Size = new System.Drawing.Size(850, 451);
             this.pnlDetails.TabIndex = 70;
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox3.Location = new System.Drawing.Point(380, 300);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(121, 22);
+            this.textBox3.TabIndex = 90;
+            this.textBox3.Text = "1.0";
+            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label5
+            // 
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(383, 278);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(139, 24);
+            this.label5.TabIndex = 89;
+            this.label5.Text = "TOTAL WEIGHTS";
             // 
             // dgWeights
             // 
@@ -651,9 +697,9 @@ namespace FIA_Biosum_Manager
             // 
             // Year
             // 
-            dataGridViewCellStyle38.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Year.DefaultCellStyle = dataGridViewCellStyle38;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Year.DefaultCellStyle = dataGridViewCellStyle3;
             this.Year.FillWeight = 80F;
             this.Year.HeaderText = "YEAR";
             this.Year.Name = "Year";
@@ -662,20 +708,20 @@ namespace FIA_Biosum_Manager
             // 
             // SeqNum
             // 
-            dataGridViewCellStyle39.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle39.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeqNum.DefaultCellStyle = dataGridViewCellStyle39;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SeqNum.DefaultCellStyle = dataGridViewCellStyle4;
             this.SeqNum.HeaderText = "SEQ NUM";
             this.SeqNum.Name = "SeqNum";
             this.SeqNum.ReadOnly = true;
             // 
             // Weight
             // 
-            dataGridViewCellStyle40.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle40.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle40.SelectionBackColor = System.Drawing.Color.Red;
-            dataGridViewCellStyle40.SelectionForeColor = System.Drawing.Color.White;
-            this.Weight.DefaultCellStyle = dataGridViewCellStyle40;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White;
+            this.Weight.DefaultCellStyle = dataGridViewCellStyle5;
             this.Weight.HeaderText = "WEIGHT";
             this.Weight.Name = "Weight";
             // 
@@ -738,15 +784,15 @@ namespace FIA_Biosum_Manager
             this.btnFvsDetailsCancel.Text = "Cancel";
             this.btnFvsDetailsCancel.Click += new System.EventHandler(this.btnFvsDetailsCancel_Click);
             // 
-            // groupBox4
+            // grpBoxFvsBaseline
             // 
-            this.groupBox4.Controls.Add(this.comboBox1);
-            this.groupBox4.Location = new System.Drawing.Point(8, 7);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(154, 48);
-            this.groupBox4.TabIndex = 74;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Baseline RxPackage";
+            this.grpBoxFvsBaseline.Controls.Add(this.comboBox1);
+            this.grpBoxFvsBaseline.Location = new System.Drawing.Point(8, 7);
+            this.grpBoxFvsBaseline.Name = "grpBoxFvsBaseline";
+            this.grpBoxFvsBaseline.Size = new System.Drawing.Size(154, 48);
+            this.grpBoxFvsBaseline.TabIndex = 74;
+            this.grpBoxFvsBaseline.TabStop = false;
+            this.grpBoxFvsBaseline.Text = "Baseline RxPackage";
             // 
             // comboBox1
             // 
@@ -841,45 +887,25 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
-            // label5
+            // grpBoxEconBaseline
             // 
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(383, 278);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(139, 24);
-            this.label5.TabIndex = 89;
-            this.label5.Text = "TOTAL WEIGHTS";
+            this.grpBoxEconBaseline.Controls.Add(this.comboBox2);
+            this.grpBoxEconBaseline.Location = new System.Drawing.Point(8, 7);
+            this.grpBoxEconBaseline.Name = "grpBoxEconBaseline";
+            this.grpBoxEconBaseline.Size = new System.Drawing.Size(154, 48);
+            this.grpBoxEconBaseline.TabIndex = 93;
+            this.grpBoxEconBaseline.TabStop = false;
+            this.grpBoxEconBaseline.Text = "Baseline RxPackage";
             // 
-            // textBox3
+            // comboBox2
             // 
-            this.textBox3.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(380, 300);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(121, 22);
-            this.textBox3.TabIndex = 90;
-            this.textBox3.Text = "1.0";
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // textBox4
-            // 
-            this.textBox4.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.Location = new System.Drawing.Point(393, 301);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(121, 22);
-            this.textBox4.TabIndex = 92;
-            this.textBox4.Text = "4.0";
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label6
-            // 
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(387, 279);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(139, 24);
-            this.label6.TabIndex = 91;
-            this.label6.Text = "TOTAL WEIGHTS";
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox2.Items.AddRange(new object[] {
+            "005"});
+            this.comboBox2.Location = new System.Drawing.Point(8, 18);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(72, 24);
+            this.comboBox2.TabIndex = 77;
             // 
             // uc_core_scenario_weighted_average
             // 
@@ -898,9 +924,10 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.ResumeLayout(false);
             this.pnlDetails.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgWeights)).EndInit();
-            this.groupBox4.ResumeLayout(false);
+            this.grpBoxFvsBaseline.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.grpBoxEconBaseline.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
