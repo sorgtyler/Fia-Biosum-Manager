@@ -96,9 +96,6 @@ namespace FIA_Biosum_Manager
         private const int COL_YEAR = 1;
         private const int COL_SEQNUM = 2;
         private Button btnNewEcon;
-        private DataGridViewTextBoxColumn Year;
-        private DataGridViewTextBoxColumn SeqNum;
-        private DataGridViewTextBoxColumn Weight;
         private GroupBox grpBoxEconomicVariable;
         public Panel panel1;
         private DataGridView dgEcon;
@@ -121,6 +118,11 @@ namespace FIA_Biosum_Manager
         private Label label5;
         private GroupBox grpBoxEconBaseline;
         private ComboBox comboBox2;
+        private ColumnHeader vType;
+        private DataGridViewTextBoxColumn Year;
+        private DataGridViewTextBoxColumn Cycle;
+        private DataGridViewTextBoxColumn SeqNum;
+        private DataGridViewTextBoxColumn Weight;
         private DataGridView dgWeights;
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
@@ -166,39 +168,47 @@ namespace FIA_Biosum_Manager
             lstVariables.Items.Add("Weight_Torch");
             lstVariables.Items[0].UseItemStyleForSubItems = false;
             lstVariables.Items[0].SubItems.Add("Weighted P-Torch severity");
+            lstVariables.Items[0].SubItems.Add("FVS");
             m_oLvAlternateColors.AddRow();
             m_oLvAlternateColors.AddColumns(0, lstVariables.Columns.Count);
             lstVariables.Items.Add("wHazard");
             lstVariables.Items[1].UseItemStyleForSubItems = false;
             lstVariables.Items[1].SubItems.Add("Weighted Hazard Score");
+            lstVariables.Items[1].SubItems.Add("FVS");
             m_oLvAlternateColors.AddRow();
             m_oLvAlternateColors.AddColumns(1, lstVariables.Columns.Count);
+            lstVariables.Items.Add("total_volume_1");
+            lstVariables.Items[2].UseItemStyleForSubItems = false;
+            lstVariables.Items[2].SubItems.Add("Default calculation for total volume");
+            lstVariables.Items[2].SubItems.Add("Economic");
+            m_oLvAlternateColors.AddRow();
+            m_oLvAlternateColors.AddColumns(2, lstVariables.Columns.Count);
             this.m_oLvAlternateColors.ListView();
 
 
             var row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "1", "1", "0.025");
+            row.CreateCells(dgWeights, "1", "1", "1", "0.025");
             dgWeights.Rows.Add(row);
             row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "6", "2", "0.15");
+            row.CreateCells(dgWeights, "6", "1", "2", "0.15");
             dgWeights.Rows.Add(row);
             row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "11", "3", "0.1");
+            row.CreateCells(dgWeights, "11", "2", "3", "0.1");
             dgWeights.Rows.Add(row);
             row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "12", "4", "0.15");
+            row.CreateCells(dgWeights, "12", "2", "4", "0.15");
             dgWeights.Rows.Add(row);
             row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "21", "5", "0.1");
+            row.CreateCells(dgWeights, "21", "3", "5", "0.1");
             dgWeights.Rows.Add(row);
             row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "22", "6", "0.15");
+            row.CreateCells(dgWeights, "22", "3", "6", "0.15");
             dgWeights.Rows.Add(row);
             row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "31", "7", "0.1");
+            row.CreateCells(dgWeights, "31", "4", "7", "0.1");
             dgWeights.Rows.Add(row);
             row = (DataGridViewRow)dgWeights.RowTemplate.Clone();
-            row.CreateCells(dgWeights, "32", "8", "0.225");
+            row.CreateCells(dgWeights, "32", "4", "8", "0.225");
             dgWeights.Rows.Add(row);
 
             row = (DataGridViewRow) dgEcon.RowTemplate.Clone();
@@ -245,9 +255,12 @@ namespace FIA_Biosum_Manager
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.grpBoxEconBaseline = new System.Windows.Forms.GroupBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.dgEcon = new System.Windows.Forms.DataGridView();
@@ -279,9 +292,6 @@ namespace FIA_Biosum_Manager
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.dgWeights = new System.Windows.Forms.DataGridView();
-            this.Year = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SeqNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BtnHelp = new System.Windows.Forms.Button();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -298,11 +308,15 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.grpBoxEconBaseline = new System.Windows.Forms.GroupBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.vType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Year = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cycle = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SeqNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.grpBoxEconBaseline.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEcon)).BeginInit();
             this.groupBox8.SuspendLayout();
             this.grpboxSummary.SuspendLayout();
@@ -313,7 +327,6 @@ namespace FIA_Biosum_Manager
             this.grpBoxFvsBaseline.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.grpBoxEconBaseline.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -366,6 +379,26 @@ namespace FIA_Biosum_Manager
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(850, 451);
             this.panel1.TabIndex = 70;
+            // 
+            // grpBoxEconBaseline
+            // 
+            this.grpBoxEconBaseline.Controls.Add(this.comboBox2);
+            this.grpBoxEconBaseline.Location = new System.Drawing.Point(8, 7);
+            this.grpBoxEconBaseline.Name = "grpBoxEconBaseline";
+            this.grpBoxEconBaseline.Size = new System.Drawing.Size(154, 48);
+            this.grpBoxEconBaseline.TabIndex = 93;
+            this.grpBoxEconBaseline.TabStop = false;
+            this.grpBoxEconBaseline.Text = "Baseline RxPackage";
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox2.Items.AddRange(new object[] {
+            "005"});
+            this.comboBox2.Location = new System.Drawing.Point(8, 18);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(72, 24);
+            this.comboBox2.TabIndex = 77;
             // 
             // textBox4
             // 
@@ -600,7 +633,8 @@ namespace FIA_Biosum_Manager
             // 
             this.lstVariables.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.vName,
-            this.vDescription});
+            this.vDescription,
+            this.vType});
             this.lstVariables.GridLines = true;
             this.lstVariables.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstVariables.HideSelection = false;
@@ -620,7 +654,7 @@ namespace FIA_Biosum_Manager
             // vDescription
             // 
             this.vDescription.Text = "Description";
-            this.vDescription.Width = 400;
+            this.vDescription.Width = 350;
             // 
             // grpboxDetails
             // 
@@ -664,7 +698,7 @@ namespace FIA_Biosum_Manager
             // 
             this.textBox3.BackColor = System.Drawing.SystemColors.Control;
             this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(380, 300);
+            this.textBox3.Location = new System.Drawing.Point(463, 297);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(121, 22);
             this.textBox3.TabIndex = 90;
@@ -674,7 +708,7 @@ namespace FIA_Biosum_Manager
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(383, 278);
+            this.label5.Location = new System.Drawing.Point(466, 275);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(139, 24);
             this.label5.TabIndex = 89;
@@ -688,42 +722,13 @@ namespace FIA_Biosum_Manager
             this.dgWeights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgWeights.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
+            this.Cycle,
             this.SeqNum,
             this.Weight});
             this.dgWeights.Location = new System.Drawing.Point(18, 172);
             this.dgWeights.Name = "dgWeights";
-            this.dgWeights.Size = new System.Drawing.Size(350, 150);
+            this.dgWeights.Size = new System.Drawing.Size(412, 150);
             this.dgWeights.TabIndex = 88;
-            // 
-            // Year
-            // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Year.DefaultCellStyle = dataGridViewCellStyle3;
-            this.Year.FillWeight = 80F;
-            this.Year.HeaderText = "YEAR";
-            this.Year.Name = "Year";
-            this.Year.ReadOnly = true;
-            this.Year.Width = 80;
-            // 
-            // SeqNum
-            // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeqNum.DefaultCellStyle = dataGridViewCellStyle4;
-            this.SeqNum.HeaderText = "SEQ NUM";
-            this.SeqNum.Name = "SeqNum";
-            this.SeqNum.ReadOnly = true;
-            // 
-            // Weight
-            // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Red;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White;
-            this.Weight.DefaultCellStyle = dataGridViewCellStyle5;
-            this.Weight.HeaderText = "WEIGHT";
-            this.Weight.Name = "Weight";
             // 
             // BtnHelp
             // 
@@ -887,25 +892,49 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
-            // grpBoxEconBaseline
+            // vType
             // 
-            this.grpBoxEconBaseline.Controls.Add(this.comboBox2);
-            this.grpBoxEconBaseline.Location = new System.Drawing.Point(8, 7);
-            this.grpBoxEconBaseline.Name = "grpBoxEconBaseline";
-            this.grpBoxEconBaseline.Size = new System.Drawing.Size(154, 48);
-            this.grpBoxEconBaseline.TabIndex = 93;
-            this.grpBoxEconBaseline.TabStop = false;
-            this.grpBoxEconBaseline.Text = "Baseline RxPackage";
+            this.vType.Text = "Type";
+            this.vType.Width = 100;
             // 
-            // comboBox2
+            // Year
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.Items.AddRange(new object[] {
-            "005"});
-            this.comboBox2.Location = new System.Drawing.Point(8, 18);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(72, 24);
-            this.comboBox2.TabIndex = 77;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Year.DefaultCellStyle = dataGridViewCellStyle3;
+            this.Year.FillWeight = 80F;
+            this.Year.HeaderText = "YEAR";
+            this.Year.Name = "Year";
+            this.Year.ReadOnly = true;
+            this.Year.Width = 80;
+            // 
+            // Cycle
+            // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Cycle.DefaultCellStyle = dataGridViewCellStyle4;
+            this.Cycle.HeaderText = "CYCLE";
+            this.Cycle.Name = "Cycle";
+            this.Cycle.Width = 80;
+            // 
+            // SeqNum
+            // 
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SeqNum.DefaultCellStyle = dataGridViewCellStyle5;
+            this.SeqNum.HeaderText = "SEQ NUM";
+            this.SeqNum.Name = "SeqNum";
+            this.SeqNum.ReadOnly = true;
+            // 
+            // Weight
+            // 
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
+            this.Weight.DefaultCellStyle = dataGridViewCellStyle6;
+            this.Weight.HeaderText = "WEIGHT";
+            this.Weight.Name = "Weight";
+            this.Weight.Width = 80;
             // 
             // uc_core_scenario_weighted_average
             // 
@@ -916,6 +945,7 @@ namespace FIA_Biosum_Manager
             this.grpBoxEconomicVariable.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.grpBoxEconBaseline.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgEcon)).EndInit();
             this.groupBox8.ResumeLayout(false);
             this.grpboxSummary.ResumeLayout(false);
@@ -927,7 +957,6 @@ namespace FIA_Biosum_Manager
             this.grpBoxFvsBaseline.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
-            this.grpBoxEconBaseline.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
