@@ -2621,8 +2621,9 @@ namespace FIA_Biosum_Manager
                            this.m_oQueries.m_oFvs.m_strFvsTreeSpcRefTable + " f " +
                            "WHERE  w.treetable_spcd = s.spcd " +
                            "AND TRIM(w.fvsouttable_fvs_variant)=TRIM(s.fvs_variant) " +
-                           "AND s.fvs_input_spcd = f.spcd AND TRIM(s.fvs_variant) = TRIM(f.fvs_variant) " +
-                           "AND (VAL(w.fvsouttable_spcd)= s.spcd OR VAL(w.fvsouttable_spcd) = s.fvs_input_spcd))";
+                           "AND (VAL(w.fvsouttable_spcd)= s.spcd OR VAL(w.fvsouttable_spcd) = s.fvs_input_spcd) " +
+                           "AND (VAL(w.fvsouttable_spcd)= f.spcd AND TRIM(w.fvsouttable_fvs_variant) = TRIM(f.fvs_variant)) " +
+                           "AND f.spcd = s.fvs_input_spcd)";
 
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 

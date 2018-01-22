@@ -737,15 +737,18 @@ namespace FIA_Biosum_Manager
                             dblSmLogHwdPct = nextStand.SmLogHwdVolCfPa / nextStand.SmLogVolCfPa * 100;
                         }
                         // Apply OpCost value limits
-                        if (nextStand.TotalSmLogTpa > 0 && nextStand.TotalSmLogTpa < nextStand.HarvestMethod.MinTpa)
+                        if (nextStand.TotalSmLogTpa > 0)
                         {
-                            nextStand.TotalSmLogTpaUnadj = nextStand.TotalSmLogTpa;
-                            nextStand.TotalSmLogTpa = nextStand.HarvestMethod.MinTpa;
-                        }
-                        if (dblSmLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
-                        {
-                            dblSmLogAvgVolumeAdj = dblSmLogAvgVolume;
-                            dblSmLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            if (nextStand.TotalSmLogTpa < nextStand.HarvestMethod.MinTpa)
+                            {
+                                nextStand.TotalSmLogTpaUnadj = nextStand.TotalSmLogTpa;
+                                nextStand.TotalSmLogTpa = nextStand.HarvestMethod.MinTpa;
+                            }
+                            if (dblSmLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
+                            {
+                                dblSmLogAvgVolumeAdj = dblSmLogAvgVolume;
+                                dblSmLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            }
                         }
 
                         // *** LARGE LOGS ***
@@ -769,15 +772,18 @@ namespace FIA_Biosum_Manager
                             dblLgLogHwdPct = nextStand.LgLogHwdVolCfPa / nextStand.LgLogVolCfPa * 100;
                         }
                         // Apply OpCost value limits
-                        if (nextStand.TotalLgLogTpa > 0 && nextStand.TotalLgLogTpa < nextStand.HarvestMethod.MinTpa)
+                        if (nextStand.TotalLgLogTpa > 0)
                         {
-                            nextStand.TotalLgLogTpaUnadj = nextStand.TotalLgLogTpa;
-                            nextStand.TotalLgLogTpa = nextStand.HarvestMethod.MinTpa;
-                        }
-                        if (dblLgLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
-                        {
-                            dblLgLogAvgVolumeAdj = dblLgLogAvgVolume;
-                            dblLgLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            if (nextStand.TotalLgLogTpa < nextStand.HarvestMethod.MinTpa)
+                            {
+                                nextStand.TotalLgLogTpaUnadj = nextStand.TotalLgLogTpa;
+                                nextStand.TotalLgLogTpa = nextStand.HarvestMethod.MinTpa;
+                            }
+                            if (dblLgLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
+                            {
+                                dblLgLogAvgVolumeAdj = dblLgLogAvgVolume;
+                                dblLgLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            }
                         }
 
                         m_oAdo.m_strSQL = "INSERT INTO " + m_strOpcostTableName + " " +
