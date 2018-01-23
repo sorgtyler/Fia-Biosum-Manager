@@ -4869,13 +4869,13 @@ namespace FIA_Biosum_Manager
             }
             int x, y;
             string strSum = "";
-            
+
             string[] strRXArray = null;
             //create work table to hold total additional costs
             if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "HarvestCostsTotalAdditionalWorkTable"))
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE HarvestCostsTotalAdditionalWorkTable");
             frmMain.g_oTables.m_oProcessorScenarioRun.CreateTotalAdditionalHarvestCostsTable(
-                m_oAdo,m_oAdo.m_OleDbConnection,"HarvestCostsTotalAdditionalWorkTable");
+                m_oAdo, m_oAdo.m_OleDbConnection, "HarvestCostsTotalAdditionalWorkTable");
 
             if (m_oAdo.m_intError == 0)
             {
@@ -4884,19 +4884,21 @@ namespace FIA_Biosum_Manager
                                   "(biosum_cond_id,rx) SELECT biosum_cond_id,rx " +
                                                       "FROM scenario_additional_harvest_costs " +
                                                       "WHERE TRIM(UCASE(scenario_id)) = " +
-                                                      "'" + ScenarioId.Trim() + "'";
+                                                      "'" + ScenarioId.ToUpper().Trim() + "'";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             }
             if (m_oAdo.m_intError == 0)
             {
-
-                //get the user defined harvest cost columns to sum
+                //
+                //GET THE ADDITIONAL HARVEST COST COLUMNS AND THEIR ASSOCIATED TREATMENT
+                //
                 m_oAdo.m_strSQL = "SELECT columnname,rx " +
                     "FROM scenario_harvest_cost_columns " +
                     "WHERE trim(ucase(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'";
-
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
                 if (m_oAdo.m_intError == 0)
@@ -4916,15 +4918,18 @@ namespace FIA_Biosum_Manager
                             if (m_oAdo.m_OleDbDataReader["ColumnName"] != System.DBNull.Value &&
                                 m_oAdo.m_OleDbDataReader["ColumnName"].ToString().Trim().Length > 0)
                             {
+
                                 strCol = m_oAdo.m_OleDbDataReader["ColumnName"].ToString().Trim();
                                 strScenarioColumnNameList = strScenarioColumnNameList + strCol + ",";
-                                if (m_oAdo.m_OleDbDataReader["rx"] != System.DBNull.Value)
+
+                                if (m_oAdo.m_OleDbDataReader["rx"] != System.DBNull.Value &&
+                                    m_oAdo.m_OleDbDataReader["rx"].ToString().Trim().Length > 0)
                                 {
                                     strCol = m_oAdo.m_OleDbDataReader["rx"].ToString();
                                 }
                                 else
                                 {
-                                    strCol = " ";
+                                    strCol = "*";
                                 }
                                 strScenarioRxList = strScenarioRxList + strCol + ",";
 
@@ -4934,6 +4939,12 @@ namespace FIA_Biosum_Manager
                     m_oAdo.m_OleDbDataReader.Close();
                     if (strScenarioColumnNameList.Trim().Length > 0)
                     {
+                        /*****************************************************************
+                         *the key is that the strScenarioColumnNameArray 
+                         *and the strScenarioRxArray match in length
+                         *and values as found in the scenario_harvest_cost_columns table
+                         *****************************************************************/
+
                         strScenarioColumnNameList = strScenarioColumnNameList.Substring(0, strScenarioColumnNameList.Length - 1);
                         strScenarioColumnNameArray = frmMain.g_oUtils.ConvertListToArray(strScenarioColumnNameList, ",");
                         strScenarioRxList = strScenarioRxList.Substring(0, strScenarioRxList.Length - 1);
@@ -4943,11 +4954,15 @@ namespace FIA_Biosum_Manager
                         m_oAdo.m_strSQL = "SELECT DISTINCT rx " +
                            "FROM scenario_harvest_cost_columns " +
                            "WHERE trim(ucase(scenario_id))='" + ScenarioId.Trim().ToUpper() + "'";
-
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                         strRXArray = frmMain.g_oUtils.ConvertListToArray(
                              (string)m_oAdo.CreateCommaDelimitedList(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, ""), ",");
                     }
-
+                    //
+                    //WITH TREATMENTS:
+                    //PROCESS SCENARIO_HARVEST_COST_COLUMNS THAT HAVE ASSOCIATED TREATMENT
+                    //
                     if (strRXArray != null)
                     {
                         for (x = 0; x <= strRXArray.Length - 1; x++)
@@ -4955,7 +4970,7 @@ namespace FIA_Biosum_Manager
                             strSum = "";
                             for (y = 0; y <= strScenarioRxArray.Length - 1; y++)
                             {
-                                if (strScenarioRxArray[y].Trim().Length > 0)
+                                if (strScenarioRxArray[y].Trim().Length > 0 && strScenarioRxArray[y] != "*")
                                 {
                                     if (strRXArray[x] == strScenarioRxArray[y])
                                     {
@@ -4976,7 +4991,7 @@ namespace FIA_Biosum_Manager
                                               "ON a.biosum_cond_id=b.biosum_cond_id AND " +
                                                  "a.RX = b.RX " +
                                               "SET a.complete_additional_cpa = " + strSum + " " +
-                                              "WHERE TRIM(UCASE(b.scenario_id))='" + ScenarioId.Trim() + "' AND " +
+                                              "WHERE TRIM(UCASE(b.scenario_id))='" + ScenarioId.ToUpper().Trim() + "' AND " +
                                                      "b.RX = '" + strRXArray[x] + "'";
 
                             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -4987,23 +5002,32 @@ namespace FIA_Biosum_Manager
                     }
                     if (m_oAdo.m_intError == 0)
                     {
-                        //update by rx that have only global costs
+                        //
+                        //WITHOUT TREATMENTS:
+                        //PROCESS TREATMENTS THAT ARE IN THE SCENARIO_ADDITIONAL_HARVEST_COSTS table
+                        //BUT ARE NOT IN THE SCENARIO_ADDITIONAL_HARVEST_COST_COLUMNS table
+                        //
                         m_oAdo.m_strSQL = "SELECT DISTINCT  a.rx " +
                                           "FROM scenario_additional_harvest_costs a " +
                                           "WHERE NOT EXISTS (SELECT b.rx " +
                                                             "FROM scenario_harvest_cost_columns b " +
                                                             "WHERE b.rx=a.rx AND TRIM(UCASE(scenario_id))='" + ScenarioId.Trim().ToUpper() + "')";
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                         strRXArray = frmMain.g_oUtils.ConvertListToArray(
                                    (string)m_oAdo.CreateCommaDelimitedList(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, ""), ",");
 
                         if (strRXArray != null && strScenarioRxArray != null)
                         {
+
                             for (x = 0; x <= strRXArray.Length - 1; x++)
                             {
                                 strSum = "";
+
                                 for (y = 0; y <= strScenarioRxArray.Length - 1; y++)
                                 {
-                                    if (strScenarioRxArray[y].Trim().Length > 0)
+                                    //check 
+                                    if (strScenarioRxArray[y].Trim().Length > 0 && strScenarioRxArray[y] != "*")
                                     {
 
                                     }
@@ -5013,6 +5037,8 @@ namespace FIA_Biosum_Manager
                                         strSum = strSum + "IIF(b." + strScenarioColumnNameArray[y].Trim() + " IS NOT NULL,b." + strScenarioColumnNameArray[y].Trim() + ",0) +";
                                     }
                                 }
+
+
                                 if (strSum.Trim().Length > 0)
                                 {
                                     strSum = strSum.Substring(0, strSum.Length - 1);
@@ -5021,7 +5047,7 @@ namespace FIA_Biosum_Manager
                                                       "ON a.biosum_cond_id=b.biosum_cond_id AND " +
                                                          "a.RX = b.RX " +
                                                       "SET a.complete_additional_cpa = " + strSum + " " +
-                                                      "WHERE TRIM(UCASE(b.scenario_id))='" + ScenarioId.Trim() + "' AND " +
+                                                      "WHERE TRIM(UCASE(b.scenario_id))='" + ScenarioId.ToUpper().Trim() + "' AND " +
                                                              "b.RX = '" + strRXArray[x] + "'";
 
                                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -5038,7 +5064,8 @@ namespace FIA_Biosum_Manager
                         m_oAdo.m_strSQL = "UPDATE HarvestCostsTotalAdditionalWorkTable " +
                                           "SET complete_additional_cpa = 0 " +
                                           "WHERE complete_additional_cpa IS NULL";
-
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
                     if (m_oAdo.m_intError == 0)
@@ -5060,18 +5087,21 @@ namespace FIA_Biosum_Manager
                                              "scenario_cost_revenue_escalators",
                                              "HarvestCostsTotalAdditionalWorkTable",
                                              p_strHarvestCostsTableName, ScenarioId);
-
-                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
                 }
             }
 
             m_intError = m_oAdo.m_intError;
             m_strError = m_oAdo.m_strError;
-            
-            
+
+
 
         }
+
+
         private void RunScenario_DeleteFromTreeVolValAndHarvestCostsTable(string p_strVariant, string p_strRxPackage)
         {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)

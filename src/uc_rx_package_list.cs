@@ -474,7 +474,7 @@ namespace FIA_Biosum_Manager
 
 			if (this.btnSave.Enabled==false) this.btnSave.Enabled=true;
 		}
-		public void UpdateItem(RxPackageItem p_oRxPackageItem)
+		public void UpdateItem(RxPackageItem p_oRxPackageItem, bool bEnableSave)
 		{
 			if (this.lstRx.SelectedItems.Count == 0) return;
 
@@ -501,6 +501,8 @@ namespace FIA_Biosum_Manager
 			this.lstRx.Items[x].SubItems[COLUMN_DESC].Text = p_oRxPackageItem.Description;
 			this.lstRx.Items[x].SubItems[COLUMN_KCP].Text = p_oRxPackageItem.KcpFile;
 			this.lstRx.EndUpdate();
+
+            if (bEnableSave == true) this.btnSave.Enabled = true;
 		}
 
 

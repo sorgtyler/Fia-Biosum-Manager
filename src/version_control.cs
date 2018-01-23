@@ -5066,15 +5066,20 @@ namespace FIA_Biosum_Manager
 
             //new datasource table entries for fia_tree_species_ref table
             frmMain.g_sbpInfo.Text = "Version Update: Add datasource entries for new FIA Tree Species Reference table ...Stand by";
-            strSQL = "INSERT INTO datasource " +
-                     "(table_type,Path,file,table_name) " +
-                     "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
-                     "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" + 
-                     Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "')";
-            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
 
-            // Refresh datasource array after change
-            oDs.populate_datasource_array();
+            int intTreeSpeciesRef = oDs.getValidTableNameRow(Datasource.TableTypes.FiaTreeSpeciesReference);
+            if (intTreeSpeciesRef < 1)
+            {
+                strSQL = "INSERT INTO datasource " +
+                         "(table_type,Path,file,table_name) " +
+                         "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
+                         "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" +
+                         Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "')";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+
+                // Refresh datasource array after change
+                oDs.populate_datasource_array();
+            }
 
             //new datasource table entries for each scenario
             //retrieve paths for all scenarios in the project and put them in list
@@ -5091,11 +5096,24 @@ namespace FIA_Biosum_Manager
                         strScenario = oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim();
                     if (!String.IsNullOrEmpty(strScenario))
                     {
-                        strSQL = "INSERT INTO scenario_datasource (table_type, path, file, table_name, scenario_id) " +
-                                 "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
-                                 "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" +
-                                 Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "', '" + strScenario + "')";
-                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                        // Load scenario data sources table
+                        FIA_Biosum_Manager.Datasource oScenarioDs = new Datasource();
+                        oDs.m_strDataSourceMDBFile = strProcessorMdb;
+                        oDs.m_strDataSourceTableName = "scenario_datasource";
+                        oDs.m_strScenarioId = strScenario;
+                        oDs.LoadTableColumnNamesAndDataTypes = false;
+                        oDs.LoadTableRecordCount = false;
+                        oDs.populate_datasource_array();
+                        int intFiaSpeciesRef = oDs.getValidTableNameRow(Datasource.TableTypes.FiaTreeSpeciesReference);
+                        if (intFiaSpeciesRef < 1)
+                        {
+
+                            strSQL = "INSERT INTO scenario_datasource (table_type, path, file, table_name, scenario_id) " +
+                                     "VALUES ('" + Datasource.TableTypes.FiaTreeSpeciesReference + "','@@appdata@@\\fiabiosum', " +
+                                     "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "', '" +
+                                     Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "', '" + strScenario + "')";
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSQL);
+                        }
                     }
                 }
                 oAdo.m_OleDbDataReader.Close();

@@ -2435,7 +2435,7 @@ namespace FIA_Biosum_Manager
                                                    "TRIM(UCASE(a.FVS_TREE_FILE))='" + p_strFVSTreeFileName + "' " +
                                           "UNION " +
                                           "SELECT a.FVS_TREE_FILE,a.COLUMN_NAME, 'NULLS NOT ALLOWED' AS ERROR_DESC,FVS_TREE.* FROM " + p_strPostAuditSummaryTable + " a," +
-                                            "(SELECT * FROM " + p_strFvsTreeTableName + " WHERE VOLCFNET IS NULL) FVS_TREE " +
+                                            "(SELECT * FROM " + p_strFvsTreeTableName + " WHERE DBH IS NOT NULL AND DBH >= 5 AND VOLCFNET IS NULL) FVS_TREE " +
                                              "WHERE a.NOVALUE_ERROR IS NOT NULL AND " +
                                                    "LEN(TRIM(NOVALUE_ERROR)) > 0 AND " +
                                                    "a.NOVALUE_ERROR <> 'NA' AND " +
