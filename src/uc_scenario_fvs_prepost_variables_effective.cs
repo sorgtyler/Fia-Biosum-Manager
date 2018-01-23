@@ -148,6 +148,8 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostExpressionNRFilter;
         private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors= new ListViewAlternateBackgroundColors();
         private Label label2;
+        private TextBox txtEffVarDescr;
+        private Label label8;
         private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
 
 
@@ -529,7 +531,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "1",
             "Not Defined",
@@ -537,7 +539,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "2",
             "Not Defined",
@@ -545,7 +547,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "3",
             "Not Defined",
@@ -553,7 +555,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "4",
             "Not Defined",
@@ -585,6 +587,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostExpression = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostExpression = new System.Windows.Forms.Panel();
             this.grpboxFVSVariablesPrePostExpressionNRFilter = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.chkFVSVariablesPrePostExpressionNRFilterEnable = new System.Windows.Forms.CheckBox();
             this.cmbFVSVariablesPrePostExpressionNRFilterOperator = new System.Windows.Forms.ComboBox();
             this.txtFVSVariablesPrePostExpressionNRFilterAmount = new System.Windows.Forms.TextBox();
@@ -635,7 +638,8 @@ namespace FIA_Biosum_Manager
             this.lblTitle = new System.Windows.Forms.Label();
             this.cmbFVSVariablesPrePost = new System.Windows.Forms.ComboBox();
             this.btnFVSVariablesPrePostGo = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.txtEffVarDescr = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesPrePost.SuspendLayout();
             this.pnlFVSVariablesPrePost.SuspendLayout();
@@ -733,15 +737,15 @@ namespace FIA_Biosum_Manager
             this.lvFVSVariablesPrePostValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvFVSVariablesPrePostValues.GridLines = true;
             this.lvFVSVariablesPrePostValues.HideSelection = false;
-            listViewItem5.StateImageIndex = 0;
-            listViewItem6.StateImageIndex = 0;
-            listViewItem7.StateImageIndex = 0;
-            listViewItem8.StateImageIndex = 0;
+            listViewItem9.StateImageIndex = 0;
+            listViewItem10.StateImageIndex = 0;
+            listViewItem11.StateImageIndex = 0;
+            listViewItem12.StateImageIndex = 0;
             this.lvFVSVariablesPrePostValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8});
+            listViewItem9,
+            listViewItem10,
+            listViewItem11,
+            listViewItem12});
             this.lvFVSVariablesPrePostValues.Location = new System.Drawing.Point(8, 48);
             this.lvFVSVariablesPrePostValues.MultiSelect = false;
             this.lvFVSVariablesPrePostValues.Name = "lvFVSVariablesPrePostValues";
@@ -927,6 +931,16 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostExpressionNRFilter.TabIndex = 71;
             this.grpboxFVSVariablesPrePostExpressionNRFilter.TabStop = false;
             this.grpboxFVSVariablesPrePostExpressionNRFilter.Text = "Net Revenue Dollars Per Acre Filter Setting";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(230, 19);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(13, 13);
+            this.label2.TabIndex = 19;
+            this.label2.Text = "$";
             // 
             // chkFVSVariablesPrePostExpressionNRFilterEnable
             // 
@@ -1337,6 +1351,8 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxFVSVariablesPrePostVariableValues
             // 
+            this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.txtEffVarDescr);
+            this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.label8);
             this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.btnFVSVariablesPrePostVariableValue);
             this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.lstFVSVariablesPrePostVariableValue);
             this.grpboxFVSVariablesPrePostVariableValues.Location = new System.Drawing.Point(8, 16);
@@ -1350,9 +1366,9 @@ namespace FIA_Biosum_Manager
             // btnFVSVariablesPrePostVariableValue
             // 
             this.btnFVSVariablesPrePostVariableValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFVSVariablesPrePostVariableValue.Location = new System.Drawing.Point(448, 32);
+            this.btnFVSVariablesPrePostVariableValue.Location = new System.Drawing.Point(447, 16);
             this.btnFVSVariablesPrePostVariableValue.Name = "btnFVSVariablesPrePostVariableValue";
-            this.btnFVSVariablesPrePostVariableValue.Size = new System.Drawing.Size(184, 144);
+            this.btnFVSVariablesPrePostVariableValue.Size = new System.Drawing.Size(184, 57);
             this.btnFVSVariablesPrePostVariableValue.TabIndex = 1;
             this.btnFVSVariablesPrePostVariableValue.Text = "Select";
             this.btnFVSVariablesPrePostVariableValue.Click += new System.EventHandler(this.btnFVSVariablesPrePostVariableValue_Click);
@@ -1496,15 +1512,24 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesPrePostGo.Text = "Go";
             this.btnFVSVariablesPrePostGo.Click += new System.EventHandler(this.btnFVSVariablesPrePostGo_Click);
             // 
-            // label2
+            // txtEffVarDescr
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(230, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(13, 13);
-            this.label2.TabIndex = 19;
-            this.label2.Text = "$";
+            this.txtEffVarDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEffVarDescr.Location = new System.Drawing.Point(525, 89);
+            this.txtEffVarDescr.Multiline = true;
+            this.txtEffVarDescr.Name = "txtEffVarDescr";
+            this.txtEffVarDescr.ReadOnly = true;
+            this.txtEffVarDescr.Size = new System.Drawing.Size(281, 75);
+            this.txtEffVarDescr.TabIndex = 88;
+            this.txtEffVarDescr.Text = "Visible only when calculated variable selected";
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(448, 92);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(87, 24);
+            this.label8.TabIndex = 87;
+            this.label8.Text = "Description:";
             // 
             // uc_scenario_fvs_prepost_variables_effective
             // 
@@ -1530,6 +1555,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostVariable.ResumeLayout(false);
             this.pnlFVSVariablesPrePostVariable.ResumeLayout(false);
             this.grpboxFVSVariablesPrePostVariableValues.ResumeLayout(false);
+            this.grpboxFVSVariablesPrePostVariableValues.PerformLayout();
             this.grpboxFVSVariablesPrePostVariablePreSelected.ResumeLayout(false);
             this.grpboxFVSVariablesPrePostVariablePostSelected.ResumeLayout(false);
             this.ResumeLayout(false);

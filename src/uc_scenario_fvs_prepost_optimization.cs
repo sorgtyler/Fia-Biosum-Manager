@@ -108,6 +108,7 @@ namespace FIA_Biosum_Manager
         private GroupBox grpBoxOptimizationNetRevenue;
         private ComboBox cboEconVariable;
         private TextBox txtRevenueDescr;
+        private Label LblNetRevenu;
         private string m_strLastValue = "";
 
 		public class VariableItem
@@ -298,6 +299,9 @@ namespace FIA_Biosum_Manager
             this.btnOptimizationAudit = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettings = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostVariable = new System.Windows.Forms.Panel();
+            this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
+            this.txtRevenueDescr = new System.Windows.Forms.TextBox();
+            this.cboEconVariable = new System.Windows.Forms.ComboBox();
             this.btnOptimiztionPrev = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettingsPostPre = new System.Windows.Forms.GroupBox();
             this.cmbOptimizationSettingsPostPreValue = new System.Windows.Forms.ComboBox();
@@ -313,9 +317,7 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
-            this.cboEconVariable = new System.Windows.Forms.ComboBox();
-            this.txtRevenueDescr = new System.Windows.Forms.TextBox();
+            this.LblNetRevenu = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationFVSVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -328,10 +330,10 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationAudit.SuspendLayout();
             this.grpboxOptimizationSettings.SuspendLayout();
             this.pnlFVSVariablesPrePostVariable.SuspendLayout();
+            this.grpBoxOptimizationNetRevenue.SuspendLayout();
             this.grpboxOptimizationSettingsPostPre.SuspendLayout();
             this.grpFilter.SuspendLayout();
             this.grpMaxMin.SuspendLayout();
-            this.grpBoxOptimizationNetRevenue.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -623,6 +625,7 @@ namespace FIA_Biosum_Manager
             // pnlFVSVariablesPrePostVariable
             // 
             this.pnlFVSVariablesPrePostVariable.AutoScroll = true;
+            this.pnlFVSVariablesPrePostVariable.Controls.Add(this.LblNetRevenu);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpBoxOptimizationNetRevenue);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.btnOptimiztionPrev);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpboxOptimizationSettingsPostPre);
@@ -637,6 +640,38 @@ namespace FIA_Biosum_Manager
             this.pnlFVSVariablesPrePostVariable.Size = new System.Drawing.Size(850, 427);
             this.pnlFVSVariablesPrePostVariable.TabIndex = 12;
             this.pnlFVSVariablesPrePostVariable.Resize += new System.EventHandler(this.pnlFVSVariablesPrePostVariable_Resize);
+            // 
+            // grpBoxOptimizationNetRevenue
+            // 
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cboEconVariable);
+            this.grpBoxOptimizationNetRevenue.Location = new System.Drawing.Point(80, 215);
+            this.grpBoxOptimizationNetRevenue.Name = "grpBoxOptimizationNetRevenue";
+            this.grpBoxOptimizationNetRevenue.Size = new System.Drawing.Size(464, 69);
+            this.grpBoxOptimizationNetRevenue.TabIndex = 22;
+            this.grpBoxOptimizationNetRevenue.TabStop = false;
+            this.grpBoxOptimizationNetRevenue.Text = "Net Revenue Calculation";
+            this.grpBoxOptimizationNetRevenue.Visible = false;
+            // 
+            // txtRevenueDescr
+            // 
+            this.txtRevenueDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtRevenueDescr.Location = new System.Drawing.Point(189, 21);
+            this.txtRevenueDescr.Multiline = true;
+            this.txtRevenueDescr.Name = "txtRevenueDescr";
+            this.txtRevenueDescr.Size = new System.Drawing.Size(259, 40);
+            this.txtRevenueDescr.TabIndex = 87;
+            this.txtRevenueDescr.Text = "Sums net revenue across all 4 cycles";
+            // 
+            // cboEconVariable
+            // 
+            this.cboEconVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboEconVariable.Items.AddRange(new object[] {
+            "net_revenue_1"});
+            this.cboEconVariable.Location = new System.Drawing.Point(16, 24);
+            this.cboEconVariable.Name = "cboEconVariable";
+            this.cboEconVariable.Size = new System.Drawing.Size(110, 24);
+            this.cboEconVariable.TabIndex = 20;
             // 
             // btnOptimiztionPrev
             // 
@@ -674,7 +709,7 @@ namespace FIA_Biosum_Manager
             this.grpFilter.Controls.Add(this.chkEnableFilter);
             this.grpFilter.Controls.Add(this.cmbOptimizationOperator);
             this.grpFilter.Controls.Add(this.txtOptimizationValue);
-            this.grpFilter.Location = new System.Drawing.Point(80, 283);
+            this.grpFilter.Location = new System.Drawing.Point(80, 290);
             this.grpFilter.Name = "grpFilter";
             this.grpFilter.Size = new System.Drawing.Size(584, 64);
             this.grpFilter.TabIndex = 18;
@@ -728,18 +763,18 @@ namespace FIA_Biosum_Manager
             // 
             this.grpMaxMin.Controls.Add(this.rdoOptimizationMinimum);
             this.grpMaxMin.Controls.Add(this.rdoOptimizationMaximum);
-            this.grpMaxMin.Location = new System.Drawing.Point(82, 147);
+            this.grpMaxMin.Location = new System.Drawing.Point(457, 55);
             this.grpMaxMin.Name = "grpMaxMin";
-            this.grpMaxMin.Size = new System.Drawing.Size(464, 45);
+            this.grpMaxMin.Size = new System.Drawing.Size(359, 45);
             this.grpMaxMin.TabIndex = 17;
             this.grpMaxMin.TabStop = false;
             this.grpMaxMin.Text = "Aggregate Setting";
             // 
             // rdoOptimizationMinimum
             // 
-            this.rdoOptimizationMinimum.Location = new System.Drawing.Point(256, 16);
+            this.rdoOptimizationMinimum.Location = new System.Drawing.Point(143, 16);
             this.rdoOptimizationMinimum.Name = "rdoOptimizationMinimum";
-            this.rdoOptimizationMinimum.Size = new System.Drawing.Size(176, 24);
+            this.rdoOptimizationMinimum.Size = new System.Drawing.Size(166, 24);
             this.rdoOptimizationMinimum.TabIndex = 14;
             this.rdoOptimizationMinimum.Text = "Minimum";
             // 
@@ -748,7 +783,7 @@ namespace FIA_Biosum_Manager
             this.rdoOptimizationMaximum.Checked = true;
             this.rdoOptimizationMaximum.Location = new System.Drawing.Point(32, 16);
             this.rdoOptimizationMaximum.Name = "rdoOptimizationMaximum";
-            this.rdoOptimizationMaximum.Size = new System.Drawing.Size(176, 24);
+            this.rdoOptimizationMaximum.Size = new System.Drawing.Size(105, 24);
             this.rdoOptimizationMaximum.TabIndex = 12;
             this.rdoOptimizationMaximum.TabStop = true;
             this.rdoOptimizationMaximum.Text = "Maximum";
@@ -791,37 +826,14 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
             // 
-            // grpBoxOptimizationNetRevenue
+            // LblNetRevenu
             // 
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cboEconVariable);
-            this.grpBoxOptimizationNetRevenue.Location = new System.Drawing.Point(80, 208);
-            this.grpBoxOptimizationNetRevenue.Name = "grpBoxOptimizationNetRevenue";
-            this.grpBoxOptimizationNetRevenue.Size = new System.Drawing.Size(464, 69);
-            this.grpBoxOptimizationNetRevenue.TabIndex = 22;
-            this.grpBoxOptimizationNetRevenue.TabStop = false;
-            this.grpBoxOptimizationNetRevenue.Text = "Net Revenue Calculation";
-            this.grpBoxOptimizationNetRevenue.Visible = false;
-            // 
-            // cboEconVariable
-            // 
-            this.cboEconVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboEconVariable.Items.AddRange(new object[] {
-            "net_revenue_1"});
-            this.cboEconVariable.Location = new System.Drawing.Point(16, 24);
-            this.cboEconVariable.Name = "cboEconVariable";
-            this.cboEconVariable.Size = new System.Drawing.Size(110, 24);
-            this.cboEconVariable.TabIndex = 20;
-            // 
-            // txtRevenueDescr
-            // 
-            this.txtRevenueDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtRevenueDescr.Location = new System.Drawing.Point(189, 21);
-            this.txtRevenueDescr.Multiline = true;
-            this.txtRevenueDescr.Name = "txtRevenueDescr";
-            this.txtRevenueDescr.Size = new System.Drawing.Size(259, 40);
-            this.txtRevenueDescr.TabIndex = 87;
-            this.txtRevenueDescr.Text = "Sums net revenue across all 4 cycles";
+            this.LblNetRevenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LblNetRevenu.Location = new System.Drawing.Point(24, 176);
+            this.LblNetRevenu.Name = "LblNetRevenu";
+            this.LblNetRevenu.Size = new System.Drawing.Size(182, 32);
+            this.LblNetRevenu.TabIndex = 23;
+            this.LblNetRevenu.Text = "Net Revenue";
             // 
             // uc_scenario_fvs_prepost_optimization
             // 
@@ -840,12 +852,12 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationAudit.ResumeLayout(false);
             this.grpboxOptimizationSettings.ResumeLayout(false);
             this.pnlFVSVariablesPrePostVariable.ResumeLayout(false);
+            this.grpBoxOptimizationNetRevenue.ResumeLayout(false);
+            this.grpBoxOptimizationNetRevenue.PerformLayout();
             this.grpboxOptimizationSettingsPostPre.ResumeLayout(false);
             this.grpFilter.ResumeLayout(false);
             this.grpFilter.PerformLayout();
             this.grpMaxMin.ResumeLayout(false);
-            this.grpBoxOptimizationNetRevenue.ResumeLayout(false);
-            this.grpBoxOptimizationNetRevenue.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -1691,13 +1703,16 @@ namespace FIA_Biosum_Manager
 			{
 				btnOptimiztionPrev.Hide();
 				this.lblOptimizationVariable.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
-				grpboxOptimizationSettingsPostPre.Hide();
+                this.grpMaxMin.Location = grpboxOptimizationSettingsPostPre.Location;
+                this.grpboxOptimizationSettingsPostPre.Hide();
 			}
 			else
 			{
 				btnOptimiztionPrev.Show();
 				this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
-				this.grpboxOptimizationFVSVariable.Show();
+                this.lblOptimizationVariable.Text = this.lblFVSVariablesOptimizationVariableValuesSelected.Text;
+                this.grpMaxMin.Location = new System.Drawing.Point(457, 55);
+                this.grpboxOptimizationFVSVariable.Show();
 				//this.grpboxOptimizationSettingsPostPre.Show();
 				if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_VALUESOURCE].Text.Trim()=="POST")
 					this.cmbOptimizationSettingsPostPreValue.Text = 
