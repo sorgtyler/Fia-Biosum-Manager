@@ -901,8 +901,8 @@ namespace FIA_Biosum_Manager
              ***************************************************************************/
             m_ado.m_strSQL = "SELECT DISTINCT s.common_name " +
                   "FROM " + this.m_strFvsOutTreeTable + " t, " + m_oQueries.m_oFvs.m_strTreeSpcTable + " s " +
-                  "WHERE val(t.fvs_species) = val(s.spcd) AND " +
-                  "t.FvsCreatedTree_YN = 'Y' AND " +
+                  "WHERE t.FvsCreatedTree_YN = 'Y' AND " +
+                  "val(t.fvs_species) = s.spcd AND " +
                   "TRIM(UCASE(t.fvs_variant)) = TRIM(UCASE(s.fvs_variant))";
 
             this.m_ado.SqlQueryReader(m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
