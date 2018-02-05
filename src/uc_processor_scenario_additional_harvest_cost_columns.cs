@@ -1612,7 +1612,7 @@ namespace FIA_Biosum_Manager
                         //Clear out previous values before copying
                         m_oAdo.m_strSQL = "UPDATE additional_harvest_costs_work_table " +
                                           "SET " + strColumn + " = NULL " +
-                                          "WHERE a.rx='" + strRx + "' ";
+                                          "WHERE rx='" + strRx + "' ";
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                         
                         m_oAdo.m_strSQL = "UPDATE additional_harvest_costs_work_table a " +
