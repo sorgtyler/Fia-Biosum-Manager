@@ -8790,6 +8790,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oLvAlternateColors.DelegateListViewItem(lstFvsOutput.SelectedItems[0]);
 
+                //Enable/Disable PRE-APPEND Audit Tables
                 string strDbFile = this.lstFvsOutput.SelectedItems[0].SubItems[COL_MDBOUT].Text.Trim();
                 strDbFile = strDbFile.Replace(".MDB", "_BIOSUM.ACCDB");
                 string strOutDirAndFile = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)this.txtOutDir, "Text", false);
@@ -8800,6 +8801,7 @@ namespace FIA_Biosum_Manager
                 else
                    btnAuditDb.Enabled = false;
 
+                //Enable/Disable POST-APPEND Audit Tables
                 string strAuditDbFile = (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)this.txtOutDir, "Text", false);
                 strAuditDbFile = strAuditDbFile.Trim();
                 string strVariant = lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim();
@@ -8809,6 +8811,28 @@ namespace FIA_Biosum_Manager
                     btnPostAppendAuditDb.Enabled = true;
                 else
                     btnPostAppendAuditDb.Enabled = false;
+
+                //Enable/Disable Open Pre Audit Log button
+                btnViewLogFile.Enabled = false;
+                string strDirectory = this.txtOutDir.Text.Trim() + "\\" + lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim();
+                if (System.IO.Directory.Exists(strDirectory) == true)
+                {
+                    string strSearch = this.lstFvsOutput.SelectedItems[0].SubItems[COL_MDBOUT].Text.Trim().ToUpper().Replace(".MDB","_BIOSUM.ACCDB") + "_AUDIT_*.txt";
+                    string[] strFiles = System.IO.Directory.GetFiles(strDirectory, strSearch);
+                    if (strFiles.Length > 0)
+                        btnViewLogFile.Enabled = true;
+                }
+
+                //Enable/Disable Open Post Audit Log button
+                btnViewPostLogFile.Enabled = false;
+                strDirectory = this.txtOutDir.Text.Trim() + "\\" + lstFvsOutput.SelectedItems[0].SubItems[COL_VARIANT].Text.Trim() + "\\BiosumCalc";
+                if (System.IO.Directory.Exists(strDirectory) == true)
+                {
+                    string strSearch = "??_P???_TREE_CUTLIST.MDB_audit*.txt";
+                    string[] strFiles = System.IO.Directory.GetFiles(strDirectory, strSearch);
+                    if (strFiles.Length > 0)
+                        btnViewPostLogFile.Enabled = true;
+                }
             }
 
 		}
@@ -8864,6 +8888,11 @@ namespace FIA_Biosum_Manager
 
         private void btnViewPostLogFile_Click(object sender, EventArgs e)
         {
+            if (this.lstFvsOutput.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No Rows Are Selected", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
             
             string strSearch =  "??_P???_TREE_CUTLIST.MDB_audit*.txt";
 
