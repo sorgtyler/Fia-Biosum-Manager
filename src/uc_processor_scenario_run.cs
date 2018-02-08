@@ -1251,7 +1251,7 @@ namespace FIA_Biosum_Manager
         {
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", false);
-            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules,"tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", false);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond,tbMoveInCosts", false);
             string strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
             if (!System.IO.Directory.Exists(strPath))
                 System.IO.Directory.CreateDirectory(strPath);
@@ -4433,14 +4433,14 @@ namespace FIA_Biosum_Manager
              m_oAdo.m_strSQL = "DROP TABLE temp_year";
              m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
-             RunScenario_CreateOPCOSTBatchFile();
-             RunScenario_ExecuteOPCOST();
+             bool bOPCOSTWindow = RunScenario_CreateOPCOSTBatchFile();
+             RunScenario_ExecuteOPCOST(bOPCOSTWindow);
              
             
 
 
         }
-        private void RunScenario_ExecuteOPCOST()
+        private void RunScenario_ExecuteOPCOST(bool bOPCOSTWindow)
         {
             //close the open connection
             string strConn = m_oAdo.m_OleDbConnection.ConnectionString;
@@ -4453,7 +4453,7 @@ namespace FIA_Biosum_Manager
             proc.StartInfo.RedirectStandardOutput = false;
             proc.StartInfo.RedirectStandardInput = false;
             proc.StartInfo.RedirectStandardError = false;
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel < 3)
+            if (! bOPCOSTWindow)
             {
                 //suppress opCost window
                 proc.StartInfo.CreateNoWindow = true;
@@ -4499,7 +4499,7 @@ namespace FIA_Biosum_Manager
 
 
         }
-        private void RunScenario_CreateOPCOSTBatchFile()
+        private bool RunScenario_CreateOPCOSTBatchFile()
         {
             
             //create a batch file containing the command
@@ -4520,7 +4520,11 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("SET ERRORFILE=" + frmMain.g_oEnv.strTempDir + "\\opcost_error_log.txt  \r\n");
             oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
             string strRedirect = " 2> " + "\"" + "%ERRORFILE%" + "\"";
+            // Suppress OpCost window if debugging is turned off OR debug level < 3
+            bool bOPCOSTWindow = frmMain.g_bDebug;
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel < 3)
+                bOPCOSTWindow = false;
+            if (! bOPCOSTWindow)
             {
                 //OpCost window is suppressed so we write standard out to log
                 strRedirect = "> \"" + "%ERRORFILE%" + "\"" + " 2>&1";
@@ -4529,7 +4533,7 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("EXIT\r\n");
             oTextStreamWriter.Close();
             oTextFileStream.Close();
-
+            return bOPCOSTWindow;
         
         }
         private void RunScenario_ProcessFRCS()
@@ -5207,7 +5211,8 @@ namespace FIA_Biosum_Manager
             uc_filesize_monitor2.EndMonitoringFile();
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tlbScenario, "Enabled", true);
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", true);
-            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", true);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbTreeGroupings", true);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond,tbMoveInCosts", true);
             //frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tlbScenario,"Enabled",true);
             //frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tabControlRules, "Enabled", true);
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceProcessorScenarioForm.tabControlScenario, "Enabled", true);
@@ -5377,7 +5382,8 @@ namespace FIA_Biosum_Manager
         {
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
             ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbDataSources", false);
-            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond", false);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlScenario, "tbTreeGroupings", false);
+            ReferenceProcessorScenarioForm.EnableTabPage(ReferenceProcessorScenarioForm.tabControlRules, "tbHarvestMethod,tbWoodValue,tbEscalators,tbAddHarvestCosts,tbFilterCond,tbMoveInCosts", false);
             string strPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
             if (!System.IO.Directory.Exists(strPath))
                 System.IO.Directory.CreateDirectory(strPath);

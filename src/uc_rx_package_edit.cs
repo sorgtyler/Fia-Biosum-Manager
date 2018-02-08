@@ -50,6 +50,7 @@ namespace FIA_Biosum_Manager
 		private ado_data_access m_oAdo = new ado_data_access();
 		private RxTools m_oRxTools = new RxTools();
 		private string _strRxPackageId="";
+        public bool m_bSave = false;
 
 		const int COLUMN_CYCLE=0;
         const int COLUMN_RX = 1;
@@ -305,7 +306,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSCycleOk.Size = new System.Drawing.Size(64, 25);
             this.btnFVSCycleOk.TabIndex = 19;
             this.btnFVSCycleOk.Text = "OK";
-            this.btnFVSCycleOk.Click += new System.EventHandler(this.btnSimYearOk_Click);
+            this.btnFVSCycleOk.Click += new System.EventHandler(this.btnFVSCycleOk_Click);
             // 
             // chkFVSCycleSkip
             // 
@@ -443,6 +444,8 @@ namespace FIA_Biosum_Manager
             this.txtPackageDesc.Name = "txtPackageDesc";
             this.txtPackageDesc.Size = new System.Drawing.Size(440, 88);
             this.txtPackageDesc.TabIndex = 19;
+            this.txtPackageDesc.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPackageDesc_KeyPress);
+
             // 
             // label2
             // 
@@ -869,10 +872,10 @@ namespace FIA_Biosum_Manager
 		}
 
 
-		
-		
 
-		private void btnSimYearOk_Click(object sender, System.EventArgs e)
+
+
+        private void btnFVSCycleOk_Click(object sender, System.EventArgs e)
 		{
 			val_rx();
 			if (this.m_intError==0)
@@ -952,6 +955,7 @@ namespace FIA_Biosum_Manager
 
 				this.btnFVSCycleClear2.Enabled=true;
 				this.btnFVSCycleClearAll.Enabled=true;
+                this.m_bSave = true;
 			}
 
 			
@@ -1057,6 +1061,7 @@ namespace FIA_Biosum_Manager
 				this.lstRx.Items[1].Text = "05";
 				this.lstRx.Items[2].Text = "10";
 				this.lstRx.Items[3].Text = "15";
+                this.m_bSave = true;
 			}
 		}
 
@@ -1068,6 +1073,7 @@ namespace FIA_Biosum_Manager
 				this.lstRx.Items[1].Text = "10";
 				this.lstRx.Items[2].Text = "20";
 				this.lstRx.Items[3].Text = "30";
+                this.m_bSave = true;
 			}
 		}
 
@@ -1111,6 +1117,11 @@ namespace FIA_Biosum_Manager
 			this.chkFVSCycleSkip.Checked=true;
 			this.txtRxDesc.Text="";
 		}
+
+        private void txtPackageDesc_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            m_bSave = true;
+        }
 
 		public string RxPackageId
 		{

@@ -1371,9 +1371,9 @@ namespace FIA_Biosum_Manager
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-						"('FVS Tree Species'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
-						"'ref_master.mdb'," + 
+						"('" + Datasource.TableTypes.FvsTreeSpecies + "'," + 
+						"'@@AppData@@" + frmMain.g_strBiosumDataDir + "'," + 
+						"'" + Tables.Reference.DefaultBiosumReferenceDbFile + "'," + 
 						"'fvs_tree_species');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 
@@ -1391,9 +1391,6 @@ namespace FIA_Biosum_Manager
                         "'FVS_EasternTreeSpeciesTranslator');";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
 
-
-					
-
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 						"('Travel Times'," + 
 						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\gis\\db'," + 
@@ -1407,8 +1404,6 @@ namespace FIA_Biosum_Manager
 						"'gis_travel_times.mdb'," +
 						"'processing_site');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
-
-					
 					
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " + 
 						"('FIADB FVS Variant'," + 
@@ -1430,10 +1425,6 @@ namespace FIA_Biosum_Manager
 						"'ref_master.mdb'," +
                         "'harvest_methods');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
-					
-
-					
-
 
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 						"('Plot And Condition Record Audit'," + 
@@ -1491,13 +1482,20 @@ namespace FIA_Biosum_Manager
                         "'" + frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName + "');";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
 
-
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 						"('Site Tree'," + 
 						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
 						"'master.mdb'," + 
 						"'sitetree');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
+
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                             "('" + Datasource.TableTypes.FiaTreeSpeciesReference + "'," +
+                             "'@@AppData@@" + frmMain.g_strBiosumDataDir + "'," +
+                             "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "'," +
+                             "'" + Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
 
                     frmMain.g_oGeneralMacroSubstitutionVariable_Collection.Item(frmMain.PROJDIR).VariableSubstitutionString = this.txtRootDirectory.Text.Trim();
 					

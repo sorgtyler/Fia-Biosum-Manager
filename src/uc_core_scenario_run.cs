@@ -98,7 +98,7 @@ namespace FIA_Biosum_Manager
             //
             //Save Rule Definitions
             //
-            this.AddListViewRowItem("Save Rule Defintions",false);
+            this.AddListViewRowItem("Save Rule Definitions",false);
             //
             //Initialize and Load Variables
             //

@@ -204,7 +204,15 @@ namespace FIA_Biosum_Manager
                         newTree.RxYear = Convert.ToString(m_oAdo.m_OleDbDataReader["rxYear"]).Trim();
                         newTree.Dbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["dbh"]);
                         newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
-                        newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
+                        // Special processing for saplings where volCfNet may be null
+                        if (m_oAdo.m_OleDbDataReader["volCfNet"] == System.DBNull.Value && newTree.IsSapling)
+                        {
+                            newTree.VolCfNet = 0;
+                        }
+                        else
+                        {
+                            newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
+                        }
                         newTree.VolTsGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volTsGrs"]);
                         // Special processing for saplings where volCfGrs may be null
                         if (m_oAdo.m_OleDbDataReader["volCfGrs"] == System.DBNull.Value && newTree.IsSapling)
@@ -433,9 +441,13 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Missing species diam values for diamGroup|speciesGroup " +
                                 strSpeciesDiamKey + " - " + System.DateTime.Now.ToString() + "\r\n");
                     }
-
+                    // saplings are never cull
+                    if (nextTree.IsSapling == true)
+                    {
+                        nextTree.IsCull = false;
+                    }
                     // set cull pct based on scenarioHarvestMethod.cullPctThreshold
-                    if (nextTree.VolCfNet < ((100 - m_scenarioHarvestMethod.CullPctThreshold) * nextTree.VolCfGrs / 100))
+                    else if (nextTree.VolCfNet < ((100 - m_scenarioHarvestMethod.CullPctThreshold) * nextTree.VolCfGrs / 100))
                     {
                         nextTree.IsCull = true;
                     }
@@ -725,15 +737,18 @@ namespace FIA_Biosum_Manager
                             dblSmLogHwdPct = nextStand.SmLogHwdVolCfPa / nextStand.SmLogVolCfPa * 100;
                         }
                         // Apply OpCost value limits
-                        if (nextStand.TotalSmLogTpa > 0 && nextStand.TotalSmLogTpa < nextStand.HarvestMethod.MinTpa)
+                        if (nextStand.TotalSmLogTpa > 0)
                         {
-                            nextStand.TotalSmLogTpaUnadj = nextStand.TotalSmLogTpa;
-                            nextStand.TotalSmLogTpa = nextStand.HarvestMethod.MinTpa;
-                        }
-                        if (dblSmLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
-                        {
-                            dblSmLogAvgVolumeAdj = dblSmLogAvgVolume;
-                            dblSmLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            if (nextStand.TotalSmLogTpa < nextStand.HarvestMethod.MinTpa)
+                            {
+                                nextStand.TotalSmLogTpaUnadj = nextStand.TotalSmLogTpa;
+                                nextStand.TotalSmLogTpa = nextStand.HarvestMethod.MinTpa;
+                            }
+                            if (dblSmLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
+                            {
+                                dblSmLogAvgVolumeAdj = dblSmLogAvgVolume;
+                                dblSmLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            }
                         }
 
                         // *** LARGE LOGS ***
@@ -757,15 +772,13 @@ namespace FIA_Biosum_Manager
                             dblLgLogHwdPct = nextStand.LgLogHwdVolCfPa / nextStand.LgLogVolCfPa * 100;
                         }
                         // Apply OpCost value limits
-                        if (nextStand.TotalLgLogTpa > 0 && nextStand.TotalLgLogTpa < nextStand.HarvestMethod.MinTpa)
+                        if (nextStand.TotalLgLogTpa > 0)
                         {
-                            nextStand.TotalLgLogTpaUnadj = nextStand.TotalLgLogTpa;
-                            nextStand.TotalLgLogTpa = nextStand.HarvestMethod.MinTpa;
-                        }
-                        if (dblLgLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
-                        {
-                            dblLgLogAvgVolumeAdj = dblLgLogAvgVolume;
-                            dblLgLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            if (dblLgLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
+                            {
+                                dblLgLogAvgVolumeAdj = dblLgLogAvgVolume;
+                                dblLgLogAvgVolume = nextStand.HarvestMethod.MinAvgTreeVolCf;
+                            }
                         }
 
                         m_oAdo.m_strSQL = "INSERT INTO " + m_strOpcostTableName + " " +
@@ -1129,23 +1142,15 @@ namespace FIA_Biosum_Manager
             if (m_oAdo.m_intError == 0)
             {
                 string strTreeSpeciesTableName = this.m_oQueries.m_oFvs.m_strTreeSpcTable;
-                if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, strTreeSpeciesTableName, "WOODLAND_YN"))
-                {
-                    System.Windows.Forms.MessageBox.Show("The WOODLAND_YN field is missing from the tree_species table. " +
-                                    "The most likely cause is having an outdated tree_species table. " +
-                                    "Please check the migration instructions for v5.7.7.", 
-                                    "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, 
-                                    System.Windows.Forms.MessageBoxIcon.Error);
-                    return null;
-                }
-                
-                string strSQL = "SELECT DISTINCT s.SPCD, s.SPECIES_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN FROM " +
+                string strSQL = "SELECT DISTINCT s.SPCD, s.SPECIES_GROUP, f.od_wgt, f.Dry_to_Green, f.WOODLAND_YN FROM " +
                          strTreeSpeciesTableName + " t, " +
-                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " s " +
-                         "WHERE t.spcd = s.spcd AND FVS_VARIANT = '" + p_strVariant + "' " +
+                         Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " s, " +
+                         Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + " f " +
+                         "WHERE t.spcd = s.spcd AND t.spcd = f.spcd and f.spcd = s.spcd " +
+                         "AND FVS_VARIANT = '" + p_strVariant + "' " +
                          "AND S.SPCD IS NOT NULL AND S.SPECIES_GROUP IS NOT NULL " +
                          "AND TRIM(UCASE(S.scenario_id)) = '" + m_strScenarioId.Trim().ToUpper() + "' " +
-                         "GROUP BY s.SPCD, s.SPECIES_GROUP, OD_WGT, Dry_to_Green, WOODLAND_YN";
+                         "GROUP BY s.SPCD, s.SPECIES_GROUP, f.OD_WGT, f.Dry_to_Green, f.WOODLAND_YN";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {

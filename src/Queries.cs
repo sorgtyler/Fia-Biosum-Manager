@@ -78,11 +78,15 @@ namespace FIA_Biosum_Manager
 			if (p_bLimited)
 			{
 				LoadLimitedDatasources(p_strScenarioType,p_strScenarioId);
-				
 			}
-			else
-			{
-				
+            if (this.m_oDataSource.m_intError < 0)
+            {
+                // An error has occurred in LoadLimitedDatasources likely due to dao 'too many client tasks'
+                // The error originates in populate_datasource_array()
+                MessageBox.Show("An error occurred while loading data sources! Close the current window " +
+                                "and try again. If the problem persists, close and restart FIA Biosum Manager.",
+                                "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
 			}
 			if (this.m_oFvs.LoadDatasource) this.m_oFvs.LoadDatasources();
 			if (this.m_oFIAPlot.LoadDatasource) this.m_oFIAPlot.LoadDatasources();
@@ -211,7 +215,7 @@ namespace FIA_Biosum_Manager
 				m_strRxPackageFvsCmdOrderTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("TREATMENT PACKAGE FVS COMMANDS ORDER");
 				m_strTreeSpcTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("TREE SPECIES");
 				m_strFvsTreeTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS TREE LIST FOR PROCESSOR");
-				m_strFvsTreeSpcRefTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS TREE SPECIES");
+				m_strFvsTreeSpcRefTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName(Datasource.TableTypes.FvsTreeSpecies.ToUpper());
                 m_strFVSPrePostSeqNumTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS PRE-POST SEQNUM DEFINITIONS");
                 m_strFVSPrePostSeqNumRxPackageAssgnTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("FVS PRE-POST SEQNUM TREATMENT PACKAGE ASSIGNMENTS");
 				

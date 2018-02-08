@@ -17,6 +17,9 @@ namespace FIA_Biosum_Manager
 		private string m_strVariableNames="";
 		private SQLMacroSubstitutionVariable_Collection _oSQLMacroSubstitutionVariable_Collection;
 		private SQLMacroSubstitutionVariableItem _oSQLMacroSubstitutionVariableItem;
+        private GeneralMacroSubstitutionVariable_Collection _oGeneralMacroSubstitutionVariable_Collection;
+        private GeneralMacroSubstitutionVariableItem _oGeneralMacroSubstitutionVariableItem;
+
 		public macrosubst()
 		{
 			//
@@ -256,6 +259,17 @@ namespace FIA_Biosum_Manager
 			get {return _oSQLMacroSubstitutionVariableItem;}
 			set {_oSQLMacroSubstitutionVariableItem=value;}
 		}
+        public GeneralMacroSubstitutionVariable_Collection ReferenceGeneralMacroSubstitutionVariableCollection
+        {
+            get { return _oGeneralMacroSubstitutionVariable_Collection; }
+            set { _oGeneralMacroSubstitutionVariable_Collection = value; }
+        }
+        public GeneralMacroSubstitutionVariableItem ReferenceGeneralMacroSubstitutionVariableItem
+        {
+            get { return _oGeneralMacroSubstitutionVariableItem; }
+            set { _oGeneralMacroSubstitutionVariableItem = value; }
+        }
+
 		/// <summary>
 		/// Translate SQL variable substitution variables to there value string
 		/// </summary>
@@ -327,6 +341,75 @@ namespace FIA_Biosum_Manager
 			}
 			return m_strNewString;
 		}
+
+        public string GeneralTranslateVariableSubstitution(string str)
+        {
+            if (str.IndexOf("@@", 0) < 0) return str;
+            if (this.m_bInit) m_strNewString = "";
+            string strVariable;
+            try
+            {
+
+                for (int x = 0; x <= str.Trim().Length - 1; x++)
+                {
+                    if (x == str.Trim().Length - 1)
+                    {
+                        m_strNewString = m_strNewString + str.Substring(x, 1);
+                        break;
+                    }
+                    if (str.Substring(x, 2) == "@@")
+                    {
+                        strVariable = "";
+                        for (int y = x + 2; y <= str.Trim().Length - 1; y++)
+                        {
+                            if (str.Substring(y, 2) == "@@")
+                            {
+                                //find the substitution variable in the collection
+                                for (int z = 0; z <= ReferenceGeneralMacroSubstitutionVariableCollection.Count - 1; z++)
+                                {
+                                    if (ReferenceGeneralMacroSubstitutionVariableCollection.Item(z).VariableName.ToString().Trim().ToUpper() == strVariable.Trim().ToUpper())
+                                    {
+                                        if (str.Substring(y, 2) == "@@")
+                                        {
+                                            if (ReferenceGeneralMacroSubstitutionVariableCollection.Item(z).VariableSubstitutionString.IndexOf("@@", 0) >= 0)
+                                            {
+                                                m_bInit = false;
+                                                m_strNewString = GeneralTranslateVariableSubstitution(ReferenceGeneralMacroSubstitutionVariableCollection.Item(z).VariableSubstitutionString);
+                                                m_bInit = true;
+                                            }
+                                            else
+                                            {
+                                                m_strNewString = m_strNewString + ReferenceGeneralMacroSubstitutionVariableCollection.Item(z).VariableSubstitutionString;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                x = y + 1;
+                                break;
+                            }
+                            else
+                            {
+                                strVariable = strVariable + str.Substring(y, 1);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        m_strNewString = m_strNewString + str.Substring(x, 1);
+
+                    }
+
+                }
+            }
+            catch
+            {
+                return m_strNewString;
+            }
+            return m_strNewString;
+        }
+
 		/// <summary>
 		/// get the column names that are embedded between the ## or !! tags. Return a comma delimited list
 		/// </summary>

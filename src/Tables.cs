@@ -1901,6 +1901,7 @@ namespace FIA_Biosum_Manager
                     "cull DOUBLE," +
                     "roughcull DOUBLE," +
                     "decaycd BYTE," + 
+                    "totage DOUBLE," +
                     "volcfnet DOUBLE," +
                     "volcfgrs DOUBLE," +
                     "volcsgrs DOUBLE," +
@@ -1939,6 +1940,7 @@ namespace FIA_Biosum_Manager
                     "ROUGHCULL DOUBLE," + 
                     "CULL DOUBLE," +
                     "DECAYCD BYTE," + 
+                    "TOTAGE DOUBLE," +
                     "TRE_CN CHAR(34)," +
                     "CND_CN CHAR(34)," +
                     "PLT_CN CHAR(34)," +
@@ -3441,6 +3443,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeHwdBinLowSlopeTableName { get { return "Hwd_BinsLowSlope"; } }
             static public string DefaultTreeBinSteepSlopeTableName { get { return "BinsSteepSlope"; } }
             static public string DefaultTreeHwdBinSteepSlopeTableName { get { return "Hwd_BinsSteepSlope"; } }
+            static public string DefaultFiaTreeSpeciesRefTableName { get { return "FIA_TREE_SPECIES_REF"; } }
 
 			public ProcessorScenarioRun()
 			{
@@ -4181,7 +4184,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultFVSEasternTreeSpeciesTableName { get { return "FVS_EasternTreeSpeciesTranslator"; } }
             static public string DefaultTreeMacroPlotBreakPointDiaTableDbFile { get { return @"db\ref_master.mdb"; } }
             static public string DefaultTreeMacroPlotBreakPointDiaTableName { get { return "TreeMacroPlotBreakPointDia"; } }
-
+            static public string DefaultBiosumReferenceDbFile { get { return "biosum_ref.accdb"; } }
 
 
 
@@ -4206,13 +4209,8 @@ namespace FIA_Biosum_Manager
                      "species CHAR(50)," +
                      "variety CHAR(50)," +
                      "subspecies CHAR(50)," +
-                     "fvs_species CHAR(2)," +
-                     "fvs_common_name CHAR(50)," +
                      "fvs_variant CHAR(2)," +
                      "fvs_input_spcd INTEGER," +
-                     "od_wgt SINGLE DEFAULT 0," +
-                     "dry_to_green SINGLE DEFAULT 0," +
-                     "dry_to_green_substitution_desc CHAR(255)," +
                      "comments CHAR(200))";
             }
             public void CreateFVSCommandsTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)

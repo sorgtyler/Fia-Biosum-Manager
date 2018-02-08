@@ -190,7 +190,8 @@ namespace FIA_Biosum_Manager
         public const int PROJDIR = 0;
         public const int OLDPROJDIR = 1;
 
-		public static string g_strAppVer = "5.7.9";
+		public static string g_strAppVer = "5.8.0";
+        public static string g_strBiosumDataDir = "\\FIABiosum";
 		private System.Windows.Forms.MenuItem mnuSettings;
         private MenuItem mnuTools;
         private MenuItem mnuToolsFCS;
@@ -403,8 +404,19 @@ namespace FIA_Biosum_Manager
             oItem.VariableSubstitutionString = "";
             g_oGeneralMacroSubstitutionVariable_Collection.Add(oItem);
 
+            oItem = new GeneralMacroSubstitutionVariableItem();
+            oItem.Description = "Application Data Folder";
+            oItem.Index = 2;
+            oItem.VariableName = "AppData";
+            oItem.VariableSubstitutionString = frmMain.g_oEnv.strApplicationDataDirectory;
+            g_oGeneralMacroSubstitutionVariable_Collection.Add(oItem);
 
-   
+            string strSourceFile = frmMain.g_oEnv.strAppDir + "\\db\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
+            string strDestFile = frmMain.g_oEnv.strApplicationDataDirectory.Trim() + 
+                frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
+            if (System.IO.File.Exists(strDestFile) == false)
+                System.IO.File.Copy(strSourceFile, strDestFile);
+
 		}
 
 		/// <summary>
@@ -3614,9 +3626,9 @@ namespace FIA_Biosum_Manager
             this.m_btnProcessorTreeSpc.Location = this.btnMain1.Location;
 			this.m_btnProcessorTreeSpc.Left  = this.btnMain1.Left;
 			this.m_btnProcessorTreeSpc.Text = "Tree Species";
-			this.m_btnProcessorTreeSpc.strToolTip = "Step 1 - Assess Data Readiness For These 2 Items: \n" + 
-				                                             "1)Check If Each FIA Tree Species Code, FVS Variant, And FVS Species Code Combination Is Present In The Tree Species Table \n" + 
-				                                             "2)Check If Oven Dry Weight And Green Weight Conversion Ratios Exist";
+            this.m_btnProcessorTreeSpc.strToolTip = "Step 1 - Assess Data Readiness For This Item: \n" +
+                                                             "1)Check If Each FIA Tree Species Code, FVS Variant, And FVS Species Code Combination Is Present In The Tree Species Table"; 
+				               
             
             //start OPCOST
             this.m_btnProcessorOpcost = new btnMainForm(this);
