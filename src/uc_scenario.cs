@@ -325,16 +325,17 @@ namespace FIA_Biosum_Manager
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
             int i = 1;
-            string strTestName = "scenario" + Convert.ToString(i);
-            
+            string strTestName;
             // keep incrementing the scenario name until we find one that doesn't exist
-            while (i < lstExistingScenarios.Count)
+            while (i < (lstExistingScenarios.Count + 1) )
             {
                 strTestName = "scenario" + Convert.ToString(i);
                 if (! lstExistingScenarios.Contains(strTestName))
                     break;
                 i++;
             }
+
+            strTestName = "scenario" + Convert.ToString(i);
             return strTestName;
         }
 		private void btnFolder_Click(object sender, System.EventArgs e)
