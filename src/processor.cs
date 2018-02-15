@@ -774,11 +774,6 @@ namespace FIA_Biosum_Manager
                         // Apply OpCost value limits
                         if (nextStand.TotalLgLogTpa > 0)
                         {
-                            if (nextStand.TotalLgLogTpa < nextStand.HarvestMethod.MinTpa)
-                            {
-                                nextStand.TotalLgLogTpaUnadj = nextStand.TotalLgLogTpa;
-                                nextStand.TotalLgLogTpa = nextStand.HarvestMethod.MinTpa;
-                            }
                             if (dblLgLogAvgVolume < nextStand.HarvestMethod.MinAvgTreeVolCf)
                             {
                                 dblLgLogAvgVolumeAdj = dblLgLogAvgVolume;

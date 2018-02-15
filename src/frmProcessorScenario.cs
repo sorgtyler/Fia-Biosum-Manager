@@ -1198,7 +1198,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_sbpInfo.Text = "Loading Scenario Revenue And Cost Escalator Rule Definitions...Stand By";
                 this.uc_processor_scenario_escalators1.loadvalues_FromProperties();
                 frmMain.g_sbpInfo.Text = "Loading Scenario Supplemental Harvest Component Rule Definitions...Stand By";
-               this.uc_processor_scenario_additional_harvest_cost_columns1.loadvaluesFromProperties();
+                this.uc_processor_scenario_additional_harvest_cost_columns1.loadvaluesFromProperties();
                 
                 frmMain.g_sbpInfo.Text = "Ready";
                 m_bSave = true;
@@ -1280,6 +1280,12 @@ namespace FIA_Biosum_Manager
         {
             get { return _strNotes; }
             set { _strNotes = value; }
+        }
+        private string _strSourceScenarioId = "";
+        public string SourceScenarioId
+        {
+            get { return _strSourceScenarioId; }
+            set { _strSourceScenarioId = value; }
         }
         public void Copy(ProcessorScenarioItem p_oSource,
                          ProcessorScenarioItem p_oDest)

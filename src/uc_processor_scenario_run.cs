@@ -54,15 +54,7 @@ namespace FIA_Biosum_Manager
         private string _strScenarioId = "";
         private frmProcessorScenario _frmProcessorScenario = null;
         private ProgressBarEx.ProgressBarEx _oProgressBarEx = null;
-
-        //FRCS Harvest Method Low Slope
-        FRCSHarvestMethodItem m_oFRCSHarvestMethodItemLowSlope = new FRCSHarvestMethodItem();
-        FRCSHarvestMethodItem m_oFRCSHarvestMethodItemSteepSlope = new FRCSHarvestMethodItem();
-
-        //FRCS Harvest Method collection
-        FRCSHarvestMethodItem_Collection m_oFRCSHarvestMethodItem_Collection = new FRCSHarvestMethodItem_Collection(); 
-        
-
+       
         private const int COL_CHECKBOX = 0;
         private const int COL_VARIANT = 1;
         private const int COL_PACKAGE = 2;
@@ -155,310 +147,7 @@ namespace FIA_Biosum_Manager
             }            
            
         }
-        
-        public class FRCSHarvestMethodItem
-        {
-            //
-            //HARVEST METHOD
-            //
-            private string _strHarvestMethod = "";
-            public string HarvestMethod
-            {
-                get { return _strHarvestMethod; }
-                set { _strHarvestMethod = value; }
-            }
-            private string _strDesc = "";
-            public string Description
-            {
-                get { return _strDesc; }
-                set { _strDesc = value; }
-            }
-            //
-            //STEEP SLOPE METHOD?
-            //
-            private bool _bSteepSlope = false;
-            public bool SteepSlope
-            {
-                get { return _bSteepSlope; }
-                set { _bSteepSlope = value; }
-            }
-            //
-            //MAXIMUM CUBIC FOOT VOLUME FOR CHIPS
-            //
-            private int _intMaxCubicFootVolumeChips = -1;
-            public int MaxCubicFootVolumeChips
-            {
-                get { return _intMaxCubicFootVolumeChips; }
-                set { _intMaxCubicFootVolumeChips = value; }
-            }
-            private int _intMaxCubicFootVolumeChipsDefault = -1;
-            public int MaxCubicFootVolumeChipsDefault
-            {
-                get { return _intMaxCubicFootVolumeChipsDefault; }
-                set { _intMaxCubicFootVolumeChipsDefault = value; }
-            }
-            private string _strMaxCubicFootVolumeChipsCellLocation="";
-            public string MaxCubicFootVolumeChipsCellLocation
-            {
-                get { return _strMaxCubicFootVolumeChipsCellLocation; }
-                set { _strMaxCubicFootVolumeChipsCellLocation = value; }
-            }
-            //
-            //MAXIMUM CUBIC FOOT VOLUME FOR SMALL LOGS
-            //
-            private int _intMaxCubicFootVolumeSmLogs = -1;
-            public int MaxCubicFootVolumeSmLogs
-            {
-                get { return _intMaxCubicFootVolumeSmLogs; }
-                set { _intMaxCubicFootVolumeSmLogs = value; }
-            }
-            private int _intMaxCubicFootVolumeSmLogsDefault = -1;
-            public int MaxCubicFootVolumeSmLogsDefault
-            {
-                get { return _intMaxCubicFootVolumeSmLogsDefault; }
-                set { _intMaxCubicFootVolumeSmLogsDefault = value; }
-            }
-            private string _strMaxCubicFootVolumeSmLogsCellLocation = "";
-            public string MaxCubicFootVolumeSmLogsCellLocation
-            {
-                get { return _strMaxCubicFootVolumeSmLogsCellLocation; }
-                set { _strMaxCubicFootVolumeSmLogsCellLocation = value; }
-            }
-            //
-            //MAXIMUM CUBIC FOOT VOLUME FOR LARGE LOGS
-            //
-            private int _intMaxCubicFootVolumeLgLogs = -1;
-            public int MaxCubicFootVolumeLgLogs
-            {
-                get { return _intMaxCubicFootVolumeLgLogs; }
-                set { _intMaxCubicFootVolumeLgLogs = value; }
-            }
-            private int _intMaxCubicFootVolumeLgLogsDefault = -1;
-            public int MaxCubicFootVolumeLgLogsDefault
-            {
-                get { return _intMaxCubicFootVolumeLgLogsDefault; }
-                set { _intMaxCubicFootVolumeLgLogsDefault = value; }
-            }
-            private string _strMaxCubicFootVolumeLgLogsCellLocation = "";
-            public string MaxCubicFootVolumeLgLogsCellLocation
-            {
-                get { return _strMaxCubicFootVolumeLgLogsCellLocation; }
-                set { _strMaxCubicFootVolumeLgLogsCellLocation = value; }
-            }
-            //
-            //MAXIMUM CUBIC FOOT VOLUME FOR ALL LOGS (SMALL AND LARGE)
-            //
-            private int _intMaxCubicFootVolumeAllLogs = -1;
-            public int MaxCubicFootVolumeAllLogs
-            {
-                get { return _intMaxCubicFootVolumeAllLogs; }
-                set { _intMaxCubicFootVolumeAllLogs = value; }
-            }
-            private int _intMaxCubicFootVolumeAllLogsDefault = -1;
-            public int MaxCubicFootVolumeAllLogsDefault
-            {
-                get { return _intMaxCubicFootVolumeAllLogsDefault; }
-                set { _intMaxCubicFootVolumeAllLogsDefault = value; }
-            }
-            private string _strMaxCubicFootVolumeAllLogsCellLocation = "";
-            public string MaxCubicFootVolumeAllLogsCellLocation
-            {
-                get { return _strMaxCubicFootVolumeAllLogsCellLocation; }
-                set { _strMaxCubicFootVolumeAllLogsCellLocation = value; }
-            }
-            //
-            //MAXIMUM CUBIC FOOT VOLUME FOR ALL TREES
-            //
-            private int _intMaxCubicFootVolumeAllTrees = -1;
-            public int MaxCubicFootVolumeAllTrees
-            {
-                get { return _intMaxCubicFootVolumeAllTrees; }
-                set { _intMaxCubicFootVolumeAllTrees = value; }
-            }
-            private int _intMaxCubicFootVolumeAllTreesDefault = -1;
-            public int MaxCubicFootVolumeAllTreesDefault
-            {
-                get { return _intMaxCubicFootVolumeAllTreesDefault; }
-                set { _intMaxCubicFootVolumeAllTreesDefault = value; }
-            }
-            private string _strMaxCubicFootVolumeAllTreesCellLocation = "";
-            public string MaxCubicFootVolumeAllTreesCellLocation
-            {
-                get { return _strMaxCubicFootVolumeAllTreesCellLocation; }
-                set { _strMaxCubicFootVolumeAllTreesCellLocation = value; }
-            }
-            //
-            //MAXIMUM SLOPE PERCENT
-            //
-            private int _intMaxSlopePercent = -1;
-            public int MaxSlopePercent
-            {
-                get { return _intMaxSlopePercent; }
-                set { _intMaxSlopePercent = value; }
-            }
-            private int _intMaxSlopePercentDefault = -1;
-            public int MaxSlopePercentDefault
-            {
-                get { return _intMaxSlopePercentDefault; }
-                set { _intMaxSlopePercentDefault = value; }
-            }
-            private string _strMaxSlopePercentCellLocation = "";
-            public string MaxSlopePercentCellLocation
-            {
-                get { return _strMaxSlopePercentCellLocation; }
-                set { _strMaxSlopePercentCellLocation = value; }
-            }
-            //
-            //MAXIMUM YARDING DISTANCE
-            //
-            private int _intMaxYardingDistance = -1;
-            public int MaxYardingDistance
-            {
-                get { return _intMaxYardingDistance; }
-                set { _intMaxYardingDistance = value; }
-            }
-            private int _intMaxYardingDistanceDefault = 40;
-            public int MaxYardingDistanceDefault
-            {
-                get { return _intMaxYardingDistanceDefault; }
-                set { _intMaxYardingDistanceDefault = value; }
-            }
-            private string _strMaxYardingDistanceCellLocation = "";
-            public string MaxYardingDistanceCellLocation
-            {
-               get { return _strMaxYardingDistanceCellLocation; }
-                set { _strMaxYardingDistanceCellLocation = value; }
-            }
-            //
-            //MAX PERCENT OF LARGE LOGS TO ALL LOGS
-            //
-            private int _intMaxLgLogsToAllLogsPerc = -1;
-            public int MaxLgLogsToAllLogsPercent
-            {
-                get { return _intMaxLgLogsToAllLogsPerc; }
-                set { _intMaxLgLogsToAllLogsPerc = value; }
-            }
-            private int _intMaxLgLogsToAllLogsPercDefault = -1;
-            public int MaxLgLogsToAllLogsPercentDefault
-            {
-                get { return _intMaxLgLogsToAllLogsPercDefault; }
-                set { _intMaxLgLogsToAllLogsPercDefault = value; }
-            }
-            private string _strMaxLgLogsToAllLogsPercCellLocation = "";
-            public string MaxLgLogsToAllLogsPercentCellLocation
-            {
-                get { return _strMaxLgLogsToAllLogsPercCellLocation; }
-                set { _strMaxLgLogsToAllLogsPercCellLocation = value; }
-            }
-            //
-            //MAX LARGE LOGS PER ACRE
-            //
-            private int _intMaxCubicFootVolumeLgLogsPerAcre = -1;
-            public int MaxCubicFootVolumeLgLogsPerAcre
-            {
-                get { return _intMaxCubicFootVolumeLgLogsPerAcre; }
-                set { _intMaxCubicFootVolumeLgLogsPerAcre = value; }
-            }
-            private int _intMaxCubicFootVolumeLgLogsPerAcreDefault = -1;
-            public int MaxCubicFootVolumeLgLogsPerAcreDefault
-            {
-                get { return _intMaxCubicFootVolumeLgLogsPerAcreDefault; }
-                set { _intMaxCubicFootVolumeLgLogsPerAcreDefault = value; }
-            }
-            private string _strMaxCubicFootVolumeLgLogsPerAcreCellLocation = "";
-            public string MaxCubicFootVolumeLgLogsPerAcreCellLocation
-            {
-                get { return _strMaxCubicFootVolumeLgLogsPerAcreCellLocation; }
-                set { _strMaxCubicFootVolumeLgLogsPerAcreCellLocation = value; }
-            }
-            private bool _bInCurrentBatch = false;
-            public bool InCurrentBatch
-            {
-                get { return _bInCurrentBatch; }
-                set { _bInCurrentBatch = value; }
-            }
-            
-            public FRCSHarvestMethodItem()
-            {
-            }
-            public void CopyProperties(FRCSHarvestMethodItem p_oItemSource, FRCSHarvestMethodItem p_oItemDest)
-            {
-                p_oItemDest.HarvestMethod = p_oItemSource.HarvestMethod;
-                p_oItemDest.Description = p_oItemSource.Description;
-                p_oItemDest.MaxCubicFootVolumeAllLogs = p_oItemSource.MaxCubicFootVolumeAllLogs;
-                p_oItemDest.MaxCubicFootVolumeAllLogsCellLocation = p_oItemSource.MaxCubicFootVolumeAllLogsCellLocation;
-                p_oItemDest.MaxCubicFootVolumeAllLogsDefault = p_oItemSource.MaxCubicFootVolumeAllLogsDefault;
-                p_oItemDest.MaxCubicFootVolumeAllTrees = p_oItemSource.MaxCubicFootVolumeAllTrees;
-                p_oItemDest.MaxCubicFootVolumeAllTreesCellLocation = p_oItemSource.MaxCubicFootVolumeAllTreesCellLocation;
-                p_oItemDest.MaxCubicFootVolumeAllTreesDefault = p_oItemSource.MaxCubicFootVolumeAllTreesDefault;
-                p_oItemDest.MaxCubicFootVolumeChips = p_oItemSource.MaxCubicFootVolumeChips;
-                p_oItemDest.MaxCubicFootVolumeChipsCellLocation = p_oItemSource.MaxCubicFootVolumeChipsCellLocation;
-                p_oItemDest.MaxCubicFootVolumeChipsDefault = p_oItemSource.MaxCubicFootVolumeChipsDefault;
-                p_oItemDest.MaxCubicFootVolumeLgLogs = p_oItemSource.MaxCubicFootVolumeLgLogs;
-                p_oItemDest.MaxCubicFootVolumeLgLogsCellLocation = p_oItemSource.MaxCubicFootVolumeLgLogsCellLocation;
-                p_oItemDest.MaxCubicFootVolumeLgLogsDefault = p_oItemSource.MaxCubicFootVolumeLgLogsDefault;
-                p_oItemDest.MaxCubicFootVolumeSmLogs = p_oItemSource.MaxCubicFootVolumeSmLogs;
-                p_oItemDest.MaxCubicFootVolumeSmLogsCellLocation = p_oItemSource.MaxCubicFootVolumeSmLogsCellLocation;
-                p_oItemDest.MaxCubicFootVolumeSmLogsDefault = p_oItemSource.MaxCubicFootVolumeSmLogsDefault;
-                p_oItemDest.MaxLgLogsToAllLogsPercent = p_oItemSource.MaxLgLogsToAllLogsPercent;
-                p_oItemDest.MaxLgLogsToAllLogsPercentDefault = p_oItemSource.MaxLgLogsToAllLogsPercentDefault;
-                p_oItemDest.MaxLgLogsToAllLogsPercentCellLocation = p_oItemSource.MaxLgLogsToAllLogsPercentCellLocation;
-                p_oItemDest.MaxCubicFootVolumeLgLogsPerAcre = p_oItemSource.MaxCubicFootVolumeLgLogsPerAcre;
-                p_oItemDest.MaxCubicFootVolumeLgLogsPerAcreDefault = p_oItemSource.MaxCubicFootVolumeLgLogsPerAcreDefault;
-                p_oItemDest.MaxCubicFootVolumeLgLogsPerAcreCellLocation = p_oItemSource.MaxCubicFootVolumeLgLogsPerAcreCellLocation;
-                p_oItemDest.MaxSlopePercent = p_oItemSource.MaxSlopePercent;
-                p_oItemDest.MaxSlopePercentDefault = p_oItemSource.MaxSlopePercentDefault;
-                p_oItemDest.MaxSlopePercentCellLocation = p_oItemSource.MaxSlopePercentCellLocation;
-                p_oItemDest.MaxYardingDistance = p_oItemSource.MaxYardingDistance;
-                p_oItemDest.MaxYardingDistanceCellLocation = p_oItemSource.MaxYardingDistanceCellLocation;
-                p_oItemDest.MaxYardingDistanceDefault = p_oItemSource.MaxYardingDistanceDefault;
-                p_oItemDest.InCurrentBatch = p_oItemSource.InCurrentBatch;
-            }
-        }
-        public class FRCSHarvestMethodItem_Collection : System.Collections.CollectionBase
-        {
-            public FRCSHarvestMethodItem_Collection()
-            {
-                //
-                // TODO: Add constructor logic here
-                //
-            }
 
-            public void Add(FRCSHarvestMethodItem m_oFRCSHarvestMethodItem)
-            {
-                // vérify if object is not already in
-                if (this.List.Contains(m_oFRCSHarvestMethodItem))
-                    throw new InvalidOperationException();
-
-                // adding it
-                this.List.Add(m_oFRCSHarvestMethodItem);
-
-                // return collection
-                //return this;
-            }
-            public void Remove(int index)
-            {
-                // Check to see if there is a widget at the supplied index.
-                if (index > Count - 1 || index < 0)
-                // If no widget exists, a messagebox is shown and the operation 
-                // is canColumned.
-                {
-                    System.Windows.Forms.MessageBox.Show("Index not valid!");
-                }
-                else
-                {
-                    List.RemoveAt(index);
-                }
-            }
-            public FRCSHarvestMethodItem Item(int Index)
-            {
-                // The appropriate item is retrieved from the List object and
-                // explicitly cast to the Widget type, then returned to the 
-                // caller.
-                return (FRCSHarvestMethodItem)List[Index];
-            }
-
-        }
         static private class DiameterVariables
         {
             static private double _dblDiameter = 0.9;
@@ -778,14 +467,6 @@ namespace FIA_Biosum_Manager
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(strDebugFile, "END SQL " + System.DateTime.Now.ToString() + "\r\n");
-                //
-                //LOAD HARVEST METHOD MAX VALUES
-                //
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(strDebugFile, "START: LoadHarvestMethods - " + System.DateTime.Now.ToString() + "\r\n");
-                m_oRxTools.LoadHarvestMethods(m_oAdo, m_oAdo.m_OleDbConnection, m_oQueries, m_oFRCSHarvestMethodItem_Collection);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(strDebugFile, "END: LoadHarvestMethods - " + System.DateTime.Now.ToString() + "\r\n");
 
                 //
                 //GET LIST OF VARIANTS
@@ -1824,16 +1505,6 @@ namespace FIA_Biosum_Manager
 
                     intCount++;
 
-                    if (m_intError == 0)
-                    {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Get Maximum Values...Stand By");
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        if (bFRCS)
-                            RunScenario_MaxValues("frcs_input");
-                        else
-                            RunScenario_MaxValues("opcost_input");
-                    }
                     if (m_intError == 0)
                     {
                         y++;
@@ -3767,392 +3438,6 @@ namespace FIA_Biosum_Manager
             m_intError = m_oAdo.m_intError;
             m_strError = m_oAdo.m_strError;
         }
-
-
-
-
-        /// <summary>
-        /// Get the maximum values  that will be used to
-        /// update cell values in the FRCS spreadsheet 
-        /// in order to avoid FRCS threshold tolerance level errors.
-        /// </summary>
-        /// @ToDo: Lesley comment this out to stop creating FRCS tables in OpCost output
-        private void RunScenario_MaxValues(string p_strInputTable)
-        {
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_MaxValues BEGIN \r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-            }
-            int x,y;
-            string strHarvestMethodsList = "";
-            string[] strHarvestMethodsArray = null;
-            //initialize any previous batch runs
-            for (x = 0; x <= m_oFRCSHarvestMethodItem_Collection.Count - 1; x++)
-            {
-                if (m_oFRCSHarvestMethodItem_Collection.Item(x).InCurrentBatch)
-                {
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogs = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTrees = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChips = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogs = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogs = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercent = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistance = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogsPerAcre = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercent = -1;
-                    m_oFRCSHarvestMethodItem_Collection.Item(x).InCurrentBatch = false;
-
-                }
-            }
-            //
-            //LOW SLOPE
-            //
-            if (ScenarioHarvestMethodVariables.ProcessLowSlope)
-            {
-                m_oAdo.m_strSQL = "SELECT COUNT(*) AS countLowSlope " +
-                                  "FROM " + p_strInputTable + " i " +
-                                  "WHERE i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                if ((int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "LowSlopeCount") > 0)
-                {
-                    //FRCS Variables
-                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "FrcsVariablesLowSlopeTable"))
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE FrcsVariablesLowSlopeTable");
-                    m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.PopulateFrcsVariableValuesTable("FrcsVariablesLowSlopeTable", p_strInputTable, "<= " + ScenarioHarvestMethodVariables.SteepSlope.ToString());
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-
-                    if (m_oAdo.m_intError == 0)
-                    {
-                        //get the low slope harvest methods used for this batch
-                        m_oAdo.m_strSQL = "SELECT DISTINCT i.[Harvesting System] " +
-                                          "FROM " + p_strInputTable + " i " + 
-                                          "WHERE i.[Percent Slope] <= " +
-                                           ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                        strHarvestMethodsList = m_oAdo.CreateCommaDelimitedList(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "");
-                    }
-                    if (strHarvestMethodsList.Trim().Length > 0)
-                    {
-                        strHarvestMethodsArray = frmMain.g_oUtils.ConvertListToArray(strHarvestMethodsList, ",");
-                        for (y = 0; y <= m_oFRCSHarvestMethodItem_Collection.Count - 1; y++)
-                        {
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(y) == null) break;
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(y).SteepSlope == false)
-                            {
-                                for (x = 0; x <= strHarvestMethodsArray.Length - 1; x++)
-                                {
-                                    if (strHarvestMethodsArray[x].Trim() ==
-                                        m_oFRCSHarvestMethodItem_Collection.Item(y).HarvestMethod.Trim())
-                                    {
-                                        m_oFRCSHarvestMethodItem_Collection.Item(y).InCurrentBatch = true;
-                                        //Maximum Large Log Volume in Cubic Foot
-                                        m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Large log trees average vol(ft3)])) + 1 AS max_large_log_avg_vol_ft3 " +
-                                                          "FROM " + p_strInputTable + " i " +
-                                                          "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                 "i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                        m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeLgLogs =
-                                            (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-                                            //Maximum Small Log Volume in Cubic Foot
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Small log trees average volume(ft3)])) + 1 AS max_small_log_avg_vol_ft3 " +
-                                                              "FROM " + p_strInputTable + " i " +
-                                                              "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                     "i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeSmLogs =
-                                                (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-                                            //Maximum Chips Volume in Cubic Foot
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Chip trees average volume(ft3)])) + 1 AS max_chips_avg_vol_ft3 " +
-                                                              "FROM " + p_strInputTable + " i " +
-                                                              "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                     "i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeChips =
-                                                (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-
-                                            //Maximum Large Logs As Percent To All Trees
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(IIf(i.[small log trees per acre] Is Not Null AND " +
-                                                                       "i.[large log trees per acre] Is Not Null AND " +
-                                                                       "i.[small log trees per acre] > 0," +
-                                                                       "100*i.[large log trees per acre]/" +
-                                                                       "(i.[small log trees per acre]+i.[large log trees per acre])," +
-                                                                          "IIF(i.[large log trees per acre] Is Not Null,100,100))))+1 " +
-                                                                     "AS max_large_log_trees_as_percent_of_all_trees " +
-                                                             "FROM " + p_strInputTable + " i " +
-                                                             "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                   "i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxLgLogsToAllLogsPercent =
-                                                   (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-                                            //Maximum Volume Per Acre For All Log Trees Per Cubic Foot
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(f.[TreeVolALT])) + 1 AS max_vol_per_acre_of_all_log_trees " +
-                                                              "FROM FrcsVariablesLowSlopeTable f " +
-                                                              "WHERE TRIM(f.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "'";
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeAllLogs
-                                                = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-                                            //Maximum Volume Per Acre For All Trees Per Cubic Foot
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(f.[TreeVol])) + 1 AS max_vol_per_acre_of_all_trees " +
-                                                              "FROM FrcsVariablesLowSlopeTable f " +
-                                                              "WHERE TRIM(f.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "'";
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeAllTrees
-                                               = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-                                            //Maximum Large Log Removed Per Acre
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Large log trees per acre])) + 1 AS max_large_log_removed_per_acre " +
-                                                              "FROM " + p_strInputTable + " i " +
-                                                              "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                    "i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeLgLogsPerAcre
-                                               = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-                                            //Maximum Slope Percent
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Percent Slope])) + 1 AS max_percent_slope " +
-                                                              "FROM " + p_strInputTable + " i " +
-                                                              "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                    "i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxSlopePercent
-                                               = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-                                        if (m_oAdo.m_intError == 0)
-                                        {
-                                            //Maximum One Way Yarding Distance
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[One-way Yarding Distance])) + 1 AS max_yarding_distance " +
-                                                              "FROM " + p_strInputTable + " i " +
-                                                              "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                    "i.[Percent Slope] <= " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxYardingDistance
-                                               = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                        }
-                                        if (m_oAdo.m_intError != 0) break;
-                                    }
-                                }
-                            }
-                            if (m_oAdo.m_intError != 0) break;
-                        }
-
-                    }
-                }
-            }
-            if (m_oAdo.m_intError == 0)
-            {
-                //
-                //STEEP SLOPE
-                //
-                if (ScenarioHarvestMethodVariables.ProcessSteepSlope)
-                {
-                    m_oAdo.m_strSQL = "SELECT COUNT(*) AS countSteepSlope " +
-                                       "FROM " + p_strInputTable + " i " +
-                                      "WHERE i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                    if ((int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "SteepSlopeCount") > 0)
-                    {
-                        //FRCS Variables
-                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "FrcsVariablesSteepSlopeTable"))
-                            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE FrcsVariablesSteepSlopeTable");
-                        m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.PopulateFrcsVariableValuesTable("FrcsVariablesSteepSlopeTable", p_strInputTable, "> " + ScenarioHarvestMethodVariables.SteepSlope.ToString());
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-
-                        if (m_oAdo.m_intError == 0)
-                        {
-                            //get the low slope harvest methods used for this batch
-                            m_oAdo.m_strSQL = "SELECT DISTINCT i.[Harvesting system] " +
-                                               "FROM " + p_strInputTable + " i " +
-                                              "WHERE i.[Percent Slope] > " +
-                                               ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                            strHarvestMethodsList = m_oAdo.CreateCommaDelimitedList(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "");
-                        }
-                        if (strHarvestMethodsList.Trim().Length > 0)
-                        {
-                            strHarvestMethodsArray = frmMain.g_oUtils.ConvertListToArray(strHarvestMethodsList, ",");
-                            for (y = 0; y <= m_oFRCSHarvestMethodItem_Collection.Count - 1; y++)
-                            {
-                                if (m_oFRCSHarvestMethodItem_Collection.Item(y) == null) break;
-                                if (m_oFRCSHarvestMethodItem_Collection.Item(y).SteepSlope == true)
-                                {
-                                    for (x = 0; x <= strHarvestMethodsArray.Length - 1; x++)
-                                    {
-                                        if (strHarvestMethodsArray[x].Trim() ==
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).HarvestMethod.Trim())
-                                        {
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).InCurrentBatch = true;
-                                            //Maximum Large Log Volume in Cubic Foot
-                                            m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Large log trees average vol(ft3)])) + 1 AS max_large_log_avg_vol_ft3 " +
-                                                              "FROM " + p_strInputTable + " i " +
-                                                              "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                     "i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                            m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeLgLogs =
-                                                (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum Small Log Volume in Cubic Foot
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Small log trees average volume(ft3)])) + 1 AS max_small_log_avg_vol_ft3 " +
-                                                                  "FROM " + p_strInputTable + " i " +
-                                                                  "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                         "i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeSmLogs =
-                                                    (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum Chips Volume in Cubic Foot
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Chip trees average volume(ft3)])) + 1 AS max_chips_avg_vol_ft3 " +
-                                                                  "FROM " + p_strInputTable + " i " +
-                                                                  "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                         "i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeChips =
-                                                    (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum Large Logs As Percent To All Trees
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(IIf(i.[small log trees per acre] Is Not Null AND " +
-                                                                           "i.[large log trees per acre] Is Not Null AND " +
-                                                                           "i.[small log trees per acre] > 0," +
-                                                                           "100*i.[large log trees per acre]/" +
-                                                                           "(i.[small log trees per acre]+i.[large log trees per acre])," +
-                                                                              "IIF(i.[large log trees per acre] Is Not Null,100,100))))+1 " +
-                                                                         "AS max_large_log_trees_as_percent_of_all_trees " +
-                                                                 "FROM " + p_strInputTable + " i " +
-                                                                 "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                       "i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxLgLogsToAllLogsPercent =
-                                                       (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum Volume Per Acre For All Log Trees Per Cubic Foot
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(f.[TreeVolALT])) + 1 AS max_vol_per_acre_of_all_log_trees " +
-                                                                  "FROM FrcsVariablesSteepSlopeTable f " +
-                                                                  "WHERE TRIM(f.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "'";
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeAllLogs
-                                                    = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum Volume Per Acre For All Trees Per Cubic Foot
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(f.[TreeVol])) + 1 AS max_vol_per_acre_of_all_trees " +
-                                                                  "FROM FrcsVariablesSteepSlopeTable f " +
-                                                                  "WHERE TRIM(f.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "'";
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeAllTrees
-                                                   = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum Large Log Removed Per Acre
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Large log trees per acre])) + 1 AS max_large_log_removed_per_acre " +
-                                                                  "FROM " + p_strInputTable + " i " +
-                                                                  "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                        "i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxCubicFootVolumeLgLogsPerAcre
-                                                   = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum Slope Percent
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[Percent Slope])) + 1 AS max_percent_slope " +
-                                                                  "FROM " + p_strInputTable + " i " +
-                                                                  "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                        "i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxSlopePercent
-                                                   = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError == 0)
-                                            {
-                                                //Maximum One Way Yarding Distance
-                                                m_oAdo.m_strSQL = "SELECT ROUND(MAX(i.[One-way Yarding Distance])) + 1 AS max_yarding_distance " +
-                                                                   "FROM " + p_strInputTable + " i " +
-                                                                  "WHERE TRIM(i.[Harvesting system])='" + strHarvestMethodsArray[x].Trim() + "' AND " +
-                                                                        "i.[Percent Slope] > " + ScenarioHarvestMethodVariables.SteepSlope.ToString();
-                                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                                m_oFRCSHarvestMethodItem_Collection.Item(y).MaxYardingDistance
-                                                   = (int)m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-                                            }
-                                            if (m_oAdo.m_intError != 0) break;
-                                        }
-                                    }
-                                }
-                                if (m_oAdo.m_intError != 0) break;
-                            }
-
-                        }
-                    }
-                }
-            }
-            m_intError = m_oAdo.m_intError;
-            m_strError = m_oAdo.m_strError;
-
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_MaxValues END \r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//DataSource: " + m_oAdo.m_OleDbConnection.DataSource + "\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-            }
-
-        }
  
         private void RunScenario_UpdateFRCSThresholds()
         {
@@ -4198,187 +3483,7 @@ namespace FIA_Biosum_Manager
             }
             if (m_oExcel.m_intError == 0)
             {
-                for (x = 0; x <= m_oFRCSHarvestMethodItem_Collection.Count - 1; x++)
-                {
-                    if (m_oFRCSHarvestMethodItem_Collection.Item(x) == null) break;
-
-                    if (m_oFRCSHarvestMethodItem_Collection.Item(x).InCurrentBatch == true)
-                    {
-                        if (m_oFRCSHarvestMethodItem_Collection.Item(x).SteepSlope)
-                        {
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Steep Slope Harvest Method: " + m_oFRCSHarvestMethodItem_Collection.Item(x).HarvestMethod + "\r\n");
-                        }
-                        else
-                        {
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Low Slope Harvest Method: " + m_oFRCSHarvestMethodItem_Collection.Item(x).HarvestMethod + "\r\n");
-                        }
-
-
-                        //
-                        //ALL LOGS VOLUME
-                        //
-                        if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogsCellLocation.Trim().Length > 0 &&
-                            m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogs != -1 &&
-                            m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogs >
-                               m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogsDefault)
-                        {
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                      m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogsCellLocation.Trim() + " " +
-                                      "- Maximum Cubic Foot Volume For All Logs Value: " +
-                                      m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogs.ToString().Trim() + "\r\n");
-                            m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogsCellLocation.Trim(),
-                                                     m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllLogs.ToString().Trim());
-
-                        }
-                        if (m_oExcel.m_intError == 0)
-                        {
-                            //
-                            //LARGE LOGS VOLUME
-                            //
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogsCellLocation.Trim().Length > 0 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogs != -1 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogs >
-                                   m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogsDefault)
-                            {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                          m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogsCellLocation.Trim() + " " +
-                                          "- Maximum Cubic Foot Volume For Large Logs Value: " +
-                                          m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogs.ToString().Trim() + "\r\n");
-                                m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogsCellLocation.Trim(),
-                                                         m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeLgLogs.ToString().Trim());
-
-                            }
-                        }
-                        if (m_oExcel.m_intError == 0)
-                        {
-                            //
-                            //ALL TREES VOLUME
-                            //
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTreesCellLocation.Trim().Length > 0 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTrees != -1 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTrees >
-                                   m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTreesDefault)
-                            {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTreesCellLocation.Trim() + " " +
-                                              "- Maximum Cubic Foot Volume For All Trees Value: " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTrees.ToString().Trim() + "\r\n");
-                                m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTreesCellLocation.Trim(),
-                                                         m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeAllTrees.ToString().Trim());
-
-                            }
-                        }
-                        if (m_oExcel.m_intError == 0)
-                        {
-                            //
-                            //CHIPS VOLUME
-                            //
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChipsCellLocation.Trim().Length > 0 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChips != -1 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChips >
-                                   m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChipsDefault)
-                            {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChipsCellLocation.Trim() + " " +
-                                              "- Maximum Cubic Foot Volume For Chips Value: " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChips.ToString().Trim() + "\r\n");
-                                m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChipsCellLocation.Trim(),
-                                                         m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeChips.ToString().Trim());
-
-                            }
-                        }
-                        if (m_oExcel.m_intError == 0)
-                        {
-                            //
-                            //SMALL LOGS VOLUME
-                            //
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogsCellLocation.Trim().Length > 0 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogs != -1 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogs >
-                                   m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogsDefault)
-                            {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogsCellLocation.Trim() + " " +
-                                              "- Maximum Cubic Foot Volume For Small Logs Value: " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogs.ToString().Trim() + "\r\n");
-                                m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogsCellLocation.Trim(),
-                                                         m_oFRCSHarvestMethodItem_Collection.Item(x).MaxCubicFootVolumeSmLogs.ToString().Trim());
-
-                            }
-                        }
-                        if (m_oExcel.m_intError == 0)
-                        {
-                            //
-                            //SLOPE PERCENT
-                            //
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercentCellLocation.Trim().Length > 0 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercent != -1 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercent >
-                                   m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercentDefault)
-                            {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercentCellLocation.Trim() + " " +
-                                              "- Maximum Slope Percent Value: " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercent.ToString().Trim() + "\r\n");
-                                m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercentCellLocation.Trim(),
-                                                         m_oFRCSHarvestMethodItem_Collection.Item(x).MaxSlopePercent.ToString().Trim());
-
-                            }
-                        }
-                        if (m_oExcel.m_intError == 0)
-                        {
-                            //
-                            //YARDING DISTANCE
-                            //
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistanceCellLocation.Trim().Length > 0 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistance != -1 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistance >
-                                   m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistanceDefault)
-                            {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistanceCellLocation.Trim() + " " +
-                                              "- Maximum Yarding Distance Value: " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistance.ToString().Trim() + "\r\n");
-                                m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistanceCellLocation.Trim(),
-                                                         m_oFRCSHarvestMethodItem_Collection.Item(x).MaxYardingDistance.ToString().Trim());
-
-                            }
-                        }
-                        if (m_oExcel.m_intError == 0)
-                        {
-                            //
-                            //PERCENT VOLUME OF LARGE LOGS TO ALL LOGS
-                            //
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercentCellLocation.Trim().Length > 0 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercent != -1 &&
-                                m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercent >
-                                   m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercentDefault)
-                            {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Cell " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercentCellLocation.Trim() + " " +
-                                              "- Maximum Large Logs To All Logs Percent Value: " +
-                                              m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercent.ToString().Trim() + "\r\n");
-                                m_oExcel.AssignCellValue(m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercentCellLocation.Trim(),
-                                                         m_oFRCSHarvestMethodItem_Collection.Item(x).MaxLgLogsToAllLogsPercent.ToString().Trim());
-
-                            }
-                        }
-                        if (m_oExcel.m_intError != 0) break;
-                            
-
-                    }
-
-                }
+                //Delete all this code; Obsolete
             }
             if (m_oExcel.m_intError == 0)
             {
@@ -4433,14 +3538,14 @@ namespace FIA_Biosum_Manager
              m_oAdo.m_strSQL = "DROP TABLE temp_year";
              m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
-             RunScenario_CreateOPCOSTBatchFile();
-             RunScenario_ExecuteOPCOST();
+             bool bOPCOSTWindow = RunScenario_CreateOPCOSTBatchFile();
+             RunScenario_ExecuteOPCOST(bOPCOSTWindow);
              
             
 
 
         }
-        private void RunScenario_ExecuteOPCOST()
+        private void RunScenario_ExecuteOPCOST(bool bOPCOSTWindow)
         {
             //close the open connection
             string strConn = m_oAdo.m_OleDbConnection.ConnectionString;
@@ -4453,7 +3558,7 @@ namespace FIA_Biosum_Manager
             proc.StartInfo.RedirectStandardOutput = false;
             proc.StartInfo.RedirectStandardInput = false;
             proc.StartInfo.RedirectStandardError = false;
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel < 3)
+            if (! bOPCOSTWindow)
             {
                 //suppress opCost window
                 proc.StartInfo.CreateNoWindow = true;
@@ -4499,7 +3604,7 @@ namespace FIA_Biosum_Manager
 
 
         }
-        private void RunScenario_CreateOPCOSTBatchFile()
+        private bool RunScenario_CreateOPCOSTBatchFile()
         {
             
             //create a batch file containing the command
@@ -4520,7 +3625,11 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("SET ERRORFILE=" + frmMain.g_oEnv.strTempDir + "\\opcost_error_log.txt  \r\n");
             oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
             string strRedirect = " 2> " + "\"" + "%ERRORFILE%" + "\"";
+            // Suppress OpCost window if debugging is turned off OR debug level < 3
+            bool bOPCOSTWindow = frmMain.g_bDebug;
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel < 3)
+                bOPCOSTWindow = false;
+            if (! bOPCOSTWindow)
             {
                 //OpCost window is suppressed so we write standard out to log
                 strRedirect = "> \"" + "%ERRORFILE%" + "\"" + " 2>&1";
@@ -4529,7 +3638,7 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("EXIT\r\n");
             oTextStreamWriter.Close();
             oTextFileStream.Close();
-
+            return bOPCOSTWindow;
         
         }
         private void RunScenario_ProcessFRCS()
@@ -4706,33 +3815,7 @@ namespace FIA_Biosum_Manager
                     if (strHarvestMethodsList.Trim().Length > 0)
                     {
                         strHarvestMethodsArray = frmMain.g_oUtils.ConvertListToArray(strHarvestMethodsList, ",");
-                        for (y = 0; y <= m_oFRCSHarvestMethodItem_Collection.Count - 1; y++)
-                        {
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(y) == null) break;
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(y).SteepSlope == false)
-                            {
-                                for (x = 0; x <= strHarvestMethodsArray.Length - 1; x++)
-                                {
-                                    if (strHarvestMethodsArray[x].Trim() ==
-                                        m_oFRCSHarvestMethodItem_Collection.Item(y).HarvestMethod.Trim())
-                                    {
-
-                                        m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateFRCSWarningMessages
-                                              (
-                                              m_oFRCSHarvestMethodItem_Collection.Item(y),
-                                              "FRCS_warning_messages", "bin_output_lowslope");
-
-                                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                                        if (m_oAdo.m_intError != 0) break;
-
-
-                                    }
-                                }
-                            }
-                            if (m_oAdo.m_intError != 0) break;
-                        }
+                        // Delete code; obsolete; FRCS no longer used
                     }
                 }
             }
@@ -4754,30 +3837,7 @@ namespace FIA_Biosum_Manager
                     if (strHarvestMethodsList.Trim().Length > 0)
                     {
                         strHarvestMethodsArray = frmMain.g_oUtils.ConvertListToArray(strHarvestMethodsList, ",");
-                        for (y = 0; y <= m_oFRCSHarvestMethodItem_Collection.Count - 1; y++)
-                        {
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(y) == null) break;
-                            if (m_oFRCSHarvestMethodItem_Collection.Item(y).SteepSlope == true)
-                            {
-                                for (x = 0; x <= strHarvestMethodsArray.Length - 1; x++)
-                                {
-                                    if (strHarvestMethodsArray[x].Trim() ==
-                                        m_oFRCSHarvestMethodItem_Collection.Item(y).HarvestMethod.Trim())
-                                    {
-                                        m_oAdo.m_strSQL =
-                                           Queries.ProcessorScenarioRun.UpdateFRCSWarningMessages(
-                                             m_oFRCSHarvestMethodItem_Collection.Item(y),
-                                             "FRCS_warning_messages", "bin_output_steepslope");
-                                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                                        if (m_oAdo.m_intError != 0) break;
-
-                                    }
-                                }
-                            }
-                            if (m_oAdo.m_intError != 0) break;
-                        }
+                        // Delete code; No longer using FRCS
                     }
                 }
             }

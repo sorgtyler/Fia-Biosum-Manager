@@ -258,6 +258,7 @@ namespace FIA_Biosum_Manager
 
                 ReferenceCurrentScenarioItem.Description = m_oProcessorScenarioItem.Description;
                 ReferenceCurrentScenarioItem.Notes = m_oProcessorScenarioItem.Notes;
+                ReferenceCurrentScenarioItem.SourceScenarioId = m_oProcessorScenarioItem.ScenarioId;
                 
                 ReferenceCurrentScenarioItem.m_oTreeDiamGroupsItem_Collection.Copy(m_oProcessorScenarioItem.m_oTreeDiamGroupsItem_Collection,
                     ref ReferenceCurrentScenarioItem.m_oTreeDiamGroupsItem_Collection, true);
