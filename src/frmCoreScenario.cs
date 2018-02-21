@@ -519,10 +519,12 @@ namespace FIA_Biosum_Manager
             this.tabControlRules.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlRules.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tabControlRules.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControlRules.ItemSize = new System.Drawing.Size(125, 18);
             this.tabControlRules.Location = new System.Drawing.Point(0, 0);
             this.tabControlRules.Name = "tabControlRules";
             this.tabControlRules.SelectedIndex = 0;
             this.tabControlRules.Size = new System.Drawing.Size(640, 334);
+            this.tabControlRules.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlRules.TabIndex = 0;
             this.tabControlRules.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlRules_DrawItem);
             this.tabControlRules.SelectedIndexChanged += new System.EventHandler(this.tabControlRules_SelectedIndexChanged);
@@ -623,10 +625,12 @@ namespace FIA_Biosum_Manager
             this.tabControlFVSVariables.Controls.Add(this.tbTieBreaker);
             this.tabControlFVSVariables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlFVSVariables.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.tabControlFVSVariables.ItemSize = new System.Drawing.Size(75, 18);
             this.tabControlFVSVariables.Location = new System.Drawing.Point(0, 0);
             this.tabControlFVSVariables.Name = "tabControlFVSVariables";
             this.tabControlFVSVariables.SelectedIndex = 0;
             this.tabControlFVSVariables.Size = new System.Drawing.Size(632, 308);
+            this.tabControlFVSVariables.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlFVSVariables.TabIndex = 0;
             this.tabControlFVSVariables.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tbFVSVariablesSelect_DrawItem);
             this.tabControlFVSVariables.SelectedIndexChanged += new System.EventHandler(this.tbFVSVariablesSelect_SelectedIndexChanged);
