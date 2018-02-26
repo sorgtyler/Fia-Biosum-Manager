@@ -99,6 +99,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ColumnHeader lvColFieldSource;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerVariableValueSource;
 		private System.Windows.Forms.ComboBox cmbFVSVariablesTieBreakerVariableValueSource;
+        private Label label1;
 		public TieBreaker_Collection m_oSavTieBreakerCollection = new TieBreaker_Collection();
 		
 
@@ -245,11 +246,10 @@ namespace FIA_Biosum_Manager
             "Treatment Intensity",
             "NA",
             "NA",
-            "NA"}, -1);
+            "MIN"}, -1);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpboxFVSVariablesTieBreakerTreatmentIntensity = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
             this.btnFVSVariablesTieBreakerTreatmentIntensityPrev = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
@@ -283,6 +283,8 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerTreatmentIntensity.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -331,6 +333,7 @@ namespace FIA_Biosum_Manager
             // panel2
             // 
             this.panel2.AutoScroll = true;
+            this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.uc_scenario_treatment_intensity1);
             this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev);
             this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityClear);
@@ -341,16 +344,6 @@ namespace FIA_Biosum_Manager
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(866, 427);
             this.panel2.TabIndex = 12;
-            // 
-            // uc_scenario_treatment_intensity1
-            // 
-            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 8);
-            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
-            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
-            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 344);
-            this.uc_scenario_treatment_intensity1.TabIndex = 13;
-            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // btnFVSVariablesTieBreakerTreatmentIntensityPrev
             // 
@@ -687,6 +680,26 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(894, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(9, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(837, 15);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "When treatment intensity is used to break ties, the tie goes to the treatment wit" +
+    "h the lowest rx_intensity value";
+            // 
+            // uc_scenario_treatment_intensity1
+            // 
+            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
+            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
+            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
+            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
+            this.uc_scenario_treatment_intensity1.TabIndex = 13;
+            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // uc_scenario_fvs_prepost_variables_tiebreaker
             // 

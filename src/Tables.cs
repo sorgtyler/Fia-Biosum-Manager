@@ -4359,34 +4359,10 @@ namespace FIA_Biosum_Manager
 					"HarvestMethodId BYTE," + 
 					"STEEP_YN CHAR(1)," + 
 					"Method CHAR(50)," +
-					"Description MEMO," + 
-                    "MaxTreeVolumeFt3Chips INTEGER," +
-                    "MaxTreeVolumeFt3ChipsDefault INTEGER," +
-                    "MaxTreeVolumeFt3ChipsCellLocation CHAR(15)," +
-                    "MaxTreeVolumeFt3SmallLogs INTEGER," +
-                    "MaxTreeVolumeFt3SmallLogsDefault INTEGER," +
-                    "MaxTreeVolumeFt3SmallLogsCellLocation CHAR(15)," +
-                    "MaxTreeVolumeFt3LargeLogs INTEGER," +
-                    "MaxTreeVolumeFt3LargeLogsDefault INTEGER," +
-                    "MaxTreeVolumeFt3LargeLogsCellLocation CHAR(15)," +
-                    "MaxTreeVolumeFt3AllLogs INTEGER," +
-                    "MaxTreeVolumeFt3AllLogsDefault INTEGER," +
-                    "MaxTreeVolumeFt3AllLogsCellLocation CHAR(15)," +
-                    "MaxTreeVolumeFt3AllTrees INTEGER," +
-                    "MaxTreeVolumeFt3AllTreesDefault INTEGER," +
-                    "MaxTreeVolumeFt3AllTreesCellLocation CHAR(15)," +
-                    "MaxTreeVolumeFt3PercentLgLogsToAllLogs INTEGER," +
-                    "MaxTreeVolumeFt3PercentLgLogsToAllLogsDefault INTEGER," +
-                    "MaxTreeVolumeFt3PercentLgLogsToAllLogsCellLocation CHAR(15)," +
-                    "MaxTreeVolumeFt3LgLogsPerAcre INTEGER," +
-                    "MaxTreeVolumeFt3LgLogsPerAcreDefault INTEGER," +
-                    "MaxTreeVolumeFt3LgLogsPerAcreCellLocation CHAR(15)," +
-                    "MaxSlopePercent INTEGER," +
-                    "MaxSlopePercentDefault INTEGER," +
-                    "MaxSlopePercentCellLocation CHAR(15)," +
-                    "MaxYardingDistance INTEGER," +
-                    "MaxYardingDistanceDefault INTEGER," +
-                    "MaxYardingDistanceCellLocation CHAR(15), " +
+					"Description MEMO," +
+                    "min_yard_distance_ft DOUBLE," +
+                    "min_tpa DOUBLE," +
+                    "min_avg_tree_vol_cf DOUBLE," +
                     "biosum_category INTEGER)";
 			}
 
