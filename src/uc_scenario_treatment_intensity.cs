@@ -464,6 +464,16 @@ namespace FIA_Biosum_Manager
 					aColumnTextColumn.MappingName = this.m_DataSet.Tables["scenario_rx_intensity"].Columns[i].ColumnName;
 					//add the datagridcoloredtextboxcolumn object to the data grid table style object
 					tableStyle.GridColumnStyles.Add(aColumnTextColumn);
+                    //set wider width for some columns
+                    switch (aColumnTextColumn.HeaderText)
+                    {
+                        case "scenario_id":
+                            aColumnTextColumn.Width = 150;
+                            break;
+                        case "Description":
+                            aColumnTextColumn.Width = 475;
+                            break;
+                    }
 				}
                 dataGrid1.BackgroundColor=frmMain.g_oGridViewBackgroundColor;   	
 				dataGrid1.BackColor=frmMain.g_oGridViewRowBackgroundColor;

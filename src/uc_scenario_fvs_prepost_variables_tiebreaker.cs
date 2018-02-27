@@ -100,6 +100,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerVariableValueSource;
 		private System.Windows.Forms.ComboBox cmbFVSVariablesTieBreakerVariableValueSource;
         private Label label1;
+        private Label label2;
 		public TieBreaker_Collection m_oSavTieBreakerCollection = new TieBreaker_Collection();
 		
 
@@ -251,7 +252,6 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
             this.btnFVSVariablesTieBreakerTreatmentIntensityPrev = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
@@ -285,6 +285,8 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -354,16 +356,6 @@ namespace FIA_Biosum_Manager
             this.label1.TabIndex = 14;
             this.label1.Text = "Assign integer ranks for silvicultural sequences; lowest numbered sequence will b" +
     "e best when there is more than one optimal sequence";
-            // 
-            // uc_scenario_treatment_intensity1
-            // 
-            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
-            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
-            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
-            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
-            this.uc_scenario_treatment_intensity1.TabIndex = 13;
-            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // btnFVSVariablesTieBreakerTreatmentIntensityPrev
             // 
@@ -583,6 +575,7 @@ namespace FIA_Biosum_Manager
             // pnlTieBreaker
             // 
             this.pnlTieBreaker.AutoScroll = true;
+            this.pnlTieBreaker.Controls.Add(this.label2);
             this.pnlTieBreaker.Controls.Add(this.grpboxFVSVariablesTieBreakerValues);
             this.pnlTieBreaker.Controls.Add(this.groupBox3);
             this.pnlTieBreaker.Controls.Add(this.btnFVSVariablesTieBreakerEdit);
@@ -597,10 +590,11 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerValues.Controls.Add(this.lvFVSVariablesTieBreakerValues);
             this.grpboxFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(8, 16);
             this.grpboxFVSVariablesTieBreakerValues.Name = "grpboxFVSVariablesTieBreakerValues";
-            this.grpboxFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(840, 152);
+            this.grpboxFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(840, 135);
             this.grpboxFVSVariablesTieBreakerValues.TabIndex = 67;
             this.grpboxFVSVariablesTieBreakerValues.TabStop = false;
-            this.grpboxFVSVariablesTieBreakerValues.Text = "Step 1: Define Tie Breakers";
+            this.grpboxFVSVariablesTieBreakerValues.Text = "Step 1: Rules for choosing best silvicultural sequence when more than one are opt" +
+    "imal by the optimization rule";
             // 
             // lvFVSVariablesTieBreakerValues
             // 
@@ -615,8 +609,8 @@ namespace FIA_Biosum_Manager
             this.lvFVSVariablesTieBreakerValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvFVSVariablesTieBreakerValues.GridLines = true;
             this.lvFVSVariablesTieBreakerValues.HideSelection = false;
-            listViewItem1.Checked = true;
             listViewItem1.StateImageIndex = 1;
+            listViewItem2.Checked = true;
             listViewItem2.StateImageIndex = 0;
             this.lvFVSVariablesTieBreakerValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
@@ -624,7 +618,7 @@ namespace FIA_Biosum_Manager
             this.lvFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(3, 18);
             this.lvFVSVariablesTieBreakerValues.MultiSelect = false;
             this.lvFVSVariablesTieBreakerValues.Name = "lvFVSVariablesTieBreakerValues";
-            this.lvFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(834, 131);
+            this.lvFVSVariablesTieBreakerValues.Size = new System.Drawing.Size(834, 114);
             this.lvFVSVariablesTieBreakerValues.TabIndex = 67;
             this.lvFVSVariablesTieBreakerValues.UseCompatibleStateImageBehavior = false;
             this.lvFVSVariablesTieBreakerValues.View = System.Windows.Forms.View.Details;
@@ -674,7 +668,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit.Name = "btnFVSVariablesTieBreakerAudit";
             this.btnFVSVariablesTieBreakerAudit.Size = new System.Drawing.Size(800, 32);
             this.btnFVSVariablesTieBreakerAudit.TabIndex = 0;
-            this.btnFVSVariablesTieBreakerAudit.Text = "Audit";
+            this.btnFVSVariablesTieBreakerAudit.Text = "Audit Tie Breaker Specifications";
             this.btnFVSVariablesTieBreakerAudit.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerAudit_Click);
             // 
             // btnFVSVariablesTieBreakerEdit
@@ -700,6 +694,26 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(894, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(15, 154);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(714, 16);
+            this.label2.TabIndex = 70;
+            this.label2.Text = "Select a method to edit, then click the <Edit> button. To enable the method, ensu" +
+    "re its box is checked.";
+            // 
+            // uc_scenario_treatment_intensity1
+            // 
+            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
+            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
+            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
+            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
+            this.uc_scenario_treatment_intensity1.TabIndex = 13;
+            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // uc_scenario_fvs_prepost_variables_tiebreaker
             // 
