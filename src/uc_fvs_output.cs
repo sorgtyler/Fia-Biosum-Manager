@@ -4243,10 +4243,8 @@ namespace FIA_Biosum_Manager
                                             oAdo.m_strSQL = "SELECT DISTINCT c.StandID AS biosum_cond_id,'" + p_strPackage.Trim() + "' AS rxpackage," +
                                                 "'" + strRx.Trim() + "' AS rx,'" + strCycle.Trim() + "' AS rxcycle," +
                                                 "CSTR(t.year) AS rxyear," +
-                                                "c.Variant AS fvs_variant, IIf(Len(Trim(t.treeid))=4," +
-                                                "c.variant+'000'+Trim(t.treeid),IIf(Len(Trim(t.treeid))=5," +
-                                                "c.variant+'00'+Trim(t.treeid),IIf(Len(Trim(t.treeid))=6," +
-                                                "c.variant+'0'+Trim(t.treeid),c.variant+Trim(t.treeid)))) AS fvs_tree_id," +
+                                                "c.Variant AS fvs_variant, " +
+                                                "Trim(t.treeid) AS fvs_tree_id," +
                                                 "'C' AS cut_leave," +
                                                 "t.Species AS fvs_species, t.TPA, ROUND(t.DBH,1) AS DBH , t.Ht,t.estht,t.pctcr,t.TCuFt,'N' AS FvsCreatedTree_YN," +
                                                 "'" + m_strDateTimeCreated + "' AS DateTimeCreated " + 
