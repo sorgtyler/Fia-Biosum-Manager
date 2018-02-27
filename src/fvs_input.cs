@@ -361,7 +361,6 @@ namespace FIA_Biosum_Manager
 
             CheckDir();
             DeleteFiles();
-            System.IO.File.Delete(this.m_strFVSInMDBFile); //TODO: This should be inside DeleteFiles() but I'm trying to use both text and database approaches right now
 
             CopyFVSBlankDatabaseToFVSInDir(this.m_strInDir);
             if (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
@@ -2489,6 +2488,7 @@ namespace FIA_Biosum_Manager
 			}
 			System.IO.File.Delete(this.m_strVariant.Trim() + ".loc");
 			System.IO.File.Delete(this.m_strVariant.Trim() + ".slf");
+            System.IO.File.Delete(this.m_strFVSInMDBFile);
 			System.IO.Directory.SetCurrentDirectory(strCurrDir);
 
 		}
