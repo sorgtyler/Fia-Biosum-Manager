@@ -244,7 +244,7 @@ namespace FIA_Biosum_Manager
             "Not Defined"}, -1);
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
-            "Treatment Intensity",
+            "Last Tie-Break Rank",
             "NA",
             "NA",
             "MIN"}, -1);
@@ -274,6 +274,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerVariableNext = new System.Windows.Forms.Button();
             this.grpboxFVSVariablesTieBreaker = new System.Windows.Forms.GroupBox();
             this.pnlTieBreaker = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.grpboxFVSVariablesTieBreakerValues = new System.Windows.Forms.GroupBox();
             this.lvFVSVariablesTieBreakerValues = new System.Windows.Forms.ListView();
             this.lvColChecked = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -285,7 +286,6 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
@@ -329,7 +329,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Size = new System.Drawing.Size(872, 448);
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.TabIndex = 35;
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.TabStop = false;
-            this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Text = "Last TieBreak Rank";
+            this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Text = "Last Tie-Break Rank";
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreakerTreatmentIntensity_Resize);
             // 
             // panel2
@@ -349,10 +349,10 @@ namespace FIA_Biosum_Manager
             // 
             // label1
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(9, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(837, 15);
+            this.label1.Size = new System.Drawing.Size(837, 17);
             this.label1.TabIndex = 14;
             this.label1.Text = "Assign integer ranks for silvicultural sequences; lowest numbered sequence will b" +
     "e best when there is more than one optimal sequence";
@@ -585,6 +585,16 @@ namespace FIA_Biosum_Manager
             this.pnlTieBreaker.Size = new System.Drawing.Size(866, 427);
             this.pnlTieBreaker.TabIndex = 70;
             // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(15, 154);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(714, 16);
+            this.label2.TabIndex = 70;
+            this.label2.Text = "Select a method to edit, then click the <Edit> button. To enable the method, ensu" +
+    "re its box is checked.";
+            // 
             // grpboxFVSVariablesTieBreakerValues
             // 
             this.grpboxFVSVariablesTieBreakerValues.Controls.Add(this.lvFVSVariablesTieBreakerValues);
@@ -609,9 +619,9 @@ namespace FIA_Biosum_Manager
             this.lvFVSVariablesTieBreakerValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvFVSVariablesTieBreakerValues.GridLines = true;
             this.lvFVSVariablesTieBreakerValues.HideSelection = false;
-            listViewItem1.StateImageIndex = 1;
+            listViewItem1.StateImageIndex = 0;
             listViewItem2.Checked = true;
-            listViewItem2.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 1;
             this.lvFVSVariablesTieBreakerValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2});
@@ -694,16 +704,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(894, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(15, 154);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(714, 16);
-            this.label2.TabIndex = 70;
-            this.label2.Text = "Select a method to edit, then click the <Edit> button. To enable the method, ensu" +
-    "re its box is checked.";
             // 
             // uc_scenario_treatment_intensity1
             // 
@@ -894,7 +894,7 @@ namespace FIA_Biosum_Manager
                         }
                         this.lvFVSVariablesTieBreakerValues.Items[0].Checked = this.m_oOldTieBreakerCollection.Item(0).bSelected;
                     }
-                    else if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "TREATMENT INTENSITY")
+                    else if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "LAST TIE-BREAK RANK")
                     {
                         if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
                         {
@@ -984,7 +984,6 @@ namespace FIA_Biosum_Manager
 
 						if (oAdo.m_OleDbDataReader["tiebreaker_method"] != System.DBNull.Value)
 						{
-							
 							if (oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim().ToUpper()=="FVS VARIABLE")
 							{
 								//fvs variable name
@@ -1032,7 +1031,7 @@ namespace FIA_Biosum_Manager
 								}
 								this.lvFVSVariablesTieBreakerValues.Items[0].Checked = this.m_oOldTieBreakerCollection.Item(0).bSelected;
 							}
-							else if (oItem.strMethod.Trim().ToUpper()=="TREATMENT INTENSITY")
+                            else if (oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim().ToUpper()=="LAST TIE-BREAK RANK")
 							{
 								if (oAdo.m_OleDbDataReader["checked_yn"].ToString().Trim().ToUpper()=="Y")
 								{
@@ -1135,7 +1134,7 @@ namespace FIA_Biosum_Manager
 				oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 
 				//
-				//TREATMENT INTENSITY
+                //LAST TIE-BREAK RANK
 				//
 				//scenario id
 				strValues = "'" + strScenarioId + "','1',";
@@ -1576,10 +1575,10 @@ namespace FIA_Biosum_Manager
 			this.m_strError="Audit Results \r\n";
 			this.m_strError=m_strError + "-------------\r\n\r\n";
 
-            // Only validate treatment intensity if it is checked
+            // Only validate LAST TIE-BREAK RANK if it is checked
             foreach (ListViewItem itemRow in this.lvFVSVariablesTieBreakerValues.CheckedItems)
             {
-                if (itemRow.SubItems[COLUMN_METHOD].Text.Trim().Equals("Treatment Intensity"))
+                if (itemRow.SubItems[COLUMN_METHOD].Text.Trim().Equals("Last Tie-Break Rank"))
                 {
                     x=this.uc_scenario_treatment_intensity1.Val_Intensity(false);
                 }
@@ -1588,8 +1587,8 @@ namespace FIA_Biosum_Manager
             if (x<0)
 			{
                 if (x == -1) m_strError = m_strError + "No treatments defined\r\n";
-                else if (x == -2) m_strError = m_strError + "Treatment intensity ratings must be unique\r\n";
-                else if (x == -3) m_strError = m_strError + "Treatment intensity ratings cannot be null in value\r\n";
+                else if (x == -2) m_strError = m_strError + "Last Tie-Break Rankings must be unique\r\n";
+                else if (x == -3) m_strError = m_strError + "Last Tie-Break Rankings cannot be null in value\r\n";
 				m_intError=x;
 			}
 			if (this.lvFVSVariablesTieBreakerValues.CheckedItems.Count==0)
@@ -1826,7 +1825,16 @@ namespace FIA_Biosum_Manager
 
 		private void lvFVSVariablesTieBreakerValues_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
 		{
-		   this.ReferenceCoreScenarioForm.m_bSave=true;
+            string strMethod = this.lvFVSVariablesTieBreakerValues.Items[e.Index].SubItems[COLUMN_METHOD].Text.Trim();
+            //Tie-Break Rank is read-only and cannot be unchecked
+            if (strMethod.Equals("Last Tie-Break Rank") && e.NewValue != CheckState.Checked)
+            {
+                e.NewValue = e.CurrentValue;
+            }
+            else
+            {
+                this.ReferenceCoreScenarioForm.m_bSave = true;
+            }
 		}
 
 		private void btnFVSVariablesTieBreakerAudit_Click(object sender, System.EventArgs e)
