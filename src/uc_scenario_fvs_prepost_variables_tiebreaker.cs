@@ -208,7 +208,6 @@ namespace FIA_Biosum_Manager
 			this.m_oLvRowColors.AddColumns(1,this.lvFVSVariablesTieBreakerValues.Columns.Count);
 			this.m_oLvRowColors.ListView();
 
-
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Hide();
 			this.grpboxFVSVariablesTieBreakerVariable.Hide();
 			this.grpboxFVSVariablesTieBreaker.Show();
@@ -893,6 +892,12 @@ namespace FIA_Biosum_Manager
                             this.m_oOldTieBreakerCollection.Item(0).bSelected = false;
                         }
                         this.lvFVSVariablesTieBreakerValues.Items[0].Checked = this.m_oOldTieBreakerCollection.Item(0).bSelected;
+                        // Select stand attribute on the listView by default if is enabled
+                        if (this.m_oOldTieBreakerCollection.Item(0).bSelected == true)
+                        {
+                            lvFVSVariablesTieBreakerValues.Items[0].Selected = this.m_oOldTieBreakerCollection.Item(0).bSelected;
+                            lvFVSVariablesTieBreakerValues.Select();
+                        }
                     }
                     else if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "LAST TIE-BREAK RANK")
                     {
@@ -928,7 +933,8 @@ namespace FIA_Biosum_Manager
 
 			this.m_oOldTieBreakerCollection.Clear();
 
-			uc_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem = new TieBreakerItem();
+			// Stand Attribute
+            uc_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem = new TieBreakerItem();
 			oItem.intListViewIndex=0;
 			oItem.strFVSVariableName=this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
 			oItem.strMethod = this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_METHOD].Text.Trim();
@@ -944,7 +950,8 @@ namespace FIA_Biosum_Manager
 		    oItem.bSelected=this.lvFVSVariablesTieBreakerValues.Items[0].Checked;
 			this.m_oOldTieBreakerCollection.Add(oItem);
 
-			oItem = new TieBreakerItem();
+			// Last Tie-Break Rank
+            oItem = new TieBreakerItem();
 			oItem.intListViewIndex=1;
 			oItem.strFVSVariableName=this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
 			oItem.strMethod = this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_METHOD].Text.Trim();
@@ -952,8 +959,12 @@ namespace FIA_Biosum_Manager
 			oItem.strMaxYN="N"; oItem.strMinYN="N";
 			oItem.bSelected=this.lvFVSVariablesTieBreakerValues.Items[1].Checked;
 			this.m_oOldTieBreakerCollection.Add(oItem);
-
-
+            // Make row appear read-only
+            // @ToDo: Save off in case we want to reformat
+            //for (int i = COLUMN_CHECKBOX; i <= COLUMN_MAXMIN; i++)
+            //{
+            //    this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[i].ForeColor = SystemColors.GrayText;
+            //}
 			
 			ado_data_access oAdo = new ado_data_access();
 
@@ -1030,6 +1041,12 @@ namespace FIA_Biosum_Manager
 									this.m_oOldTieBreakerCollection.Item(0).bSelected=false;
 								}
 								this.lvFVSVariablesTieBreakerValues.Items[0].Checked = this.m_oOldTieBreakerCollection.Item(0).bSelected;
+                                // Select stand attribute on the listView by default if is enabled
+                                if (this.m_oOldTieBreakerCollection.Item(0).bSelected == true)
+                                {
+                                    lvFVSVariablesTieBreakerValues.Items[0].Selected = this.m_oOldTieBreakerCollection.Item(0).bSelected;
+                                    lvFVSVariablesTieBreakerValues.Select();
+                                }
 							}
                             else if (oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim().ToUpper()=="LAST TIE-BREAK RANK")
 							{
@@ -1830,6 +1847,8 @@ namespace FIA_Biosum_Manager
             if (strMethod.Equals("Last Tie-Break Rank") && e.NewValue != CheckState.Checked)
             {
                 e.NewValue = e.CurrentValue;
+                MessageBox.Show("Last Tie-Break Rank is a required Tie Breaker. It cannot be unselected.", 
+                    "BIOSUM");
             }
             else
             {
