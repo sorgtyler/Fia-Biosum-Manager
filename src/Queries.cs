@@ -3127,6 +3127,11 @@ namespace FIA_Biosum_Manager
                             "UPDATE FVS_StandInit_WorkTable SET Site_Species={1}, Site_Index={2} WHERE STAND_ID={0}; ",
                             strStandID, strSiteSpecies, strSiteIndex);
                     }
+
+                    public static string DeleteWorkTable()
+                    {
+                        return "DROP TABLE FVS_StandInit_WorkTable;";
+                    }
                 }
 
                 //All the queries necessary to create the FVSIn.accdb FVS_TreeInit table using intermediate tables
@@ -3140,51 +3145,29 @@ namespace FIA_Biosum_Manager
                         string strCondTableName, string strPlotTableName, string strTreeTableName)
                     {
                         string strInsertIntoTreeInit =
-                            "INSERT INTO " + strDestTable + //NOTICE: WORK TABLE
+                            "INSERT INTO " + strDestTable +
                             " (Stand_ID, Tree_ID, Tree_Count, History, Species, " +
                             "DBH, DG, Htcd, Ht, HtTopK, CrRatio, " +
                             "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
                             "Prescription, Slope, Aspect, PV_Code, TreeValue, cullbf, mist_cl_cd, " +
                             "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, TreeCN)  ";
-                        //string strBioSumWorkTableSelectStmt =
-                        //    "SELECT c.biosum_cond_id, t.subp*1000 + t.tree, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
-                        //    "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
-                        //    "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
-                        //    "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
-                        //    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
                         string strBioSumWorkTableSelectStmt =
                             "SELECT c.biosum_cond_id, VAL(t.fvs_tree_id) as Tree_ID, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
                             "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
                             "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
                             "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
                             "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
-
                         string strFromTableExpr = "FROM " +
                                                   strCondTableName + " c, " + strPlotTableName + " p, " +
                                                   strTreeTableName + " t ";
-
                         string strFilters =
                             "WHERE t.biosum_cond_id=c.biosum_cond_id AND p.biosum_plot_id=c.biosum_plot_id " +
                             "AND t.dia > 0 AND c.landclcd=1 " +
                             "AND ucase(trim(p.fvs_variant)) = \'" + strVariant.Trim().ToUpper() + "\'";
-
                         string strSQL = strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
                                         strFilters;
                         return strSQL;
                     }
-
-                    //TODO: Remove this from workflow because Issue#79 removes fvs_species name from schema
-                    //public static string UpdateFVSSpeciesNameColumn(string strDestTable, string strVariant,
-                    //    string strTreeSpeciesTableName)
-                    //{
-                    //    string strSQL =
-                    //        "UPDATE " + strDestTable +
-                    //        " AS fvstree INNER JOIN " + strTreeSpeciesTableName +
-                    //        " AS ts ON VAL(fvstree.SPECIES) = ts.SPCD " +
-                    //        "SET fvstree.FVS_SPECIES_NAME = ts.FVS_SPECIES " +
-                    //        "WHERE TRIM(ts.FVS_VARIANT)=\'" + strVariant.Trim().ToUpper() + "\'; ";
-                    //    return strSQL;
-                    //}
 
                     public static string CreateSpcdConversionTable(string strCondTableName, string strPlotTableName,
                         string strTreeTableName, string strTreeSpeciesTableName)
@@ -3398,6 +3381,44 @@ namespace FIA_Biosum_Manager
                     public static string RoundSingleDigitPercentageCrRatiosDownTo1(string strDestTable)
                     {
                         return "UPDATE " + strDestTable + " SET CrRatio=1 WHERE CrRatio<10;";
+                    }
+
+                    public static string DeleteWorkTable()
+                    {
+                        return "DROP TABLE FVS_TreeInit_WorkTable;";
+                    }
+
+                    public static string DeleteSpcdChangeWorkTable()
+                    {
+                        return "DROP TABLE SPCD_CHANGE_WORK_TABLE;";
+                    }
+                }
+
+                //This updates the FVSIn.GroupAddFilesAndKeywords table so that they FVS keywords have the correct DSNIn value
+                public class GroupAddFilesAndKeywords
+                {
+                    public static string UpdateAllPlots(string strFVSInFileName)
+                    {
+                        return
+                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_PlotInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Plots\");";
+                    }
+
+                    public static string UpdateAllStands(string strFVSInFileName)
+                    {
+                        return
+                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_StandInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Stands\");";
                     }
                 }
             }

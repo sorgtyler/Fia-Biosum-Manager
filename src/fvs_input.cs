@@ -363,11 +363,14 @@ namespace FIA_Biosum_Manager
             DeleteFiles();
 
             CopyFVSBlankDatabaseToFVSInDir(this.m_strInDir);
-            if (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
+
+            if (m_ado.m_OleDbConnection != null && m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open) //TODO: if (not null) {if (open conn)}
             {
                 m_ado.m_OleDbConnection.Close();
             }
+
             CreateTablesLinksToFVSIn(); //uses a dao_data_access exclusively on the temp database
+
             m_ado.OpenConnection(m_strConn); //reopen the connection after the dao connection is released
             //create work tables with similar schemas to the FVS Input tables
             frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTable(m_ado, m_ado.m_OleDbConnection,
@@ -402,19 +405,10 @@ namespace FIA_Biosum_Manager
             File.Copy(strFVSInSourcePath, strFVSInDestPath, true);
             string strFVSInConn = this.m_ado.getMDBConnString(strFVSInDestPath, "", "");
 
-            /*how to update groups table all_plots keywords. this.strFVSInMDBFile should be the name of the desired filename*/
-            string strSQLUpdateGroupsTable =
-                "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = \"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" +
-                this.strFVSInMDBFile +
-                "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + \"FROM FVS_PlotInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + \"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + \"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + \"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Plots\");";
-            this.m_ado.SqlNonQuery(strFVSInConn, strSQLUpdateGroupsTable);
-
-            /*how to update groups table all_stands keywords. this.strFVSInMDBFile should be the name of the desired filename*/
-            strSQLUpdateGroupsTable =
-                "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = \"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" +
-                this.strFVSInMDBFile +
-                "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + \"FROM FVS_StandInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + \"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + \"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + \"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Stands\");";
-            this.m_ado.SqlNonQuery(strFVSInConn, strSQLUpdateGroupsTable);
+            string strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllPlots(this.strFVSInMDBFile);
+            this.m_ado.SqlNonQuery(strFVSInConn, strSQL);
+            strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllStands(this.strFVSInMDBFile);
+            this.m_ado.SqlNonQuery(strFVSInConn, strSQL);
 
             p_env = null;
         }
@@ -430,8 +424,6 @@ namespace FIA_Biosum_Manager
             m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_TreeInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
                 "FVS_TreeInit", true);
 
-            //m_dao.m_DaoDatabase.Close();
-            //m_dao.m_DaoDatabase = null;
             m_dao = null;
         }
 
@@ -482,6 +474,10 @@ namespace FIA_Biosum_Manager
 
                 strSQL = Queries.FVS.FVSInput.StandInit.TranslateWorkTableToStandInitTable(strStandInitWorkTable,
                     strStandInit);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                //Delete work table
+                strSQL = Queries.FVS.FVSInput.StandInit.DeleteWorkTable();
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
 
                 //close connection to temp database
@@ -536,7 +532,7 @@ namespace FIA_Biosum_Manager
                     System.Windows.Forms.MessageBoxIcon.Exclamation);
                 this.m_ado.m_DataSet.Clear();
                 this.m_ado.m_DataSet.Dispose();
-                this.m_ado.m_OleDbConnection.Close();
+                m_ado.CloseConnection(m_ado.m_OleDbConnection);
                 this.m_ado.m_OleDbConnection.Dispose();
                 return false;
             }
@@ -673,6 +669,12 @@ namespace FIA_Biosum_Manager
 
                 //Pad and trim the Species column again so FVS works with it properly
                 strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInit);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                //Delete work tables
+                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteWorkTable();
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteSpcdChangeWorkTable();
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
 
                 //close the connection to the temp mdb file
