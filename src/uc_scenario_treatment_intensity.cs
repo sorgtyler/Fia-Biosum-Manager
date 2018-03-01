@@ -542,7 +542,7 @@ namespace FIA_Biosum_Manager
                 //check for null value
                 if (m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"] == System.DBNull.Value)
                 {
-                    if (p_bDisplayMessage) MessageBox.Show("Run Scenario Failed: Treatment intensity ratings cannot be null in value");
+                    if (p_bDisplayMessage) MessageBox.Show("Run Scenario Failed: Last Tie-Break Rankings cannot be null in value");
                     return -3;
                 }
 				//check for duplicates
@@ -551,7 +551,7 @@ namespace FIA_Biosum_Manager
 					if (this.m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"].ToString().Trim() ==
 						this.m_DataSet.Tables["scenario_rx_intensity"].Rows[y]["rx_intensity"].ToString().Trim())
 					{
-						if (p_bDisplayMessage) MessageBox.Show("Run Scenario Failed: Treatment intensity ratings must be unique");
+                        if (p_bDisplayMessage) MessageBox.Show("Run Scenario Failed: Last Tie-Break Rankings must be unique");
 						return -2;
 					}
 				}

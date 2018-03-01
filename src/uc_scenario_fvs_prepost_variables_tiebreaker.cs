@@ -65,11 +65,11 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ColumnHeader lvColMethod;
 		private System.Windows.Forms.ColumnHeader lvColFVSVariableName;
 		private System.Windows.Forms.ColumnHeader lvColMinMax;
-		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerVariable;
+		private System.Windows.Forms.GroupBox grpboxStandAttributeTieBreakerVariable;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerVariableValues;
 		private System.Windows.Forms.Button btnFVSVariablesTieBreakerVariableValues;
-		private System.Windows.Forms.ListBox lstFVSVariablesTieBreakerVariableValues;
+		private System.Windows.Forms.ListBox lstStandAttributeTieBreakerVariableValues;
 		private System.Windows.Forms.GroupBox grpFVSVariablesTieBreakerVariableValuesSelected;
 		private System.Windows.Forms.Label lblFVSVariablesTieBreakerVariableValuesSelected;
 		private System.Windows.Forms.GroupBox grpMaxMin;
@@ -209,7 +209,7 @@ namespace FIA_Biosum_Manager
 			this.m_oLvRowColors.ListView();
 
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Hide();
-			this.grpboxFVSVariablesTieBreakerVariable.Hide();
+			this.grpboxStandAttributeTieBreakerVariable.Hide();
 			this.grpboxFVSVariablesTieBreaker.Show();
 		}
 
@@ -237,7 +237,7 @@ namespace FIA_Biosum_Manager
 		{
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
-            "FVS Variable",
+            "Stand Attribute",
             "Not Defined",
             "Not Defined",
             "Not Defined"}, -1);
@@ -255,7 +255,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityCancel = new System.Windows.Forms.Button();
-            this.grpboxFVSVariablesTieBreakerVariable = new System.Windows.Forms.GroupBox();
+            this.grpboxStandAttributeTieBreakerVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.grpboxFVSVariablesTieBreakerVariableValueSource = new System.Windows.Forms.GroupBox();
             this.cmbFVSVariablesTieBreakerVariableValueSource = new System.Windows.Forms.ComboBox();
@@ -264,7 +264,7 @@ namespace FIA_Biosum_Manager
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax = new System.Windows.Forms.RadioButton();
             this.grpboxFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.GroupBox();
             this.btnFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.Button();
-            this.lstFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.ListBox();
+            this.lstStandAttributeTieBreakerVariableValues = new System.Windows.Forms.ListBox();
             this.grpFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.GroupBox();
             this.lblFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.Label();
             this.btnFVSVariablesTieBreakerVariableClear = new System.Windows.Forms.Button();
@@ -289,7 +289,7 @@ namespace FIA_Biosum_Manager
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.grpboxFVSVariablesTieBreakerVariable.SuspendLayout();
+            this.grpboxStandAttributeTieBreakerVariable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerVariableValueSource.SuspendLayout();
             this.grpMaxMin.SuspendLayout();
@@ -305,7 +305,7 @@ namespace FIA_Biosum_Manager
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerLastTieBreakRank);
-            this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariable);
+            this.groupBox1.Controls.Add(this.grpboxStandAttributeTieBreakerVariable);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreaker);
             this.groupBox1.Controls.Add(this.lblTitle);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -392,18 +392,18 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Text = "Cancel";
             this.btnFVSVariablesTieBreakerTreatmentIntensityCancel.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerTreatmentIntensityCancel_Click);
             // 
-            // grpboxFVSVariablesTieBreakerVariable
+            // grpboxStandAttributeTieBreakerVariable
             // 
-            this.grpboxFVSVariablesTieBreakerVariable.BackColor = System.Drawing.SystemColors.Control;
-            this.grpboxFVSVariablesTieBreakerVariable.Controls.Add(this.panel1);
-            this.grpboxFVSVariablesTieBreakerVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpboxFVSVariablesTieBreakerVariable.ForeColor = System.Drawing.Color.Black;
-            this.grpboxFVSVariablesTieBreakerVariable.Location = new System.Drawing.Point(16, 544);
-            this.grpboxFVSVariablesTieBreakerVariable.Name = "grpboxFVSVariablesTieBreakerVariable";
-            this.grpboxFVSVariablesTieBreakerVariable.Size = new System.Drawing.Size(872, 448);
-            this.grpboxFVSVariablesTieBreakerVariable.TabIndex = 34;
-            this.grpboxFVSVariablesTieBreakerVariable.TabStop = false;
-            this.grpboxFVSVariablesTieBreakerVariable.Text = "FVS Variable";
+            this.grpboxStandAttributeTieBreakerVariable.BackColor = System.Drawing.SystemColors.Control;
+            this.grpboxStandAttributeTieBreakerVariable.Controls.Add(this.panel1);
+            this.grpboxStandAttributeTieBreakerVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpboxStandAttributeTieBreakerVariable.ForeColor = System.Drawing.Color.Black;
+            this.grpboxStandAttributeTieBreakerVariable.Location = new System.Drawing.Point(16, 544);
+            this.grpboxStandAttributeTieBreakerVariable.Name = "grpboxStandAttributeTieBreakerVariable";
+            this.grpboxStandAttributeTieBreakerVariable.Size = new System.Drawing.Size(872, 448);
+            this.grpboxStandAttributeTieBreakerVariable.TabIndex = 34;
+            this.grpboxStandAttributeTieBreakerVariable.TabStop = false;
+            this.grpboxStandAttributeTieBreakerVariable.Text = "Stand Attribute";
             // 
             // panel1
             // 
@@ -475,7 +475,7 @@ namespace FIA_Biosum_Manager
             // grpboxFVSVariablesTieBreakerVariableValues
             // 
             this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.btnFVSVariablesTieBreakerVariableValues);
-            this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.lstFVSVariablesTieBreakerVariableValues);
+            this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.lstStandAttributeTieBreakerVariableValues);
             this.grpboxFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
             this.grpboxFVSVariablesTieBreakerVariableValues.Name = "grpboxFVSVariablesTieBreakerVariableValues";
             this.grpboxFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(816, 216);
@@ -493,14 +493,14 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerVariableValues.Text = "Select";
             this.btnFVSVariablesTieBreakerVariableValues.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableValues_Click);
             // 
-            // lstFVSVariablesTieBreakerVariableValues
+            // lstStandAttributeTieBreakerVariableValues
             // 
-            this.lstFVSVariablesTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstFVSVariablesTieBreakerVariableValues.ItemHeight = 16;
-            this.lstFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
-            this.lstFVSVariablesTieBreakerVariableValues.Name = "lstFVSVariablesTieBreakerVariableValues";
-            this.lstFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(424, 180);
-            this.lstFVSVariablesTieBreakerVariableValues.TabIndex = 0;
+            this.lstStandAttributeTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstStandAttributeTieBreakerVariableValues.ItemHeight = 16;
+            this.lstStandAttributeTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
+            this.lstStandAttributeTieBreakerVariableValues.Name = "lstStandAttributeTieBreakerVariableValues";
+            this.lstStandAttributeTieBreakerVariableValues.Size = new System.Drawing.Size(424, 180);
+            this.lstStandAttributeTieBreakerVariableValues.TabIndex = 0;
             // 
             // grpFVSVariablesTieBreakerVariableValuesSelected
             // 
@@ -722,7 +722,7 @@ namespace FIA_Biosum_Manager
             this.groupBox1.ResumeLayout(false);
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
-            this.grpboxFVSVariablesTieBreakerVariable.ResumeLayout(false);
+            this.grpboxStandAttributeTieBreakerVariable.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.grpboxFVSVariablesTieBreakerVariableValueSource.ResumeLayout(false);
             this.grpMaxMin.ResumeLayout(false);
@@ -844,7 +844,7 @@ namespace FIA_Biosum_Manager
                 for (x = 0; x <= ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Count - 1; x++)
                 {
 
-                    if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "FVS VARIABLE")
+                    if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "STAND ATTRIBUTE")
                     {
                         //fvs variable name
                         this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName =
@@ -927,9 +927,9 @@ namespace FIA_Biosum_Manager
 			this.m_strError="";
 
 			int x,y;
-			lstFVSVariablesTieBreakerVariableValues.Items.Clear();
+			lstStandAttributeTieBreakerVariableValues.Items.Clear();
 			for (x=0;x<=p_oListBox.Items.Count-1;x++)
-				lstFVSVariablesTieBreakerVariableValues.Items.Add(p_oListBox.Items[x]);
+				lstStandAttributeTieBreakerVariableValues.Items.Add(p_oListBox.Items[x]);
 
 			this.m_oOldTieBreakerCollection.Clear();
 
@@ -995,7 +995,7 @@ namespace FIA_Biosum_Manager
 
 						if (oAdo.m_OleDbDataReader["tiebreaker_method"] != System.DBNull.Value)
 						{
-							if (oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim().ToUpper()=="FVS VARIABLE")
+                            if (oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim().ToUpper() == "STAND ATTRIBUTE")
 							{
 								//fvs variable name
 								this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName=oAdo.m_OleDbDataReader["fvs_variable_name"].ToString().Trim();
@@ -1289,8 +1289,8 @@ namespace FIA_Biosum_Manager
 		{
 			this.grpboxFVSVariablesTieBreaker.Height = this.ClientSize.Height - this.grpboxFVSVariablesTieBreaker.Top - 5;
 			this.grpboxFVSVariablesTieBreaker.Width = this.ClientSize.Width - (this.grpboxFVSVariablesTieBreaker.Left * 2) ;
-			this.grpboxFVSVariablesTieBreakerVariable.Height = this.grpboxFVSVariablesTieBreaker.Height;
-			this.grpboxFVSVariablesTieBreakerVariable.Width =  this.grpboxFVSVariablesTieBreakerVariable.Width;
+			this.grpboxStandAttributeTieBreakerVariable.Height = this.grpboxFVSVariablesTieBreaker.Height;
+			this.grpboxStandAttributeTieBreakerVariable.Width =  this.grpboxStandAttributeTieBreakerVariable.Width;
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Height = this.grpboxFVSVariablesTieBreaker.Height;
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Width = this.grpboxFVSVariablesTieBreaker.Width;
 			
@@ -1632,7 +1632,7 @@ namespace FIA_Biosum_Manager
 				if (this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim().ToUpper()=="NOT DEFINED")
 				{
 					p_intError=-1;
-					p_strError=p_strError + "Tie Breaker FVS variable not selected\r\n";
+					p_strError=p_strError + "Tie Breaker Stand Attribute not selected\r\n";
 				}
 				else
 				{
@@ -1721,7 +1721,7 @@ namespace FIA_Biosum_Manager
 			this.EnableTabs(false);
 			if (this.lvFVSVariablesTieBreakerValues.SelectedItems[0].Index==0)
 			{
-				this.grpboxFVSVariablesTieBreakerVariable.Show();
+				this.grpboxStandAttributeTieBreakerVariable.Show();
 			}
 			else
 			{
@@ -1733,7 +1733,7 @@ namespace FIA_Biosum_Manager
 		private void grpboxFVSVariablesTieBreaker_Resize(object sender, System.EventArgs e)
 		{
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Top = this.grpboxFVSVariablesTieBreaker.Top;
-			this.grpboxFVSVariablesTieBreakerVariable.Top = this.grpboxFVSVariablesTieBreaker.Top;
+			this.grpboxStandAttributeTieBreakerVariable.Top = this.grpboxFVSVariablesTieBreaker.Top;
 		}
 
 		private void uc_scenario_treatment_intensity1_Load(object sender, System.EventArgs e)
@@ -1754,13 +1754,13 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerVariableValues_Click(object sender, System.EventArgs e)
 		{
-			if (this.lstFVSVariablesTieBreakerVariableValues.SelectedItems.Count==0) return;
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = this.lstFVSVariablesTieBreakerVariableValues.SelectedItems[0].ToString();
+			if (this.lstStandAttributeTieBreakerVariableValues.SelectedItems.Count==0) return;
+			this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = this.lstStandAttributeTieBreakerVariableValues.SelectedItems[0].ToString();
 		}
 
 		private void btnFVSVariablesTieBreakerVariableNext_Click(object sender, System.EventArgs e)
 		{
-			this.grpboxFVSVariablesTieBreakerVariable.Hide();
+			this.grpboxStandAttributeTieBreakerVariable.Hide();
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Show();
 		}
 
@@ -1780,7 +1780,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerVariableCancel_Click(object sender, System.EventArgs e)
 		{
-			this.grpboxFVSVariablesTieBreakerVariable.Hide();
+			this.grpboxStandAttributeTieBreakerVariable.Hide();
 			this.EnableTabs(true);
 			grpboxFVSVariablesTieBreaker.Show();
 		}
@@ -1790,7 +1790,7 @@ namespace FIA_Biosum_Manager
 			this.ReferenceCoreScenarioForm.m_bSave=true;
 			UpdateFVSVariableListView();
 
-			this.grpboxFVSVariablesTieBreakerVariable.Hide();
+			this.grpboxStandAttributeTieBreakerVariable.Hide();
 			this.EnableTabs(true);
 			this.grpboxFVSVariablesTieBreaker.Show();
 		}
@@ -1887,7 +1887,7 @@ namespace FIA_Biosum_Manager
 		private void btnFVSVariablesTieBreakerTreatmentIntensityPrev_Click(object sender, System.EventArgs e)
 		{
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Hide();
-			this.grpboxFVSVariablesTieBreakerVariable.Show();
+			this.grpboxStandAttributeTieBreakerVariable.Show();
 			
 		}
 	
