@@ -452,7 +452,7 @@ namespace FIA_Biosum_Manager
             this.grpMaxMin.Size = new System.Drawing.Size(464, 64);
             this.grpMaxMin.TabIndex = 18;
             this.grpMaxMin.TabStop = false;
-            this.grpMaxMin.Text = "Aggregate Setting For Tie Breaker Variable";
+            this.grpMaxMin.Text = "Which attribute value is best";
             // 
             // rdoFVSVariablesTieBreakerVariableValuesSelectedMin
             // 
@@ -460,7 +460,7 @@ namespace FIA_Biosum_Manager
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Name = "rdoFVSVariablesTieBreakerVariableValuesSelectedMin";
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Size = new System.Drawing.Size(176, 40);
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.TabIndex = 14;
-            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Text = "Minimum";
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Text = "Minimum value";
             // 
             // rdoFVSVariablesTieBreakerVariableValuesSelectedMax
             // 
@@ -470,7 +470,7 @@ namespace FIA_Biosum_Manager
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Size = new System.Drawing.Size(176, 40);
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.TabIndex = 12;
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.TabStop = true;
-            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Text = "Maximum";
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Text = "Maximum value";
             // 
             // grpboxFVSVariablesTieBreakerVariableValues
             // 
@@ -481,12 +481,13 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(816, 216);
             this.grpboxFVSVariablesTieBreakerVariableValues.TabIndex = 0;
             this.grpboxFVSVariablesTieBreakerVariableValues.TabStop = false;
-            this.grpboxFVSVariablesTieBreakerVariableValues.Text = "Tie Breaker Variable List";
+            this.grpboxFVSVariablesTieBreakerVariableValues.Text = "Stand Attribute for resolving ties when there is more than one optimal silvicultu" +
+    "ral sequence";
             // 
             // btnFVSVariablesTieBreakerVariableValues
             // 
             this.btnFVSVariablesTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(448, 32);
+            this.btnFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(448, 37);
             this.btnFVSVariablesTieBreakerVariableValues.Name = "btnFVSVariablesTieBreakerVariableValues";
             this.btnFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(184, 144);
             this.btnFVSVariablesTieBreakerVariableValues.TabIndex = 1;
@@ -497,7 +498,7 @@ namespace FIA_Biosum_Manager
             // 
             this.lstStandAttributeTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstStandAttributeTieBreakerVariableValues.ItemHeight = 16;
-            this.lstStandAttributeTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
+            this.lstStandAttributeTieBreakerVariableValues.Location = new System.Drawing.Point(8, 21);
             this.lstStandAttributeTieBreakerVariableValues.Name = "lstStandAttributeTieBreakerVariableValues";
             this.lstStandAttributeTieBreakerVariableValues.Size = new System.Drawing.Size(424, 180);
             this.lstStandAttributeTieBreakerVariableValues.TabIndex = 0;
@@ -510,7 +511,7 @@ namespace FIA_Biosum_Manager
             this.grpFVSVariablesTieBreakerVariableValuesSelected.Size = new System.Drawing.Size(816, 51);
             this.grpFVSVariablesTieBreakerVariableValuesSelected.TabIndex = 4;
             this.grpFVSVariablesTieBreakerVariableValuesSelected.TabStop = false;
-            this.grpFVSVariablesTieBreakerVariableValuesSelected.Text = "Selected Tie Breaker Variable";
+            this.grpFVSVariablesTieBreakerVariableValuesSelected.Text = "Currently Active Tie Breaker";
             // 
             // lblFVSVariablesTieBreakerVariableValuesSelected
             // 
