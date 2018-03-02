@@ -150,11 +150,7 @@ namespace FIA_Biosum_Manager
         private Label label2;
         private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
 
-
-		
-		
-
-
+        private System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;		
 
 		public class Variables
 		{
@@ -1718,7 +1714,9 @@ namespace FIA_Biosum_Manager
             oRxTools.CreateTableLinksToFVSPrePostTables(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb");
             oRxTools = null;
 			oAdo.OpenConnection(oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb","",""));
-			if (oAdo.m_intError==0)
+            _dictFVSTables = new System.Collections.Generic.Dictionary<string, 
+                System.Collections.Generic.IList<string>>();
+            if (oAdo.m_intError==0)
 			{
 
 				string[] strTableNamesArray = oAdo.getTableNames(oAdo.m_OleDbConnection);
@@ -1727,7 +1725,8 @@ namespace FIA_Biosum_Manager
 					if (strTableNamesArray[x].ToUpper().IndexOf("PRE_",0)==0)
 					{
 						string[] strColumnNamesArray = oAdo.getFieldNamesArray(oAdo.m_OleDbConnection,"SELECT * FROM " + strTableNamesArray[x]);
-						for (y=0;y<=strColumnNamesArray.Length-1;y++)
+                        System.Collections.Generic.IList<string> lstFVSFields = new System.Collections.Generic.List<string>();
+                        for (y=0;y<=strColumnNamesArray.Length-1;y++)
 						{
 							switch (strColumnNamesArray[y].Trim().ToUpper())
 							{
@@ -1756,10 +1755,25 @@ namespace FIA_Biosum_Manager
 									{
 
 										this.lstFVSVariablesPrePostVariableValue.Items.Add(strTableNamesArray[x].Substring(4,strTableNamesArray[x].Length - 4) + "." +  strColumnNamesArray[y]);
-									}
+									    lstFVSFields.Add(strColumnNamesArray[y]);
+                                    }
 									break;
 							}
+
 						}
+                        if (lstFVSFields.Count > 0)
+                        {
+                            string strFvsTableName = strTableNamesArray[x].Substring(4, strTableNamesArray[x].Length - 4);
+                            if (!_dictFVSTables.ContainsKey(strFvsTableName))
+                            {
+                                _dictFVSTables.Add(strFvsTableName, lstFVSFields);
+                            }
+                            else
+                            {
+                                System.Collections.Generic.List<string> lstTemp = (System.Collections.Generic.List<string>)_dictFVSTables[strFvsTableName];
+                                lstTemp.AddRange(lstFVSFields);
+                            }
+                        }
 					}
 				}
 				oAdo.CloseConnection(oAdo.m_OleDbConnection);
@@ -1904,7 +1918,7 @@ namespace FIA_Biosum_Manager
 
 
 			this.ReferenceOptimizationUserControl.loadvalues(lstFVSVariablesPrePostVariableValue);
-			this.ReferenceTieBreakerUserControl.loadvalues(lstFVSVariablesPrePostVariableValue);
+			this.ReferenceTieBreakerUserControl.loadvalues(_dictFVSTables);
 			this.m_intError=oAdo.m_intError;
 			this.m_strError=oAdo.m_strError;
 			oAdo=null;

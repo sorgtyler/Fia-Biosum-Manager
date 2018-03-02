@@ -68,8 +68,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox grpboxStandAttributeTieBreakerVariable;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerVariableValues;
-		private System.Windows.Forms.Button btnFVSVariablesTieBreakerVariableValues;
-		private System.Windows.Forms.ListBox lstStandAttributeTieBreakerVariableValues;
+        private System.Windows.Forms.Button btnFVSVariablesTieBreakerVariableValues;
 		private System.Windows.Forms.GroupBox grpFVSVariablesTieBreakerVariableValuesSelected;
 		private System.Windows.Forms.Label lblFVSVariablesTieBreakerVariableValuesSelected;
 		private System.Windows.Forms.GroupBox grpMaxMin;
@@ -101,7 +100,10 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ComboBox cmbFVSVariablesTieBreakerVariableValueSource;
         private Label label1;
         private Label label2;
+        private ListBox lstFVSFieldsList;
+        private ListBox lstFVSTablesList;
 		public TieBreaker_Collection m_oSavTieBreakerCollection = new TieBreaker_Collection();
+        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;		
 		
 
 		public class TieBreakerItem
@@ -235,13 +237,13 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "Stand Attribute",
             "Not Defined",
             "Not Defined",
             "Not Defined"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "Last Tie-Break Rank",
             "NA",
@@ -264,7 +266,6 @@ namespace FIA_Biosum_Manager
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax = new System.Windows.Forms.RadioButton();
             this.grpboxFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.GroupBox();
             this.btnFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.Button();
-            this.lstStandAttributeTieBreakerVariableValues = new System.Windows.Forms.ListBox();
             this.grpFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.GroupBox();
             this.lblFVSVariablesTieBreakerVariableValuesSelected = new System.Windows.Forms.Label();
             this.btnFVSVariablesTieBreakerVariableClear = new System.Windows.Forms.Button();
@@ -285,6 +286,8 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
+            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
             this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
@@ -474,8 +477,9 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxFVSVariablesTieBreakerVariableValues
             // 
+            this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.lstFVSFieldsList);
             this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.btnFVSVariablesTieBreakerVariableValues);
-            this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.lstStandAttributeTieBreakerVariableValues);
+            this.grpboxFVSVariablesTieBreakerVariableValues.Controls.Add(this.lstFVSTablesList);
             this.grpboxFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(8, 16);
             this.grpboxFVSVariablesTieBreakerVariableValues.Name = "grpboxFVSVariablesTieBreakerVariableValues";
             this.grpboxFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(816, 216);
@@ -486,22 +490,14 @@ namespace FIA_Biosum_Manager
             // 
             // btnFVSVariablesTieBreakerVariableValues
             // 
+            this.btnFVSVariablesTieBreakerVariableValues.Enabled = false;
             this.btnFVSVariablesTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(448, 37);
+            this.btnFVSVariablesTieBreakerVariableValues.Location = new System.Drawing.Point(490, 42);
             this.btnFVSVariablesTieBreakerVariableValues.Name = "btnFVSVariablesTieBreakerVariableValues";
             this.btnFVSVariablesTieBreakerVariableValues.Size = new System.Drawing.Size(184, 144);
             this.btnFVSVariablesTieBreakerVariableValues.TabIndex = 1;
             this.btnFVSVariablesTieBreakerVariableValues.Text = "Select";
             this.btnFVSVariablesTieBreakerVariableValues.Click += new System.EventHandler(this.btnFVSVariablesTieBreakerVariableValues_Click);
-            // 
-            // lstStandAttributeTieBreakerVariableValues
-            // 
-            this.lstStandAttributeTieBreakerVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstStandAttributeTieBreakerVariableValues.ItemHeight = 16;
-            this.lstStandAttributeTieBreakerVariableValues.Location = new System.Drawing.Point(8, 21);
-            this.lstStandAttributeTieBreakerVariableValues.Name = "lstStandAttributeTieBreakerVariableValues";
-            this.lstStandAttributeTieBreakerVariableValues.Size = new System.Drawing.Size(424, 180);
-            this.lstStandAttributeTieBreakerVariableValues.TabIndex = 0;
             // 
             // grpFVSVariablesTieBreakerVariableValuesSelected
             // 
@@ -619,12 +615,12 @@ namespace FIA_Biosum_Manager
             this.lvFVSVariablesTieBreakerValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvFVSVariablesTieBreakerValues.GridLines = true;
             this.lvFVSVariablesTieBreakerValues.HideSelection = false;
-            listViewItem1.StateImageIndex = 0;
-            listViewItem2.Checked = true;
-            listViewItem2.StateImageIndex = 1;
+            listViewItem3.StateImageIndex = 0;
+            listViewItem4.Checked = true;
+            listViewItem4.StateImageIndex = 1;
             this.lvFVSVariablesTieBreakerValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2});
+            listViewItem3,
+            listViewItem4});
             this.lvFVSVariablesTieBreakerValues.Location = new System.Drawing.Point(3, 18);
             this.lvFVSVariablesTieBreakerValues.MultiSelect = false;
             this.lvFVSVariablesTieBreakerValues.Name = "lvFVSVariablesTieBreakerValues";
@@ -704,6 +700,27 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(894, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
+            // 
+            // lstFVSTablesList
+            // 
+            this.lstFVSTablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSTablesList.ItemHeight = 16;
+            this.lstFVSTablesList.Location = new System.Drawing.Point(8, 21);
+            this.lstFVSTablesList.Name = "lstFVSTablesList";
+            this.lstFVSTablesList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSTablesList.TabIndex = 0;
+            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
+            // 
+            // lstFVSFieldsList
+            // 
+            this.lstFVSFieldsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSFieldsList.ItemHeight = 16;
+            this.lstFVSFieldsList.Location = new System.Drawing.Point(251, 21);
+            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
+            this.lstFVSFieldsList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSFieldsList.Sorted = true;
+            this.lstFVSFieldsList.TabIndex = 2;
+            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
             // 
             // uc_scenario_treatment_intensity1
             // 
@@ -854,6 +871,7 @@ namespace FIA_Biosum_Manager
                             this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName;
                         this.lblFVSVariablesTieBreakerVariableValuesSelected.Text =
                             this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName;
+                        this.loadFVSTableAndField();
 
                         //fvs value source (POST or POST/PRE change)
                         this.m_oOldTieBreakerCollection.Item(0).strValueSource =
@@ -919,18 +937,21 @@ namespace FIA_Biosum_Manager
             }
             this.uc_scenario_treatment_intensity1.loadgrid(true);
 
-        }	
-		public void loadvalues(System.Windows.Forms.ListBox p_oListBox)
+        }
+        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables)
 		{
 
 			
 			this.m_intError=0;
 			this.m_strError="";
 
-			int x,y;
-			lstStandAttributeTieBreakerVariableValues.Items.Clear();
-			for (x=0;x<=p_oListBox.Items.Count-1;x++)
-				lstStandAttributeTieBreakerVariableValues.Items.Add(p_oListBox.Items[x]);
+            lstFVSTablesList.Items.Clear();
+            _dictFVSTables = new System.Collections.Generic.Dictionary<string,
+                System.Collections.Generic.IList<string>>(p_dictFVSTables);           
+            foreach (string strKey in _dictFVSTables.Keys)
+            {
+                lstFVSTablesList.Items.Add(strKey);
+            }
 
 			this.m_oOldTieBreakerCollection.Clear();
 
@@ -1004,6 +1025,7 @@ namespace FIA_Biosum_Manager
 									this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName;
 								this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = 
 									this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName;
+                                this.loadFVSTableAndField();
 
 								//fvs value source (POST or POST/PRE change)
 								this.m_oOldTieBreakerCollection.Item(0).strValueSource = oAdo.m_OleDbDataReader["value_source"].ToString().Trim();
@@ -1750,13 +1772,16 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerVariableClear_Click(object sender, System.EventArgs e)
 		{
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = "Not Defined";
+            this.lstFVSTablesList.ClearSelected();
+            this.cmbFVSVariablesTieBreakerVariableValueSource.Text = "Post Value";
+            this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Checked = true;
 		}
 
 		private void btnFVSVariablesTieBreakerVariableValues_Click(object sender, System.EventArgs e)
 		{
-			if (this.lstStandAttributeTieBreakerVariableValues.SelectedItems.Count==0) return;
-			this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = this.lstStandAttributeTieBreakerVariableValues.SelectedItems[0].ToString();
+			if (this.lstFVSTablesList.SelectedItems.Count==0  || this.lstFVSFieldsList.SelectedItems.Count == 0) return;
+			this.lblFVSVariablesTieBreakerVariableValuesSelected.Text =
+                this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
 		}
 
 		private void btnFVSVariablesTieBreakerVariableNext_Click(object sender, System.EventArgs e)
@@ -1879,6 +1904,33 @@ namespace FIA_Biosum_Manager
 			}
 		}
 
+        private void loadFVSTableAndField()
+        {
+            string[] strPieces = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text.Split('.');
+            //set FVS table and variable
+            if (strPieces.Length == 2)
+            {
+                for (int index = 0; index < lstFVSTablesList.Items.Count + 1; index++)
+                {
+                    string item = lstFVSTablesList.Items[index].ToString();
+                    if (strPieces[0] == item)
+                    {
+                        lstFVSTablesList.SelectedIndex = index;
+                        break;
+                    }
+                }
+                for (int index = 0; index < lstFVSFieldsList.Items.Count + 1; index++)
+                {
+                    string item = lstFVSFieldsList.Items[index].ToString();
+                    if (strPieces[1] == item)
+                    {
+                        lstFVSFieldsList.SelectedIndex = index;
+                        break;
+                    }
+                }
+            }
+        }
+
 		private void lvFVSVariablesTieBreakerValues_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if (this.lvFVSVariablesTieBreakerValues.SelectedItems.Count > 0)
@@ -1908,6 +1960,37 @@ namespace FIA_Biosum_Manager
 			get {return _uc_optimization;}
 			set {_uc_optimization=value;}
 		}
+
+        private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lstFVSFieldsList.Items.Clear();
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = "Not Defined";
+            if (this.lstFVSTablesList.SelectedIndex > -1)
+            {
+                System.Collections.Generic.IList<string> lstFields = 
+                    _dictFVSTables[Convert.ToString(this.lstFVSTablesList.SelectedItem)];
+                if (lstFields != null)
+                {
+                    foreach (string strField in lstFields)
+                    {
+                        lstFVSFieldsList.Items.Add(strField);
+                    }
+                }
+            }
+        }
+
+        private void lstFVSFieldsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = "Not Defined";
+            if (this.lstFVSFieldsList.SelectedIndex > -1)
+            {
+                this.btnFVSVariablesTieBreakerVariableValues.Enabled = true;
+            }
+            else
+            {
+                this.btnFVSVariablesTieBreakerVariableValues.Enabled = false;
+            }
+        }
 	
 	}
 }
