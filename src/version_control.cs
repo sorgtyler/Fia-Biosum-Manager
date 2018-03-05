@@ -5132,7 +5132,34 @@ namespace FIA_Biosum_Manager
             }
         }
 
+        //@ToDo: Integrate this into versioning once we know deployment version
+        private void UpdateDatasources_5_8_1()
+        {
+            frmMain.g_sbpInfo.Text = "Version Update: Updating Core Analysis Configurations ...Stand by";
+            ado_data_access oAdo = new ado_data_access();
+            string strCoreMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";            
+            oAdo.OpenConnection(oAdo.getMDBConnString(strCoreMdb, "", ""));
+            oAdo.m_strSQL = "UPDATE scenario_fvs_variables_tiebreaker " +
+                            "SET tiebreaker_method = 'Last Tie-Break Rank' " +
+                            "WHERE tiebreaker_method = 'Treatment Intensity'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
+            oAdo.m_strSQL = "UPDATE scenario_fvs_variables_tiebreaker " +
+                            "SET tiebreaker_method = 'Stand Attribute' " +
+                            "WHERE tiebreaker_method = 'FVS Variable'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            oAdo.m_strSQL = "UPDATE scenario_fvs_variables_optimization " +
+                            "SET optimization_variable = 'Stand Attribute' " +
+                            "WHERE optimization_variable = 'FVS Variable'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            if (oAdo != null)
+            {
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                oAdo = null;
+            }
+        }
 
         public string ReferenceProjectDirectory
 		{

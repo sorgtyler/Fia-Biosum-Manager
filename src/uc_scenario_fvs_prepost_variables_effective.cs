@@ -1917,7 +1917,7 @@ namespace FIA_Biosum_Manager
 			m_oOldVar.Copy(m_oOldVar,ref m_oSavVar);
 
 
-			this.ReferenceOptimizationUserControl.loadvalues(lstFVSVariablesPrePostVariableValue);
+            this.ReferenceOptimizationUserControl.loadvalues(_dictFVSTables);
 			this.ReferenceTieBreakerUserControl.loadvalues(_dictFVSTables);
 			this.m_intError=oAdo.m_intError;
 			this.m_strError=oAdo.m_strError;
