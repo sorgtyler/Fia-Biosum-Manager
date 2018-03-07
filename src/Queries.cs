@@ -2437,7 +2437,7 @@ namespace FIA_Biosum_Manager
                                                    "TRIM(a.COLUMN_NAME) = 'TPA' AND " +
                                                    "TRIM(UCASE(a.FVS_TREE_FILE))='" + p_strFVSTreeFileName + "' " +
                                           "UNION " +
-                                          "SELECT a.FVS_TREE_FILE,a.COLUMN_NAME, 'NULLS NOT ALLOWED' AS ERROR_DESC,FVS_TREE.* FROM " + p_strPostAuditSummaryTable + " a," +
+                                          "SELECT a.FVS_TREE_FILE,a.COLUMN_NAME, 'NULLS NOT ALLOWED WHEN DBH >= 5 INCHES' AS ERROR_DESC,FVS_TREE.* FROM " + p_strPostAuditSummaryTable + " a," +
                                             "(SELECT * FROM " + p_strFvsTreeTableName + " WHERE DBH IS NOT NULL AND DBH >= 5 AND VOLCFNET IS NULL) FVS_TREE " +
                                              "WHERE a.NOVALUE_ERROR IS NOT NULL AND " +
                                                    "LEN(TRIM(NOVALUE_ERROR)) > 0 AND " +
@@ -2753,6 +2753,13 @@ namespace FIA_Biosum_Manager
                 public VolumesAndBiomass()
                 {
                 }
+                /// <summary>
+                /// Insert all FVS_TREEs that are not cycle 1 trees 
+                /// </summary>
+                /// <param name="p_strInputVolumesTable"></param>
+                /// <param name="p_strFvsTreeTable"></param>
+                /// <param name="p_strRxPackage"></param>
+                /// <returns></returns>
                 public static string FVSOut_BuiltInputTableForVolumeCalculation_Step1(string p_strInputVolumesTable,string p_strFvsTreeTable,string p_strRxPackage)
                 {
                     string strColumns = "id,biosum_cond_id,invyr,fvs_variant,spcd,dbh,ht,actualht,cr,fvs_tree_id";
@@ -2765,6 +2772,31 @@ namespace FIA_Biosum_Manager
                             "FROM " + p_strFvsTreeTable + " " +
                             "WHERE rxpackage='" + p_strRxPackage.Trim() + "' AND rxcycle<>'1'"; 
                 }
+                /// <summary>
+                /// Insert all FVS_TREEs that are cycle 1 trees and are also fvs created trees
+                /// </summary>
+                /// <param name="p_strInputVolumesTable"></param>
+                /// <param name="p_strFvsTreeTable"></param>
+                /// <param name="p_strRxPackage"></param>
+                /// <returns></returns>
+                public static string FVSOut_BuiltInputTableForVolumeCalculation_Step1a(string p_strInputVolumesTable, string p_strFvsTreeTable, string p_strRxPackage)
+                {
+                    string strColumns = "id,biosum_cond_id,invyr,fvs_variant,spcd,dbh,ht,actualht,cr,fvs_tree_id";
+                    return "INSERT INTO " + p_strInputVolumesTable + " " +
+                            "(" + strColumns + ") " +
+                            "SELECT id,biosum_cond_id,CINT(rxyear) AS invyr," +
+                                    "fvs_variant," +
+                                    "IIF(FvsCreatedTree_YN='Y',CINT(fvs_species),-1) AS spcd," +
+                                    "dbh,estht,ht,pctcr,fvs_tree_id " +
+                            "FROM " + p_strFvsTreeTable + " " +
+                            "WHERE rxpackage='" + p_strRxPackage.Trim() + "' AND rxcycle='1' AND FvsCreatedTree_YN='Y'";
+                }
+                /// <summary>
+                /// Insert FVS_TREEs that are not cycle 1 trees
+                /// </summary>
+                /// <param name="p_strInputVolumesTable"></param>
+                /// <param name="p_strFvsTreeTable"></param>
+                /// <returns></returns>
                 public static string FVSOut_BuiltInputTableForVolumeCalculation_Step1(string p_strInputVolumesTable, string p_strFvsTreeTable)
                 {
                     string strColumns = "id,biosum_cond_id,invyr,fvs_variant,spcd,dbh,ht,actualht,cr,fvs_tree_id";
@@ -2777,6 +2809,14 @@ namespace FIA_Biosum_Manager
                             "FROM " + p_strFvsTreeTable + " " +
                             "WHERE rxcycle<>'1'";
                 }
+                /// <summary>
+                /// Update tree fields with values from the MASTER.TREE records
+                /// </summary>
+                /// <param name="p_strInputVolumesTable"></param>
+                /// <param name="p_strFIATreeTable"></param>
+                /// <param name="p_strFIAPlotTable"></param>
+                /// <param name="p_strFIACondTable"></param>
+                /// <returns></returns>
                 public static string FVSOut_BuildInputTableForVolumeCalculation_Step2(
                                         string p_strInputVolumesTable,
                                         string p_strFIATreeTable,
@@ -2797,6 +2837,12 @@ namespace FIA_Biosum_Manager
                                "i.roughcull=IIF(t.roughcull IS NULL,0,t.roughcull)," +
                                "i.decaycd=IIF(t.decaycd IS NULL,0,t.decaycd)";
                 }
+                /// <summary>
+                /// Update tree fields to have values other than null. Also assign the VOL_LOC_GRP value from the condition table.
+                /// </summary>
+                /// <param name="p_strInputVolumesTable"></param>
+                /// <param name="p_strFIACondTable"></param>
+                /// <returns></returns>
                 public static string FVSOut_BuildInputTableForVolumeCalculation_Step3(
                                         string p_strInputVolumesTable,
                                         string p_strFIACondTable)
