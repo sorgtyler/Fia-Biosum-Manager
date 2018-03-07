@@ -69,7 +69,7 @@ namespace FIA_Biosum_Manager
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
                                                               "FIA Tree Macro Plot Breakpoint Diameter",
-															  "Harvest Methods",
+															  Datasource.TableTypes.HarvestMethods,
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
 															  "Tree Regional Biomass",
@@ -102,7 +102,7 @@ namespace FIA_Biosum_Manager
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
                                                               "FIA Tree Macro Plot Breakpoint Diameter",
-															  "Harvest Methods",
+															  Datasource.TableTypes.HarvestMethods,
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
 															  "Tree Regional Biomass",
@@ -133,7 +133,7 @@ namespace FIA_Biosum_Manager
 															  "FVS Tree List For Processor",
 															  "FIADB FVS Variant",
                                                               "FIA Tree Macro Plot Breakpoint Diameter",
-															  "Harvest Methods",
+															  Datasource.TableTypes.HarvestMethods,
 															  "Plot And Condition Record Audit",
 															  "Plot, Condition And Treatment Record Audit",
 															  "Tree Regional Biomass",
@@ -1242,6 +1242,7 @@ namespace FIA_Biosum_Manager
         {
             static public string FvsTreeSpecies = "FVS Tree Species";
             static public string FiaTreeSpeciesReference = "FIA Tree Species Reference";
+            static public string HarvestMethods = "Harvest Methods";
         }
 		
 	}
