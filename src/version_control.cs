@@ -132,6 +132,8 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  strProjVersion=" + strProjVersion + "\r\n");
                     if (strProjVersion.Trim() == frmMain.g_strAppVer.Trim())
                     {
+                        //@ToDo: Remove this when we have a deployment plan
+                        UpdateDatasources_5_8_1();
                         bPerformCheck = false;
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                             frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  bPerformCheck=false\r\n");
