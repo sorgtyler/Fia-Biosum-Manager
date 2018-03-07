@@ -1554,10 +1554,7 @@ namespace FIA_Biosum_Manager
                 sqlArray[4] = "ALTER TABLE plot_biosum_plot_id_work_table ALTER COLUMN biosum_plot_id CHAR(24) PRIMARY KEY";
 
                 sqlArray[5] = "SELECT biosum_cond_id, SPCD, FVS_TREE_ID, DIA INTO tree_fvs_tree_id_work_table FROM " + p_strTreeTable + " WHERE FVS_TREE_ID IS NOT NULL AND LEN(TRIM(FVS_TREE_ID)) > 0";
-                //sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ALTER COLUMN fvs_tree_id CHAR(10) PRIMARY KEY"; //not unique value after using subp*1000+tree fvs_tree_id
-                //sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ADD CONSTRAINT PRIMARY KEY primarykey (biosum_cond_id,fvs_tree_id)"; //named primary key constraint. should this be used?
-                sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ADD PRIMARY KEY (biosum_cond_id,fvs_tree_id);"; //TODO: make this an index instead? make biosum_cond_id & 
-
+                sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ADD PRIMARY KEY (biosum_cond_id,fvs_tree_id);";
 
                 sqlArray[7] = "SELECT DISTINCT " +
                                 "IIF(BIOSUM_COND_ID IS NULL OR LEN(TRIM(BIOSUM_COND_ID)) = 0,''," +
@@ -1848,7 +1845,7 @@ namespace FIA_Biosum_Manager
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
                                            "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID " +
-											"AND a.biosum_cond_id = b.BIOSUM_COND_ID " +
+											"AND a.biosum_cond_id = b.biosum_cond_id " +
                 							")) fvs_tree_id_not_found_in_tree_table_count " +
                      "UNION " +
                      "SELECT DISTINCT " +
@@ -2200,7 +2197,8 @@ namespace FIA_Biosum_Manager
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID)) fvs_tree_id_not_found_in_tree_table_count " +
+                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID AND a.biosum_cond_id = b.biosum_cond_id)) " +
+                                            "fvs_tree_id_not_found_in_tree_table_count " +
                      "UNION " +
                      "SELECT DISTINCT " +
                         "'014' AS [INDEX]," +
@@ -2239,6 +2237,7 @@ namespace FIA_Biosum_Manager
                          "FROM " + p_strFvsTreeTableName + " a " +
                          "INNER JOIN tree_fvs_tree_id_work_table b " +
                          "ON a.FVS_TREE_ID = b.FVS_TREE_ID " +
+                         "AND a.biosum_cond_id = b.biosum_cond_id " + 
                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
@@ -2294,7 +2293,7 @@ namespace FIA_Biosum_Manager
                                           "FROM " + p_strFvsTreeTableName + " fvs " +
                                           "INNER JOIN " + p_strTreeTable + " fia " +
                                           "ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " + 
-                                          "AND fvs.biosum_cond_id=fia.biosum_cond_id " + //To make sure the records match using new fvs_tree_id
+                                          "AND fvs.biosum_cond_id=fia.biosum_cond_id " +
                                           "WHERE fvs.FvsCreatedTree_YN='N' AND " +
                                                 "fvs.FVS_TREE_ID IS NOT NULL AND " +
                                                 "LEN(TRIM(fvs.FVS_TREE_ID)) >  0 AND " + 
@@ -2348,7 +2347,7 @@ namespace FIA_Biosum_Manager
                                          "FROM " + p_strFvsTreeTableName + " fvs " +
                                          "INNER JOIN " + p_strTreeTable + " fia " +
                                          "ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " +
-                                         "AND fvs.biosum_cond_id=fia.biosum_cond_id " +
+                                         "AND fvs.biosum_cond_id = fia.biosum_cond_id " +
                                          "WHERE fvs.FvsCreatedTree_YN='N' AND " +
                                                "fvs.RXCYCLE IS NOT NULL AND " + 
                                                "LEN(TRIM(fvs.RXCYCLE)) > 0 AND " + 
@@ -2608,7 +2607,8 @@ namespace FIA_Biosum_Manager
                                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                                "a.FVS_TREE_ID IS NOT NULL AND LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID)) fvs_tree_id_not_found_in_tree_table " + //TODO: biosum_cond_id join condition?
+                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID and a.biosum_cond_id = b.biosum_cond_id)) " +
+                                                           "fvs_tree_id_not_found_in_tree_table " +
                                      "WHERE a.ID = fvs_tree_id_not_found_in_tree_table.ID " +
                                      "UNION " +
                                      "SELECT DISTINCT " +
@@ -2709,7 +2709,7 @@ namespace FIA_Biosum_Manager
                                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                                "a.FVS_TREE_ID IS NOT NULL AND LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID)) fvs_tree_id_not_found_in_tree_table " +
+                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID and a.biosum_cond_id = b.biosum_cond_id)) fvs_tree_id_not_found_in_tree_table " +
                                      "WHERE a.ID = fvs_tree_id_not_found_in_tree_table.ID " +
                                      "UNION " +
                                      "SELECT DISTINCT " +
