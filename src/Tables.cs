@@ -2058,7 +2058,7 @@ namespace FIA_Biosum_Manager
 			}
 			public void CreateRxPackageTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","rxpackage");
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "rxpackage");
 			}
 			public string CreateRxPackageTableSQL(string p_strTableName)
 			{
