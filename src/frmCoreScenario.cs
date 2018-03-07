@@ -3081,7 +3081,7 @@ namespace FIA_Biosum_Manager
                         CoreAnalysisScenarioItem.TieBreakerItem oItem = new CoreAnalysisScenarioItem.TieBreakerItem();
                         oItem.RxCycle = p_oAdo.m_OleDbDataReader["rxcycle"].ToString().Trim();
                         oItem.strMethod = p_oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim();
-                        if (oItem.strMethod.ToUpper() == "FVS VARIABLE")
+                        if (oItem.strMethod.ToUpper() == "STAND ATTRIBUTE")
                         {
 
 
@@ -3113,7 +3113,7 @@ namespace FIA_Biosum_Manager
                                 oItem.bSelected = false;
                             }
                         }
-                        else if (oItem.strMethod.ToUpper() == "TREATMENT INTENSITY")
+                        else if (oItem.strMethod.ToUpper() == "LAST TIE-BREAK RANK")
                         {
                             if (p_oAdo.m_OleDbDataReader["checked_yn"].ToString().Trim().ToUpper() == "Y")
                             {
@@ -3706,7 +3706,7 @@ namespace FIA_Biosum_Manager
                 {
                     for (y = 0; y <= CoreAnalysisScenarioItem.EffectiveVariablesItem.NUMBER_OF_VARIABLES - 1; y++)
                     {
-                        strLine = strLine + "-FVS Variable " + Convert.ToString(y + 1) + "-\r\n";
+                        strLine = strLine + "-Stand Attribute " + Convert.ToString(y + 1) + "-\r\n";
                         strLine = strLine + "Pre-Treatment Variable: " +
                             p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strPreVarArray[y] + "\r\n";
                         strLine = strLine + "Post-Treatment Variable: " +
@@ -3780,7 +3780,7 @@ namespace FIA_Biosum_Manager
                        p_oScenarioItem.m_oTieBreaker_Collection.Item(x).strMethod + "\r\n";
 
                      if (p_oScenarioItem.m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() ==
-                          "TREATMENT INTENSITY")
+                          "LAST TIE-BREAK RANK")
                      {
                          bUseRxIntensity = true;
                      }
@@ -3804,7 +3804,7 @@ namespace FIA_Biosum_Manager
             }
             if (bUseRxIntensity)
             {
-                strLine = strLine + "\r\nTreatment Intensity Assignments\r\n";
+                strLine = strLine + "\r\nLast Tie-Break Rank Assignments\r\n";
                 strLine = strLine + "------------------------------------\r\n";
                 strLine = strLine + "--Rx-- --Intensity--\r\n";
                 
