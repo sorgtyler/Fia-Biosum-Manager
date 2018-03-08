@@ -373,11 +373,7 @@ namespace FIA_Biosum_Manager
 
             m_ado.OpenConnection(m_strConn); //reopen the connection after the dao connection is released
             //create work tables with similar schemas to the FVS Input tables
-            frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTable(m_ado, m_ado.m_OleDbConnection,
-                "FVS_StandInit_WorkTable");
-            frmMain.g_oTables.m_oFvs.CreateFVSInputTreeInitWorkTable(m_ado, m_ado.m_OleDbConnection,
-                "FVS_TreeInit_WorkTable");
-
+            CreateFVSWorkTables();
 
             //Create FVS input text files
             if (this.m_intError != 0) return;
@@ -397,7 +393,23 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
         }
 
-        public void CopyFVSBlankDatabaseToFVSInDir(string strFVSInDir)
+	    private void CreateFVSWorkTables()
+	    {
+	        /* Sometimes when processing multiple variants during FVSIn workflow, 
+             * processing will stop before these tables are deleted 
+             * if there are no stands in the standlist dataset.
+             */
+	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_StandInit_WorkTable"))
+	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.StandInit.DeleteWorkTable());
+	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_TreeInit_WorkTable"))
+	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.TreeInit.DeleteWorkTable());
+	        frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTable(m_ado, m_ado.m_OleDbConnection,
+	            "FVS_StandInit_WorkTable");
+	        frmMain.g_oTables.m_oFvs.CreateFVSInputTreeInitWorkTable(m_ado, m_ado.m_OleDbConnection,
+	            "FVS_TreeInit_WorkTable");
+	    }
+
+	    public void CopyFVSBlankDatabaseToFVSInDir(string strFVSInDir)
         {
             env p_env = new env();
             string strFVSInSourcePath = p_env.strAppDir + "\\db\\" + this.strFVSInMDBFile;
