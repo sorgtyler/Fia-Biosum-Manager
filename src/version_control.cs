@@ -5206,17 +5206,20 @@ namespace FIA_Biosum_Manager
             string strTargetTable = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
             string strTableStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
 
-            if (strFileStatus == "F" && strTableStatus == "F")
+            if (strDirectoryPath.IndexOf("@@appdata@@") < 0)
             {
-                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+                if (strFileStatus == "F" && strTableStatus == "F")
+                {
+                    oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+                }
             }
-            
+
             // Update datasource tables to point at biosum_ref.accdb for harvest_methods
             string strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
             oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
             oAdo.m_strSQL = "UPDATE datasource " +
-                     "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
-                     "WHERE TABLE_TYPE = '" + Datasource.TableTypes.HarvestMethods + "'";
+                         "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
+                         "WHERE TABLE_TYPE = '" + Datasource.TableTypes.HarvestMethods + "'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
             strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
