@@ -1554,10 +1554,7 @@ namespace FIA_Biosum_Manager
                 sqlArray[4] = "ALTER TABLE plot_biosum_plot_id_work_table ALTER COLUMN biosum_plot_id CHAR(24) PRIMARY KEY";
 
                 sqlArray[5] = "SELECT biosum_cond_id, SPCD, FVS_TREE_ID, DIA INTO tree_fvs_tree_id_work_table FROM " + p_strTreeTable + " WHERE FVS_TREE_ID IS NOT NULL AND LEN(TRIM(FVS_TREE_ID)) > 0";
-                //sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ALTER COLUMN fvs_tree_id CHAR(10) PRIMARY KEY"; //not unique value after using subp*1000+tree fvs_tree_id
-                //sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ADD CONSTRAINT PRIMARY KEY primarykey (biosum_cond_id,fvs_tree_id)"; //named primary key constraint. should this be used?
-                sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ADD PRIMARY KEY (biosum_cond_id,fvs_tree_id);"; //TODO: make this an index instead? make biosum_cond_id & 
-
+                sqlArray[6] = "ALTER TABLE tree_fvs_tree_id_work_table ADD PRIMARY KEY (biosum_cond_id,fvs_tree_id);";
 
                 sqlArray[7] = "SELECT DISTINCT " +
                                 "IIF(BIOSUM_COND_ID IS NULL OR LEN(TRIM(BIOSUM_COND_ID)) = 0,''," +
@@ -1716,8 +1713,7 @@ namespace FIA_Biosum_Manager
                         "(SELECT CSTR(COUNT(*)) AS NOVALUE_COUNT FROM " + p_strFvsTreeTableName + " " +
                          "WHERE DBH IS NULL) dbh_no_value_count, " +
                         "(SELECT CSTR(COUNT(*)) AS VALUE_ERROR_COUNT FROM " + p_strFvsTreeTableName + " fvs " +
-                         "INNER JOIN tree_fvs_tree_id_work_table fia ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " + 
- 						 "AND fvs.biosum_cond_id = fia.biosum_cond_id " + 
+                         "INNER JOIN tree_fvs_tree_id_work_table fia ON fvs.fvs_tree_id = fia.fvs_tree_id and fvs.biosum_cond_id = fia.biosum_cond_id " + 
                          "WHERE fvs.FvsCreatedTree_YN='N' AND  " +
                                "fvs.rxcycle='1' AND " + 
                                "fvs.FVS_TREE_ID IS NOT NULL AND " +
@@ -1847,9 +1843,7 @@ namespace FIA_Biosum_Manager
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID " +
-											"AND a.biosum_cond_id = b.BIOSUM_COND_ID " +
-                							")) fvs_tree_id_not_found_in_tree_table_count " +
+                                   "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) fvs_tree_id_not_found_in_tree_table_count " +
                      "UNION " +
                      "SELECT DISTINCT " +
                         "'014' AS [INDEX]," +
@@ -1887,8 +1881,7 @@ namespace FIA_Biosum_Manager
                         "(SELECT CSTR(COUNT(*)) AS TREE_SPECIES_CHANGE_WARNING " +
                          "FROM " + p_strFvsTreeTableName + " a " +
                          "INNER JOIN tree_fvs_tree_id_work_table b " +
-                         "ON a.FVS_TREE_ID = b.FVS_TREE_ID " +
-						 "AND a.biosum_cond_id = b.biosum_cond_id " + 
+                         "ON a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id " + 
                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
@@ -2200,7 +2193,8 @@ namespace FIA_Biosum_Manager
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID)) fvs_tree_id_not_found_in_tree_table_count " +
+                                           "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) " +
+                                            "fvs_tree_id_not_found_in_tree_table_count " +
                      "UNION " +
                      "SELECT DISTINCT " +
                         "'014' AS [INDEX]," +
@@ -2238,7 +2232,7 @@ namespace FIA_Biosum_Manager
                         "(SELECT CSTR(COUNT(*)) AS TREE_SPECIES_CHANGE_WARNING " +
                          "FROM " + p_strFvsTreeTableName + " a " +
                          "INNER JOIN tree_fvs_tree_id_work_table b " +
-                         "ON a.FVS_TREE_ID = b.FVS_TREE_ID " +
+                         "ON a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id " + 
                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
@@ -2293,7 +2287,7 @@ namespace FIA_Biosum_Manager
 				                                 "FVS.FVSCREATEDTREE_YN " +
                                           "FROM " + p_strFvsTreeTableName + " fvs " +
                                           "INNER JOIN " + p_strTreeTable + " fia " +
-                                          "ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " +
+                                          "ON fvs.fvs_tree_id = fia.fvs_tree_id and fvs.biosum_cond_id=fia.biosum_cond_id " +
                                           "WHERE fvs.FvsCreatedTree_YN='N' AND " +
                                                 "fvs.FVS_TREE_ID IS NOT NULL AND " +
                                                 "LEN(TRIM(fvs.FVS_TREE_ID)) >  0 AND " + 
@@ -2346,7 +2340,7 @@ namespace FIA_Biosum_Manager
                                                 "FVS.FVSCREATEDTREE_YN " +
                                          "FROM " + p_strFvsTreeTableName + " fvs " +
                                          "INNER JOIN " + p_strTreeTable + " fia " +
-                                         "ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " +
+                                         "ON fvs.fvs_tree_id = fia.fvs_tree_id and fvs.biosum_cond_id = fia.biosum_cond_id " +
                                          "WHERE fvs.FvsCreatedTree_YN='N' AND " +
                                                "fvs.RXCYCLE IS NOT NULL AND " + 
                                                "LEN(TRIM(fvs.RXCYCLE)) > 0 AND " + 
@@ -2606,7 +2600,8 @@ namespace FIA_Biosum_Manager
                                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                                "a.FVS_TREE_ID IS NOT NULL AND LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID)) fvs_tree_id_not_found_in_tree_table " +
+                                                           "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) " +
+                                                           "fvs_tree_id_not_found_in_tree_table " +
                                      "WHERE a.ID = fvs_tree_id_not_found_in_tree_table.ID " +
                                      "UNION " +
                                      "SELECT DISTINCT " +
@@ -2707,7 +2702,7 @@ namespace FIA_Biosum_Manager
                                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                                "a.FVS_TREE_ID IS NOT NULL AND LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID)) fvs_tree_id_not_found_in_tree_table " +
+                                                           "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) fvs_tree_id_not_found_in_tree_table " +
                                      "WHERE a.ID = fvs_tree_id_not_found_in_tree_table.ID " +
                                      "UNION " +
                                      "SELECT DISTINCT " +
@@ -2827,7 +2822,7 @@ namespace FIA_Biosum_Manager
                                         "ON t.biosum_cond_id=c.biosum_cond_id) " +
                                         "INNER JOIN " + p_strFIAPlotTable + " p " +
                                         "ON p.biosum_plot_id=c.biosum_plot_id) " +
-                           "ON i.fvs_tree_id=t.fvs_tree_id " +
+                           "ON i.fvs_tree_id = t.fvs_tree_id and i.biosum_cond_id = t.biosum_cond_id " +
                            "SET i.spcd=t.spcd," +
                                "i.statuscd=IIF(t.statuscd IS NULL,1,t.statuscd)," +
                                "i.treeclcd=t.treeclcd," +
@@ -3173,6 +3168,11 @@ namespace FIA_Biosum_Manager
                             "UPDATE FVS_StandInit_WorkTable SET Site_Species={1}, Site_Index={2} WHERE STAND_ID={0}; ",
                             strStandID, strSiteSpecies, strSiteIndex);
                     }
+
+                    public static string DeleteWorkTable()
+                    {
+                        return "DROP TABLE FVS_StandInit_WorkTable;";
+                    }
                 }
 
                 //All the queries necessary to create the FVSIn.accdb FVS_TreeInit table using intermediate tables
@@ -3186,51 +3186,29 @@ namespace FIA_Biosum_Manager
                         string strCondTableName, string strPlotTableName, string strTreeTableName)
                     {
                         string strInsertIntoTreeInit =
-                            "INSERT INTO " + strDestTable + //NOTICE: WORK TABLE
+                            "INSERT INTO " + strDestTable +
                             " (Stand_ID, Tree_ID, Tree_Count, History, Species, " +
                             "DBH, DG, Htcd, Ht, HtTopK, CrRatio, " +
                             "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
                             "Prescription, Slope, Aspect, PV_Code, TreeValue, cullbf, mist_cl_cd, " +
                             "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, TreeCN)  ";
-                        //string strBioSumWorkTableSelectStmt =
-                        //    "SELECT c.biosum_cond_id, t.subp*1000 + t.tree, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
-                        //    "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
-                        //    "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
-                        //    "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
-                        //    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
                         string strBioSumWorkTableSelectStmt =
                             "SELECT c.biosum_cond_id, VAL(t.fvs_tree_id) as Tree_ID, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
                             "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
                             "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
                             "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
                             "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
-
                         string strFromTableExpr = "FROM " +
                                                   strCondTableName + " c, " + strPlotTableName + " p, " +
                                                   strTreeTableName + " t ";
-
                         string strFilters =
                             "WHERE t.biosum_cond_id=c.biosum_cond_id AND p.biosum_plot_id=c.biosum_plot_id " +
                             "AND t.dia > 0 AND c.landclcd=1 " +
                             "AND ucase(trim(p.fvs_variant)) = \'" + strVariant.Trim().ToUpper() + "\'";
-
                         string strSQL = strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
                                         strFilters;
                         return strSQL;
                     }
-
-                    //TODO: Remove this from workflow because Issue#79 removes fvs_species name from schema
-                    //public static string UpdateFVSSpeciesNameColumn(string strDestTable, string strVariant,
-                    //    string strTreeSpeciesTableName)
-                    //{
-                    //    string strSQL =
-                    //        "UPDATE " + strDestTable +
-                    //        " AS fvstree INNER JOIN " + strTreeSpeciesTableName +
-                    //        " AS ts ON VAL(fvstree.SPECIES) = ts.SPCD " +
-                    //        "SET fvstree.FVS_SPECIES_NAME = ts.FVS_SPECIES " +
-                    //        "WHERE TRIM(ts.FVS_VARIANT)=\'" + strVariant.Trim().ToUpper() + "\'; ";
-                    //    return strSQL;
-                    //}
 
                     public static string CreateSpcdConversionTable(string strCondTableName, string strPlotTableName,
                         string strTreeTableName, string strTreeSpeciesTableName)
@@ -3444,6 +3422,44 @@ namespace FIA_Biosum_Manager
                     public static string RoundSingleDigitPercentageCrRatiosDownTo1(string strDestTable)
                     {
                         return "UPDATE " + strDestTable + " SET CrRatio=1 WHERE CrRatio<10;";
+                    }
+
+                    public static string DeleteWorkTable()
+                    {
+                        return "DROP TABLE FVS_TreeInit_WorkTable;";
+                    }
+
+                    public static string DeleteSpcdChangeWorkTable()
+                    {
+                        return "DROP TABLE SPCD_CHANGE_WORK_TABLE;";
+                    }
+                }
+
+                //This updates the FVSIn.GroupAddFilesAndKeywords table so that they FVS keywords have the correct DSNIn value
+                public class GroupAddFilesAndKeywords
+                {
+                    public static string UpdateAllPlots(string strFVSInFileName)
+                    {
+                        return
+                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_PlotInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Plots\");";
+                    }
+
+                    public static string UpdateAllStands(string strFVSInFileName)
+                    {
+                        return
+                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_StandInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Stands\");";
                     }
                 }
             }
