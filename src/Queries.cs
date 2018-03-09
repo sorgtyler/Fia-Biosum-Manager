@@ -1713,8 +1713,7 @@ namespace FIA_Biosum_Manager
                         "(SELECT CSTR(COUNT(*)) AS NOVALUE_COUNT FROM " + p_strFvsTreeTableName + " " +
                          "WHERE DBH IS NULL) dbh_no_value_count, " +
                         "(SELECT CSTR(COUNT(*)) AS VALUE_ERROR_COUNT FROM " + p_strFvsTreeTableName + " fvs " +
-                         "INNER JOIN tree_fvs_tree_id_work_table fia ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " + 
- 						 "AND fvs.biosum_cond_id = fia.biosum_cond_id " + 
+                         "INNER JOIN tree_fvs_tree_id_work_table fia ON fvs.fvs_tree_id = fia.fvs_tree_id and fvs.biosum_cond_id = fia.biosum_cond_id " + 
                          "WHERE fvs.FvsCreatedTree_YN='N' AND  " +
                                "fvs.rxcycle='1' AND " + 
                                "fvs.FVS_TREE_ID IS NOT NULL AND " +
@@ -1844,9 +1843,7 @@ namespace FIA_Biosum_Manager
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID " +
-											"AND a.biosum_cond_id = b.biosum_cond_id " +
-                							")) fvs_tree_id_not_found_in_tree_table_count " +
+                                   "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) fvs_tree_id_not_found_in_tree_table_count " +
                      "UNION " +
                      "SELECT DISTINCT " +
                         "'014' AS [INDEX]," +
@@ -1884,8 +1881,7 @@ namespace FIA_Biosum_Manager
                         "(SELECT CSTR(COUNT(*)) AS TREE_SPECIES_CHANGE_WARNING " +
                          "FROM " + p_strFvsTreeTableName + " a " +
                          "INNER JOIN tree_fvs_tree_id_work_table b " +
-                         "ON a.FVS_TREE_ID = b.FVS_TREE_ID " +
-						 "AND a.biosum_cond_id = b.biosum_cond_id " + 
+                         "ON a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id " + 
                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
@@ -2197,7 +2193,7 @@ namespace FIA_Biosum_Manager
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID AND a.biosum_cond_id = b.biosum_cond_id)) " +
+                                           "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) " +
                                             "fvs_tree_id_not_found_in_tree_table_count " +
                      "UNION " +
                      "SELECT DISTINCT " +
@@ -2236,8 +2232,7 @@ namespace FIA_Biosum_Manager
                         "(SELECT CSTR(COUNT(*)) AS TREE_SPECIES_CHANGE_WARNING " +
                          "FROM " + p_strFvsTreeTableName + " a " +
                          "INNER JOIN tree_fvs_tree_id_work_table b " +
-                         "ON a.FVS_TREE_ID = b.FVS_TREE_ID " +
-                         "AND a.biosum_cond_id = b.biosum_cond_id " + 
+                         "ON a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id " + 
                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                "a.FVS_TREE_ID IS NOT NULL AND " +
                                "LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
@@ -2292,8 +2287,7 @@ namespace FIA_Biosum_Manager
 				                                 "FVS.FVSCREATEDTREE_YN " +
                                           "FROM " + p_strFvsTreeTableName + " fvs " +
                                           "INNER JOIN " + p_strTreeTable + " fia " +
-                                          "ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " + 
-                                          "AND fvs.biosum_cond_id=fia.biosum_cond_id " +
+                                          "ON fvs.fvs_tree_id = fia.fvs_tree_id and fvs.biosum_cond_id=fia.biosum_cond_id " +
                                           "WHERE fvs.FvsCreatedTree_YN='N' AND " +
                                                 "fvs.FVS_TREE_ID IS NOT NULL AND " +
                                                 "LEN(TRIM(fvs.FVS_TREE_ID)) >  0 AND " + 
@@ -2346,8 +2340,7 @@ namespace FIA_Biosum_Manager
                                                 "FVS.FVSCREATEDTREE_YN " +
                                          "FROM " + p_strFvsTreeTableName + " fvs " +
                                          "INNER JOIN " + p_strTreeTable + " fia " +
-                                         "ON fvs.FVS_TREE_ID = fia.FVS_TREE_ID " +
-                                         "AND fvs.biosum_cond_id = fia.biosum_cond_id " +
+                                         "ON fvs.fvs_tree_id = fia.fvs_tree_id and fvs.biosum_cond_id = fia.biosum_cond_id " +
                                          "WHERE fvs.FvsCreatedTree_YN='N' AND " +
                                                "fvs.RXCYCLE IS NOT NULL AND " + 
                                                "LEN(TRIM(fvs.RXCYCLE)) > 0 AND " + 
@@ -2607,7 +2600,7 @@ namespace FIA_Biosum_Manager
                                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                                "a.FVS_TREE_ID IS NOT NULL AND LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID and a.biosum_cond_id = b.biosum_cond_id)) " +
+                                                           "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) " +
                                                            "fvs_tree_id_not_found_in_tree_table " +
                                      "WHERE a.ID = fvs_tree_id_not_found_in_tree_table.ID " +
                                      "UNION " +
@@ -2709,7 +2702,7 @@ namespace FIA_Biosum_Manager
                                          "WHERE a.FvsCreatedTree_YN='N' AND " +
                                                "a.FVS_TREE_ID IS NOT NULL AND LEN(TRIM(a.FVS_TREE_ID)) >  0 AND " +
                                                "NOT EXISTS (SELECT b.FVS_TREE_ID FROM tree_fvs_tree_id_work_table b " +
-                                                           "WHERE a.FVS_TREE_ID = b.FVS_TREE_ID and a.biosum_cond_id = b.biosum_cond_id)) fvs_tree_id_not_found_in_tree_table " +
+                                                           "WHERE a.fvs_tree_id = b.fvs_tree_id and a.biosum_cond_id = b.biosum_cond_id)) fvs_tree_id_not_found_in_tree_table " +
                                      "WHERE a.ID = fvs_tree_id_not_found_in_tree_table.ID " +
                                      "UNION " +
                                      "SELECT DISTINCT " +
@@ -2829,7 +2822,7 @@ namespace FIA_Biosum_Manager
                                         "ON t.biosum_cond_id=c.biosum_cond_id) " +
                                         "INNER JOIN " + p_strFIAPlotTable + " p " +
                                         "ON p.biosum_plot_id=c.biosum_plot_id) " +
-                           "ON i.fvs_tree_id=t.fvs_tree_id " +
+                           "ON i.fvs_tree_id = t.fvs_tree_id and i.biosum_cond_id = t.biosum_cond_id " +
                            "SET i.spcd=t.spcd," +
                                "i.statuscd=IIF(t.statuscd IS NULL,1,t.statuscd)," +
                                "i.treeclcd=t.treeclcd," +
