@@ -4270,7 +4270,7 @@ namespace FIA_Biosum_Manager
                                                                         "(SELECT standid,year " +
                                                                          "FROM " + strFVSOutSeqNumMatrixTableLink + " " +
                                                                          "WHERE CYCLE" + strCycle + "_PRE_YN='Y')  b " +
-                                                                    "WHERE TRIM(a.biosum_cond_id)=TRIM(b.standid) AND CINT(a.rxyear)=b.year";
+                                                                    "WHERE TRIM(a.biosum_cond_id)=TRIM(b.standid) AND CINT(a.rxyear)=b.year AND a.dbh >= 1.0";
 
                                             if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                                 this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
@@ -4287,7 +4287,7 @@ namespace FIA_Biosum_Manager
                                                                         "(SELECT standid,year " +
                                                                          "FROM " + strFVSOutSeqNumMatrixTableLink + " " +
                                                                          "WHERE CYCLE" + strCycle + "_PRE_YN='Y')  b " +
-                                                                    "WHERE TRIM(a.biosum_cond_id)=TRIM(b.standid) AND CINT(a.rxyear)=b.year";
+                                                                    "WHERE TRIM(a.biosum_cond_id)=TRIM(b.standid) AND CINT(a.rxyear)=b.year AND a.dbh >= 1.0";
 
                                             if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                                 this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
