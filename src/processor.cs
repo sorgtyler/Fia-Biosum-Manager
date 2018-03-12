@@ -183,11 +183,10 @@ namespace FIA_Biosum_Manager
                                 "z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, " +
                                 "z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, c.gis_yard_dist " +
                                 "FROM " + strTableName + " z, " +
-                                "(SELECT p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM " + 
+                                "(SELECT p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM " +
                                 strPlotTableName + " p INNER JOIN " + strCondTableName + " d ON p.biosum_plot_id = d.biosum_plot_id) c " +
                                 "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
-                                "z.biosum_cond_id = c.biosum_cond_id AND " +
-                                "mid(z.fvs_tree_id,1,2)='" + p_strVariant + "' ";
+                                "z.biosum_cond_id = c.biosum_cond_id";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -309,7 +308,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID) t, (SELECT \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON  \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id = d.biosum_plot_id) c WHERE z.rxpackage='001' AND z.biosum_cond_id = c.biosum_cond_id AND \r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.biosum_plot_id = t.biosum_plot_id AND mid(z.fvs_tree_id,1,2)='BM' \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.biosum_plot_id = t.biosum_plot_id AND mid(z.fvs_tree_id,1,2)='" + p_strVariant + "' \r\n");
                 }
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
@@ -366,12 +365,12 @@ namespace FIA_Biosum_Manager
             {
             string strTableName = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
             string strTreeTableName = m_oQueries.m_oFIAPlot.m_strTreeTable;
-            string strSQL = "SELECT DISTINCT t.fvs_tree_id, t.spcd " +
+            string strSQL = "SELECT DISTINCT t.fvs_tree_id, t.biosum_cond_id, t.spcd " +
                     "FROM " + strTreeTableName + " t, " + strTableName + " z " +
                     "WHERE t.fvs_tree_id = z.fvs_tree_id " +
+                    "AND t.biosum_cond_id = z.biosum_cond_id " +
                     "AND z.rxpackage='" + p_strRxPackage + "' " +
-                    "AND mid(t.fvs_tree_id,1,2)='" + p_strVariant + "' " +
-                    "GROUP BY t.fvs_tree_id, t.spcd";
+                    "GROUP BY t.fvs_tree_id, t.biosum_cond_id, t.spcd";
 
             m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
             if (m_oAdo.m_OleDbDataReader.HasRows)
@@ -381,26 +380,30 @@ namespace FIA_Biosum_Manager
                 while (m_oAdo.m_OleDbDataReader.Read())
                 {
                     string strTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
+                    string strCondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
                     string strSpCd = Convert.ToString(m_oAdo.m_OleDbDataReader["spcd"]).Trim();
-                    dictSpCd.Add(strTreeId, strSpCd);
+                    dictSpCd.Add(strCondId + "_" + strTreeId, strSpCd);
                 }
 
                 // Second pass at processing tree properties based on information from the cut list
                 System.Collections.Generic.IList<tree> lstRemovetrees = new System.Collections.Generic.List<tree>();
                 foreach (tree nextTree in m_trees)
                 {
+                    string strKey = nextTree.CondId + "_" + nextTree.FvsTreeId;
                     if (!nextTree.FvsCreatedTree)
                     {
-                        nextTree.SpCd = dictSpCd[nextTree.FvsTreeId];
+                        nextTree.SpCd = dictSpCd[strKey];
                     }
                     // set tree species fields from treeSpecies dictionary
-                    if (! dictTreeSpecies.ContainsKey(nextTree.SpCd))
+                    if (!dictTreeSpecies.ContainsKey(nextTree.SpCd))
                     {
                         System.Windows.Forms.MessageBox.Show("The tree_species table is missing either an entry or species group for variant " +
                         p_strVariant + " spcd " + nextTree.SpCd + ". Please resolve this issue before running Processor.",
                         "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                         return -1;
                     }
+
+                    // set tree species fields from treeSpecies dictionary
                     treeSpecies foundSpecies = dictTreeSpecies[nextTree.SpCd];
                     nextTree.SpeciesGroup = foundSpecies.SpeciesGroup;
                     nextTree.OdWgt = foundSpecies.OdWgt;
@@ -515,7 +518,7 @@ namespace FIA_Biosum_Manager
             if (p_oAdo.m_intError == 0)
             {
                 string strTreeTableName = m_oQueries.m_oFIAPlot.m_strTreeTable;
-                string strSQL = "SELECT fvs_tree_id, tree, cn from " + strTreeTableName + " where fvs_tree_id is not null";
+                string strSQL = "SELECT fvs_tree_id, biosum_cond_id, tree, cn from " + strTreeTableName + " where fvs_tree_id is not null and biosum_cond_id is not null";
   
                 p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, strSQL);
                 if (p_oAdo.m_OleDbDataReader.HasRows)
@@ -529,12 +532,13 @@ namespace FIA_Biosum_Manager
                         System.Collections.Generic.List<string> treeList = 
                             new System.Collections.Generic.List<string>();
                         string strFvsTreeId = Convert.ToString(p_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
+                        string strKey = Convert.ToString(p_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim() + "_" + strFvsTreeId;
                         //This is stored as a number but we convert to string so we can store in list
                         string strTree = Convert.ToString(p_oAdo.m_OleDbDataReader["tree"]);
                         string strCn = Convert.ToString(p_oAdo.m_OleDbDataReader["cn"]).Trim();
                         treeList.Add(strTree);
                         treeList.Add(strCn);
-                        dictTreeTable.Add(strFvsTreeId, treeList);
+                        dictTreeTable.Add(strKey, treeList);
                     }
 
                     string strTableName = p_strVariant + "_" + p_strRxPackage + "_reconcile_trees";
@@ -550,9 +554,10 @@ namespace FIA_Biosum_Manager
                     int intTempTree = 9999;
                     foreach (tree nextTree in m_trees)
                     {
-                        if (dictTreeTable.ContainsKey(nextTree.FvsTreeId))
+                        string strKey = nextTree.CondId + "_" + nextTree.FvsTreeId;
+                        if (dictTreeTable.ContainsKey(strKey))
                         {
-                            System.Collections.Generic.List<string> treeList = dictTreeTable[nextTree.FvsTreeId];
+                            System.Collections.Generic.List<string> treeList = dictTreeTable[strKey];
                             intTempTree = Convert.ToInt16(treeList[idxTree]);
                             strTempCn = treeList[idxCn];
                         }

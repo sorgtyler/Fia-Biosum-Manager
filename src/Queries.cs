@@ -3945,71 +3945,7 @@ namespace FIA_Biosum_Manager
 
 
             }
-            public static string UpdateBinsTable(string p_strDiametersTableName,
-                                          string p_strTreeBinsTableName,
-                                          string p_strTreeDataInTableName,
-                                          string p_strClass)
-            {
-                return "UPDATE " + p_strDiametersTableName + " d " +
-                        "INNER JOIN (" + p_strTreeDataInTableName + " t " +
-                        "INNER JOIN " + p_strTreeBinsTableName + " b " +
-                        "ON  (t.rxpackage = b.rxpackage AND " +
-                             "t.rx = b.rx AND " +
-                             "t.rxcycle = b.rxcycle AND " +
-                             "t.fvs_tree_id = b.fvs_tree_id)) " +
-                        "ON d.DBH = b.DBH AND d.species_group=b.species_group " +
-                        "SET b." + p_strClass + "_Util_Logs_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',1,0)," +
-                        "b." + p_strClass + "_Util_Logs_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.TPA,0)," +
-                        "b." + p_strClass + "_Util_Chips_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',1,0)," +
-                        "b." + p_strClass + "_Util_Chips_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.TPA,0)," +
-                        "b." + p_strClass + "_Util_Logs_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b." + p_strClass + "_Util_Logs_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b." + p_strClass + "_Util_Logs_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b." + p_strClass + "_Util_Logs_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[CHIP_VOL_CF],0)," +
-                        "b." + p_strClass + "_Util_Chips_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b." + p_strClass + "_Util_Chips_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b." + p_strClass + "_Util_Chips_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b." + p_strClass + "_Util_Chips_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[CHIP_VOL_CF],0)," + 
-                        "b." + p_strClass + "_NonUtil_Logs_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',1,0)," +
-                        "b." + p_strClass + "_NonUtil_Logs_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.TPA,0)," +
-                        "b." + p_strClass + "_NonUtil_Chips_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',1,0)," +
-                        "b." + p_strClass + "_NonUtil_Chips_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.TPA,0)," +
-                        "b." + p_strClass + "_NonUtil_Logs_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b." + p_strClass + "_NonUtil_Logs_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b." + p_strClass + "_NonUtil_Logs_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b." + p_strClass + "_NonUtil_Logs_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[CHIP_VOL_CF],0)," +
-                        "b." + p_strClass + "_NonUtil_Chips_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b." + p_strClass + "_NonUtil_Chips_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b." + p_strClass + "_NonUtil_Chips_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b." + p_strClass + "_NonUtil_Chips_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[CHIP_VOL_CF],0) ";
-                
 
-
-            }
             public static string InitializeHwdBinsTable(string p_strTreeBinsTableName,
                                                      string p_strClass)
             {
@@ -4042,72 +3978,7 @@ namespace FIA_Biosum_Manager
 
 
             }
-            public static string UpdateHwdBinsTable(string p_strDiametersTableName,
-                                          string p_strTreeHwdBinsTableName,
-                                          string p_strTreeDataInTableName,
-                                          string p_strClass)
-            {
-                return "UPDATE " + p_strDiametersTableName + " d " +
-                        "INNER JOIN (" + p_strTreeDataInTableName + " t " +
-                        "INNER JOIN " + p_strTreeHwdBinsTableName + " b " +
-                        "ON  (t.rxpackage = b.rxpackage AND " +
-                             "t.rx = b.rx AND " +
-                             "t.rxcycle = b.rxcycle AND " +
-                             "t.fvs_tree_id = b.fvs_tree_id)) " +
-                        "ON d.DBH = b.DBH AND d.species_group=b.species_group " +
-                        "SET b.HWD_" + p_strClass + "_Util_Logs_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',1,0)," +
-                        "b.HWD_" + p_strClass + "_Util_Logs_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.TPA,0)," +
-                        "b.HWD_" + p_strClass + "_Util_Chips_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',1,0)," +
-                        "b.HWD_" + p_strClass + "_Util_Chips_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.TPA,0)," +
-                        "b.HWD_" + p_strClass + "_Util_Logs_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_Util_Logs_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b.HWD_" + p_strClass + "_Util_Logs_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_Util_Logs_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Logs_Bl='Y',t.[CHIP_VOL_CF],0)," +
-                        "b.HWD_" + p_strClass + "_Util_Chips_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_Util_Chips_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b.HWD_" + p_strClass + "_Util_Chips_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_Util_Chips_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.Util_Chips_Bl='Y',t.[CHIP_VOL_CF],0), " +
-                        "b.HWD_" + p_strClass + "_NonUtil_Logs_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',1,0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Logs_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.TPA,0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Chips_count = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',1,0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Chips_TPA = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.TPA,0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Logs_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Logs_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Logs_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Logs_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Logs_Bl='Y',t.[CHIP_VOL_CF],0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Chips_merch_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[MERCH_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Chips_merch_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[MERCH_VOL_CF],0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Chips_biomass_wt = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[CHIP_WT_GT],0)," +
-                        "b.HWD_" + p_strClass + "_NonUtil_Chips_biomass_vol = " +
-                              "IIF(TRIM(d.class)='" + p_strClass + "' And d.NonUtil_Chips_Bl='Y',t.[CHIP_VOL_CF],0) " + 
-                    "WHERE t.spcd > 299";
-                       
 
-
-            }
             public static string SumBinByPlotRxSpcGrpDbhGrp(string p_strFromTableName, string p_strIntoTableName)
             {
                 return "SELECT BIOSUM_COND_ID, RXPACKAGE,RX,RXCYCLE, species_group, diam_group," +
