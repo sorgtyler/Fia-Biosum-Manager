@@ -4331,7 +4331,7 @@ namespace FIA_Biosum_Manager
                                                    "'" + m_strDateTimeCreated + "' AS DateTimeCreated " +
                                                    "INTO cutlist_fvs_created_seedlings_work_table " +
                                                    "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t " +
-                                                   "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES' AND dbh >= 1.0"; //t.dbh?
+                                                   "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES' AND dbh >= 1.0";
                                             }
                                             else
                                             {
@@ -4353,7 +4353,7 @@ namespace FIA_Biosum_Manager
                                                    "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t,cutlist_rowid_work_table r " +
                                                    "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES' AND " + 
                                                          "(r.CaseId = t.CaseId AND r.StandId = t.StandId AND r.year = t.year AND r.treeid = t.treeid AND r.treeindex = t.treeindex) AND " + 
-                                                         "(r.CaseId = c.CaseId) AND dbh >= 1.0"; //t.dbh?
+                                                         "(r.CaseId = c.CaseId) AND dbh >= 1.0";
                                             }
 
                                             if (m_bDebug && frmMain.g_intDebugLevel > 2)
