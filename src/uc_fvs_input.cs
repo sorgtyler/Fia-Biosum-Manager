@@ -56,20 +56,16 @@ namespace FIA_Biosum_Manager
 		private const int COL_CHECKBOX = 0;
 		private const int COL_VARIANT = 1;
 		private const int COL_RX = 2;
-		//private const int COL_CYCLE = 3;
 		private const int COL_LOC = 3;
-		private const int COL_SLF = 4;
-		//private const int COL_FVS = 4;
-		private const int COL_STANDCOUNT = 5;
-		private const int COL_TREECOUNT=6;
-		//private const int COL_DSNOUT = 7;
-		private const int COL_MDBOUT = 7;
-		private const int COL_SUMMARYCOUNT = 8;
-		private const int COL_CUTCOUNT = 9;
-		private const int COL_LEFTCOUNT = 10;
-		private const int COL_POTFIRECOUNT = 11;
-        private const int COL_POTFIREMDBOUT = 12;
-        private const int COL_POTFIREBASEYEARCOUNT = 13;
+		private const int COL_STANDCOUNT = 4;
+		private const int COL_TREECOUNT=5;
+		private const int COL_MDBOUT = 6;
+		private const int COL_SUMMARYCOUNT = 7;
+		private const int COL_CUTCOUNT = 8;
+		private const int COL_LEFTCOUNT = 9;
+		private const int COL_POTFIRECOUNT = 10;
+        private const int COL_POTFIREMDBOUT = 11;
+        private const int COL_POTFIREBASEYEARCOUNT = 12;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Label lblProgress;
 		private System.Windows.Forms.Button btnCancel;
@@ -215,8 +211,8 @@ namespace FIA_Biosum_Manager
             // 
             this.cmbAction.FormattingEnabled = true;
             this.cmbAction.Items.AddRange(new object[] {
-            "Create FVS Input Text Files",
-            "Create FVS Output MDB Files",
+            "Create FVS Input Database Files",
+            "Create FVS Output Database Files",
             "Delete Standard FVS Output Tables",
             "Delete POTFIRE Base Year Output Tables",
             "Delete Both Standard and POTFIRE Base Year Output Tables",
@@ -532,9 +528,8 @@ namespace FIA_Biosum_Manager
 				this.lstFvsInput.Columns.Add("FVS Variant", 80, HorizontalAlignment.Left);
 				this.lstFvsInput.Columns.Add("RxPackage", 120, HorizontalAlignment.Left);
 				this.lstFvsInput.Columns.Add("Loc File", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Slf File", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Stand Count", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Fvs File Count", 100, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("StandInit Count", 100, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("TreeInit Count", 100, HorizontalAlignment.Left);
 				this.lstFvsInput.Columns.Add("Output File", 100, HorizontalAlignment.Left);
 				this.lstFvsInput.Columns.Add("Summary Count", 100, HorizontalAlignment.Left);
 				this.lstFvsInput.Columns.Add("Tree Cut List Count", 100, HorizontalAlignment.Left);
@@ -597,14 +592,11 @@ namespace FIA_Biosum_Manager
 					//loc file
 					entryListItem.SubItems.Add(" ");  //loc file
 					this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,uc_fvs_input.COL_LOC,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
-					//slf file
-					entryListItem.SubItems.Add(" ");  //slf file
-					this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,uc_fvs_input.COL_SLF,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
-					//slf record count
-					entryListItem.SubItems.Add(" ");  //slf record count
+					//FVS_StandInit Stand_ID count
+					entryListItem.SubItems.Add(" ");
 					this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,uc_fvs_input.COL_STANDCOUNT,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
-					//tree file count
-					entryListItem.SubItems.Add(" ");  //tree file count
+					//FVS_TreeInit row count
+					entryListItem.SubItems.Add(" ");
 					this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,uc_fvs_input.COL_TREECOUNT,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
 					//out mdb file name
 					entryListItem.SubItems.Add(" ");  //out mdb file
@@ -647,17 +639,13 @@ namespace FIA_Biosum_Manager
 						entryListItem.SubItems[COL_LOC].Text = this.m_strLocFile;
     				}
 
-					strInDirAndFile = this.txtDataDir.Text.Trim() + "\\" + this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim() + "\\" + this.m_strSlfFile.Trim();
-					if (System.IO.File.Exists(strInDirAndFile)==true)
-					{
-						entryListItem.SubItems[COL_SLF].Text = this.m_strSlfFile;
-						entryListItem.SubItems[COL_STANDCOUNT].Text = Convert.ToString(getSlfPlotCount(strInDirAndFile));
-					}
-
-					entryListItem.SubItems[COL_TREECOUNT].Text = Convert.ToString(getFvsTreeFileCount(this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim()));
-				
-				
-
+				    strInDirAndFile = this.txtDataDir.Text.Trim() + "\\" + this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim() + "\\" + "FVSIn.accdb";
+				    if (System.IO.File.Exists(strInDirAndFile) == true)
+				    {
+				        //TODO: is " " preferable to "0" in the case that FVSIn exists but the table does not (not expected behavior), or the table exists but has no rows?
+				        entryListItem.SubItems[COL_STANDCOUNT].Text = Convert.ToString(getStandInitCount(strInDirAndFile));
+				        entryListItem.SubItems[COL_TREECOUNT].Text = Convert.ToString(getTreeInitCount(strInDirAndFile));
+				    }
 
 
 					//check dsn out registry values
@@ -1352,14 +1340,14 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_LOC, "Text", strVariant + ".loc");
                         }
 
-                        strInDirAndFile = strDataDir + "\\" + strVariant + "\\" + strVariant + ".slf";
-                        if (System.IO.File.Exists(strInDirAndFile) == true)
-                        {
-                            frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_SLF, "Text", strVariant + ".slf");
-                        }
-                        frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_TREECOUNT, "Text",Convert.ToString(getFvsTreeFileCount(strVariant)));
-                        frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_STANDCOUNT, "Text", Convert.ToString(this.getSlfPlotCount(strDataDir + "\\" + strVariant + "\\" + strVariant + ".slf")));
-                        				
+					    strInDirAndFile = strDataDir + "\\" + strVariant + "\\" + "FVSIn.accdb";
+					    if (System.IO.File.Exists(strInDirAndFile) == true) //redundant check here, but leaves " " instead of new "0"
+					    {
+					        frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_STANDCOUNT, "Text",
+					            Convert.ToString(getStandInitCount(strInDirAndFile)));
+					        frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_TREECOUNT, "Text",
+					            Convert.ToString(getTreeInitCount(strInDirAndFile)));
+					    }				
 
 					}
 					
@@ -1581,6 +1569,95 @@ namespace FIA_Biosum_Manager
 
             
 		}
+
+        private int getStandInitCount(string strDirAndFile)
+        {
+            int x = 0;
+            try
+            {
+
+                if (System.IO.File.Exists(strDirAndFile))
+                {
+                    ado_data_access p_ado = new ado_data_access();
+                    dao_data_access p_dao = new dao_data_access();
+                    string strConn = p_ado.getMDBConnString(strDirAndFile, "", "");
+
+                    if (p_dao.TableExists(strDirAndFile, "FVS_StandInit"))
+                    {
+                        System.Data.OleDb.OleDbConnection pConn = new System.Data.OleDb.OleDbConnection();
+                        pConn.ConnectionString = strConn;
+                        pConn.Open();
+                        x = (int)m_ado.getSingleDoubleValueFromSQLQuery(pConn,
+                            "SELECT COUNT(*) as StandInitCount FROM (SELECT DISTINCT Stand_ID FROM FVS_StandInit);",
+                            "FVS_StandInit");
+                        p_ado.CloseConnection(pConn);
+                        pConn.Dispose();
+                    }
+
+                    p_ado = null;
+                    p_dao = null;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("!!Error!! \n" +
+                                "Module - uc_fvs_input:getStandInitCount  \n" +
+                                "Err Msg - " + e.Message.ToString().Trim(),
+                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                //if (x > 2) //TODO: Why was this logic here in getSlfPlotCount?
+                //{
+                //    x = (int) (x / 2);
+                //}
+            }
+            return x;
+        }
+
+        private int getTreeInitCount(string strDirAndFile)
+        {
+            int x = 0;
+            try
+            {
+
+                if (System.IO.File.Exists(strDirAndFile))
+                {
+                    ado_data_access p_ado = new ado_data_access();
+                    dao_data_access p_dao = new dao_data_access();
+                    string strConn = p_ado.getMDBConnString(strDirAndFile, "", "");
+
+                    if (p_dao.TableExists(strDirAndFile, "FVS_TreeInit"))
+                    {
+                        System.Data.OleDb.OleDbConnection pConn = new System.Data.OleDb.OleDbConnection();
+                        pConn.ConnectionString = strConn;
+                        pConn.Open();
+                        x = (int)m_ado.getSingleDoubleValueFromSQLQuery(pConn,
+                            "SELECT COUNT(*) as TreeInitCount FROM FVS_TreeInit;",
+                            "FVS_TreeInit");
+                        p_ado.CloseConnection(pConn);
+                        pConn.Dispose();
+                    }
+
+                    p_ado = null;
+                    p_dao = null;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("!!Error!! \n" +
+                                "Module - uc_fvs_input:getTreeInitCount  \n" +
+                                "Err Msg - " + e.Message.ToString().Trim(),
+                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                //if (x > 2) //TODO: Why was this logic here in getSlfPlotCount?
+                //{
+                //    x = (int) (x / 2);
+                //}
+            }
+            return x;
+        }
+
 		private int getFvsTreeFileCount(string strVariant)
 		{
 			int x=0;
@@ -2221,10 +2298,10 @@ namespace FIA_Biosum_Manager
             string strAction = cmbAction.Text.Trim().ToUpper();
             switch (strAction)
             {
-                case "CREATE FVS INPUT TEXT FILES":
+                case "CREATE FVS INPUT DATABASE FILES":
                     btnAppend_Click(null, null);
                     break;
-                case "CREATE FVS OUTPUT MDB FILES":
+                case "CREATE FVS OUTPUT DATABASE FILES":
                     CreateFvsOutFiles();
                     break;
                 case "DELETE STANDARD FVS OUTPUT TABLES":
