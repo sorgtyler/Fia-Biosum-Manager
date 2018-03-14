@@ -94,7 +94,6 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesOptimizationVariableValues;
 		private System.Windows.Forms.Button btnFVSVariablesOptimizationVariableValues;
-		private System.Windows.Forms.ListBox lstFVSVariablesOptimizationVariableValues;
 		private System.Windows.Forms.GroupBox grpFVSVariablesOptimizationVariableValuesSelected;
 		private System.Windows.Forms.Label lblFVSVariablesOptimizationVariableValuesSelected;
 		private System.Windows.Forms.Button btnOptimiztionPrev;
@@ -109,7 +108,10 @@ namespace FIA_Biosum_Manager
         private ComboBox cboEconVariable;
         private TextBox txtRevenueDescr;
         private Label LblNetRevenu;
+        private ListBox lstFVSFieldsList;
+        private ListBox lstFVSTablesList;
         private string m_strLastValue = "";
+        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;		
 
 		public class VariableItem
 		{
@@ -241,8 +243,6 @@ namespace FIA_Biosum_Manager
 
 			
 
-			
-
 			// TODO: Add any initialization after the InitializeComponent call
 
 		}
@@ -274,7 +274,6 @@ namespace FIA_Biosum_Manager
             this.panel1 = new System.Windows.Forms.Panel();
             this.grpboxFVSVariablesOptimizationVariableValues = new System.Windows.Forms.GroupBox();
             this.btnFVSVariablesOptimizationVariableValues = new System.Windows.Forms.Button();
-            this.lstFVSVariablesOptimizationVariableValues = new System.Windows.Forms.ListBox();
             this.grpFVSVariablesOptimizationVariableValuesSelected = new System.Windows.Forms.GroupBox();
             this.lblFVSVariablesOptimizationVariableValuesSelected = new System.Windows.Forms.Label();
             this.btnOptimizationFVSVariableClear = new System.Windows.Forms.Button();
@@ -318,6 +317,8 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.LblNetRevenu = new System.Windows.Forms.Label();
+            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
+            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationFVSVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -363,7 +364,7 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationFVSVariable.Size = new System.Drawing.Size(872, 448);
             this.grpboxOptimizationFVSVariable.TabIndex = 35;
             this.grpboxOptimizationFVSVariable.TabStop = false;
-            this.grpboxOptimizationFVSVariable.Text = "FVS Variable";
+            this.grpboxOptimizationFVSVariable.Text = "Stand Attribute";
             // 
             // panel1
             // 
@@ -382,33 +383,25 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxFVSVariablesOptimizationVariableValues
             // 
+            this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.lstFVSFieldsList);
+            this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.lstFVSTablesList);
             this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.btnFVSVariablesOptimizationVariableValues);
-            this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.lstFVSVariablesOptimizationVariableValues);
             this.grpboxFVSVariablesOptimizationVariableValues.Location = new System.Drawing.Point(8, 16);
             this.grpboxFVSVariablesOptimizationVariableValues.Name = "grpboxFVSVariablesOptimizationVariableValues";
             this.grpboxFVSVariablesOptimizationVariableValues.Size = new System.Drawing.Size(816, 280);
             this.grpboxFVSVariablesOptimizationVariableValues.TabIndex = 0;
             this.grpboxFVSVariablesOptimizationVariableValues.TabStop = false;
-            this.grpboxFVSVariablesOptimizationVariableValues.Text = "Optimization Variable List";
+            this.grpboxFVSVariablesOptimizationVariableValues.Text = "Stand attribute used to select the optimal silvicultural sequence";
             // 
             // btnFVSVariablesOptimizationVariableValues
             // 
             this.btnFVSVariablesOptimizationVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFVSVariablesOptimizationVariableValues.Location = new System.Drawing.Point(448, 32);
+            this.btnFVSVariablesOptimizationVariableValues.Location = new System.Drawing.Point(490, 42);
             this.btnFVSVariablesOptimizationVariableValues.Name = "btnFVSVariablesOptimizationVariableValues";
             this.btnFVSVariablesOptimizationVariableValues.Size = new System.Drawing.Size(184, 144);
             this.btnFVSVariablesOptimizationVariableValues.TabIndex = 1;
             this.btnFVSVariablesOptimizationVariableValues.Text = "Select";
             this.btnFVSVariablesOptimizationVariableValues.Click += new System.EventHandler(this.btnFVSVariablesOptimizationVariableValues_Click);
-            // 
-            // lstFVSVariablesOptimizationVariableValues
-            // 
-            this.lstFVSVariablesOptimizationVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstFVSVariablesOptimizationVariableValues.ItemHeight = 16;
-            this.lstFVSVariablesOptimizationVariableValues.Location = new System.Drawing.Point(8, 16);
-            this.lstFVSVariablesOptimizationVariableValues.Name = "lstFVSVariablesOptimizationVariableValues";
-            this.lstFVSVariablesOptimizationVariableValues.Size = new System.Drawing.Size(424, 244);
-            this.lstFVSVariablesOptimizationVariableValues.TabIndex = 0;
             // 
             // grpFVSVariablesOptimizationVariableValuesSelected
             // 
@@ -418,7 +411,7 @@ namespace FIA_Biosum_Manager
             this.grpFVSVariablesOptimizationVariableValuesSelected.Size = new System.Drawing.Size(816, 51);
             this.grpFVSVariablesOptimizationVariableValuesSelected.TabIndex = 4;
             this.grpFVSVariablesOptimizationVariableValuesSelected.TabStop = false;
-            this.grpFVSVariablesOptimizationVariableValuesSelected.Text = "Selected Optimization Variable";
+            this.grpFVSVariablesOptimizationVariableValuesSelected.Text = "Currently Active Optimization Stand Attribute";
             // 
             // lblFVSVariablesOptimizationVariableValuesSelected
             // 
@@ -619,7 +612,7 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationSettings.Size = new System.Drawing.Size(856, 448);
             this.grpboxOptimizationSettings.TabIndex = 30;
             this.grpboxOptimizationSettings.TabStop = false;
-            this.grpboxOptimizationSettings.Text = "Optimization Variable Settings";
+            this.grpboxOptimizationSettings.Text = "Stand Attribute Settings";
             this.grpboxOptimizationSettings.Resize += new System.EventHandler(this.grpboxFVSVariablesPrePostVariable_Resize);
             // 
             // pnlFVSVariablesPrePostVariable
@@ -690,7 +683,7 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationSettingsPostPre.Size = new System.Drawing.Size(344, 72);
             this.grpboxOptimizationSettingsPostPre.TabIndex = 20;
             this.grpboxOptimizationSettingsPostPre.TabStop = false;
-            this.grpboxOptimizationSettingsPostPre.Text = "Post Treatment Variable Or Pre/Post Treatment Change";
+            this.grpboxOptimizationSettingsPostPre.Text = "Post Treatment Stand Attribute Or Pre/Post Treatment Change";
             // 
             // cmbOptimizationSettingsPostPreValue
             // 
@@ -768,7 +761,7 @@ namespace FIA_Biosum_Manager
             this.grpMaxMin.Size = new System.Drawing.Size(359, 45);
             this.grpMaxMin.TabIndex = 17;
             this.grpMaxMin.TabStop = false;
-            this.grpMaxMin.Text = "Aggregate Setting";
+            this.grpMaxMin.Text = "Which attribute value is best";
             // 
             // rdoOptimizationMinimum
             // 
@@ -776,7 +769,7 @@ namespace FIA_Biosum_Manager
             this.rdoOptimizationMinimum.Name = "rdoOptimizationMinimum";
             this.rdoOptimizationMinimum.Size = new System.Drawing.Size(166, 24);
             this.rdoOptimizationMinimum.TabIndex = 14;
-            this.rdoOptimizationMinimum.Text = "Minimum";
+            this.rdoOptimizationMinimum.Text = "Minimum Value";
             // 
             // rdoOptimizationMaximum
             // 
@@ -786,7 +779,7 @@ namespace FIA_Biosum_Manager
             this.rdoOptimizationMaximum.Size = new System.Drawing.Size(105, 24);
             this.rdoOptimizationMaximum.TabIndex = 12;
             this.rdoOptimizationMaximum.TabStop = true;
-            this.rdoOptimizationMaximum.Text = "Maximum";
+            this.rdoOptimizationMaximum.Text = "Maximum Value";
             // 
             // lblOptimizationVariable
             // 
@@ -826,14 +819,33 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
             // 
+            // lstFVSFieldsList
             // LblNetRevenu
             // 
+            this.lstFVSFieldsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSFieldsList.ItemHeight = 16;
+            this.lstFVSFieldsList.Location = new System.Drawing.Point(251, 21);
+            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
+            this.lstFVSFieldsList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSFieldsList.Sorted = true;
+            this.lstFVSFieldsList.TabIndex = 4;
+            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
             this.LblNetRevenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LblNetRevenu.Location = new System.Drawing.Point(24, 176);
             this.LblNetRevenu.Name = "LblNetRevenu";
             this.LblNetRevenu.Size = new System.Drawing.Size(182, 32);
             this.LblNetRevenu.TabIndex = 23;
             this.LblNetRevenu.Text = "Net Revenue";
+            // 
+            // lstFVSTablesList
+            // 
+            this.lstFVSTablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSTablesList.ItemHeight = 16;
+            this.lstFVSTablesList.Location = new System.Drawing.Point(8, 21);
+            this.lstFVSTablesList.Name = "lstFVSTablesList";
+            this.lstFVSTablesList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSTablesList.TabIndex = 3;
+            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
             // 
             // uc_scenario_fvs_prepost_optimization
             // 
@@ -902,7 +914,7 @@ namespace FIA_Biosum_Manager
 
                     if (oItem.bSelected)
                     {
-                        if (oItem.strOptimizedVariable.Trim().ToUpper() == "FVS VARIABLE")
+                        if (oItem.strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
                         {
                             ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strFVSVariableName);
                         }
@@ -921,16 +933,20 @@ namespace FIA_Biosum_Manager
             }
 
         }
-        public void loadvalues(System.Windows.Forms.ListBox p_oListBox)
+        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables)
 		{
 			
 			this.m_intError=0;
 			this.m_strError="";
 
-			int x,y;
-			this.lstFVSVariablesOptimizationVariableValues.Items.Clear();
-			for (x=0;x<=p_oListBox.Items.Count-1;x++)
-				lstFVSVariablesOptimizationVariableValues.Items.Add(p_oListBox.Items[x]);
+			int y;
+            lstFVSTablesList.Items.Clear();
+            _dictFVSTables = new System.Collections.Generic.Dictionary<string,
+                System.Collections.Generic.IList<string>>(p_dictFVSTables);
+            foreach (string strKey in _dictFVSTables.Keys)
+            {
+                lstFVSTablesList.Items.Add(strKey);
+            }
 
 			this.lvOptimizationListValues.Items.Clear();
 			this.m_oLvRowColors.InitializeRowCollection();
@@ -961,7 +977,7 @@ namespace FIA_Biosum_Manager
 			CreateListViewOptimizationRow();
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count-1,lvOptimizationListValues.Columns.Count);
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "FVS Variable";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Stand Attribute";
 			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
 			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
 			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
@@ -1083,7 +1099,7 @@ namespace FIA_Biosum_Manager
                                     if (Convert.ToString(oAdo.m_OleDbDataReader["checked_yn"]).Trim() == "Y")
                                     {
                                         oItem.bSelected = true;
-                                        if (oItem.strOptimizedVariable.Trim().ToUpper() == "FVS VARIABLE")
+                                        if (oItem.strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
                                         {
                                             ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strFVSVariableName);
                                         }
@@ -1152,8 +1168,8 @@ namespace FIA_Biosum_Manager
 					{
 						for (x=0;x<=this.m_oSavVariableCollection.Count-1;x++)
 						{
-							if (lvOptimizationListValues.Items[y].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "FVS VARIABLE" &&
-								m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper()=="FVS VARIABLE")
+                            if (lvOptimizationListValues.Items[y].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE" &&
+                                m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
 							{
 								bFound=true;
 								break;
@@ -1209,7 +1225,7 @@ namespace FIA_Biosum_Manager
 			p_oVariableItem.intListViewIndex=p_lvItem.Index;
 			p_lvItem.Checked=p_oVariableItem.bSelected;
 
-			if (p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper()=="FVS VARIABLE")
+            if (p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
 				p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text = p_oVariableItem.strFVSVariableName;
 			//p_oVariableItem.strFVSVariableName = p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
 			p_oVariableItem.strOptimizedVariable = p_lvItem.SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
@@ -1682,7 +1698,7 @@ namespace FIA_Biosum_Manager
                 }
                 else
                 {
-                    if (m_oSavVariableCollection.Item(intSelectedIndex).strOptimizedVariable.Trim().ToUpper() == "FVS VARIABLE")
+                    if (m_oSavVariableCollection.Item(intSelectedIndex).strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
                         this.ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(m_oSavVariableCollection.Item(intSelectedIndex).strFVSVariableName);
                     else
                         this.ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(m_oSavVariableCollection.Item(intSelectedIndex).strOptimizedVariable);
@@ -1710,6 +1726,9 @@ namespace FIA_Biosum_Manager
 			{
 				btnOptimiztionPrev.Show();
 				this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
+                this.loadFVSTableAndField();
+                // Need to set this again because manipulating the FVSTableAndField listboxes will clear it
+                this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
                 this.lblOptimizationVariable.Text = this.lblFVSVariablesOptimizationVariableValuesSelected.Text;
                 this.grpMaxMin.Location = new System.Drawing.Point(457, 55);
                 this.grpboxOptimizationFVSVariable.Show();
@@ -1812,7 +1831,7 @@ namespace FIA_Biosum_Manager
 					this.m_oSavVariableCollection.Item(x).bSelected)
 				{
 					m_intError=-1;
-					m_strError= m_strError + "FVS Variable is selected but is not defined\r\n";
+                    m_strError = m_strError + "Stand Attribute is selected but is not defined\r\n";
 				}
 				else
 				{
@@ -1937,8 +1956,9 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesOptimizationVariableValues_Click(object sender, System.EventArgs e)
 		{
-			if (this.lstFVSVariablesOptimizationVariableValues.SelectedItems.Count==0) return;
-			this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lstFVSVariablesOptimizationVariableValues.SelectedItems[0].ToString();
+            if (this.lstFVSTablesList.SelectedItems.Count == 0 || this.lstFVSFieldsList.SelectedItems.Count == 0) return;
+            this.lblFVSVariablesOptimizationVariableValuesSelected.Text =
+                this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
 		}
 
 		private void btnOptimizationFVSVariableDone_Click(object sender, System.EventArgs e)
@@ -1957,6 +1977,12 @@ namespace FIA_Biosum_Manager
 
 		private void btnOptimizationFVSVariableNext_Click(object sender, System.EventArgs e)
 		{
+            if (this.lblFVSVariablesOptimizationVariableValuesSelected.Text == "Not Defined")
+            {
+                System.Windows.Forms.MessageBox.Show("Use the Select button to choose a stand attribute before proceeding!", "FIA Biosum");
+                return;
+            }
+            this.lblOptimizationVariable.Text = this.lblFVSVariablesOptimizationVariableValuesSelected.Text;
             this.grpboxOptimizationSettingsPostPre.Show();
             this.grpboxOptimizationFVSVariable.Hide();
 			this.grpboxOptimizationSettings.Show();
@@ -1971,6 +1997,33 @@ namespace FIA_Biosum_Manager
 			
 		}
 
+
+        private void loadFVSTableAndField()
+        {
+            string[] strPieces = this.lblFVSVariablesOptimizationVariableValuesSelected.Text.Split('.');
+            //set FVS table and variable
+            if (strPieces.Length == 2)
+            {
+                for (int index = 0; index < lstFVSTablesList.Items.Count + 1; index++)
+                {
+                    string item = lstFVSTablesList.Items[index].ToString();
+                    if (strPieces[0] == item)
+                    {
+                        lstFVSTablesList.SelectedIndex = index;
+                        break;
+                    }
+                }
+                for (int index = 0; index < lstFVSFieldsList.Items.Count + 1; index++)
+                {
+                    string item = lstFVSFieldsList.Items[index].ToString();
+                    if (strPieces[1] == item)
+                    {
+                        lstFVSFieldsList.SelectedIndex = index;
+                        break;
+                    }
+                }
+            }
+        }
 		
 		public bool DisplayAuditMessage
 		{
@@ -2006,6 +2059,37 @@ namespace FIA_Biosum_Manager
                 this.txtOptimizationValue.Text = this.m_strLastValue;
             }
 
+        }
+
+        private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lstFVSFieldsList.Items.Clear();
+            this.lblFVSVariablesOptimizationVariableValuesSelected.Text = "Not Defined";
+            if (this.lstFVSTablesList.SelectedIndex > -1)
+            {
+                System.Collections.Generic.IList<string> lstFields =
+                    _dictFVSTables[Convert.ToString(this.lstFVSTablesList.SelectedItem)];
+                if (lstFields != null)
+                {
+                    foreach (string strField in lstFields)
+                    {
+                        lstFVSFieldsList.Items.Add(strField);
+                    }
+                }
+            }
+        }
+
+        private void lstFVSFieldsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.lblFVSVariablesOptimizationVariableValuesSelected.Text = "Not Defined";
+            if (this.lstFVSFieldsList.SelectedIndex > -1)
+            {
+                this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
+            }
+            else
+            {
+                this.btnFVSVariablesOptimizationVariableValues.Enabled = false;
+            }
         }
 	
 	}

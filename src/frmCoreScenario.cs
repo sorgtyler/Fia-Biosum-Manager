@@ -519,10 +519,12 @@ namespace FIA_Biosum_Manager
             this.tabControlRules.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlRules.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tabControlRules.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControlRules.ItemSize = new System.Drawing.Size(125, 18);
             this.tabControlRules.Location = new System.Drawing.Point(0, 0);
             this.tabControlRules.Name = "tabControlRules";
             this.tabControlRules.SelectedIndex = 0;
             this.tabControlRules.Size = new System.Drawing.Size(640, 334);
+            this.tabControlRules.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlRules.TabIndex = 0;
             this.tabControlRules.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlRules_DrawItem);
             this.tabControlRules.SelectedIndexChanged += new System.EventHandler(this.tabControlRules_SelectedIndexChanged);
@@ -623,10 +625,12 @@ namespace FIA_Biosum_Manager
             this.tabControlFVSVariables.Controls.Add(this.tbTieBreaker);
             this.tabControlFVSVariables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlFVSVariables.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.tabControlFVSVariables.ItemSize = new System.Drawing.Size(75, 18);
             this.tabControlFVSVariables.Location = new System.Drawing.Point(0, 0);
             this.tabControlFVSVariables.Name = "tabControlFVSVariables";
             this.tabControlFVSVariables.SelectedIndex = 0;
             this.tabControlFVSVariables.Size = new System.Drawing.Size(632, 308);
+            this.tabControlFVSVariables.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlFVSVariables.TabIndex = 0;
             this.tabControlFVSVariables.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tbFVSVariablesSelect_DrawItem);
             this.tabControlFVSVariables.SelectedIndexChanged += new System.EventHandler(this.tbFVSVariablesSelect_SelectedIndexChanged);
@@ -3077,7 +3081,7 @@ namespace FIA_Biosum_Manager
                         CoreAnalysisScenarioItem.TieBreakerItem oItem = new CoreAnalysisScenarioItem.TieBreakerItem();
                         oItem.RxCycle = p_oAdo.m_OleDbDataReader["rxcycle"].ToString().Trim();
                         oItem.strMethod = p_oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim();
-                        if (oItem.strMethod.ToUpper() == "FVS VARIABLE")
+                        if (oItem.strMethod.ToUpper() == "STAND ATTRIBUTE")
                         {
 
 
@@ -3109,7 +3113,7 @@ namespace FIA_Biosum_Manager
                                 oItem.bSelected = false;
                             }
                         }
-                        else if (oItem.strMethod.ToUpper() == "TREATMENT INTENSITY")
+                        else if (oItem.strMethod.ToUpper() == "LAST TIE-BREAK RANK")
                         {
                             if (p_oAdo.m_OleDbDataReader["checked_yn"].ToString().Trim().ToUpper() == "Y")
                             {
@@ -3702,7 +3706,7 @@ namespace FIA_Biosum_Manager
                 {
                     for (y = 0; y <= CoreAnalysisScenarioItem.EffectiveVariablesItem.NUMBER_OF_VARIABLES - 1; y++)
                     {
-                        strLine = strLine + "-FVS Variable " + Convert.ToString(y + 1) + "-\r\n";
+                        strLine = strLine + "-Stand Attribute " + Convert.ToString(y + 1) + "-\r\n";
                         strLine = strLine + "Pre-Treatment Variable: " +
                             p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strPreVarArray[y] + "\r\n";
                         strLine = strLine + "Post-Treatment Variable: " +
@@ -3776,7 +3780,7 @@ namespace FIA_Biosum_Manager
                        p_oScenarioItem.m_oTieBreaker_Collection.Item(x).strMethod + "\r\n";
 
                      if (p_oScenarioItem.m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() ==
-                          "TREATMENT INTENSITY")
+                          "LAST TIE-BREAK RANK")
                      {
                          bUseRxIntensity = true;
                      }
@@ -3800,7 +3804,7 @@ namespace FIA_Biosum_Manager
             }
             if (bUseRxIntensity)
             {
-                strLine = strLine + "\r\nTreatment Intensity Assignments\r\n";
+                strLine = strLine + "\r\nLast Tie-Break Rank Assignments\r\n";
                 strLine = strLine + "------------------------------------\r\n";
                 strLine = strLine + "--Rx-- --Intensity--\r\n";
                 

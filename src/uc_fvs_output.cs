@@ -4025,7 +4025,7 @@ namespace FIA_Biosum_Manager
                                                   ref int p_intError,
                                                   ref string p_strError)
         {
-            int x, y, z;
+            int x, y, z, xx, yy;
 
            
             
@@ -4310,7 +4310,7 @@ namespace FIA_Biosum_Manager
                                         oAdo.m_strSQL = "SELECT COUNT(*) FROM " +
                                                          "(SELECT TOP 1 c.standid " +
                                                           "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t " +
-                                                          "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES')";
+                                                          "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES' AND t.dbh >= 1.0)";
                                         if ((int)oAdo.getRecordCount(oConn, oAdo.m_strSQL, "temp") > 0)
                                         {
                                             if (bIdColumnExist)
@@ -4331,7 +4331,7 @@ namespace FIA_Biosum_Manager
                                                    "'" + m_strDateTimeCreated + "' AS DateTimeCreated " +
                                                    "INTO cutlist_fvs_created_seedlings_work_table " +
                                                    "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t " +
-                                                   "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES'";
+                                                   "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES' AND dbh >= 1.0";
                                             }
                                             else
                                             {
@@ -4353,7 +4353,7 @@ namespace FIA_Biosum_Manager
                                                    "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t,cutlist_rowid_work_table r " +
                                                    "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'ES' AND " + 
                                                          "(r.CaseId = t.CaseId AND r.StandId = t.StandId AND r.year = t.year AND r.treeid = t.treeid AND r.treeindex = t.treeindex) AND " + 
-                                                         "(r.CaseId = c.CaseId)";
+                                                         "(r.CaseId = c.CaseId) AND dbh >= 1.0";
                                             }
 
                                             if (m_bDebug && frmMain.g_intDebugLevel > 2)
@@ -4402,7 +4402,7 @@ namespace FIA_Biosum_Manager
                                         oAdo.m_strSQL = "SELECT COUNT(*) FROM " +
                                                         "(SELECT TOP 1 c.standid " +
                                                          "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t " +
-                                                         "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'CM')";
+                                                         "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'CM' AND t.dbh >= 1.0)";
                                         if ((int)oAdo.getRecordCount(oConn, oAdo.m_strSQL, "temp") > 0)
                                         {
                                             //FVS CREATED CO
@@ -4423,7 +4423,7 @@ namespace FIA_Biosum_Manager
                                                    "'" + m_strDateTimeCreated + "' AS DateTimeCreated " +
                                                    "INTO cutlist_fvs_created_compacted_work_table " +
                                                    "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t " +
-                                                   "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'CM'";
+                                                   "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'CM' AND dbh >= 1.0";
                                             }
                                             else
                                             {
@@ -4444,7 +4444,7 @@ namespace FIA_Biosum_Manager
                                                    "FROM " + strCasesTable + " c," + strFVSOutTableLink + " t,cutlist_rowid_work_table r " +
                                                    "WHERE c.CaseID = t.CaseID AND MID(t.treeid, 1, 2) = 'CM' AND " +
                                                          "(r.CaseId = t.CaseId AND r.StandId = t.StandId AND r.year = t.year AND r.treeid = t.treeid AND r.treeindex = t.treeindex) AND " +
-                                                         "(r.CaseId = c.CaseId)";
+                                                         "(r.CaseId = c.CaseId) AND dbh >= 1.0";
                                             }
 
                                             if (m_bDebug && frmMain.g_intDebugLevel > 2)
@@ -4589,6 +4589,19 @@ namespace FIA_Biosum_Manager
                                 if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                     this.WriteText(m_strDebugFile, "DONE:" + System.DateTime.Now.ToString() + "\r\n\r\n");
 
+                                oAdo.m_strSQL = Queries.FVS.VolumesAndBiomass.FVSOut_BuiltInputTableForVolumeCalculation_Step1a(
+                                                   Tables.FVS.DefaultOracleInputVolumesTable,
+                                                   strFvsTreeTable, p_strPackage);
+
+
+                                if (m_bDebug && frmMain.g_intDebugLevel > 2)
+                                    this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
+
+                                oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
+
+                                if (m_bDebug && frmMain.g_intDebugLevel > 2)
+                                    this.WriteText(m_strDebugFile, "DONE:" + System.DateTime.Now.ToString() + "\r\n\r\n");
+
                                 m_intProgressStepCurrentCount++;
                                 UpdateTherm(m_frmTherm.progressBar1,
                                            m_intProgressStepCurrentCount,
@@ -4717,10 +4730,10 @@ namespace FIA_Biosum_Manager
                                         if (m_oOracleServices.m_intError == 0)
                                         {
                                             m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.InsertRowTrigger;
-                                            x = 1;
+                                            xx = 1;
                                             while (oAdo.m_OleDbDataReader.Read())
                                             {
-                                                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.lblMsg, "Text", "Package:" + p_strPackage.Trim() + " Prepare data for Oracle volume calculation. " + x.ToString() + "/" + intTotalRecs.ToString());
+                                                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.lblMsg, "Text", "Package:" + p_strPackage.Trim() + " Prepare data for Oracle volume calculation. " + xx.ToString() + "/" + intTotalRecs.ToString());
                                                 string strBiosumCondId = oAdo.m_OleDbDataReader["biosum_cond_id"].ToString().Trim();
                                                 string strBiosumPlotId = strBiosumCondId.Substring(0, strBiosumCondId.Length - 1);
                                                 string strState = strBiosumCondId.Substring(5, 2);
@@ -4755,25 +4768,36 @@ namespace FIA_Biosum_Manager
                                             m_oOracleServices.m_oTree.GetBiosumVolumes();
                                             if (m_oOracleServices.m_intError == 0)
                                             {
-                                                y = 0;
+                                                yy = 0;
 
-                                                for (x = 0; x <= m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Count - 1; x++)
+                                                for (xx = 0; xx <= m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Count - 1; xx++)
                                                 {
-                                                    frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.lblMsg, "Text", "Package:" + p_strPackage.Trim() + " Process volume data returned by Oracle. " + y.ToString() + "/" + intTotalRecs.ToString());
+                                                    frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.lblMsg, "Text", "Package:" + p_strPackage.Trim() + " Process volume data returned by Oracle. " + yy.ToString() + "/" + intTotalRecs.ToString());
                                                     oAdo.m_strSQL = "UPDATE " + strFvsTreeTable + " " +
-                                                        "SET volcsgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).VOLCSGRS.ToString().Trim() + "," +
-                                                          "volcfgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).VOLCFGRS.ToString().Trim() + "," +
-                                                          "volcfnet=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).VOLCFNET.ToString().Trim() + "," +
-                                                          "drybiot=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).DRYBIOT.ToString().Trim() + "," +
-                                                          "drybiom=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).DRYBIOM.ToString().Trim() + "," +
-                                                          "voltsgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).VOLTSGRS.ToString().Trim() + " " + 
-                                                      "WHERE id=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(x).RecordId;
+                                                        "SET volcsgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(xx).VOLCSGRS.ToString().Trim() + "," +
+                                                          "volcfgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(xx).VOLCFGRS.ToString().Trim() + "," +
+                                                          "volcfnet=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(xx).VOLCFNET.ToString().Trim() + "," +
+                                                          "drybiot=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(xx).DRYBIOT.ToString().Trim() + "," +
+                                                          "drybiom=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(xx).DRYBIOM.ToString().Trim() + "," +
+                                                          "voltsgrs=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(xx).VOLTSGRS.ToString().Trim() + " " + 
+                                                      "WHERE id=" + m_oOracleServices.m_oTree.BiosumTreeInputRecordCollection.Item(xx).RecordId;
                                                     if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                                         this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
                                                     oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
                                                     if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                                         this.WriteText(m_strDebugFile, "DONE:" + System.DateTime.Now.ToString() + "\r\n\r\n");
-
+                                                    oAdo.m_strSQL = "UPDATE " + strFvsTreeTable + " " +
+                                                                    "SET volcsgrs=IIF(volcsgrs IS NOT NULL AND volcsgrs=-1,0,volcsgrs)," +
+                                                                        "volcfnet=IIF(volcfnet IS NOT NULL AND volcfnet=-1,0,volcfnet)," +
+                                                                        "volcfgrs=IIF(volcsgrs IS NOT NULL AND volcfgrs=-1,0,volcfgrs)," +
+                                                                        "drybiot=IIF(drybiot IS NOT NULL AND drybiot=-1,0,drybiot)," +
+                                                                        "drybiom=IIF(drybiom IS NOT NULL AND drybiom=-1,0,drybiom)," +
+                                                                        "voltsgrs=IIF(voltsgrs IS NOT NULL AND voltsgrs=-1,0,voltsgrs)";
+                                                    if (m_bDebug && frmMain.g_intDebugLevel > 2)
+                                                        this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
+                                                    oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
+                                                    if (m_bDebug && frmMain.g_intDebugLevel > 2)
+                                                        this.WriteText(m_strDebugFile, "DONE:" + System.DateTime.Now.ToString() + "\r\n\r\n");
 
                                                 }
                                             }
