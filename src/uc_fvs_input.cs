@@ -246,18 +246,18 @@ namespace FIA_Biosum_Manager
             // btnRxPackage
             // 
             this.btnRxPackage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRxPackage.Location = new System.Drawing.Point(320, 80);
+            this.btnRxPackage.Location = new System.Drawing.Point(320, 78);
             this.btnRxPackage.Name = "btnRxPackage";
-            this.btnRxPackage.Size = new System.Drawing.Size(160, 24);
+            this.btnRxPackage.Size = new System.Drawing.Size(90, 24);
             this.btnRxPackage.TabIndex = 58;
-            this.btnRxPackage.Text = "Number Of Packages";
+            this.btnRxPackage.Text = "Packages";
             this.btnRxPackage.Click += new System.EventHandler(this.btnRxPackage_Click);
             // 
             // lblRxPackageCnt
             // 
             this.lblRxPackageCnt.BackColor = System.Drawing.Color.White;
             this.lblRxPackageCnt.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRxPackageCnt.Location = new System.Drawing.Point(485, 80);
+            this.lblRxPackageCnt.Location = new System.Drawing.Point(415, 80);
             this.lblRxPackageCnt.Name = "lblRxPackageCnt";
             this.lblRxPackageCnt.Size = new System.Drawing.Size(32, 16);
             this.lblRxPackageCnt.TabIndex = 57;
@@ -266,11 +266,11 @@ namespace FIA_Biosum_Manager
             // btnRx
             // 
             this.btnRx.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRx.Location = new System.Drawing.Point(320, 56);
+            this.btnRx.Location = new System.Drawing.Point(320, 54);
             this.btnRx.Name = "btnRx";
-            this.btnRx.Size = new System.Drawing.Size(160, 24);
+            this.btnRx.Size = new System.Drawing.Size(90, 24);
             this.btnRx.TabIndex = 55;
-            this.btnRx.Text = "Number Of Treatments";
+            this.btnRx.Text = "Treatments";
             this.btnRx.Click += new System.EventHandler(this.btnRx_Click);
             // 
             // btnTreeSpcVariants
@@ -390,7 +390,7 @@ namespace FIA_Biosum_Manager
             // 
             this.lblRxCnt.BackColor = System.Drawing.Color.White;
             this.lblRxCnt.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRxCnt.Location = new System.Drawing.Point(485, 59);
+            this.lblRxCnt.Location = new System.Drawing.Point(415, 58);
             this.lblRxCnt.Name = "lblRxCnt";
             this.lblRxCnt.Size = new System.Drawing.Size(32, 16);
             this.lblRxCnt.TabIndex = 27;
@@ -525,18 +525,18 @@ namespace FIA_Biosum_Manager
 
 
 				this.lstFvsInput.Columns.Add("", 2, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("FVS Variant", 80, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("RxPackage", 120, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Loc File", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("StandInit Count", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("TreeInit Count", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Output File", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Summary Count", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Tree Cut List Count", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Tree Standing Count", 100, HorizontalAlignment.Left);
-				this.lstFvsInput.Columns.Add("Potential Fire Count", 100, HorizontalAlignment.Left);
-                this.lstFvsInput.Columns.Add("Potential Fire Base Yr Output File", 100, HorizontalAlignment.Left);
-                this.lstFvsInput.Columns.Add("Potential Fire Base Yr Count", 100, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("Variant", 55, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("Package", 55, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("Location File", 80, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("Stands", 70, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("Trees", 70, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("FVS Output DB", 230, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("SUMMARY RECS", 100, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("CUTLIST RECS", 100, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("TREELIST RECS", 100, HorizontalAlignment.Left);
+				this.lstFvsInput.Columns.Add("POTFIRE RECS", 100, HorizontalAlignment.Left);
+                this.lstFvsInput.Columns.Add("POTFIRE BaseYr DB", 120, HorizontalAlignment.Left);
+                this.lstFvsInput.Columns.Add("POTFIRE BaseYr RECS", 120, HorizontalAlignment.Left);
 
 				this.lstFvsInput.Columns[COL_CHECKBOX].Width = -2;
 
@@ -640,7 +640,7 @@ namespace FIA_Biosum_Manager
     				}
 
 				    strInDirAndFile = this.txtDataDir.Text.Trim() + "\\" + this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim() + "\\" + "FVSIn.accdb";
-				    if (System.IO.File.Exists(strInDirAndFile) == true)
+				    if (frmMain.g_bSuppressFVSInputTableRowCount==false && System.IO.File.Exists(strInDirAndFile) == true)
 				    {
 				        //TODO: is " " preferable to "0" in the case that FVSIn exists but the table does not (not expected behavior), or the table exists but has no rows?
 				        entryListItem.SubItems[COL_STANDCOUNT].Text = Convert.ToString(getStandInitCount(strInDirAndFile));
