@@ -273,6 +273,8 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationFVSVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.grpboxFVSVariablesOptimizationVariableValues = new System.Windows.Forms.GroupBox();
+            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
+            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
             this.btnFVSVariablesOptimizationVariableValues = new System.Windows.Forms.Button();
             this.grpFVSVariablesOptimizationVariableValuesSelected = new System.Windows.Forms.GroupBox();
             this.lblFVSVariablesOptimizationVariableValuesSelected = new System.Windows.Forms.Label();
@@ -298,6 +300,7 @@ namespace FIA_Biosum_Manager
             this.btnOptimizationAudit = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettings = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostVariable = new System.Windows.Forms.Panel();
+            this.LblNetRevenu = new System.Windows.Forms.Label();
             this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
             this.txtRevenueDescr = new System.Windows.Forms.TextBox();
             this.cboEconVariable = new System.Windows.Forms.ComboBox();
@@ -316,9 +319,6 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.LblNetRevenu = new System.Windows.Forms.Label();
-            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
-            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationFVSVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -392,6 +392,27 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesOptimizationVariableValues.TabIndex = 0;
             this.grpboxFVSVariablesOptimizationVariableValues.TabStop = false;
             this.grpboxFVSVariablesOptimizationVariableValues.Text = "Stand attribute used to select the optimal silvicultural sequence";
+            // 
+            // lstFVSFieldsList
+            // 
+            this.lstFVSFieldsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSFieldsList.ItemHeight = 16;
+            this.lstFVSFieldsList.Location = new System.Drawing.Point(251, 21);
+            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
+            this.lstFVSFieldsList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSFieldsList.Sorted = true;
+            this.lstFVSFieldsList.TabIndex = 4;
+            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
+            // 
+            // lstFVSTablesList
+            // 
+            this.lstFVSTablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSTablesList.ItemHeight = 16;
+            this.lstFVSTablesList.Location = new System.Drawing.Point(8, 21);
+            this.lstFVSTablesList.Name = "lstFVSTablesList";
+            this.lstFVSTablesList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSTablesList.TabIndex = 3;
+            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
             // 
             // btnFVSVariablesOptimizationVariableValues
             // 
@@ -634,6 +655,15 @@ namespace FIA_Biosum_Manager
             this.pnlFVSVariablesPrePostVariable.TabIndex = 12;
             this.pnlFVSVariablesPrePostVariable.Resize += new System.EventHandler(this.pnlFVSVariablesPrePostVariable_Resize);
             // 
+            // LblNetRevenu
+            // 
+            this.LblNetRevenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LblNetRevenu.Location = new System.Drawing.Point(24, 176);
+            this.LblNetRevenu.Name = "LblNetRevenu";
+            this.LblNetRevenu.Size = new System.Drawing.Size(182, 32);
+            this.LblNetRevenu.TabIndex = 23;
+            this.LblNetRevenu.Text = "Net Revenue";
+            // 
             // grpBoxOptimizationNetRevenue
             // 
             this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
@@ -758,16 +788,16 @@ namespace FIA_Biosum_Manager
             this.grpMaxMin.Controls.Add(this.rdoOptimizationMaximum);
             this.grpMaxMin.Location = new System.Drawing.Point(457, 55);
             this.grpMaxMin.Name = "grpMaxMin";
-            this.grpMaxMin.Size = new System.Drawing.Size(359, 45);
+            this.grpMaxMin.Size = new System.Drawing.Size(388, 45);
             this.grpMaxMin.TabIndex = 17;
             this.grpMaxMin.TabStop = false;
             this.grpMaxMin.Text = "Which attribute value is best";
             // 
             // rdoOptimizationMinimum
             // 
-            this.rdoOptimizationMinimum.Location = new System.Drawing.Point(143, 16);
+            this.rdoOptimizationMinimum.Location = new System.Drawing.Point(210, 16);
             this.rdoOptimizationMinimum.Name = "rdoOptimizationMinimum";
-            this.rdoOptimizationMinimum.Size = new System.Drawing.Size(166, 24);
+            this.rdoOptimizationMinimum.Size = new System.Drawing.Size(150, 24);
             this.rdoOptimizationMinimum.TabIndex = 14;
             this.rdoOptimizationMinimum.Text = "Minimum Value";
             // 
@@ -776,7 +806,7 @@ namespace FIA_Biosum_Manager
             this.rdoOptimizationMaximum.Checked = true;
             this.rdoOptimizationMaximum.Location = new System.Drawing.Point(32, 16);
             this.rdoOptimizationMaximum.Name = "rdoOptimizationMaximum";
-            this.rdoOptimizationMaximum.Size = new System.Drawing.Size(105, 24);
+            this.rdoOptimizationMaximum.Size = new System.Drawing.Size(150, 24);
             this.rdoOptimizationMaximum.TabIndex = 12;
             this.rdoOptimizationMaximum.TabStop = true;
             this.rdoOptimizationMaximum.Text = "Maximum Value";
@@ -818,34 +848,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(866, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
-            // 
-            // lstFVSFieldsList
-            // LblNetRevenu
-            // 
-            this.lstFVSFieldsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstFVSFieldsList.ItemHeight = 16;
-            this.lstFVSFieldsList.Location = new System.Drawing.Point(251, 21);
-            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
-            this.lstFVSFieldsList.Size = new System.Drawing.Size(202, 180);
-            this.lstFVSFieldsList.Sorted = true;
-            this.lstFVSFieldsList.TabIndex = 4;
-            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
-            this.LblNetRevenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LblNetRevenu.Location = new System.Drawing.Point(24, 176);
-            this.LblNetRevenu.Name = "LblNetRevenu";
-            this.LblNetRevenu.Size = new System.Drawing.Size(182, 32);
-            this.LblNetRevenu.TabIndex = 23;
-            this.LblNetRevenu.Text = "Net Revenue";
-            // 
-            // lstFVSTablesList
-            // 
-            this.lstFVSTablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstFVSTablesList.ItemHeight = 16;
-            this.lstFVSTablesList.Location = new System.Drawing.Point(8, 21);
-            this.lstFVSTablesList.Name = "lstFVSTablesList";
-            this.lstFVSTablesList.Size = new System.Drawing.Size(202, 180);
-            this.lstFVSTablesList.TabIndex = 3;
-            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
             // 
             // uc_scenario_fvs_prepost_optimization
             // 
