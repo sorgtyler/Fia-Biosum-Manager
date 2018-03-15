@@ -296,9 +296,6 @@
     <Compile Include="ResizeFormUsingVisibleScrollBars.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="run_core_scenario.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="run_PostFvsForeFrcs.cs">
       <SubType>Code</SubType>
     </Compile>
