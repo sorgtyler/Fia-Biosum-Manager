@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 using Microsoft.Win32;
 using System.Threading;
 
@@ -554,11 +556,10 @@ namespace FIA_Biosum_Manager
 				//save the odbc datasources in strDsnNames
 				string[] strDsnNames = regKey.GetValueNames(); // for the 1st time it's only 2 names
 
-			
 				string strRegKey = "";
 
-			
-
+                //Keep a count of records in FVS_StandInit and FVS_TreeInit tables in each variant
+                Dictionary<string, int[]> pVariantCountsDict = new Dictionary<string,int[]>();
 
 				while (this.m_ado.m_OleDbDataReader.Read())
 				{
@@ -577,6 +578,11 @@ namespace FIA_Biosum_Manager
 
 					//fvs_variant		
                     strVariant = this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim();
+				    if (pVariantCountsDict.ContainsKey(strVariant) == false)
+				    {
+				        pVariantCountsDict.Add(strVariant, null); //fvs_standinit, fvs_treeinit counts
+				    }
+
 					entryListItem.SubItems.Add(this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim());
 					this.m_oLvRowColors.ListViewSubItem(entryListItem.Index,uc_fvs_input.COL_VARIANT,entryListItem.SubItems[entryListItem.SubItems.Count-1],false);
 					if (!System.IO.Directory.Exists(txtDataDir.Text.Trim() + "\\" + m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim()))
@@ -642,11 +648,13 @@ namespace FIA_Biosum_Manager
 				    strInDirAndFile = this.txtDataDir.Text.Trim() + "\\" + this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim() + "\\" + "FVSIn.accdb";
 				    if (frmMain.g_bSuppressFVSInputTableRowCount==false && System.IO.File.Exists(strInDirAndFile) == true)
 				    {
-				        //TODO: is " " preferable to "0" in the case that FVSIn exists but the table does not (not expected behavior), or the table exists but has no rows?
-				        entryListItem.SubItems[COL_STANDCOUNT].Text = Convert.ToString(getStandInitCount(strInDirAndFile));
-				        entryListItem.SubItems[COL_TREECOUNT].Text = Convert.ToString(getTreeInitCount(strInDirAndFile));
+				        if (pVariantCountsDict[strVariant] == null)
+				        {
+				            pVariantCountsDict[strVariant] = getFVSInputRecordCounts(strInDirAndFile);
+				        }
+				        entryListItem.SubItems[COL_STANDCOUNT].Text = Convert.ToString(pVariantCountsDict[strVariant][0]);
+				        entryListItem.SubItems[COL_TREECOUNT].Text = Convert.ToString(pVariantCountsDict[strVariant][1]);
 				    }
-
 
 					//check dsn out registry values
 					foreach(string strDsnName in strDsnNames)
@@ -1343,10 +1351,11 @@ namespace FIA_Biosum_Manager
 					    strInDirAndFile = strDataDir + "\\" + strVariant + "\\" + "FVSIn.accdb";
 					    if (System.IO.File.Exists(strInDirAndFile) == true) //redundant check here, but leaves " " instead of new "0"
 					    {
+					        int[] fvsInputRecordCounts = getFVSInputRecordCounts(strInDirAndFile);
 					        frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_STANDCOUNT, "Text",
-					            Convert.ToString(getStandInitCount(strInDirAndFile)));
+					            Convert.ToString(fvsInputRecordCounts[0]));
 					        frmMain.g_oDelegate.SetListViewSubItemPropertyValue(this.lstFvsInput, x, COL_TREECOUNT, "Text",
-					            Convert.ToString(getTreeInitCount(strInDirAndFile)));
+					            Convert.ToString(fvsInputRecordCounts[1]));
 					    }				
 
 					}
@@ -1570,12 +1579,12 @@ namespace FIA_Biosum_Manager
             
 		}
 
-        private int getStandInitCount(string strDirAndFile)
-        {
-            int x = 0;
+	    private int[] getFVSInputRecordCounts(string strDirAndFile)
+	    {
+            int stands = 0;
+            int trees = 0;
             try
             {
-
                 if (System.IO.File.Exists(strDirAndFile))
                 {
                     ado_data_access p_ado = new ado_data_access();
@@ -1587,57 +1596,15 @@ namespace FIA_Biosum_Manager
                         System.Data.OleDb.OleDbConnection pConn = new System.Data.OleDb.OleDbConnection();
                         pConn.ConnectionString = strConn;
                         pConn.Open();
-                        x = (int)m_ado.getSingleDoubleValueFromSQLQuery(pConn,
+                        stands = (int)m_ado.getSingleDoubleValueFromSQLQuery(pConn,
                             "SELECT COUNT(*) as StandInitCount FROM (SELECT DISTINCT Stand_ID FROM FVS_StandInit);",
                             "FVS_StandInit");
-                        p_ado.CloseConnection(pConn);
-                        pConn.Dispose();
-                    }
-
-                    p_ado = null;
-                    p_dao = null;
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("!!Error!! \n" +
-                                "Module - uc_fvs_input:getStandInitCount  \n" +
-                                "Err Msg - " + e.Message.ToString().Trim(),
-                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Exclamation);
-                this.m_intError = -1;
-                //if (x > 2) //TODO: Why was this logic here in getSlfPlotCount?
-                //{
-                //    x = (int) (x / 2);
-                //}
-            }
-            return x;
-        }
-
-        private int getTreeInitCount(string strDirAndFile)
-        {
-            int x = 0;
-            try
-            {
-
-                if (System.IO.File.Exists(strDirAndFile))
-                {
-                    ado_data_access p_ado = new ado_data_access();
-                    dao_data_access p_dao = new dao_data_access();
-                    string strConn = p_ado.getMDBConnString(strDirAndFile, "", "");
-
-                    if (p_dao.TableExists(strDirAndFile, "FVS_TreeInit"))
-                    {
-                        System.Data.OleDb.OleDbConnection pConn = new System.Data.OleDb.OleDbConnection();
-                        pConn.ConnectionString = strConn;
-                        pConn.Open();
-                        x = (int)m_ado.getSingleDoubleValueFromSQLQuery(pConn,
+                        trees = (int)m_ado.getSingleDoubleValueFromSQLQuery(pConn,
                             "SELECT COUNT(*) as TreeInitCount FROM FVS_TreeInit;",
                             "FVS_TreeInit");
                         p_ado.CloseConnection(pConn);
                         pConn.Dispose();
                     }
-
                     p_ado = null;
                     p_dao = null;
                 }
@@ -1645,20 +1612,17 @@ namespace FIA_Biosum_Manager
             catch (Exception e)
             {
                 MessageBox.Show("!!Error!! \n" +
-                                "Module - uc_fvs_input:getTreeInitCount  \n" +
+                                "Module - uc_fvs_input:getFVSInputRecordCounts  \n" +
                                 "Err Msg - " + e.Message.ToString().Trim(),
                     "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Exclamation);
                 this.m_intError = -1;
-                //if (x > 2) //TODO: Why was this logic here in getSlfPlotCount?
-                //{
-                //    x = (int) (x / 2);
-                //}
             }
-            return x;
+            return new int[] {stands,trees};
         }
 
-		private int getFvsTreeFileCount(string strVariant)
+
+	    private int getFvsTreeFileCount(string strVariant)
 		{
 			int x=0;
 			try
