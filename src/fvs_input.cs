@@ -600,7 +600,12 @@ namespace FIA_Biosum_Manager
             {
                 this.m_ado.OpenConnection(this.m_strConn);
 
-                //TODO: Make these fvs_input members like the other table names? How does this relate to datasource?
+                int intProgressBarCounter = 0;
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
+                    "Writing FVS_TreeInit For Variant " + this.m_strVariant);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", 30);
+
                 string strTreeInitWorkTable = "FVS_TreeInit_WorkTable";
                 string strTreeInit = "FVS_TreeInit";
 
@@ -608,6 +613,7 @@ namespace FIA_Biosum_Manager
                 string strSQL = Queries.FVS.FVSInput.TreeInit.BulkImportTreeDataFromBioSumMaster(
                     m_strVariant, strTreeInitWorkTable, m_strCondTable, m_strPlotTable, m_strTreeTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Set FVS_Species_Names using FIA_SPCD & Variant to map FVS_TreeInit_WorkTable to Tree_Species table
                 //These species names are used to determine mistletoe damage codes
@@ -619,18 +625,22 @@ namespace FIA_Biosum_Manager
                 strSQL = Queries.FVS.FVSInput.TreeInit.CreateSpcdConversionTable(m_strCondTable, m_strPlotTable,
                     m_strTreeTable, m_strTreeSpcTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Execute the Species code update
                 strSQL = Queries.FVS.FVSInput.TreeInit.UpdateFVSSpeciesCodeColumn(m_strVariant, strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Dead trees don't have Compacted Crown Ratio logic in text file approach, so set CrRatio to null where history=9
                 strSQL = Queries.FVS.FVSInput.TreeInit.DeleteCrRatiosForDeadTrees(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Round Cr<10 to Crown Ratio Class 1 (so that FVS rounds it up to 5% to make it the middle of the threshold)
                 strSQL = Queries.FVS.FVSInput.TreeInit.RoundSingleDigitPercentageCrRatiosDownTo1(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 /*This logic is present in the CreateFVS code, but Jeremy Fried said we should keep CrRatios for HtCd==4*/
                 //strSQL = "UPDATE FVS_TreeInit_WorkTable SET CrRatio=null WHERE HtCd not in (1,2,3);";
@@ -643,51 +653,62 @@ namespace FIA_Biosum_Manager
                 //If Htcd not in {1,2,3} then set the Ht and HtTopK to 0
                 strSQL = Queries.FVS.FVSInput.TreeInit.DeleteHtAndHtTopKForNonMeasuredHeights(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Calculating Broken top using Ht > ActualHt (HtTopK) before setting HtTopK>=Ht to 0. The 0<HtTopK means we could execute this after setting HtTopK's to 0
                 //Broken tops can determine damage codes
                 strSQL = Queries.FVS.FVSInput.TreeInit.SetBrokenTopFlag(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //If HtTopK >= Ht, set it to 0
                 strSQL = Queries.FVS.FVSInput.TreeInit.SetHtTopKToZeroIfGteHt(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Set Dbh to 0.1 if Tpa > 25 and dbh <= 0 and live tree (implies saplings) 
                 strSQL = Queries.FVS.FVSInput.TreeInit.SetInferredSaplingDbh(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Pad FVS_TreeInit.Species with 0 in case it's not 3-digits
                 strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Damage code section
                 string[] strDamageCodes = Queries.FVS.FVSInput.TreeInit.DamageCodes(strTreeInitWorkTable);
                 foreach (string strDamageCodeSQL in strDamageCodes)
                 {
                     m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strDamageCodeSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
                 }
 
                 string[] strTreeValues = Queries.FVS.FVSInput.TreeInit.TreeValueClass(strTreeInitWorkTable);
                 foreach (string strTreeValueUpdate in strTreeValues)
                 {
                     m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strTreeValueUpdate);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
                 }
 
                 //Insert into linked FVS_TreeInit after doing intermediate work in the work table
                 strSQL = Queries.FVS.FVSInput.TreeInit.TranslateWorkTableToTreeInitTable(strTreeInitWorkTable,
                     strTreeInit);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Pad and trim the Species column again so FVS works with it properly
                 strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInit);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //Delete work tables
                 strSQL = Queries.FVS.FVSInput.TreeInit.DeleteWorkTable();
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
                 strSQL = Queries.FVS.FVSInput.TreeInit.DeleteSpcdChangeWorkTable();
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                 //close the connection to the temp mdb file
                 m_ado.CloseConnection(m_ado.m_OleDbConnection);
