@@ -1298,6 +1298,10 @@ namespace FIA_Biosum_Manager
                 cmbSteepSlopeMethod.Enabled = true;
                 this.txtDesc.Enabled = true;
                 this.txtSteepSlopeDesc.Enabled = true;
+                if (String.IsNullOrEmpty(cmbMethod.Text))
+                    cmbMethod.Text = "Ground-Based Mech WT";
+                if (String.IsNullOrEmpty(cmbSteepSlopeMethod.Text))
+                    cmbSteepSlopeMethod.Text = "Cable Manual WT";
             }
         }
 
