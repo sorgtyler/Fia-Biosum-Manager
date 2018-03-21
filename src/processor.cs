@@ -246,9 +246,10 @@ namespace FIA_Biosum_Manager
 
                         if (newTree.Slope < m_scenarioHarvestMethod.SteepSlopePct)
                         {
-                            // assign low slope harvest method
-                            if (m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.SELECTED) &&
-                                m_scenarioHarvestMethod.HarvestMethodLowSlope != null)
+                            // assign low slope harvest method if not rx
+                            if ((m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.SELECTED) || 
+                                 m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.LOWEST_COST)) &&
+                                 m_scenarioHarvestMethod.HarvestMethodLowSlope != null)
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodLowSlope;
                             }
@@ -259,9 +260,10 @@ namespace FIA_Biosum_Manager
                         }
                         else
                         {
-                            // assign steep slope harvest method
-                            if (m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.SELECTED) &&
-                                m_scenarioHarvestMethod.HarvestMethodSteepSlope != null)
+                            // assign steep slope harvest method if not rx
+                            if ((m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.SELECTED) || 
+                                 m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.LOWEST_COST)) &&
+                                 m_scenarioHarvestMethod.HarvestMethodSteepSlope != null)
                             {
                                 newTree.HarvestMethod = m_scenarioHarvestMethod.HarvestMethodSteepSlope;
                             }
