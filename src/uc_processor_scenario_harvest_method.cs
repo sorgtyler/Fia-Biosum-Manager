@@ -781,8 +781,18 @@ namespace FIA_Biosum_Manager
                     this.rdoLowestCost.Checked = false;
                 }
 
-                this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
+                cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                 cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
+                // Set default harvest methods if otherwise empty; We need them populated if analyst
+                // selects processor-specified or lowest-cost treatment
+                if (this.rdoProcessorSpecified.Checked == true ||
+                    this.rdoLowestCost.Checked == true)
+                {
+                    if (String.IsNullOrEmpty(cmbMethod.Text))
+                        cmbMethod.Text = "Ground-Based Mech WT";
+                    if (String.IsNullOrEmpty(cmbSteepSlopeMethod.Text))
+                        cmbSteepSlopeMethod.Text = "Cable Manual WT";
+                }
                 txtMinDiaForChips.Text = oItem.m_oHarvestMethod.MinDiaForChips;
                 txtMinDiaSmallLogs.Text = oItem.m_oHarvestMethod.MinDiaForSmallLogs;
                 txtMinDiaLargeLogs.Text = oItem.m_oHarvestMethod.MinDiaForLargeLogs;
@@ -1288,13 +1298,48 @@ namespace FIA_Biosum_Manager
                 cmbSteepSlopeMethod.Enabled = true;
                 this.txtDesc.Enabled = true;
                 this.txtSteepSlopeDesc.Enabled = true;
+                if (String.IsNullOrEmpty(cmbMethod.Text))
+                    cmbMethod.Text = "Ground-Based Mech WT";
+                if (String.IsNullOrEmpty(cmbSteepSlopeMethod.Text))
+                    cmbSteepSlopeMethod.Text = "Cable Manual WT";
             }
         }
 
-
-       
+        public void val_data(System.Collections.Generic.IList<string> lstRx)
+        {
+            this.m_intError = 0;
+            if (this.rdoTreatment.Checked == true)
+            {
+                string strFvsMDB =
+                    frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                    "\\db\\fvsmaster.mdb";
+                m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strFvsMDB, "", ""));
+                string strRxClause = "AND RX IN ('";
+                foreach (string strRx in lstRx)
+                {
+                    strRxClause = strRxClause + strRx + "',";
+                }
+                //Trim the trailing comma
+                strRxClause = strRxClause.Substring(0, (strRxClause.Length - 1));
+                strRxClause = strRxClause + " )";
+                m_oAdo.m_strSQL = "SELECT * from " + Tables.FVS.DefaultRxTableName + " " +
+                                  "WHERE (TRIM(HarvestMethodLowSlope) = '' " +
+                                  "OR TRIM(HarvestMethodSteepSlope) = '') " + strRxClause;
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                if (m_oAdo.m_intError == 0)
+                {
+                    if (m_oAdo.m_OleDbDataReader.HasRows)
+                    {
+                        this.m_intError = -1;
+                        MessageBox.Show("Harvest method is selected to be defined by treatment but at " +
+                                        "least one treatment is not associated with a harvest method!", "FIA Biosum", 
+                                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                        return;
+                    }
+                }
+            }
+        }
 	
-		
 	}
 
     public class HarvestMethodSelection
@@ -1345,5 +1390,6 @@ namespace FIA_Biosum_Manager
                 return hash;
             }
         }
+
     }
 }
