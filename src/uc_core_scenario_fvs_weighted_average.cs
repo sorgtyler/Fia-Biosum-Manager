@@ -124,6 +124,8 @@ namespace FIA_Biosum_Manager
         private DataGridViewTextBoxColumn SeqNum;
         private DataGridViewTextBoxColumn Weight;
         private DataGridView dgWeights;
+        private env m_oEnv;
+
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -224,7 +226,7 @@ namespace FIA_Biosum_Manager
             row.CreateCells(dgEcon, "4", "1");
             dgEcon.Rows.Add(row);
 
-
+            this.m_oEnv = new env();
             this.loadvalues();
 		}
 
@@ -976,8 +978,78 @@ namespace FIA_Biosum_Manager
 			this.m_intError=0;
 			this.m_strError="";
 
+            loadRefData();
 
 		}
+
+        public void loadRefData()
+        {
+            this.m_intError = 0;
+            this.m_strError = "";
+
+            string strDestinationLinkDir = this.m_oEnv.strTempDir;
+            //used to get the temporary random file name
+            utils objUtils = new utils();
+            //get temporary mdb file
+            string strTempMDB = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
+
+            //create a temporary mdb that will contain all the links to the FVS_XXX_PREPOST_SEQNUM_MATRIX tables
+            //in all of the FVS\DATA\VARIANT\FVSOUT_VARIANT_RXPACKAGE-RXCYCLE1-RXCYCLE2-RXCYCLE3-RXCYCLE4_BIOSUM.ACCDB files 
+            dao_data_access oDao = new dao_data_access();
+            oDao.CreateMDB(strTempMDB);
+
+            // Load project data sources table
+            FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            oDs.m_strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() 
+                + "\\db\\project.mdb";
+            oDs.m_strDataSourceTableName = "datasource";
+            oDs.m_strScenarioId = "";
+            oDs.LoadTableColumnNamesAndDataTypes = false;
+            oDs.LoadTableRecordCount = false;
+            oDs.populate_datasource_array();
+            // Link to plot table
+            int intTable = oDs.getValidTableNameRow("Plot");
+            string strDirectoryPath = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            string strFileName = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            string strPlotTable = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            oDao.CreateTableLink(strTempMDB, strPlotTable, strDirectoryPath + "\\" + strFileName, 
+                strPlotTable);
+            intTable = oDs.getDataSourceTableNameRow("Treatment Packages");
+            strDirectoryPath = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strFileName = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            string strRxPkgTable = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            oDao.CreateTableLink(strTempMDB, strRxPkgTable, strDirectoryPath + "\\" + strFileName,
+                strRxPkgTable);
+
+            //@ToDo: may want to move this to class-level if we need ado elsewher
+            ado_data_access oAdo = new ado_data_access();
+            oAdo.m_strSQL = Queries.FVS.GetFVSVariantRxPackageSQL(strPlotTable, strRxPkgTable);
+            oAdo.OpenConnection(oAdo.getMDBConnString(strTempMDB, "", ""));
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            RxTools oRxTools = new RxTools();
+            string strFvsDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim()
+                + "\\fvs";
+            while (oAdo.m_OleDbDataReader.Read())
+            {
+                string strVariant = oAdo.m_OleDbDataReader["fvs_variant"].ToString().Trim();
+                string strPackage = oAdo.m_OleDbDataReader["RxPackage"].ToString().Trim();
+
+                string strOutMDBFile = oRxTools.GetRxPackageFvsOutDbFileName(oAdo.m_OleDbDataReader);
+                //@ToDo: find routine to convert to accdb name
+                string strOutDirAndFile = strFvsDirectory + "\\" + strVariant + "\\" + strOutMDBFile.Trim();
+            
+            }
+
+            if (oAdo != null)
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            
+            if (oDao != null)
+            {
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
+        }
 
 		public int savevalues()
 		{
@@ -1358,6 +1430,52 @@ namespace FIA_Biosum_Manager
             //@ToDo: Add code to clear fields on econ variable screen
         }
 
+        public class FvsVariableWeight
+        {
+            public string strPreOrPost;
+            public string strCycle;
+            public int intYear;
+            public int intSeqNum;
+        }
 
-	}
+        public class FvsVariableWeightCollection : System.Collections.CollectionBase
+	    {
+
+	    public void Add(FIA_Biosum_Manager.uc_core_scenario_weighted_average.FvsVariableWeight m_oVariableWeight)
+	    {
+	        // vérify if object is not already in
+		    if (this.List.Contains(m_oVariableWeight))
+			    throw new InvalidOperationException();
+ 
+		    // adding it
+		    this.List.Add(m_oVariableWeight);
+	    }
+			
+        public void Remove(int index)
+		{
+		    // Check to see if there is a widget at the supplied index.
+			if (index > Count - 1 || index < 0)
+				// If no widget exists, a messagebox is shown and the operation 
+				// is canColumned.
+			{
+				System.Windows.Forms.MessageBox.Show("Index not valid!");
+			}
+			else
+			{
+				List.RemoveAt(index); 
+			}
+		}
+			
+        public FIA_Biosum_Manager.uc_core_scenario_weighted_average.FvsVariableWeight Item(int Index)
+		{
+			// The appropriate item is retrieved from the List object and
+			// explicitly cast to the Widget type, then returned to the 
+			// caller.
+			return (FIA_Biosum_Manager.uc_core_scenario_weighted_average.FvsVariableWeight) List[Index];
+		}
+
+
+		}
+    }
+
 }
