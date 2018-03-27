@@ -1021,24 +1021,113 @@ namespace FIA_Biosum_Manager
             oDao.CreateTableLink(strTempMDB, strRxPkgTable, strDirectoryPath + "\\" + strFileName,
                 strRxPkgTable);
 
-            //@ToDo: may want to move this to class-level if we need ado elsewher
+            //@ToDo: may want to move this to class-level if we need ado elsewhere
             ado_data_access oAdo = new ado_data_access();
             oAdo.m_strSQL = Queries.FVS.GetFVSVariantRxPackageSQL(strPlotTable, strRxPkgTable);
             oAdo.OpenConnection(oAdo.getMDBConnString(strTempMDB, "", ""));
             oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
+            //@ToDo: Choose table name based on FVS variable selected
+            string strSeqNumTable = "FVS_SUMMARY_PREPOST_SEQNUM_MATRIX";
             RxTools oRxTools = new RxTools();
             string strFvsDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim()
-                + "\\fvs";
+                + "\\fvs\\data";
+            System.Collections.Generic.IList<string> lstSeqNumTables = new System.Collections.Generic.List<string>();
             while (oAdo.m_OleDbDataReader.Read())
             {
                 string strVariant = oAdo.m_OleDbDataReader["fvs_variant"].ToString().Trim();
                 string strPackage = oAdo.m_OleDbDataReader["RxPackage"].ToString().Trim();
 
                 string strOutMDBFile = oRxTools.GetRxPackageFvsOutDbFileName(oAdo.m_OleDbDataReader);
-                //@ToDo: find routine to convert to accdb name
-                string strOutDirAndFile = strFvsDirectory + "\\" + strVariant + "\\" + strOutMDBFile.Trim();
-            
+                string strACCDBFile = strOutMDBFile.Replace(".MDB", "_BIOSUM.ACCDB");
+                string strOutDirAndFile = strFvsDirectory + "\\" + strVariant + "\\" + strACCDBFile.Trim();
+                if (System.IO.File.Exists(strOutDirAndFile))
+                {
+                    string strLinkTableName = "SEQNUM_MATRIX_" + strVariant + "_" + strPackage;
+                    oDao.CreateTableLink(strTempMDB, strLinkTableName, strOutDirAndFile,
+                        strSeqNumTable);
+                    if (m_intError == 0)
+                        lstSeqNumTables.Add(strLinkTableName);
+                }
+            }
+            //Create temporary table to populate datagrid
+            string strViewTableName = "view_weights";
+            frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFvsVariableWeightsReferenceTable(oAdo,
+                oAdo.m_OleDbConnection, strViewTableName);
+            string[] sqlWhereArray = new string[8];
+            sqlWhereArray[0] = " WHERE CYCLE1_PRE_YN = 'Y'";
+            sqlWhereArray[1] = " WHERE CYCLE1_POST_YN = 'Y'";
+            sqlWhereArray[2] = " WHERE CYCLE2_PRE_YN = 'Y'";
+            sqlWhereArray[3] = " WHERE CYCLE2_POST_YN = 'Y'";
+            sqlWhereArray[4] = " WHERE CYCLE3_PRE_YN = 'Y'";
+            sqlWhereArray[5] = " WHERE CYCLE3_POST_YN = 'Y'";
+            sqlWhereArray[6] = " WHERE CYCLE4_PRE_YN = 'Y'";
+            sqlWhereArray[7] = " WHERE CYCLE4_POST_YN = 'Y'";
+            for (int i = 0; i < sqlWhereArray.Length; i++)
+            {
+                string strSql = "SELECT MIN(MinSeqNum) as MinSeqNum1, MIN(MinYear) as MinYear1 " +
+                                "FROM ( ";
+                foreach (string strTableName in lstSeqNumTables)
+                {
+                    strSql = strSql + "SELECT MIN(SEQNUM) as MinSeqNum, MIN(YEAR) as MinYear " +
+                                      "FROM " + strTableName +
+                                      sqlWhereArray[i] +
+                                      " UNION ALL ";    
+                }
+                //Trim off trailing union
+                strSql = strSql.Remove(strSql.LastIndexOf(" UNION ALL "));
+                strSql = strSql + ")";
+                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSql);
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strPrePost = "";
+                    string strRxCycle = "";
+                    int intSeqNum = Convert.ToInt16(oAdo.m_OleDbDataReader["MinSeqNum1"]);
+                    int intYear = Convert.ToInt16(oAdo.m_OleDbDataReader["MinYear1"]);
+                    switch (i)
+                    {
+                        case 0:
+                            strPrePost = "PRE";
+                            strRxCycle = "1";
+                            break;
+                        case 1:
+                            strPrePost = "POST";
+                            strRxCycle = "1";
+                            break;
+                        case 2:
+                            strPrePost = "PRE";
+                            strRxCycle = "2";
+                            break;
+                        case 3:
+                            strPrePost = "POST";
+                            strRxCycle = "2";
+                            break;
+                        case 4:
+                            strPrePost = "PRE";
+                            strRxCycle = "3";
+                            break;
+                        case 5:
+                            strPrePost = "POST";
+                            strRxCycle = "3";
+                            break;
+                        case 6:
+                            strPrePost = "PRE";
+                            strRxCycle = "4";
+                            break;
+                        case 7:
+                            strPrePost = "POST";
+                            strRxCycle = "4";
+                            break;
+                    }
+                    if (!String.IsNullOrEmpty(strPrePost))
+                    {
+                        string insertSql = "INSERT INTO " + strViewTableName +
+                                           " VALUES('" + strPrePost + "','" + strRxCycle +
+                                           "'," + intYear + "," + intSeqNum + ",0)";
+                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, insertSql);
+                    }
+                }
+
             }
 
             if (oAdo != null)
@@ -1430,52 +1519,7 @@ namespace FIA_Biosum_Manager
             //@ToDo: Add code to clear fields on econ variable screen
         }
 
-        public class FvsVariableWeight
-        {
-            public string strPreOrPost;
-            public string strCycle;
-            public int intYear;
-            public int intSeqNum;
-        }
-
-        public class FvsVariableWeightCollection : System.Collections.CollectionBase
-	    {
-
-	    public void Add(FIA_Biosum_Manager.uc_core_scenario_weighted_average.FvsVariableWeight m_oVariableWeight)
-	    {
-	        // vérify if object is not already in
-		    if (this.List.Contains(m_oVariableWeight))
-			    throw new InvalidOperationException();
  
-		    // adding it
-		    this.List.Add(m_oVariableWeight);
-	    }
-			
-        public void Remove(int index)
-		{
-		    // Check to see if there is a widget at the supplied index.
-			if (index > Count - 1 || index < 0)
-				// If no widget exists, a messagebox is shown and the operation 
-				// is canColumned.
-			{
-				System.Windows.Forms.MessageBox.Show("Index not valid!");
-			}
-			else
-			{
-				List.RemoveAt(index); 
-			}
-		}
-			
-        public FIA_Biosum_Manager.uc_core_scenario_weighted_average.FvsVariableWeight Item(int Index)
-		{
-			// The appropriate item is retrieved from the List object and
-			// explicitly cast to the Widget type, then returned to the 
-			// caller.
-			return (FIA_Biosum_Manager.uc_core_scenario_weighted_average.FvsVariableWeight) List[Index];
-		}
-
-
-		}
     }
 
 }

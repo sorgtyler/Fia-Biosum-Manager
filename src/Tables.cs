@@ -1674,7 +1674,19 @@ namespace FIA_Biosum_Manager
 					"min_yn CHAR(1)," + 
 					"checked_yn CHAR(1))";
 			}
-
+            public void CreateScenarioFvsVariableWeightsReferenceTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateScenarioFvsVariableWeightsReferenceTableSQL(p_strTableName));
+            }
+            static public string CreateScenarioFvsVariableWeightsReferenceTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "pre_or_post CHAR(4)," +
+                    "rxcycle CHAR(1)," +
+                    "rxyear INTEGER," +
+                    "seqnum INTEGER," +
+                    "weight DOUBLE)";
+            }
 
 
 
