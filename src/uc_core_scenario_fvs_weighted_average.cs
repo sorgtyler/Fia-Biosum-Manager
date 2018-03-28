@@ -21,7 +21,6 @@ namespace FIA_Biosum_Manager
 		public System.Data.OleDb.OleDbConnection m_OleDbConnectionScenario;
 		public System.Data.OleDb.OleDbCommand m_OleDbCommand;
 		public System.Data.DataRelation m_DataRelation;
-		public System.Data.DataTable m_DataTable;
 		public System.Data.DataRow m_DataRow;
 		public int m_intError = 0;
 		public string m_strError = "";
@@ -227,8 +226,8 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -405,9 +404,9 @@ namespace FIA_Biosum_Manager
             // 
             // dataGridViewTextBoxColumn1
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewTextBoxColumn1.FillWeight = 80F;
             this.dataGridViewTextBoxColumn1.HeaderText = "CYCLE";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
@@ -416,11 +415,11 @@ namespace FIA_Biosum_Manager
             // 
             // dataGridViewTextBoxColumn3
             // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Red;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
-            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewTextBoxColumn3.HeaderText = "WEIGHT";
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             // 
@@ -706,6 +705,7 @@ namespace FIA_Biosum_Manager
             this.BtnHelp.Size = new System.Drawing.Size(64, 24);
             this.BtnHelp.TabIndex = 87;
             this.BtnHelp.Text = "Help";
+            this.BtnHelp.Click += new System.EventHandler(this.BtnHelp_Click);
             // 
             // textBox18
             // 
@@ -1101,10 +1101,9 @@ namespace FIA_Biosum_Manager
 					 **we will use those to create new columnstyles for the columns in our grid
 					 ******************************************************************************/
                     //get the number of columns from the view_weights data set
-                    int numCols = oAdo.m_DataSet.Tables["view_weights"].Columns.Count;
-                
+                    int numCols = oAdo.m_DataSet.Tables["view_weights"].Columns.Count;      
                     
-					/************************************************
+                    /************************************************
 					 **loop through all the columns in the dataset	
 					 ************************************************/
                     string strColumnName;
@@ -1112,14 +1111,26 @@ namespace FIA_Biosum_Manager
 					{
                         strColumnName = oAdo.m_DataSet.Tables["view_weights"].Columns[i].ColumnName;
 
-					    /******************************************************************
-					    **create a new instance of the DataGridColoredTextBoxColumn class
-						******************************************************************/
-                        aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
 						/***********************************
-						**all columns are read-only
+						**all columns are read-only except weight
 						***********************************/
-						aColumnTextColumn.ReadOnly=true;
+                        if (strColumnName.Trim().ToUpper() == "WEIGHT")
+                        {
+                            /******************************************************************
+                            **create a new instance of the DataGridColoredTextBoxColumn class
+                            ******************************************************************/
+                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(true, true, this);
+                            aColumnTextColumn.Format = "#0.00";
+                            aColumnTextColumn.ReadOnly = false;
+                        }
+                        else
+                        {
+                            /******************************************************************
+                            **create a new instance of the DataGridColoredTextBoxColumn class
+                            ******************************************************************/
+                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
+                            aColumnTextColumn.ReadOnly = true;
+                        }
 						aColumnTextColumn.HeaderText = strColumnName;
 				 				    
 						/********************************************************************
@@ -1136,6 +1147,11 @@ namespace FIA_Biosum_Manager
 						 ********************************************************************/
 						tableStyle.GridColumnStyles.Add(aColumnTextColumn);
 
+                        /**********************************
+                         * Hide pre_or_post column
+                         * *******************************/
+                        if (strColumnName.Equals("pre_or_post"))
+                            tableStyle.GridColumnStyles.Remove(aColumnTextColumn);
 					}
 					/*********************************************************************
 					 ** make the dataGrid use our new tablestyle and bind it to our table
@@ -1560,7 +1576,15 @@ namespace FIA_Biosum_Manager
             //@ToDo: Add code to clear fields on econ variable screen
         }
 
- 
+        private void BtnHelp_Click(object sender, EventArgs e)
+        {
+            DataTable objDataTable = this.m_dv.Table;
+            DataColumn aColumn = objDataTable.Columns["weight"];
+            foreach (DataRow row in objDataTable.Rows)
+            {
+                MessageBox.Show(row[aColumn].ToString());
+            }
+        }
     }
 
     public class WeightedAverage_DataGridColoredTextBoxColumn : DataGridTextBoxColumn
