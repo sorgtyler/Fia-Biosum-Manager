@@ -1839,14 +1839,7 @@ namespace FIA_Biosum_Manager
                 this.uc_scenario_run1.groupBox1_Resize();
             }
         }
-
-		
-
-
-		
-		
-		
-
+	
 	}
     public class CoreAnalysisScenarioItem
     {
@@ -3678,6 +3671,82 @@ namespace FIA_Biosum_Manager
                 p_oAdo.m_OleDbDataReader.Close();
                
             }
+        }
+
+        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> LoadFvsTablesAndVariables(FIA_Biosum_Manager.ado_data_access p_oAdo)
+        {
+            int x, y;
+            RxTools oRxTools = new RxTools();
+
+            //
+            //load list box with all the pre and post table columns
+            //
+            oRxTools.CreateTableLinksToFVSPrePostTables(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb");
+            oRxTools = null;
+            p_oAdo.OpenConnection(p_oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb", "", ""));
+            System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables = 
+                new System.Collections.Generic.Dictionary<string,
+                System.Collections.Generic.IList<string>>();
+            if (p_oAdo.m_intError == 0)
+            {
+
+                string[] strTableNamesArray = p_oAdo.getTableNames(p_oAdo.m_OleDbConnection);
+                for (x = 0; x <= strTableNamesArray.Length - 1; x++)
+                {
+                    if (strTableNamesArray[x].ToUpper().IndexOf("PRE_", 0) == 0)
+                    {
+                        string[] strColumnNamesArray = p_oAdo.getFieldNamesArray(p_oAdo.m_OleDbConnection, "SELECT * FROM " + strTableNamesArray[x]);
+                        System.Collections.Generic.IList<string> lstFVSFields = new System.Collections.Generic.List<string>();
+                        for (y = 0; y <= strColumnNamesArray.Length - 1; y++)
+                        {
+                            switch (strColumnNamesArray[y].Trim().ToUpper())
+                            {
+                                case "BIOSUM_COND_ID":
+                                    break;
+                                case "RXPACKAGE":
+                                    break;
+                                case "RX":
+                                    break;
+                                case "RXCYCLE":
+                                    break;
+                                case "STANDID":
+                                    break;
+                                case "ID":
+                                    break;
+                                case "CASEID":
+                                    break;
+                                case "FVS_VARIANT":
+                                    break;
+                                case "YEAR":
+                                    break;
+                                default:
+                                    if (p_oAdo.ColumnExist(p_oAdo.m_OleDbConnection,
+                                        "POST_" + strTableNamesArray[x].Substring(4, strTableNamesArray[x].Length - 4),
+                                        strColumnNamesArray[y]))
+                                    {
+                                        lstFVSFields.Add(strColumnNamesArray[y]);
+                                    }
+                                    break;
+                            }
+
+                        }
+                        if (lstFVSFields.Count > 0)
+                        {
+                            string strFvsTableName = strTableNamesArray[x].Substring(4, strTableNamesArray[x].Length - 4);
+                            if (!_dictFVSTables.ContainsKey(strFvsTableName))
+                            {
+                                _dictFVSTables.Add(strFvsTableName, lstFVSFields);
+                            }
+                            else
+                            {
+                                System.Collections.Generic.List<string> lstTemp = (System.Collections.Generic.List<string>) _dictFVSTables[strFvsTableName];
+                                lstTemp.AddRange(lstFVSFields);
+                            }
+                        }
+                    }
+                }
+            }
+            return _dictFVSTables;
         }
         public string ScenarioProperties(CoreAnalysisScenarioItem p_oScenarioItem)
         {

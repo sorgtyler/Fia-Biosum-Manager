@@ -59,6 +59,7 @@ namespace FIA_Biosum_Manager
 		public bool m_bFirstTime=true;
 		private bool _bDisplayAuditMsg=true;
         private bool m_bIgnoreListViewItemCheck = false;
+        private int m_intPrevColumnIdx = -1;
         private System.Windows.Forms.GroupBox grpboxSummary;
 		private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors=new ListViewAlternateBackgroundColors();
          private ValidateNumericValues m_oValidate = new ValidateNumericValues();
@@ -71,11 +72,11 @@ namespace FIA_Biosum_Manager
         public Button btnFvsCalculate;
         private Button btnFvsDetailsCancel;
         private GroupBox grpBoxFvsBaseline;
-        private ComboBox comboBox1;
+        private ComboBox cboFvsVariableBaselinePkg;
         private GroupBox groupBox3;
-        private ListBox listBox1;
+        private ListBox lstFVSFieldsList;
         private GroupBox groupBox2;
-        private ListBox lstFVSVariableTables;
+        private ListBox lstFVSTablesList;
         private Label LblSelectedVariable;
         private Label lblSelectedFVSVariable;
         private TextBox textBox18;
@@ -113,7 +114,7 @@ namespace FIA_Biosum_Manager
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private TextBox textBox4;
         private Label label6;
-        private TextBox textBox3;
+        private TextBox txtFvsVariableTotalWeight;
         private Label label5;
         private GroupBox grpBoxEconBaseline;
         private ComboBox comboBox2;
@@ -122,6 +123,10 @@ namespace FIA_Biosum_Manager
         private env m_oEnv;
         private System.Data.DataTable m_dtTableSchema;
         private System.Data.DataView m_dv;
+        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
+        private Button btnFVSVariableValue;
+        private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
+
 
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
@@ -262,8 +267,9 @@ namespace FIA_Biosum_Manager
             this.vType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
+            this.btnFVSVariableValue = new System.Windows.Forms.Button();
             this.m_dg = new System.Windows.Forms.DataGrid();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.txtFvsVariableTotalWeight = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.BtnHelp = new System.Windows.Forms.Button();
             this.textBox18 = new System.Windows.Forms.TextBox();
@@ -273,11 +279,11 @@ namespace FIA_Biosum_Manager
             this.btnFvsCalculate = new System.Windows.Forms.Button();
             this.btnFvsDetailsCancel = new System.Windows.Forms.Button();
             this.grpBoxFvsBaseline = new System.Windows.Forms.GroupBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cboFvsVariableBaselinePkg = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.lstFVSVariableTables = new System.Windows.Forms.ListBox();
+            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
@@ -646,8 +652,9 @@ namespace FIA_Biosum_Manager
             // pnlDetails
             // 
             this.pnlDetails.AutoScroll = true;
+            this.pnlDetails.Controls.Add(this.btnFVSVariableValue);
             this.pnlDetails.Controls.Add(this.m_dg);
-            this.pnlDetails.Controls.Add(this.textBox3);
+            this.pnlDetails.Controls.Add(this.txtFvsVariableTotalWeight);
             this.pnlDetails.Controls.Add(this.label5);
             this.pnlDetails.Controls.Add(this.BtnHelp);
             this.pnlDetails.Controls.Add(this.textBox18);
@@ -667,6 +674,16 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Size = new System.Drawing.Size(850, 451);
             this.pnlDetails.TabIndex = 70;
             // 
+            // btnFVSVariableValue
+            // 
+            this.btnFVSVariableValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFVSVariableValue.Location = new System.Drawing.Point(646, 28);
+            this.btnFVSVariableValue.Name = "btnFVSVariableValue";
+            this.btnFVSVariableValue.Size = new System.Drawing.Size(139, 98);
+            this.btnFVSVariableValue.TabIndex = 92;
+            this.btnFVSVariableValue.Text = "Select";
+            this.btnFVSVariableValue.Click += new System.EventHandler(this.btnFVSVariableValue_Click);
+            // 
             // m_dg
             // 
             this.m_dg.DataMember = "";
@@ -675,18 +692,19 @@ namespace FIA_Biosum_Manager
             this.m_dg.Name = "m_dg";
             this.m_dg.Size = new System.Drawing.Size(403, 177);
             this.m_dg.TabIndex = 91;
+            this.m_dg.CurrentCellChanged += new System.EventHandler(this.Grid_CurCellChange);
             // 
-            // textBox3
+            // txtFvsVariableTotalWeight
             // 
-            this.textBox3.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(463, 297);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(121, 22);
-            this.textBox3.TabIndex = 90;
-            this.textBox3.Text = "1.0";
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtFvsVariableTotalWeight.BackColor = System.Drawing.SystemColors.Control;
+            this.txtFvsVariableTotalWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFvsVariableTotalWeight.Location = new System.Drawing.Point(463, 297);
+            this.txtFvsVariableTotalWeight.Name = "txtFvsVariableTotalWeight";
+            this.txtFvsVariableTotalWeight.ReadOnly = true;
+            this.txtFvsVariableTotalWeight.Size = new System.Drawing.Size(121, 22);
+            this.txtFvsVariableTotalWeight.TabIndex = 90;
+            this.txtFvsVariableTotalWeight.Text = "0.0";
+            this.txtFvsVariableTotalWeight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label5
             // 
@@ -705,7 +723,6 @@ namespace FIA_Biosum_Manager
             this.BtnHelp.Size = new System.Drawing.Size(64, 24);
             this.BtnHelp.TabIndex = 87;
             this.BtnHelp.Text = "Help";
-            this.BtnHelp.Click += new System.EventHandler(this.BtnHelp_Click);
             // 
             // textBox18
             // 
@@ -761,7 +778,7 @@ namespace FIA_Biosum_Manager
             // 
             // grpBoxFvsBaseline
             // 
-            this.grpBoxFvsBaseline.Controls.Add(this.comboBox1);
+            this.grpBoxFvsBaseline.Controls.Add(this.cboFvsVariableBaselinePkg);
             this.grpBoxFvsBaseline.Location = new System.Drawing.Point(8, 7);
             this.grpBoxFvsBaseline.Name = "grpBoxFvsBaseline";
             this.grpBoxFvsBaseline.Size = new System.Drawing.Size(154, 48);
@@ -769,19 +786,17 @@ namespace FIA_Biosum_Manager
             this.grpBoxFvsBaseline.TabStop = false;
             this.grpBoxFvsBaseline.Text = "Baseline RxPackage";
             // 
-            // comboBox1
+            // cboFvsVariableBaselinePkg
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Items.AddRange(new object[] {
-            "005"});
-            this.comboBox1.Location = new System.Drawing.Point(8, 18);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(72, 24);
-            this.comboBox1.TabIndex = 77;
+            this.cboFvsVariableBaselinePkg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboFvsVariableBaselinePkg.Location = new System.Drawing.Point(8, 18);
+            this.cboFvsVariableBaselinePkg.Name = "cboFvsVariableBaselinePkg";
+            this.cboFvsVariableBaselinePkg.Size = new System.Drawing.Size(72, 24);
+            this.cboFvsVariableBaselinePkg.TabIndex = 77;
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.listBox1);
+            this.groupBox3.Controls.Add(this.lstFVSFieldsList);
             this.groupBox3.Location = new System.Drawing.Point(440, 7);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 133);
@@ -789,27 +804,20 @@ namespace FIA_Biosum_Manager
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "FVS Variable(s)";
             // 
-            // listBox1
+            // lstFVSFieldsList
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 16;
-            this.listBox1.Items.AddRange(new object[] {
-            "Canopy_Density",
-            "Canopy_Ht",
-            "Crown_Index",
-            "Fire_Type_Mod",
-            "PTorch_Sev",
-            "PTorch_Mod",
-            "Torch_Index",
-            ""});
-            this.listBox1.Location = new System.Drawing.Point(6, 21);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(181, 100);
-            this.listBox1.TabIndex = 70;
+            this.lstFVSFieldsList.FormattingEnabled = true;
+            this.lstFVSFieldsList.ItemHeight = 16;
+            this.lstFVSFieldsList.Location = new System.Drawing.Point(6, 21);
+            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
+            this.lstFVSFieldsList.Size = new System.Drawing.Size(181, 100);
+            this.lstFVSFieldsList.Sorted = true;
+            this.lstFVSFieldsList.TabIndex = 70;
+            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.lstFVSVariableTables);
+            this.groupBox2.Controls.Add(this.lstFVSTablesList);
             this.groupBox2.Location = new System.Drawing.Point(208, 7);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 133);
@@ -817,22 +825,15 @@ namespace FIA_Biosum_Manager
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "FVS Variable Table(s)";
             // 
-            // lstFVSVariableTables
+            // lstFVSTablesList
             // 
-            this.lstFVSVariableTables.FormattingEnabled = true;
-            this.lstFVSVariableTables.ItemHeight = 16;
-            this.lstFVSVariableTables.Items.AddRange(new object[] {
-            "FVS_BURNREPORT",
-            "FVS_CARBON",
-            "FVS_COMPUTE",
-            "FVS_HRV_CARBON",
-            "FVS_POTFIRE",
-            "FVS_STRCLASS",
-            "FVS_SUMMARY"});
-            this.lstFVSVariableTables.Location = new System.Drawing.Point(6, 21);
-            this.lstFVSVariableTables.Name = "lstFVSVariableTables";
-            this.lstFVSVariableTables.Size = new System.Drawing.Size(181, 100);
-            this.lstFVSVariableTables.TabIndex = 70;
+            this.lstFVSTablesList.FormattingEnabled = true;
+            this.lstFVSTablesList.ItemHeight = 16;
+            this.lstFVSTablesList.Location = new System.Drawing.Point(6, 21);
+            this.lstFVSTablesList.Name = "lstFVSTablesList";
+            this.lstFVSTablesList.Size = new System.Drawing.Size(181, 100);
+            this.lstFVSTablesList.TabIndex = 70;
+            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
             // 
             // LblSelectedVariable
             // 
@@ -888,22 +889,7 @@ namespace FIA_Biosum_Manager
 		}
 		#endregion
 
-        public void loadvalues_FromProperties()
-        {
-
-
-        }
         public void loadvalues()
-		{
-			
-			this.m_intError=0;
-			this.m_strError="";
-
-            loadRefData();
-
-		}
-
-        public void loadRefData()
         {
             this.m_intError = 0;
             this.m_strError = "";
@@ -969,6 +955,9 @@ namespace FIA_Biosum_Manager
                         strSeqNumTable);
                     if (m_intError == 0)
                         lstSeqNumTables.Add(strLinkTableName);
+
+                    if (!cboFvsVariableBaselinePkg.Items.Contains(strPackage))
+                        cboFvsVariableBaselinePkg.Items.Add(strPackage);
                 }
             }
             //Create temporary table to populate datagrid
@@ -1137,11 +1126,8 @@ namespace FIA_Biosum_Manager
 						 **assign the mappingname property the data sets column name
 						 ********************************************************************/
 						aColumnTextColumn.MappingName = strColumnName;
-						//aColumnTextColumn
-						//aColumnTextColumn.TextBox.ContextMenu =  new ContextMenu(); //this.m_mnuDataGridPopup;
-						//aColumnTextColumn.TextBox.ContextMenu = this.m_mnuDataGridPopup;
-						//aColumnTextColumn.TextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_dg_TextBox_MouseDown);
-						/********************************************************************
+
+                        /********************************************************************
 						 **add the datagridcoloredtextboxcolumn object to the data grid 
 						 **table style object
 						 ********************************************************************/
@@ -1179,10 +1165,19 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			if (oAdo.m_intError < 0)
-			{
-				this.ParentForm.Close();
-			}
+
+            m_dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(oAdo);
+            foreach (string strKey in m_dictFVSTables.Keys)
+            {
+                lstFVSTablesList.Items.Add(strKey);
+            }
+            
+            //Set Defaults
+            if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
+            {
+                //Set to last package as that is usually the grow-only package
+                cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
+            }
 
             
             
@@ -1576,15 +1571,67 @@ namespace FIA_Biosum_Manager
             //@ToDo: Add code to clear fields on econ variable screen
         }
 
-        private void BtnHelp_Click(object sender, EventArgs e)
+        public void SumWeights()
         {
             DataTable objDataTable = this.m_dv.Table;
-            DataColumn aColumn = objDataTable.Columns["weight"];
+            double dblSum = 0;
+            double dblWeight = -1;
             foreach (DataRow row in objDataTable.Rows)
             {
-                MessageBox.Show(row[aColumn].ToString());
+                string strWeight = row["weight"].ToString();
+                if (Double.TryParse(strWeight, out dblWeight))
+                    dblSum = dblSum + dblWeight;
+            }
+            txtFvsVariableTotalWeight.Text = String.Format("{0:0.##}", dblSum); 
+        }
+
+        protected void Grid_CurCellChange(object sender, EventArgs e)
+        {
+            //Only recalculate if we are leaving the weight column
+            if (m_intPrevColumnIdx.Equals(3))
+                this.SumWeights();
+            m_intPrevColumnIdx = m_dg.CurrentCell.ColumnNumber;
+        }
+
+        private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lstFVSFieldsList.Items.Clear();
+            this.LblSelectedVariable.Text = "Not Defined";
+            if (this.lstFVSTablesList.SelectedIndex > -1)
+            {
+                System.Collections.Generic.IList<string> lstFields =
+                    m_dictFVSTables[Convert.ToString(this.lstFVSTablesList.SelectedItem)];
+                if (lstFields != null)
+                {
+                    foreach (string strField in lstFields)
+                    {
+                        lstFVSFieldsList.Items.Add(strField);
+                    }
+                }
             }
         }
+
+        private void lstFVSFieldsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.LblSelectedVariable.Text = "Not Defined";
+            //if (this.lstFVSFieldsList.SelectedIndex > -1)
+            //{
+            //    this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
+            //}
+            //else
+            //{
+            //    this.btnFVSVariablesOptimizationVariableValues.Enabled = false;
+            //}
+        }
+
+        private void btnFVSVariableValue_Click(object sender, EventArgs e)
+        {
+            if (this.lstFVSTablesList.SelectedItems.Count == 0 || this.lstFVSFieldsList.SelectedItems.Count == 0) return;
+            this.LblSelectedVariable.Text =
+                this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
+        }
+
+
     }
 
     public class WeightedAverage_DataGridColoredTextBoxColumn : DataGridTextBoxColumn
@@ -1695,5 +1742,7 @@ namespace FIA_Biosum_Manager
         }
 
     }
+
+
 
 }

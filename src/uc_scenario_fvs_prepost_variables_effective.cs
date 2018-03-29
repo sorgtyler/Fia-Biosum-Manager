@@ -151,8 +151,7 @@ namespace FIA_Biosum_Manager
         private TextBox txtEffVarDescr;
         private Label label8;
         private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
-
-        private System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;		
+        private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
 
 		public class Variables
 		{
@@ -1729,89 +1728,26 @@ namespace FIA_Biosum_Manager
 			this.m_intError=0;
 			this.m_strError="";
 
-			this.lstFVSVariablesPrePostVariableValue.Items.Clear();
-			int x,y;
             ado_data_access oAdo = new ado_data_access();
-            RxTools oRxTools = new RxTools();
 
-			//
-			//load list box with all the pre and post table columns
-			//
-            oRxTools.CreateTableLinksToFVSPrePostTables(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb");
-            oRxTools = null;
-			oAdo.OpenConnection(oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb","",""));
-            _dictFVSTables = new System.Collections.Generic.Dictionary<string, 
-                System.Collections.Generic.IList<string>>();
-            if (oAdo.m_intError==0)
-			{
+			this.lstFVSVariablesPrePostVariableValue.Items.Clear();
+            System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(oAdo);
+            foreach (string strKey in _dictFVSTables.Keys)
+            {
+                System.Collections.Generic.IList<String> lstFields = _dictFVSTables[strKey];
+                foreach (string strField in lstFields)
+                {
+                    this.lstFVSVariablesPrePostVariableValue.Items.Add(strKey + "." + strField);
+                }
+            }
 
-				string[] strTableNamesArray = oAdo.getTableNames(oAdo.m_OleDbConnection);
-				for (x=0;x<=strTableNamesArray.Length-1;x++)
-				{
-					if (strTableNamesArray[x].ToUpper().IndexOf("PRE_",0)==0)
-					{
-						string[] strColumnNamesArray = oAdo.getFieldNamesArray(oAdo.m_OleDbConnection,"SELECT * FROM " + strTableNamesArray[x]);
-                        System.Collections.Generic.IList<string> lstFVSFields = new System.Collections.Generic.List<string>();
-                        for (y=0;y<=strColumnNamesArray.Length-1;y++)
-						{
-							switch (strColumnNamesArray[y].Trim().ToUpper())
-							{
-								case "BIOSUM_COND_ID":
-									break;
-                                case "RXPACKAGE":
-                                    break;
-								case "RX":
-									break;
-                                case "RXCYCLE":
-                                    break;
-								case "STANDID":
-									break;
-								case "ID":
-									break;
-								case "CASEID":
-									break;
-                                case "FVS_VARIANT":
-									break;
-								case "YEAR":
-									break;
-								default:
-									if (oAdo.ColumnExist(oAdo.m_OleDbConnection,
-										"POST_" + strTableNamesArray[x].Substring(4,strTableNamesArray[x].Length - 4),
-										strColumnNamesArray[y]))
-									{
-
-										this.lstFVSVariablesPrePostVariableValue.Items.Add(strTableNamesArray[x].Substring(4,strTableNamesArray[x].Length - 4) + "." +  strColumnNamesArray[y]);
-									    lstFVSFields.Add(strColumnNamesArray[y]);
-                                    }
-									break;
-							}
-
-						}
-                        if (lstFVSFields.Count > 0)
-                        {
-                            string strFvsTableName = strTableNamesArray[x].Substring(4, strTableNamesArray[x].Length - 4);
-                            if (!_dictFVSTables.ContainsKey(strFvsTableName))
-                            {
-                                _dictFVSTables.Add(strFvsTableName, lstFVSFields);
-                            }
-                            else
-                            {
-                                System.Collections.Generic.List<string> lstTemp = (System.Collections.Generic.List<string>)_dictFVSTables[strFvsTableName];
-                                lstTemp.AddRange(lstFVSFields);
-                            }
-                        }
-					}
-				}
-				oAdo.CloseConnection(oAdo.m_OleDbConnection);
-				oAdo.m_OleDbConnection.Dispose();
-			}
 			//
 			//load previous scenario values
 			//
 			m_oOldVar = new Variables();
 			m_oSavVar = new Variables();
 
-			
+            int x = 0;
 			for (x=0;x<=NUMBER_OF_VARIABLES-1;x++)
 				this.RemoveVariable(x);
 
@@ -1819,7 +1755,7 @@ namespace FIA_Biosum_Manager
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
 				"\\core\\db\\scenario_core_rule_definitions.mdb";
-			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
 				int intVarNum=0;

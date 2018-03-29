@@ -111,7 +111,7 @@ namespace FIA_Biosum_Manager
         private ListBox lstFVSFieldsList;
         private ListBox lstFVSTablesList;
         private string m_strLastValue = "";
-        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;		
+        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;		
 
 		public class VariableItem
 		{
@@ -943,9 +943,9 @@ namespace FIA_Biosum_Manager
 
 			int y;
             lstFVSTablesList.Items.Clear();
-            _dictFVSTables = new System.Collections.Generic.Dictionary<string,
+            m_dictFVSTables = new System.Collections.Generic.Dictionary<string,
                 System.Collections.Generic.IList<string>>(p_dictFVSTables);
-            foreach (string strKey in _dictFVSTables.Keys)
+            foreach (string strKey in m_dictFVSTables.Keys)
             {
                 lstFVSTablesList.Items.Add(strKey);
             }
@@ -2070,7 +2070,7 @@ namespace FIA_Biosum_Manager
             if (this.lstFVSTablesList.SelectedIndex > -1)
             {
                 System.Collections.Generic.IList<string> lstFields =
-                    _dictFVSTables[Convert.ToString(this.lstFVSTablesList.SelectedItem)];
+                    m_dictFVSTables[Convert.ToString(this.lstFVSTablesList.SelectedItem)];
                 if (lstFields != null)
                 {
                     foreach (string strField in lstFields)
