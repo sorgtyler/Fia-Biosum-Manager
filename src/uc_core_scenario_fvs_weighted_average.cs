@@ -104,7 +104,7 @@ namespace FIA_Biosum_Manager
         private Label label1;
         private TextBox textBox2;
         private Label label2;
-        private Button button3;
+        private Button BtnSaveEcon;
         private Button btnEconDetailsCancel;
         private GroupBox groupBox8;
         private ListBox listBox3;
@@ -248,7 +248,7 @@ namespace FIA_Biosum_Manager
             this.label1 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
+            this.BtnSaveEcon = new System.Windows.Forms.Button();
             this.btnEconDetailsCancel = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.listBox3 = new System.Windows.Forms.ListBox();
@@ -343,7 +343,7 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.button3);
+            this.panel1.Controls.Add(this.BtnSaveEcon);
             this.panel1.Controls.Add(this.btnEconDetailsCancel);
             this.panel1.Controls.Add(this.groupBox8);
             this.panel1.Controls.Add(this.label3);
@@ -473,13 +473,13 @@ namespace FIA_Biosum_Manager
             this.label2.TabIndex = 79;
             this.label2.Text = "Weighted variable name:";
             // 
-            // button3
+            // BtnSaveEcon
             // 
-            this.button3.Location = new System.Drawing.Point(634, 402);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(76, 24);
-            this.button3.TabIndex = 77;
-            this.button3.Text = "Calculate";
+            this.BtnSaveEcon.Location = new System.Drawing.Point(634, 402);
+            this.BtnSaveEcon.Name = "BtnSaveEcon";
+            this.BtnSaveEcon.Size = new System.Drawing.Size(76, 24);
+            this.BtnSaveEcon.TabIndex = 77;
+            this.BtnSaveEcon.Text = "Save";
             // 
             // btnEconDetailsCancel
             // 
@@ -1582,7 +1582,7 @@ namespace FIA_Biosum_Manager
                 if (Double.TryParse(strWeight, out dblWeight))
                     dblSum = dblSum + dblWeight;
             }
-            txtFvsVariableTotalWeight.Text = String.Format("{0:0.##}", dblSum); 
+            txtFvsVariableTotalWeight.Text = String.Format("{0:0.0#}", dblSum); 
         }
 
         protected void Grid_CurCellChange(object sender, EventArgs e)
