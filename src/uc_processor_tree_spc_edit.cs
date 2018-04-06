@@ -531,7 +531,25 @@ namespace FIA_Biosum_Manager
 				this.m_intError=-1;
 				this.txtSpCd.Focus();
 				return;
+            }
+            else
+            {
+                //check to make sure the spcd exists in fia_tree_species_ref before trying to add
+                this.m_ado.m_strSQL = "SELECT common_name FROM " + Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName +
+                                      " WHERE spcd = " + this.txtSpCd.Text.Trim() + ";";
+                this.m_ado.SqlQueryReader(this.m_ado.m_OleDbConnection, this.m_ado.m_OleDbTransaction, this.m_ado.m_strSQL);
+                if (!this.m_ado.m_OleDbDataReader.HasRows)
+                {
+                    string strMessage = "!!spcd " + this.txtSpCd.Text.Trim() + " is missing from the " +
+                                        Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + " table. If this is a " +
+                                        "valid FIA species code, please contact the Biosum Administrator to have it added!!";
+                    System.Windows.Forms.MessageBox.Show(strMessage, "FIA Biosum");
+                    this.m_intError = -1;
+                    this.txtSpCd.Focus();
+                    return;
+                }
 			}
+
             if (this.cmbFvsSpCd.Text.Trim().Length == 0)
             {
                 MessageBox.Show("!!Select An FVS Tree Species!!", "FIA Biosum",

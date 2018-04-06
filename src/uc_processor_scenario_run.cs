@@ -4983,8 +4983,41 @@ namespace FIA_Biosum_Manager
                     MessageBox.Show("No Boxes Are Checked", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                     return;
                 }
-                ReferenceProcessorScenarioForm.SaveRuleDefinitions();
+
+                System.Collections.Generic.IList<string> lstRx = new System.Collections.Generic.List<string>();
+                for (int x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
+                {
+                    if ((bool)frmMain.g_oDelegate.GetListViewExItemPropertyValue(this.m_lvEx, x, "Checked", false))
+                    {
+                        string strRx1 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE1, "Text", false);
+                        strRx1 = strRx1.Trim();
+                        lstRx.Add(strRx1);
+
+                        string strRx2 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE2, "Text", false);
+                        strRx2 = strRx2.Trim();
+                        if (! lstRx.Contains(strRx2))
+                            lstRx.Add(strRx2);
+
+                        string strRx3 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE3, "Text", false);
+                        strRx3 = strRx3.Trim();
+                        if (!lstRx.Contains(strRx3))
+                            lstRx.Add(strRx3);
+
+                        string strRx4 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE4, "Text", false);
+                        strRx4 = strRx4.Trim();
+                        if (!lstRx.Contains(strRx4))
+                            lstRx.Add(strRx4);
+                    }
+                }
+
+                ReferenceProcessorScenarioForm.ValidateRuleDefinitions(lstRx);
                 m_intError = ReferenceProcessorScenarioForm.m_intError;
+
+                if (this.m_intError == 0)
+                {
+                    ReferenceProcessorScenarioForm.SaveRuleDefinitions();
+                    m_intError = ReferenceProcessorScenarioForm.m_intError;
+                }
 
                 if (this.m_intError == 0 && (frmMain.g_oDelegate.m_oThread == null ||
                                              frmMain.g_oDelegate.m_oThread.IsAlive == false))

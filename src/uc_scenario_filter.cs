@@ -44,10 +44,8 @@ namespace FIA_Biosum_Manager
 		private string m_strScenarioTable="scenario_plot_filter";
 		public int m_intError=0;
 		public string m_strError="";
-		private string _strSteepYardingDistanceDefault="5000";
-        private string _strLowYardingDistanceDefault = "2000";
-        private string _strSteepSlope = "";
-        private string _strLowSlope = "";
+		private string _strSteepYardingDistanceDefault="2500";
+        private string _strLowYardingDistanceDefault = "2500";
 
 
 		public uc_scenario_filter()
