@@ -2632,6 +2632,21 @@ namespace FIA_Biosum_Manager
 			SqlNonQuery(p_oConn,m_strSQL);
 
 		}
+        /// <summary>
+        /// Create a unique index
+        /// </summary>
+        /// <param name="p_oConn"></param>
+        /// <param name="p_strTableName"></param>
+        /// <param name="p_strIndexName"></param>
+        /// <param name="p_strColumnList"></param>
+        public void AddUniqueIndex(System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName, string p_strIndexName, string p_strColumnList)
+        {
+            m_strSQL = "CREATE UNIQUE INDEX " + p_strIndexName + " " +
+                       "ON " + p_strTableName + " " +
+                       "(" + p_strColumnList + ")";
+            SqlNonQuery(p_oConn, m_strSQL);
+
+        }
         public void AddColumn(System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName, string p_strColumnName,string p_strDataType, string p_strSize)
         {
             if (p_strSize.Trim().Length > 0)

@@ -9,7 +9,8 @@ namespace FIA_Biosum_Manager
 	{
 		public Project m_oProject = new Project();
 		public CoreScenarioResults m_oCoreScenarioResults = new CoreScenarioResults();
-		public CoreScenarioRuleDefinitions m_oCoreScenarioRuleDef = new CoreScenarioRuleDefinitions();
+		public CoreDefinitions m_oCoreDef = new CoreDefinitions();
+        public CoreScenarioRuleDefinitions m_oCoreScenarioRuleDef = new CoreScenarioRuleDefinitions();
 		public FIAPlot m_oFIAPlot = new FIAPlot();
 		public FVS m_oFvs = new FVS();
 		public TravelTime m_oTravelTime = new TravelTime();
@@ -1688,10 +1689,38 @@ namespace FIA_Biosum_Manager
                     "weight DOUBLE)";
             }
 
-
-
-
 		}
+
+        public class CoreDefinitions
+        {
+            private string strSQL = "";
+
+            static public string DefaultDbFile { get { return @"core\db\core_definitions.accdb"; } }
+            static public string DefaultCalculatedCoreVariablesTableName { get { return "calculated_core_variables"; } }
+
+            public void CreateCalculatedCoreVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedCoreVariableTableSQL(p_strTableName));
+                CreateCalculatedCoreVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateCalculatedCoreVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddAutoNumber(p_oConn, p_strTableName, "ID");
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "ID");
+                p_oAdo.AddUniqueIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "VARIABLE_NAME");
+            }
+            static public string CreateCalculatedCoreVariableTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "ID INTEGER," +
+                    "VARIABLE_NAME CHAR(4)," +
+                    "VARIABLE_DESCRIPTION CHAR(255)," +
+                    "VARIABLE_TYPE CHAR(25)," +
+                    "BASELINE_RXPACKAGE CHAR(3))";
+            }
+        }
+
+
 		public class FVS
 		{
             public static string[] g_strFVSOutTablesArray =  {"FVS_CASES",
