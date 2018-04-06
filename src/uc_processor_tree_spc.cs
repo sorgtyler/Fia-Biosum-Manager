@@ -1648,6 +1648,19 @@ namespace FIA_Biosum_Manager
                     {
                         if (this.lstAudit.Items[x].Checked == true)
                         {
+                            //check to make sure the spcd exists in fia_tree_species_ref before trying to add
+                            this.m_ado.m_strSQL = "SELECT common_name FROM " + Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName +
+                                                  " WHERE spcd = " + this.lstAudit.Items[x].SubItems[1].Text.Trim() + ";";
+                            this.m_ado.SqlQueryReader(this.m_ado.m_OleDbConnection, this.m_ado.m_OleDbTransaction, this.m_ado.m_strSQL);
+                            if (!this.m_ado.m_OleDbDataReader.HasRows)
+                            {
+                                string strMessage = "spcd " + this.lstAudit.Items[x].SubItems[1].Text.Trim() + " is missing from the " +
+                                                    Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + " table. If this is a " +
+                                                    "valid FIA species code, please contact the BioSum Administrator to have it added.";
+                                System.Windows.Forms.MessageBox.Show(strMessage, "FIA Biosum");
+                                return;
+                            }
+                            
                             //get the species information if a record with the same species already exists
                             this.m_ado.m_strSQL = "SELECT DISTINCT common_name,genus,species " +
                                 "FROM " + this.m_oQueries.m_oFvs.m_strTreeSpcTable + " t " +
