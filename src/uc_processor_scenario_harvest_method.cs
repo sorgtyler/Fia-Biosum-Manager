@@ -1314,10 +1314,10 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
                     "\\db\\fvsmaster.mdb";
                 m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strFvsMDB, "", ""));
-                string strRxClause = "AND RX IN ('";
+                string strRxClause = "AND RX IN (";
                 foreach (string strRx in lstRx)
                 {
-                    strRxClause = strRxClause + strRx + "',";
+                    strRxClause = strRxClause + "'" + strRx + "',";
                 }
                 //Trim the trailing comma
                 strRxClause = strRxClause.Substring(0, (strRxClause.Length - 1));

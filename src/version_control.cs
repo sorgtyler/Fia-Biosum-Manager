@@ -5139,7 +5139,7 @@ namespace FIA_Biosum_Manager
         {
             frmMain.g_sbpInfo.Text = "Version Update: Updating Core Analysis Configurations ...Stand by";
             ado_data_access oAdo = new ado_data_access();
-            dao_data_access oDao = new dao_data_access();
+            //dao_data_access oDao = new dao_data_access();
             string strCoreMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";            
             oAdo.OpenConnection(oAdo.getMDBConnString(strCoreMdb, "", ""));
             oAdo.m_strSQL = "UPDATE scenario_fvs_variables_tiebreaker " +
@@ -5158,82 +5158,82 @@ namespace FIA_Biosum_Manager
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
 
-            frmMain.g_sbpInfo.Text = "Version Update: Updating Harvest Methods table locations ...Stand by";
-            // Copying the harvest_methods table into biosum_ref.accdb, if it is missing and biosum_ref.accdb already exists
-            string strMDBPathAndFile = frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
-                frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
-            if (System.IO.File.Exists(strMDBPathAndFile) == true)
-            {
-                if (!oDao.TableExists(strMDBPathAndFile, Tables.Reference.DefaultHarvestMethodsTableName))
-                {
-                    string strDestinationTableName = "harvestmethod_worktable";
-                    string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
-                    // Harvest Methods table
-                    oDao.CreateTableLink(strMDBPathAndFile, strDestinationTableName, strSourceDbFile, Tables.Reference.DefaultHarvestMethodsTableName);
+            //frmMain.g_sbpInfo.Text = "Version Update: Updating Harvest Methods table locations ...Stand by";
+            //// Copying the harvest_methods table into biosum_ref.accdb, if it is missing and biosum_ref.accdb already exists
+            //string strMDBPathAndFile = frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
+            //    frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
+            //if (System.IO.File.Exists(strMDBPathAndFile) == true)
+            //{
+            //    if (!oDao.TableExists(strMDBPathAndFile, Tables.Reference.DefaultHarvestMethodsTableName))
+            //    {
+            //        string strDestinationTableName = "harvestmethod_worktable";
+            //        string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
+            //        // Harvest Methods table
+            //        oDao.CreateTableLink(strMDBPathAndFile, strDestinationTableName, strSourceDbFile, Tables.Reference.DefaultHarvestMethodsTableName);
 
-                    //copy contents of new harvest methods table into place
-                    oAdo.OpenConnection(oAdo.getMDBConnString(strMDBPathAndFile, "", ""));
-                    oAdo.m_strSQL = "SELECT * INTO " + Tables.Reference.DefaultHarvestMethodsTableName + " FROM " + strDestinationTableName;
-                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            //        //copy contents of new harvest methods table into place
+            //        oAdo.OpenConnection(oAdo.getMDBConnString(strMDBPathAndFile, "", ""));
+            //        oAdo.m_strSQL = "SELECT * INTO " + Tables.Reference.DefaultHarvestMethodsTableName + " FROM " + strDestinationTableName;
+            //        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
-                    //drop the harvest methods table link
-                    if (oAdo.TableExist(oAdo.m_OleDbConnection, strDestinationTableName))
-                    {
-                        oAdo.m_strSQL = "DROP TABLE " + strDestinationTableName;
-                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
-                    }
+            //        //drop the harvest methods table link
+            //        if (oAdo.TableExist(oAdo.m_OleDbConnection, strDestinationTableName))
+            //        {
+            //            oAdo.m_strSQL = "DROP TABLE " + strDestinationTableName;
+            //            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            //        }
 
-                }
-            }
+            //    }
+            //}
             
             //Rename existing harvest_methods table
             // Load project data sources table
-            FIA_Biosum_Manager.Datasource oDs = new Datasource();
-            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
-            oDs.m_strDataSourceTableName = "datasource";
-            oDs.m_strScenarioId = "";
-            oDs.LoadTableColumnNamesAndDataTypes = false;
-            oDs.LoadTableRecordCount = false;
-            oDs.populate_datasource_array();
+            //FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            //oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            //oDs.m_strDataSourceTableName = "datasource";
+            //oDs.m_strScenarioId = "";
+            //oDs.LoadTableColumnNamesAndDataTypes = false;
+            //oDs.LoadTableRecordCount = false;
+            //oDs.populate_datasource_array();
 
-            // Extract table properties from data sources table; Assume still under the old name
-            string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
-            int intHarvestMethodsTable = oDs.getValidTableNameRow(Datasource.TableTypes.HarvestMethods);
-            string strDirectoryPath = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            string strFileName = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            string strFileStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
-            string strTargetTable = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            string strTableStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            //// Extract table properties from data sources table; Assume still under the old name
+            //string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
+            //int intHarvestMethodsTable = oDs.getValidTableNameRow(Datasource.TableTypes.HarvestMethods);
+            //string strDirectoryPath = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            //string strFileName = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            ////(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+            //string strFileStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            //string strTargetTable = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            //string strTableStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
 
-            if (strDirectoryPath.IndexOf("@@appdata@@") < 0)
-            {
-                if (strFileStatus == "F" && strTableStatus == "F")
-                {
-                    oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
-                }
-            }
+            //if (strDirectoryPath.IndexOf("@@appdata@@") < 0)
+            //{
+            //    if (strFileStatus == "F" && strTableStatus == "F")
+            //    {
+            //        oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            //    }
+            //}
 
-            // Update datasource tables to point at biosum_ref.accdb for harvest_methods
-            string strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
-            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
-            oAdo.m_strSQL = "UPDATE datasource " +
-                         "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
-                         "WHERE TABLE_TYPE = '" + Datasource.TableTypes.HarvestMethods + "'";
-            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            //// Update datasource tables to point at biosum_ref.accdb for harvest_methods
+            //string strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
+            //oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            //oAdo.m_strSQL = "UPDATE datasource " +
+            //             "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
+            //             "WHERE TABLE_TYPE = '" + Datasource.TableTypes.HarvestMethods + "'";
+            //oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
-            strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
-            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
-            oAdo.m_strSQL = "UPDATE scenario_datasource " +
-            "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
-            "WHERE TABLE_TYPE = '" + Datasource.TableTypes.HarvestMethods + "'";
-            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            //strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            //oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            //oAdo.m_strSQL = "UPDATE scenario_datasource " +
+            //"SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
+            //"WHERE TABLE_TYPE = '" + Datasource.TableTypes.HarvestMethods + "'";
+            //oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
-            if (oDao != null)
-            {
-                oDao.m_DaoWorkspace.Close();
-                oDao = null;
-            }
+            //if (oDao != null)
+            //{
+            //    oDao.m_DaoWorkspace.Close();
+            //    oDao = null;
+            //}
             if (oAdo != null)
             {
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
