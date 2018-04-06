@@ -132,8 +132,6 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  strProjVersion=" + strProjVersion + "\r\n");
                     if (strProjVersion.Trim() == frmMain.g_strAppVer.Trim())
                     {
-                        //@ToDo: Remove this when we have a deployment plan
-                        UpdateDatasources_5_8_1();
                         bPerformCheck = false;
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                             frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck:  bPerformCheck=false\r\n");
@@ -465,7 +463,20 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-
+                    //5.8.4 is initial release of new FVS input/output functionality;
+                    //Only Processor and Core are backwards compatible
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 4) &&
+                            (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) == 8 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 4)
+                        )
+                    {
+                        UpdateDatasources_5_8_1();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6) &&
                             (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
