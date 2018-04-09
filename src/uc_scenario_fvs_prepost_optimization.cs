@@ -991,7 +991,7 @@ namespace FIA_Biosum_Manager
             CreateListViewOptimizationRow();
             this.m_oLvRowColors.AddRow();
             this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count - 1, lvOptimizationListValues.Columns.Count);
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Variable";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Attribute";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";

@@ -116,8 +116,6 @@ namespace FIA_Biosum_Manager
         private Label label6;
         private TextBox txtFvsVariableTotalWeight;
         private Label label5;
-        private GroupBox grpBoxEconBaseline;
-        private ComboBox comboBox2;
         private ColumnHeader vType;
         private DataGrid m_dg;
         private env m_oEnv;
@@ -231,13 +229,11 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.grpBoxEconBaseline = new System.Windows.Forms.GroupBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.dgEcon = new System.Windows.Forms.DataGridView();
@@ -290,7 +286,6 @@ namespace FIA_Biosum_Manager
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.grpBoxEconBaseline.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEcon)).BeginInit();
             this.groupBox8.SuspendLayout();
             this.grpboxSummary.SuspendLayout();
@@ -334,7 +329,6 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.grpBoxEconBaseline);
             this.panel1.Controls.Add(this.textBox4);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.dgEcon);
@@ -353,26 +347,6 @@ namespace FIA_Biosum_Manager
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(850, 451);
             this.panel1.TabIndex = 70;
-            // 
-            // grpBoxEconBaseline
-            // 
-            this.grpBoxEconBaseline.Controls.Add(this.comboBox2);
-            this.grpBoxEconBaseline.Location = new System.Drawing.Point(8, 7);
-            this.grpBoxEconBaseline.Name = "grpBoxEconBaseline";
-            this.grpBoxEconBaseline.Size = new System.Drawing.Size(154, 48);
-            this.grpBoxEconBaseline.TabIndex = 93;
-            this.grpBoxEconBaseline.TabStop = false;
-            this.grpBoxEconBaseline.Text = "Baseline RxPackage";
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.Items.AddRange(new object[] {
-            "005"});
-            this.comboBox2.Location = new System.Drawing.Point(8, 18);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(72, 24);
-            this.comboBox2.TabIndex = 77;
             // 
             // textBox4
             // 
@@ -410,9 +384,9 @@ namespace FIA_Biosum_Manager
             // 
             // dataGridViewTextBoxColumn1
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridViewTextBoxColumn1.FillWeight = 80F;
             this.dataGridViewTextBoxColumn1.HeaderText = "CYCLE";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
@@ -421,11 +395,11 @@ namespace FIA_Biosum_Manager
             // 
             // dataGridViewTextBoxColumn3
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Red;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
-            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Red;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridViewTextBoxColumn3.HeaderText = "WEIGHT";
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             // 
@@ -493,7 +467,7 @@ namespace FIA_Biosum_Manager
             // groupBox8
             // 
             this.groupBox8.Controls.Add(this.listBox3);
-            this.groupBox8.Location = new System.Drawing.Point(208, 7);
+            this.groupBox8.Location = new System.Drawing.Point(18, 5);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(200, 133);
             this.groupBox8.TabIndex = 71;
@@ -872,7 +846,6 @@ namespace FIA_Biosum_Manager
             this.grpBoxEconomicVariable.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.grpBoxEconBaseline.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgEcon)).EndInit();
             this.groupBox8.ResumeLayout(false);
             this.grpboxSummary.ResumeLayout(false);
