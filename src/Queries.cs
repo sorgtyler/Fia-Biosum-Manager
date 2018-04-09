@@ -1295,13 +1295,13 @@ namespace FIA_Biosum_Manager
                 strSQL[0] = "SELECT COUNT(*) AS TREECOUNT, STANDID,YEAR " +
                             "INTO " + p_strIntoTempTreeListTableName + " " +
                             "FROM " + p_strTreeListTableName + " " +
-                            "WHERE standid IS NOT NULL " +
+                            "WHERE standid IS NOT NULL and year > 0 " +
                             "GROUP BY CASEID,STANDID,YEAR";
 
                 strSQL[1] = "SELECT DISTINCT STANDID,YEAR " +
                             "INTO " + p_strIntoTempSummaryTableName + " " +
                             "FROM " + p_strSummaryTableName + " " +
-                            "WHERE standid IS NOT NULL";
+                            "WHERE standid IS NOT NULL and year > 0 ";
 
                 strSQL[2] = "SELECT a.STANDID,a.YEAR,a.TREECOUNT, " + 
                               "SUM(IIF(a.standid=b.standid AND a.year=b.year,1,0)) AS ROWCOUNT " + 
