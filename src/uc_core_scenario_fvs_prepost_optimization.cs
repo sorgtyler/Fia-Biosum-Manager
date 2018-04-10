@@ -34,7 +34,7 @@ namespace FIA_Biosum_Manager
 		private bool _bCrownIndex=true;
 		public System.Windows.Forms.Label lblTitle;
 		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 
 		
 		private int m_intCurVar=-1;
@@ -79,7 +79,7 @@ namespace FIA_Biosum_Manager
 		private Variable_Collection m_oOldVariableCollection = new Variable_Collection();
 		public Variable_Collection m_oSavVariableCollection = new Variable_Collection();
 		private Variable_Collection m_oNewVariableCollection = new Variable_Collection();
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
 		private System.Windows.Forms.ColumnHeader lvColUseFilter;
 		private System.Windows.Forms.ColumnHeader lvColFilterOperator;
 		private System.Windows.Forms.ColumnHeader lvColFilterValue;
@@ -2324,12 +2324,12 @@ namespace FIA_Biosum_Manager
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
 		{
 			get {return this._oCurVar;}
 			set {_oCurVar=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
 		{
 			get {return _uc_tiebreaker;}
 			set {_uc_tiebreaker=value;}

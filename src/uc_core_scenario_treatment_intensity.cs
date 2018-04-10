@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_treatment_intensity.
 	/// </summary>
-	public class uc_scenario_treatment_intensity : System.Windows.Forms.UserControl
+	public class uc_core_scenario_treatment_intensity : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.DataGrid dataGrid1;
 		private System.Windows.Forms.GroupBox groupBox1;
@@ -35,7 +35,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
 		
 
-		public uc_scenario_treatment_intensity()
+		public uc_core_scenario_treatment_intensity()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -66,7 +66,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_scenario_treatment_intensity));
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_core_scenario_treatment_intensity));
 			this.dataGrid1 = new System.Windows.Forms.DataGrid();
 			this.imgSize = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1 = new System.Windows.Forms.GroupBox();

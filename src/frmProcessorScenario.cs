@@ -26,7 +26,6 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_scenario uc_scenario1;
 		public FIA_Biosum_Manager.uc_datasource uc_datasource1;
 		public FIA_Biosum_Manager.uc_scenario_notes uc_scenario_notes1;
-		public FIA_Biosum_Manager.uc_scenario_datasource uc_scenario_datasource1;
         public FIA_Biosum_Manager.uc_processor_scenario_tree_groupings uc_scenario_tree_groupings1;
 		public bool m_bSave=false;
 		public bool m_bScenarioOpen = false;

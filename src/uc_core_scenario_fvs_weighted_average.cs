@@ -33,7 +33,7 @@ namespace FIA_Biosum_Manager
 		private bool _bCrownIndex=true;
 		public System.Windows.Forms.Label lblTitle;
 		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 
 		
 		private int m_intCurVar=-1;
@@ -55,7 +55,7 @@ namespace FIA_Biosum_Manager
 		const int COLUMN_USEFILTER=5;
 		const int COLUMN_FILTER_OPERATOR=6;
         const int COLUMN_FILTER_VALUE = 7;
-        private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
+        private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
 		public bool m_bFirstTime=true;
 		private bool _bDisplayAuditMsg=true;
         private bool m_bIgnoreListViewItemCheck = false;
@@ -1439,12 +1439,12 @@ namespace FIA_Biosum_Manager
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
 		{
 			get {return this._oCurVar;}
 			set {_oCurVar=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
 		{
 			get {return _uc_tiebreaker;}
 			set {_uc_tiebreaker=value;}

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace FIA_Biosum_Manager
 {
-    public partial class uc_scenario_processor_scenario_select : UserControl
+    public partial class uc_core_scenario_processor_scenario_select : UserControl
     {
         private ProcessorScenarioItem_Collection m_oProcessorScenarioItem_Collection = new ProcessorScenarioItem_Collection();
         public ProcessorScenarioItem m_oProcessorScenarioItem;
@@ -23,7 +23,7 @@ namespace FIA_Biosum_Manager
         private bool m_bSuppressCheckEvents = false;
         
         FIA_Biosum_Manager.frmCoreScenario _frmScenario = null;
-        public uc_scenario_processor_scenario_select()
+        public uc_core_scenario_processor_scenario_select()
         {
             InitializeComponent();
         }

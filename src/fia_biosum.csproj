@@ -485,37 +485,31 @@
     <Compile Include="uc_scenario.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_core_scenario_copy.cs">
+    <Compile Include="uc_core_scenario_copy.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_core_scenario_copy.designer.cs">
-      <DependentUpon>uc_scenario_core_scenario_copy.cs</DependentUpon>
+    <Compile Include="uc_core_scenario_copy.designer.cs">
+      <DependentUpon>uc_core_scenario_copy.cs</DependentUpon>
     </Compile>
-    <Compile Include="uc_scenario_costs.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="uc_scenario_datasource.cs">
+    <Compile Include="uc_core_scenario_costs.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_scenario_ffe.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_filter.cs">
+    <Compile Include="uc_core_scenario_filter.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_core_scenario_fvs_prepost_optimization.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_fvs_prepost_variables_effective.cs">
+    <Compile Include="uc_core_scenario_fvs_prepost_variables_effective.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_fvs_prepost_variables_tiebreaker.cs">
+    <Compile Include="uc_core_scenario_fvs_prepost_variables_tiebreaker.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_scenario_harvest_cost_column_edit.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="uc_scenario_harvest_cost_column_list.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_scenario_merge_tables.cs">
@@ -527,16 +521,16 @@
     <Compile Include="uc_scenario_open.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_owner_groups.cs">
+    <Compile Include="uc_core_scenario_owner_groups.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_psite.cs">
+    <Compile Include="uc_core_scenario_psite.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_core_scenario_run.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_treatment_intensity.cs">
+    <Compile Include="uc_core_scenario_treatment_intensity.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_select_list_item.cs">
@@ -566,11 +560,11 @@
     <Compile Include="uc_processor_scenario_tree_spc_groups.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_processor_scenario_select.cs">
+    <Compile Include="uc_core_scenario_processor_scenario_select.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_processor_scenario_select.Designer.cs">
-      <DependentUpon>uc_scenario_processor_scenario_select.cs</DependentUpon>
+    <Compile Include="uc_core_scenario_processor_scenario_select.Designer.cs">
+      <DependentUpon>uc_core_scenario_processor_scenario_select.cs</DependentUpon>
     </Compile>
     <Compile Include="utils.cs">
       <SubType>Code</SubType>
@@ -826,35 +820,29 @@
     <EmbeddedResource Include="uc_scenario.resx">
       <DependentUpon>uc_scenario.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_core_scenario_copy.resx">
-      <DependentUpon>uc_scenario_core_scenario_copy.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_copy.resx">
+      <DependentUpon>uc_core_scenario_copy.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_costs.resx">
-      <DependentUpon>uc_scenario_costs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_datasource.resx">
-      <DependentUpon>uc_scenario_datasource.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_costs.resx">
+      <DependentUpon>uc_core_scenario_costs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_scenario_ffe.resx">
       <DependentUpon>uc_scenario_ffe.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_filter.resx">
-      <DependentUpon>uc_scenario_filter.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_filter.resx">
+      <DependentUpon>uc_core_scenario_filter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_core_scenario_fvs_prepost_optimization.resx">
       <DependentUpon>uc_core_scenario_fvs_prepost_optimization.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_fvs_prepost_variables_effective.resx">
-      <DependentUpon>uc_scenario_fvs_prepost_variables_effective.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_fvs_prepost_variables_effective.resx">
+      <DependentUpon>uc_core_scenario_fvs_prepost_variables_effective.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_fvs_prepost_variables_tiebreaker.resx">
-      <DependentUpon>uc_scenario_fvs_prepost_variables_tiebreaker.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_fvs_prepost_variables_tiebreaker.resx">
+      <DependentUpon>uc_core_scenario_fvs_prepost_variables_tiebreaker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_scenario_harvest_cost_column_edit.resx">
       <DependentUpon>uc_scenario_harvest_cost_column_edit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_harvest_cost_column_list.resx">
-      <DependentUpon>uc_scenario_harvest_cost_column_list.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_scenario_merge_tables.resx">
       <DependentUpon>uc_scenario_merge_tables.cs</DependentUpon>
@@ -865,26 +853,26 @@
     <EmbeddedResource Include="uc_scenario_open.resx">
       <DependentUpon>uc_scenario_open.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_owner_groups.resx">
-      <DependentUpon>uc_scenario_owner_groups.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_owner_groups.resx">
+      <DependentUpon>uc_core_scenario_owner_groups.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_psite.af.resx">
-      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_psite.af.resx">
+      <DependentUpon>uc_core_scenario_psite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_psite.en-US.resx">
-      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_psite.en-US.resx">
+      <DependentUpon>uc_core_scenario_psite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_psite.en.resx">
-      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_psite.en.resx">
+      <DependentUpon>uc_core_scenario_psite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_psite.resx">
-      <DependentUpon>uc_scenario_psite.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_psite.resx">
+      <DependentUpon>uc_core_scenario_psite.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_core_scenario_run.resx">
       <DependentUpon>uc_core_scenario_run.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_treatment_intensity.resx">
-      <DependentUpon>uc_scenario_treatment_intensity.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_treatment_intensity.resx">
+      <DependentUpon>uc_core_scenario_treatment_intensity.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_select_list_item.resx">
       <DependentUpon>uc_select_list_item.cs</DependentUpon>
@@ -912,8 +900,8 @@
     <EmbeddedResource Include="uc_processor_scenario_tree_spc_groups.resx">
       <DependentUpon>uc_processor_scenario_tree_spc_groups.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_processor_scenario_select.resx">
-      <DependentUpon>uc_scenario_processor_scenario_select.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_processor_scenario_select.resx">
+      <DependentUpon>uc_core_scenario_processor_scenario_select.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

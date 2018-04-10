@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_costs.
 	/// </summary>
-	public class uc_scenario_costs : System.Windows.Forms.UserControl
+	public class uc_core_scenario_costs : System.Windows.Forms.UserControl
 	{
         private System.Windows.Forms.ImageList imgSize;
 		private System.Windows.Forms.GroupBox groupBox1;
@@ -62,7 +62,7 @@ namespace FIA_Biosum_Manager
 		//private int intCentCurLen=0;
 		//private string strLastKey = "";
 
-		public uc_scenario_costs()
+		public uc_core_scenario_costs()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -102,7 +102,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_scenario_costs));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_core_scenario_costs));
             this.imgSize = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();

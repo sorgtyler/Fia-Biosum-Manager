@@ -11,7 +11,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_psite.
 	/// </summary>
-	public class uc_scenario_psite : System.Windows.Forms.UserControl
+	public class uc_core_scenario_psite : System.Windows.Forms.UserControl
 	{
 		private ListViewEmbeddedControls.ListViewEx lstPSites;
 		private System.Windows.Forms.ImageList imgSize;
@@ -43,7 +43,7 @@ namespace FIA_Biosum_Manager
 		const int COLUMN_PSITEBIOPROCESSTYPE=5;
 
 
-		public uc_scenario_psite()
+		public uc_core_scenario_psite()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -594,7 +594,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_scenario_psite));
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_core_scenario_psite));
 			this.imgSize = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.lblTitle = new System.Windows.Forms.Label();

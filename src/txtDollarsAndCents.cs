@@ -36,7 +36,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add constructor logic here
 			//
 		}
-		public txtDollarsAndCents(int intDollarMaxLength, int intCentMaxLength,ref FIA_Biosum_Manager.uc_scenario_costs p_uc)
+		public txtDollarsAndCents(int intDollarMaxLength, int intCentMaxLength,ref FIA_Biosum_Manager.uc_core_scenario_costs p_uc)
 			
 		{
 		    

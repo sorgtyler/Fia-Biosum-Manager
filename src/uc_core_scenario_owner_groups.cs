@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_owner_groups.
 	/// </summary>
-	public class uc_scenario_owner_groups : System.Windows.Forms.UserControl
+	public class uc_core_scenario_owner_groups : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.ImageList imgSize;
 		private System.ComponentModel.IContainer components;
@@ -27,7 +27,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
 
 
-		public uc_scenario_owner_groups()
+		public uc_core_scenario_owner_groups()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -58,7 +58,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_scenario_owner_groups));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_core_scenario_owner_groups));
             this.imgSize = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkOwnGrp10 = new System.Windows.Forms.CheckBox();

@@ -36,9 +36,9 @@ namespace FIA_Biosum_Manager
 		private System.Threading.Thread m_thread=null;
 		public System.Windows.Forms.Label m_lblCurrentProcessStatus;
 
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables _oFVSPrePostVariables;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables _oFVSPrePostVariables;
 		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.Variable_Collection _oFVSPrePostOptimization;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection _oFVSPrePostTieBreaker;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection _oFVSPrePostTieBreaker;
 
         private System.Windows.Forms.Panel panel1;
 
@@ -1140,7 +1140,7 @@ namespace FIA_Biosum_Manager
         {
             
         }
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSPrePostVariables
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSPrePostVariables
 		{
 			get {return _oFVSPrePostVariables;}
 			set {_oFVSPrePostVariables=value;}
@@ -1150,7 +1150,7 @@ namespace FIA_Biosum_Manager
 			get {return _oFVSPrePostOptimization;}
 			set {_oFVSPrePostOptimization=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection ReferenceFVSPrePostTieBreaker
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection ReferenceFVSPrePostTieBreaker
 		{
 			get {return this._oFVSPrePostTieBreaker;}
 			set {this._oFVSPrePostTieBreaker=value;}
@@ -1390,7 +1390,7 @@ namespace FIA_Biosum_Manager
                     FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
 
 					//effective variable
-					FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables oFvsVar =
+					FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables oFvsVar =
 						ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_variables_effective1.m_oSavVar;
 
 					/********************************************************************
@@ -4478,7 +4478,7 @@ namespace FIA_Biosum_Manager
 			
 
 			string strWhere="";
-			for (x=0;x<=FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
+			for (x=0;x<=FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
 			{
 				strTable = ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_variables_effective1.m_oSavVar.TableName(ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_variables_effective1.m_oSavVar.m_strPostVarArray[x]);
 				if (strTable.Trim().Length > 0)
@@ -5008,9 +5008,9 @@ namespace FIA_Biosum_Manager
 			string strPostTable="";
 			string strPostColumn="";
 			string[] strEffectiveColumnArray;
-			string[] strBetterIsNotNull= new string[uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES];
-			string[] strWorseIsNotNull= new string[uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES];
-			string[] strEffectiveIsNotNull= new string[uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES];
+			string[] strBetterIsNotNull= new string[uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES];
+			string[] strWorseIsNotNull= new string[uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES];
+			string[] strEffectiveIsNotNull= new string[uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES];
 			string strOverallEffectiveIsNotNull = "";
 			string strBetterSql="";
 			string strWorseSql="";
@@ -5018,7 +5018,7 @@ namespace FIA_Biosum_Manager
             int intListViewIndex = -1;
 
 			string strVariableNumber="";
-			FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables oFvsVar =
+			FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables oFvsVar =
 				ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_variables_effective1.m_oSavVar;
 
 
@@ -5080,7 +5080,7 @@ namespace FIA_Biosum_Manager
 
         
 			//populate the variable table.column name and its value to the effective table
-			for (x=0;x<=uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
+			for (x=0;x<=uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
 			{
 				
 				
@@ -5150,7 +5150,7 @@ namespace FIA_Biosum_Manager
            
 			//populate the change column by subtracting pre value from post value
 			m_strSQL="";
-			for (x=0;x<=uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
+			for (x=0;x<=uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
 			{
 				strVariableNumber = Convert.ToString(x+1).Trim();
 				m_strSQL = m_strSQL + "variable" + strVariableNumber + "_change=IIF(pre_variable" + strVariableNumber + "_value IS NOT NULL AND post_variable" + strVariableNumber + "_value IS NOT NULL,post_variable" + strVariableNumber + "_value - pre_variable" + strVariableNumber + "_value,null),";
@@ -5167,7 +5167,7 @@ namespace FIA_Biosum_Manager
 
 			//see what variables are referenced in the sql expression and make sure they are not null
 			strOverallEffectiveIsNotNull="";
-			for (x=0;x<=uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
+			for (x=0;x<=uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
 			{
 				strBetterIsNotNull[x]="";
 				strWorseIsNotNull[x]="";
@@ -5212,7 +5212,7 @@ namespace FIA_Biosum_Manager
 				}
 			}
 			//remove the last AND
-			for (x=0;x<=uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
+			for (x=0;x<=uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
 			{
 				if (strBetterIsNotNull[x].Trim().Length > 0)
 				{
@@ -5236,7 +5236,7 @@ namespace FIA_Biosum_Manager
 			strBetterSql="";
 			strWorseSql="";
 			strEffectiveSql="";
-			for (x=0;x<=uc_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
+			for (x=0;x<=uc_core_scenario_fvs_prepost_variables_effective.NUMBER_OF_VARIABLES-1;x++)
 			{
 				strVariableNumber = Convert.ToString(x+1).Trim();
 				if (oFvsVar.m_strBetterExpr[x].Trim().Length > 0)
@@ -5489,10 +5489,10 @@ namespace FIA_Biosum_Manager
 			string[] strArray=null;
 			string strVariableNumber="";
 
-            FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection =
+            FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection =
 		        ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection;
 
-			FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem;
+			FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem;
 
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -6818,7 +6818,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunCore.g_intCurrentListViewItem, "focused", true);
 
 			
-			FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection =
+			FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection =
 				ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection;
 
 
@@ -7041,7 +7041,7 @@ namespace FIA_Biosum_Manager
 		}
 
 		private void Cycle1_best_rx_summary(
-			FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection, 
+			FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection, 
 			string strTieBreakerAggregate,
 			bool bFVSVariable)
 		{

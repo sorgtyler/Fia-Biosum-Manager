@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_scenario_fvs_prepost_variables_effective : System.Windows.Forms.UserControl
+	public class uc_core_scenario_fvs_prepost_variables_effective : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -60,7 +60,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostExpression;
 		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
 		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization _uc_optimization;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 		
 		private System.Windows.Forms.Label lblFVSVariablesPrePostExpression;
 		private System.Windows.Forms.TextBox txtExpression;
@@ -308,7 +308,7 @@ namespace FIA_Biosum_Manager
 	
 		
 
-		public uc_scenario_fvs_prepost_variables_effective()
+		public uc_core_scenario_fvs_prepost_variables_effective()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -3144,7 +3144,7 @@ namespace FIA_Biosum_Manager
 			}
     		EnableOverallExpr();
 		}
-		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_scenario_fvs_prepost_variables_effective.Variables p_oVar)
+		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_core_scenario_fvs_prepost_variables_effective.Variables p_oVar)
 		{
 			this.lvFVSVariablesPrePostValues.Items[p_intListViewItem].SubItems[COLUMN_PREVAR].Text = p_oVar.m_strPreVarArray[p_intVarArrayItem-1];
 			this.lvFVSVariablesPrePostValues.Items[p_intListViewItem].SubItems[COLUMN_POSTVAR].Text = p_oVar.m_strPostVarArray[p_intVarArrayItem-1];
@@ -3222,17 +3222,17 @@ namespace FIA_Biosum_Manager
 			if (this.lblFVSVariablesPrePostVariablePreSelected.Text.Trim().ToUpper() != "NOT DEFINED")
 			{
 				//save variables
-				if (this.m_intCurVariableDefinitionStepCount==uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER)
+				if (this.m_intCurVariableDefinitionStepCount==uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER)
 				{
 					m_oCurVar.m_strBetterExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 					//load worse expression
-					this.loadvalues_variable(m_intCurVar-1,uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE);
+					this.loadvalues_variable(m_intCurVar-1,uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE);
 				}
-				else if (this.m_intCurVariableDefinitionStepCount==uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE)
+				else if (this.m_intCurVariableDefinitionStepCount==uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE)
 				{
 					m_oCurVar.m_strWorseExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 					//load effective expression
-					this.loadvalues_variable(m_intCurVar-1,uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE);
+					this.loadvalues_variable(m_intCurVar-1,uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE);
 				}
 				
 				this.txtExpression.Focus();
@@ -3393,15 +3393,15 @@ namespace FIA_Biosum_Manager
 			string str="";
 			switch (this.m_intCurVariableDefinitionStepCount)
 			{
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 					this.txtExpression.Text = "post_variable" + this.m_intCurVar.ToString().Trim() + "_value > pre_variable" + this.m_intCurVar.ToString().Trim() + "_value + 10 AND " + 
 						                      "post_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1 AND pre_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1";
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 					this.txtExpression.Text = "post_variable" + this.m_intCurVar.ToString().Trim() + "_value < pre_variable" + this.m_intCurVar.ToString().Trim() + "_value - 10 AND " + 
 											  "post_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1 AND pre_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1";;
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 					if (this.m_oCurVar.m_strBetterExpr[m_intCurVar-1].Trim().Length > 0 &&
 						this.m_oCurVar.m_strWorseExpr[m_intCurVar-1].Trim().Length > 0)
 					{
@@ -3417,7 +3417,7 @@ namespace FIA_Biosum_Manager
 						this.txtExpression.Text = "variable" + this.m_intCurVar.ToString().Trim() + "_worse_yn='N'";
 					}
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 					if (this.m_oCurVar.m_strEffectiveExpr[0].Trim().Length > 0)
 						str="variable1_effective_yn='Y' AND ";
 					if (this.m_oCurVar.m_strEffectiveExpr[1].Trim().Length > 0)
@@ -3461,7 +3461,7 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			else if (this.m_intCurVariableDefinitionStepCount == uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
+			else if (this.m_intCurVariableDefinitionStepCount == uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
 			{
 				if (Modified())
 				{
@@ -3697,23 +3697,23 @@ namespace FIA_Biosum_Manager
 					this.m_oCurVar.m_strPreVarArray[m_intCurVar-1] = lblFVSVariablesPrePostVariablePreSelected.Text.Trim();
 					switch (this.m_intCurVariableDefinitionStepCount)
 					{
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 							this.m_oCurVar.m_strBetterExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 							this.m_oCurVar.m_strWorseExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 							this.m_oCurVar.m_strEffectiveExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 							this.m_oCurVar.m_strOverallEffectiveExpr = this.txtExpression.Text;
 							break;
 					
 					}
 				
 				}
-				else if (this.m_intCurVariableDefinitionStepCount==uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
+				else if (this.m_intCurVariableDefinitionStepCount==uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
 				{
 					this.m_oCurVar.m_strOverallEffectiveExpr = this.txtExpression.Text;
 				}
@@ -4100,19 +4100,19 @@ namespace FIA_Biosum_Manager
 
 			switch (this.m_intCurVariableDefinitionStepCount)
 			{
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 					strSQL = "SELECT scenario_id,pre_fvs_variable,better_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"BETTER_EXPRESSION","BETTER_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 					strSQL = "SELECT scenario_id,pre_fvs_variable,worse_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"WORSE_EXPRESSION","WORSE_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 					strSQL = "SELECT scenario_id,fvs_variables_list,pre_fvs_variable,effective_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"EFFECTIVE_EXPRESSION","EFFECTIVE_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 					strSQL = "SELECT scenario_id,fvs_variables_list,overall_effective_expression,current_yn FROM scenario_fvs_variables_overall_effective";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"OVERALL_EFFECTIVE_EXPRESSION","OVERALL_EFFECTIVE_EXPRESSION", "scenario_fvs_variables_overall_effective");
 					break;
@@ -4217,7 +4217,7 @@ namespace FIA_Biosum_Manager
 			get {return _uc_optimization;}
 			set {_uc_optimization=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreakerUserControl
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreakerUserControl
 		{
 			get {return _uc_tiebreaker;}
 			set {_uc_tiebreaker=value;}

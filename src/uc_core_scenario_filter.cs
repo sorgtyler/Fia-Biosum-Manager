@@ -11,7 +11,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_filter.
 	/// </summary>
-	public class uc_scenario_filter : System.Windows.Forms.UserControl
+	public class uc_core_scenario_filter : System.Windows.Forms.UserControl
 	{
 		private env m_oEnv;
 		private System.Windows.Forms.ImageList imgSize;
@@ -48,7 +48,7 @@ namespace FIA_Biosum_Manager
         private string _strLowYardingDistanceDefault = "2500";
 
 
-		public uc_scenario_filter()
+		public uc_core_scenario_filter()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -90,7 +90,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_scenario_filter));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_core_scenario_filter));
             this.imgSize = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTitle = new System.Windows.Forms.Label();

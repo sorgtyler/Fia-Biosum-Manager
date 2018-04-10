@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_scenario_fvs_prepost_variables_tiebreaker: System.Windows.Forms.UserControl
+	public class uc_core_scenario_fvs_prepost_variables_tiebreaker: System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -74,7 +74,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox grpMaxMin;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerLastTieBreakRank;
 		private System.Windows.Forms.Panel panel2;
-		public FIA_Biosum_Manager.uc_scenario_treatment_intensity uc_scenario_treatment_intensity1;
+		public FIA_Biosum_Manager.uc_core_scenario_treatment_intensity uc_scenario_treatment_intensity1;
 		private System.Windows.Forms.Panel pnlTieBreaker;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerValues;
 		private System.Windows.Forms.ListView lvFVSVariablesTieBreakerValues;
@@ -141,7 +141,7 @@ namespace FIA_Biosum_Manager
 				//
 			}
 
-			public void Add(FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem m_oTieBreaker)
+			public void Add(FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem m_oTieBreaker)
 			{
 				// vérify if object is not already in
 				if (this.List.Contains(m_oTieBreaker))
@@ -167,12 +167,12 @@ namespace FIA_Biosum_Manager
 					List.RemoveAt(index); 
 				}
 			}
-			public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem Item(int Index)
+			public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem Item(int Index)
 			{
 				// The appropriate item is retrieved from the List object and
 				// explicitly cast to the Widget type, then returned to the 
 				// caller.
-				return (FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem) List[Index];
+				return (FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem) List[Index];
 			}
 			public void Copy(TieBreaker_Collection p_oSource,ref TieBreaker_Collection p_oDest,bool p_bInitializeDest)
 			{
@@ -190,7 +190,7 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		public uc_scenario_fvs_prepost_variables_tiebreaker()
+		public uc_core_scenario_fvs_prepost_variables_tiebreaker()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -296,7 +296,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_scenario_treatment_intensity();
+            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_core_scenario_treatment_intensity();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -967,7 +967,7 @@ namespace FIA_Biosum_Manager
 			this.m_oOldTieBreakerCollection.Clear();
 
 			// Stand Attribute
-            uc_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem = new TieBreakerItem();
+            uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem = new TieBreakerItem();
 			oItem.intListViewIndex=0;
 			oItem.strFVSVariableName=this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
 			oItem.strMethod = this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_METHOD].Text.Trim();
@@ -1436,7 +1436,7 @@ namespace FIA_Biosum_Manager
 			
 			
 		}
-		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_scenario_fvs_prepost_variables_effective.Variables p_oVar)
+		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_core_scenario_fvs_prepost_variables_effective.Variables p_oVar)
 		{
 			
 		}

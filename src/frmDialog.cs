@@ -60,7 +60,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_filter_rows_text_datatype uc_filter_rows_text_datatype1;
 		public FIA_Biosum_Manager.uc_filter_rows_numeric_datatype uc_filter_rows_numeric_datatype1;
 		public FIA_Biosum_Manager.uc_gridview uc_gridview1;
-        public FIA_Biosum_Manager.uc_scenario_core_scenario_copy uc_scenario_core_scenario_copy1;
+        public FIA_Biosum_Manager.uc_core_scenario_copy uc_scenario_core_scenario_copy1;
         public FIA_Biosum_Manager.uc_processor_scenario_copy uc_processor_scenario_copy1;
         public FIA_Biosum_Manager.uc_fvs_output_prepost_seqnum uc_fvs_output_prepost_seqnum1=null;
         public FIA_Biosum_Manager.uc_processor_opcost_settings uc_processor_opcost_settings1 = null;
@@ -474,7 +474,7 @@ namespace FIA_Biosum_Manager
 		}
         public void Initialize_Scenario_Core_Scenario_Copy()
         {
-            this.uc_scenario_core_scenario_copy1 = new uc_scenario_core_scenario_copy();
+            this.uc_scenario_core_scenario_copy1 = new uc_core_scenario_copy();
             this.Controls.Add(this.uc_scenario_core_scenario_copy1);
             uc_scenario_core_scenario_copy1.Dock = DockStyle.Fill;
             this.Width = this.uc_scenario_core_scenario_copy1.Width + 10;

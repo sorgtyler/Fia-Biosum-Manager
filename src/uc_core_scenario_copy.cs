@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace FIA_Biosum_Manager
 {
-    public partial class uc_scenario_core_scenario_copy : UserControl
+    public partial class uc_core_scenario_copy : UserControl
     {
         private FIA_Biosum_Manager.CoreAnalysisScenarioItem_Collection m_oCoreAnalysisScenarioItem_Collection = new CoreAnalysisScenarioItem_Collection();
         private FIA_Biosum_Manager.CoreAnalysisScenarioItem m_oCoreAnalysisScenarioItem;
@@ -24,7 +24,7 @@ namespace FIA_Biosum_Manager
         private bool m_bSuppressCheckEvents = false;
         
         FIA_Biosum_Manager.frmDialog _frmDialog = null;
-        public uc_scenario_core_scenario_copy()
+        public uc_core_scenario_copy()
         {
             InitializeComponent();
         }

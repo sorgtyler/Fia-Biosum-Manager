@@ -37,7 +37,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add constructor logic here
 			//
 		}
-		public txtNumeric(int intWholeMaxLength, int intDecimalMaxLength,ref FIA_Biosum_Manager.uc_scenario_costs p_uc)
+		public txtNumeric(int intWholeMaxLength, int intDecimalMaxLength,ref FIA_Biosum_Manager.uc_core_scenario_costs p_uc)
 			
 		{
 		    

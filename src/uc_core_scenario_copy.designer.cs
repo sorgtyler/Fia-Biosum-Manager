@@ -1,6 +1,6 @@
 ﻿namespace FIA_Biosum_Manager
 {
-    partial class uc_scenario_core_scenario_copy
+    partial class uc_core_scenario_copy
     {
         /// <summary> 
         /// Required designer variable.

@@ -25,19 +25,19 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_scenario uc_scenario1;
 		public FIA_Biosum_Manager.uc_datasource uc_datasource1;
 		public FIA_Biosum_Manager.uc_scenario_ffe uc_scenario_ffe1;
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective uc_scenario_fvs_prepost_variables_effective1;
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective uc_scenario_fvs_prepost_variables_effective1;
 		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization uc_scenario_fvs_prepost_optimization1;
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker uc_scenario_fvs_prepost_variables_tiebreaker1;
-		public FIA_Biosum_Manager.uc_scenario_costs uc_scenario_costs1;
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker uc_scenario_fvs_prepost_variables_tiebreaker1;
+		public FIA_Biosum_Manager.uc_core_scenario_costs uc_scenario_costs1;
 		public FIA_Biosum_Manager.uc_select_list_item uc_select_list_item1;
-		public FIA_Biosum_Manager.uc_scenario_filter uc_scenario_filter1;
-		public FIA_Biosum_Manager.uc_scenario_filter uc_scenario_cond_filter1;
-		public FIA_Biosum_Manager.uc_scenario_psite uc_scenario_psite1;
+		public FIA_Biosum_Manager.uc_core_scenario_filter uc_scenario_filter1;
+		public FIA_Biosum_Manager.uc_core_scenario_filter uc_scenario_cond_filter1;
+		public FIA_Biosum_Manager.uc_core_scenario_psite uc_scenario_psite1;
 		public FIA_Biosum_Manager.uc_scenario_open uc_scenario_open1;
 		public FIA_Biosum_Manager.uc_core_scenario_run uc_scenario_run1=null;
 		public FIA_Biosum_Manager.uc_scenario_notes uc_scenario_notes1;
-        public FIA_Biosum_Manager.uc_scenario_processor_scenario_select uc_scenario_processor_scenario_select1;
-		public FIA_Biosum_Manager.uc_scenario_owner_groups uc_scenario_owner_groups1;
+        public FIA_Biosum_Manager.uc_core_scenario_processor_scenario_select uc_scenario_processor_scenario_select1;
+		public FIA_Biosum_Manager.uc_core_scenario_owner_groups uc_scenario_owner_groups1;
 		public FIA_Biosum_Manager.frmGridView frmGridView1;
 		private FIA_Biosum_Manager.frmRunCoreScenario frmRunCoreScenario1;
 		
@@ -157,14 +157,14 @@ namespace FIA_Biosum_Manager
 				//
 				//rule definitions owner groups
 				//
-				this.uc_scenario_owner_groups1 = new uc_scenario_owner_groups();
+				this.uc_scenario_owner_groups1 = new uc_core_scenario_owner_groups();
 				this.tbOwners.Controls.Add(uc_scenario_owner_groups1);
 				this.uc_scenario_owner_groups1.Dock = System.Windows.Forms.DockStyle.Fill;
 				uc_scenario_owner_groups1.ReferenceCoreScenarioForm=this;
 				//
 				//rule definitions costs
 				//
-				this.uc_scenario_costs1 = new uc_scenario_costs();
+				this.uc_scenario_costs1 = new uc_core_scenario_costs();
 				this.tbCosts.Controls.Add(uc_scenario_costs1);
               
 				this.uc_scenario_costs1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -172,14 +172,14 @@ namespace FIA_Biosum_Manager
 				//
 				//rule definitions processing sites
 				//
-				this.uc_scenario_psite1 = new uc_scenario_psite();
+				this.uc_scenario_psite1 = new uc_core_scenario_psite();
 				this.tbPSites.Controls.Add(uc_scenario_psite1);
 				this.uc_scenario_psite1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_psite1.ReferenceCoreScenarioForm=this;
 				//
 				//rule custom plot filter
 				//
-				this.uc_scenario_filter1 = new uc_scenario_filter();
+				this.uc_scenario_filter1 = new uc_core_scenario_filter();
 				this.tbFilterPlots.Controls.Add(uc_scenario_filter1);
 				this.uc_scenario_filter1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_filter1.ReferenceCoreScenarioForm=this;
@@ -187,7 +187,7 @@ namespace FIA_Biosum_Manager
 				//
 				//rule custom condition filter
 				//
-				this.uc_scenario_cond_filter1 = new uc_scenario_filter();
+				this.uc_scenario_cond_filter1 = new uc_core_scenario_filter();
 				this.tbFilterCond.Controls.Add(uc_scenario_cond_filter1);
 				this.uc_scenario_cond_filter1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_cond_filter1.ReferenceCoreScenarioForm=this;
@@ -196,7 +196,7 @@ namespace FIA_Biosum_Manager
 				//
 				//rule definitions fvs pre-post variables
 				//
-				this.uc_scenario_fvs_prepost_variables_effective1 = new uc_scenario_fvs_prepost_variables_effective();
+				this.uc_scenario_fvs_prepost_variables_effective1 = new uc_core_scenario_fvs_prepost_variables_effective();
 				this.tbEffective.Controls.Add(this.uc_scenario_fvs_prepost_variables_effective1);
 				this.uc_scenario_fvs_prepost_variables_effective1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_fvs_prepost_variables_effective1.ReferenceCoreScenarioForm=this;
@@ -212,7 +212,7 @@ namespace FIA_Biosum_Manager
 				//
 				//rule definitions fvs tie breaker
 				//
-				this.uc_scenario_fvs_prepost_variables_tiebreaker1 = new FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker();
+				this.uc_scenario_fvs_prepost_variables_tiebreaker1 = new FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker();
 				this.tbTieBreaker.Controls.Add(this.uc_scenario_fvs_prepost_variables_tiebreaker1);
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.ReferenceCoreScenarioForm = this;
@@ -223,7 +223,7 @@ namespace FIA_Biosum_Manager
                 //
                 //processor scenario select
                 //
-                this.uc_scenario_processor_scenario_select1 = new uc_scenario_processor_scenario_select();
+                this.uc_scenario_processor_scenario_select1 = new uc_core_scenario_processor_scenario_select();
                 this.tbProcessorScenario.Controls.Add(this.uc_scenario_processor_scenario_select1);
                 this.uc_scenario_processor_scenario_select1.Dock = System.Windows.Forms.DockStyle.Fill;
                 this.uc_scenario_processor_scenario_select1.ReferenceCoreScenarioForm = this;
