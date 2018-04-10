@@ -1752,6 +1752,49 @@ namespace FIA_Biosum_Manager
 			public FVS()
 			{
 			}
+
+		    public static void CreateFVSCutListTable(ado_data_access p_oAdo)
+		    {
+		        p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, CreateFVSCutListTableSQL());
+		    }
+
+		    public static string CreateFVSCutListTableSQL()
+		    {
+		        return "CREATE TABLE FVS_CutList " +
+		            "(CaseID CHAR(255)," +
+		            "StandID CHAR(255)," +
+                    "`Year` LONG," +
+                    "PrdLen LONG," +
+		            "TreeId CHAR(255)," +
+                    "TreeIndex LONG," +
+		            "Species CHAR(255)," +
+                    "TreeVal LONG," +
+                    "SSCD LONG," +
+                    "PtIndex LONG," +
+		            "TPA DOUBLE," +
+		            "MortPA DOUBLE," +
+		            "DBH DOUBLE," +
+		            "DG DOUBLE," +
+		            "Ht DOUBLE," +
+		            "HtG DOUBLE," +
+                    "PctCr LONG," +
+		            "CrWidth DOUBLE," +
+                    "MistCD LONG," +
+		            "BAPctile DOUBLE," +
+		            "PtBAL DOUBLE," +
+		            "TCuFt DOUBLE," +
+		            "MCuFt DOUBLE," +
+		            "BdFt DOUBLE," +
+                    "MDefect LONG," +
+                    "BDefect LONG," +
+                    "TruncHt LONG," +
+		            "EstHt DOUBLE," +
+                    "ActPt LONG," +
+		            "Ht2TDCF SINGLE," +
+		            "Ht2TDBF SINGLE," +
+		            "TreeAge DOUBLE)";
+		    }
+
 			//
 			//FVS_tree table
 			//
