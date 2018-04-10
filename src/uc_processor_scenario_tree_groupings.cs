@@ -11,7 +11,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_tree_groupings.
 	/// </summary>
-	public class uc_scenario_tree_groupings : System.Windows.Forms.UserControl
+	public class uc_processor_scenario_tree_groupings : System.Windows.Forms.UserControl
     {
 		private System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Label lblTitle;
@@ -27,7 +27,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-        public uc_scenario_tree_groupings()
+        public uc_processor_scenario_tree_groupings()
         {
             // This call is required by the Windows.Forms Form Designer.
             InitializeComponent();

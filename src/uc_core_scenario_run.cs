@@ -37,7 +37,7 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.Label m_lblCurrentProcessStatus;
 
 		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective.Variables _oFVSPrePostVariables;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.Variable_Collection _oFVSPrePostOptimization;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.Variable_Collection _oFVSPrePostOptimization;
 		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection _oFVSPrePostTieBreaker;
 
         private System.Windows.Forms.Panel panel1;
@@ -1125,7 +1125,7 @@ namespace FIA_Biosum_Manager
         private void UpdateOptimizationGroupboxText()
         {
             
-            FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.Variable_Collection oOptimizationVariableCollection = ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_optimization1.m_oSavVariableCollection;
+            FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.Variable_Collection oOptimizationVariableCollection = ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_optimization1.m_oSavVariableCollection;
 
             for (int x = 0; x <= oOptimizationVariableCollection.Count - 1; x++)
             {
@@ -1145,7 +1145,7 @@ namespace FIA_Biosum_Manager
 			get {return _oFVSPrePostVariables;}
 			set {_oFVSPrePostVariables=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.Variable_Collection ReferenceFVSPrePostOptimization
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.Variable_Collection ReferenceFVSPrePostOptimization
 		{
 			get {return _oFVSPrePostOptimization;}
 			set {_oFVSPrePostOptimization=value;}
@@ -1213,7 +1213,7 @@ namespace FIA_Biosum_Manager
 	    public string m_strUserDefinedCondSQL;
 		
 		private string m_strLine;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.VariableItem m_oOptimizationVariable = new FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.VariableItem();
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.VariableItem m_oOptimizationVariable = new FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.VariableItem();
 		private string m_strOptimizationTableName="";
 		private string m_strOptimizationSourceTableName="";
 		private string m_strOptimizationTableNameSql="";
@@ -1396,7 +1396,7 @@ namespace FIA_Biosum_Manager
 					/********************************************************************
 					 **get optimization variable
 					 ********************************************************************/
-					FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.Variable_Collection oOptimizationVariableCollection = ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_optimization1.m_oSavVariableCollection;
+					FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.Variable_Collection oOptimizationVariableCollection = ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_optimization1.m_oSavVariableCollection;
 						
 					for (int x=0;x<=oOptimizationVariableCollection.Count-1;x++)
 					{

@@ -171,7 +171,7 @@
     <Compile Include="uc_textboxWithButtons.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_tree_groupings.cs">
+    <Compile Include="uc_processor_scenario_tree_groupings.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_processor_scenario_movein_costs.cs">
@@ -503,7 +503,7 @@
     <Compile Include="uc_scenario_filter.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_scenario_fvs_prepost_optimization.cs">
+    <Compile Include="uc_core_scenario_fvs_prepost_optimization.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_scenario_fvs_prepost_variables_effective.cs">
@@ -598,8 +598,8 @@
     <EmbeddedResource Include="uc_textboxWithButtons.resx">
       <DependentUpon>uc_textboxWithButtons.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_tree_groupings.resx">
-      <DependentUpon>uc_scenario_tree_groupings.cs</DependentUpon>
+    <EmbeddedResource Include="uc_processor_scenario_tree_groupings.resx">
+      <DependentUpon>uc_processor_scenario_tree_groupings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_processor_scenario_movein_costs.resx">
       <DependentUpon>uc_processor_scenario_movein_costs.cs</DependentUpon>
@@ -841,8 +841,8 @@
     <EmbeddedResource Include="uc_scenario_filter.resx">
       <DependentUpon>uc_scenario_filter.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_scenario_fvs_prepost_optimization.resx">
-      <DependentUpon>uc_scenario_fvs_prepost_optimization.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_fvs_prepost_optimization.resx">
+      <DependentUpon>uc_core_scenario_fvs_prepost_optimization.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_scenario_fvs_prepost_variables_effective.resx">
       <DependentUpon>uc_scenario_fvs_prepost_variables_effective.cs</DependentUpon>

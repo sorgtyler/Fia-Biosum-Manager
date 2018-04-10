@@ -59,7 +59,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnFVSVariablesPrePostVariableValue;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostExpression;
 		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization _uc_optimization;
+		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization _uc_optimization;
 		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 		
 		private System.Windows.Forms.Label lblFVSVariablesPrePostExpression;
@@ -4212,7 +4212,7 @@ namespace FIA_Biosum_Manager
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
 		{
 			get {return _uc_optimization;}
 			set {_uc_optimization=value;}

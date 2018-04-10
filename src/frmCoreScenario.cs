@@ -26,7 +26,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_datasource uc_datasource1;
 		public FIA_Biosum_Manager.uc_scenario_ffe uc_scenario_ffe1;
 		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_effective uc_scenario_fvs_prepost_variables_effective1;
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization uc_scenario_fvs_prepost_optimization1;
+		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization uc_scenario_fvs_prepost_optimization1;
 		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker uc_scenario_fvs_prepost_variables_tiebreaker1;
 		public FIA_Biosum_Manager.uc_scenario_costs uc_scenario_costs1;
 		public FIA_Biosum_Manager.uc_select_list_item uc_select_list_item1;
@@ -203,7 +203,7 @@ namespace FIA_Biosum_Manager
 				//
 				//rule definitions fvs optimization variables
 				//
-				this.uc_scenario_fvs_prepost_optimization1 = new uc_scenario_fvs_prepost_optimization();
+				this.uc_scenario_fvs_prepost_optimization1 = new uc_core_scenario_fvs_prepost_optimization();
 				this.tbOptimization.Controls.Add(this.uc_scenario_fvs_prepost_optimization1);
 				this.uc_scenario_fvs_prepost_optimization1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_fvs_prepost_optimization1.ReferenceCoreScenarioForm = this;

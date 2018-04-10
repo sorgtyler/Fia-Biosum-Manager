@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_scenario_fvs_prepost_optimization : System.Windows.Forms.UserControl
+	public class uc_core_scenario_fvs_prepost_optimization : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -105,12 +105,31 @@ namespace FIA_Biosum_Manager
         private ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private Label label1;
         private GroupBox grpBoxOptimizationNetRevenue;
-        private ComboBox cboEconVariable;
+        private ComboBox cboNetRevOptimzFilter;
         private TextBox txtRevenueDescr;
         private Label LblNetRevenu;
         private ListBox lstFVSFieldsList;
         private ListBox lstFVSTablesList;
         private string m_strLastValue = "";
+        private GroupBox grpboxEconOptimizSettings;
+        private Panel panel2;
+        private GroupBox groupBox5;
+        private Label label3;
+        private CheckBox chkEnableEconFilter;
+        private ComboBox cmbEconOptimizationOperator;
+        private TextBox txtEconOptimizationValue;
+        private GroupBox groupBox6;
+        private RadioButton radioButton1;
+        private RadioButton radioButton2;
+        private Label lblEconomicAttribute;
+        private Button button2;
+        private Button btnEconOptimizationCancel;
+        private ListBox lstEconVariables;
+        private Button btnEconSelect;
+        private TextBox txtEconAttribDescr;
+        private Label label2;
+        private TextBox txtEconRevenueDescr;
+        private ComboBox cboNetRevEconOptimzFilter;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;		
 
 		public class VariableItem
@@ -150,7 +169,7 @@ namespace FIA_Biosum_Manager
 				//
 			}
 
-			public void Add(FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.VariableItem m_oVariable)
+			public void Add(FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.VariableItem m_oVariable)
 			{
 				// vérify if object is not already in
 				if (this.List.Contains(m_oVariable))
@@ -176,12 +195,12 @@ namespace FIA_Biosum_Manager
 					List.RemoveAt(index); 
 				}
 			}
-			public FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.VariableItem Item(int Index)
+			public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.VariableItem Item(int Index)
 			{
 				// The appropriate item is retrieved from the List object and
 				// explicitly cast to the Widget type, then returned to the 
 				// caller.
-				return (FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization.VariableItem) List[Index];
+				return (FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization.VariableItem) List[Index];
 			}
 			public void Copy(Variable_Collection p_oSource,ref Variable_Collection p_oDest,bool p_bInitializeDest)
 			{
@@ -204,7 +223,7 @@ namespace FIA_Biosum_Manager
 
 		
 
-		public uc_scenario_fvs_prepost_optimization()
+		public uc_core_scenario_fvs_prepost_optimization()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -220,6 +239,11 @@ namespace FIA_Biosum_Manager
 			this.grpboxOptimizationFVSVariable.Left = this.grpboxOptimization.Left;
 			this.grpboxOptimizationFVSVariable.Height = this.grpboxOptimization.Height;
 			this.grpboxOptimizationFVSVariable.Width = this.grpboxOptimization.Width;
+            this.grpboxEconOptimizSettings.Top = grpboxOptimization.Top;
+            this.grpboxEconOptimizSettings.Left = this.grpboxOptimization.Left;
+            this.grpboxEconOptimizSettings.Height = this.grpboxOptimization.Height;
+            this.grpboxEconOptimizSettings.Width = this.grpboxOptimization.Width;
+
 
 			this.m_oLvRowColors.ReferenceListView = this.lvOptimizationListValues;
 			this.m_oLvRowColors.CustomFullRowSelect=true;
@@ -228,6 +252,7 @@ namespace FIA_Biosum_Manager
 
 
 			this.grpboxOptimizationFVSVariable.Hide();
+            this.grpboxEconOptimizSettings.Hide();
 
 
             m_oValidate.RoundDecimalLength = 0;
@@ -237,7 +262,7 @@ namespace FIA_Biosum_Manager
             m_oValidate.MinValue = -1000;
             m_oValidate.TestForMin = true;
 
-            this.cboEconVariable.SelectedIndex = 0;
+            this.cboNetRevOptimzFilter.SelectedIndex = 0;
 
 			
 
@@ -303,7 +328,7 @@ namespace FIA_Biosum_Manager
             this.LblNetRevenu = new System.Windows.Forms.Label();
             this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
             this.txtRevenueDescr = new System.Windows.Forms.TextBox();
-            this.cboEconVariable = new System.Windows.Forms.ComboBox();
+            this.cboNetRevOptimzFilter = new System.Windows.Forms.ComboBox();
             this.btnOptimiztionPrev = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettingsPostPre = new System.Windows.Forms.GroupBox();
             this.cmbOptimizationSettingsPostPreValue = new System.Windows.Forms.ComboBox();
@@ -319,6 +344,25 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.grpboxEconOptimizSettings = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.chkEnableEconFilter = new System.Windows.Forms.CheckBox();
+            this.cmbEconOptimizationOperator = new System.Windows.Forms.ComboBox();
+            this.txtEconOptimizationValue = new System.Windows.Forms.TextBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.lblEconomicAttribute = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.btnEconOptimizationCancel = new System.Windows.Forms.Button();
+            this.lstEconVariables = new System.Windows.Forms.ListBox();
+            this.txtEconAttribDescr = new System.Windows.Forms.TextBox();
+            this.btnEconSelect = new System.Windows.Forms.Button();
+            this.txtEconRevenueDescr = new System.Windows.Forms.TextBox();
+            this.cboNetRevEconOptimzFilter = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationFVSVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -335,11 +379,16 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationSettingsPostPre.SuspendLayout();
             this.grpFilter.SuspendLayout();
             this.grpMaxMin.SuspendLayout();
+            this.grpboxEconOptimizSettings.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.grpboxEconOptimizSettings);
             this.groupBox1.Controls.Add(this.grpboxOptimizationFVSVariable);
             this.groupBox1.Controls.Add(this.grpboxOptimization);
             this.groupBox1.Controls.Add(this.grpboxOptimizationSettings);
@@ -667,7 +716,7 @@ namespace FIA_Biosum_Manager
             // grpBoxOptimizationNetRevenue
             // 
             this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cboEconVariable);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cboNetRevOptimzFilter);
             this.grpBoxOptimizationNetRevenue.Location = new System.Drawing.Point(80, 215);
             this.grpBoxOptimizationNetRevenue.Name = "grpBoxOptimizationNetRevenue";
             this.grpBoxOptimizationNetRevenue.Size = new System.Drawing.Size(464, 69);
@@ -686,15 +735,15 @@ namespace FIA_Biosum_Manager
             this.txtRevenueDescr.TabIndex = 87;
             this.txtRevenueDescr.Text = "Sums net revenue across all 4 cycles";
             // 
-            // cboEconVariable
+            // cboNetRevOptimzFilter
             // 
-            this.cboEconVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboEconVariable.Items.AddRange(new object[] {
+            this.cboNetRevOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboNetRevOptimzFilter.Items.AddRange(new object[] {
             "net_revenue_1"});
-            this.cboEconVariable.Location = new System.Drawing.Point(16, 24);
-            this.cboEconVariable.Name = "cboEconVariable";
-            this.cboEconVariable.Size = new System.Drawing.Size(110, 24);
-            this.cboEconVariable.TabIndex = 20;
+            this.cboNetRevOptimzFilter.Location = new System.Drawing.Point(16, 24);
+            this.cboNetRevOptimzFilter.Name = "cboNetRevOptimzFilter";
+            this.cboNetRevOptimzFilter.Size = new System.Drawing.Size(110, 24);
+            this.cboNetRevOptimzFilter.TabIndex = 20;
             // 
             // btnOptimiztionPrev
             // 
@@ -849,6 +898,214 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
             // 
+            // grpboxEconOptimizSettings
+            // 
+            this.grpboxEconOptimizSettings.BackColor = System.Drawing.SystemColors.Control;
+            this.grpboxEconOptimizSettings.Controls.Add(this.panel2);
+            this.grpboxEconOptimizSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpboxEconOptimizSettings.ForeColor = System.Drawing.Color.Black;
+            this.grpboxEconOptimizSettings.Location = new System.Drawing.Point(12, 1458);
+            this.grpboxEconOptimizSettings.Name = "grpboxEconOptimizSettings";
+            this.grpboxEconOptimizSettings.Size = new System.Drawing.Size(856, 448);
+            this.grpboxEconOptimizSettings.TabIndex = 36;
+            this.grpboxEconOptimizSettings.TabStop = false;
+            this.grpboxEconOptimizSettings.Text = "Economic Attribute Optimization Settings";
+            // 
+            // panel2
+            // 
+            this.panel2.AutoScroll = true;
+            this.panel2.Controls.Add(this.btnEconSelect);
+            this.panel2.Controls.Add(this.txtEconAttribDescr);
+            this.panel2.Controls.Add(this.lstEconVariables);
+            this.panel2.Controls.Add(this.groupBox5);
+            this.panel2.Controls.Add(this.groupBox6);
+            this.panel2.Controls.Add(this.lblEconomicAttribute);
+            this.panel2.Controls.Add(this.button2);
+            this.panel2.Controls.Add(this.btnEconOptimizationCancel);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(3, 18);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(850, 427);
+            this.panel2.TabIndex = 12;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label2);
+            this.groupBox5.Controls.Add(this.txtEconRevenueDescr);
+            this.groupBox5.Controls.Add(this.cboNetRevEconOptimzFilter);
+            this.groupBox5.Controls.Add(this.label3);
+            this.groupBox5.Controls.Add(this.chkEnableEconFilter);
+            this.groupBox5.Controls.Add(this.cmbEconOptimizationOperator);
+            this.groupBox5.Controls.Add(this.txtEconOptimizationValue);
+            this.groupBox5.Location = new System.Drawing.Point(20, 223);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(584, 139);
+            this.groupBox5.TabIndex = 18;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Net Revenue Dollars Per Acre Filter Setting";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(313, 102);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(24, 25);
+            this.label3.TabIndex = 18;
+            this.label3.Text = "$";
+            // 
+            // chkEnableEconFilter
+            // 
+            this.chkEnableEconFilter.Location = new System.Drawing.Point(46, 98);
+            this.chkEnableEconFilter.Name = "chkEnableEconFilter";
+            this.chkEnableEconFilter.Size = new System.Drawing.Size(112, 32);
+            this.chkEnableEconFilter.TabIndex = 17;
+            this.chkEnableEconFilter.Text = "Enable Filter";
+            // 
+            // cmbEconOptimizationOperator
+            // 
+            this.cmbEconOptimizationOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbEconOptimizationOperator.Items.AddRange(new object[] {
+            ">",
+            "<",
+            ">=",
+            "<=",
+            "<>"});
+            this.cmbEconOptimizationOperator.Location = new System.Drawing.Point(224, 100);
+            this.cmbEconOptimizationOperator.Name = "cmbEconOptimizationOperator";
+            this.cmbEconOptimizationOperator.Size = new System.Drawing.Size(83, 32);
+            this.cmbEconOptimizationOperator.TabIndex = 16;
+            this.cmbEconOptimizationOperator.Text = ">";
+            // 
+            // txtEconOptimizationValue
+            // 
+            this.txtEconOptimizationValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconOptimizationValue.Location = new System.Drawing.Point(339, 99);
+            this.txtEconOptimizationValue.Name = "txtEconOptimizationValue";
+            this.txtEconOptimizationValue.Size = new System.Drawing.Size(200, 29);
+            this.txtEconOptimizationValue.TabIndex = 15;
+            this.txtEconOptimizationValue.Text = "0";
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.radioButton1);
+            this.groupBox6.Controls.Add(this.radioButton2);
+            this.groupBox6.Location = new System.Drawing.Point(220, 133);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(351, 45);
+            this.groupBox6.TabIndex = 17;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Which attribute value is best";
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.Location = new System.Drawing.Point(197, 15);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(122, 24);
+            this.radioButton1.TabIndex = 14;
+            this.radioButton1.Text = "Minimum Value";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.Checked = true;
+            this.radioButton2.Location = new System.Drawing.Point(32, 16);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(150, 24);
+            this.radioButton2.TabIndex = 12;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Maximum Value";
+            // 
+            // lblEconomicAttribute
+            // 
+            this.lblEconomicAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblEconomicAttribute.Location = new System.Drawing.Point(7, 11);
+            this.lblEconomicAttribute.Name = "lblEconomicAttribute";
+            this.lblEconomicAttribute.Size = new System.Drawing.Size(472, 32);
+            this.lblEconomicAttribute.TabIndex = 13;
+            this.lblEconomicAttribute.Text = "Economic Attribute";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(352, 376);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(88, 40);
+            this.button2.TabIndex = 11;
+            this.button2.Text = "Done";
+            // 
+            // btnEconOptimizationCancel
+            // 
+            this.btnEconOptimizationCancel.Location = new System.Drawing.Point(440, 376);
+            this.btnEconOptimizationCancel.Name = "btnEconOptimizationCancel";
+            this.btnEconOptimizationCancel.Size = new System.Drawing.Size(88, 40);
+            this.btnEconOptimizationCancel.TabIndex = 9;
+            this.btnEconOptimizationCancel.Text = "Cancel";
+            this.btnEconOptimizationCancel.Click += new System.EventHandler(this.btnEconOptimizationCancel_Click);
+            // 
+            // lstEconVariables
+            // 
+            this.lstEconVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstEconVariables.ItemHeight = 16;
+            this.lstEconVariables.Items.AddRange(new object[] {
+            "chip_volume_1",
+            "merch_volume_1",
+            "net_revenue_1",
+            "total_volume_1",
+            "treatment_haul_costs_1"});
+            this.lstEconVariables.Location = new System.Drawing.Point(20, 46);
+            this.lstEconVariables.Name = "lstEconVariables";
+            this.lstEconVariables.Size = new System.Drawing.Size(177, 132);
+            this.lstEconVariables.TabIndex = 24;
+            // 
+            // txtEconAttribDescr
+            // 
+            this.txtEconAttribDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconAttribDescr.Location = new System.Drawing.Point(220, 46);
+            this.txtEconAttribDescr.Multiline = true;
+            this.txtEconAttribDescr.Name = "txtEconAttribDescr";
+            this.txtEconAttribDescr.ReadOnly = true;
+            this.txtEconAttribDescr.Size = new System.Drawing.Size(242, 45);
+            this.txtEconAttribDescr.TabIndex = 87;
+            this.txtEconAttribDescr.Text = "Default calculation for total volume with 25% allotted to each cycle";
+            // 
+            // btnEconSelect
+            // 
+            this.btnEconSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEconSelect.Location = new System.Drawing.Point(486, 46);
+            this.btnEconSelect.Name = "btnEconSelect";
+            this.btnEconSelect.Size = new System.Drawing.Size(90, 66);
+            this.btnEconSelect.TabIndex = 88;
+            this.btnEconSelect.Text = "Select";
+            this.btnEconSelect.Click += new System.EventHandler(this.btnEconSelect_Click);
+            // 
+            // txtEconRevenueDescr
+            // 
+            this.txtEconRevenueDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconRevenueDescr.Location = new System.Drawing.Point(219, 46);
+            this.txtEconRevenueDescr.Multiline = true;
+            this.txtEconRevenueDescr.Name = "txtEconRevenueDescr";
+            this.txtEconRevenueDescr.Size = new System.Drawing.Size(320, 40);
+            this.txtEconRevenueDescr.TabIndex = 89;
+            this.txtEconRevenueDescr.Text = "Sums net revenue across all 4 cycles";
+            // 
+            // cboNetRevEconOptimzFilter
+            // 
+            this.cboNetRevEconOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboNetRevEconOptimzFilter.Items.AddRange(new object[] {
+            "net_revenue_1"});
+            this.cboNetRevEconOptimzFilter.Location = new System.Drawing.Point(46, 49);
+            this.cboNetRevEconOptimzFilter.Name = "cboNetRevEconOptimzFilter";
+            this.cboNetRevEconOptimzFilter.Size = new System.Drawing.Size(110, 24);
+            this.cboNetRevEconOptimzFilter.TabIndex = 88;
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(43, 24);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(158, 20);
+            this.label2.TabIndex = 90;
+            this.label2.Text = "Net Revenue Calculation";
+            // 
             // uc_scenario_fvs_prepost_optimization
             // 
             this.Controls.Add(this.groupBox1);
@@ -872,6 +1129,12 @@ namespace FIA_Biosum_Manager
             this.grpFilter.ResumeLayout(false);
             this.grpFilter.PerformLayout();
             this.grpMaxMin.ResumeLayout(false);
+            this.grpboxEconOptimizSettings.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -957,47 +1220,47 @@ namespace FIA_Biosum_Manager
 			CreateListViewOptimizationRow();
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count-1,lvOptimizationListValues.Columns.Count);
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Revenue";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Revenue";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
 			CreateListViewOptimizationRow();
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count-1,lvOptimizationListValues.Columns.Count);
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Merchantable Volume";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Merchantable Volume";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
 			CreateListViewOptimizationRow();
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count-1,lvOptimizationListValues.Columns.Count);
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Stand Attribute";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Stand Attribute";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
             // New row for economic weighted variables
             CreateListViewOptimizationRow();
             this.m_oLvRowColors.AddRow();
             this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count - 1, lvOptimizationListValues.Columns.Count);
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Attribute";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Attribute";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
 
 			//
@@ -1154,11 +1417,11 @@ namespace FIA_Biosum_Manager
 				for (y=0;y<=this.lvOptimizationListValues.Items.Count-1;y++)
 				{
 					bFound=false;
-					if (lvOptimizationListValues.Items[y].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text.Trim()=="NA")
+					if (lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text.Trim()=="NA")
 					{
 						for (x=0;x<=this.m_oSavVariableCollection.Count-1;x++)
 						{
-							if (lvOptimizationListValues.Items[y].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == 
+							if (lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == 
 								m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper())
 							{
 								bFound=true;
@@ -1170,7 +1433,7 @@ namespace FIA_Biosum_Manager
 					{
 						for (x=0;x<=this.m_oSavVariableCollection.Count-1;x++)
 						{
-                            if (lvOptimizationListValues.Items[y].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE" &&
+                            if (lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE" &&
                                 m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
 							{
 								bFound=true;
@@ -1195,14 +1458,14 @@ namespace FIA_Biosum_Manager
 						else
 							oItem.bUseFilter=false;
 						
-						if (this.lvOptimizationListValues.Items[y].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MAX")
+						if (this.lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MAX")
 						{
 							oItem.strMaxYN="Y";
 						}
 						else
 							oItem.strMaxYN="N";
 
-						if (this.lvOptimizationListValues.Items[y].SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MIN")
+						if (this.lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MIN")
 						{
 							oItem.strMinYN="Y";
 						}
@@ -1227,7 +1490,7 @@ namespace FIA_Biosum_Manager
 			p_oVariableItem.intListViewIndex=p_lvItem.Index;
 			p_lvItem.Checked=p_oVariableItem.bSelected;
 
-            if (p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
+            if (p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
 				p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text = p_oVariableItem.strFVSVariableName;
 			//p_oVariableItem.strFVSVariableName = p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
 			p_oVariableItem.strOptimizedVariable = p_lvItem.SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
@@ -1236,20 +1499,20 @@ namespace FIA_Biosum_Manager
 			p_lvItem.SubItems[COLUMN_VALUESOURCE].Text = p_oVariableItem.strValueSource;
 
 			if (p_oVariableItem.bUseFilter)
-				p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "Yes";
+				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "Yes";
 			else
-				p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
 
 			if (p_oVariableItem.strMaxYN=="Y")
-				p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MAX";
+				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MAX";
 			else if (p_oVariableItem.strMinYN=="Y")
-				p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MIN";
+				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MIN";
 			else
-				p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
 
 			if (p_oVariableItem.strFilterOperator.Trim().Length > 0)
 			{
-				p_lvItem.SubItems[uc_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = 
+				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = 
 					p_oVariableItem.strFilterOperator;
 			}
             m_oValidate.ValidateDecimal(Convert.ToString(p_oVariableItem.dblFilterValue).Trim());
@@ -1418,6 +1681,9 @@ namespace FIA_Biosum_Manager
 			grpboxOptimizationSettings.Width =  grpboxOptimization.Width;
 			this.grpboxOptimizationFVSVariable.Height = grpboxOptimization.Height;
 			this.grpboxOptimizationFVSVariable.Width = grpboxOptimization.Width;
+            this.grpboxEconOptimizSettings.Height = grpboxOptimization.Height;
+            this.grpboxEconOptimizSettings.Width = grpboxOptimization.Width;
+
 		
 		}
 
@@ -1563,6 +1829,7 @@ namespace FIA_Biosum_Manager
 			this.EnableTabs(true);
 			this.grpboxOptimizationSettings.Hide();
 			this.grpboxOptimizationFVSVariable.Hide();
+            this.grpboxEconOptimizSettings.Hide();
 			this.grpboxOptimization.Show();
 			
 		}
@@ -1577,6 +1844,7 @@ namespace FIA_Biosum_Manager
 			this.EnableTabs(true);
 			this.grpboxOptimizationSettings.Hide();
 			this.grpboxOptimizationFVSVariable.Hide();
+            this.grpboxEconOptimizSettings.Hide();
 			this.grpboxOptimization.Show();
 			for (int x=0;x<=this.m_oSavVariableCollection.Count-1;x++)
 			{
@@ -1717,22 +1985,40 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.lvOptimizationListValues.SelectedItems.Count==0) return;
 
-			if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim()=="NA")
+			//Either Revenue or Merch Volume has been selected
+            if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim()=="NA")
 			{
 				btnOptimiztionPrev.Hide();
 				this.lblOptimizationVariable.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
                 this.grpMaxMin.Location = grpboxOptimizationSettingsPostPre.Location;
+                // Hide the second (FVS) layer so the third is visible
                 this.grpboxOptimizationSettingsPostPre.Hide();
+                // Hide the fourth (Economic) layer
+                this.grpboxEconOptimizSettings.Hide();
+                // Show the third layer
+                this.grpboxOptimizationSettings.Show();
 			}
+            //Economic attribute was selected
+            else if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim() == "Economic Attribute")
+            {
+                // Hide the second (FVS) layer so the fourth is visible
+                this.grpboxOptimizationSettingsPostPre.Hide();
+                // Hide the third layer; This layer replaces it
+                this.grpboxOptimizationSettings.Hide();
+                // Show the fourth layer
+                this.grpboxEconOptimizSettings.Show();
+            }
 			else
 			{
-				btnOptimiztionPrev.Show();
+				// Populate the fields on the second (FVS) layer
+                btnOptimiztionPrev.Show();
 				this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
                 this.loadFVSTableAndField();
                 // Need to set this again because manipulating the FVSTableAndField listboxes will clear it
                 this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
                 this.lblOptimizationVariable.Text = this.lblFVSVariablesOptimizationVariableValuesSelected.Text;
                 this.grpMaxMin.Location = new System.Drawing.Point(457, 55);
+                // Show the second layer on top
                 this.grpboxOptimizationFVSVariable.Show();
 				//this.grpboxOptimizationSettingsPostPre.Show();
 				if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_VALUESOURCE].Text.Trim()=="POST")
@@ -1768,9 +2054,10 @@ namespace FIA_Biosum_Manager
 			{
 				this.chkEnableFilter.Checked=false;
 			}
-			this.grpboxOptimization.Hide();
+			// Hide the top Layer
+            this.grpboxOptimization.Hide();
+            // Fourth layer should be hidden because this is third
 			this.EnableTabs(false);
-			this.grpboxOptimizationSettings.Show();
 			
 			
 		}
@@ -2092,6 +2379,22 @@ namespace FIA_Biosum_Manager
             {
                 this.btnFVSVariablesOptimizationVariableValues.Enabled = false;
             }
+        }
+
+        private void btnEconSelect_Click(object sender, EventArgs e)
+        {
+            if (this.lstEconVariables.SelectedItems.Count == 0 || this.lstEconVariables.SelectedItems.Count == 0) return;
+            this.lblEconomicAttribute.Text =
+                this.lstEconVariables.SelectedItems[0].ToString();
+        }
+
+        private void btnEconOptimizationCancel_Click(object sender, EventArgs e)
+        {
+            this.EnableTabs(true);
+            this.grpboxOptimizationSettings.Hide();
+            this.grpboxOptimizationFVSVariable.Hide();
+            this.grpboxEconOptimizSettings.Hide();
+            this.grpboxOptimization.Show();
         }
 	
 	}
