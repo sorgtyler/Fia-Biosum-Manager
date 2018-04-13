@@ -44,8 +44,7 @@ namespace FIA_Biosum_Manager
 		public bool m_bSave=false;
         //list view associated classes
         private ListViewEmbeddedControls.ListViewEx m_lvEx;
-
-
+        private ado_data_access m_oAdo;
 
 		const int COLUMN_CHECKBOX=0;
 		const int COLUMN_OPTIMIZE_VARIABLE=1;
@@ -55,6 +54,14 @@ namespace FIA_Biosum_Manager
 		const int COLUMN_USEFILTER=5;
 		const int COLUMN_FILTER_OPERATOR=6;
         const int COLUMN_FILTER_VALUE = 7;
+        const string VARIABLE_ECON = "ECON";
+        const string VARIABLE_FVS = "FVS";
+        const string PREFIX_CHIP_VOLUME = "chip_volume";
+        const string PREFIX_MERCH_VOLUME = "merch_volume";
+        const string PREFIX_TOTAL_VOLUME = "total_volume";
+        const string PREFIX_NET_REVENUE = "net_revenue";
+        const string PREFIX_TREATMENT_HAUL_COSTS = "treatment_haul_costs";
+
         private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
 		public bool m_bFirstTime=true;
 		private bool _bDisplayAuditMsg=true;
@@ -67,7 +74,6 @@ namespace FIA_Biosum_Manager
         private FIA_Biosum_Manager.frmMain m_frmMain;
         public int m_DialogHt;
         public Panel pnlDetails;
-        private TextBox txtFvsVariableName;
         private Label label7;
         public Button btnFvsCalculate;
         private Button btnFvsDetailsCancel;
@@ -100,15 +106,14 @@ namespace FIA_Biosum_Manager
         public Panel panel1;
         private DataGridView dgEcon;
         private Button button2;
-        private TextBox textBox1;
+        private TextBox txtEconVariableDescr;
         private Label label1;
-        private TextBox textBox2;
         private Label label2;
         private Button BtnSaveEcon;
         private Button btnEconDetailsCancel;
         private GroupBox groupBox8;
-        private ListBox listBox3;
-        private Label label3;
+        private ListBox lstEconVariablesList;
+        private Label lblSelectedEconVariable;
         private Label label4;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
@@ -123,8 +128,11 @@ namespace FIA_Biosum_Manager
         private System.Data.DataView m_dv;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
         private Button btnFVSVariableValue;
+        private ColumnHeader vId;
+        private Button btnEconVariableType;
+        private Label lblEconVariableName;
+        private Label lstFvsVariableName;
         private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
-
 
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
@@ -164,31 +172,6 @@ namespace FIA_Biosum_Manager
             this.m_DialogWd = this.Width + 25;
             this.m_DialogHt = this.pnlDetails.Height + 120;
             this.Height = m_DialogHt -40;
-
-            //@ToDo: Plugging temporary data for screenshots
-            this.m_oLvAlternateColors.InitializeRowCollection();
-            lstVariables.Items.Add("Weight_Torch");
-            lstVariables.Items[0].UseItemStyleForSubItems = false;
-            lstVariables.Items[0].SubItems.Add("Weighted P-Torch severity");
-            lstVariables.Items[0].SubItems.Add("FVS");
-            m_oLvAlternateColors.AddRow();
-            m_oLvAlternateColors.AddColumns(0, lstVariables.Columns.Count);
-            lstVariables.Items.Add("wHazard");
-            lstVariables.Items[1].UseItemStyleForSubItems = false;
-            lstVariables.Items[1].SubItems.Add("Weighted Hazard Score");
-            lstVariables.Items[1].SubItems.Add("FVS");
-            m_oLvAlternateColors.AddRow();
-            m_oLvAlternateColors.AddColumns(1, lstVariables.Columns.Count);
-            lstVariables.Items.Add("total_volume_1");
-            lstVariables.Items[2].UseItemStyleForSubItems = false;
-            lstVariables.Items[2].SubItems.Add("Default calculation for total volume");
-            lstVariables.Items[2].SubItems.Add("Economic");
-            m_oLvAlternateColors.AddRow();
-            m_oLvAlternateColors.AddColumns(2, lstVariables.Columns.Count);
-            this.m_oLvAlternateColors.ListView();
-
-
-
 
             var row = (DataGridViewRow) dgEcon.RowTemplate.Clone();
             row.CreateCells(dgEcon, "1", "1");
@@ -234,21 +217,21 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnEconVariableType = new System.Windows.Forms.Button();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.dgEcon = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button2 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtEconVariableDescr = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.BtnSaveEcon = new System.Windows.Forms.Button();
             this.btnEconDetailsCancel = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.listBox3 = new System.Windows.Forms.ListBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lstEconVariablesList = new System.Windows.Forms.ListBox();
+            this.lblSelectedEconVariable = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.grpboxSummary = new System.Windows.Forms.GroupBox();
             this.pnlSummary = new System.Windows.Forms.Panel();
@@ -261,6 +244,7 @@ namespace FIA_Biosum_Manager
             this.vName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.vDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.vType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.vId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
             this.btnFVSVariableValue = new System.Windows.Forms.Button();
@@ -270,7 +254,6 @@ namespace FIA_Biosum_Manager
             this.BtnHelp = new System.Windows.Forms.Button();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.txtFvsVariableName = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnFvsCalculate = new System.Windows.Forms.Button();
             this.btnFvsDetailsCancel = new System.Windows.Forms.Button();
@@ -283,6 +266,8 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.lblEconVariableName = new System.Windows.Forms.Label();
+            this.lstFvsVariableName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -329,24 +314,35 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.lblEconVariableName);
+            this.panel1.Controls.Add(this.btnEconVariableType);
             this.panel1.Controls.Add(this.textBox4);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.dgEcon);
             this.panel1.Controls.Add(this.button2);
-            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.txtEconVariableDescr);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.BtnSaveEcon);
             this.panel1.Controls.Add(this.btnEconDetailsCancel);
             this.panel1.Controls.Add(this.groupBox8);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.lblSelectedEconVariable);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 18);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(850, 451);
             this.panel1.TabIndex = 70;
+            // 
+            // btnEconVariableType
+            // 
+            this.btnEconVariableType.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEconVariableType.Location = new System.Drawing.Point(240, 26);
+            this.btnEconVariableType.Name = "btnEconVariableType";
+            this.btnEconVariableType.Size = new System.Drawing.Size(139, 98);
+            this.btnEconVariableType.TabIndex = 93;
+            this.btnEconVariableType.Text = "Select";
+            this.btnEconVariableType.Click += new System.EventHandler(this.btnEconVariableType_Click);
             // 
             // textBox4
             // 
@@ -412,15 +408,14 @@ namespace FIA_Biosum_Manager
             this.button2.TabIndex = 87;
             this.button2.Text = "Help";
             // 
-            // textBox1
+            // txtEconVariableDescr
             // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(173, 386);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(259, 40);
-            this.textBox1.TabIndex = 86;
-            this.textBox1.Text = "Default calculation for total volume";
+            this.txtEconVariableDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconVariableDescr.Location = new System.Drawing.Point(173, 386);
+            this.txtEconVariableDescr.Multiline = true;
+            this.txtEconVariableDescr.Name = "txtEconVariableDescr";
+            this.txtEconVariableDescr.Size = new System.Drawing.Size(259, 40);
+            this.txtEconVariableDescr.TabIndex = 86;
             // 
             // label1
             // 
@@ -430,18 +425,9 @@ namespace FIA_Biosum_Manager
             this.label1.TabIndex = 85;
             this.label1.Text = "Description:";
             // 
-            // textBox2
-            // 
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(173, 357);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(259, 22);
-            this.textBox2.TabIndex = 84;
-            this.textBox2.Text = "total_volume_1";
-            // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(13, 360);
+            this.label2.Location = new System.Drawing.Point(13, 359);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(212, 24);
             this.label2.TabIndex = 79;
@@ -466,7 +452,7 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox8
             // 
-            this.groupBox8.Controls.Add(this.listBox3);
+            this.groupBox8.Controls.Add(this.lstEconVariablesList);
             this.groupBox8.Location = new System.Drawing.Point(18, 5);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(200, 133);
@@ -474,29 +460,29 @@ namespace FIA_Biosum_Manager
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Variable type";
             // 
-            // listBox3
+            // lstEconVariablesList
             // 
-            this.listBox3.FormattingEnabled = true;
-            this.listBox3.ItemHeight = 16;
-            this.listBox3.Items.AddRange(new object[] {
+            this.lstEconVariablesList.FormattingEnabled = true;
+            this.lstEconVariablesList.ItemHeight = 16;
+            this.lstEconVariablesList.Items.AddRange(new object[] {
             "Total Volume",
             "Merch Volume",
             "Chip Volume",
             "Net Revenue",
             "Gross Costs"});
-            this.listBox3.Location = new System.Drawing.Point(6, 21);
-            this.listBox3.Name = "listBox3";
-            this.listBox3.Size = new System.Drawing.Size(181, 100);
-            this.listBox3.TabIndex = 70;
+            this.lstEconVariablesList.Location = new System.Drawing.Point(6, 21);
+            this.lstEconVariablesList.Name = "lstEconVariablesList";
+            this.lstEconVariablesList.Size = new System.Drawing.Size(181, 100);
+            this.lstEconVariablesList.TabIndex = 70;
             // 
-            // label3
+            // lblSelectedEconVariable
             // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(224, 145);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(302, 24);
-            this.label3.TabIndex = 69;
-            this.label3.Text = "Total Volume";
+            this.lblSelectedEconVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSelectedEconVariable.Location = new System.Drawing.Point(224, 145);
+            this.lblSelectedEconVariable.Name = "lblSelectedEconVariable";
+            this.lblSelectedEconVariable.Size = new System.Drawing.Size(302, 24);
+            this.lblSelectedEconVariable.TabIndex = 69;
+            this.lblSelectedEconVariable.Text = "Not Defined";
             // 
             // label4
             // 
@@ -558,6 +544,7 @@ namespace FIA_Biosum_Manager
             this.btnProperties.Size = new System.Drawing.Size(114, 32);
             this.btnProperties.TabIndex = 12;
             this.btnProperties.Text = "Properties";
+            this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click);
             // 
             // btnDelete
             // 
@@ -582,7 +569,8 @@ namespace FIA_Biosum_Manager
             this.lstVariables.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.vName,
             this.vDescription,
-            this.vType});
+            this.vType,
+            this.vId});
             this.lstVariables.GridLines = true;
             this.lstVariables.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstVariables.HideSelection = false;
@@ -596,18 +584,26 @@ namespace FIA_Biosum_Manager
             // 
             // vName
             // 
+            this.vName.DisplayIndex = 1;
             this.vName.Text = "Variable Name";
             this.vName.Width = 200;
             // 
             // vDescription
             // 
+            this.vDescription.DisplayIndex = 2;
             this.vDescription.Text = "Description";
             this.vDescription.Width = 350;
             // 
             // vType
             // 
+            this.vType.DisplayIndex = 3;
             this.vType.Text = "Type";
             this.vType.Width = 100;
+            // 
+            // vId
+            // 
+            this.vId.DisplayIndex = 0;
+            this.vId.Width = 0;
             // 
             // grpboxDetails
             // 
@@ -626,6 +622,7 @@ namespace FIA_Biosum_Manager
             // pnlDetails
             // 
             this.pnlDetails.AutoScroll = true;
+            this.pnlDetails.Controls.Add(this.lstFvsVariableName);
             this.pnlDetails.Controls.Add(this.btnFVSVariableValue);
             this.pnlDetails.Controls.Add(this.m_dg);
             this.pnlDetails.Controls.Add(this.txtFvsVariableTotalWeight);
@@ -633,7 +630,6 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Controls.Add(this.BtnHelp);
             this.pnlDetails.Controls.Add(this.textBox18);
             this.pnlDetails.Controls.Add(this.label8);
-            this.pnlDetails.Controls.Add(this.txtFvsVariableName);
             this.pnlDetails.Controls.Add(this.label7);
             this.pnlDetails.Controls.Add(this.btnFvsCalculate);
             this.pnlDetails.Controls.Add(this.btnFvsDetailsCancel);
@@ -714,16 +710,6 @@ namespace FIA_Biosum_Manager
             this.label8.Size = new System.Drawing.Size(87, 24);
             this.label8.TabIndex = 85;
             this.label8.Text = "Description:";
-            // 
-            // txtFvsVariableName
-            // 
-            this.txtFvsVariableName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFvsVariableName.Location = new System.Drawing.Point(173, 357);
-            this.txtFvsVariableName.Name = "txtFvsVariableName";
-            this.txtFvsVariableName.ReadOnly = true;
-            this.txtFvsVariableName.Size = new System.Drawing.Size(259, 22);
-            this.txtFvsVariableName.TabIndex = 84;
-            this.txtFvsVariableName.Text = "PTorch_Sev_1";
             // 
             // label7
             // 
@@ -837,6 +823,24 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
+            // lblEconVariableName
+            // 
+            this.lblEconVariableName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblEconVariableName.Location = new System.Drawing.Point(172, 360);
+            this.lblEconVariableName.Name = "lblEconVariableName";
+            this.lblEconVariableName.Size = new System.Drawing.Size(302, 24);
+            this.lblEconVariableName.TabIndex = 94;
+            this.lblEconVariableName.Text = "Not Defined";
+            // 
+            // lstFvsVariableName
+            // 
+            this.lstFvsVariableName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFvsVariableName.Location = new System.Drawing.Point(170, 361);
+            this.lstFvsVariableName.Name = "lstFvsVariableName";
+            this.lstFvsVariableName.Size = new System.Drawing.Size(264, 24);
+            this.lstFvsVariableName.TabIndex = 93;
+            this.lstFvsVariableName.Text = "PTorch_Sev_1";
+            // 
             // uc_core_scenario_weighted_average
             // 
             this.Controls.Add(this.groupBox1);
@@ -866,6 +870,39 @@ namespace FIA_Biosum_Manager
         {
             this.m_intError = 0;
             this.m_strError = "";
+            //Loading the first (main) groupbox
+            string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                "\\" + Tables.CoreDefinitions.DefaultDbFile;
+            m_oAdo = new ado_data_access();
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
+            m_oAdo.m_strSQL = "SELECT * FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+                " ORDER BY VARIABLE_NAME";
+            m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+            if (m_oAdo.m_intError == 0)
+            {
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    this.m_oLvAlternateColors.InitializeRowCollection();
+                    int idxItems = 0;
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        lstVariables.Items.Add(m_oAdo.m_OleDbDataReader["VARIABLE_NAME"].ToString().Trim());
+                        lstVariables.Items[idxItems].UseItemStyleForSubItems = false;
+                        lstVariables.Items[idxItems].SubItems.Add(m_oAdo.m_OleDbDataReader["VARIABLE_DESCRIPTION"].ToString().Trim());
+                        lstVariables.Items[idxItems].SubItems.Add(m_oAdo.m_OleDbDataReader["VARIABLE_TYPE"].ToString().Trim());
+                        lstVariables.Items[idxItems].SubItems.Add(m_oAdo.m_OleDbDataReader["ID"].ToString().Trim());
+                        //lstVariables.Columns[0].Width = 0;      // hide ID column
+                        m_oLvAlternateColors.AddRow();
+                        m_oLvAlternateColors.AddColumns(idxItems, lstVariables.Columns.Count);
+                        idxItems++;
+                    }
+                    this.m_oLvAlternateColors.ListView();
+                }
+            }
+            m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+
+
 
             string strDestinationLinkDir = this.m_oEnv.strTempDir;
             //used to get the temporary random file name
@@ -901,11 +938,9 @@ namespace FIA_Biosum_Manager
             oDao.CreateTableLink(strTempMDB, strRxPkgTable, strDirectoryPath + "\\" + strFileName,
                 strRxPkgTable);
 
-            //@ToDo: may want to move this to class-level if we need ado elsewhere
-            ado_data_access oAdo = new ado_data_access();
-            oAdo.m_strSQL = Queries.FVS.GetFVSVariantRxPackageSQL(strPlotTable, strRxPkgTable);
-            oAdo.OpenConnection(oAdo.getMDBConnString(strTempMDB, "", ""));
-            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            m_oAdo.m_strSQL = Queries.FVS.GetFVSVariantRxPackageSQL(strPlotTable, strRxPkgTable);
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strTempMDB, "", ""));
+            m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
             //@ToDo: Choose table name based on FVS variable selected
             string strSeqNumTable = "FVS_SUMMARY_PREPOST_SEQNUM_MATRIX";
@@ -913,12 +948,12 @@ namespace FIA_Biosum_Manager
             string strFvsDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim()
                 + "\\fvs\\data";
             System.Collections.Generic.IList<string> lstSeqNumTables = new System.Collections.Generic.List<string>();
-            while (oAdo.m_OleDbDataReader.Read())
+            while (m_oAdo.m_OleDbDataReader.Read())
             {
-                string strVariant = oAdo.m_OleDbDataReader["fvs_variant"].ToString().Trim();
-                string strPackage = oAdo.m_OleDbDataReader["RxPackage"].ToString().Trim();
+                string strVariant = m_oAdo.m_OleDbDataReader["fvs_variant"].ToString().Trim();
+                string strPackage = m_oAdo.m_OleDbDataReader["RxPackage"].ToString().Trim();
 
-                string strOutMDBFile = oRxTools.GetRxPackageFvsOutDbFileName(oAdo.m_OleDbDataReader);
+                string strOutMDBFile = oRxTools.GetRxPackageFvsOutDbFileName(m_oAdo.m_OleDbDataReader);
                 string strACCDBFile = strOutMDBFile.Replace(".MDB", "_BIOSUM.ACCDB");
                 string strOutDirAndFile = strFvsDirectory + "\\" + strVariant + "\\" + strACCDBFile.Trim();
                 if (System.IO.File.Exists(strOutDirAndFile))
@@ -935,8 +970,8 @@ namespace FIA_Biosum_Manager
             }
             //Create temporary table to populate datagrid
             string strViewTableName = "view_weights";
-            frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFvsVariableWeightsReferenceTable(oAdo,
-                oAdo.m_OleDbConnection, strViewTableName);
+            frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFvsVariableWeightsReferenceTable(m_oAdo,
+                m_oAdo.m_OleDbConnection, strViewTableName);
             string[] sqlWhereArray = new string[8];
             sqlWhereArray[0] = " WHERE CYCLE1_PRE_YN = 'Y'";
             sqlWhereArray[1] = " WHERE CYCLE1_POST_YN = 'Y'";
@@ -960,13 +995,13 @@ namespace FIA_Biosum_Manager
                 //Trim off trailing union
                 strSql = strSql.Remove(strSql.LastIndexOf(" UNION ALL "));
                 strSql = strSql + ")";
-                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSql);
-                while (oAdo.m_OleDbDataReader.Read())
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSql);
+                while (m_oAdo.m_OleDbDataReader.Read())
                 {
                     string strPrePost = "";
                     string strRxCycle = "";
-                    int intSeqNum = Convert.ToInt16(oAdo.m_OleDbDataReader["MinSeqNum1"]);
-                    int intYear = Convert.ToInt16(oAdo.m_OleDbDataReader["MinYear1"]);
+                    int intSeqNum = Convert.ToInt16(m_oAdo.m_OleDbDataReader["MinSeqNum1"]);
+                    int intYear = Convert.ToInt16(m_oAdo.m_OleDbDataReader["MinYear1"]);
                     switch (i)
                     {
                         case 0:
@@ -1007,29 +1042,29 @@ namespace FIA_Biosum_Manager
                         string insertSql = "INSERT INTO " + strViewTableName +
                                            " VALUES('" + strPrePost + "','" + strRxCycle +
                                            "'," + intYear + "," + intSeqNum + ",0)";
-                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, insertSql);
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, insertSql);
                     }
                 }
 
             }
 
-            oAdo.m_DataSet = new DataSet("view_weights");
-            oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-            oAdo.m_strSQL = "select * from " + strViewTableName;
-            this.m_dtTableSchema = oAdo.getTableSchema(oAdo.m_OleDbConnection,
-                                                       oAdo.m_OleDbTransaction,
-                                                       oAdo.m_strSQL);
-            if (oAdo.m_intError == 0)
+            m_oAdo.m_DataSet = new DataSet("view_weights");
+            m_oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
+            m_oAdo.m_strSQL = "select * from " + strViewTableName;
+            this.m_dtTableSchema = m_oAdo.getTableSchema(m_oAdo.m_OleDbConnection,
+                                                       m_oAdo.m_OleDbTransaction,
+                                                       m_oAdo.m_strSQL);
+            if (m_oAdo.m_intError == 0)
 			{
-				oAdo.m_OleDbCommand = oAdo.m_OleDbConnection.CreateCommand();
-				oAdo.m_OleDbCommand.CommandText = oAdo.m_strSQL;
-				oAdo.m_OleDbDataAdapter.SelectCommand = oAdo.m_OleDbCommand;
-				oAdo.m_OleDbDataAdapter.SelectCommand.Transaction = oAdo.m_OleDbTransaction;
+				m_oAdo.m_OleDbCommand = m_oAdo.m_OleDbConnection.CreateCommand();
+				m_oAdo.m_OleDbCommand.CommandText = m_oAdo.m_strSQL;
+				m_oAdo.m_OleDbDataAdapter.SelectCommand = m_oAdo.m_OleDbCommand;
+				m_oAdo.m_OleDbDataAdapter.SelectCommand.Transaction = m_oAdo.m_OleDbTransaction;
 				try 
 				{
 
-					oAdo.m_OleDbDataAdapter.Fill(oAdo.m_DataSet,"view_weights");
-                    this.m_dv = new DataView(oAdo.m_DataSet.Tables["view_weights"]);
+					m_oAdo.m_OleDbDataAdapter.Fill(m_oAdo.m_DataSet,"view_weights");
+                    this.m_dv = new DataView(m_oAdo.m_DataSet.Tables["view_weights"]);
 				
 					this.m_dv.AllowNew = false;       //cannot append new records
 					this.m_dv.AllowDelete = false;    //cannot delete records
@@ -1063,7 +1098,7 @@ namespace FIA_Biosum_Manager
 					 **we will use those to create new columnstyles for the columns in our grid
 					 ******************************************************************************/
                     //get the number of columns from the view_weights data set
-                    int numCols = oAdo.m_DataSet.Tables["view_weights"].Columns.Count;      
+                    int numCols = m_oAdo.m_DataSet.Tables["view_weights"].Columns.Count;      
                     
                     /************************************************
 					 **loop through all the columns in the dataset	
@@ -1071,7 +1106,7 @@ namespace FIA_Biosum_Manager
                     string strColumnName;
                     for(int i = 0; i < numCols; ++i)
 					{
-                        strColumnName = oAdo.m_DataSet.Tables["view_weights"].Columns[i].ColumnName;
+                        strColumnName = m_oAdo.m_DataSet.Tables["view_weights"].Columns[i].ColumnName;
 
 						/***********************************
 						**all columns are read-only except weight
@@ -1126,20 +1161,19 @@ namespace FIA_Biosum_Manager
 				{
 					MessageBox.Show(e.Message,"Table",MessageBoxButtons.OK,MessageBoxIcon.Error);
 					this.m_intError=-1;
-                    oAdo.m_OleDbConnection.Close();
-                    oAdo.m_OleDbConnection = null;
-                    oAdo.m_DataSet.Clear();
-                    oAdo.m_DataSet = null;
-                    oAdo.m_OleDbDataAdapter.Dispose();
-                    oAdo.m_OleDbDataAdapter = null;
-                    oAdo = null;
+                    m_oAdo.m_OleDbConnection.Close();
+                    m_oAdo.m_OleDbConnection = null;
+                    m_oAdo.m_DataSet.Clear();
+                    m_oAdo.m_DataSet = null;
+                    m_oAdo.m_OleDbDataAdapter.Dispose();
+                    m_oAdo.m_OleDbDataAdapter = null;
 					return;
 
 				}
 
 			}
 
-            m_dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(oAdo);
+            m_dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(m_oAdo);
             foreach (string strKey in m_dictFVSTables.Keys)
             {
                 lstFVSTablesList.Items.Add(strKey);
@@ -1155,8 +1189,8 @@ namespace FIA_Biosum_Manager
             
             
             
-            if (oAdo != null)
-                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            if (m_oAdo != null)
+                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             
             if (oDao != null)
             {
@@ -1168,13 +1202,13 @@ namespace FIA_Biosum_Manager
 		public int savevalues()
 		{
 			int x;
-			ado_data_access oAdo = new ado_data_access();
+			ado_data_access m_oAdo = new ado_data_access();
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
 				"\\core\\db\\scenario_core_rule_definitions.mdb";
-			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
-			if (oAdo.m_intError==0)
+			m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strScenarioMDB,"",""));
+			if (m_oAdo.m_intError==0)
 			{
 
 
@@ -1604,6 +1638,51 @@ namespace FIA_Biosum_Manager
                 this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
         }
 
+        private void btnProperties_Click(object sender, EventArgs e)
+        {
+            if (lstVariables.SelectedItems.Count == 0) return;
+            this.grpboxSummary.Hide();
+            int intVariableId = Convert.ToInt32(lstVariables.SelectedItems[0].SubItems[3].Text.Trim());
+            string strVariableName = lstVariables.SelectedItems[0].Text.Trim();
+            if (lstVariables.SelectedItems[0].SubItems[2].Text.Trim().Equals(VARIABLE_ECON))
+            {
+                lblEconVariableName.Text = strVariableName;
+                txtEconVariableDescr.Text = lstVariables.SelectedItems[0].SubItems[1].Text.Trim();
+                txtEconVariableDescr.ReadOnly = true;
+                string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
+                m_oAdo.m_strSQL = "SELECT * FROM " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName + 
+                    " WHERE CALCULATED_VARIABLES_ID = " + intVariableId;
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                if (m_oAdo.m_intError == 0)
+                {
+                    if (m_oAdo.m_OleDbDataReader.HasRows)
+                    {
+                        while (m_oAdo.m_OleDbDataReader.Read())
+                        {
+
+                        }
+
+                    }
+
+                }
+                
+                this.grpBoxEconomicVariable.Show();
+            }
+            else
+            {
+                this.grpboxDetails.Show();
+            }
+        }
+
+        private void btnEconVariableType_Click(object sender, EventArgs e)
+        {
+            if (this.lstEconVariablesList.SelectedItems.Count == 0 || this.lstEconVariablesList.SelectedItems.Count == 0) return;
+            this.lblSelectedEconVariable.Text =
+                this.lstEconVariablesList.SelectedItems[0].ToString();
+        }
+
 
     }
 
@@ -1715,7 +1794,5 @@ namespace FIA_Biosum_Manager
         }
 
     }
-
-
 
 }

@@ -1697,6 +1697,8 @@ namespace FIA_Biosum_Manager
 
             static public string DefaultDbFile { get { return @"core\db\core_definitions.accdb"; } }
             static public string DefaultCalculatedCoreVariablesTableName { get { return "calculated_core_variables"; } }
+            static public string DefaultCalculatedEconVariablesTableName { get { return "calculated_econ_variables_definition"; } }
+
 
             public void CreateCalculatedCoreVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -1713,10 +1715,29 @@ namespace FIA_Biosum_Manager
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "ID INTEGER," +
-                    "VARIABLE_NAME CHAR(4)," +
+                    "VARIABLE_NAME CHAR(40)," +
                     "VARIABLE_DESCRIPTION CHAR(255)," +
                     "VARIABLE_TYPE CHAR(25)," +
                     "BASELINE_RXPACKAGE CHAR(3))";
+            }
+            public void CreateCalculatedEconVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedEconVariableTableSQL(p_strTableName));
+                CreateCalculatedEconVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateCalculatedEconVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "CALCULATED_VARIABLES_ID");
+            }
+            static public string CreateCalculatedEconVariableTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "CALCULATED_VARIABLES_ID INTEGER," +
+                    "ECON_VARIABLE_SOURCE CHAR(100)," +
+                    "WEIGHT_CYCLE_1 DOUBLE," +
+                    "WEIGHT_CYCLE_2 DOUBLE," +
+                    "WEIGHT_CYCLE_3 DOUBLE," +
+                    "WEIGHT_CYCLE_4 DOUBLE)";
             }
         }
 

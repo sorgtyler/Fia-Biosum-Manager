@@ -1256,7 +1256,7 @@ namespace FIA_Biosum_Manager
             this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count - 1, lvOptimizationListValues.Columns.Count);
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Attribute";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
@@ -1417,7 +1417,9 @@ namespace FIA_Biosum_Manager
 				for (y=0;y<=this.lvOptimizationListValues.Items.Count-1;y++)
 				{
 					bFound=false;
-					if (lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text.Trim()=="NA")
+                    string strOptimizeVariable = lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper();
+                    // It is the Revenue or Merchantable Volume line
+                    if (strOptimizeVariable.IndexOf("ATTRIBUTE") < 0)
 					{
 						for (x=0;x<=this.m_oSavVariableCollection.Count-1;x++)
 						{
@@ -1429,12 +1431,16 @@ namespace FIA_Biosum_Manager
 							}
 						}
 					}
-					else
+					// It is the Stand or Economic Attribute line
+                    else
 					{
 						for (x=0;x<=this.m_oSavVariableCollection.Count-1;x++)
 						{
-                            if (lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE" &&
-                                m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
+                            string strTest = m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper();
+                            if ((strOptimizeVariable == "STAND ATTRIBUTE" &&
+                                m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE") ||
+                                (strOptimizeVariable == "ECONOMIC ATTRIBUTE" &&
+                                m_oSavVariableCollection.Item(x).strOptimizedVariable.Trim().ToUpper() == "ECONOMIC ATTRIBUTE"))
 							{
 								bFound=true;
 								break;
@@ -1491,12 +1497,18 @@ namespace FIA_Biosum_Manager
 			p_lvItem.Checked=p_oVariableItem.bSelected;
 
             if (p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
-				p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text = p_oVariableItem.strFVSVariableName;
-			//p_oVariableItem.strFVSVariableName = p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
-			p_oVariableItem.strOptimizedVariable = p_lvItem.SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
-			//p_oVariableItem.strValueSource = p_lvItem.SubItems[COLUMN_VALUESOURCE].Text.Trim();
+            {
+                p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text = p_oVariableItem.strFVSVariableName;
+                p_oVariableItem.strOptimizedVariable = p_lvItem.SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
+                p_lvItem.SubItems[COLUMN_VALUESOURCE].Text = p_oVariableItem.strValueSource;
+            }
+            else if (p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
+            {
+                p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text = p_oVariableItem.strFVSVariableName;
+                p_oVariableItem.strOptimizedVariable = p_lvItem.SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
+                // No current need to set Value Source (POST, POST-PRE) for economic attributes
+            }
 
-			p_lvItem.SubItems[COLUMN_VALUESOURCE].Text = p_oVariableItem.strValueSource;
 
 			if (p_oVariableItem.bUseFilter)
 				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "Yes";
@@ -2001,6 +2013,27 @@ namespace FIA_Biosum_Manager
             //Economic attribute was selected
             else if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim() == "Economic Attribute")
             {
+                if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim() != "Not Defined")
+                {
+                    this.lblEconomicAttribute.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
+                    for (int index = 0; index < lstEconVariables.Items.Count + 1; index++)
+                    {
+                        string item = lstEconVariables.Items[index].ToString();
+                        if (this.lblEconomicAttribute.Text == item)
+                        {
+                            lstEconVariables.SelectedIndex = index;
+                            break;
+                        }
+                    }
+                }
+
+                if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_MAXMIN].Text.Trim() == "MAX")
+                    this.rdoOptimizationMaximum.Checked = true;
+                else if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_MAXMIN].Text.Trim() == "MIN")
+                    this.rdoOptimizationMinimum.Checked = true;
+                else
+                    this.rdoOptimizationMaximum.Checked = true;
+                
                 // Hide the second (FVS) layer so the fourth is visible
                 this.grpboxOptimizationSettingsPostPre.Hide();
                 // Hide the third layer; This layer replaces it
@@ -2020,7 +2053,6 @@ namespace FIA_Biosum_Manager
                 this.grpMaxMin.Location = new System.Drawing.Point(457, 55);
                 // Show the second layer on top
                 this.grpboxOptimizationFVSVariable.Show();
-				//this.grpboxOptimizationSettingsPostPre.Show();
 				if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_VALUESOURCE].Text.Trim()=="POST")
 					this.cmbOptimizationSettingsPostPreValue.Text = 
 						this.cmbOptimizationSettingsPostPreValue.Items[0].ToString().Trim();
