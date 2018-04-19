@@ -116,9 +116,9 @@ namespace FIA_Biosum_Manager
         private Button btnEconDetailsCancel;
         private GroupBox groupBox8;
         private ListBox lstEconVariablesList;
-        private Label lblSelectedEconVariable;
+        private Label lblSelectedEconType;
         private Label label4;
-        private TextBox textBox4;
+        private TextBox txtEconVariableTotalWeight;
         private Label label6;
         private TextBox txtFvsVariableTotalWeight;
         private Label label5;
@@ -127,6 +127,7 @@ namespace FIA_Biosum_Manager
         private env m_oEnv;
         private System.Data.DataTable m_dtTableSchema;
         private System.Data.DataView m_dv;
+        private System.Data.DataView m_econ_dv;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
         private Button btnFVSVariableValue;
         private ColumnHeader vId;
@@ -204,9 +205,10 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.m_dgEcon = new System.Windows.Forms.DataGrid();
             this.lblEconVariableName = new System.Windows.Forms.Label();
             this.btnEconVariableType = new System.Windows.Forms.Button();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.txtEconVariableTotalWeight = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.txtEconVariableDescr = new System.Windows.Forms.TextBox();
@@ -216,7 +218,7 @@ namespace FIA_Biosum_Manager
             this.btnEconDetailsCancel = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.lstEconVariablesList = new System.Windows.Forms.ListBox();
-            this.lblSelectedEconVariable = new System.Windows.Forms.Label();
+            this.lblSelectedEconType = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.grpboxSummary = new System.Windows.Forms.GroupBox();
             this.pnlSummary = new System.Windows.Forms.Panel();
@@ -252,10 +254,10 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.m_dgEcon = new System.Windows.Forms.DataGrid();
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_dgEcon)).BeginInit();
             this.groupBox8.SuspendLayout();
             this.grpboxSummary.SuspendLayout();
             this.pnlSummary.SuspendLayout();
@@ -265,7 +267,6 @@ namespace FIA_Biosum_Manager
             this.grpBoxFvsBaseline.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.m_dgEcon)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -302,7 +303,7 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.m_dgEcon);
             this.panel1.Controls.Add(this.lblEconVariableName);
             this.panel1.Controls.Add(this.btnEconVariableType);
-            this.panel1.Controls.Add(this.textBox4);
+            this.panel1.Controls.Add(this.txtEconVariableTotalWeight);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.txtEconVariableDescr);
@@ -311,13 +312,23 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.BtnSaveEcon);
             this.panel1.Controls.Add(this.btnEconDetailsCancel);
             this.panel1.Controls.Add(this.groupBox8);
-            this.panel1.Controls.Add(this.lblSelectedEconVariable);
+            this.panel1.Controls.Add(this.lblSelectedEconType);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 18);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(850, 451);
             this.panel1.TabIndex = 70;
+            // 
+            // m_dgEcon
+            // 
+            this.m_dgEcon.DataMember = "";
+            this.m_dgEcon.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+            this.m_dgEcon.Location = new System.Drawing.Point(16, 171);
+            this.m_dgEcon.Name = "m_dgEcon";
+            this.m_dgEcon.Size = new System.Drawing.Size(327, 177);
+            this.m_dgEcon.TabIndex = 95;
+            this.m_dgEcon.CurrentCellChanged += new System.EventHandler(this.m_dgEcon_CurCellChange);
             // 
             // lblEconVariableName
             // 
@@ -338,16 +349,16 @@ namespace FIA_Biosum_Manager
             this.btnEconVariableType.Text = "Select";
             this.btnEconVariableType.Click += new System.EventHandler(this.btnEconVariableType_Click);
             // 
-            // textBox4
+            // txtEconVariableTotalWeight
             // 
-            this.textBox4.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.Location = new System.Drawing.Point(393, 301);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(121, 22);
-            this.textBox4.TabIndex = 92;
-            this.textBox4.Text = "4.0";
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtEconVariableTotalWeight.BackColor = System.Drawing.SystemColors.Control;
+            this.txtEconVariableTotalWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconVariableTotalWeight.Location = new System.Drawing.Point(393, 301);
+            this.txtEconVariableTotalWeight.Name = "txtEconVariableTotalWeight";
+            this.txtEconVariableTotalWeight.Size = new System.Drawing.Size(121, 22);
+            this.txtEconVariableTotalWeight.TabIndex = 92;
+            this.txtEconVariableTotalWeight.Text = "4.0";
+            this.txtEconVariableTotalWeight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label6
             // 
@@ -428,14 +439,14 @@ namespace FIA_Biosum_Manager
             this.lstEconVariablesList.Size = new System.Drawing.Size(181, 100);
             this.lstEconVariablesList.TabIndex = 70;
             // 
-            // lblSelectedEconVariable
+            // lblSelectedEconType
             // 
-            this.lblSelectedEconVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSelectedEconVariable.Location = new System.Drawing.Point(224, 145);
-            this.lblSelectedEconVariable.Name = "lblSelectedEconVariable";
-            this.lblSelectedEconVariable.Size = new System.Drawing.Size(302, 24);
-            this.lblSelectedEconVariable.TabIndex = 69;
-            this.lblSelectedEconVariable.Text = "Not Defined";
+            this.lblSelectedEconType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSelectedEconType.Location = new System.Drawing.Point(224, 145);
+            this.lblSelectedEconType.Name = "lblSelectedEconType";
+            this.lblSelectedEconType.Size = new System.Drawing.Size(302, 24);
+            this.lblSelectedEconType.TabIndex = 69;
+            this.lblSelectedEconType.Text = "Not Defined";
             // 
             // label4
             // 
@@ -626,7 +637,7 @@ namespace FIA_Biosum_Manager
             this.m_dg.Name = "m_dg";
             this.m_dg.Size = new System.Drawing.Size(403, 177);
             this.m_dg.TabIndex = 91;
-            this.m_dg.CurrentCellChanged += new System.EventHandler(this.Grid_CurCellChange);
+            this.m_dg.CurrentCellChanged += new System.EventHandler(this.m_dg_CurCellChange);
             // 
             // txtFvsVariableTotalWeight
             // 
@@ -787,15 +798,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
-            // m_dgEcon
-            // 
-            this.m_dgEcon.DataMember = "";
-            this.m_dgEcon.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-            this.m_dgEcon.Location = new System.Drawing.Point(16, 171);
-            this.m_dgEcon.Name = "m_dgEcon";
-            this.m_dgEcon.Size = new System.Drawing.Size(327, 177);
-            this.m_dgEcon.TabIndex = 95;
-            // 
             // uc_core_scenario_weighted_average
             // 
             this.Controls.Add(this.groupBox1);
@@ -805,6 +807,7 @@ namespace FIA_Biosum_Manager
             this.grpBoxEconomicVariable.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_dgEcon)).EndInit();
             this.groupBox8.ResumeLayout(false);
             this.grpboxSummary.ResumeLayout(false);
             this.pnlSummary.ResumeLayout(false);
@@ -815,7 +818,6 @@ namespace FIA_Biosum_Manager
             this.grpBoxFvsBaseline.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.m_dgEcon)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -1111,6 +1113,8 @@ namespace FIA_Biosum_Manager
                     //this.m_dg.CaptionText = strCaption;
                     this.m_dg.DataSource = this.m_dv;  
 					this.m_dg.Expand(-1);
+                    //sum up the weights after the grid loads
+                    this.SumWeights(false);
 
                     // load listbox for economic variables
                     lstEconVariablesList.Items.Clear();
@@ -1502,9 +1506,11 @@ namespace FIA_Biosum_Manager
             //@ToDo: Add code to clear fields on econ variable screen
         }
 
-        public void SumWeights()
+        public void SumWeights(bool bIsEconVariable)
         {
             DataTable objDataTable = this.m_dv.Table;
+            if (bIsEconVariable == true)
+                objDataTable = this.m_econ_dv.Table;
             double dblSum = 0;
             double dblWeight = -1;
             foreach (DataRow row in objDataTable.Rows)
@@ -1513,15 +1519,30 @@ namespace FIA_Biosum_Manager
                 if (Double.TryParse(strWeight, out dblWeight))
                     dblSum = dblSum + dblWeight;
             }
-            txtFvsVariableTotalWeight.Text = String.Format("{0:0.0#}", dblSum); 
+            if (bIsEconVariable == false)
+            {
+                txtFvsVariableTotalWeight.Text = String.Format("{0:0.0#}", dblSum);
+            }
+            else
+            {
+                txtEconVariableTotalWeight.Text = String.Format("{0:0.0#}", dblSum);
+            }
         }
 
-        protected void Grid_CurCellChange(object sender, EventArgs e)
+        protected void m_dg_CurCellChange(object sender, EventArgs e)
         {
             //Only recalculate if we are leaving the weight column
             if (m_intPrevColumnIdx.Equals(3))
-                this.SumWeights();
+                this.SumWeights(false);
             m_intPrevColumnIdx = m_dg.CurrentCell.ColumnNumber;
+        }
+
+        protected void m_dgEcon_CurCellChange(object sender, EventArgs e)
+        {
+            //Only recalculate if we are leaving the weight column
+            if (m_intPrevColumnIdx.Equals(1))
+                this.SumWeights(true);
+            m_intPrevColumnIdx = m_dgEcon.CurrentCell.ColumnNumber;
         }
 
         private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)
@@ -1579,6 +1600,7 @@ namespace FIA_Biosum_Manager
                 {
                     if (strValue.Equals(strSelectedType))
                     {
+                        lblSelectedEconType.Text = PREFIX_ECON_NAME_ARRAY[idxType];
                         break;
                     }
                     else
@@ -1593,11 +1615,126 @@ namespace FIA_Biosum_Manager
                 m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
                 m_oAdo.m_DataSet = new DataSet("econ_variable");
                 m_oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-                m_oAdo.m_strSQL = "SELECT * FROM " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
+                m_oAdo.m_strSQL = "SELECT rxcycle, weight FROM " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
                     " WHERE CALCULATED_VARIABLES_ID = " + intVariableId;
                 this.m_dtTableSchema = m_oAdo.getTableSchema(m_oAdo.m_OleDbConnection,
                                                            m_oAdo.m_OleDbTransaction,
                                                            m_oAdo.m_strSQL);
+                if (m_oAdo.m_intError == 0)
+                {
+                    m_oAdo.m_OleDbCommand = m_oAdo.m_OleDbConnection.CreateCommand();
+                    m_oAdo.m_OleDbCommand.CommandText = m_oAdo.m_strSQL;
+                    m_oAdo.m_OleDbDataAdapter.SelectCommand = m_oAdo.m_OleDbCommand;
+                    m_oAdo.m_OleDbDataAdapter.SelectCommand.Transaction = m_oAdo.m_OleDbTransaction;
+                    try
+                    {
+                        m_oAdo.m_OleDbDataAdapter.Fill(m_oAdo.m_DataSet, "econ_variable");
+                        this.m_econ_dv = new DataView(m_oAdo.m_DataSet.Tables["econ_variable"]);
+
+                        this.m_econ_dv.AllowNew = false;       //cannot append new records
+                        this.m_econ_dv.AllowDelete = false;    //cannot delete records
+                        this.m_econ_dv.AllowEdit = true;
+                        this.m_dgEcon.CaptionText = "econ_variable";
+                        m_dgEcon.BackgroundColor = frmMain.g_oGridViewBackgroundColor;
+
+                        /***********************************************************************************
+                        **assign the aColumnTextColumn as type DataGridColoredTextBoxColumn object class
+                        ***********************************************************************************/
+                        WeightedAverage_DataGridColoredTextBoxColumn aColumnTextColumn;
+
+
+                        /***************************************************************
+                         **custom define the grid style
+                         ***************************************************************/
+                        DataGridTableStyle tableStyle = new DataGridTableStyle();
+
+                        /***********************************************************************
+                         **map the data grid table style to the scenario rx intensity dataset
+                         ***********************************************************************/
+                        tableStyle.MappingName = "econ_variable";
+                        tableStyle.AlternatingBackColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
+                        tableStyle.BackColor = frmMain.g_oGridViewRowBackgroundColor;
+                        tableStyle.ForeColor = frmMain.g_oGridViewRowForegroundColor;
+                        tableStyle.SelectionBackColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
+
+
+                        /******************************************************************************
+                         **since the dataset has things like field name and number of columns,
+                         **we will use those to create new columnstyles for the columns in our grid
+                         ******************************************************************************/
+                        //get the number of columns from the view_weights data set
+                        int numCols = m_oAdo.m_DataSet.Tables["econ_variable"].Columns.Count;
+
+                        /************************************************
+                         **loop through all the columns in the dataset	
+                         ************************************************/
+                        string strColumnName;
+                        for (int i = 0; i < numCols; ++i)
+                        {
+                            strColumnName = m_oAdo.m_DataSet.Tables["econ_variable"].Columns[i].ColumnName;
+
+                            /***********************************
+                            **all columns are read-only except weight
+                            ***********************************/
+                            //if (strColumnName.Trim().ToUpper() == "WEIGHT")
+                            //{
+                            //    /******************************************************************
+                            //    **create a new instance of the DataGridColoredTextBoxColumn class
+                            //    ******************************************************************/
+                            //    aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(true, true, this);
+                            //    aColumnTextColumn.Format = "#0.00";
+                            //    aColumnTextColumn.ReadOnly = true;
+                            //}
+                            //else
+                            //{
+                            //    /******************************************************************
+                            //    **create a new instance of the DataGridColoredTextBoxColumn class
+                            //    ******************************************************************/
+                            //    aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
+                            //    aColumnTextColumn.ReadOnly = true;
+                            //}
+
+                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
+                            aColumnTextColumn.ReadOnly = true;
+                            aColumnTextColumn.HeaderText = strColumnName;
+
+                            /********************************************************************
+                             **assign the mappingname property the data sets column name
+                             ********************************************************************/
+                            aColumnTextColumn.MappingName = strColumnName;
+
+                            /********************************************************************
+                             **add the datagridcoloredtextboxcolumn object to the data grid 
+                             **table style object
+                             ********************************************************************/
+                            tableStyle.GridColumnStyles.Add(aColumnTextColumn);
+
+                        }
+                        /*********************************************************************
+                         ** make the dataGrid use our new tablestyle and bind it to our table
+                         *********************************************************************/
+                        if (frmMain.g_oGridViewFont != null) this.m_dgEcon.Font = frmMain.g_oGridViewFont;
+                        this.m_dgEcon.TableStyles.Clear();
+                        this.m_dgEcon.TableStyles.Add(tableStyle);
+                        //this.m_dg.CaptionText = strCaption;
+                        this.m_dgEcon.DataSource = this.m_econ_dv;
+                        this.m_dgEcon.Expand(-1);
+                        this.SumWeights(true);
+                    }
+                    catch (Exception e2)
+                    {
+                        MessageBox.Show(e2.Message, "Table", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        this.m_intError = -1;
+                        m_oAdo.m_OleDbConnection.Close();
+                        m_oAdo.m_OleDbConnection = null;
+                        m_oAdo.m_DataSet.Clear();
+                        m_oAdo.m_DataSet = null;
+                        m_oAdo.m_OleDbDataAdapter.Dispose();
+                        m_oAdo.m_OleDbDataAdapter = null;
+                        return;
+
+                    }
+                }
 
                 
                 this.grpBoxEconomicVariable.Show();
@@ -1611,7 +1748,7 @@ namespace FIA_Biosum_Manager
         private void btnEconVariableType_Click(object sender, EventArgs e)
         {
             if (this.lstEconVariablesList.SelectedItems.Count == 0 || this.lstEconVariablesList.SelectedItems.Count == 0) return;
-            this.lblSelectedEconVariable.Text =
+            this.lblSelectedEconType.Text =
                 this.lstEconVariablesList.SelectedItems[0].ToString();
         }
 

@@ -1732,12 +1732,9 @@ namespace FIA_Biosum_Manager
             static public string CreateCalculatedEconVariableTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
-                    "CALCULATED_VARIABLES_ID INTEGER," +
-                    "ECON_VARIABLE_SOURCE CHAR(100)," +
-                    "WEIGHT_CYCLE_1 DOUBLE," +
-                    "WEIGHT_CYCLE_2 DOUBLE," +
-                    "WEIGHT_CYCLE_3 DOUBLE," +
-                    "WEIGHT_CYCLE_4 DOUBLE)";
+                    "calculated_variables_id INTEGER," +
+                    "rxcycle CHAR(1)," +
+                    "weight DOUBLE)";
             }
         }
 
