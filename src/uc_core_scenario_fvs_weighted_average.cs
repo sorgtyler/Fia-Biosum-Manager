@@ -823,7 +823,7 @@ namespace FIA_Biosum_Manager
 		}
 		#endregion
 
-        public void loadvalues()
+        protected void loadvalues()
         {
             this.m_intError = 0;
             this.m_strError = "";
@@ -1116,6 +1116,9 @@ namespace FIA_Biosum_Manager
                     //sum up the weights after the grid loads
                     this.SumWeights(false);
 
+                    //load datagrid for economic variables
+                    loadEconVariablesGrid();
+                    
                     // load listbox for economic variables
                     lstEconVariablesList.Items.Clear();
                     foreach (string strName in PREFIX_ECON_NAME_ARRAY)
@@ -1182,6 +1185,117 @@ namespace FIA_Biosum_Manager
 			
             return 1;
 		}
+
+        protected void loadEconVariablesGrid()
+        {
+            string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                "\\" + Tables.CoreDefinitions.DefaultDbFile;
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
+            m_oAdo.m_DataSet = new DataSet("econ_variable");
+            m_oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
+            m_oAdo.m_strSQL = "SELECT rxcycle, 0.001 as weight FROM " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
+                " WHERE CALCULATED_VARIABLES_ID = 1";
+            this.m_dtTableSchema = m_oAdo.getTableSchema(m_oAdo.m_OleDbConnection,
+                                                       m_oAdo.m_OleDbTransaction,
+                                                       m_oAdo.m_strSQL);
+            if (m_oAdo.m_intError == 0)
+            {
+                m_oAdo.m_OleDbCommand = m_oAdo.m_OleDbConnection.CreateCommand();
+                m_oAdo.m_OleDbCommand.CommandText = m_oAdo.m_strSQL;
+                m_oAdo.m_OleDbDataAdapter.SelectCommand = m_oAdo.m_OleDbCommand;
+                m_oAdo.m_OleDbDataAdapter.SelectCommand.Transaction = m_oAdo.m_OleDbTransaction;
+                try
+                {
+                    m_oAdo.m_OleDbDataAdapter.Fill(m_oAdo.m_DataSet, "econ_variable");
+                    this.m_econ_dv = new DataView(m_oAdo.m_DataSet.Tables["econ_variable"]);
+
+                    this.m_econ_dv.AllowNew = false;       //cannot append new records
+                    this.m_econ_dv.AllowDelete = false;    //cannot delete records
+                    this.m_econ_dv.AllowEdit = true;
+                    this.m_dgEcon.CaptionText = "econ_variable";
+                    m_dgEcon.BackgroundColor = frmMain.g_oGridViewBackgroundColor;
+
+                    /***********************************************************************************
+                    **assign the aColumnTextColumn as type DataGridColoredTextBoxColumn object class
+                    ***********************************************************************************/
+                    WeightedAverage_DataGridColoredTextBoxColumn aColumnTextColumn;
+
+
+                    /***************************************************************
+                     **custom define the grid style
+                     ***************************************************************/
+                    DataGridTableStyle tableStyle = new DataGridTableStyle();
+
+                    /***********************************************************************
+                     **map the data grid table style to the scenario rx intensity dataset
+                     ***********************************************************************/
+                    tableStyle.MappingName = "econ_variable";
+                    tableStyle.AlternatingBackColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
+                    tableStyle.BackColor = frmMain.g_oGridViewRowBackgroundColor;
+                    tableStyle.ForeColor = frmMain.g_oGridViewRowForegroundColor;
+                    tableStyle.SelectionBackColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
+
+
+                    /******************************************************************************
+                     **since the dataset has things like field name and number of columns,
+                     **we will use those to create new columnstyles for the columns in our grid
+                     ******************************************************************************/
+                    //get the number of columns from the view_weights data set
+                    int numCols = m_oAdo.m_DataSet.Tables["econ_variable"].Columns.Count;
+
+                    /************************************************
+                     **loop through all the columns in the dataset	
+                     ************************************************/
+                    string strColumnName;
+                    for (int i = 0; i < numCols; ++i)
+                    {
+                        strColumnName = m_oAdo.m_DataSet.Tables["econ_variable"].Columns[i].ColumnName;
+                        aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
+                        aColumnTextColumn.ReadOnly = true;
+                        aColumnTextColumn.HeaderText = strColumnName;
+
+                        if (strColumnName.Trim().ToUpper() == "WEIGHT")
+                        {
+                            aColumnTextColumn.Format = "#0.00";
+                        }
+
+                        /********************************************************************
+                         **assign the mappingname property the data sets column name
+                         ********************************************************************/
+                        aColumnTextColumn.MappingName = strColumnName;
+
+                        /********************************************************************
+                         **add the datagridcoloredtextboxcolumn object to the data grid 
+                         **table style object
+                         ********************************************************************/
+                        tableStyle.GridColumnStyles.Add(aColumnTextColumn);
+
+                    }
+                    /*********************************************************************
+                     ** make the dataGrid use our new tablestyle and bind it to our table
+                     *********************************************************************/
+                    if (frmMain.g_oGridViewFont != null) this.m_dgEcon.Font = frmMain.g_oGridViewFont;
+                    this.m_dgEcon.TableStyles.Clear();
+                    this.m_dgEcon.TableStyles.Add(tableStyle);
+                    this.m_dgEcon.DataSource = this.m_econ_dv;
+                    this.m_dgEcon.Expand(-1);
+                    this.SumWeights(true);
+                }
+                catch (Exception e2)
+                {
+                    MessageBox.Show(e2.Message, "Table", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.m_intError = -1;
+                    m_oAdo.m_OleDbConnection.Close();
+                    m_oAdo.m_OleDbConnection = null;
+                    m_oAdo.m_DataSet.Clear();
+                    m_oAdo.m_DataSet = null;
+                    m_oAdo.m_OleDbDataAdapter.Dispose();
+                    m_oAdo.m_OleDbDataAdapter = null;
+                    return;
+
+                }
+            }
+        }
 
 		protected void SendKeyStrokes(System.Windows.Forms.TextBox p_oTextBox, string strKeyStrokes)
 		{
@@ -1464,6 +1578,19 @@ namespace FIA_Biosum_Manager
 
         private void btnNewEcon_Click(object sender, EventArgs e)
         {
+            lstEconVariablesList.ClearSelected();
+            lblSelectedEconType.Text = "Not Defined";
+            foreach (System.Data.DataRow p_row in m_oAdo.m_DataSet.Tables["econ_variable"].Rows)
+            {
+                p_row["weight"] = 0;
+            }
+            this.SumWeights(true);
+            //@ToDo: How to change red, editable formatting on the fly
+            DataGridTableStyle objTableStyle = this.m_dgEcon.TableStyles[0];
+            WeightedAverage_DataGridColoredTextBoxColumn objColumnWeight = 
+                (WeightedAverage_DataGridColoredTextBoxColumn) objTableStyle.GridColumnStyles["weight"];
+            objColumnWeight.ReadOnly = false;
+
             this.grpboxSummary.Hide();
             this.grpBoxEconomicVariable.Show();
         }
@@ -1609,134 +1736,30 @@ namespace FIA_Biosum_Manager
                     }   
                 }
                 lstEconVariablesList.SelectedIndex = idxType;
-
                 string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                    "\\" + Tables.CoreDefinitions.DefaultDbFile;
                 m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
-                m_oAdo.m_DataSet = new DataSet("econ_variable");
-                m_oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-                m_oAdo.m_strSQL = "SELECT rxcycle, weight FROM " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
-                    " WHERE CALCULATED_VARIABLES_ID = " + intVariableId;
-                this.m_dtTableSchema = m_oAdo.getTableSchema(m_oAdo.m_OleDbConnection,
-                                                           m_oAdo.m_OleDbTransaction,
-                                                           m_oAdo.m_strSQL);
-                if (m_oAdo.m_intError == 0)
+                m_oAdo.m_strSQL = "select * from " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
+                    " where calculated_variables_id = " + intVariableId;
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
-                    m_oAdo.m_OleDbCommand = m_oAdo.m_OleDbConnection.CreateCommand();
-                    m_oAdo.m_OleDbCommand.CommandText = m_oAdo.m_strSQL;
-                    m_oAdo.m_OleDbDataAdapter.SelectCommand = m_oAdo.m_OleDbCommand;
-                    m_oAdo.m_OleDbDataAdapter.SelectCommand.Transaction = m_oAdo.m_OleDbTransaction;
-                    try
+                    while (m_oAdo.m_OleDbDataReader.Read())
                     {
-                        m_oAdo.m_OleDbDataAdapter.Fill(m_oAdo.m_DataSet, "econ_variable");
-                        this.m_econ_dv = new DataView(m_oAdo.m_DataSet.Tables["econ_variable"]);
-
-                        this.m_econ_dv.AllowNew = false;       //cannot append new records
-                        this.m_econ_dv.AllowDelete = false;    //cannot delete records
-                        this.m_econ_dv.AllowEdit = true;
-                        this.m_dgEcon.CaptionText = "econ_variable";
-                        m_dgEcon.BackgroundColor = frmMain.g_oGridViewBackgroundColor;
-
-                        /***********************************************************************************
-                        **assign the aColumnTextColumn as type DataGridColoredTextBoxColumn object class
-                        ***********************************************************************************/
-                        WeightedAverage_DataGridColoredTextBoxColumn aColumnTextColumn;
-
-
-                        /***************************************************************
-                         **custom define the grid style
-                         ***************************************************************/
-                        DataGridTableStyle tableStyle = new DataGridTableStyle();
-
-                        /***********************************************************************
-                         **map the data grid table style to the scenario rx intensity dataset
-                         ***********************************************************************/
-                        tableStyle.MappingName = "econ_variable";
-                        tableStyle.AlternatingBackColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
-                        tableStyle.BackColor = frmMain.g_oGridViewRowBackgroundColor;
-                        tableStyle.ForeColor = frmMain.g_oGridViewRowForegroundColor;
-                        tableStyle.SelectionBackColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
-
-
-                        /******************************************************************************
-                         **since the dataset has things like field name and number of columns,
-                         **we will use those to create new columnstyles for the columns in our grid
-                         ******************************************************************************/
-                        //get the number of columns from the view_weights data set
-                        int numCols = m_oAdo.m_DataSet.Tables["econ_variable"].Columns.Count;
-
-                        /************************************************
-                         **loop through all the columns in the dataset	
-                         ************************************************/
-                        string strColumnName;
-                        for (int i = 0; i < numCols; ++i)
+                        foreach (System.Data.DataRow p_row in m_oAdo.m_DataSet.Tables["econ_variable"].Rows)
                         {
-                            strColumnName = m_oAdo.m_DataSet.Tables["econ_variable"].Columns[i].ColumnName;
-
-                            /***********************************
-                            **all columns are read-only except weight
-                            ***********************************/
-                            //if (strColumnName.Trim().ToUpper() == "WEIGHT")
-                            //{
-                            //    /******************************************************************
-                            //    **create a new instance of the DataGridColoredTextBoxColumn class
-                            //    ******************************************************************/
-                            //    aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(true, true, this);
-                            //    aColumnTextColumn.Format = "#0.00";
-                            //    aColumnTextColumn.ReadOnly = true;
-                            //}
-                            //else
-                            //{
-                            //    /******************************************************************
-                            //    **create a new instance of the DataGridColoredTextBoxColumn class
-                            //    ******************************************************************/
-                            //    aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
-                            //    aColumnTextColumn.ReadOnly = true;
-                            //}
-
-                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
-                            aColumnTextColumn.ReadOnly = true;
-                            aColumnTextColumn.HeaderText = strColumnName;
-
-                            /********************************************************************
-                             **assign the mappingname property the data sets column name
-                             ********************************************************************/
-                            aColumnTextColumn.MappingName = strColumnName;
-
-                            /********************************************************************
-                             **add the datagridcoloredtextboxcolumn object to the data grid 
-                             **table style object
-                             ********************************************************************/
-                            tableStyle.GridColumnStyles.Add(aColumnTextColumn);
-
+                            if (Convert.ToInt16(m_oAdo.m_OleDbDataReader["rxcycle"]) == Convert.ToInt16(p_row["rxcycle"]))
+                            {
+                                p_row["weight"] = Convert.ToDouble(m_oAdo.m_OleDbDataReader["weight"]);
+                                break;
+                            }
+                          
                         }
-                        /*********************************************************************
-                         ** make the dataGrid use our new tablestyle and bind it to our table
-                         *********************************************************************/
-                        if (frmMain.g_oGridViewFont != null) this.m_dgEcon.Font = frmMain.g_oGridViewFont;
-                        this.m_dgEcon.TableStyles.Clear();
-                        this.m_dgEcon.TableStyles.Add(tableStyle);
-                        //this.m_dg.CaptionText = strCaption;
-                        this.m_dgEcon.DataSource = this.m_econ_dv;
-                        this.m_dgEcon.Expand(-1);
-                        this.SumWeights(true);
-                    }
-                    catch (Exception e2)
-                    {
-                        MessageBox.Show(e2.Message, "Table", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        this.m_intError = -1;
-                        m_oAdo.m_OleDbConnection.Close();
-                        m_oAdo.m_OleDbConnection = null;
-                        m_oAdo.m_DataSet.Clear();
-                        m_oAdo.m_DataSet = null;
-                        m_oAdo.m_OleDbDataAdapter.Dispose();
-                        m_oAdo.m_OleDbDataAdapter = null;
-                        return;
-
                     }
                 }
-
-                
+                m_oAdo.m_OleDbDataReader.Close();
+                this.SumWeights(true);
+ 
                 this.grpBoxEconomicVariable.Show();
             }
             else
