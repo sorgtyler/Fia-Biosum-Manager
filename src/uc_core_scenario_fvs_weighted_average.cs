@@ -1246,18 +1246,32 @@ namespace FIA_Biosum_Manager
                     /************************************************
                      **loop through all the columns in the dataset	
                      ************************************************/
-                    string strColumnName;
+                    string strColumnName = ""; ;
                     for (int i = 0; i < numCols; ++i)
                     {
                         strColumnName = m_oAdo.m_DataSet.Tables["econ_variable"].Columns[i].ColumnName;
-                        aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
-                        aColumnTextColumn.ReadOnly = true;
-                        aColumnTextColumn.HeaderText = strColumnName;
-
+                        
+                        /***********************************
+                        **all columns are read-only except weight
+                        ***********************************/
                         if (strColumnName.Trim().ToUpper() == "WEIGHT")
                         {
+                            /******************************************************************
+                            **create a new instance of the DataGridColoredTextBoxColumn class
+                            ******************************************************************/
+                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(true, true, this);
                             aColumnTextColumn.Format = "#0.00";
+                            aColumnTextColumn.ReadOnly = false;
                         }
+                        else
+                        {
+                            /******************************************************************
+                            **create a new instance of the DataGridColoredTextBoxColumn class
+                            ******************************************************************/
+                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
+                            aColumnTextColumn.ReadOnly = true;
+                        }
+                        aColumnTextColumn.HeaderText = strColumnName;
 
                         /********************************************************************
                          **assign the mappingname property the data sets column name
@@ -1579,18 +1593,21 @@ namespace FIA_Biosum_Manager
         private void btnNewEcon_Click(object sender, EventArgs e)
         {
             lstEconVariablesList.ClearSelected();
+            lstEconVariablesList.Enabled = true;
+            btnEconVariableType.Visible = true;
             lblSelectedEconType.Text = "Not Defined";
             foreach (System.Data.DataRow p_row in m_oAdo.m_DataSet.Tables["econ_variable"].Rows)
             {
                 p_row["weight"] = 0;
             }
             this.SumWeights(true);
-            //@ToDo: How to change red, editable formatting on the fly
-            DataGridTableStyle objTableStyle = this.m_dgEcon.TableStyles[0];
-            WeightedAverage_DataGridColoredTextBoxColumn objColumnWeight = 
-                (WeightedAverage_DataGridColoredTextBoxColumn) objTableStyle.GridColumnStyles["weight"];
-            objColumnWeight.ReadOnly = false;
 
+            //Remove and re-add weight column so it is editable
+            this.updateWeightColumn(VARIABLE_ECON, true);
+            this.m_dgEcon.Expand(-1);
+
+            lblEconVariableName.Text = "Not Defined";
+            txtEconVariableDescr.Text = "";
             this.grpboxSummary.Hide();
             this.grpBoxEconomicVariable.Show();
         }
@@ -1735,6 +1752,8 @@ namespace FIA_Biosum_Manager
                         idxType++;
                     }   
                 }
+                lstEconVariablesList.Enabled = false;
+                btnEconVariableType.Visible = false;
                 lstEconVariablesList.SelectedIndex = idxType;
                 string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                     "\\" + Tables.CoreDefinitions.DefaultDbFile;
@@ -1759,6 +1778,7 @@ namespace FIA_Biosum_Manager
                 }
                 m_oAdo.m_OleDbDataReader.Close();
                 this.SumWeights(true);
+                this.updateWeightColumn(VARIABLE_ECON, false);
  
                 this.grpBoxEconomicVariable.Show();
             }
@@ -1800,6 +1820,42 @@ namespace FIA_Biosum_Manager
             else
             {
                 return "";
+            }
+        }
+
+        private void updateWeightColumn(string strWeightType, bool bEdit)
+        {           
+            DataGridTableStyle objTableStyle = this.m_dgEcon.TableStyles[0];
+            if (strWeightType.Equals(VARIABLE_FVS))
+            {
+                objTableStyle = this.m_dg.TableStyles[0];
+            }
+
+            WeightedAverage_DataGridColoredTextBoxColumn objColumnWeight =
+                (WeightedAverage_DataGridColoredTextBoxColumn)objTableStyle.GridColumnStyles["weight"];
+            objTableStyle.GridColumnStyles.Remove(objColumnWeight);
+            if (bEdit == false)
+            {
+                objColumnWeight = new WeightedAverage_DataGridColoredTextBoxColumn(false, true, this);
+                objColumnWeight.ReadOnly = true;
+            }
+            else
+            {
+                objColumnWeight = new WeightedAverage_DataGridColoredTextBoxColumn(true, true, this);
+                objColumnWeight.ReadOnly = false;
+            }
+            objColumnWeight.Format = "#0.00";
+
+            objColumnWeight.MappingName = "weight";
+            objTableStyle.GridColumnStyles.Add(objColumnWeight);
+
+            if (strWeightType.Equals(VARIABLE_ECON))
+            {
+                this.m_dgEcon.Expand(-1);
+            }
+            else
+            {
+                this.m_dg.Expand(-1);
             }
         }
 
