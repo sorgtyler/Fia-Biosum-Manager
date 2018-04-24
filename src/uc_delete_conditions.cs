@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -28,7 +32,13 @@ namespace FIA_Biosum_Manager
         //TODO: more strings to hold FVSOUT table information?
 
         //TODO:for collecting biosum_cond_id values from text file
-        private string m_strBiosumCondIds = "";
+        private string m_strCondCNs;
+        private string m_strBiosumCondCNs;
+        private string m_strBiosumCondIds;
+        private string m_strBiosumPlotIds;
+        private string m_strPlotCNs;
+        private string m_strTreeCNs;
+        Dictionary<string, string> m_dictIDColumnsToValues;
 
         //TODO: Help files
         private env m_oEnv;
@@ -45,6 +55,7 @@ namespace FIA_Biosum_Manager
         private string m_strTempMDBFileConn;
         private string m_strTempMDBFile;
         private string m_strSQL;
+        private string m_strProjDir;
 
         public uc_delete_conditions()
         {
@@ -108,12 +119,12 @@ namespace FIA_Biosum_Manager
 
         private void InitializeDatasource()
         {
-            var strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
+            m_strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
 
             m_oDatasource = new Datasource();
             m_oDatasource.LoadTableColumnNamesAndDataTypes = false;
             m_oDatasource.LoadTableRecordCount = false;
-            m_oDatasource.m_strDataSourceMDBFile = strProjDir.Trim() + "\\db\\project.mdb";
+            m_oDatasource.m_strDataSourceMDBFile = m_strProjDir.Trim() + "\\db\\project.mdb";
             m_oDatasource.m_strDataSourceTableName = "datasource";
             m_oDatasource.m_strScenarioId = "";
             m_oDatasource.populate_datasource_array();
@@ -181,29 +192,28 @@ namespace FIA_Biosum_Manager
                 if (this.rdoDeleteAllConds.Checked)
                 {
                     //LoadMDBPlotCondTreeData_Start();
-                    MessageBox.Show("You really want to delete everything here?");
-//                    throw new NotImplementedException("This should eventually delete ALL conds/plots/trees through the FVSOUT phase of BioSum.");
+                    //MessageBox.Show("You really want to delete everything here?");
+                    //throw new NotImplementedException("This should eventually delete ALL conds/plots/trees through the FVSOUT phase of BioSum.");
                     //delete pretty much everything. building a string of 1+ biosum_cond_ids is skipped (filter by file radio button not selected)
                     DeleteCondsFromBiosumProject_Start();
                 }
                 else if (this.rdoFilterByMenu.Checked)
                 {
-                    MessageBox.Show("Deleting conds based on menu selection...");
-//                    throw new NotImplementedException("Eventually deletes specific conds/plots/trees through the FVSOUT phase of BioSum.");
+                    //MessageBox.Show("Deleting conds based on menu selection...");
+                    //throw new NotImplementedException("Eventually deletes specific conds/plots/trees through the FVSOUT phase of BioSum.");
                     DeleteCondsFromBiosumProject_Start();
                 }
                 else if (this.rdoFilterByFile.Checked)
                 {
                     if (System.IO.File.Exists(this.txtFilterByFile.Text.Trim()) == true)
                     {
-                        this.m_strBiosumCondIds =
+                        this.m_strCondCNs =
                             this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", ",", false);
                         if (this.m_intError == 0)
                         {
                             //this.LoadMDBPlotCondTreeData_Start();
-                            MessageBox.Show("This would be deleting information related to the following conditions:" +
-                                            m_strBiosumCondIds);
-//                            throw new NotImplementedException("This should eventually delete SPECIFIC conds/plots/trees through the FVSOUT phase of BioSum.");
+                            //MessageBox.Show("This would be deleting information related to the following conditions:" + m_strCondCNs);
+                            //throw new NotImplementedException("This should eventually delete SPECIFIC conds/plots/trees through the FVSOUT phase of BioSum.");
                             DeleteCondsFromBiosumProject_Start();
                         }
                     }
@@ -220,7 +230,7 @@ namespace FIA_Biosum_Manager
             //((frmDialog) this.ParentForm).Close(); //causes premature disposal with multithreaded applications
         }
 
-        //throw new NotImplementedException("Delete conds, with or without filters, using m_strBiosumCondIds built with either a text file or GUI menu. use it to collect biosum_cond_ids, plot.cn, tree.cn");
+        //throw new NotImplementedException("Delete conds, with or without filters, using m_strCondCNs built with either a text file or GUI menu. use it to collect biosum_cond_ids, plot.cn, tree.cn");
         private void DeleteCondsFromBiosumProject_Start()
         {
             frmMain.g_oDelegate.InitializeThreadEvents();
@@ -262,129 +272,101 @@ namespace FIA_Biosum_Manager
                 this.SetThermValue(m_frmTherm.progressBar2, "Value", 0);
                 this.SetLabelValue(m_frmTherm.lblMsg2, "Text", "Overall Progress");
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) m_frmTherm, "Visible", true);
-
-
-                //create a temporary mdb file with links to all the project tables
-                //and return the name of the file that contains the links
-                this.m_strTempMDBFile = m_oDatasource.CreateMDBAndTableDataSourceLinks();
-
-
-                //TODO: Create a table with bscid, bspid, p.cn, t.cn to query from 
-
-
-                //instatiate dao for creating links in the temp table
-                //to the fiadb plot, cond, and tree input tables
-                dao_data_access p_dao1 = new dao_data_access();
-                this.SetLabelValue(m_frmTherm.lblMsg, "Text", "NAME OF STEP"); //todo: rename step label
-
-//                //cond table
-//                strSourceTableName = "BIOSUM_COND";
-//                strDestTableLinkName = "fiadb_cond_input";
-//                if (p_dao1.m_intError == 0)
-//                    p_dao1.CreateTableLink(this.m_strTempMDBFile, strDestTableLinkName, strFIADBDbFile,
-//                        strSourceTableName, true);
-//                //tree table
-//                str2 = (string) frmMain.g_oDelegate.GetControlPropertyValue(
-//                    (System.Windows.Forms.ComboBox) cmbFiadbTreeTable, "Text", false);
-//                if (p_dao1.m_intError == 0)
-//                    p_dao1.CreateTableLink(this.m_strTempMDBFile, "fiadb_tree_input", strFIADBDbFile, str2.Trim());
-//                //tree regional biomass
-//                str2 = (string) frmMain.g_oDelegate.GetControlPropertyValue(
-//                    (System.Windows.Forms.ComboBox) cmbFiadbTreeRegionalBiomassTable, "Text", false);
-//                if (p_dao1.m_intError == 0 && str2.Trim().Length > 0 && str2.Trim() != "<Optional Table>")
-//                    p_dao1.CreateTableLink(this.m_strTempMDBFile, "fiadb_treeRegionalBiomass_input", strFIADBDbFile,
-//                        str2.Trim());
-//                //site tree
-//                str2 = (string) frmMain.g_oDelegate.GetControlPropertyValue(
-//                    (System.Windows.Forms.ComboBox) cmbFiadbSiteTreeTable, "Text", false);
-//                if (p_dao1.m_intError == 0)
-//                    p_dao1.CreateTableLink(this.m_strTempMDBFile, "fiadb_site_tree_input", strFIADBDbFile, str2.Trim());
-
-
-                m_intError = p_dao1.m_intError;
-
-                //destroy the object and release it from memory
-                p_dao1.m_DaoWorkspace.Close();
-                p_dao1 = null;
-
-
+                this.SetLabelValue(m_frmTherm.lblMsg, "Text", "Collecting information about conditions to delete..."); //todo: rename step label
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control) this.m_frmTherm.progressBar1,
                     "Value", 10);
 
-                System.Data.DataTable dtPlotSchema = new DataTable();
-                System.Data.DataTable dtCondSchema = new DataTable();
-                System.Data.DataTable dtTreeSchema = new DataTable();
-                System.Data.DataTable dtSiteTreeSchema = new DataTable();
-                System.Data.DataTable dtFIADBPlotSchema = new DataTable();
-                System.Data.DataTable dtFIADBCondSchema = new DataTable();
-                System.Data.DataTable dtFIADBTreeSchema = new DataTable();
-                System.Data.DataTable dtFIADBSiteTreeSchema = new DataTable();
-
-
+                this.m_strTempMDBFile = m_oDatasource.CreateMDBAndTableDataSourceLinks();
                 //get an ado connection string for the temp mdb file
                 this.m_strTempMDBFileConn = this.m_ado.getMDBConnString(this.m_strTempMDBFile, "", "");
-
-
                 //create a new connection to the temp MDB file
                 this.m_connTempMDBFile = new System.Data.OleDb.OleDbConnection();
-
                 //open the connection to the temp mdb file 
                 this.m_ado.OpenConnection(this.m_strTempMDBFileConn, ref this.m_connTempMDBFile);
 
 
-                if (this.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
-                {
-                    SetThermValue(m_frmTherm.progressBar1, "Value", 20);
+                SetConditionLookupAndIDStrings();
 
-                    /****************************************************************
-                     **get the table structure that results from executing the sql
-                     ****************************************************************/
-                    //get the fiabiosum table structures
-                    dtPlotSchema =
-                        this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strPlotTable);
-                    dtCondSchema =
-                        this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strCondTable);
-                    dtTreeSchema =
-                        this.m_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strTreeTable);
-                    dtSiteTreeSchema = this.m_ado.getTableSchema(this.m_connTempMDBFile,
-                        "select * from " + this.m_strSiteTreeTable);
-                    //get the fiadb table structures
-                    m_intError = m_ado.m_intError;
+                //FVS Section
+                string[] strVariants = m_oDatasource.getVariants();
+                string strFvsDataDir = m_strProjDir + "\\fvs\\data\\";
+                foreach (string variant in strVariants)
+                {
+                    //Collect pathfiles of databases to delete from in FVS Data directory
+                    string strVariantPath = strFvsDataDir + variant + "\\";
+
+                    //TODO: Check if this variant folder exists
+                    if (Directory.Exists(strVariantPath))
+                    {
+                        //FVSIN
+                        string strFvsIn = strVariantPath + "fvsin.accdb";
+                        strFvsIn = File.Exists(strFvsIn) ? strFvsIn : null;
+
+                        //FVSOUT
+                        string[] strFvsOutMDBs = Directory.GetFiles(strVariantPath, "fvsout*.mdb");
+                        string[] strFvsOutBiosumACCDBs = Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb");
+                        string[] strBiosumCalcMDBs = Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb");
+
+
+                        //Connect to each database
+
+                        //ExecuteDeleteOnAllTables(db);
+                        //tables and exceptions will be mutually exclusive because they're not compared to the tables inside the database if tables != null
+                        ExecuteDeleteOnTables(strFvsIn, exceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
+//                        ExecuteDeleteOnTables(strFvsIn, tables: new string[] {"FVS_StandInit", "FVS_TreeInit", "FVS_PlotInit"});
+
+                        foreach (string db in strFvsOutMDBs)
+                        {
+                            //ExecuteDeleteOnAllTables(db);
+                            ExecuteDeleteOnTables(db);
+                        }
+                        foreach (string db in strFvsOutBiosumACCDBs)
+                        {
+                            //ExecuteDeleteOnAllTables(db);
+                            ExecuteDeleteOnTables(db);
+                            //fvsout*biosum.accdb has links to tables that might not exist in output table...
+                        }
+                        foreach (string db in strBiosumCalcMDBs)
+                        {
+                            //ExecuteDeleteOnAllTables(db);
+                            ExecuteDeleteOnTables(db);
+                        }
+                    }
                 }
 
-                
-
-                
-                
-                
-                
-
-                
-                
-
-       
-          
-
-
-                //TODO: make this a function to call repeatedly with different m_strSQL values, connections, and progress bar values
-                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+                //PREPOST Databases
+                string strFvsDbDir = m_strProjDir + "\\fvs\\db\\";
+                string[] strPrePostDbs = Directory.GetFiles(strFvsDbDir, "PREPOST*.accdb");
+                foreach (string db in strPrePostDbs)
                 {
-                    SetThermValue(m_frmTherm.progressBar1, "Value", 80);
-                    m_ado.m_strSQL = "SELECT 1;"; //todo: delete from table where ___ in () function
-                    this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
-                    m_intError = m_ado.m_intError;
+                    //One of the linked tables points to a temporary database. If you run the FVSOUT module, this code works because the linked tables aren't broken.
+                    //TODO: Pass specific table names to this function so you don't open the ones that link to nonexistent databases.
+                    //ExecuteDeleteOnAllTables(db);
+                    ExecuteDeleteOnTables(db, exceptions: new string[] {"FVS_TREE"});
                 }
 
-                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
-                {
-                }
-                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
-                {
-                }
-                else
-                {
-                    MessageBox.Show("Some error occured in deleting conditions.");
-                }
+
+//                //TODO: make this a function to call repeatedly with different m_strSQL values, connections, and progress bar values
+//                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+//                {
+//                    SetThermValue(m_frmTherm.progressBar1, "Value", 80);
+//                    m_ado.m_strSQL = "SELECT 1;"; //todo: delete from table where ___ in () function
+//                    this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
+//                    m_intError = m_ado.m_intError;
+//                }
+
+
+
+//                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+//                {
+//                }
+//                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+//                {
+//                }
+//                else
+//                {
+//                    MessageBox.Show("Some error occured in deleting conditions.");
+//                }
 
 
                 this.m_connTempMDBFile.Close();
@@ -471,9 +453,152 @@ namespace FIA_Biosum_Manager
 
             frmMain.g_oDelegate.m_oEventThreadStopped.Set();
             this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
+        }
 
-            //TODO: Experiment: Does this cause issues with disposing resources before they're done being used?
-            ((frmDialog) this.ParentForm).Close();
+        private void SetConditionLookupAndIDStrings()
+        {
+            System.Data.DataTable dtIdentifiers = new DataTable();
+            HashSet<string> setBiosumCondCNs = new HashSet<string>();
+            HashSet<string> setBiosumCondIds = new HashSet<string>();
+            HashSet<string> setBiosumPlotIds = new HashSet<string>();
+            HashSet<string> setPlotCNs = new HashSet<string>();
+            HashSet<string> setTreeCNs = new HashSet<string>();
+
+
+            if (this.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+            {
+                SetThermValue(m_frmTherm.progressBar1, "Value", 20);
+                this.m_ado.CreateDataSet(this.m_connTempMDBFile,
+                    String.Format(
+                        "SELECT c.cn, c.biosum_cond_id, c.biosum_plot_id, p.cn, t.cn FROM ({0} c INNER JOIN {1} p ON c.biosum_plot_id=p.biosum_plot_id) INNER JOIN {2} t on c.biosum_cond_id=t.biosum_cond_id WHERE c.cn IN ({3});",
+                        m_strCondTable, m_strPlotTable, m_strTreeTable, m_strCondCNs), "identifiers");
+                dtIdentifiers = this.m_ado.m_DataSet.Tables["identifiers"];
+                foreach (DataRow row in dtIdentifiers.Rows)
+                {
+                    setBiosumCondCNs.Add(String.Format("'{0}'", row[0]));
+                    setBiosumCondIds.Add(String.Format("'{0}'", row[1]));
+                    setBiosumPlotIds.Add(String.Format("'{0}'", row[2]));
+                    setPlotCNs.Add(String.Format("'{0}'", row[3]));
+                    setTreeCNs.Add(String.Format("'{0}'", row[4]));
+                }
+                m_intError = m_ado.m_intError;
+            }
+
+            //Create strings from the HashSets to insert into SQL filters 
+            m_strBiosumCondCNs = CreateCommaDelimitedString(setBiosumCondCNs);
+            m_strBiosumCondIds = CreateCommaDelimitedString(setBiosumCondIds);
+            m_strBiosumPlotIds = CreateCommaDelimitedString(setBiosumPlotIds);
+            m_strPlotCNs = CreateCommaDelimitedString(setPlotCNs);
+            m_strTreeCNs = CreateCommaDelimitedString(setTreeCNs);
+
+            m_dictIDColumnsToValues = new Dictionary<string, string>
+            {
+                {"biosum_cond_id", m_strBiosumCondIds},
+                {"StandID", m_strBiosumCondIds},
+                {"Stand_ID", m_strBiosumCondIds},
+                {"biosum_plot_id", m_strBiosumPlotIds},
+                {"plt_cn", m_strPlotCNs},
+                {"cnd_cn", m_strBiosumCondCNs},
+                {"tre_cn", m_strTreeCNs},
+            };
+        }
+
+        private void ExecuteDeleteOnTables(string strDbPathFile, string[] tables = null, string[] exceptions = null)
+        {
+            //TODO: Logic for when rdoDeleteAllConds is selected
+            OleDbConnection oConn = new OleDbConnection();
+            m_ado.OpenConnection(m_ado.getMDBConnString(strDbPathFile, "", ""), ref oConn);
+
+            string[] strTables = tables;
+            if (tables == null || tables.Length == 0)
+            {
+                strTables = m_ado.getTableNames(oConn);
+            }
+
+            string strSQL, column;
+            foreach (string table in strTables)
+            {
+                //in case a list of tables should be skipped
+                if (exceptions != null && exceptions.Contains(table))
+                {
+                    using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
+                        file.WriteLine(String.Format("{0}\n\t{1}\n\tSKIPPED USING EXCEPTIONS ARRAY\n\n", strDbPathFile, table));
+                    }
+                    continue;
+                }
+                column = null;
+                //Determine the column
+                foreach (string col in m_dictIDColumnsToValues.Keys)
+                {
+                    if (m_ado.ColumnExist(oConn, table, col))
+                    {
+                        column = col;
+                        break;
+                    }
+                }
+                if (!String.IsNullOrEmpty(column))
+                {
+                    //Pick which column/identifier string to use in the strSQL
+                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2})", table, column, m_dictIDColumnsToValues[column]);
+                    //TODO: delete conditions from this table 
+                    using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
+                        file.WriteLine(String.Format("{0}\n\t{1}\n\t{2}\n\n", strDbPathFile, table, strSQL));
+                    }
+                }
+            }
+            m_ado.CloseConnection(oConn);
+        }
+
+//        private void ExecuteDeleteOnAllTables(string strDbPathFile)
+//        {
+//            //TODO: Logic for when rdoDeleteAllConds is selected
+//            OleDbConnection oConn = new OleDbConnection();
+//            m_ado.OpenConnection(m_ado.getMDBConnString(strDbPathFile, "", ""), ref oConn);
+//            string[] tables;
+//            tables = m_ado.getTableNames(oConn);
+//            string strSQL, column;
+//            foreach (string table in tables)
+//            {
+//                column = null;
+//                //Determine the column
+//                foreach (string col in m_dictIDColumnsToValues.Keys)
+//                {
+//                    if (m_ado.ColumnExist(oConn, table, col))
+//                    {
+//                        column = col;
+//                        break;
+//                    }
+//                }
+//                if (!String.IsNullOrEmpty(column))
+//                {
+//                    //Pick which column/identifier string to use in the strSQL
+//                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2})", table, column, m_dictIDColumnsToValues[column]);
+//                    //TODO: delete conditions from this table 
+//                    using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
+//                        file.WriteLine(String.Format("{0}\t{1}\t{2}\n", strDbPathFile, table, strSQL));
+//                    }
+//                }
+//            }
+//            m_ado.CloseConnection(oConn);
+//        }
+
+        private string CreateCommaDelimitedString(ICollection<string> strs)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            bool bFirst = true;
+            foreach (string str in strs)
+            {
+                if (bFirst)
+                {
+                    stringBuilder.Append(str);
+                    bFirst = false;
+                }
+                else
+                {
+                    stringBuilder.Append("," + str);
+                }
+            }
+            return stringBuilder.ToString();
         }
 
         private void CleanupThread()
