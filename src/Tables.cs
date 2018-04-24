@@ -1698,6 +1698,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultDbFile { get { return @"core\db\core_definitions.accdb"; } }
             static public string DefaultCalculatedCoreVariablesTableName { get { return "calculated_core_variables"; } }
             static public string DefaultCalculatedEconVariablesTableName { get { return "calculated_econ_variables_definition"; } }
+            static public string DefaultCalculatedFVSVariablesTableName { get { return "calculated_fvs_variables_definition"; } }
 
 
             public void CreateCalculatedCoreVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
@@ -1735,6 +1736,29 @@ namespace FIA_Biosum_Manager
                     "calculated_variables_id INTEGER," +
                     "rxcycle CHAR(1)," +
                     "weight DOUBLE)";
+            }
+            public void CreateCalculatedFVSVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedEconVariableTableSQL(p_strTableName));
+                CreateCalculatedFVSVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateCalculatedFVSVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "CALCULATED_VARIABLES_ID");
+            }
+            static public string CreateCalculatedFVSVariableTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "calculated_variables_id INTEGER," +
+                    "fvs_variable_source CHAR(100)," +
+                    "weight_1_pre DOUBLE," +
+                    "weight_1_post DOUBLE," +
+                    "weight_2_pre DOUBLE," +
+                    "weight_2_post DOUBLE," +
+                    "weight_3_pre DOUBLE," +
+                    "weight_3_post DOUBLE," +
+                    "weight_4_pre DOUBLE," +
+                    "weight_4_post DOUBLE )";
             }
         }
 
