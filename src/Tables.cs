@@ -275,8 +275,9 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsPSiteRxPackageCostRevenueVolumesTableName { get { return "psite_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
             static public string DefaultScenarioResultsOwnerRxCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rx"; } }
             static public string DefaultScenarioResultsOwnerRxPackageCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
-            
-
+            static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"core\db\prepost_fvs_weighted.accdb"; } }
+            static public string DefaultCalculatedPreFVSVariableTableName { get { return "PRE_FVS_WEIGHTED"; } }
+            static public string DefaultCalculatedPostFVSVariableTableName { get { return "POST_FVS_WEIGHTED"; } }
 
 			
 			private string strSQL = "";
