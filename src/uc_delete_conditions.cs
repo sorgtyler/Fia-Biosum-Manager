@@ -38,7 +38,7 @@ namespace FIA_Biosum_Manager
         private string m_strBiosumPlotIds;
         private string m_strPlotCNs;
         private string m_strTreeCNs;
-        Dictionary<string, string> m_dictIDColumnsToValues;
+        Dictionary<string, string> m_dictIdentityColumnsToValues;
 
         //TODO: Help files
         private env m_oEnv;
@@ -287,6 +287,16 @@ namespace FIA_Biosum_Manager
 
                 SetConditionLookupAndIDStrings();
 
+                //ProjectRoot\db Section
+                ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\db\\", "*.mdb"));
+
+                //ProjectRoot\gis Section
+                ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\gis\\db\\", "*.mdb"));
+
+                //ProjectRoot\processor Section
+                //foreach (string subfolder in Directory.GetDirectories(m_strProjDir + "\\processor\\"){ }
+                ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\processor\\db\\", "*.mdb"));
+
                 //FVS Section
                 string[] strVariants = m_oDatasource.getVariants();
                 string strFvsDataDir = m_strProjDir + "\\fvs\\data\\";
@@ -295,55 +305,57 @@ namespace FIA_Biosum_Manager
                     //Collect pathfiles of databases to delete from in FVS Data directory
                     string strVariantPath = strFvsDataDir + variant + "\\";
 
-                    //TODO: Check if this variant folder exists
                     if (Directory.Exists(strVariantPath))
                     {
-                        //FVSIN
-                        string strFvsIn = strVariantPath + "fvsin.accdb";
-                        strFvsIn = File.Exists(strFvsIn) ? strFvsIn : null;
+                        //TODO: should i just wildcard both .mdb and .accdb all in one call to ConnectToDatabasesInPathAndExecuteDeletes for fvsVariantPath?
 
-                        //FVSOUT
-                        string[] strFvsOutMDBs = Directory.GetFiles(strVariantPath, "fvsout*.mdb");
-                        string[] strFvsOutBiosumACCDBs = Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb");
-                        string[] strBiosumCalcMDBs = Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb");
+                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsin.accdb"),
+                            strTableExceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
+                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*.mdb"));
+                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb"));
+                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb"));
 
+//                        //FVSIN
+//                        string strFvsIn = strVariantPath + "fvsin.accdb";
+//                        strFvsIn = File.Exists(strFvsIn) ? strFvsIn : null;
+//
+//                        //FVSOUT
+//                        string[] strFvsOutMDBs = Directory.GetFiles(strVariantPath, "fvsout*.mdb");
+//                        string[] strFvsOutBiosumACCDBs = Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb");
+//                        string[] strBiosumCalcMDBs = Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb");
+//
+//                        ExecuteDeleteOnTables(strFvsIn, exceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
+//                        foreach (string db in strFvsOutBiosumACCDBs)
+//                        {
+//                            ExecuteDeleteOnTables(db);
+//                        }
+//                        foreach (string db in strBiosumCalcMDBs)
+//                        {
+//                            ExecuteDeleteOnTables(db);
+//                        }
 
-                        //Connect to each database
-
-                        //ExecuteDeleteOnAllTables(db);
-                        //tables and exceptions will be mutually exclusive because they're not compared to the tables inside the database if tables != null
-                        ExecuteDeleteOnTables(strFvsIn, exceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
-//                        ExecuteDeleteOnTables(strFvsIn, tables: new string[] {"FVS_StandInit", "FVS_TreeInit", "FVS_PlotInit"});
-
-                        foreach (string db in strFvsOutMDBs)
-                        {
-                            //ExecuteDeleteOnAllTables(db);
-                            ExecuteDeleteOnTables(db);
-                        }
-                        foreach (string db in strFvsOutBiosumACCDBs)
-                        {
-                            //ExecuteDeleteOnAllTables(db);
-                            ExecuteDeleteOnTables(db);
-                            //fvsout*biosum.accdb has links to tables that might not exist in output table...
-                        }
-                        foreach (string db in strBiosumCalcMDBs)
-                        {
-                            //ExecuteDeleteOnAllTables(db);
-                            ExecuteDeleteOnTables(db);
-                        }
                     }
                 }
 
                 //PREPOST Databases
-                string strFvsDbDir = m_strProjDir + "\\fvs\\db\\";
-                string[] strPrePostDbs = Directory.GetFiles(strFvsDbDir, "PREPOST*.accdb");
-                foreach (string db in strPrePostDbs)
-                {
-                    //One of the linked tables points to a temporary database. If you run the FVSOUT module, this code works because the linked tables aren't broken.
-                    //TODO: Pass specific table names to this function so you don't open the ones that link to nonexistent databases.
-                    //ExecuteDeleteOnAllTables(db);
-                    ExecuteDeleteOnTables(db, exceptions: new string[] {"FVS_TREE"});
-                }
+                ConnectToDatabasesInPathAndExecuteDeletes(
+                    Directory.GetFiles(m_strProjDir + "\\fvs\\db\\", "PREPOST*.accdb"),
+                    strTableExceptions: new string[] {"FVS_TREE"});
+
+//                ConnectToDatabasesInPathAndExecuteDeletes(
+//                    Directory.GetFiles(m_strProjDir + "\\fvs\\db\\", "PREPOST*.accdb"),
+//                    strTargetTables: new string[] {"fcs_biosum_volume"});
+
+//                string strFvsDbDir = m_strProjDir + "\\fvs\\db\\";
+//                string[] strPrePostDbs = Directory.GetFiles(strFvsDbDir, "PREPOST*.accdb");
+//                foreach (string db in strPrePostDbs)
+//                {
+//                    //One of the linked tables points to a temporary database. If you run the FVSOUT module, this code works because the linked tables aren't broken.
+//                    //TODO: Pass specific table names to this function so you don't open the ones that link to nonexistent databases.
+//                    //ExecuteDeleteOnAllTables(db);
+//                    ExecuteDeleteOnTables(db, exceptions: new string[] {"FVS_TREE"});
+////                    ExecuteDeleteOnTables(db, tables: new string[] {"fcs_biosum_volume"});
+//                }
 
 
 //                //TODO: make this a function to call repeatedly with different m_strSQL values, connections, and progress bar values
@@ -455,9 +467,16 @@ namespace FIA_Biosum_Manager
             this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
         }
 
+        private void ConnectToDatabasesInPathAndExecuteDeletes(string[] strDatabaseNames, string[] strTargetTables = null, string[] strTableExceptions = null)
+        {
+            foreach (string db in strDatabaseNames)
+            {
+                ExecuteDeleteOnTables(db, tables: strTargetTables, exceptions: strTableExceptions);
+            }
+        }
+
         private void SetConditionLookupAndIDStrings()
         {
-            System.Data.DataTable dtIdentifiers = new DataTable();
             HashSet<string> setBiosumCondCNs = new HashSet<string>();
             HashSet<string> setBiosumCondIds = new HashSet<string>();
             HashSet<string> setBiosumPlotIds = new HashSet<string>();
@@ -470,19 +489,31 @@ namespace FIA_Biosum_Manager
                 SetThermValue(m_frmTherm.progressBar1, "Value", 20);
                 this.m_ado.CreateDataSet(this.m_connTempMDBFile,
                     String.Format(
-                        "SELECT c.cn, c.biosum_cond_id, c.biosum_plot_id, p.cn, t.cn FROM ({0} c INNER JOIN {1} p ON c.biosum_plot_id=p.biosum_plot_id) INNER JOIN {2} t on c.biosum_cond_id=t.biosum_cond_id WHERE c.cn IN ({3});",
+                        "SELECT c.cn, c.biosum_cond_id, t.cn FROM ({0} c INNER JOIN {1} p ON c.biosum_plot_id=p.biosum_plot_id) INNER JOIN {2} t on c.biosum_cond_id=t.biosum_cond_id WHERE c.cn IN ({3});",
                         m_strCondTable, m_strPlotTable, m_strTreeTable, m_strCondCNs), "identifiers");
-                dtIdentifiers = this.m_ado.m_DataSet.Tables["identifiers"];
-                foreach (DataRow row in dtIdentifiers.Rows)
+                foreach (DataRow row in m_ado.m_DataSet.Tables["identifiers"].Rows)
                 {
                     setBiosumCondCNs.Add(String.Format("'{0}'", row[0]));
                     setBiosumCondIds.Add(String.Format("'{0}'", row[1]));
-                    setBiosumPlotIds.Add(String.Format("'{0}'", row[2]));
-                    setPlotCNs.Add(String.Format("'{0}'", row[3]));
-                    setTreeCNs.Add(String.Format("'{0}'", row[4]));
+                    setTreeCNs.Add(String.Format("'{0}'", row[2]));
                 }
                 m_intError = m_ado.m_intError;
             }
+
+            m_ado.CreateDataSet(this.m_connTempMDBFile,
+                String.Format(
+                    "SELECT allconds.biosum_plot_id, allconds.cn " + //, allconds.cntConds, someconds.cntConds " +
+                    "FROM (SELECT p.biosum_plot_id, p.cn, count(*) as cntConds FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id WHERE c.cn IN ({2}) GROUP BY p.biosum_plot_id, p.cn) someconds " +
+                    "RIGHT JOIN (SELECT p.biosum_plot_id, p.cn, count(*) as cntConds FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id GROUP BY p.biosum_plot_id, p.cn) allconds " +
+                    "ON allconds.biosum_plot_id=someconds.biosum_plot_id WHERE allconds.cntConds=someconds.cntConds",
+                    m_strCondTable, m_strPlotTable, m_strCondCNs), "plots_with_all_conds_deleted");
+            foreach (DataRow row in m_ado.m_DataSet.Tables["plots_with_all_conds_deleted"].Rows)
+            {
+                setBiosumPlotIds.Add(String.Format("'{0}'", row[0]));
+                setPlotCNs.Add(String.Format("'{0}'", row[1]));
+            }
+
+
 
             //Create strings from the HashSets to insert into SQL filters 
             m_strBiosumCondCNs = CreateCommaDelimitedString(setBiosumCondCNs);
@@ -491,44 +522,54 @@ namespace FIA_Biosum_Manager
             m_strPlotCNs = CreateCommaDelimitedString(setPlotCNs);
             m_strTreeCNs = CreateCommaDelimitedString(setTreeCNs);
 
-            m_dictIDColumnsToValues = new Dictionary<string, string>
+            m_dictIdentityColumnsToValues = new Dictionary<string, string>
             {
                 {"biosum_cond_id", m_strBiosumCondIds},
                 {"StandID", m_strBiosumCondIds},
                 {"Stand_ID", m_strBiosumCondIds},
                 {"biosum_plot_id", m_strBiosumPlotIds},
-                {"plt_cn", m_strPlotCNs},
+                //Only usage of cnd_cn is in FCS schema, which uses biosum_cond_id values
                 {"cnd_cn", m_strBiosumCondCNs},
-                {"tre_cn", m_strTreeCNs},
+                //plt_cn used in two tables. pop_plot_stratum_assgn uses plot.cn, fcs uses biosum_plot_id
+                {"plt_cn", m_strPlotCNs}, 
+                //used in master.tree_regional_biomass. values are tree.cn
+                {"tre_cn", m_strTreeCNs}, 
             };
         }
 
         private void ExecuteDeleteOnTables(string strDbPathFile, string[] tables = null, string[] exceptions = null)
         {
-            //TODO: Logic for when rdoDeleteAllConds is selected
             OleDbConnection oConn = new OleDbConnection();
             m_ado.OpenConnection(m_ado.getMDBConnString(strDbPathFile, "", ""), ref oConn);
 
             string[] strTables = tables;
             if (tables == null || tables.Length == 0)
             {
-                strTables = m_ado.getTableNames(oConn);
+                //includes linked and pass-through tables, repeats work on tables like cond/plot/tree
+                //strTables = m_ado.getTableNames(oConn); 
+
+                strTables = m_ado.getTableNamesOfSpecificTypes(oConn, includePassThroughTables: true);
+
+                //In case none of the tables are valid, not linked or pass-through type. 
+                //Those table names should be specified in parameters
+                if (strTables.Length == 1 && strTables[0] == "") 
+                    return;
             }
 
             string strSQL, column;
             foreach (string table in strTables)
             {
-                //in case a list of tables should be skipped
+                //in case one or more tables should be skipped
                 if (exceptions != null && exceptions.Contains(table))
                 {
                     using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
-                        file.WriteLine(String.Format("{0}\n\t{1}\n\tSKIPPED USING EXCEPTIONS ARRAY\n\n", strDbPathFile, table));
+                        file.WriteLine(String.Format("{0}\t{1}\t(SKIPPED)", strDbPathFile, table));
                     }
                     continue;
                 }
+
                 column = null;
-                //Determine the column
-                foreach (string col in m_dictIDColumnsToValues.Keys)
+                foreach (string col in m_dictIdentityColumnsToValues.Keys)
                 {
                     if (m_ado.ColumnExist(oConn, table, col))
                     {
@@ -536,51 +577,41 @@ namespace FIA_Biosum_Manager
                         break;
                     }
                 }
+
                 if (!String.IsNullOrEmpty(column))
                 {
-                    //Pick which column/identifier string to use in the strSQL
-                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2})", table, column, m_dictIDColumnsToValues[column]);
-                    //TODO: delete conditions from this table 
+                    strSQL = BuildDeleteSQLStmt(table, column);
                     using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
-                        file.WriteLine(String.Format("{0}\n\t{1}\n\t{2}\n\n", strDbPathFile, table, strSQL));
+                        file.WriteLine(String.Format("{0}\t{1}\t{2}", strDbPathFile, table, strSQL));
                     }
+                    //TODO: delete conditions from this table 
+                    //m_ado.SqlNonQuery(oConn, strSQL);
                 }
             }
+
             m_ado.CloseConnection(oConn);
         }
 
-//        private void ExecuteDeleteOnAllTables(string strDbPathFile)
-//        {
-//            //TODO: Logic for when rdoDeleteAllConds is selected
-//            OleDbConnection oConn = new OleDbConnection();
-//            m_ado.OpenConnection(m_ado.getMDBConnString(strDbPathFile, "", ""), ref oConn);
-//            string[] tables;
-//            tables = m_ado.getTableNames(oConn);
-//            string strSQL, column;
-//            foreach (string table in tables)
-//            {
-//                column = null;
-//                //Determine the column
-//                foreach (string col in m_dictIDColumnsToValues.Keys)
-//                {
-//                    if (m_ado.ColumnExist(oConn, table, col))
-//                    {
-//                        column = col;
-//                        break;
-//                    }
-//                }
-//                if (!String.IsNullOrEmpty(column))
-//                {
-//                    //Pick which column/identifier string to use in the strSQL
-//                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2})", table, column, m_dictIDColumnsToValues[column]);
-//                    //TODO: delete conditions from this table 
-//                    using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
-//                        file.WriteLine(String.Format("{0}\t{1}\t{2}\n", strDbPathFile, table, strSQL));
-//                    }
-//                }
-//            }
-//            m_ado.CloseConnection(oConn);
-//        }
+        private string BuildDeleteSQLStmt(string table, string column)
+        {
+            //TODO: Logic for when rdoDeleteAllConds is selected (DELETE FROM Table [WHERE Column IN (Values)])
+
+            string strSQL = "SELECT 1;";
+            string[] edgeCaseTables = new string[] {"fcs_biosum_volume"};
+            if (edgeCaseTables.Contains(table))
+            {
+                //FCS schema uses cnd_cn/plt_cn, but we set these values to biosum_cond_id/biosum_plot_id in FVSOUT stage
+                if (table.ToLower() == "fcs_biosum_volume" && column.ToLower() == "cnd_cn")
+                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
+                        m_dictIdentityColumnsToValues["biosum_cond_id"]);
+            }
+            else
+            {
+                strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
+                    m_dictIdentityColumnsToValues[column]);
+            }
+            return strSQL;
+        }
 
         private string CreateCommaDelimitedString(ICollection<string> strs)
         {
