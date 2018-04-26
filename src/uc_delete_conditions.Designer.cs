@@ -61,6 +61,7 @@
             this.rdoFilterByFile = new System.Windows.Forms.RadioButton();
             this.rdoFilterByMenu = new System.Windows.Forms.RadioButton();
             this.rdoDeleteAllConds = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxFilterByState.SuspendLayout();
             this.grpboxFilterByCondId.SuspendLayout();
@@ -337,6 +338,7 @@
             // 
             // grpboxFilterOptions
             // 
+            this.grpboxFilterOptions.Controls.Add(this.label1);
             this.grpboxFilterOptions.Controls.Add(this.btnFilterByFileBrowse);
             this.grpboxFilterOptions.Controls.Add(this.txtFilterByFile);
             this.grpboxFilterOptions.Controls.Add(this.rdoFilterByFile);
@@ -399,6 +401,16 @@
             this.rdoDeleteAllConds.Text = "Delete All Conditions";
             this.rdoDeleteAllConds.Click += new System.EventHandler(this.rdoDeleteAllConds_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(60, 190);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(354, 20);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Warning: Deleting conditions is irreversible.";
+            // 
             // uc_delete_conditions
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -449,5 +461,6 @@
         private System.Windows.Forms.Button btnFilterByPlotPrevious;
         private System.Windows.Forms.Button btnFilterByPlotNext;
         private System.Windows.Forms.Button btnFilterByPlotCancel;
+        private System.Windows.Forms.Label label1;
     }
 }

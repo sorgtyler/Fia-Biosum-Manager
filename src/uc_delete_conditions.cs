@@ -114,6 +114,9 @@ namespace FIA_Biosum_Manager
             m_dtPlot.Columns.Add("countycd", typeof(string));
             m_dtPlot.Columns.Add("plot", typeof(string));
 
+            rdoFilterByMenu.Enabled = false;
+            rdoDeleteAllConds.Enabled = false;
+
             m_oEnv = new env();
         }
 
@@ -184,23 +187,21 @@ namespace FIA_Biosum_Manager
             this.m_strStateCountySQL = "";
             this.m_intError = 0;
             InitializeDatasource();
-
-            //TODO: Delete Conditions, parent plots if only one cond, the cond's trees, etc. all the way through FVSOUT
             if (m_intError == 0)
             {
                 //No specific conditions to remove. Delete all of them.
                 if (this.rdoDeleteAllConds.Checked)
                 {
-                    //LoadMDBPlotCondTreeData_Start();
-                    //MessageBox.Show("You really want to delete everything here?");
-                    //throw new NotImplementedException("This should eventually delete ALL conds/plots/trees through the FVSOUT phase of BioSum.");
-                    //delete pretty much everything. building a string of 1+ biosum_cond_ids is skipped (filter by file radio button not selected)
+                    /*TODO: either set m_strCondCNs to all possible cond.cn values 
+                     * or modify the SQL to skip the where filters 
+                     * (caution: this approach deletes tables that don't have 
+                     * plot/cond/tree/stand identifiers at all)
+                     */
                     DeleteCondsFromBiosumProject_Start();
                 }
                 else if (this.rdoFilterByMenu.Checked)
                 {
-                    //MessageBox.Show("Deleting conds based on menu selection...");
-                    //throw new NotImplementedException("Eventually deletes specific conds/plots/trees through the FVSOUT phase of BioSum.");
+                    //TODO: set m_strCondCNs via the GUI
                     DeleteCondsFromBiosumProject_Start();
                 }
                 else if (this.rdoFilterByFile.Checked)
@@ -211,9 +212,6 @@ namespace FIA_Biosum_Manager
                             this.CreateDelimitedStringList(this.txtFilterByFile.Text.Trim(), ",", ",", false);
                         if (this.m_intError == 0)
                         {
-                            //this.LoadMDBPlotCondTreeData_Start();
-                            //MessageBox.Show("This would be deleting information related to the following conditions:" + m_strCondCNs);
-                            //throw new NotImplementedException("This should eventually delete SPECIFIC conds/plots/trees through the FVSOUT phase of BioSum.");
                             DeleteCondsFromBiosumProject_Start();
                         }
                     }
