@@ -272,9 +272,8 @@ namespace FIA_Biosum_Manager
                 this.SetThermValue(m_frmTherm.progressBar2, "Value", 0);
                 this.SetLabelValue(m_frmTherm.lblMsg2, "Text", "Overall Progress");
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) m_frmTherm, "Visible", true);
-                this.SetLabelValue(m_frmTherm.lblMsg, "Text", "Collecting information about conditions to delete..."); //todo: rename step label
-                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control) this.m_frmTherm.progressBar1,
-                    "Value", 10);
+
+                UpdateProgressBar2(10);
 
                 this.m_strTempMDBFile = m_oDatasource.CreateMDBAndTableDataSourceLinks();
                 //get an ado connection string for the temp mdb file
@@ -287,19 +286,40 @@ namespace FIA_Biosum_Manager
 
                 SetConditionLookupAndIDStrings();
 
+
+
+
                 //ProjectRoot\db Section
+                UpdateProgressBar2(20);
                 ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\db\\", "*.mdb"));
 
+
                 //ProjectRoot\gis Section
+                UpdateProgressBar2(30);
                 ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\gis\\db\\", "*.mdb"));
 
                 //ProjectRoot\processor Section
-                //foreach (string subfolder in Directory.GetDirectories(m_strProjDir + "\\processor\\"){ }
-                ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\processor\\db\\", "*.mdb"));
+                UpdateProgressBar2(40);
+                foreach (string subfolder in Directory.GetDirectories(m_strProjDir + "\\processor\\"))
+                {
+                    if (Path.GetFileName(subfolder) == "db")
+                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(subfolder, "*.mdb"));
+                    else 
+                        if (Directory.Exists(subfolder + "\\db\\"))
+                            ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(subfolder + "\\db\\", "*.mdb"));
+                }
 
                 //FVS Section
+                UpdateProgressBar2(50);
                 string[] strVariants = m_oDatasource.getVariants();
                 string strFvsDataDir = m_strProjDir + "\\fvs\\data\\";
+
+                int num_variants_in_fvs_data = 0;
+                foreach (string variant in strVariants)
+                    if (Directory.Exists(strFvsDataDir + "\\" + variant + "\\"))
+                        num_variants_in_fvs_data++;
+
+                int progressbar2_value = 50;
                 foreach (string variant in strVariants)
                 {
                     //Collect pathfiles of databases to delete from in FVS Data directory
@@ -307,55 +327,29 @@ namespace FIA_Biosum_Manager
 
                     if (Directory.Exists(strVariantPath))
                     {
+                        progressbar2_value += (30 / (num_variants_in_fvs_data + 1));
+                        UpdateProgressBar2(progressbar2_value);
                         //TODO: should i just wildcard both .mdb and .accdb all in one call to ConnectToDatabasesInPathAndExecuteDeletes for fvsVariantPath?
 
-                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsin.accdb"),
+//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsin.accdb"),
+//                            strTableExceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
+//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*.mdb"));
+//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb"));
+
+                        ConnectToDatabasesInPathAndExecuteDeletes(
+                            Directory.GetFiles(strVariantPath, "*.*", SearchOption.AllDirectories)
+                                .Where(s => s.ToLower().EndsWith(".mdb") || s.ToLower().EndsWith(".accdb")).ToArray(),
                             strTableExceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
-                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*.mdb"));
-                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb"));
-                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb"));
-
-//                        //FVSIN
-//                        string strFvsIn = strVariantPath + "fvsin.accdb";
-//                        strFvsIn = File.Exists(strFvsIn) ? strFvsIn : null;
-//
-//                        //FVSOUT
-//                        string[] strFvsOutMDBs = Directory.GetFiles(strVariantPath, "fvsout*.mdb");
-//                        string[] strFvsOutBiosumACCDBs = Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb");
-//                        string[] strBiosumCalcMDBs = Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb");
-//
-//                        ExecuteDeleteOnTables(strFvsIn, exceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
-//                        foreach (string db in strFvsOutBiosumACCDBs)
-//                        {
-//                            ExecuteDeleteOnTables(db);
-//                        }
-//                        foreach (string db in strBiosumCalcMDBs)
-//                        {
-//                            ExecuteDeleteOnTables(db);
-//                        }
-
+//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb"));
+//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*.accdb")); //PostAudit
                     }
                 }
 
                 //PREPOST Databases
+                UpdateProgressBar2(80);
                 ConnectToDatabasesInPathAndExecuteDeletes(
                     Directory.GetFiles(m_strProjDir + "\\fvs\\db\\", "PREPOST*.accdb"),
                     strTableExceptions: new string[] {"FVS_TREE"});
-
-//                ConnectToDatabasesInPathAndExecuteDeletes(
-//                    Directory.GetFiles(m_strProjDir + "\\fvs\\db\\", "PREPOST*.accdb"),
-//                    strTargetTables: new string[] {"fcs_biosum_volume"});
-
-//                string strFvsDbDir = m_strProjDir + "\\fvs\\db\\";
-//                string[] strPrePostDbs = Directory.GetFiles(strFvsDbDir, "PREPOST*.accdb");
-//                foreach (string db in strPrePostDbs)
-//                {
-//                    //One of the linked tables points to a temporary database. If you run the FVSOUT module, this code works because the linked tables aren't broken.
-//                    //TODO: Pass specific table names to this function so you don't open the ones that link to nonexistent databases.
-//                    //ExecuteDeleteOnAllTables(db);
-//                    ExecuteDeleteOnTables(db, exceptions: new string[] {"FVS_TREE"});
-////                    ExecuteDeleteOnTables(db, tables: new string[] {"fcs_biosum_volume"});
-//                }
 
 
 //                //TODO: make this a function to call repeatedly with different m_strSQL values, connections, and progress bar values
@@ -467,12 +461,32 @@ namespace FIA_Biosum_Manager
             this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
         }
 
+
+        private void UpdateProgressBar1(string label, int value)
+        {
+            this.SetLabelValue(m_frmTherm.lblMsg, "Text", label);
+            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control) this.m_frmTherm.progressBar1,
+                "Value", value);
+        }
+
+        private void UpdateProgressBar2(int value)
+        {
+            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control) this.m_frmTherm.progressBar2,
+                "Value", value);
+        }
+
         private void ConnectToDatabasesInPathAndExecuteDeletes(string[] strDatabaseNames, string[] strTargetTables = null, string[] strTableExceptions = null)
         {
+            int progressbar1_value_incr = 100 / (strDatabaseNames.Length + 1);
+            int counter = 0;
+
             foreach (string db in strDatabaseNames)
             {
+                UpdateProgressBar1("Deleting from " + Path.GetFileName(db), counter);
+                counter += progressbar1_value_incr;
                 ExecuteDeleteOnTables(db, tables: strTargetTables, exceptions: strTableExceptions);
             }
+            UpdateProgressBar1("", 0);
         }
 
         private void SetConditionLookupAndIDStrings()
@@ -567,7 +581,6 @@ namespace FIA_Biosum_Manager
                     }
                     continue;
                 }
-
                 column = null;
                 foreach (string col in m_dictIdentityColumnsToValues.Keys)
                 {
@@ -577,15 +590,15 @@ namespace FIA_Biosum_Manager
                         break;
                     }
                 }
-
                 if (!String.IsNullOrEmpty(column))
                 {
+                    //TODO: Select to-be-deleted records into a backup table? (caution: careful with 2GB Accdb size limit)
                     strSQL = BuildDeleteSQLStmt(table, column);
+                    //TODO: delete conditions from this table 
+                    //m_ado.SqlNonQuery(oConn, strSQL);
                     using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
                         file.WriteLine(String.Format("{0}\t{1}\t{2}", strDbPathFile, table, strSQL));
                     }
-                    //TODO: delete conditions from this table 
-                    //m_ado.SqlNonQuery(oConn, strSQL);
                 }
             }
 
