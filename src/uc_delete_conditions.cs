@@ -225,9 +225,6 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-
-            //Close the form after deleting condititions finished
-            //((frmDialog) this.ParentForm).Close(); //causes premature disposal with multithreaded applications
         }
 
         //throw new NotImplementedException("Delete conds, with or without filters, using m_strCondCNs built with either a text file or GUI menu. use it to collect biosum_cond_ids, plot.cn, tree.cn");
@@ -286,13 +283,12 @@ namespace FIA_Biosum_Manager
 
                 SetConditionLookupAndIDStrings();
 
-
-
+                //Need to access plot.fvs_variants before deleting records
+                string[] strVariants = m_oDatasource.getVariants();
 
                 //ProjectRoot\db Section
                 UpdateProgressBar2(20);
                 ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\db\\", "*.mdb"));
-
 
                 //ProjectRoot\gis Section
                 UpdateProgressBar2(30);
@@ -311,37 +307,29 @@ namespace FIA_Biosum_Manager
 
                 //FVS Section
                 UpdateProgressBar2(50);
-                string[] strVariants = m_oDatasource.getVariants();
-                string strFvsDataDir = m_strProjDir + "\\fvs\\data\\";
-
-                int num_variants_in_fvs_data = 0;
-                foreach (string variant in strVariants)
-                    if (Directory.Exists(strFvsDataDir + "\\" + variant + "\\"))
-                        num_variants_in_fvs_data++;
-
-                int progressbar2_value = 50;
-                foreach (string variant in strVariants)
+                if (strVariants != null && strVariants.Length > 0)
                 {
-                    //Collect pathfiles of databases to delete from in FVS Data directory
-                    string strVariantPath = strFvsDataDir + variant + "\\";
+                    string strFvsDataDir = m_strProjDir + "\\fvs\\data\\";
+                    int num_variants_in_fvs_data = 0;
+                    foreach (string variant in strVariants)
+                        if (Directory.Exists(strFvsDataDir + "\\" + variant + "\\"))
+                            num_variants_in_fvs_data++;
 
-                    if (Directory.Exists(strVariantPath))
+                    int progressbar2_value = 50;
+                    foreach (string variant in strVariants)
                     {
-                        progressbar2_value += (30 / (num_variants_in_fvs_data + 1));
-                        UpdateProgressBar2(progressbar2_value);
-                        //TODO: should i just wildcard both .mdb and .accdb all in one call to ConnectToDatabasesInPathAndExecuteDeletes for fvsVariantPath?
-
-//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsin.accdb"),
-//                            strTableExceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
-//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*.mdb"));
-//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath, "fvsout*biosum.accdb"));
-
-                        ConnectToDatabasesInPathAndExecuteDeletes(
-                            Directory.GetFiles(strVariantPath, "*.*", SearchOption.AllDirectories)
-                                .Where(s => s.ToLower().EndsWith(".mdb") || s.ToLower().EndsWith(".accdb")).ToArray(),
-                            strTableExceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
-//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*TREE_CUTLIST.mdb"));
-//                        ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(strVariantPath + "BiosumCalc\\", "*.accdb")); //PostAudit
+                        //Collect pathfiles of databases to delete from in FVS Data directory
+                        string strVariantPath = strFvsDataDir + variant + "\\";
+                        if (Directory.Exists(strVariantPath))
+                        {
+                            progressbar2_value += (30 / (num_variants_in_fvs_data + 1));
+                            UpdateProgressBar2(progressbar2_value);
+                            ConnectToDatabasesInPathAndExecuteDeletes(
+                                Directory.GetFiles(strVariantPath, "*.*", SearchOption.AllDirectories)
+                                    .Where(s => s.ToLower().EndsWith(".mdb") || s.ToLower().EndsWith(".accdb"))
+                                    .ToArray(),
+                                strTableExceptions: new string[] {"FVS_GroupAddFilesAndKeywords"});
+                        }
                     }
                 }
 
@@ -350,7 +338,7 @@ namespace FIA_Biosum_Manager
                 ConnectToDatabasesInPathAndExecuteDeletes(
                     Directory.GetFiles(m_strProjDir + "\\fvs\\db\\", "PREPOST*.accdb"),
                     strTableExceptions: new string[] {"FVS_TREE"});
-
+                UpdateProgressBar2(100);
 
 //                //TODO: make this a function to call repeatedly with different m_strSQL values, connections, and progress bar values
 //                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
@@ -361,32 +349,33 @@ namespace FIA_Biosum_Manager
 //                    m_intError = m_ado.m_intError;
 //                }
 
+                //repeat the if block with more sql to execute
 
-
-//                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
-//                {
-//                }
-//                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
-//                {
-//                }
 //                else
 //                {
 //                    MessageBox.Show("Some error occured in deleting conditions.");
 //                }
 
 
+
+                //Cleanup section, assuming no exceptions were thrown
                 this.m_connTempMDBFile.Close();
                 while (m_connTempMDBFile.State != System.Data.ConnectionState.Closed)
                     System.Threading.Thread.Sleep(1000);
-                //this.m_ado.m_DataSet.Clear(); //todo: if m_DataSet is null, clear has null reference exception thrown
-                //this.m_ado.m_DataSet.Dispose();
-                this.m_ado = null;
+                if (m_ado != null)
+                {
+                    if (m_ado.m_DataSet != null)
+                    {
+                        this.m_ado.m_DataSet.Clear();
+                        this.m_ado.m_DataSet.Dispose();
+                    }
+                    this.m_ado = null;
+                }
 
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Visible",
                     true);
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Enabled",
                     true);
-
 
                 DeleteCondsFromBiosumProject_Finish();
             }
@@ -503,7 +492,7 @@ namespace FIA_Biosum_Manager
                 SetThermValue(m_frmTherm.progressBar1, "Value", 20);
                 this.m_ado.CreateDataSet(this.m_connTempMDBFile,
                     String.Format(
-                        "SELECT c.cn, c.biosum_cond_id, t.cn FROM ({0} c INNER JOIN {1} p ON c.biosum_plot_id=p.biosum_plot_id) INNER JOIN {2} t on c.biosum_cond_id=t.biosum_cond_id WHERE c.cn IN ({3});",
+                        "SELECT c.cn, c.biosum_cond_id, t.cn FROM ({0} c INNER JOIN {1} p ON c.biosum_plot_id=p.biosum_plot_id) LEFT JOIN {2} t on c.biosum_cond_id=t.biosum_cond_id WHERE c.cn IN ({3});",
                         m_strCondTable, m_strPlotTable, m_strTreeTable, m_strCondCNs), "identifiers");
                 foreach (DataRow row in m_ado.m_DataSet.Tables["identifiers"].Rows)
                 {
@@ -590,15 +579,14 @@ namespace FIA_Biosum_Manager
                         break;
                     }
                 }
-                if (!String.IsNullOrEmpty(column))
+                if (!(String.IsNullOrEmpty(column) || String.IsNullOrEmpty(m_dictIdentityColumnsToValues[column])))
                 {
                     //TODO: Select to-be-deleted records into a backup table? (caution: careful with 2GB Accdb size limit)
                     strSQL = BuildDeleteSQLStmt(table, column);
-                    //TODO: delete conditions from this table 
-                    //m_ado.SqlNonQuery(oConn, strSQL);
                     using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
                         file.WriteLine(String.Format("{0}\t{1}\t{2}", strDbPathFile, table, strSQL));
                     }
+                    m_ado.SqlNonQuery(oConn, strSQL);
                 }
             }
 
@@ -610,7 +598,7 @@ namespace FIA_Biosum_Manager
             //TODO: Logic for when rdoDeleteAllConds is selected (DELETE FROM Table [WHERE Column IN (Values)])
 
             string strSQL = "SELECT 1;";
-            string[] edgeCaseTables = new string[] {"fcs_biosum_volume"};
+            string[] edgeCaseTables = new string[] {"fcs_biosum_volume", "fcs_biosum_volumes_input"};
             if (edgeCaseTables.Contains(table))
             {
                 //FCS schema uses cnd_cn/plt_cn, but we set these values to biosum_cond_id/biosum_plot_id in FVSOUT stage
@@ -647,7 +635,6 @@ namespace FIA_Biosum_Manager
 
         private void CleanupThread()
         {
-            // ((frmDialog)this.ParentForm).m_frmMain.Visible = true;
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Visible",
                 true);
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Enabled",
@@ -658,7 +645,6 @@ namespace FIA_Biosum_Manager
         {
             try
             {
-                // ((frmDialog)this.ParentForm).m_frmMain.Visible = true;
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Visible",
                     true);
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Enabled",
@@ -679,32 +665,15 @@ namespace FIA_Biosum_Manager
 
         private void DeleteCondsFromBiosumProject_Finish()
         {
-//            this.m_strPlotIdList = "";
-
-
             if (this.m_frmTherm != null)
             {
                 frmMain.g_oDelegate.ExecuteControlMethod(m_frmTherm, "Close");
                 frmMain.g_oDelegate.ExecuteControlMethod(m_frmTherm, "Dispose");
                 this.m_frmTherm = null;
             }
-            if (m_intError != 0)
-            {
-//                this.m_strLoadedPopEstUnitInputTable = "";
-//                this.m_strLoadedPopStratumInputTable = "";
-//                this.m_strLoadedPpsaInputTable = "";
-//                this.m_strLoadedFiadbInputFile = "";
-            }
-            else
-            {
-//                this.m_strLoadedPopEstUnitTxtInputFile = "";
-//                this.m_strLoadedPopEvalTxtInputFile = "";
-//                this.m_strLoadedPopStratumTxtInputFile = "";
-//                this.m_strLoadedPpsaTxtInputFile = "";
-            }
             this.m_strCurrentProcess = "";
             frmMain.g_oDelegate.SetControlPropertyValue(this, "Enabled", true);
-            //((frmDialog) this.ParentForm).MinimizeMainForm = false;
+            ((frmDialog) ParentForm).MinimizeMainForm = false;
         }
 
 
@@ -716,7 +685,8 @@ namespace FIA_Biosum_Manager
             this.m_frmTherm.lblMsg.Text = "";
             this.m_frmTherm.lblMsg2.Text = "";
             this.m_frmTherm.Visible = false;
-            this.m_frmTherm.btnCancel.Visible = true;
+            this.m_frmTherm.btnCancel.Visible = false; //disallow users to cancel delete process
+            this.m_frmTherm.btnCancel.Enabled = false;
             this.m_frmTherm.lblMsg.Visible = true;
             this.m_frmTherm.progressBar1.Minimum = 0;
             this.m_frmTherm.progressBar1.Visible = true;
@@ -740,7 +710,7 @@ namespace FIA_Biosum_Manager
             this.m_frmTherm.AbortProcess = false;
             this.m_frmTherm.Refresh();
             this.m_frmTherm.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            //((frmDialog)this.ParentForm).Enabled=false;
+            ((frmDialog)this.ParentForm).Enabled=false;
             this.m_frmTherm.Visible = true;
         }
 
@@ -758,18 +728,6 @@ namespace FIA_Biosum_Manager
 //                this.ThreadCleanUp();
                 throw new NotImplementedException();
             }
-        }
-
-        private bool Checked(System.Windows.Forms.RadioButton p_rdoButton)
-        {
-            return (bool) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.RadioButton) p_rdoButton,
-                "Checked", false);
-        }
-
-        private bool Checked(System.Windows.Forms.CheckBox p_chkBox)
-        {
-            return (bool) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox) p_chkBox,
-                "Checked", false);
         }
 
         private void SetThermValue(System.Windows.Forms.ProgressBar p_oPb, string p_strPropertyName, int p_intValue)
