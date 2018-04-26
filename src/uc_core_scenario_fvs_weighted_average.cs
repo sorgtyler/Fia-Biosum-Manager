@@ -44,6 +44,7 @@ namespace FIA_Biosum_Manager
 		public bool m_bSave=false;
         private ado_data_access m_oAdo;
         private ado_data_access m_oAdoFvs;
+        private string m_strTempMDB;
 
 		const int COLUMN_CHECKBOX=0;
 		const int COLUMN_OPTIMIZE_VARIABLE=1;
@@ -878,12 +879,12 @@ namespace FIA_Biosum_Manager
             //used to get the temporary random file name
             utils objUtils = new utils();
             //get temporary mdb file
-            string strTempMDB = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
+            m_strTempMDB = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
 
             //create a temporary mdb that will contain all the links to the FVS_XXX_PREPOST_SEQNUM_MATRIX tables
             //in all of the FVS\DATA\VARIANT\FVSOUT_VARIANT_RXPACKAGE-RXCYCLE1-RXCYCLE2-RXCYCLE3-RXCYCLE4_BIOSUM.ACCDB files 
             dao_data_access oDao = new dao_data_access();
-            oDao.CreateMDB(strTempMDB);
+            oDao.CreateMDB(m_strTempMDB);
 
             // Load project data sources table
             FIA_Biosum_Manager.Datasource oDs = new Datasource();
@@ -899,18 +900,18 @@ namespace FIA_Biosum_Manager
             string strDirectoryPath = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
             string strFileName = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
             string strPlotTable = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            oDao.CreateTableLink(strTempMDB, strPlotTable, strDirectoryPath + "\\" + strFileName, 
+            oDao.CreateTableLink(m_strTempMDB, strPlotTable, strDirectoryPath + "\\" + strFileName, 
                 strPlotTable);
             intTable = oDs.getDataSourceTableNameRow("Treatment Packages");
             strDirectoryPath = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
             strFileName = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
             string strRxPkgTable = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            oDao.CreateTableLink(strTempMDB, strRxPkgTable, strDirectoryPath + "\\" + strFileName,
+            oDao.CreateTableLink(m_strTempMDB, strRxPkgTable, strDirectoryPath + "\\" + strFileName,
                 strRxPkgTable);
 
             m_oAdoFvs = new ado_data_access();
             m_oAdoFvs.m_strSQL = Queries.FVS.GetFVSVariantRxPackageSQL(strPlotTable, strRxPkgTable);
-            m_oAdoFvs.OpenConnection(m_oAdoFvs.getMDBConnString(strTempMDB, "", ""));
+            m_oAdoFvs.OpenConnection(m_oAdoFvs.getMDBConnString(m_strTempMDB, "", ""));
             m_oAdoFvs.SqlQueryReader(m_oAdoFvs.m_OleDbConnection, m_oAdoFvs.m_strSQL);
 
             //@ToDo: Choose table name based on FVS variable selected
@@ -930,7 +931,7 @@ namespace FIA_Biosum_Manager
                 if (System.IO.File.Exists(strOutDirAndFile))
                 {
                     string strLinkTableName = "SEQNUM_MATRIX_" + strVariant + "_" + strPackage;
-                    oDao.CreateTableLink(strTempMDB, strLinkTableName, strOutDirAndFile,
+                    oDao.CreateTableLink(m_strTempMDB, strLinkTableName, strOutDirAndFile,
                         strSeqNumTable);
                     if (m_intError == 0)
                         lstSeqNumTables.Add(strLinkTableName);
@@ -2006,40 +2007,44 @@ namespace FIA_Biosum_Manager
         private void btnFvsCalculate_Click(object sender, EventArgs e)
         {
             dao_data_access oDao = new dao_data_access();
+            //Determine database and table names based on the source FVS variable
             string[] strPieces = LblSelectedVariable.Text.Split('.');
             string strSourcePreTable = "PRE_" + strPieces[0];
             string strSourcePostTable = "POST_" + strPieces[0];
-            string strDatabaseName = "PREPOST_" + strPieces[0] + ".ACCDB";
+            string strSourceDatabaseName = "PREPOST_" + strPieces[0] + ".ACCDB";
+            string strTargetPreTable = "PRE_" + strPieces[0] + "_WEIGHTED";
+            string strTargetPostTable = "POST_" + strPieces[0] + "_WEIGHTED";
+            string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
+            string strWeightsByRxCyclePostTable = "WEIGHTS_BY_RX_CYCLE_POST";
+            string strWeightsByRxPreTable = "WEIGHTS_BY_RX_PRE";
+            string strWeightsByRxPostTable = "WEIGHTS_BY_RX_POST";
 
-            //Link to source FVS tables
+
+            //Link to source FVS tables in temp .mdb
             string strPrePostWeightedDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                 "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
             string strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\fvs\\db\\" + strDatabaseName;
-            oDao.CreateTableLink(strPrePostWeightedDb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
-            oDao.CreateTableLink(strPrePostWeightedDb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
+                "\\fvs\\db\\" + strSourceDatabaseName;
+            oDao.CreateTableLink(m_strTempMDB, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
+            oDao.CreateTableLink(m_strTempMDB, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
 
-            //Check to see if the tables exists or if we need to add them
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strPrePostWeightedDb, "", ""));
-            
-            if (! m_oAdo.TableExist(m_oAdo.m_OleDbConnection, Tables.CoreScenarioResults.DefaultCalculatedPreFVSVariableTableName))
+            //Check to see if the tables exist or if we need to add them
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempMDB, "", ""));
+
+            if (!m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTargetPreTable))
             {
-                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant " +
-                                  "INTO " + Tables.CoreScenarioResults.DefaultCalculatedPreFVSVariableTableName +
+                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                  lblFvsVariableName.Text + " " +
+                                  "INTO " + strWeightsByRxCyclePreTable +
                                   " FROM " + strSourcePreTable;
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
-                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant " +
-                  "INTO " + Tables.CoreScenarioResults.DefaultCalculatedPostFVSVariableTableName +
-                  " FROM " + strSourcePostTable;
+                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                  lblFvsVariableName.Text + " " +
+                                  "INTO " + strWeightsByRxCyclePostTable +
+                                  " FROM " + strSourcePostTable;
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             }
-
-            //Create new columns to hold data
-            m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, Tables.CoreScenarioResults.DefaultCalculatedPreFVSVariableTableName,
-                lblFvsVariableName.Text, "DOUBLE", "");
-            m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, Tables.CoreScenarioResults.DefaultCalculatedPostFVSVariableTableName,
-                lblFvsVariableName.Text, "DOUBLE", "");
 
             //Calculate values for each row in table
             //@ToDo: save config values to database before we calculate
@@ -2056,16 +2061,17 @@ namespace FIA_Biosum_Manager
                 strPrePost = row["pre_or_post"].ToString().Trim();
                 if (strPrePost.Equals("PRE"))
                 {
-                    strTargetTableName = Tables.CoreScenarioResults.DefaultCalculatedPreFVSVariableTableName;
+                    strTargetTableName = strWeightsByRxCyclePreTable;
                     strSourceTableName = strSourcePreTable;
                 }
                 else
                 {
-                    strTargetTableName = Tables.CoreScenarioResults.DefaultCalculatedPostFVSVariableTableName;
+                    strTargetTableName = strWeightsByRxCyclePostTable;
                     strSourceTableName = strSourcePostTable;
                 }
                 if (Double.TryParse(strWeight, out dblWeight))
                 {
+                    // Apply weights to each cycle
                     m_oAdo.m_strSQL = "UPDATE " + strTargetTableName + " w " +
                                       "INNER JOIN " + strSourceTableName + " p " +
                                       "ON w.biosum_cond_id = p.biosum_cond_id " +
@@ -2075,9 +2081,30 @@ namespace FIA_Biosum_Manager
                                       strPieces[1] + " * " + dblWeight + " " +
                                       "WHERE w.rxcycle = '" + strRxCycle + "'";
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
                 }
             }
 
+            // Sum by rx across cycles
+            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, sum(" + lblFvsVariableName.Text + ") as [sum] " +
+                              "into " + strWeightsByRxPreTable + " " +
+                              "from " + strWeightsByRxCyclePreTable + " " +
+                              "group by biosum_cond_id, rxpackage, rx";
+            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, sum(" + lblFvsVariableName.Text + ") as [sum] " +
+                              "into " + strWeightsByRxPostTable + " " +
+                              "from " + strWeightsByRxCyclePostTable + " " +
+                              "group by biosum_cond_id, rxpackage, rx";
+            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+
+            //@ToDo: Do this at the end when we are ready to write to the table
+            //Create new columns to hold data
+            //m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, strTargetPreTable,
+            //    lblFvsVariableName.Text, "DOUBLE", "");
+            //m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, strTargetPostTable,
+            //    lblFvsVariableName.Text, "DOUBLE", "");
+            
             //Delete table links
             oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePreTable);
             oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePostTable);
