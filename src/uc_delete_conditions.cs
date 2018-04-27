@@ -27,18 +27,20 @@ namespace FIA_Biosum_Manager
         private string m_strPopStratumTable;
         private string m_strPopEvalTable;
         private string m_strBiosumPopStratumAdjustmentFactorsTable;
-
         private string m_strTreeMacroPlotBreakPointDiaTable;
-        //TODO: more strings to hold FVSOUT table information?
 
-        //TODO:for collecting biosum_cond_id values from text file
+        private HashSet<string> setBiosumCondCNs = new HashSet<string>();
+        private HashSet<string> setBiosumCondIds = new HashSet<string>();
+        private HashSet<string> setBiosumPlotIds = new HashSet<string>();
+        private HashSet<string> setPlotCNs = new HashSet<string>();
+        private HashSet<string> setTreeCNs = new HashSet<string>();
         private string m_strCondCNs;
         private string m_strBiosumCondCNs;
         private string m_strBiosumCondIds;
         private string m_strBiosumPlotIds;
         private string m_strPlotCNs;
         private string m_strTreeCNs;
-        Dictionary<string, string> m_dictIdentityColumnsToValues;
+        Dictionary<string, object[]> m_dictIdentityColumnsToValues;
 
         //TODO: Help files
         private env m_oEnv;
@@ -478,12 +480,11 @@ namespace FIA_Biosum_Manager
 
         private void SetConditionLookupAndIDStrings()
         {
-            HashSet<string> setBiosumCondCNs = new HashSet<string>();
-            HashSet<string> setBiosumCondIds = new HashSet<string>();
-            HashSet<string> setBiosumPlotIds = new HashSet<string>();
-            HashSet<string> setPlotCNs = new HashSet<string>();
-            HashSet<string> setTreeCNs = new HashSet<string>();
-
+            setBiosumCondCNs = new HashSet<string>();
+            setBiosumCondIds = new HashSet<string>();
+            setBiosumPlotIds = new HashSet<string>();
+            setPlotCNs = new HashSet<string>();
+            setTreeCNs = new HashSet<string>();
 
             if (this.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
             {
@@ -498,43 +499,43 @@ namespace FIA_Biosum_Manager
                     setBiosumCondIds.Add(String.Format("'{0}'", row[1]));
                     setTreeCNs.Add(String.Format("'{0}'", row[2]));
                 }
+                m_ado.CreateDataSet(this.m_connTempMDBFile,
+                    String.Format(
+                        "SELECT allconds.biosum_plot_id, allconds.cn " + //, allconds.cntConds, someconds.cntConds " +
+                        "FROM (SELECT p.biosum_plot_id, p.cn, count(*) as cntConds FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id WHERE c.cn IN ({2}) GROUP BY p.biosum_plot_id, p.cn) someconds " +
+                        "RIGHT JOIN (SELECT p.biosum_plot_id, p.cn, count(*) as cntConds FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id GROUP BY p.biosum_plot_id, p.cn) allconds " +
+                        "ON allconds.biosum_plot_id=someconds.biosum_plot_id WHERE allconds.cntConds=someconds.cntConds",
+                        m_strCondTable, m_strPlotTable, m_strCondCNs), "plots_with_all_conds_deleted");
+                foreach (DataRow row in m_ado.m_DataSet.Tables["plots_with_all_conds_deleted"].Rows)
+                {
+                    setBiosumPlotIds.Add(String.Format("'{0}'", row[0]));
+                    setPlotCNs.Add(String.Format("'{0}'", row[1]));
+                }
                 m_intError = m_ado.m_intError;
             }
-
-            m_ado.CreateDataSet(this.m_connTempMDBFile,
-                String.Format(
-                    "SELECT allconds.biosum_plot_id, allconds.cn " + //, allconds.cntConds, someconds.cntConds " +
-                    "FROM (SELECT p.biosum_plot_id, p.cn, count(*) as cntConds FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id WHERE c.cn IN ({2}) GROUP BY p.biosum_plot_id, p.cn) someconds " +
-                    "RIGHT JOIN (SELECT p.biosum_plot_id, p.cn, count(*) as cntConds FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id GROUP BY p.biosum_plot_id, p.cn) allconds " +
-                    "ON allconds.biosum_plot_id=someconds.biosum_plot_id WHERE allconds.cntConds=someconds.cntConds",
-                    m_strCondTable, m_strPlotTable, m_strCondCNs), "plots_with_all_conds_deleted");
-            foreach (DataRow row in m_ado.m_DataSet.Tables["plots_with_all_conds_deleted"].Rows)
-            {
-                setBiosumPlotIds.Add(String.Format("'{0}'", row[0]));
-                setPlotCNs.Add(String.Format("'{0}'", row[1]));
-            }
-
-
 
             //Create strings from the HashSets to insert into SQL filters 
             m_strBiosumCondCNs = CreateCommaDelimitedString(setBiosumCondCNs);
             m_strBiosumCondIds = CreateCommaDelimitedString(setBiosumCondIds);
             m_strBiosumPlotIds = CreateCommaDelimitedString(setBiosumPlotIds);
             m_strPlotCNs = CreateCommaDelimitedString(setPlotCNs);
-            m_strTreeCNs = CreateCommaDelimitedString(setTreeCNs);
-
-            m_dictIdentityColumnsToValues = new Dictionary<string, string>
+            if (setTreeCNs.Count < 5000)
             {
-                {"biosum_cond_id", m_strBiosumCondIds},
-                {"StandID", m_strBiosumCondIds},
-                {"Stand_ID", m_strBiosumCondIds},
-                {"biosum_plot_id", m_strBiosumPlotIds},
+                m_strTreeCNs = CreateCommaDelimitedString(setTreeCNs);
+            }
+
+            m_dictIdentityColumnsToValues = new Dictionary<string, object[]>
+            {
+                {"biosum_cond_id", new object[] {setBiosumCondCNs, m_strBiosumCondIds}},
+                {"StandID", new object[] {setBiosumCondCNs, m_strBiosumCondIds}},
+                {"Stand_ID", new object[] {setBiosumCondCNs, m_strBiosumCondIds}},
+                {"biosum_plot_id", new object[] {setBiosumPlotIds, m_strBiosumPlotIds}},
                 //Only usage of cnd_cn is in FCS schema, which uses biosum_cond_id values
-                {"cnd_cn", m_strBiosumCondCNs},
+                {"cnd_cn", new object[] {setBiosumCondCNs, m_strBiosumCondCNs}},
                 //plt_cn used in two tables. pop_plot_stratum_assgn uses plot.cn, fcs uses biosum_plot_id
-                {"plt_cn", m_strPlotCNs}, 
+                {"plt_cn", new object[] {setPlotCNs, m_strPlotCNs}},
                 //used in master.tree_regional_biomass. values are tree.cn
-                {"tre_cn", m_strTreeCNs}, 
+                {"tre_cn", new object[] {setTreeCNs, m_strTreeCNs}},
             };
         }
 
@@ -549,7 +550,7 @@ namespace FIA_Biosum_Manager
                 //includes linked and pass-through tables, repeats work on tables like cond/plot/tree
                 //strTables = m_ado.getTableNames(oConn); 
 
-                strTables = m_ado.getTableNamesOfSpecificTypes(oConn, includePassThroughTables: true);
+                strTables = m_ado.getTableNamesOfSpecificTypes(oConn);
 
                 //In case none of the tables are valid, not linked or pass-through type. 
                 //Those table names should be specified in parameters
@@ -557,15 +558,11 @@ namespace FIA_Biosum_Manager
                     return;
             }
 
-            string strSQL, column;
+            string column;
             foreach (string table in strTables)
             {
-                //in case one or more tables should be skipped
                 if (exceptions != null && exceptions.Contains(table))
                 {
-                    using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
-                        file.WriteLine(String.Format("{0}\t{1}\t(SKIPPED)", strDbPathFile, table));
-                    }
                     continue;
                 }
                 column = null;
@@ -577,40 +574,65 @@ namespace FIA_Biosum_Manager
                         break;
                     }
                 }
-                if (!(String.IsNullOrEmpty(column) || String.IsNullOrEmpty(m_dictIdentityColumnsToValues[column])))
+                if (!(String.IsNullOrEmpty(column)) && ((HashSet<string>) m_dictIdentityColumnsToValues[column][0]).Count > 0)
                 {
-                    //TODO: Select to-be-deleted records into a backup table? (caution: careful with 2GB Accdb size limit)
-                    strSQL = BuildDeleteSQLStmt(table, column);
+                    BuildAndExecuteDeleteSQLStmts(oConn, table, column);
                     using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
-                        file.WriteLine(String.Format("{0}\t{1}\t{2}", strDbPathFile, table, strSQL));
+                        file.WriteLine(String.Format("{0}\t{1}\t{2}", strDbPathFile, table, column));
                     }
-                    m_ado.SqlNonQuery(oConn, strSQL);
                 }
             }
-
             m_ado.CloseConnection(oConn);
         }
 
-        private string BuildDeleteSQLStmt(string table, string column)
+        private void BuildAndExecuteDeleteSQLStmts(OleDbConnection oConn, string table, string column)
         {
-            //TODO: Logic for when rdoDeleteAllConds is selected (DELETE FROM Table [WHERE Column IN (Values)])
-
-            string strSQL = "SELECT 1;";
-            string[] edgeCaseTables = new string[] {"fcs_biosum_volume", "fcs_biosum_volumes_input"};
+            string column_key = column;
+            string strSQL;
+            string[] edgeCaseTables = new string[] {"fcs_biosum_volumes_input"};
             if (edgeCaseTables.Contains(table))
             {
                 //FCS schema uses cnd_cn/plt_cn, but we set these values to biosum_cond_id/biosum_plot_id in FVSOUT stage
-                if (table.ToLower() == "fcs_biosum_volume" && column.ToLower() == "cnd_cn")
-                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
-                        m_dictIdentityColumnsToValues["biosum_cond_id"]);
+                if (table.ToLower() =="fcs_biosum_volumes_input" && column.ToLower() == "cnd_cn")
+                    column_key = "biosum_cond_id";
+            }
+            if (((HashSet<string>) m_dictIdentityColumnsToValues[column_key][0]).Count < 5000)
+            {
+                strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column, m_dictIdentityColumnsToValues[column_key][1]);
+                m_ado.SqlNonQuery(oConn, strSQL);
             }
             else
             {
-                strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
-                    m_dictIdentityColumnsToValues[column]);
+                //loop over individual values or chunks of the set (how to do that without missing values? convert to array for this?) LINQ query?
+                foreach (string id in (HashSet<string>) m_dictIdentityColumnsToValues[column_key][0])
+                {
+                    strSQL = String.Format("DELETE FROM {0} WHERE {1} = {2};", table, column, id);
+                    m_ado.SqlNonQuery(oConn, strSQL);
+                }
             }
-            return strSQL;
         }
+
+//        private string BuildDeleteSQLStmt(string table, string column)
+//        {
+//            //TODO: Logic for when rdoDeleteAllConds is selected (DELETE FROM Table [WHERE Column IN (Values)])
+//
+//            string strSQL = "SELECT 1;";
+//            string[] edgeCaseTables = new string[] {"fcs_biosum_volume", "fcs_biosum_volumes_input"};
+//            if (edgeCaseTables.Contains(table))
+//            {
+//                //FCS schema uses cnd_cn/plt_cn, but we set these values to biosum_cond_id/biosum_plot_id in FVSOUT stage
+//                if (table.ToLower() == "fcs_biosum_volume" && column.ToLower() == "cnd_cn")
+//                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
+//                        m_dictIdentityColumnsToValues["biosum_cond_id"]);
+//                //TODO: fcs_biosum_volumes_input
+//            }
+//            else
+//            {
+//                strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
+//                    m_dictIdentityColumnsToValues[column]);
+//            }
+//            return strSQL;
+//        }
 
         private string CreateCommaDelimitedString(ICollection<string> strs)
         {
