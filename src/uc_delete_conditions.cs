@@ -247,22 +247,16 @@ namespace FIA_Biosum_Manager
         private void DeleteCondsFromBiosumProject_Process()
         {
             frmMain.g_oDelegate.CurrentThreadProcessStarted = true;
-
             this.m_intError = 0;
-
-            //-----------PREPARATION FOR DELETING COND RECORDS---------//
-
             try
             {
                 this.m_ado = new ado_data_access();
-
                 //progress bar 1: single process
                 this.SetThermValue(m_frmTherm.progressBar1, "Maximum", 100);
                 this.SetThermValue(m_frmTherm.progressBar1, "Minimum", 0);
                 this.SetThermValue(m_frmTherm.progressBar1, "Value", 0);
                 this.SetLabelValue(m_frmTherm.lblMsg, "Text", "");
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) m_frmTherm, "Visible", true);
-
                 //progress bar 2: overall progress
                 this.SetThermValue(m_frmTherm.progressBar2, "Maximum", 100);
                 this.SetThermValue(m_frmTherm.progressBar2, "Minimum", 0);
@@ -270,7 +264,6 @@ namespace FIA_Biosum_Manager
                 this.SetLabelValue(m_frmTherm.lblMsg2, "Text", "Overall Progress");
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) m_frmTherm, "Visible", true);
 
-                UpdateProgressBar2(10);
 
                 this.m_strTempMDBFile = m_oDatasource.CreateMDBAndTableDataSourceLinks();
                 //get an ado connection string for the temp mdb file
@@ -280,7 +273,7 @@ namespace FIA_Biosum_Manager
                 //open the connection to the temp mdb file 
                 this.m_ado.OpenConnection(this.m_strTempMDBFileConn, ref this.m_connTempMDBFile);
 
-
+                UpdateProgressBar2(10);
                 SetConditionLookupAndIDStrings();
 
                 //Need to access plot.fvs_variants before deleting records
@@ -314,7 +307,6 @@ namespace FIA_Biosum_Manager
                     foreach (string variant in strVariants)
                         if (Directory.Exists(strFvsDataDir + "\\" + variant + "\\"))
                             num_variants_in_fvs_data++;
-
                     int progressbar2_value = 50;
                     foreach (string variant in strVariants)
                     {
@@ -339,24 +331,6 @@ namespace FIA_Biosum_Manager
                     Directory.GetFiles(m_strProjDir + "\\fvs\\db\\", "PREPOST*.accdb"),
                     strTableExceptions: new string[] {"FVS_TREE"});
                 UpdateProgressBar2(100);
-
-//                //TODO: make this a function to call repeatedly with different m_strSQL values, connections, and progress bar values
-//                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
-//                {
-//                    SetThermValue(m_frmTherm.progressBar1, "Value", 80);
-//                    m_ado.m_strSQL = "SELECT 1;"; //todo: delete from table where ___ in () function
-//                    this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
-//                    m_intError = m_ado.m_intError;
-//                }
-
-                //repeat the if block with more sql to execute
-
-//                else
-//                {
-//                    MessageBox.Show("Some error occured in deleting conditions.");
-//                }
-
-
 
                 //Cleanup section, assuming no exceptions were thrown
                 this.m_connTempMDBFile.Close();
@@ -402,7 +376,6 @@ namespace FIA_Biosum_Manager
                     }
                     this.m_ado = null;
                 }
-//                this.CancelThreadCleanup();
                 this.ThreadCleanUp();
                 this.CleanupThread();
             }
@@ -547,13 +520,8 @@ namespace FIA_Biosum_Manager
             string[] strTables = tables;
             if (tables == null || tables.Length == 0)
             {
-                //includes linked and pass-through tables, repeats work on tables like cond/plot/tree
-                //strTables = m_ado.getTableNames(oConn); 
-
                 strTables = m_ado.getTableNamesOfSpecificTypes(oConn);
-
-                //In case none of the tables are valid, not linked or pass-through type. 
-                //Those table names should be specified in parameters
+                //In case none of the tables are valid
                 if (strTables.Length == 1 && strTables[0] == "") 
                     return;
             }
@@ -576,10 +544,9 @@ namespace FIA_Biosum_Manager
                 }
                 if (!(String.IsNullOrEmpty(column)) && ((HashSet<string>) m_dictIdentityColumnsToValues[column][0]).Count > 0)
                 {
+                    m_ado.AddIndex(oConn, table, column + "_delete_idx",column);
                     BuildAndExecuteDeleteSQLStmts(oConn, table, column);
-                    using (StreamWriter file = new StreamWriter(m_strProjDir +"\\executedDeleteCondSQL.txt", true)) { 
-                        file.WriteLine(String.Format("{0}\t{1}\t{2}", strDbPathFile, table, column));
-                    }
+                    m_ado.SqlNonQuery(oConn, String.Format("DROP INDEX {0} ON {1}", column + "_delete_idx", table));
                 }
             }
             m_ado.CloseConnection(oConn);
@@ -611,28 +578,6 @@ namespace FIA_Biosum_Manager
                 }
             }
         }
-
-//        private string BuildDeleteSQLStmt(string table, string column)
-//        {
-//            //TODO: Logic for when rdoDeleteAllConds is selected (DELETE FROM Table [WHERE Column IN (Values)])
-//
-//            string strSQL = "SELECT 1;";
-//            string[] edgeCaseTables = new string[] {"fcs_biosum_volume", "fcs_biosum_volumes_input"};
-//            if (edgeCaseTables.Contains(table))
-//            {
-//                //FCS schema uses cnd_cn/plt_cn, but we set these values to biosum_cond_id/biosum_plot_id in FVSOUT stage
-//                if (table.ToLower() == "fcs_biosum_volume" && column.ToLower() == "cnd_cn")
-//                    strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
-//                        m_dictIdentityColumnsToValues["biosum_cond_id"]);
-//                //TODO: fcs_biosum_volumes_input
-//            }
-//            else
-//            {
-//                strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
-//                    m_dictIdentityColumnsToValues[column]);
-//            }
-//            return strSQL;
-//        }
 
         private string CreateCommaDelimitedString(ICollection<string> strs)
         {
