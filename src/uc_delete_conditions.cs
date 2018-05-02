@@ -53,6 +53,7 @@ namespace FIA_Biosum_Manager
         private string m_strCurrentProcess;
         private frmTherm m_frmTherm;
         private ado_data_access m_ado;
+        private dao_data_access m_dao;
         private OleDbConnection m_connTempMDBFile;
         private string m_strTempMDBFileConn;
         private string m_strTempMDBFile;
@@ -251,6 +252,8 @@ namespace FIA_Biosum_Manager
             try
             {
                 this.m_ado = new ado_data_access();
+                this.m_dao = new dao_data_access();
+
                 //progress bar 1: single process
                 this.SetThermValue(m_frmTherm.progressBar1, "Maximum", 100);
                 this.SetThermValue(m_frmTherm.progressBar1, "Minimum", 0);
@@ -344,6 +347,10 @@ namespace FIA_Biosum_Manager
                         this.m_ado.m_DataSet.Dispose();
                     }
                     this.m_ado = null;
+                }
+                if (m_dao != null)
+                {
+                    this.m_dao = null;
                 }
 
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Visible",
@@ -550,6 +557,7 @@ namespace FIA_Biosum_Manager
                 }
             }
             m_ado.CloseConnection(oConn);
+            m_dao.CompactMDB(strDbPathFile);
         }
 
         private void BuildAndExecuteDeleteSQLStmts(OleDbConnection oConn, string table, string column)
