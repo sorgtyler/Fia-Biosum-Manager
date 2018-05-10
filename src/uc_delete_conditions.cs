@@ -284,7 +284,7 @@ namespace FIA_Biosum_Manager
 
                 //ProjectRoot\db Section
                 UpdateProgressBar2(20);
-                ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\db\\", "*.mdb"));
+                ConnectToDatabasesInPathAndExecuteDeletes(Directory.GetFiles(m_strProjDir + "\\db\\", "*.mdb"), strTableExceptions: new string[] {"tree_regional_biomass"});
 
                 //ProjectRoot\gis Section
                 UpdateProgressBar2(30);
@@ -513,9 +513,9 @@ namespace FIA_Biosum_Manager
                 //Only usage of cnd_cn is in FCS schema, which uses biosum_cond_id values
                 {"cnd_cn", new object[] {setBiosumCondCNs, m_strBiosumCondCNs}},
                 //plt_cn used in two tables. pop_plot_stratum_assgn uses plot.cn, fcs uses biosum_plot_id
-                {"plt_cn", new object[] {setPlotCNs, m_strPlotCNs}},
+                //{"plt_cn", new object[] {setPlotCNs, m_strPlotCNs}},
                 //used in master.tree_regional_biomass. values are tree.cn
-                {"tre_cn", new object[] {setTreeCNs, m_strTreeCNs}},
+                //{"tre_cn", new object[] {setTreeCNs, m_strTreeCNs}},
             };
         }
 

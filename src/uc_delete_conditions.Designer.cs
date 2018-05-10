@@ -56,12 +56,12 @@
             this.btnFilterNext = new System.Windows.Forms.Button();
             this.btnFilterCancel = new System.Windows.Forms.Button();
             this.grpboxFilterOptions = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnFilterByFileBrowse = new System.Windows.Forms.Button();
             this.txtFilterByFile = new System.Windows.Forms.TextBox();
             this.rdoFilterByFile = new System.Windows.Forms.RadioButton();
-            this.rdoFilterByMenu = new System.Windows.Forms.RadioButton();
             this.rdoDeleteAllConds = new System.Windows.Forms.RadioButton();
-            this.label1 = new System.Windows.Forms.Label();
+            this.rdoFilterByMenu = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.grpboxFilterByState.SuspendLayout();
             this.grpboxFilterByCondId.SuspendLayout();
@@ -309,9 +309,11 @@
             this.btnFilterHelp.Size = new System.Drawing.Size(64, 24);
             this.btnFilterHelp.TabIndex = 2;
             this.btnFilterHelp.Text = "Help";
+            this.btnFilterHelp.Visible = false;
             // 
             // btnFilterPrevious
             // 
+            this.btnFilterPrevious.Enabled = false;
             this.btnFilterPrevious.Location = new System.Drawing.Point(424, 326);
             this.btnFilterPrevious.Name = "btnFilterPrevious";
             this.btnFilterPrevious.Size = new System.Drawing.Size(72, 24);
@@ -350,11 +352,22 @@
             this.grpboxFilterOptions.TabIndex = 1;
             this.grpboxFilterOptions.TabStop = false;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(6, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(519, 20);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Warning: Deleting conditions is irreversible after clicking Delete.";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
             // btnFilterByFileBrowse
             // 
             this.btnFilterByFileBrowse.Enabled = false;
             this.btnFilterByFileBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnFilterByFileBrowse.Image")));
-            this.btnFilterByFileBrowse.Location = new System.Drawing.Point(408, 127);
+            this.btnFilterByFileBrowse.Location = new System.Drawing.Point(409, 120);
             this.btnFilterByFileBrowse.Name = "btnFilterByFileBrowse";
             this.btnFilterByFileBrowse.Size = new System.Drawing.Size(32, 32);
             this.btnFilterByFileBrowse.TabIndex = 4;
@@ -363,7 +376,7 @@
             // txtFilterByFile
             // 
             this.txtFilterByFile.Enabled = false;
-            this.txtFilterByFile.Location = new System.Drawing.Point(64, 132);
+            this.txtFilterByFile.Location = new System.Drawing.Point(75, 127);
             this.txtFilterByFile.Name = "txtFilterByFile";
             this.txtFilterByFile.Size = new System.Drawing.Size(328, 20);
             this.txtFilterByFile.TabIndex = 3;
@@ -373,43 +386,36 @@
             // 
             this.rdoFilterByFile.Checked = true;
             this.rdoFilterByFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFilterByFile.Location = new System.Drawing.Point(40, 92);
+            this.rdoFilterByFile.Location = new System.Drawing.Point(51, 91);
             this.rdoFilterByFile.Name = "rdoFilterByFile";
-            this.rdoFilterByFile.Size = new System.Drawing.Size(400, 32);
+            this.rdoFilterByFile.Size = new System.Drawing.Size(432, 32);
             this.rdoFilterByFile.TabIndex = 2;
             this.rdoFilterByFile.TabStop = true;
-            this.rdoFilterByFile.Text = "Delete Conditions Using Text File";
+            this.rdoFilterByFile.Text = "Delete Conditions with Text File of Cond.CN values";
+            this.rdoFilterByFile.CheckedChanged += new System.EventHandler(this.rdoFilterByFile_CheckedChanged);
             this.rdoFilterByFile.Click += new System.EventHandler(this.rdoFilterByFile_Click);
-            // 
-            // rdoFilterByMenu
-            // 
-            this.rdoFilterByMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFilterByMenu.Location = new System.Drawing.Point(40, 60);
-            this.rdoFilterByMenu.Name = "rdoFilterByMenu";
-            this.rdoFilterByMenu.Size = new System.Drawing.Size(400, 32);
-            this.rdoFilterByMenu.TabIndex = 1;
-            this.rdoFilterByMenu.Text = "Delete Conditions By Menu Selection";
-            this.rdoFilterByMenu.Click += new System.EventHandler(this.rdoFilterByMenu_Click);
             // 
             // rdoDeleteAllConds
             // 
             this.rdoDeleteAllConds.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoDeleteAllConds.Location = new System.Drawing.Point(40, 28);
+            this.rdoDeleteAllConds.Location = new System.Drawing.Point(51, 157);
             this.rdoDeleteAllConds.Name = "rdoDeleteAllConds";
             this.rdoDeleteAllConds.Size = new System.Drawing.Size(400, 32);
             this.rdoDeleteAllConds.TabIndex = 0;
             this.rdoDeleteAllConds.Text = "Delete All Conditions";
+            this.rdoDeleteAllConds.Visible = false;
             this.rdoDeleteAllConds.Click += new System.EventHandler(this.rdoDeleteAllConds_Click);
             // 
-            // label1
+            // rdoFilterByMenu
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(60, 190);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(354, 20);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Warning: Deleting conditions is irreversible.";
+            this.rdoFilterByMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoFilterByMenu.Location = new System.Drawing.Point(51, 182);
+            this.rdoFilterByMenu.Name = "rdoFilterByMenu";
+            this.rdoFilterByMenu.Size = new System.Drawing.Size(400, 32);
+            this.rdoFilterByMenu.TabIndex = 1;
+            this.rdoFilterByMenu.Text = "Delete Conditions By Menu Selection";
+            this.rdoFilterByMenu.Visible = false;
+            this.rdoFilterByMenu.Click += new System.EventHandler(this.rdoFilterByMenu_Click);
             // 
             // uc_delete_conditions
             // 
@@ -440,8 +446,6 @@
         private System.Windows.Forms.Button btnFilterByFileBrowse;
         private System.Windows.Forms.TextBox txtFilterByFile;
         private System.Windows.Forms.RadioButton rdoFilterByFile;
-        private System.Windows.Forms.RadioButton rdoFilterByMenu;
-        private System.Windows.Forms.RadioButton rdoDeleteAllConds;
         public System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.GroupBox grpboxFilterByState;
         private System.Windows.Forms.Button btnFilterByStateFinish;
@@ -462,5 +466,7 @@
         private System.Windows.Forms.Button btnFilterByPlotNext;
         private System.Windows.Forms.Button btnFilterByPlotCancel;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.RadioButton rdoFilterByMenu;
+        private System.Windows.Forms.RadioButton rdoDeleteAllConds;
     }
 }

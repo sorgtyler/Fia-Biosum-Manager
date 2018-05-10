@@ -666,8 +666,8 @@ namespace FIA_Biosum_Manager
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
                 frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
-                //Set Dbh to 0.1 if Tpa > 25 and dbh <= 0 and live tree (implies saplings) 
-                strSQL = Queries.FVS.FVSInput.TreeInit.SetInferredSaplingDbh(strTreeInitWorkTable);
+                //Set Dbh to 0.1 if Tpa > 25 and dbh <= 0 and live tree (implies seedlings) 
+                strSQL = Queries.FVS.FVSInput.TreeInit.SetInferredSeedlingDbh(strTreeInitWorkTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
                 frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 

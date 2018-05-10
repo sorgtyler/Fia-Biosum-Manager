@@ -3280,7 +3280,7 @@ namespace FIA_Biosum_Manager
                     }
 
 
-                    public static string SetInferredSaplingDbh(string strDestTable)
+                    public static string SetInferredSeedlingDbh(string strDestTable)
                     {
                         return "UPDATE " + strDestTable +
                                " SET Dbh=0.1 WHERE Tree_Count > 25 AND Dbh <= 0 AND History=1;";
