@@ -361,7 +361,6 @@
             this.label1.Size = new System.Drawing.Size(519, 20);
             this.label1.TabIndex = 6;
             this.label1.Text = "Warning: Deleting conditions is irreversible after clicking Delete.";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // btnFilterByFileBrowse
             // 
@@ -392,7 +391,6 @@
             this.rdoFilterByFile.TabIndex = 2;
             this.rdoFilterByFile.TabStop = true;
             this.rdoFilterByFile.Text = "Delete Conditions with Text File of Cond.CN values";
-            this.rdoFilterByFile.CheckedChanged += new System.EventHandler(this.rdoFilterByFile_CheckedChanged);
             this.rdoFilterByFile.Click += new System.EventHandler(this.rdoFilterByFile_Click);
             // 
             // rdoDeleteAllConds
