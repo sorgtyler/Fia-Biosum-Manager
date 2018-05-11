@@ -605,6 +605,23 @@ namespace FIA_Biosum_Manager
 		}
 
 		#endregion
+	    public bool createFvsCutListIfDNE(string strOutDirAndFile)
+	    {
+	        bool bCutListPresent = true;
+            ado_data_access oAdo = new ado_data_access();
+            oAdo.OpenConnection(oAdo.getMDBConnString(strOutDirAndFile, "", ""));
+	        if (oAdo.TableExist(oAdo.m_OleDbConnection, "FVS_CUTLIST") == false)
+	        {
+	            Tables.FVS.CreateFVSCutListTable(oAdo);
+	            bCutListPresent = false;
+	        }
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo.m_OleDbConnection.Dispose();
+            oAdo.m_OleDbConnection = null;
+	        oAdo = null;
+	        return bCutListPresent;
+	    }
+
 		public void loadvalues()
 		{
 			
@@ -725,6 +742,7 @@ namespace FIA_Biosum_Manager
 					if (System.IO.File.Exists(strOutDirAndFile) == true)
 					{
 
+					    createFvsCutListIfDNE(strOutDirAndFile);
 						strTableNames = new string[300];						
 						oDao2.getTableNames(strOutDirAndFile,ref strTableNames);
 						for (x=0;x<=strTableNames.Length-1;x++)
