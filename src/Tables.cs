@@ -4185,7 +4185,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeMacroPlotBreakPointDiaTableDbFile { get { return @"db\ref_master.mdb"; } }
             static public string DefaultTreeMacroPlotBreakPointDiaTableName { get { return "TreeMacroPlotBreakPointDia"; } }
             static public string DefaultBiosumReferenceDbFile { get { return "biosum_ref.accdb"; } }
-
+            static public string DefaultOpCostReferenceDbFile { get { return @"db\opcost_ref.accdb"; } }
 
 
 
