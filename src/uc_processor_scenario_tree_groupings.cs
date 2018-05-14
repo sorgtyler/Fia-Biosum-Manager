@@ -369,6 +369,7 @@ namespace FIA_Biosum_Manager
                         ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oSpcGroupListItem_Collection.Item(x);
                       intSpcGrp = oItem.SpeciesGroup;
                       strCommonName = oItem.CommonName;
+                      strCommonName = _objAdo.FixString(strCommonName.Trim(), "'", "''");
                       intSpCd = oItem.SpeciesCode;
 
                       _objAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + " " +

@@ -41,6 +41,7 @@ namespace FIA_Biosum_Manager
         private ado_data_access m_ado;
         private Label label8;
         private Label lblFvsCommonName;
+        private string m_strTreeSpcTable;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -55,6 +56,7 @@ namespace FIA_Biosum_Manager
             m_ado = p_ado;                
             // Populate reference dictionary of spcd and fvs_common_name from fvs_tree_species
             m_dictFvsCommonName = new System.Collections.Generic.Dictionary<String, String>();
+            m_strTreeSpcTable = p_strTreeSpcTable;
 
 			if (p_strVariant.Trim().Length > 0)
 			{
@@ -548,6 +550,7 @@ namespace FIA_Biosum_Manager
                     this.txtSpCd.Focus();
                     return;
                 }
+                this.m_ado.m_OleDbDataReader.Close();
 			}
 
             if (this.cmbFvsSpCd.Text.Trim().Length == 0)
@@ -558,6 +561,35 @@ namespace FIA_Biosum_Manager
                 this.m_intError = -1;
                 this.cmbFvsSpCd.Focus();
                 return;
+            }
+            if (String.IsNullOrEmpty(txtCommon.Text))
+            {
+                MessageBox.Show("!!Enter a common_name!!", "FIA Biosum",
+                 System.Windows.Forms.MessageBoxButtons.OK,
+                 System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                this.txtCommon.Focus();
+                return;
+            }
+            else
+            {
+                //check to make sure the spcd exists in fia_tree_species_ref before trying to add
+                this.m_ado.m_strSQL = "SELECT spcd FROM " + m_strTreeSpcTable +
+                                      " WHERE spcd <> " + this.txtSpCd.Text.Trim() + " AND TRIM(common_name) = '" +
+                                      txtCommon.Text.Trim() + "';";
+                this.m_ado.SqlQueryReader(this.m_ado.m_OleDbConnection, this.m_ado.m_OleDbTransaction, this.m_ado.m_strSQL);
+                if (this.m_ado.m_OleDbDataReader.HasRows)
+                {
+                    this.m_ado.m_OleDbDataReader.Read();
+                    string strMessage = "!!common_name '" + this.txtCommon.Text + "' is already in use for spcd " +
+                                         Convert.ToString(this.m_ado.m_OleDbDataReader["spcd"]).Trim() + ". " +
+                                         "common_name + spcd combinations must be unique!!";
+                    System.Windows.Forms.MessageBox.Show(strMessage, "FIA Biosum");
+                    this.m_intError = -1;
+                    this.txtCommon.Focus();
+                    return;
+                }
+                this.m_ado.m_OleDbDataReader.Close();
             }
 		}
 

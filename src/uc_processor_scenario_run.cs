@@ -35,6 +35,8 @@ namespace FIA_Biosum_Manager
         string m_strDateTimeCreated = "";
         string m_strOPCOSTBatchFile="";
         private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_processor_debug.txt";
+        private string m_strOPCOSTRefPath = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
+            "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
         //@ToDo: Remove these when removing old Processor code; These variable stand-in for checkboxes that are removed
         bool m_blnLowSlope = true;
         bool m_blnSteepSlope = true;
@@ -3622,6 +3624,7 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("SET RFILE=" + uc_processor_opcost_settings.g_strRDirectory + "\r\n");
             oTextStreamWriter.Write("SET OPCOSTRFILE=" + uc_processor_opcost_settings.g_strOPCOSTDirectory + "\r\n");
             oTextStreamWriter.Write("SET INPUTFILE=" + m_oQueries.m_strTempDbFile + "\r\n");
+            oTextStreamWriter.Write("SET CONFIGFILE=" + m_strOPCOSTRefPath + "\r\n");
             oTextStreamWriter.Write("SET ERRORFILE=" + frmMain.g_oEnv.strTempDir + "\\opcost_error_log.txt  \r\n");
             oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
             string strRedirect = " 2> " + "\"" + "%ERRORFILE%" + "\"";
@@ -3634,7 +3637,7 @@ namespace FIA_Biosum_Manager
                 //OpCost window is suppressed so we write standard out to log
                 strRedirect = "> \"" + "%ERRORFILE%" + "\"" + " 2>&1";
             }
-            oTextStreamWriter.Write("\"" + "%RFILE%" + "\"" + " " + "\"" + "%OPCOSTRFILE%" + "\"" + " " + "\"" + "%INPUTFILE%" + "\"" + strRedirect + "\r\n\r\n");
+            oTextStreamWriter.Write("\"" + "%RFILE%" + "\"" + " " + "\"" + "%OPCOSTRFILE%" + "\"" + " " + "\"" + "%INPUTFILE%" + "\"" + " \"" + "%CONFIGFILE%" + "\"" + strRedirect + "\r\n\r\n");
             oTextStreamWriter.Write("EXIT\r\n");
             oTextStreamWriter.Close();
             oTextFileStream.Close();
@@ -4981,6 +4984,30 @@ namespace FIA_Biosum_Manager
                 if (this.m_lvEx.CheckedItems.Count == 0)
                 {
                     MessageBox.Show("No Boxes Are Checked", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                //@ToDo: May want to take some of the conditions out when everyone is on OpCost 10 for performance
+                string strOPCOSTVersion = "";
+                bool bUsesOPCOSTRefAccdb = false;
+                if (!String.IsNullOrEmpty(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                {
+                    strOPCOSTVersion = System.IO.Path.GetFileName(uc_processor_opcost_settings.g_strOPCOSTDirectory);
+                    string[] strPieces = strOPCOSTVersion.Split('_');
+                    if (strPieces.Length > 0)
+                    {
+                        int intVersion = -1;
+                        bool isInteger = int.TryParse(strPieces[0], out intVersion);
+                        if (intVersion > 9)
+                            bUsesOPCOSTRefAccdb = true;
+                    }
+                }
+
+                if (bUsesOPCOSTRefAccdb == true && ! System.IO.File.Exists(m_strOPCOSTRefPath))
+                {
+                    string strMessage = "BioSum could not find the OPCOST reference database! ";
+                    strMessage += "It should be located at " + m_strOPCOSTRefPath + ". Processing halted!";
+                    MessageBox.Show(strMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                     return;
                 }
 
