@@ -4905,7 +4905,6 @@ namespace FIA_Biosum_Manager
                                                        "a.fvs_tree_id=b.fvs_tree_id " +
                                                     "SET a.volcfnet=b.tcuft " +
                                                     "WHERE a.volcfnet IS NULL;";
-                                    oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
                                     if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                         this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
                                     oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
