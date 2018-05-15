@@ -7069,7 +7069,7 @@ namespace FIA_Biosum_Manager
 			if (bFVSVariable==false)
 			{
 				//find the treatment for each plot that produces the MAX/MIN revenue value
-				strSql = "SELECT a.biosum_cond_id,a.rx,a." + this.m_strOptimizationColumnNameSql + " AS optimization_value " + //LPOTTS,a.rx_intensity " + 
+				strSql = "SELECT a.biosum_cond_id,a.rxpackage,a.rxpackage,a.rx,a." + this.m_strOptimizationColumnNameSql + " AS optimization_value " + //LPOTTS,a.rx_intensity " + 
 					"FROM cycle1_optimization a,";
 
 
@@ -7082,7 +7082,7 @@ namespace FIA_Biosum_Manager
 			}
 			else
 			{
-				strSql = "SELECT a.biosum_cond_id,a.rx,a." + this.m_strOptimizationColumnNameSql + " AS optimization_value " + //LPOTTS,a.rx_intensity " + 
+				strSql = "SELECT a.biosum_cond_id,a.rxpackage,a.rx,a." + this.m_strOptimizationColumnNameSql + " AS optimization_value " + //LPOTTS,a.rx_intensity " + 
 					"FROM cycle1_optimization a,";
 
 
@@ -7167,7 +7167,7 @@ namespace FIA_Biosum_Manager
 
 
 				//find the treatment for each plot that produces the MAX/MIN tiebreaker value
-				m_ado.m_strSQL ="SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rx,a.rx_intensity " + 
+				m_ado.m_strSQL ="SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a," +
 					"(SELECT biosum_cond_id," + strTieBreakerAggregate + "(tiebreaker_value) AS tiebreaker " +
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
@@ -7199,7 +7199,7 @@ namespace FIA_Biosum_Manager
 
 
 				m_ado.m_strSQL = "SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value," + 
-					"a.tiebreaker_value,a.rx,a.rx_intensity " + 
+					"a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table2 a," +
 					"(SELECT biosum_cond_id,MIN(rx_intensity) AS min_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table2 " + 
@@ -7230,7 +7230,8 @@ namespace FIA_Biosum_Manager
 					"INNER JOIN cycle1_best_rx_summary_optimization_and_tiebreaker_work_table3 b " + 
 					"ON a.biosum_cond_id=b.biosum_cond_id " + 
 					"SET a.optimization_value=b.optimization_value," + 
-					"a.tiebreaker_value=b.tiebreaker_value," + 
+					"a.tiebreaker_value=b.tiebreaker_value," +
+                    "a.rxpackage=b.rxpackage," + 
 					"a.rx=b.rx," + 
 					"a.rx_intensity=b.rx_intensity";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -7298,7 +7299,7 @@ namespace FIA_Biosum_Manager
 
 
 				//find the treatment for each plot that produces the MAX/MIN tiebreaker value
-				m_ado.m_strSQL ="SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rx,a.rx_intensity " + 
+				m_ado.m_strSQL ="SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a," +
 					"(SELECT biosum_cond_id," + strTieBreakerAggregate + "(tiebreaker_value) AS tiebreaker " +
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
@@ -7330,6 +7331,7 @@ namespace FIA_Biosum_Manager
 					"ON a.biosum_cond_id=b.biosum_cond_id " + 
 					"SET a.optimization_value=b.optimization_value," + 
 					"a.tiebreaker_value=b.tiebreaker_value," + 
+                    "a.rxpackage=b.rxpackage," +
 					"a.rx=b.rx," + 
 					"a.rx_intensity=b.rx_intensity";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -7374,7 +7376,7 @@ namespace FIA_Biosum_Manager
 
 					
 				m_ado.m_strSQL = "SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value," + 
-					"a.tiebreaker_value,a.rx,a.rx_intensity " + 
+					"a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a," +
 					"(SELECT biosum_cond_id,MIN(rx_intensity) AS min_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
@@ -7405,7 +7407,8 @@ namespace FIA_Biosum_Manager
 					"INNER JOIN cycle1_best_rx_summary_optimization_and_tiebreaker_work_table2 b " + 
 					"ON a.biosum_cond_id=b.biosum_cond_id " + 
 					"SET a.optimization_value=b.optimization_value," + 
-					"a.tiebreaker_value=b.tiebreaker_value," + 
+					"a.tiebreaker_value=b.tiebreaker_value," +
+                    "a.rxpackage=b.rxpackage," +
 					"a.rx=b.rx," + 
 					"a.rx_intensity=b.rx_intensity";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)

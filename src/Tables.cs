@@ -618,7 +618,8 @@ namespace FIA_Biosum_Manager
 			static public string CreateBestRxSummaryCycle1TableSQL(string p_strTableName)
 			{
 				return   "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id text(25)," + 
+					"biosum_cond_id text(25)," +
+                    "rxpackage text(3)," +
                     "rx text(3)," + 
                     "acres double," + 
 					"owngrpcd INTEGER," + 
@@ -656,7 +657,8 @@ namespace FIA_Biosum_Manager
 			static public string CreateBestRxSummaryCycle1TieBreakerTableSQL(string p_strTableName)
 			{
 				return   "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id text(25)," + 
+					"biosum_cond_id text(25)," +
+                    "rxpackage text(3)," + 
                     "rx text(3)," + 
 					"acres double," + 
 					"owngrpcd INTEGER," + 
