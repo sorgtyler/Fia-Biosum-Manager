@@ -3748,6 +3748,31 @@ namespace FIA_Biosum_Manager
             }
             return _dictFVSTables;
         }
+
+        public System.Collections.Generic.IDictionary<string, string> LoadVariableDescriptions(ado_data_access p_oAdo)
+        {
+            System.Collections.Generic.IDictionary<string, string> dictVariableDescriptions =
+                new System.Collections.Generic.Dictionary<string, string>();
+            p_oAdo.OpenConnection(p_oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile, "", ""));
+            p_oAdo.m_strSQL = "SELECT VARIABLE_NAME, VARIABLE_DESCRIPTION " +
+                              "FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName;
+            p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
+
+            if (p_oAdo.m_intError == 0)
+            {
+                //load step one with wind class speed definitions
+                while (p_oAdo.m_OleDbDataReader.Read())
+                {
+                    string strKey = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_name"]).Trim();
+                    string strDescr = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_description"]).Trim();
+                    if (!dictVariableDescriptions.ContainsKey(strKey))
+                        dictVariableDescriptions.Add(strKey, strDescr);
+                }
+
+            }
+            return dictVariableDescriptions;
+        }
+
         public string ScenarioProperties(CoreAnalysisScenarioItem p_oScenarioItem)
         {
             int x,y;
