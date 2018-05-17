@@ -1896,7 +1896,7 @@ namespace FIA_Biosum_Manager
 			m_oOldVar.Copy(m_oOldVar,ref m_oSavVar);
 
 
-            this.ReferenceOptimizationUserControl.loadvalues(m_dictFVSTables);
+            this.ReferenceOptimizationUserControl.loadvalues(m_dictFVSTables, m_dictCalculatedVariableDescriptions);
             this.ReferenceTieBreakerUserControl.loadvalues(m_dictFVSTables);
 			this.m_intError=oAdo.m_intError;
 			this.m_strError=oAdo.m_strError;
@@ -1906,7 +1906,8 @@ namespace FIA_Biosum_Manager
 
         private void loadFVSTableAndField()
         {
-            string[] strPieces = this.lblFVSVariablesPrePostVariablePreSelected.Text.Split('.');
+            lstFVSTablesList.ClearSelected();
+            string[] strPieces = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim().Split('.');
             //set FVS table and variable
             if (strPieces.Length == 2 && !String.IsNullOrEmpty(strPieces[0]))
             {
@@ -3777,9 +3778,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostValuesButtonsEdit_Click(object sender, System.EventArgs e)
 		{
-            this.lblFVSVariablesPrePostVariablePreSelected.Text = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim();
             this.loadFVSTableAndField();
-            // Need to set this again because manipulating the FVSTableAndField listboxes will clear it
             this.lblFVSVariablesPrePostVariablePreSelected.Text = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim();
             this.lblFVSVariablesPrePostVariablePostSelected.Text = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_POSTVAR].Text.Trim();
 
@@ -4301,6 +4300,7 @@ namespace FIA_Biosum_Manager
         private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)
         {
             lstFVSFieldsList.Items.Clear();
+            txtEffVarDescr.Text = "";
             this.lblFVSVariablesPrePostVariablePreSelected.Text = "Not Defined";
             this.lblFVSVariablesPrePostVariablePostSelected.Text = "Not Defined";
             if (this.lstFVSTablesList.SelectedIndex > -1)
@@ -4314,11 +4314,17 @@ namespace FIA_Biosum_Manager
                         lstFVSFieldsList.Items.Add(strField);
                     }
                 }
+                // Control visibility of the weighted variable description fields
+                bool bDisplayWeightedFields = this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED");
+                lblEffVarDescr.Visible = bDisplayWeightedFields;
+                txtEffVarDescr.Visible = bDisplayWeightedFields;
             }
-            // Control visibility of the weighted variable description fields
-            string strTableName = this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper();
-            lblEffVarDescr.Visible = strTableName.Contains("_WEIGHTED");
-            txtEffVarDescr.Visible = lblEffVarDescr.Visible;
+            else
+            {
+                lblEffVarDescr.Visible = false;
+                txtEffVarDescr.Visible = false;
+            }
+
         }
 
         private void lstFVSFieldsList_SelectedIndexChanged(object sender, EventArgs e)
@@ -4329,9 +4335,8 @@ namespace FIA_Biosum_Manager
             if (this.lstFVSFieldsList.SelectedIndex > -1)
             {
                 this.btnFVSVariablesPrePostVariableValue.Enabled = true;
-                if (txtEffVarDescr.Visible == true)
+                if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    string strTest = this.lstFVSFieldsList.SelectedItem.ToString();
                     string strDescr = m_dictCalculatedVariableDescriptions[Convert.ToString(this.lstFVSFieldsList.SelectedItem)];
                     if (!String.IsNullOrEmpty(strDescr))
                     {

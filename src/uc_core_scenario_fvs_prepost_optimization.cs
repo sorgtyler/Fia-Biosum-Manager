@@ -130,7 +130,10 @@ namespace FIA_Biosum_Manager
         private Label label2;
         private TextBox txtEconRevenueDescr;
         private ComboBox cboNetRevEconOptimzFilter;
-        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;		
+        private TextBox txtOptVarDescr;
+        private Label lblOptVarDescr;
+        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
+        private System.Collections.Generic.IDictionary<string, string> m_dictCalculatedVariableDescriptions;
 
 		public class VariableItem
 		{
@@ -295,6 +298,25 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpboxEconOptimizSettings = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.btnEconSelect = new System.Windows.Forms.Button();
+            this.txtEconAttribDescr = new System.Windows.Forms.TextBox();
+            this.lstEconVariables = new System.Windows.Forms.ListBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtEconRevenueDescr = new System.Windows.Forms.TextBox();
+            this.cboNetRevEconOptimzFilter = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.chkEnableEconFilter = new System.Windows.Forms.CheckBox();
+            this.cmbEconOptimizationOperator = new System.Windows.Forms.ComboBox();
+            this.txtEconOptimizationValue = new System.Windows.Forms.TextBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.lblEconomicAttribute = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.btnEconOptimizationCancel = new System.Windows.Forms.Button();
             this.grpboxOptimizationFVSVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.grpboxFVSVariablesOptimizationVariableValues = new System.Windows.Forms.GroupBox();
@@ -344,26 +366,13 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.grpboxEconOptimizSettings = new System.Windows.Forms.GroupBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.chkEnableEconFilter = new System.Windows.Forms.CheckBox();
-            this.cmbEconOptimizationOperator = new System.Windows.Forms.ComboBox();
-            this.txtEconOptimizationValue = new System.Windows.Forms.TextBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.lblEconomicAttribute = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.btnEconOptimizationCancel = new System.Windows.Forms.Button();
-            this.lstEconVariables = new System.Windows.Forms.ListBox();
-            this.txtEconAttribDescr = new System.Windows.Forms.TextBox();
-            this.btnEconSelect = new System.Windows.Forms.Button();
-            this.txtEconRevenueDescr = new System.Windows.Forms.TextBox();
-            this.cboNetRevEconOptimzFilter = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.txtOptVarDescr = new System.Windows.Forms.TextBox();
+            this.lblOptVarDescr = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            this.grpboxEconOptimizSettings.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.grpboxOptimizationFVSVariable.SuspendLayout();
             this.panel1.SuspendLayout();
             this.grpboxFVSVariablesOptimizationVariableValues.SuspendLayout();
@@ -379,10 +388,6 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationSettingsPostPre.SuspendLayout();
             this.grpFilter.SuspendLayout();
             this.grpMaxMin.SuspendLayout();
-            this.grpboxEconOptimizSettings.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -401,6 +406,214 @@ namespace FIA_Biosum_Manager
             this.groupBox1.TabStop = false;
             this.groupBox1.Leave += new System.EventHandler(this.groupBox1_Leave);
             this.groupBox1.Resize += new System.EventHandler(this.groupBox1_Resize);
+            // 
+            // grpboxEconOptimizSettings
+            // 
+            this.grpboxEconOptimizSettings.BackColor = System.Drawing.SystemColors.Control;
+            this.grpboxEconOptimizSettings.Controls.Add(this.panel2);
+            this.grpboxEconOptimizSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpboxEconOptimizSettings.ForeColor = System.Drawing.Color.Black;
+            this.grpboxEconOptimizSettings.Location = new System.Drawing.Point(12, 1458);
+            this.grpboxEconOptimizSettings.Name = "grpboxEconOptimizSettings";
+            this.grpboxEconOptimizSettings.Size = new System.Drawing.Size(856, 448);
+            this.grpboxEconOptimizSettings.TabIndex = 36;
+            this.grpboxEconOptimizSettings.TabStop = false;
+            this.grpboxEconOptimizSettings.Text = "Economic Attribute Optimization Settings";
+            // 
+            // panel2
+            // 
+            this.panel2.AutoScroll = true;
+            this.panel2.Controls.Add(this.btnEconSelect);
+            this.panel2.Controls.Add(this.txtEconAttribDescr);
+            this.panel2.Controls.Add(this.lstEconVariables);
+            this.panel2.Controls.Add(this.groupBox5);
+            this.panel2.Controls.Add(this.groupBox6);
+            this.panel2.Controls.Add(this.lblEconomicAttribute);
+            this.panel2.Controls.Add(this.button2);
+            this.panel2.Controls.Add(this.btnEconOptimizationCancel);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(3, 18);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(850, 427);
+            this.panel2.TabIndex = 12;
+            // 
+            // btnEconSelect
+            // 
+            this.btnEconSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEconSelect.Location = new System.Drawing.Point(486, 46);
+            this.btnEconSelect.Name = "btnEconSelect";
+            this.btnEconSelect.Size = new System.Drawing.Size(90, 66);
+            this.btnEconSelect.TabIndex = 88;
+            this.btnEconSelect.Text = "Select";
+            this.btnEconSelect.Click += new System.EventHandler(this.btnEconSelect_Click);
+            // 
+            // txtEconAttribDescr
+            // 
+            this.txtEconAttribDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconAttribDescr.Location = new System.Drawing.Point(220, 46);
+            this.txtEconAttribDescr.Multiline = true;
+            this.txtEconAttribDescr.Name = "txtEconAttribDescr";
+            this.txtEconAttribDescr.ReadOnly = true;
+            this.txtEconAttribDescr.Size = new System.Drawing.Size(242, 45);
+            this.txtEconAttribDescr.TabIndex = 87;
+            this.txtEconAttribDescr.Text = "Default calculation for total volume with 25% allotted to each cycle";
+            // 
+            // lstEconVariables
+            // 
+            this.lstEconVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstEconVariables.ItemHeight = 16;
+            this.lstEconVariables.Items.AddRange(new object[] {
+            "chip_volume_1",
+            "merch_volume_1",
+            "net_revenue_1",
+            "total_volume_1",
+            "treatment_haul_costs_1"});
+            this.lstEconVariables.Location = new System.Drawing.Point(20, 46);
+            this.lstEconVariables.Name = "lstEconVariables";
+            this.lstEconVariables.Size = new System.Drawing.Size(177, 132);
+            this.lstEconVariables.TabIndex = 24;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label2);
+            this.groupBox5.Controls.Add(this.txtEconRevenueDescr);
+            this.groupBox5.Controls.Add(this.cboNetRevEconOptimzFilter);
+            this.groupBox5.Controls.Add(this.label3);
+            this.groupBox5.Controls.Add(this.chkEnableEconFilter);
+            this.groupBox5.Controls.Add(this.cmbEconOptimizationOperator);
+            this.groupBox5.Controls.Add(this.txtEconOptimizationValue);
+            this.groupBox5.Location = new System.Drawing.Point(20, 223);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(584, 139);
+            this.groupBox5.TabIndex = 18;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Net Revenue Dollars Per Acre Filter Setting";
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(43, 24);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(158, 20);
+            this.label2.TabIndex = 90;
+            this.label2.Text = "Net Revenue Calculation";
+            // 
+            // txtEconRevenueDescr
+            // 
+            this.txtEconRevenueDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconRevenueDescr.Location = new System.Drawing.Point(219, 46);
+            this.txtEconRevenueDescr.Multiline = true;
+            this.txtEconRevenueDescr.Name = "txtEconRevenueDescr";
+            this.txtEconRevenueDescr.Size = new System.Drawing.Size(320, 40);
+            this.txtEconRevenueDescr.TabIndex = 89;
+            this.txtEconRevenueDescr.Text = "Sums net revenue across all 4 cycles";
+            // 
+            // cboNetRevEconOptimzFilter
+            // 
+            this.cboNetRevEconOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboNetRevEconOptimzFilter.Items.AddRange(new object[] {
+            "net_revenue_1"});
+            this.cboNetRevEconOptimzFilter.Location = new System.Drawing.Point(46, 49);
+            this.cboNetRevEconOptimzFilter.Name = "cboNetRevEconOptimzFilter";
+            this.cboNetRevEconOptimzFilter.Size = new System.Drawing.Size(110, 24);
+            this.cboNetRevEconOptimzFilter.TabIndex = 88;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(313, 102);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(24, 25);
+            this.label3.TabIndex = 18;
+            this.label3.Text = "$";
+            // 
+            // chkEnableEconFilter
+            // 
+            this.chkEnableEconFilter.Location = new System.Drawing.Point(46, 98);
+            this.chkEnableEconFilter.Name = "chkEnableEconFilter";
+            this.chkEnableEconFilter.Size = new System.Drawing.Size(112, 32);
+            this.chkEnableEconFilter.TabIndex = 17;
+            this.chkEnableEconFilter.Text = "Enable Filter";
+            // 
+            // cmbEconOptimizationOperator
+            // 
+            this.cmbEconOptimizationOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbEconOptimizationOperator.Items.AddRange(new object[] {
+            ">",
+            "<",
+            ">=",
+            "<=",
+            "<>"});
+            this.cmbEconOptimizationOperator.Location = new System.Drawing.Point(224, 100);
+            this.cmbEconOptimizationOperator.Name = "cmbEconOptimizationOperator";
+            this.cmbEconOptimizationOperator.Size = new System.Drawing.Size(83, 32);
+            this.cmbEconOptimizationOperator.TabIndex = 16;
+            this.cmbEconOptimizationOperator.Text = ">";
+            // 
+            // txtEconOptimizationValue
+            // 
+            this.txtEconOptimizationValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEconOptimizationValue.Location = new System.Drawing.Point(339, 99);
+            this.txtEconOptimizationValue.Name = "txtEconOptimizationValue";
+            this.txtEconOptimizationValue.Size = new System.Drawing.Size(200, 29);
+            this.txtEconOptimizationValue.TabIndex = 15;
+            this.txtEconOptimizationValue.Text = "0";
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.radioButton1);
+            this.groupBox6.Controls.Add(this.radioButton2);
+            this.groupBox6.Location = new System.Drawing.Point(220, 133);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(351, 45);
+            this.groupBox6.TabIndex = 17;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Which attribute value is best";
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.Location = new System.Drawing.Point(197, 15);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(122, 24);
+            this.radioButton1.TabIndex = 14;
+            this.radioButton1.Text = "Minimum Value";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.Checked = true;
+            this.radioButton2.Location = new System.Drawing.Point(32, 16);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(150, 24);
+            this.radioButton2.TabIndex = 12;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Maximum Value";
+            // 
+            // lblEconomicAttribute
+            // 
+            this.lblEconomicAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblEconomicAttribute.Location = new System.Drawing.Point(7, 11);
+            this.lblEconomicAttribute.Name = "lblEconomicAttribute";
+            this.lblEconomicAttribute.Size = new System.Drawing.Size(472, 32);
+            this.lblEconomicAttribute.TabIndex = 13;
+            this.lblEconomicAttribute.Text = "Economic Attribute";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(352, 376);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(88, 40);
+            this.button2.TabIndex = 11;
+            this.button2.Text = "Done";
+            // 
+            // btnEconOptimizationCancel
+            // 
+            this.btnEconOptimizationCancel.Location = new System.Drawing.Point(440, 376);
+            this.btnEconOptimizationCancel.Name = "btnEconOptimizationCancel";
+            this.btnEconOptimizationCancel.Size = new System.Drawing.Size(88, 40);
+            this.btnEconOptimizationCancel.TabIndex = 9;
+            this.btnEconOptimizationCancel.Text = "Cancel";
+            this.btnEconOptimizationCancel.Click += new System.EventHandler(this.btnEconOptimizationCancel_Click);
             // 
             // grpboxOptimizationFVSVariable
             // 
@@ -432,6 +645,8 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxFVSVariablesOptimizationVariableValues
             // 
+            this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.txtOptVarDescr);
+            this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.lblOptVarDescr);
             this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.lstFVSFieldsList);
             this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.lstFVSTablesList);
             this.grpboxFVSVariablesOptimizationVariableValues.Controls.Add(this.btnFVSVariablesOptimizationVariableValues);
@@ -466,9 +681,9 @@ namespace FIA_Biosum_Manager
             // btnFVSVariablesOptimizationVariableValues
             // 
             this.btnFVSVariablesOptimizationVariableValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFVSVariablesOptimizationVariableValues.Location = new System.Drawing.Point(490, 42);
+            this.btnFVSVariablesOptimizationVariableValues.Location = new System.Drawing.Point(476, 21);
             this.btnFVSVariablesOptimizationVariableValues.Name = "btnFVSVariablesOptimizationVariableValues";
-            this.btnFVSVariablesOptimizationVariableValues.Size = new System.Drawing.Size(184, 144);
+            this.btnFVSVariablesOptimizationVariableValues.Size = new System.Drawing.Size(143, 57);
             this.btnFVSVariablesOptimizationVariableValues.TabIndex = 1;
             this.btnFVSVariablesOptimizationVariableValues.Text = "Select";
             this.btnFVSVariablesOptimizationVariableValues.Click += new System.EventHandler(this.btnFVSVariablesOptimizationVariableValues_Click);
@@ -898,223 +1113,42 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
             // 
-            // grpboxEconOptimizSettings
+            // txtOptVarDescr
             // 
-            this.grpboxEconOptimizSettings.BackColor = System.Drawing.SystemColors.Control;
-            this.grpboxEconOptimizSettings.Controls.Add(this.panel2);
-            this.grpboxEconOptimizSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpboxEconOptimizSettings.ForeColor = System.Drawing.Color.Black;
-            this.grpboxEconOptimizSettings.Location = new System.Drawing.Point(12, 1458);
-            this.grpboxEconOptimizSettings.Name = "grpboxEconOptimizSettings";
-            this.grpboxEconOptimizSettings.Size = new System.Drawing.Size(856, 448);
-            this.grpboxEconOptimizSettings.TabIndex = 36;
-            this.grpboxEconOptimizSettings.TabStop = false;
-            this.grpboxEconOptimizSettings.Text = "Economic Attribute Optimization Settings";
+            this.txtOptVarDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOptVarDescr.Location = new System.Drawing.Point(556, 84);
+            this.txtOptVarDescr.Multiline = true;
+            this.txtOptVarDescr.Name = "txtOptVarDescr";
+            this.txtOptVarDescr.ReadOnly = true;
+            this.txtOptVarDescr.Size = new System.Drawing.Size(258, 75);
+            this.txtOptVarDescr.TabIndex = 90;
+            this.txtOptVarDescr.Visible = false;
             // 
-            // panel2
+            // lblOptVarDescr
             // 
-            this.panel2.AutoScroll = true;
-            this.panel2.Controls.Add(this.btnEconSelect);
-            this.panel2.Controls.Add(this.txtEconAttribDescr);
-            this.panel2.Controls.Add(this.lstEconVariables);
-            this.panel2.Controls.Add(this.groupBox5);
-            this.panel2.Controls.Add(this.groupBox6);
-            this.panel2.Controls.Add(this.lblEconomicAttribute);
-            this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.btnEconOptimizationCancel);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(3, 18);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(850, 427);
-            this.panel2.TabIndex = 12;
+            this.lblOptVarDescr.Location = new System.Drawing.Point(477, 87);
+            this.lblOptVarDescr.Name = "lblOptVarDescr";
+            this.lblOptVarDescr.Size = new System.Drawing.Size(80, 24);
+            this.lblOptVarDescr.TabIndex = 89;
+            this.lblOptVarDescr.Text = "Description:";
+            this.lblOptVarDescr.Visible = false;
             // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.label2);
-            this.groupBox5.Controls.Add(this.txtEconRevenueDescr);
-            this.groupBox5.Controls.Add(this.cboNetRevEconOptimzFilter);
-            this.groupBox5.Controls.Add(this.label3);
-            this.groupBox5.Controls.Add(this.chkEnableEconFilter);
-            this.groupBox5.Controls.Add(this.cmbEconOptimizationOperator);
-            this.groupBox5.Controls.Add(this.txtEconOptimizationValue);
-            this.groupBox5.Location = new System.Drawing.Point(20, 223);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(584, 139);
-            this.groupBox5.TabIndex = 18;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Net Revenue Dollars Per Acre Filter Setting";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(313, 102);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(24, 25);
-            this.label3.TabIndex = 18;
-            this.label3.Text = "$";
-            // 
-            // chkEnableEconFilter
-            // 
-            this.chkEnableEconFilter.Location = new System.Drawing.Point(46, 98);
-            this.chkEnableEconFilter.Name = "chkEnableEconFilter";
-            this.chkEnableEconFilter.Size = new System.Drawing.Size(112, 32);
-            this.chkEnableEconFilter.TabIndex = 17;
-            this.chkEnableEconFilter.Text = "Enable Filter";
-            // 
-            // cmbEconOptimizationOperator
-            // 
-            this.cmbEconOptimizationOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbEconOptimizationOperator.Items.AddRange(new object[] {
-            ">",
-            "<",
-            ">=",
-            "<=",
-            "<>"});
-            this.cmbEconOptimizationOperator.Location = new System.Drawing.Point(224, 100);
-            this.cmbEconOptimizationOperator.Name = "cmbEconOptimizationOperator";
-            this.cmbEconOptimizationOperator.Size = new System.Drawing.Size(83, 32);
-            this.cmbEconOptimizationOperator.TabIndex = 16;
-            this.cmbEconOptimizationOperator.Text = ">";
-            // 
-            // txtEconOptimizationValue
-            // 
-            this.txtEconOptimizationValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtEconOptimizationValue.Location = new System.Drawing.Point(339, 99);
-            this.txtEconOptimizationValue.Name = "txtEconOptimizationValue";
-            this.txtEconOptimizationValue.Size = new System.Drawing.Size(200, 29);
-            this.txtEconOptimizationValue.TabIndex = 15;
-            this.txtEconOptimizationValue.Text = "0";
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.radioButton1);
-            this.groupBox6.Controls.Add(this.radioButton2);
-            this.groupBox6.Location = new System.Drawing.Point(220, 133);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(351, 45);
-            this.groupBox6.TabIndex = 17;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Which attribute value is best";
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.Location = new System.Drawing.Point(197, 15);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(122, 24);
-            this.radioButton1.TabIndex = 14;
-            this.radioButton1.Text = "Minimum Value";
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.Checked = true;
-            this.radioButton2.Location = new System.Drawing.Point(32, 16);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(150, 24);
-            this.radioButton2.TabIndex = 12;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Maximum Value";
-            // 
-            // lblEconomicAttribute
-            // 
-            this.lblEconomicAttribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblEconomicAttribute.Location = new System.Drawing.Point(7, 11);
-            this.lblEconomicAttribute.Name = "lblEconomicAttribute";
-            this.lblEconomicAttribute.Size = new System.Drawing.Size(472, 32);
-            this.lblEconomicAttribute.TabIndex = 13;
-            this.lblEconomicAttribute.Text = "Economic Attribute";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(352, 376);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(88, 40);
-            this.button2.TabIndex = 11;
-            this.button2.Text = "Done";
-            // 
-            // btnEconOptimizationCancel
-            // 
-            this.btnEconOptimizationCancel.Location = new System.Drawing.Point(440, 376);
-            this.btnEconOptimizationCancel.Name = "btnEconOptimizationCancel";
-            this.btnEconOptimizationCancel.Size = new System.Drawing.Size(88, 40);
-            this.btnEconOptimizationCancel.TabIndex = 9;
-            this.btnEconOptimizationCancel.Text = "Cancel";
-            this.btnEconOptimizationCancel.Click += new System.EventHandler(this.btnEconOptimizationCancel_Click);
-            // 
-            // lstEconVariables
-            // 
-            this.lstEconVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstEconVariables.ItemHeight = 16;
-            this.lstEconVariables.Items.AddRange(new object[] {
-            "chip_volume_1",
-            "merch_volume_1",
-            "net_revenue_1",
-            "total_volume_1",
-            "treatment_haul_costs_1"});
-            this.lstEconVariables.Location = new System.Drawing.Point(20, 46);
-            this.lstEconVariables.Name = "lstEconVariables";
-            this.lstEconVariables.Size = new System.Drawing.Size(177, 132);
-            this.lstEconVariables.TabIndex = 24;
-            // 
-            // txtEconAttribDescr
-            // 
-            this.txtEconAttribDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtEconAttribDescr.Location = new System.Drawing.Point(220, 46);
-            this.txtEconAttribDescr.Multiline = true;
-            this.txtEconAttribDescr.Name = "txtEconAttribDescr";
-            this.txtEconAttribDescr.ReadOnly = true;
-            this.txtEconAttribDescr.Size = new System.Drawing.Size(242, 45);
-            this.txtEconAttribDescr.TabIndex = 87;
-            this.txtEconAttribDescr.Text = "Default calculation for total volume with 25% allotted to each cycle";
-            // 
-            // btnEconSelect
-            // 
-            this.btnEconSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEconSelect.Location = new System.Drawing.Point(486, 46);
-            this.btnEconSelect.Name = "btnEconSelect";
-            this.btnEconSelect.Size = new System.Drawing.Size(90, 66);
-            this.btnEconSelect.TabIndex = 88;
-            this.btnEconSelect.Text = "Select";
-            this.btnEconSelect.Click += new System.EventHandler(this.btnEconSelect_Click);
-            // 
-            // txtEconRevenueDescr
-            // 
-            this.txtEconRevenueDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtEconRevenueDescr.Location = new System.Drawing.Point(219, 46);
-            this.txtEconRevenueDescr.Multiline = true;
-            this.txtEconRevenueDescr.Name = "txtEconRevenueDescr";
-            this.txtEconRevenueDescr.Size = new System.Drawing.Size(320, 40);
-            this.txtEconRevenueDescr.TabIndex = 89;
-            this.txtEconRevenueDescr.Text = "Sums net revenue across all 4 cycles";
-            // 
-            // cboNetRevEconOptimzFilter
-            // 
-            this.cboNetRevEconOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboNetRevEconOptimzFilter.Items.AddRange(new object[] {
-            "net_revenue_1"});
-            this.cboNetRevEconOptimzFilter.Location = new System.Drawing.Point(46, 49);
-            this.cboNetRevEconOptimzFilter.Name = "cboNetRevEconOptimzFilter";
-            this.cboNetRevEconOptimzFilter.Size = new System.Drawing.Size(110, 24);
-            this.cboNetRevEconOptimzFilter.TabIndex = 88;
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(43, 24);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(158, 20);
-            this.label2.TabIndex = 90;
-            this.label2.Text = "Net Revenue Calculation";
-            // 
-            // uc_scenario_fvs_prepost_optimization
+            // uc_core_scenario_fvs_prepost_optimization
             // 
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_scenario_fvs_prepost_optimization";
+            this.Name = "uc_core_scenario_fvs_prepost_optimization";
             this.Size = new System.Drawing.Size(872, 2000);
             this.groupBox1.ResumeLayout(false);
+            this.grpboxEconOptimizSettings.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
             this.grpboxOptimizationFVSVariable.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.grpboxFVSVariablesOptimizationVariableValues.ResumeLayout(false);
+            this.grpboxFVSVariablesOptimizationVariableValues.PerformLayout();
             this.grpFVSVariablesOptimizationVariableValuesSelected.ResumeLayout(false);
             this.grpboxOptimization.ResumeLayout(false);
             this.pnlOptimization.ResumeLayout(false);
@@ -1129,12 +1163,6 @@ namespace FIA_Biosum_Manager
             this.grpFilter.ResumeLayout(false);
             this.grpFilter.PerformLayout();
             this.grpMaxMin.ResumeLayout(false);
-            this.grpboxEconOptimizSettings.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -1198,7 +1226,8 @@ namespace FIA_Biosum_Manager
             }
 
         }
-        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables)
+        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables,
+                               System.Collections.Generic.IDictionary<string, string> p_dictCalculatedVariableDescr)
 		{
 			
 			this.m_intError=0;
@@ -1212,6 +1241,8 @@ namespace FIA_Biosum_Manager
             {
                 lstFVSTablesList.Items.Add(strKey);
             }
+            m_dictCalculatedVariableDescriptions =
+                new System.Collections.Generic.Dictionary<string, string>(p_dictCalculatedVariableDescr);
 
 			this.lvOptimizationListValues.Items.Clear();
 			this.m_oLvRowColors.InitializeRowCollection();
@@ -2045,9 +2076,7 @@ namespace FIA_Biosum_Manager
 			{
 				// Populate the fields on the second (FVS) layer
                 btnOptimiztionPrev.Show();
-				this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
                 this.loadFVSTableAndField();
-                // Need to set this again because manipulating the FVSTableAndField listboxes will clear it
                 this.lblFVSVariablesOptimizationVariableValuesSelected.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
                 this.lblOptimizationVariable.Text = this.lblFVSVariablesOptimizationVariableValuesSelected.Text;
                 this.grpMaxMin.Location = new System.Drawing.Point(457, 55);
@@ -2321,7 +2350,7 @@ namespace FIA_Biosum_Manager
 
         private void loadFVSTableAndField()
         {
-            string[] strPieces = this.lblFVSVariablesOptimizationVariableValuesSelected.Text.Split('.');
+            string[] strPieces = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim().Split('.');
             //set FVS table and variable
             if (strPieces.Length == 2)
             {
@@ -2385,6 +2414,7 @@ namespace FIA_Biosum_Manager
         private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)
         {
             lstFVSFieldsList.Items.Clear();
+            txtOptVarDescr.Text = "";
             this.lblFVSVariablesOptimizationVariableValuesSelected.Text = "Not Defined";
             if (this.lstFVSTablesList.SelectedIndex > -1)
             {
@@ -2397,15 +2427,33 @@ namespace FIA_Biosum_Manager
                         lstFVSFieldsList.Items.Add(strField);
                     }
                 }
+                // Control visibility of the weighted variable description fields
+                bool bDisplayWeightedFields = this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED");
+                lblOptVarDescr.Visible = bDisplayWeightedFields;
+                txtOptVarDescr.Visible = bDisplayWeightedFields;
+            }
+            else
+            {
+                lblOptVarDescr.Visible = false;
+                txtOptVarDescr.Visible = false;
             }
         }
 
         private void lstFVSFieldsList_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.lblFVSVariablesOptimizationVariableValuesSelected.Text = "Not Defined";
+            this.txtOptVarDescr.Text = "";
             if (this.lstFVSFieldsList.SelectedIndex > -1)
             {
                 this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
+                if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
+                {
+                    string strDescr = m_dictCalculatedVariableDescriptions[Convert.ToString(this.lstFVSFieldsList.SelectedItem)];
+                    if (!String.IsNullOrEmpty(strDescr))
+                    {
+                        txtOptVarDescr.Text = strDescr;
+                    }
+                }
             }
             else
             {
