@@ -1699,6 +1699,22 @@ namespace FIA_Biosum_Manager
                                 p_row["fvs_species"] = this.lstAudit.Items[x].SubItems[3].Text;  //fvs tree species numeric code
                                 p_row["fvs_input_spcd"] = this.lstAudit.Items[x].SubItems[2].Text;
                             }
+                            // set fvs_input_spcd to a default value if it is null
+                            if (p_row.IsNull("fvs_input_spcd"))
+                            {
+                                // set fvs_input_spcd to other softwood
+                                p_row["fvs_input_spcd"] = "298";
+                                int intSpcd = -1;
+                                bool success = int.TryParse(Convert.ToString(p_row["spcd"]), out intSpcd);
+                                if (success == true)
+                                {
+                                    // if it is a hardwood set to other hardwood
+                                    if (intSpcd > 299)
+                                    {
+                                        p_row["fvs_input_spcd"] = "998";
+                                    }
+                                }
+                            }
 
                             p_row["common_name"] = strCommonName;
                             p_row["genus"] = strGenus;
