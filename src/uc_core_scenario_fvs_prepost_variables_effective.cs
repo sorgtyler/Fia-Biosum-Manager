@@ -1897,7 +1897,7 @@ namespace FIA_Biosum_Manager
 
 
             this.ReferenceOptimizationUserControl.loadvalues(m_dictFVSTables, m_dictCalculatedVariableDescriptions);
-            this.ReferenceTieBreakerUserControl.loadvalues(m_dictFVSTables);
+            this.ReferenceTieBreakerUserControl.loadvalues(m_dictFVSTables, m_dictCalculatedVariableDescriptions);
 			this.m_intError=oAdo.m_intError;
 			this.m_strError=oAdo.m_strError;
 			oAdo=null;
