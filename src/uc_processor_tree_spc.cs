@@ -2164,7 +2164,22 @@ namespace FIA_Biosum_Manager
 					p_uc.strCommonName = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("common_name")].ToString().Trim();
 					p_uc.strTreeSpeciesGenus = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("genus")].ToString().Trim();
 					p_uc.strTreeSpecies = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("species")].ToString().Trim();
-                    p_uc.intConvertToSpCd = Convert.ToInt32(this.m_dg[this.m_intCurrRow - 1, this.getGridColumn("fvs_input_spcd")]);
+                    int intConvertToSpcd = -1;
+                    bool bValidSpcd = int.TryParse(this.m_dg[this.m_intCurrRow - 1, this.getGridColumn("fvs_input_spcd")].ToString().Trim(), 
+                        out intConvertToSpcd);
+                    if (bValidSpcd == true)
+                    {
+                        p_uc.intConvertToSpCd = intConvertToSpcd;
+                    }
+                    else
+                    {
+                        // Try setting to same as FIA spcd if invalid fvs_input_spcd column
+                        int intSpCd = -1;
+                        if (int.TryParse(p_uc.strSpCd, out intSpCd) == true)
+                        {
+                            p_uc.intConvertToSpCd = intSpCd;
+                        }
+                    }
 				}
 				System.Windows.Forms.DialogResult result = frmTemp.ShowDialog();
 				if (result==System.Windows.Forms.DialogResult.OK)

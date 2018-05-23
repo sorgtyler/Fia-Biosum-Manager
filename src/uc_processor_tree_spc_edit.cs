@@ -709,6 +709,34 @@ namespace FIA_Biosum_Manager
                             return;
                         }
                     }
+                    // if we get this far, the intConvertToSpCd wasn't found in the list, set default
+                    int intFiaSpcd = -1;
+                    if (int.TryParse(txtSpCd.Text, out intFiaSpcd) == true)
+                    {
+                        if (intFiaSpcd < 300)
+                        {
+                            // Default to Other Softwood
+                            m_intConvertToSpCd = 298;
+                        }
+                        else
+                        {
+                            // Default to Other Hardwood
+                            m_intConvertToSpCd = 998;
+                        }
+                        for (int i = 0; i < this.cmbFvsSpCd.Items.Count; i++)
+                        {
+                            // Try to set the dropdown again
+                            string strFvsSpeciesText = this.cmbFvsSpCd.GetItemText(this.cmbFvsSpCd.Items[i]);
+                            int intNextSpeciesCode = -1;
+                            int intFirstDash = strFvsSpeciesText.IndexOf("-", 0);
+                            Int32.TryParse(strFvsSpeciesText.Substring(0, intFirstDash - 1), out intNextSpeciesCode);
+                            if (m_intConvertToSpCd == intNextSpeciesCode)
+                            {
+                                this.cmbFvsSpCd.SelectedIndex = i;
+                                return;
+                            }
+                        }
+                    }
                 }
             }
 			get { return m_intConvertToSpCd; }
