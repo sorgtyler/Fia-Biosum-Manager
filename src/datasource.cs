@@ -79,7 +79,14 @@ namespace FIA_Biosum_Manager
 															  "Population Plot Stratum Assignment",
                                                               "BIOSUM Pop Stratum Adjustment Factors",
 															  "Site Tree",
-                                                              Datasource.TableTypes.FiaTreeSpeciesReference};
+                                                              Datasource.TableTypes.FiaTreeSpeciesReference,
+                                                              "DWM COARSE WOODY DEBRIS",
+                                                              "DWM DUFF LITTER FUEL",
+                                                              "DWM FINE WOODY DEBRIS",
+                                                              "DWM TRANSECT SEGMENT",
+                                                              "REF FOREST TYPE",
+                                                              "REF FOREST TYPE GROUP",
+		};
 
         public static string[] g_strCoreDatasourceTableTypesArray = {"Plot",
 															  "Condition",
@@ -400,7 +407,7 @@ namespace FIA_Biosum_Manager
 			//used to create a link to the table
 			dao_data_access p_dao = new dao_data_access();
 			
-			for (x=0; x <= this.m_intNumberOfTables - 1; x++)
+			for (x=0; x <= this.m_intNumberOfTables - 1; x++) //TODO: check if this is updated to include dwm
 			{
                 string strFileStatus = this.m_strDataSource[x, FILESTATUS];
                 if (strFileStatus != null)
@@ -1135,6 +1142,32 @@ namespace FIA_Biosum_Manager
 				case "SITE TREE":
 					oItem.VariableName="SiteTreeTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultSiteTreeTableName;
+					break;
+
+                //TODO: Determine if these cases are necessary and remove if not
+				case "DWM COARSE WOODY DEBRIS":
+					oItem.VariableName="DwmCoarseWoodyDebrisTable";
+					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName;
+					break;
+				case "DWM DUFF LITTER FUEL":
+					oItem.VariableName="DwmDuffLitterFuelTable";
+					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName;
+					break;
+				case "DWM FINE WOODY DEBRIS":
+					oItem.VariableName="DwmFineWoodyDebrisTable";
+					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName;
+					break;
+				case "DWM TRANSECT SEGMENT":
+					oItem.VariableName="DwmTransectSegmentTable";
+					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName;
+					break;
+				case "REF FOREST TYPE":
+					oItem.VariableName="RefForestTypeTable";
+					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultRefForestTypeName;
+					break;
+				case "REF FOREST TYPE GROUP":
+					oItem.VariableName="RefForestTypeGroupTable";
+					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oFIAPlot.DefaultRefForestTypeGroupName;
 					break;
 			}
 			if (oItem.VariableName.Trim().Length > 0)

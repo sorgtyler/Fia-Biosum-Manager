@@ -1002,6 +1002,22 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_vol_val_by_species_diam_groups");
                 //biosum pop stratum adjustment factors table
                 frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
+
+                //DWM tables: CWD, FWD, DuffLitter, Transect Segment
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMCoarseWoodyDebrisTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMDuffLitterFuelTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMFineWoodyDebrisTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName);
+//                frmMain.g_oTables.m_oFIAPlot.CreateDWMMicroplotFuelTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMMicroplotFuelName);
+//                frmMain.g_oTables.m_oFIAPlot.CreateDWMResidualPileTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMResidualPileName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMTransectSegmentTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName);
+//                frmMain.g_oTables.m_oFIAPlot.CreateDWMVisitTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMVisitName);
+
+                //Ref Forest Type [Group] tables for DuffLitter equations
+			    frmMain.g_oTables.m_oFIAPlot.CreateRefForestTypeTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultRefForestTypeName);
+			    frmMain.g_oTables.m_oFIAPlot.CreateRefForestTypeGroupTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultRefForestTypeGroupName);
+
+                //TODO: Growth Tables?? (or do they come from Oracle separately?)
+
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
 				//
 				//fvsmaster file
@@ -1503,6 +1519,47 @@ namespace FIA_Biosum_Manager
                              "'" + Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "');";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
 
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('DWM COARSE WOODY DEBRIS'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'master.mdb'," +
+                        "'" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('DWM DUFF LITTER FUEL'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'master.mdb'," +
+                        "'" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('DWM FINE WOODY DEBRIS'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'master.mdb'," +
+                        "'" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+                    
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('DWM TRANSECT SEGMENT'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'master.mdb'," +
+                        "'" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('REF FOREST TYPE'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'master.mdb'," +
+                        "'" + frmMain.g_oTables.m_oFIAPlot.DefaultRefForestTypeName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('REF FOREST TYPE GROUP'," +
+                        "'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," +
+                        "'master.mdb'," +
+                        "'" + frmMain.g_oTables.m_oFIAPlot.DefaultRefForestTypeGroupName + "');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
 
                     frmMain.g_oGeneralMacroSubstitutionVariable_Collection.Item(frmMain.PROJDIR).VariableSubstitutionString = this.txtRootDirectory.Text.Trim();
 					

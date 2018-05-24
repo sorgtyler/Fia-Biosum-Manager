@@ -2882,7 +2882,15 @@ namespace FIA_Biosum_Manager
 			public string DefaultSiteTreeTableDbFile {get {return @"db\master.mdb";}}
 			public string DefaultSiteTreeTableName {get {return "sitetree";}}
 
-
+            public string DefaultDWMCoarseWoodyDebrisName {get { return "DWM_COARSE_WOODY_DEBRIS"; }}
+            public string DefaultDWMDuffLitterFuelName {get { return "DWM_DUFF_LITTER_FUEL"; }}
+            public string DefaultDWMFineWoodyDebrisName {get { return "DWM_FINE_WOODY_DEBRIS"; }}
+            public string DefaultDWMMicroplotFuelName {get { return "DWM_MICROPLOT_FUEL"; }}
+            public string DefaultDWMResidualPileName {get { return "DWM_RESIDUAL_PILE"; }}
+            public string DefaultDWMTransectSegmentName {get { return "DWM_TRANSECT_SEGMENT"; }}
+            public string DefaultDWMVisitName {get { return "DWM_VISIT"; }}
+            public string DefaultRefForestTypeName {get {return "REF_FOREST_TYPE";}}
+            public string DefaultRefForestTypeGroupName {get {return "REF_FOREST_TYPE_GROUP";}}
 
 
 			public void CreatePlotTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
@@ -3286,6 +3294,454 @@ namespace FIA_Biosum_Manager
                     "adj_factor_micr DECIMAL (5,4)," +
                     "biosum_status_cd BYTE)";
             }
+
+		    public void CreateDWMCoarseWoodyDebrisTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMCoarseWoodyDebrisTableSQL(p_strTableName));
+		        CreateDWMCoarseWoodyDebrisTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMCoarseWoodyDebrisTableIndexes(ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMCoarseWoodyDebrisTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id text(25)," + 
+		               "CN TEXT(34)," +
+		               "PLT_CN TEXT(34)," +
+		               "INVYR LONG," +
+		               "STATECD LONG," +
+		               "COUNTYCD LONG," +
+		               "PLOT LONG," +
+		               "SUBP LONG," +
+		               "TRANSECT LONG," +
+		               "CWDID DOUBLE," +
+		               "MEASYEAR LONG," +
+		               "CONDID LONG," +
+		               "SLOPDIST DOUBLE," +
+		               "HORIZ_DIST DOUBLE," +
+		               "SPCD LONG," +
+		               "DECAYCD LONG," +
+		               "TRANSDIA LONG," +
+		               "SMALLDIA LONG," +
+		               "LARGEDIA LONG," +
+		               "LENGTH LONG," +
+		               "HOLLOWCD TEXT(1)," +
+		               "CWDHSTCD LONG," +
+		               "VOLCF DOUBLE," +
+		               "DRYBIO DOUBLE," +
+		               "CARBON DOUBLE," +
+		               "COVER_PCT DOUBLE," +
+		               "LPA_UNADJ DOUBLE," +
+		               "LPA_PLOT DOUBLE," +
+		               "LPA_COND DOUBLE," +
+		               "LPA_UNADJ_RGN DOUBLE," +
+		               "LPA_PLOT_RGN DOUBLE," +
+		               "LPA_COND_RGN DOUBLE," +
+		               "COVER_PCT_RGN LONG," +
+		               "CHARRED_CD LONG," +
+		               "ORNTCD_PNWRS TEXT(1)," +
+		               "CREATED_BY TEXT(30)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_BY TEXT(30)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "MODIFIED_IN_INSTANCE TEXT(6)," +
+		               "CWD_SAMPLE_METHOD TEXT(6)," +
+		               "HOLLOW_DIA LONG," +
+		               "HORIZ_DIST_CD LONG," +
+		               "INCLINATION LONG," +
+		               "LARGE_END_DIA_CLASS LONG," +
+		               "LENGTH_CD LONG," +
+		               "VOLCF_AC_UNADJ DOUBLE," +
+		               "VOLCF_AC_PLOT DOUBLE," +
+		               "VOLCF_AC_COND DOUBLE," +
+		               "DRYBIO_AC_UNADJ DOUBLE," +
+		               "DRYBIO_AC_PLOT DOUBLE," +
+		               "DRYBIO_AC_COND DOUBLE," +
+		               "CARBON_AC_UNADJ DOUBLE," +
+		               "CARBON_AC_PLOT DOUBLE," +
+		               "CARBON_AC_COND DOUBLE)";
+		    }
+
+		    public void CreateDWMFineWoodyDebrisTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMFineWoodyDebrisTableSQL(p_strTableName));
+		        CreateDWMFineWoodyDebrisTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMFineWoodyDebrisTableIndexes(ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMFineWoodyDebrisTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id text(25)," + 
+		               "CN TEXT(34)," +
+		               "PLT_CN TEXT(34)," +
+		               "INVYR LONG," +
+		               "STATECD LONG," +
+		               "COUNTYCD LONG," +
+		               "PLOT LONG," +
+		               "TRANSECT LONG," +
+		               "SUBP LONG," +
+		               "CONDID LONG," +
+		               "MEASYEAR LONG," +
+		               "SMALLCT LONG," +
+		               "MEDIUMCT LONG," +
+		               "LARGECT LONG," +
+		               "RSNCTCD LONG," +
+		               "PILESCD LONG," +
+		               "SMALL_TL_COND DOUBLE," +
+		               "SMALL_TL_PLOT DOUBLE," +
+		               "SMALL_TL_UNADJ DOUBLE," +
+		               "MEDIUM_TL_COND DOUBLE," +
+		               "MEDIUM_TL_PLOT DOUBLE," +
+		               "MEDIUM_TL_UNADJ DOUBLE," +
+		               "LARGE_TL_COND DOUBLE," +
+		               "LARGE_TL_PLOT DOUBLE," +
+		               "LARGE_TL_UNADJ DOUBLE," +
+		               "CREATED_BY TEXT(30)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_BY TEXT(30)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "MODIFIED_IN_INSTANCE TEXT(6)," +
+		               "FWD_STATUS_CD LONG," +
+		               "FWD_NONSAMPLE_REASN_CD LONG," +
+		               "FWD_SAMPLE_METHOD TEXT(6)," +
+		               "SLOPE LONG)";
+		    }
+
+		    public void CreateDWMDuffLitterFuelTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMDuffLitterFuelTableSQL(p_strTableName));
+		        CreateDWMDuffLitterFuelTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMDuffLitterFuelTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn,
+		        string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMDuffLitterFuelTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id text(25)," + 
+		               "CN TEXT(34)," +
+		               "PLT_CN TEXT(34)," +
+		               "INVYR LONG," +
+		               "STATECD LONG," +
+		               "COUNTYCD LONG," +
+		               "PLOT LONG," +
+		               "TRANSECT LONG," +
+		               "SUBP LONG," +
+		               "SMPLOCCD LONG," +
+		               "MEASYEAR LONG," +
+		               "CONDID LONG," +
+		               "DUFFDEP DOUBLE," +
+		               "LITTDEP DOUBLE," +
+		               "FUELDEP DOUBLE," +
+		               "CREATED_BY TEXT(30)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_BY TEXT(30)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "MODIFIED_IN_INSTANCE TEXT(6)," +
+		               "DLF_SAMPLE_METHOD TEXT(6)," +
+		               "DUFF_METHOD LONG," +
+		               "DUFF_NONSAMPLE_REASN_CD LONG," +
+		               "LITTER_METHOD LONG," +
+		               "LITTER_NONSAMPLE_REASN_CD LONG," +
+		               "FUELBED_METHOD LONG," +
+		               "FUELBED_NONSAMPLE_REASN_CD LONG)";
+		    }
+
+		    public void CreateDWMMicroplotFuelTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMMicroplotFuelTableSQL(p_strTableName));
+		        CreateDWMMicroplotFuelTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMMicroplotFuelTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn,
+		        string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMMicroplotFuelTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id text(25)," + 
+		               "CN TEXT(34)," +
+		               "PLT_CN TEXT(34)," +
+		               "INVYR LONG," +
+		               "STATECD LONG," +
+		               "COUNTYCD LONG," +
+		               "PLOT LONG," +
+		               "SUBP LONG," +
+		               "MEASYEAR LONG," +
+		               "LVSHRBCD LONG," +
+		               "DSHRBCD LONG," +
+		               "LVHRBCD LONG," +
+		               "DHRBCD LONG," +
+		               "LITTERCD DOUBLE," +
+		               "LVSHRBHT DOUBLE," +
+		               "DSHRBHT DOUBLE," +
+		               "LVHRBHT DOUBLE," +
+		               "DHRBHT DOUBLE," +
+		               "CREATED_BY TEXT(30)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_BY TEXT(30)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "MODIFIED_IN_INSTANCE TEXT(6)," +
+		               "MICR_SAMPLE_METHOD TEXT(6))";
+		    }
+
+		    public void CreateDWMResidualPileTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMResidualPileTableSQL(p_strTableName));
+		        CreateDWMResidualPileTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMResidualPileTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn,
+		        string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMResidualPileTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id text(25)," + 
+		               "CN TEXT(255)," +
+		               "PLT_CN TEXT(255)," +
+		               "INVYR LONG," +
+		               "STATECD LONG," +
+		               "COUNTYCD LONG," +
+		               "PLOT LONG," +
+		               "SUBP LONG," +
+		               "PILE LONG," +
+		               "MEASYEAR LONG," +
+		               "CONDID LONG," +
+		               "SHAPECD LONG," +
+		               "AZIMUTH LONG," +
+		               "DENSITY LONG," +
+		               "HEIGHT1 LONG," +
+		               "WIDTH1 LONG," +
+		               "LENGTH1 LONG," +
+		               "HEIGHT2 LONG," +
+		               "WIDTH2 LONG," +
+		               "LENGTH2 LONG," +
+		               "VOLCF TEXT(255)," +
+		               "DRYBIO TEXT(255)," +
+		               "CARBON TEXT(255)," +
+		               "PPA_UNADJ TEXT(255)," +
+		               "PPA_PLOT TEXT(255)," +
+		               "PPA_COND TEXT(255)," +
+		               "CREATED_BY TEXT(255)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(255)," +
+		               "MODIFIED_BY TEXT(255)," +
+		               "MODIFIED_IN_INSTANCE TEXT(255)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "COMP_HT LONG," +
+		               "DECAYCD LONG," +
+		               "HORIZ_BEGNDIST SINGLE," +
+		               "HORIZ_ENDDIST SINGLE," +
+		               "PILE_SAMPLE_METHOD TEXT(6)," +
+		               "SPCD LONG," +
+		               "TRANSECT LONG)";
+		    }
+
+		    public void CreateDWMTransectSegmentTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMTransectSegmentTableSQL(p_strTableName));
+		        CreateDWMTransectSegmentTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMTransectSegmentTableIndexes(ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMTransectSegmentTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+		               "biosum_cond_id text(25)," +
+		               "CN TEXT(34)," +
+		               "PLT_CN TEXT(34)," +
+		               "INVYR LONG," +
+		               "STATECD LONG," +
+		               "COUNTYCD LONG," +
+		               "PLOT LONG," +
+		               "SUBP LONG," +
+		               "TRANSECT LONG," +
+		               "SEGMNT LONG," +
+		               "MEASYEAR LONG," +
+		               "CONDID LONG," +
+		               "SLOPE_BEGNDIST DOUBLE," +
+		               "SLOPE_ENDDIST DOUBLE," +
+		               "SLOPE LONG," +
+		               "HORIZ_LENGTH DOUBLE," +
+		               "HORIZ_BEGNDIST DOUBLE," +
+		               "HORIZ_ENDDIST DOUBLE," +
+		               "CREATED_BY TEXT(30)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_BY TEXT(30)," +
+		               "MODIFIED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "SEGMNT_STATUS_CD LONG," +
+		               "SEGMNT_NONSAMPLE_REASN_CD LONG)";
+		    }
+
+		    public void CreateDWMVisitTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMVisitTableSQL(p_strTableName));
+		        CreateDWMVisitTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMVisitTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn,
+		        string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMVisitTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+		               "biosum_cond_id text(25)," +
+		               "CN TEXT(255)," +
+		               "PLT_CN TEXT(255)," +
+		               "INVYR LONG," +
+		               "STATECD LONG," +
+		               "COUNTYCD LONG," +
+		               "PLOT LONG," +
+		               "MEASDAY LONG," +
+		               "MEASMON LONG," +
+		               "MEASYEAR LONG," +
+		               "QASTATCD LONG," +
+		               "CRWTYPCD LONG," +
+		               "SMPKNDCD LONG," +
+		               "CREATED_BY TEXT(255)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(255)," +
+		               "MODIFIED_BY TEXT(255)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "MODIFIED_IN_INSTANCE TEXT(255)," +
+		               "CWD_SAMPLE_METHOD TEXT(255)," +
+		               "FWD_SAMPLE_METHOD TEXT(255)," +
+		               "MICR_SAMPLE_METHOD TEXT(255)," +
+		               "DLF_SAMPLE_METHOD TEXT(255)," +
+		               "PILE_SAMPLE_METHOD TEXT(255)," +
+		               "DWM_SAMPLING_STATUS_CD LONG," +
+		               "DWM_NBR_SUBP LONG," +
+		               "DWM_NBR_SUBP_TRANSECT LONG," +
+		               "DWM_SUBPLIST LONG," +
+		               "DWM_TRANSECT_LENGTH SINGLE)";
+		    }
+
+		    public void CreateRefForestTypeTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateRefForestTypeTableSQL(p_strTableName));
+		        CreateRefForestTypeTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateRefForestTypeTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn,
+		        string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "`value`");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "typgrpcd");
+		    }
+
+		    public string CreateRefForestTypeTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+		               "biosum_cond_id text(25)," +
+		               "`VALUE` LONG," +
+		               "MEANING TEXT(80)," +
+		               "TYPGRPCD LONG," +
+		               "MANUAL_START SINGLE," +
+		               "MANUAL_END SINGLE," +
+		               "ALLOWED_IN_FIELD TEXT(1)," +
+		               "CREATED_BY TEXT(30)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_BY TEXT(30)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "MODIFIED_IN_INSTANCE TEXT(6))";
+		    }
+
+		    public void CreateRefForestTypeGroupTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateRefForestTypeGroupTableSQL(p_strTableName));
+		        CreateRefForestTypeGroupTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateRefForestTypeGroupTableIndexes(ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn,
+		        string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "`value`");
+		    }
+
+		    public string CreateRefForestTypeGroupTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+		               "biosum_cond_id text(25)," +
+		               "`VALUE` LONG," +
+		               "MEANING TEXT(80)," +
+		               "ABBR TEXT(40)," +
+		               "DUFF_DENSITY DOUBLE," +
+		               "DUFF_CARBON_RATIO DOUBLE," +
+		               "LITTER_DENSITY DOUBLE," +
+		               "LITTER_CARBON_RATIO DOUBLE," +
+		               "PILE_DENSITY DOUBLE," +
+		               "PILE_CARBON_RATIO DOUBLE," +
+		               "PILE_DECAY_RATIO DOUBLE," +
+		               "FWD_DENSITY DOUBLE," +
+		               "FWD_CARBON_RATIO DOUBLE," +
+		               "FWD_DECAY_RATIO DOUBLE," +
+		               "FWD_SMALL_QMD DOUBLE," +
+		               "FWD_MEDIUM_QMD DOUBLE," +
+		               "FWD_LARGE_QMD DOUBLE," +
+		               "CREATED_BY TEXT(30)," +
+		               "CREATED_DATE DATETIME," +
+		               "CREATED_IN_INSTANCE TEXT(6)," +
+		               "MODIFIED_BY TEXT(30)," +
+		               "MODIFIED_DATE DATETIME," +
+		               "MODIFIED_IN_INSTANCE TEXT(6))";
+		    }
+
+		    //TODO: Growth Table functions here
+
 		}
         public class Processor
         {
