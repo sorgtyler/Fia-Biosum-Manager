@@ -3312,7 +3312,8 @@ namespace FIA_Biosum_Manager
 		    public string CreateDWMCoarseWoodyDebrisTableSQL(string p_strTableName)
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
-                       "biosum_cond_id text(25)," + 
+		               "biosum_cond_id text(25)," +
+		               "biosum_status_cd BYTE," +
 		               "CN TEXT(34)," +
 		               "PLT_CN TEXT(34)," +
 		               "INVYR LONG," +
@@ -3388,6 +3389,7 @@ namespace FIA_Biosum_Manager
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
                        "biosum_cond_id text(25)," + 
+		               "biosum_status_cd BYTE," +
 		               "CN TEXT(34)," +
 		               "PLT_CN TEXT(34)," +
 		               "INVYR LONG," +
@@ -3442,6 +3444,7 @@ namespace FIA_Biosum_Manager
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
                        "biosum_cond_id text(25)," + 
+		               "biosum_status_cd BYTE," +
 		               "CN TEXT(34)," +
 		               "PLT_CN TEXT(34)," +
 		               "INVYR LONG," +
@@ -3485,10 +3488,12 @@ namespace FIA_Biosum_Manager
 		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
 		    }
 
+
+            //Can't have biosum_cond_id because no condid
 		    public string CreateDWMMicroplotFuelTableSQL(string p_strTableName)
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
-                       "biosum_cond_id text(25)," + 
+		               "biosum_status_cd BYTE," +
 		               "CN TEXT(34)," +
 		               "PLT_CN TEXT(34)," +
 		               "INVYR LONG," +
@@ -3533,6 +3538,7 @@ namespace FIA_Biosum_Manager
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
                        "biosum_cond_id text(25)," + 
+		               "biosum_status_cd BYTE," +
 		               "CN TEXT(255)," +
 		               "PLT_CN TEXT(255)," +
 		               "INVYR LONG," +
@@ -3591,6 +3597,7 @@ namespace FIA_Biosum_Manager
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
 		               "biosum_cond_id text(25)," +
+		               "biosum_status_cd BYTE," +
 		               "CN TEXT(34)," +
 		               "PLT_CN TEXT(34)," +
 		               "INVYR LONG," +
@@ -3635,7 +3642,8 @@ namespace FIA_Biosum_Manager
 		    public string CreateDWMVisitTableSQL(string p_strTableName)
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
-		               "biosum_cond_id text(25)," +
+		               //"biosum_cond_id text(25)," +
+		               "biosum_status_cd BYTE," +
 		               "CN TEXT(255)," +
 		               "PLT_CN TEXT(255)," +
 		               "INVYR LONG," +
@@ -3683,7 +3691,6 @@ namespace FIA_Biosum_Manager
 		    public string CreateRefForestTypeTableSQL(string p_strTableName)
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
-		               "biosum_cond_id text(25)," +
 		               "`VALUE` LONG," +
 		               "MEANING TEXT(80)," +
 		               "TYPGRPCD LONG," +
@@ -3715,7 +3722,6 @@ namespace FIA_Biosum_Manager
 		    public string CreateRefForestTypeGroupTableSQL(string p_strTableName)
 		    {
 		        return "CREATE TABLE " + p_strTableName + " (" +
-		               "biosum_cond_id text(25)," +
 		               "`VALUE` LONG," +
 		               "MEANING TEXT(80)," +
 		               "ABBR TEXT(40)," +
