@@ -2777,65 +2777,6 @@ namespace FIA_Biosum_Manager
                     //TODO: delete temp table later
                     m_intError = m_ado.m_intError;
                 }
-
-                //for assigning fvs_standinit.fuel_* columns to CWD and FWD
-                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
-                {
-                    m_ado.m_strSQL = "CREATE TABLE DWM_SIZE_CLASSES (" +
-                                     "size_class_name TEXT(255)," +
-                                     "lowerbound DOUBLE," +
-                                     "upperbound DOUBLE);"
-                    m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                    m_intError = m_ado.m_intError;
-
-                    string[][] dwm_size_class_thresholds = new string[][]
-                    {
-                        {"fuel_0_25", "0", ".25"},
-                        {"fuel_25_1", ".25", "1"},
-                        {"fuel_1_3", "1", "3"},
-                        {"fuel_3_6", "3", "6"},
-                        {"fuel_6_12", "6", "12"},
-                        {"fuel_12_20", "12", "20"},
-                        {"fuel_20_35", "20", "35"},
-                        {"fuel_35_50", "35", "50"},
-                        {"fuel_gt_50", "50", "999"}, //999 is also used as Brk_Dbh as an impossible diameter. 3x larger than largest tree alive
-                    };
-                    foreach (string[] row in dwm_size_class_thresholds)
-                    {
-                        m_ado.m_strSQL =
-                            String.Format(
-                                "INSERT INTO DWM_SIZE_CLASSES (size_class_name, lowerbound, upperbound) VALUES ({0}, {1}, {2})",
-                                row[0], row[1], row[2]);
-                        m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                        m_intError = m_ado.m_intError;
-                    }
-
-
-                    //For adding hard/soft to fuel column name (i.e., Fuel_0_25_H)
-                    m_ado.m_strSQL = "CREATE TABLE DWM_DECAY_CLASSES (" +
-                                     "lowerbound LONG," +
-                                     "upperbound LONG," +
-                                     "HardSoft TEXT(10)," +
-                                     "Abbreviation TEXT(1));";
-                    m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                    m_intError = m_ado.m_intError;
-
-                    string[][] dwm_decay_classes = new string[][]
-                    {
-                        {"Hard", "H", "1", "3"},
-                        {"Soft", "S", "4", "5"}
-                    }
-                    foreach (string[] row in dwm_size_class_thresholds)
-                    {
-                        m_ado.m_strSQL =
-                            String.Format(
-                                "INSERT INTO DWM_DECAY_CLASSES (HardSoft, Abbreviation, lowerbound, upperbound) VALUES ({0}, {1}, {2}, {3})",
-                                row[0], row[1], row[2], row[3]);
-                        m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                        m_intError = m_ado.m_intError;
-                    }
-                }
-
                 //DWM Coarse Woody Debris FIADB into Temp Table
                 if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
                 {
