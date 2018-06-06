@@ -69,7 +69,15 @@ namespace FIA_Biosum_Manager
 		 **RECORD TYPE B
 		 *******************************************************/
 		private string[] m_strSlfBLineArray;
-		/// <summary>
+
+	    private string m_strDwmCoarseWoodyDebrisTable;
+	    private string m_strDwmFineWoodyDebrisTable;
+	    private string m_strDwmTransectSegmentTable;
+	    private string m_strDwmDuffLitterTable;
+	    private string m_strRefForestTypeTable;
+	    private string m_strRefForestTypeGroupTable;
+
+	    /// <summary>
 		/// 0
 		/// </summary>
 		const int B_RECORDTYPE=0;
@@ -225,6 +233,14 @@ namespace FIA_Biosum_Manager
 			this.m_strTreeSpcTable = this.m_DataSource.getValidDataSourceTableName("TREE SPECIES");
 			this.m_strSiteTreeTable = this.m_DataSource.getValidDataSourceTableName("SITE TREE");
 			this.m_strFVSTreeSpcTable = this.m_DataSource.getValidDataSourceTableName("FVS TREE SPECIES");
+
+		    this.m_strDwmCoarseWoodyDebrisTable = m_DataSource.getValidDataSourceTableName("DWM COARSE WOODY DEBRIS");
+		    this.m_strDwmFineWoodyDebrisTable = m_DataSource.getValidDataSourceTableName("DWM FINE WOODY DEBRIS");
+		    this.m_strDwmTransectSegmentTable = m_DataSource.getValidDataSourceTableName("DWM TRANSECT SEGMENT");
+		    this.m_strDwmDuffLitterTable = m_DataSource.getValidDataSourceTableName("DWM DUFF LITTER FUEL");
+		    this.m_strRefForestTypeTable = m_DataSource.getValidDataSourceTableName("REF FOREST TYPE");
+		    this.m_strRefForestTypeGroupTable = m_DataSource.getValidDataSourceTableName("REF FOREST TYPE GROUP");
+
 			
 			if (this.m_strPlotTable.Trim().Length == 0) 
 			{
@@ -400,7 +416,7 @@ namespace FIA_Biosum_Manager
              * if there are no stands in the standlist dataset.
              */
 	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_StandInit_WorkTable"))
-	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.StandInit.DeleteWorkTable());
+	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.StandInit.DeleteFvsStandInitWorkTable());
 	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_TreeInit_WorkTable"))
 	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.TreeInit.DeleteWorkTable());
 	        frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTable(m_ado, m_ado.m_OleDbConnection,
@@ -476,6 +492,9 @@ namespace FIA_Biosum_Manager
                 string strStandInit = "FVS_StandInit"; //TODO: Add to fvs_input members?
                 string strSQL;
 
+                //Create FVS DWM Fuel_Model lookup table
+                CreateDwmFuelbedTypeCodeFvsConversionTable();
+
                 strSQL = Queries.FVS.FVSInput.StandInit.BulkImportStandDataFromBioSumMaster(m_strVariant,
                     strStandInitWorkTable, m_strCondTable, m_strPlotTable);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
@@ -484,12 +503,15 @@ namespace FIA_Biosum_Manager
                 if (GenerateSiteIndexAndSiteSpeciesSQL() == false)
                     return; //if m_intError translated to bool cond by refactoring tool
 
+                //DWM fuel data import
+                PopulateFuelColumns();
+
                 strSQL = Queries.FVS.FVSInput.StandInit.TranslateWorkTableToStandInitTable(strStandInitWorkTable,
                     strStandInit);
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
 
                 //Delete work table
-                strSQL = Queries.FVS.FVSInput.StandInit.DeleteWorkTable();
+                strSQL = Queries.FVS.FVSInput.StandInit.DeleteFvsStandInitWorkTable();
                 m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
 
                 //close connection to temp database
@@ -519,7 +541,66 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private bool GenerateSiteIndexAndSiteSpeciesSQL()
+	    private void CreateDwmFuelbedTypeCodeFvsConversionTable()
+	    {
+	        m_ado.SqlNonQuery(m_ado.m_OleDbConnection,
+	            Queries.FVS.FVSInput.StandInit.CreateDWMFuelbedTypCdToFVSConversionTable());
+	        m_intError = m_ado.m_intError;
+
+	        Dictionary<string, int> fuelModelNumbers = new Dictionary<string, int>
+	        {
+	            {"GR1", 101},
+	            {"GR2", 102},
+	            {"GR3", 103},
+	            {"GR4", 104},
+	            {"GR5", 105},
+	            {"GR6", 106},
+	            {"GR7", 107},
+	            {"GR8", 108},
+	            {"GR9", 109},
+	            {"GS1", 121},
+	            {"GS2", 122},
+	            {"GS3", 123},
+	            {"GS4", 124},
+	            {"SH1", 141},
+	            {"SH2", 142},
+	            {"SH3", 143},
+	            {"SH4", 144},
+	            {"SH5", 145},
+	            {"SH6", 146},
+	            {"SH7", 147},
+	            {"SH8", 148},
+	            {"SH9", 149},
+	            {"TU1", 161},
+	            {"TU2", 162},
+	            {"TU3", 163},
+	            {"TU4", 164},
+	            {"TU5", 165},
+	            {"TL1", 181},
+	            {"TL2", 182},
+	            {"TL3", 183},
+	            {"TL4", 184},
+	            {"TL5", 185},
+	            {"TL6", 186},
+	            {"TL7", 187},
+	            {"TL8", 188},
+	            {"TL9", 189},
+	            {"SB1", 201},
+	            {"SB2", 202},
+	            {"SB3", 203},
+	            {"SB4", 204}
+	        };
+
+	        foreach (string key in fuelModelNumbers.Keys)
+	        {
+	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection,
+	                String.Format("INSERT INTO Ref_DWM_Fuelbed_Type_Codes (dwm_fuelbed_typcd, fuel_model) VALUES (\'{0}\', {1}) ",
+	                    key, fuelModelNumbers[key]));
+	            m_intError = m_ado.m_intError;
+	        }
+	    }
+
+	    private bool GenerateSiteIndexAndSiteSpeciesSQL()
         {
             fvs_input.site_index oSiteIndex = new site_index();
             oSiteIndex.ado_data_access = m_ado;
@@ -592,6 +673,59 @@ namespace FIA_Biosum_Manager
             }
             return true;
         }
+
+	    private void PopulateFuelColumns()
+	    {
+            //TODO: sample size flag determined by sum of HORIZ_LENGTH in Transect segment table... If sum of horiz_length is 0 or null, all CWD bins should be null. Either don't import in first place or delete them later... if sum is non-zero, all CWD bins should be populated.
+            //alter table fvs_standinit add column ... TODO: add this to template fvsin
+
+	        //CWD
+	        m_ado.m_strSQL =
+	            Queries.FVS.FVSInput.StandInit.CalculateCoarseWoodyDebrisBiomassTonsPerAcre(m_strDwmCoarseWoodyDebrisTable, m_strDwmTransectSegmentTable);
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+
+            //todo: add column to FVS_StandInit for sum of horiz_length from transect segment table for each BSCID (CWD flag analyst uses to decide whether the data is useful)
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.UpdateFvsStandInitCoarseWoodyDebrisColumns();
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+
+
+
+	        //FWD
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.CalculateFineWoodyDebrisBiomassTonsPerAcre(new string[]
+	            {m_strDwmFineWoodyDebrisTable, m_strCondTable, m_strRefForestTypeTable, m_strRefForestTypeGroupTable});
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+            //TODO: Either filter out FWD aggregate rows where any of the TL columns are 0 or add IIF to the updateStandInit query to handle 0s so you don't divide by 0
+                //1)delete from dwm_fwd_aggregates_worktable where smallTL=0 or mediumTL=0 or largeTL=0
+                //(IIF smallTL>0, FWD biomass equation, null) *Null vs 0. Null means not sampled. 0 means 0. any *TL=0 means that whole stand should not have FWD samples... TODO: ASK JEREMY IF CWD DATA BUT NULL FWD DATA IS OKAY*
+            //TODO: TEMPORARY fix to avoid div by 0. need to handle these stands.
+	        m_ado.m_strSQL = "DELETE FROM DWM_FWD_Aggregates_WorkTable WHERE smallTL=0 OR mediumTL=0 OR largeTL=0;";
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+
+            //todo: add columns to FVS_StandInit for small/medium and large transect segment lengths table for each BSCID (FWD flags analyst uses to decide whether the data is useful)
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.UpdateFvsStandInitFineWoodyDebrisColumns();
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+
+
+
+	        //DuffLitter
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.CalculateDuffLitterBiomassTonsPerAcre(new string[]
+	            {m_strDwmDuffLitterTable, m_strCondTable, m_strRefForestTypeTable, m_strRefForestTypeGroupTable});
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+            //todo: add columns to FVS_StandInit for number of duff/litter pits per BSCID
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.UpdateFvsStandInitDuffLitterColumns();
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+
+
+	        //Cleanup
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteCoarseWoodyDebrisWorkTable();
+//	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteFineWoodyDebrisWorkTable();
+//	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteDuffLitterWorkTable();
+//	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+
+	        m_intError = m_ado.m_intError;
+	    }
 
 
         private void CreateFVSTreeInit()

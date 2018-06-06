@@ -2608,6 +2608,10 @@ namespace FIA_Biosum_Manager
                        "Fuel_gt_50_S DOUBLE," +
                        "Fuel_Litter DOUBLE," +
                        "Fuel_Duff DOUBLE," +
+                       "SmallMediumTransectSampleLengthSum DOUBLE," +
+                       "LargeTransectSampleLengthSum DOUBLE," +
+                       "CWDHorizontalLengthSum DOUBLE," +
+                       "NumDuffLitterPits LONG," +
                        "Photo_Ref LONG," +
                        "Photo_code CHAR(13)" +
                        ")";
@@ -2963,65 +2967,66 @@ namespace FIA_Biosum_Manager
 			public string CreateConditionTableSQL(string p_strTableName)
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id CHAR(25)," + 
-					"biosum_plot_id CHAR(24)," + 
-					"invyr INTEGER," + 
-					"condid BYTE," + 
-					"condprop DOUBLE," + 
-					"landclcd BYTE," + 
-					"fortypcd INTEGER," + 
-					"ground_land_class_pnw CHAR(3)," + 
-					"owncd INTEGER," + 
-					"owngrpcd INTEGER," + 
-					"reservcd BYTE," + 
-					"siteclcd BYTE," + 
-					"sibase INTEGER," + 
-					"sicond INTEGER," + 
-					"sisp INTEGER," + 
-					"slope INTEGER," + 
-					"aspect INTEGER," + 
-					"stdage INTEGER," + 
-					"stdszcd BYTE," + 
-					"habtypcd1 CHAR(10)," + 
-					"adforcd INTEGER," + 
-					"qmd_tot_cm SINGLE," + 
-					"hwd_qmd_tot_cm SINGLE," + 
-					"swd_qmd_tot_cm SINGLE," + 
-					"acres DOUBLE," + 
-					"unitcd LONG," + 
-					"vol_loc_grp CHAR(10)," + 
-					"tpacurr DOUBLE," + 
-					"hwd_tpacurr DOUBLE," + 
-					"swd_tpacurr DOUBLE," + 
-					"ba_ft2_ac DOUBLE," + 
-					"hwd_ba_ft2_ac DOUBLE," + 
-					"swd_ba_ft2_ac DOUBLE," + 
-					"vol_ac_grs_stem_ttl_ft3 DOUBLE," + 
-					"hwd_vol_ac_grs_stem_ttl_ft3 DOUBLE," + 
-					"swd_vol_ac_grs_stem_ttl_ft3 DOUBLE," + 
-					"vol_ac_grs_ft3 DOUBLE," + 
-					"hwd_vol_ac_grs_ft3 DOUBLE," + 
-					"swd_vol_ac_grs_ft3 DOUBLE," + 
-					"volcsgrs DOUBLE," + 
-					"hwd_volcsgrs DOUBLE," + 
-					"swd_volcsgrs DOUBLE," + 
-					"gsstkcd DOUBLE," + 
-					"alstkcd DOUBLE," + 
-					"sdi DOUBLE," + 
-					"ccf DOUBLE," + 
-					"topht DOUBLE," + 
-					"condprop_unadj DOUBLE," + 
+                    "biosum_cond_id CHAR(25)," + 
+                    "biosum_plot_id CHAR(24)," + 
+                    "invyr INTEGER," + 
+                    "condid BYTE," + 
+                    "condprop DOUBLE," + 
+                    "landclcd BYTE," + 
+                    "fortypcd INTEGER," + 
+                    "ground_land_class_pnw CHAR(3)," + 
+                    "owncd INTEGER," + 
+                    "owngrpcd INTEGER," + 
+                    "reservcd BYTE," + 
+                    "siteclcd BYTE," + 
+                    "sibase INTEGER," + 
+                    "sicond INTEGER," + 
+                    "sisp INTEGER," + 
+                    "slope INTEGER," + 
+                    "aspect INTEGER," + 
+                    "stdage INTEGER," + 
+                    "stdszcd BYTE," + 
+                    "habtypcd1 CHAR(10)," + 
+                    "adforcd INTEGER," + 
+                    "qmd_tot_cm SINGLE," + 
+                    "hwd_qmd_tot_cm SINGLE," + 
+                    "swd_qmd_tot_cm SINGLE," + 
+                    "acres DOUBLE," + 
+                    "unitcd LONG," + 
+                    "vol_loc_grp CHAR(10)," + 
+                    "tpacurr DOUBLE," + 
+                    "hwd_tpacurr DOUBLE," + 
+                    "swd_tpacurr DOUBLE," + 
+                    "ba_ft2_ac DOUBLE," + 
+                    "hwd_ba_ft2_ac DOUBLE," + 
+                    "swd_ba_ft2_ac DOUBLE," + 
+                    "vol_ac_grs_stem_ttl_ft3 DOUBLE," + 
+                    "hwd_vol_ac_grs_stem_ttl_ft3 DOUBLE," + 
+                    "swd_vol_ac_grs_stem_ttl_ft3 DOUBLE," + 
+                    "vol_ac_grs_ft3 DOUBLE," + 
+                    "hwd_vol_ac_grs_ft3 DOUBLE," + 
+                    "swd_vol_ac_grs_ft3 DOUBLE," + 
+                    "volcsgrs DOUBLE," + 
+                    "hwd_volcsgrs DOUBLE," + 
+                    "swd_volcsgrs DOUBLE," + 
+                    "gsstkcd DOUBLE," + 
+                    "alstkcd DOUBLE," + 
+                    "sdi DOUBLE," + 
+                    "ccf DOUBLE," + 
+                    "topht DOUBLE," + 
+                    "condprop_unadj DOUBLE," + 
                     "micrprop_unadj DOUBLE," + 
                     "subpprop_unadj DOUBLE," + 
                     "macrprop_unadj DOUBLE," + 
-					"harvest_technique CHAR(30)," + 
-					"cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," + 
-					"cond_accessible_yn CHAR(1) DEFAULT 'Y'," + 
-					"fvs_filename CHAR(12)," +
-					"idb_cond_id LONG," + 
-					"idb_plot_id LONG," + 
-					"cn CHAR(34)," + 
-					"biosum_status_cd BYTE)";
+                    "harvest_technique CHAR(30)," + 
+                    "cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," + 
+                    "cond_accessible_yn CHAR(1) DEFAULT 'Y'," + 
+                    "fvs_filename CHAR(12)," +
+                    "idb_cond_id LONG," + 
+                    "idb_plot_id LONG," + 
+                    "cn CHAR(34)," + 
+                    "biosum_status_cd BYTE, " +
+                    "dwm_fuelbed_typcd TEXT(3))";
 
 			}
 			public void CreateTreeTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)

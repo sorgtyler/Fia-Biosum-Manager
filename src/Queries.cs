@@ -3065,18 +3065,11 @@ namespace FIA_Biosum_Manager
                                "f.drybiot=o.DRYBIOT_CALC," +
                                "f.drybiom=o.DRYBIOM_CALC," + 
                                "f.voltsgrs=o.VOLTSGRS_CALC" ;
-                }
+		        }
+		    }
 
-               
-                
-
-
-                
-            }
-
-
-            public class FVSInput
-            {
+		    public class FVSInput
+		    {
                 FVSInput()
                 {
                 }
@@ -3088,6 +3081,11 @@ namespace FIA_Biosum_Manager
                     {
                     }
 
+                    public static string CreateDWMFuelbedTypCdToFVSConversionTable()
+                    {
+                        return "CREATE TABLE Ref_DWM_Fuelbed_Type_Codes (dwm_fuelbed_typcd TEXT(3), fuel_model LONG);";
+                    }
+
                     public static string BulkImportStandDataFromBioSumMaster(string strVariant, string strDestTable,
                         string strCondTableName, string strPlotTableName)
                     {
@@ -3096,19 +3094,140 @@ namespace FIA_Biosum_Manager
                             " (Stand_ID, Variant, Inv_Year, Latitude, Longitude, Location, PV_Code, " +
                             "Age, Aspect, Slope, ElevFt, Basal_Area_Factor, Inv_Plot_Size, Brk_DBH, " +
                             "Num_Plots, NonStk_Plots, Sam_Wt, Stk_Pcnt, DG_Trans, DG_Measure, " +
-                            "HTG_Trans, HTG_Measure, Mort_Measure, State, County) ";
+                            "HTG_Trans, HTG_Measure, Mort_Measure, Forest_Type, State, County, Fuel_Model) ";
                         string strBioSumWorkTableSelectStmt =
                             "SELECT c.biosum_cond_id, p.fvs_variant, p.measyear, p.lat, p.lon, IIF(c.adforcd is null, 0, c.adforcd), " +
                             "c.habtypcd1, c.stdage, c.aspect, c.slope, p.elev, 0, 1, 999, 1, 0, 1,  " +
-                            "iif(c.landclcd is null, 0, c.landclcd), 1, 10, 1, 5, 5, p.statecd, p.countycd ";
+                            "iif(c.landclcd is null, 0, c.landclcd), 1, 10, 1, 5, 5, c.fortypcd, p.statecd, p.countycd, iif(c.dwm_fuelbed_typcd is null, null, f.fuel_model) ";
                         string strFromTableExpr =
-                            "FROM " + strCondTableName + " c INNER JOIN " + strPlotTableName +
-                            " p ON c.biosum_plot_id = p.biosum_plot_id ";
+                            String.Format("FROM ({0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id) " +
+                                          //left join so cond records without matching fuel_model still imported
+                                          "LEFT JOIN {2} f ON c.dwm_fuelbed_typcd=f.dwm_fuelbed_typcd ", 
+                                strCondTableName, strPlotTableName, "Ref_DWM_Fuelbed_Type_Codes");
                         string strFilters = "WHERE c.landclcd = 1 AND ucase(trim(p.fvs_variant)) = \'" +
                                             strVariant.Trim().ToUpper() + "\'";
 
                         return strInsertIntoStandInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
                                strFilters;
+                    }
+
+                    public static string CalculateCoarseWoodyDebrisBiomassTonsPerAcre(string strCoarseWoodyDebrisTable, string strTransectSegmentTable)
+                    {
+                        return String.Format(
+                            "SELECT cwd.biosum_cond_id, " +
+                            "SUM(IIF((cwd.transdia >= 3 AND cwd.transdia < 6) AND (cwd.decaycd IN (1,2,3)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_3_6_H, " +
+                            "SUM(IIF((cwd.transdia >= 6 AND cwd.transdia < 12) AND (cwd.decaycd IN (1,2,3)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_6_12_H, " +
+                            "SUM(IIF((cwd.transdia >= 12 AND cwd.transdia < 20) AND (cwd.decaycd IN (1,2,3)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_12_20_H, " +
+                            "SUM(IIF((cwd.transdia >= 20 AND cwd.transdia < 35) AND (cwd.decaycd IN (1,2,3)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_20_35_H, " +
+                            "SUM(IIF((cwd.transdia >= 35 AND cwd.transdia < 50) AND (cwd.decaycd IN (1,2,3)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_35_50_H, " +
+                            "SUM(IIF((cwd.transdia >= 50 AND cwd.transdia < 999) AND (cwd.decaycd IN (1,2,3)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_gt_50_H, " +
+                            "SUM(IIF((cwd.transdia >= 3 AND cwd.transdia < 6) AND (cwd.decaycd IN (4,5)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_3_6_S, " +
+                            "SUM(IIF((cwd.transdia >= 6 AND cwd.transdia < 12) AND (cwd.decaycd IN (4,5)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_6_12_S, " +
+                            "SUM(IIF((cwd.transdia >= 12 AND cwd.transdia < 20) AND (cwd.decaycd IN (4,5)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_12_20_S, " +
+                            "SUM(IIF((cwd.transdia >= 20 AND cwd.transdia < 35) AND (cwd.decaycd IN (4,5)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_20_35_S, " +
+                            "SUM(IIF((cwd.transdia >= 35 AND cwd.transdia < 50) AND (cwd.decaycd IN (4,5)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_35_50_S, " +
+                            "SUM(IIF((cwd.transdia >= 50 AND cwd.transdia < 999) AND (cwd.decaycd IN (4,5)), cwd.DRYBIO_AC_COND, 0))/2000.0 as fuel_gt_50_S, " +
+                            "SUM(ts.horiz_length) as CWDHorizontalLengthSum " +
+                            "INTO DWM_CWD_Aggregates_WorkTable FROM {0} cwd INNER JOIN {1} ts ON cwd.biosum_cond_id=ts.biosum_cond_id " +
+                            "GROUP BY cwd.biosum_cond_id;", strCoarseWoodyDebrisTable, strTransectSegmentTable);
+                    }
+
+                    public static string UpdateFvsStandInitCoarseWoodyDebrisColumns()
+                    {
+                        return
+                            "UPDATE FVS_StandInit_WorkTable fvs " +
+                            "INNER JOIN DWM_CWD_Aggregates_WorkTable cwd ON fvs.Stand_ID=cwd.biosum_cond_id " +
+                            "SET fvs.fuel_3_6_H=cwd.fuel_3_6_H, " +
+                            "fvs.fuel_6_12_H=cwd.fuel_6_12_H, " +
+                            "fvs.fuel_12_20_H=cwd.fuel_12_20_H, " +
+                            "fvs.fuel_20_35_H=cwd.fuel_20_35_H, " +
+                            "fvs.fuel_35_50_H=cwd.fuel_35_50_H, " +
+                            "fvs.fuel_gt_50_H=cwd.fuel_gt_50_H, " +
+                            "fvs.fuel_3_6_S=cwd.fuel_3_6_S, " +
+                            "fvs.fuel_6_12_S=cwd.fuel_6_12_S, " +
+                            "fvs.fuel_12_20_S=cwd.fuel_12_20_S, " +
+                            "fvs.fuel_20_35_S=cwd.fuel_20_35_S, " +
+                            "fvs.fuel_35_50_S=cwd.fuel_35_50_S, " +
+                            "fvs.fuel_gt_50_S=cwd.fuel_gt_50_S, " +
+                            "fvs.CWDHorizontalLengthSum=cwd.CWDHorizontalLengthSum;";
+                    }
+
+                    public static string DeleteCoarseWoodyDebrisWorkTable()
+                    {
+                        return "DROP TABLE DWM_CWD_Aggregates_WorkTable;";
+                    }
+
+                    public static string CalculateFineWoodyDebrisBiomassTonsPerAcre(string[] tables)
+                    {
+                        //TODO: Sample size is the total transect length in the condition in feet. small=medium, large columns. sum of sampled length on whole condition.
+                        //small_tl_cond =? medium_tl_cond, large_tl_cond (should I sum them?)
+                        return String.Format(
+                            "SELECT fwd.biosum_cond_id, sum(fwd.smallct) as smallTotal, first(fwd.small_tl_cond) as smallTL, " +
+                            "sum(fwd.mediumct) as mediumTotal, first(fwd.medium_tl_cond) as mediumTL, " +
+                            "sum(fwd.largect) as largeTotal, first(fwd.large_tl_cond) as largeTL, " +
+                            "first(rftg.fwd_decay_ratio) as decayRatio, first(rftg.fwd_density) as bulkDensity, " +
+                            "first(rftg.fwd_small_qmd) as smallQMD,  " +
+                            "first(rftg.fwd_medium_qmd) as mediumQMD,  " +
+                            "first(rftg.fwd_large_qmd) as largeQMD, " +
+                            "sum((small_tl_cond+medium_tl_cond)/2.0) as SmallMediumTransectSampleLengthSum, " +
+                            "sum(large_tl_cond) as LargeTransectSampleLengthSum, " +
+                            "((1.0/2000.0)*(43560.0/144.0)*(3.141592654^2)/8.0) as scalingConstants " + //(1/2000 lbs->tons)
+                            "INTO DWM_FWD_Aggregates_WorkTable " +
+                            "FROM (({0} fwd INNER JOIN {1} c ON fwd.biosum_cond_id = c.biosum_cond_id) " +
+                            "INNER JOIN {2} rft ON c.fortypcd = rft.`VALUE`) " +
+                            "INNER JOIN {3} rftg ON rft.TYPGRPCD = rftg.`VALUE` " +
+                            "GROUP BY fwd.biosum_cond_id;", tables);
+                    }
+
+                    public static string UpdateFvsStandInitFineWoodyDebrisColumns()
+                    {
+                        return
+                            "UPDATE FVS_StandInit_WorkTable fvs INNER JOIN DWM_FWD_Aggregates_WorkTable fwd ON fvs.stand_id=fwd.biosum_cond_id SET " +
+                            "fvs.fuel_0_25_H=(fwd.scalingConstants * (fwd.smallTotal * fwd.smallQMD^2) / (fwd.smallTL)) * fwd.bulkDensity * fwd.decayRatio, " +
+                            "fvs.fuel_25_1_H=(fwd.scalingConstants * (fwd.mediumTotal * fwd.mediumQMD^2) / (fwd.mediumTL)) * fwd.bulkDensity * fwd.decayRatio, " +
+                            "fvs.fuel_1_3_H=(fwd.scalingConstants * (fwd.largeTotal * fwd.largeQMD^2) / (fwd.largeTL)) * fwd.bulkDensity * fwd.decayRatio, " +
+                            "fvs.fuel_0_25_S=0, fvs.fuel_25_1_S=0, fvs.fuel_1_3_S=0, " + //No soft/rotten FWD;
+                            "fvs.SmallMediumTransectSampleLengthSum=fwd.SmallMediumTransectSampleLengthSum," +
+                            "fvs.LargeTransectSampleLengthSum=fwd.LargeTransectSampleLengthSum;";
+                    }
+
+                    public static string DeleteFineWoodyDebrisWorkTable()
+                    {
+                        return "DROP TABLE DWM_FWD_Aggregates_WorkTable;";
+                    }
+
+                    public static string CalculateDuffLitterBiomassTonsPerAcre(string[] tables)
+                    {
+                        return String.Format(
+                            "SELECT dl.biosum_cond_id, " +
+                            "AVG(dl.duffdep) as avgDuffDep, " +
+                            "AVG(dl.littdep) as avgLittDep, " +
+                            "count(*) as numDuffLitterPits, " +
+                            "first(rftg.duff_density) as duffDensity, " +
+                            "first(rftg.litter_density) as litterDensity, " +
+                            "(avgDuffDep*duffDensity*1.815/2000.0) as fvs_fuel_duff_tonsPerAcre, " +
+                            "(avgLittDep*litterDensity*1.815/2000.0) as fvs_fuel_litter_tonsPerAcre " +
+                            "INTO DWM_DuffLitter_Aggregates_WorkTable " +
+                            "FROM ((({0} dl " +
+                            "INNER JOIN {1} c ON dl.biosum_cond_id = c.biosum_cond_id) " +
+                            "INNER JOIN {2} rft ON c.fortypcd = rft.`VALUE`) " +
+                            "INNER JOIN {3} rftg ON rft.TYPGRPCD = rftg.`VALUE`) " +
+                            "INNER JOIN FVS_StandInit_WorkTable fvs on dl.biosum_cond_id=fvs.stand_ID " +
+                            "GROUP BY dl.biosum_cond_id;", tables);
+                    }
+
+                    public static string UpdateFvsStandInitDuffLitterColumns()
+                    {
+                        return "UPDATE Fvs_StandInit_WorkTable fvs " +
+                               "INNER JOIN DWM_DuffLitter_Aggregates_WorkTable dl ON fvs.stand_id=dl.biosum_cond_id  " +
+                               "SET fvs.fuel_duff = dl.fvs_fuel_duff_tonsPerAcre, " +
+                               "fvs.fuel_litter = dl.fvs_fuel_litter_tonsPerAcre," +
+                               "fvs.NumDuffLitterPits = dl.numDuffLitterPits;";
+                    }
+
+                    public static string DeleteDuffLitterWorkTable()
+                    {
+                        return "DROP TABLE DWM_DuffLitter_Aggregates_WorkTable;";
                     }
 
                     public static string CreateSiteIndexDataset(string strVariant,
@@ -3143,7 +3262,9 @@ namespace FIA_Biosum_Manager
                             "Fuel_3_6_H, Fuel_6_12_H, Fuel_12_20_H, Fuel_20_35_H, Fuel_35_50_H, " +
                             "Fuel_gt_50_H, Fuel_0_25_S, Fuel_25_1_S, Fuel_1_3_S, Fuel_3_6_S, " +
                             "Fuel_6_12_S, Fuel_12_20_S, Fuel_20_35_S, Fuel_35_50_S, Fuel_gt_50_S, " +
-                            "Fuel_Litter, Fuel_Duff, Photo_Ref, Photo_code) ";
+                            "Fuel_Litter, Fuel_Duff, SmallMediumTransectSampleLengthSum, " +
+                            "LargeTransectSampleLengthSum, CWDHorizontalLengthSum, NumDuffLitterPits, " +
+                            "Photo_Ref, Photo_code) ";
                         string strBioSumWorkTableSelectStmt =
                             "SELECT Stand_ID, Variant, Inv_Year, " +
                             "Latitude, Longitude, Region, Forest, District, Compartment, " +
@@ -3156,7 +3277,9 @@ namespace FIA_Biosum_Manager
                             "Fuel_3_6_H, Fuel_6_12_H, Fuel_12_20_H, Fuel_20_35_H, Fuel_35_50_H, " +
                             "Fuel_gt_50_H, Fuel_0_25_S, Fuel_25_1_S, Fuel_1_3_S, Fuel_3_6_S, " +
                             "Fuel_6_12_S, Fuel_12_20_S, Fuel_20_35_S, Fuel_35_50_S, Fuel_gt_50_S, " +
-                            "Fuel_Litter, Fuel_Duff, Photo_Ref, Photo_code ";
+                            "Fuel_Litter, Fuel_Duff, SmallMediumTransectSampleLengthSum, " +
+                            "LargeTransectSampleLengthSum, CWDHorizontalLengthSum, NumDuffLitterPits, " +
+                            "Photo_Ref, Photo_code ";
                         string strFromTableExpr = "FROM " + strSourceTable + ";";
                         return strInsertIntoStandInit + strBioSumWorkTableSelectStmt + strFromTableExpr;
                     }
@@ -3169,7 +3292,7 @@ namespace FIA_Biosum_Manager
                             strStandID, strSiteSpecies, strSiteIndex);
                     }
 
-                    public static string DeleteWorkTable()
+                    public static string DeleteFvsStandInitWorkTable()
                     {
                         return "DROP TABLE FVS_StandInit_WorkTable;";
                     }
