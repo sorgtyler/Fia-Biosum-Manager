@@ -2608,10 +2608,10 @@ namespace FIA_Biosum_Manager
                        "Fuel_gt_50_S DOUBLE," +
                        "Fuel_Litter DOUBLE," +
                        "Fuel_Duff DOUBLE," +
-                       "SmallMediumTransectSampleLengthSum DOUBLE," +
-                       "LargeTransectSampleLengthSum DOUBLE," +
-                       "CWDHorizontalLengthSum DOUBLE," +
-                       "NumDuffLitterPits LONG," +
+                       "SmallMediumTotalLength DOUBLE," +
+                       "LargeTotalLength DOUBLE," +
+                       "CWDTotalLength DOUBLE," +
+                       "PitCount LONG," +
                        "Photo_Ref LONG," +
                        "Photo_code CHAR(13)" +
                        ")";
