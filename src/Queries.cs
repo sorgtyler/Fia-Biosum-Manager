@@ -3228,8 +3228,8 @@ namespace FIA_Biosum_Manager
                             "count(*) as NumRows, " +
                             "first(rftg.duff_density) as duffDensity, " +
                             "first(rftg.litter_density) as litterDensity, " +
-                            "(avgDuffDep*duffDensity*1.815/2000.0) as fvs_fuel_duff_tonsPerAcre, " +
-                            "(avgLittDep*litterDensity*1.815/2000.0) as fvs_fuel_litter_tonsPerAcre " +
+                            "(avgDuffDep*duffDensity*1.815) as fvs_fuel_duff_tonsPerAcre, " +
+                            "(avgLittDep*litterDensity*1.815) as fvs_fuel_litter_tonsPerAcre " +
                             "INTO DWM_DuffLitter_Aggregates_WorkTable " +
                             "FROM ((({0} dl " +
                             "INNER JOIN {1} c ON dl.biosum_cond_id = c.biosum_cond_id) " +
