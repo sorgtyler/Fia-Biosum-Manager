@@ -35,8 +35,7 @@ namespace FIA_Biosum_Manager
         string m_strDateTimeCreated = "";
         string m_strOPCOSTBatchFile="";
         private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_processor_debug.txt";
-        private string m_strOPCOSTRefPath = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-            "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
+        private string m_strOPCOSTRefPath;
         //@ToDo: Remove these when removing old Processor code; These variable stand-in for checkboxes that are removed
         bool m_blnLowSlope = true;
         bool m_blnSteepSlope = true;
@@ -261,6 +260,10 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug)
                 frmMain.g_oUtils.WriteText(strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
 
+            // INITIALIZE OPCOST REF PATH WHEN WE LOAD THE SCENARIO 
+            m_strOPCOSTRefPath = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
+                "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
+            
             if (m_oAdo != null && m_oAdo.m_OleDbConnection != null)
                 if (m_oAdo.m_OleDbConnection.State == System.Data.ConnectionState.Open) m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             cmbFilter.Items.Clear();
