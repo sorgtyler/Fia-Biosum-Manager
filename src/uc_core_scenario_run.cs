@@ -5278,7 +5278,7 @@ namespace FIA_Biosum_Manager
                 strWorseSql = strWorseSql.Substring(0, strWorseSql.Length - 1);
                 strWorseSql = "UPDATE cycle1_effective SET " + strWorseSql;
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "--Regression--\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "--Disimprovement--\r\n");
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + strWorseSql + "\r\n");
                 this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, strWorseSql);

@@ -3807,7 +3807,7 @@ namespace FIA_Biosum_Manager
                             p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strPostVarArray[y] + "\r\n";
                         strLine = strLine + "Treatment Improvement Expression: " +
                             p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strBetterExpr[y] + "\r\n";
-                        strLine = strLine + "Treatment Regression Expression: " +
+                        strLine = strLine + "Treatment Disimprovement Expression: " +
                             p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strWorseExpr[y] + "\r\n";
                         strLine = strLine + "Treatment Effective Expression: " +
                         p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strEffectiveExpr[y] + "\r\n";

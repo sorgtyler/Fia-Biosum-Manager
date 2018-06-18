@@ -126,7 +126,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ColumnHeader lvColPreVariableName;
 		private System.Windows.Forms.ColumnHeader lvColPostVariableName;
 		private System.Windows.Forms.ColumnHeader lvColVariableImprovement;
-		private System.Windows.Forms.ColumnHeader lvColVariableRegression;
+		private System.Windows.Forms.ColumnHeader lvColVariableDisimprovement;
 		private System.Windows.Forms.ColumnHeader lvColVariableEffective;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostAudit;
 		private System.Windows.Forms.Button btnFVSVariablesPrePostAudit;
@@ -532,7 +532,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "1",
             "Not Defined",
@@ -540,7 +540,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "2",
             "Not Defined",
@@ -548,7 +548,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "3",
             "Not Defined",
@@ -556,7 +556,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "4",
             "Not Defined",
@@ -575,7 +575,7 @@ namespace FIA_Biosum_Manager
             this.lvColPreVariableName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvColPostVariableName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvColVariableImprovement = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lvColVariableRegression = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvColVariableDisimprovement = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvColVariableEffective = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxFVSVariablesPrePostValuesButtons = new System.Windows.Forms.GroupBox();
             this.btnFVSVariablesPrePostValuesButtonsClearAll = new System.Windows.Forms.Button();
@@ -626,6 +626,8 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostVariable = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostVariable = new System.Windows.Forms.Panel();
             this.grpboxFVSVariablesPrePostVariableValues = new System.Windows.Forms.GroupBox();
+            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
+            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
             this.txtEffVarDescr = new System.Windows.Forms.TextBox();
             this.lblEffVarDescr = new System.Windows.Forms.Label();
             this.btnFVSVariablesPrePostVariableValue = new System.Windows.Forms.Button();
@@ -640,8 +642,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle = new System.Windows.Forms.Label();
             this.cmbFVSVariablesPrePost = new System.Windows.Forms.ComboBox();
             this.btnFVSVariablesPrePostGo = new System.Windows.Forms.Button();
-            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
-            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesPrePost.SuspendLayout();
             this.pnlFVSVariablesPrePost.SuspendLayout();
@@ -734,20 +734,20 @@ namespace FIA_Biosum_Manager
             this.lvColPreVariableName,
             this.lvColPostVariableName,
             this.lvColVariableImprovement,
-            this.lvColVariableRegression,
+            this.lvColVariableDisimprovement,
             this.lvColVariableEffective});
             this.lvFVSVariablesPrePostValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvFVSVariablesPrePostValues.GridLines = true;
             this.lvFVSVariablesPrePostValues.HideSelection = false;
-            listViewItem17.StateImageIndex = 0;
-            listViewItem18.StateImageIndex = 0;
-            listViewItem19.StateImageIndex = 0;
-            listViewItem20.StateImageIndex = 0;
+            listViewItem1.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 0;
+            listViewItem3.StateImageIndex = 0;
+            listViewItem4.StateImageIndex = 0;
             this.lvFVSVariablesPrePostValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem17,
-            listViewItem18,
-            listViewItem19,
-            listViewItem20});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4});
             this.lvFVSVariablesPrePostValues.Location = new System.Drawing.Point(8, 48);
             this.lvFVSVariablesPrePostValues.MultiSelect = false;
             this.lvFVSVariablesPrePostValues.Name = "lvFVSVariablesPrePostValues";
@@ -784,10 +784,10 @@ namespace FIA_Biosum_Manager
             this.lvColVariableImprovement.Text = "Improvement Expression Defined";
             this.lvColVariableImprovement.Width = 217;
             // 
-            // lvColVariableRegression
+            // lvColVariableDisimprovement
             // 
-            this.lvColVariableRegression.Text = "Regression Expression Defined";
-            this.lvColVariableRegression.Width = 112;
+            this.lvColVariableDisimprovement.Text = "Disimprovement Expression Defined";
+            this.lvColVariableDisimprovement.Width = 112;
             // 
             // lvColVariableEffective
             // 
@@ -1366,6 +1366,27 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostVariableValues.Text = "Stand Attribute";
             this.grpboxFVSVariablesPrePostVariableValues.Resize += new System.EventHandler(this.grpboxFVSVariablesPrePostVariableValues_Resize);
             // 
+            // lstFVSFieldsList
+            // 
+            this.lstFVSFieldsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSFieldsList.ItemHeight = 16;
+            this.lstFVSFieldsList.Location = new System.Drawing.Point(252, 21);
+            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
+            this.lstFVSFieldsList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSFieldsList.Sorted = true;
+            this.lstFVSFieldsList.TabIndex = 90;
+            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
+            // 
+            // lstFVSTablesList
+            // 
+            this.lstFVSTablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSTablesList.ItemHeight = 16;
+            this.lstFVSTablesList.Location = new System.Drawing.Point(11, 21);
+            this.lstFVSTablesList.Name = "lstFVSTablesList";
+            this.lstFVSTablesList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSTablesList.TabIndex = 89;
+            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
+            // 
             // txtEffVarDescr
             // 
             this.txtEffVarDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1489,25 +1510,25 @@ namespace FIA_Biosum_Manager
             "Select Variable 1",
             "Define Expression For What Constitutes Variable 1 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 1 Post-Treatment Regression (Wors" +
+            "Define Expression For What Constitutes Variable 1 Post-Treatment Disimprovement (Wors" +
                 "e)",
             "Define Expression For What Constitutes Variable 1 Effective Treatment",
             "Select Variable 2",
             "Define Expression For What Constitutes Variable 2 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 2 Post-Treatment Regression (Wors" +
+            "Define Expression For What Constitutes Variable 2 Post-Treatment Disimprovement (Wors" +
                 "e)",
             "Define Expression For What Constitutes Variable 2 Effective Treatment",
             "Select Variable 3",
             "Define Expression For What Constitutes Variable 3 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 3 Post-Treatment Regression (Wors" +
+            "Define Expression For What Constitutes Variable 3 Post-Treatment Disimprovement (Wors" +
                 "e)",
             "Define Expression For What Constitutes Variable 3 Effective Treatment",
             "Select Variable 4",
             "Define Expression For What Constitutes Variable 4 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 4 Post-Treatment Regression (Wors" +
+            "Define Expression For What Constitutes Variable 4 Post-Treatment Disimprovement (Wors" +
                 "e)",
             "Define Expression For What Constitutes Variable 4 Effective Treatment",
             "Define Expression For What Constitutes Overall Effectiveness"});
@@ -1525,27 +1546,6 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesPrePostGo.TabIndex = 6;
             this.btnFVSVariablesPrePostGo.Text = "Go";
             this.btnFVSVariablesPrePostGo.Click += new System.EventHandler(this.btnFVSVariablesPrePostGo_Click);
-            // 
-            // lstFVSTablesList
-            // 
-            this.lstFVSTablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstFVSTablesList.ItemHeight = 16;
-            this.lstFVSTablesList.Location = new System.Drawing.Point(11, 21);
-            this.lstFVSTablesList.Name = "lstFVSTablesList";
-            this.lstFVSTablesList.Size = new System.Drawing.Size(202, 180);
-            this.lstFVSTablesList.TabIndex = 89;
-            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
-            // 
-            // lstFVSFieldsList
-            // 
-            this.lstFVSFieldsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstFVSFieldsList.ItemHeight = 16;
-            this.lstFVSFieldsList.Location = new System.Drawing.Point(252, 21);
-            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
-            this.lstFVSFieldsList.Size = new System.Drawing.Size(202, 180);
-            this.lstFVSFieldsList.Sorted = true;
-            this.lstFVSFieldsList.TabIndex = 90;
-            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
             // 
             // uc_core_scenario_fvs_prepost_variables_effective
             // 
@@ -3551,7 +3551,7 @@ namespace FIA_Biosum_Manager
 					this.loadvalues_variable(0,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 1 POST-TREATMENT REGRESSION (WORSE)":
+				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 1 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=1)
 					{
 					}
@@ -3594,7 +3594,7 @@ namespace FIA_Biosum_Manager
 					this.loadvalues_variable(1,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 2 POST-TREATMENT REGRESSION (WORSE)":
+                case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 2 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=2)
 					{
 					}
@@ -3637,7 +3637,7 @@ namespace FIA_Biosum_Manager
 					this.loadvalues_variable(2,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 3 POST-TREATMENT REGRESSION (WORSE)":
+                case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 3 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=3)
 					{
 					}
@@ -3681,7 +3681,7 @@ namespace FIA_Biosum_Manager
      				this.loadvalues_variable(3,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 4 POST-TREATMENT REGRESSION (WORSE)":
+                case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 4 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=4)
 					{
 					}
