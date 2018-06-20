@@ -106,7 +106,7 @@ namespace FIA_Biosum_Manager
         private TextBox txtTieBreakVarDescr;
         private Label lblTieBreakVarDescr;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;
-        private System.Collections.Generic.IDictionary<string, string> m_dictCalculatedVariableDescriptions;
+
 
 		public class TieBreakerItem
 		{
@@ -976,8 +976,7 @@ namespace FIA_Biosum_Manager
             this.uc_scenario_treatment_intensity1.loadgrid(true);
 
         }
-        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables,
-                               System.Collections.Generic.IDictionary<string, string> p_dictCalculatedVariableDescr)
+        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables)
 		{
 
 			
@@ -991,9 +990,6 @@ namespace FIA_Biosum_Manager
             {
                 lstFVSTablesList.Items.Add(strKey);
             }
-            m_dictCalculatedVariableDescriptions =
-                new System.Collections.Generic.Dictionary<string, string>(p_dictCalculatedVariableDescr);
-
 
 			this.m_oOldTieBreakerCollection.Clear();
 
@@ -2040,10 +2036,14 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesTieBreakerVariableValues.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    string strDescr = m_dictCalculatedVariableDescriptions[Convert.ToString(this.lstFVSFieldsList.SelectedItem)];
-                    if (!String.IsNullOrEmpty(strDescr))
+                    foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                     {
-                        txtTieBreakVarDescr.Text = strDescr;
+                        if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
+                        {
+                            if (!String.IsNullOrEmpty(oItem.strVariableDescr))
+                                txtTieBreakVarDescr.Text = oItem.strVariableDescr;
+                            break;
+                        }
                     }
                 }
             }

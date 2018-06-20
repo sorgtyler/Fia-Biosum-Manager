@@ -154,8 +154,6 @@ namespace FIA_Biosum_Manager
         private ListBox lstFVSFieldsList;
         private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
-        private System.Collections.Generic.IDictionary<string, string> m_dictCalculatedVariableDescriptions;
-
         
         public class Variables
 		{
@@ -499,12 +497,6 @@ namespace FIA_Biosum_Manager
             m_oValidate.TestForMaxMin = false;
             m_oValidate.MinValue = -1000;
             m_oValidate.TestForMin = true;
-
-            ado_data_access oAdo = new ado_data_access();
-            m_dictCalculatedVariableDescriptions = m_oCoreAnalysisScenarioTools.LoadVariableDescriptions(oAdo);
-            oAdo.m_OleDbDataReader.Close();
-            oAdo.CloseConnection(oAdo.m_OleDbConnection);
-			
 
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -1896,8 +1888,8 @@ namespace FIA_Biosum_Manager
 			m_oOldVar.Copy(m_oOldVar,ref m_oSavVar);
 
 
-            this.ReferenceOptimizationUserControl.loadvalues(m_dictFVSTables, m_dictCalculatedVariableDescriptions);
-            this.ReferenceTieBreakerUserControl.loadvalues(m_dictFVSTables, m_dictCalculatedVariableDescriptions);
+            this.ReferenceOptimizationUserControl.loadvalues(m_dictFVSTables);
+            this.ReferenceTieBreakerUserControl.loadvalues(m_dictFVSTables);
 			this.m_intError=oAdo.m_intError;
 			this.m_strError=oAdo.m_strError;
 			oAdo=null;
@@ -4337,12 +4329,16 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesPrePostVariableValue.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    string strDescr = m_dictCalculatedVariableDescriptions[Convert.ToString(this.lstFVSFieldsList.SelectedItem)];
-                    if (!String.IsNullOrEmpty(strDescr))
+                    foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                     {
-                        txtEffVarDescr.Text = strDescr;
+                        if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
+                        {
+                            if (!String.IsNullOrEmpty(oItem.strVariableDescr))
+                                txtEffVarDescr.Text = oItem.strVariableDescr;
+                            break;
+                        }
                     }
-                }
+                }                
             }
             else
             {

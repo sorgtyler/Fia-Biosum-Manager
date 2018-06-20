@@ -133,7 +133,6 @@ namespace FIA_Biosum_Manager
         private TextBox txtOptVarDescr;
         private Label lblOptVarDescr;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
-        private System.Collections.Generic.IDictionary<string, string> m_dictCalculatedVariableDescriptions;
 
 		public class VariableItem
 		{
@@ -1226,8 +1225,7 @@ namespace FIA_Biosum_Manager
             }
 
         }
-        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables,
-                               System.Collections.Generic.IDictionary<string, string> p_dictCalculatedVariableDescr)
+        public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables)
 		{
 			
 			this.m_intError=0;
@@ -1241,8 +1239,6 @@ namespace FIA_Biosum_Manager
             {
                 lstFVSTablesList.Items.Add(strKey);
             }
-            m_dictCalculatedVariableDescriptions =
-                new System.Collections.Generic.Dictionary<string, string>(p_dictCalculatedVariableDescr);
 
 			this.lvOptimizationListValues.Items.Clear();
 			this.m_oLvRowColors.InitializeRowCollection();
@@ -2186,7 +2182,8 @@ namespace FIA_Biosum_Manager
 				else
 				{
 					if (this.m_oSavVariableCollection.Item(x).strFVSVariableName.Trim().ToUpper() != "NA" && 
-						this.m_oSavVariableCollection.Item(x).strFVSVariableName.Trim().ToUpper() != "NOT DEFINED")
+						this.m_oSavVariableCollection.Item(x).strFVSVariableName.Trim().ToUpper() != "NOT DEFINED" &&
+                        this.m_oSavVariableCollection.Item(x).strFVSVariableName.IndexOf(".") > -1)
 					{
 						if (System.IO.File.Exists(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb"))
 						{
@@ -2448,10 +2445,14 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    string strDescr = m_dictCalculatedVariableDescriptions[Convert.ToString(this.lstFVSFieldsList.SelectedItem)];
-                    if (!String.IsNullOrEmpty(strDescr))
+                    foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                     {
-                        txtOptVarDescr.Text = strDescr;
+                        if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
+                        {
+                            if (!String.IsNullOrEmpty(oItem.strVariableDescr))
+                                txtOptVarDescr.Text = oItem.strVariableDescr;
+                            break;
+                        }
                     }
                 }
             }

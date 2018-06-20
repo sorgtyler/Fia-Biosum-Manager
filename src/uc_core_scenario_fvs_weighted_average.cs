@@ -1223,7 +1223,8 @@ namespace FIA_Biosum_Manager
             }
         }
 
-		public int savevalues()
+		//@ToDo: Need to write code to save values
+        public int savevalues()
 		{
 			int x;
 			ado_data_access m_oAdo = new ado_data_access();
@@ -2265,8 +2266,57 @@ namespace FIA_Biosum_Manager
 
         }
 
+        public class VariableItem
+        {
+            public string strVariableName = "";
+            public string strVariableDescr = "";
+            public string strVariableType = "";
+            public string strRxPackage = "";
+            public string strVariableSource = "";
+        }
 
+        public class Variable_Collection : System.Collections.CollectionBase
+        {
+            public Variable_Collection()
+            {
+                //
+                // TODO: Add constructor logic here
+                //
+            }
+
+            public void Add(FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem m_oVariable)
+            {
+                // vérify if object is not already in
+                if (this.List.Contains(m_oVariable))
+                    throw new InvalidOperationException();
+
+                // adding it
+                this.List.Add(m_oVariable);
+            }
+            public void Remove(int index)
+            {
+                // Check to see if there is a widget at the supplied index.
+                if (index > Count - 1 || index < 0)
+                // If no widget exists, a messagebox is shown and the operation 
+                // is canColumned.
+                {
+                    System.Windows.Forms.MessageBox.Show("Index not valid!");
+                }
+                else
+                {
+                    List.RemoveAt(index);
+                }
+            }
+            public FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem Item(int Index)
+            {
+                // The appropriate item is retrieved from the List object and
+                // explicitly cast to the Widget type, then returned to the 
+                // caller.
+                return (FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem)List[Index];
+            }
+        }
     }
+
 
     public class WeightedAverage_DataGridColoredTextBoxColumn : DataGridTextBoxColumn
     {
@@ -2376,5 +2426,4 @@ namespace FIA_Biosum_Manager
         }
 
     }
-
 }

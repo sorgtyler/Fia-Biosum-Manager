@@ -1247,6 +1247,7 @@ namespace FIA_Biosum_Manager
 			
 			this.m_intError=0;
 			_uc_scenario_run = p_form;
+            this.ReferenceCoreScenarioForm = p_form.ReferenceCoreScenarioForm;
 			try
 			{
                 m_strDebugFile = ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\runlog.txt";
@@ -1438,6 +1439,10 @@ namespace FIA_Biosum_Manager
 						this.m_strOptimizationTableName = this.m_strOptimizationTableName + "MerchVol";
 						if (this.m_oOptimizationVariable.bUseFilter) this.m_strOptimizationTableName = this.m_strOptimizationTableName + "NR";
 					}
+                    else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
+                    {
+                        //@ToDo: Not sure what this is used for
+                    }
 					else
 					{
 						
@@ -5434,6 +5439,11 @@ namespace FIA_Biosum_Manager
 					"e.change_value = 0";
 
 			}
+            else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
+            {
+                m_strSQL = getEconomicOptimizationSql();
+
+            }
 			else
 			{
 						
@@ -5473,6 +5483,47 @@ namespace FIA_Biosum_Manager
 
 		}
 
+        private string getEconomicOptimizationSql()
+        {
+            string strSql = "";
+            string[] strCol = frmMain.g_oUtils.ConvertListToArray(this.m_oOptimizationVariable.strFVSVariableName, "_");
+            uc_core_scenario_weighted_average.VariableItem oItem = null;
+            foreach (uc_core_scenario_weighted_average.VariableItem oNextItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+            {
+                if (oNextItem.strVariableName.Equals(this.m_oOptimizationVariable.strFVSVariableName))
+                {
+                    oItem = oNextItem;
+                    break;
+                }
+            }
+            if (strCol.Length > 1)
+            {
+                // This is a default economic variable; They always end in _1
+                if (strCol[strCol.Length - 1] == "1")
+                {
+                    // We are storing the table and field name in the database
+                    if (oItem.strVariableSource.IndexOf(".") > -1)
+                    {
+                        string[] strDatabase = frmMain.g_oUtils.ConvertListToArray(oItem.strVariableSource, ".");
+                        strSql = "UPDATE cycle1_optimization e " +
+                                 "INNER JOIN " + strDatabase[0] + " p " +
+                                 "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                                 "e.rxpackage=p.rxpackage AND " +
+                                 "SET e.pre_variable_name = '" + oItem.strVariableName + "'," +
+                                 "e.post_variable_name = '" + oItem.strVariableName + "'," +
+                                 "e.pre_variable_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
+                                "e.post_variable_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
+                                "e.change_value = 0";
+                    }
+                }
+                // This is a custom-weighted economic variable
+                else
+                {
+
+                }
+            }
+            return strSql;
+        }
 
 		private void tiebreaker()
 		{

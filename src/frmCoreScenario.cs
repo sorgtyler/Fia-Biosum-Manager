@@ -13,7 +13,6 @@ namespace FIA_Biosum_Manager
 	{
 		public System.Windows.Forms.TextBox txtDropDown;
 		private System.Data.DataView dataView1;
-		public string strScenarioDescription;
 		private System.Windows.Forms.ImageList imgSize;
 		private System.ComponentModel.IContainer components;
 		private System.Windows.Forms.ImageList imageList1;
@@ -99,9 +98,9 @@ namespace FIA_Biosum_Manager
         private ToolBarButton tlbSeparator;
         private ToolBarButton btnScenarioCopy;
         public FIA_Biosum_Manager.CoreAnalysisScenarioItem m_oSavCoreAnalysisScenarioItem = new CoreAnalysisScenarioItem();
-        
+        public FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection m_oWeightedVariableCollection =
+            new FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection();
 
-		
 
 		public frmCoreScenario(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
@@ -237,12 +236,15 @@ namespace FIA_Biosum_Manager
 				this.uc_scenario_run1.ReferenceFVSPrePostVariables=this.uc_scenario_fvs_prepost_variables_effective1.m_oSavVar;
 				this.uc_scenario_run1.ReferenceFVSPrePostOptimization=this.uc_scenario_fvs_prepost_optimization1.m_oSavVariableCollection;
 				this.uc_scenario_run1.ReferenceFVSPrePostTieBreaker = this.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection;
-				this.btnClose.Enabled=true;
+                this.uc_scenario_run1.ReferenceCoreScenarioForm = this;
+                this.btnClose.Enabled=true;
 				this.resize_frmScenario();
 
-
-
-
+                //load weighted variable definitions
+                ado_data_access oAdo = new ado_data_access();
+                m_oCoreAnalysisScenarioTools.LoadWeightedVariables(oAdo, m_oWeightedVariableCollection);
+                oAdo.m_OleDbDataReader.Close();
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
 			}
 			catch (Exception p_msg)
@@ -1095,7 +1097,7 @@ namespace FIA_Biosum_Manager
 			p_frmTherm.lblMsg.Text = "Rule Definitions: FVS Variables Data";
 			p_frmTherm.lblMsg.Refresh();
 
-			this.uc_scenario_fvs_prepost_variables_effective1.loadvalues();
+            this.uc_scenario_fvs_prepost_variables_effective1.loadvalues();
  			p_frmTherm.progressBar1.Value=4;
 
 
@@ -3749,12 +3751,11 @@ namespace FIA_Biosum_Manager
             return _dictFVSTables;
         }
 
-        public System.Collections.Generic.IDictionary<string, string> LoadVariableDescriptions(ado_data_access p_oAdo)
+        public void LoadWeightedVariables(ado_data_access p_oAdo, FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection p_oWeightedVariableCollection)
         {
-            System.Collections.Generic.IDictionary<string, string> dictVariableDescriptions =
-                new System.Collections.Generic.Dictionary<string, string>();
+            p_oWeightedVariableCollection.Clear();
             p_oAdo.OpenConnection(p_oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile, "", ""));
-            p_oAdo.m_strSQL = "SELECT VARIABLE_NAME, VARIABLE_DESCRIPTION " +
+            p_oAdo.m_strSQL = "SELECT * " +
                               "FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName;
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
 
@@ -3763,14 +3764,24 @@ namespace FIA_Biosum_Manager
                 //load step one with wind class speed definitions
                 while (p_oAdo.m_OleDbDataReader.Read())
                 {
-                    string strKey = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_name"]).Trim();
-                    string strDescr = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_description"]).Trim();
-                    if (!dictVariableDescriptions.ContainsKey(strKey))
-                        dictVariableDescriptions.Add(strKey, strDescr);
+                    FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem oItem = new uc_core_scenario_weighted_average.VariableItem();
+                    oItem.strVariableName = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_name"]).Trim();
+                    oItem.strVariableType = Convert.ToString(p_oAdo.m_OleDbDataReader["VARIABLE_TYPE"]).Trim();
+                    if (p_oAdo.m_OleDbDataReader["variable_description"] != System.DBNull.Value)
+                    {
+                        oItem.strVariableDescr = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_description"]).Trim();
+                    }
+                    if (p_oAdo.m_OleDbDataReader["BASELINE_RXPACKAGE"] != System.DBNull.Value)
+                    {
+                        oItem.strRxPackage = Convert.ToString(p_oAdo.m_OleDbDataReader["BASELINE_RXPACKAGE"]).Trim();
+                    }
+                    if (p_oAdo.m_OleDbDataReader["VARIABLE_SOURCE"] != System.DBNull.Value)
+                    {
+                        oItem.strVariableSource = Convert.ToString(p_oAdo.m_OleDbDataReader["VARIABLE_SOURCE"]).Trim();
+                    }
+                    p_oWeightedVariableCollection.Add(oItem);
                 }
-
             }
-            return dictVariableDescriptions;
         }
 
         public string ScenarioProperties(CoreAnalysisScenarioItem p_oScenarioItem)
