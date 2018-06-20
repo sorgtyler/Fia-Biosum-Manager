@@ -139,6 +139,7 @@ namespace FIA_Biosum_Manager
         private Label lblFvsVariableName;
         private DataGrid m_dgEcon;
         private ColumnHeader vBaselineRxPkg;
+        private ColumnHeader vVariableSource;
         private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
 
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
@@ -181,7 +182,14 @@ namespace FIA_Biosum_Manager
             this.Height = m_DialogHt -40;
 
             this.m_oEnv = new env();
+            frmMain.g_oFrmMain.ActivateStandByAnimation(
+                frmMain.g_oFrmMain.WindowState,
+                frmMain.g_oFrmMain.Left,
+                frmMain.g_oFrmMain.Height,
+                frmMain.g_oFrmMain.Width,
+                frmMain.g_oFrmMain.Top);
             this.loadvalues();
+            frmMain.g_oFrmMain.DeactivateStandByAnimation();
 		}
 
 		/// <summary> 
@@ -259,6 +267,7 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.vVariableSource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -540,7 +549,8 @@ namespace FIA_Biosum_Manager
             this.vDescription,
             this.vType,
             this.vId,
-            this.vBaselineRxPkg});
+            this.vBaselineRxPkg,
+            this.vVariableSource});
             this.lstVariables.GridLines = true;
             this.lstVariables.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstVariables.HideSelection = false;
@@ -809,6 +819,10 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
+            // vVariableSource
+            // 
+            this.vVariableSource.Width = 0;
+            // 
             // uc_core_scenario_weighted_average
             // 
             this.Controls.Add(this.groupBox1);
@@ -874,6 +888,7 @@ namespace FIA_Biosum_Manager
                             strBaselineRxPkg = m_oAdo.m_OleDbDataReader["BASELINE_RXPACKAGE"].ToString().Trim();
                         }
                         lstVariables.Items[idxItems].SubItems.Add(strBaselineRxPkg);
+                        lstVariables.Items[idxItems].SubItems.Add(m_oAdo.m_OleDbDataReader["VARIABLE_SOURCE"].ToString().Trim());
 
                         m_oLvAlternateColors.AddRow();
                         m_oLvAlternateColors.AddColumns(idxItems, lstVariables.Columns.Count);
@@ -1792,6 +1807,7 @@ namespace FIA_Biosum_Manager
             if (lstVariables.SelectedItems.Count == 0) return;
             this.grpboxSummary.Hide();
             int intVariableId = Convert.ToInt32(lstVariables.SelectedItems[0].SubItems[3].Text.Trim());
+            string strVariableSource = lstVariables.SelectedItems[0].SubItems[5].Text.Trim();
             string strVariableName = lstVariables.SelectedItems[0].Text.Trim();
             string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                 "\\" + Tables.CoreDefinitions.DefaultDbFile;
@@ -1867,7 +1883,7 @@ namespace FIA_Biosum_Manager
                         //Selected FVS table (lstFVSTablesList)
                         btnFVSVariableValue.Visible = false;
                         lstFVSTablesList.Enabled = false;
-                        string[] strPieces = Convert.ToString(m_oAdo.m_OleDbDataReader["FVS_VARIABLE_SOURCE"]).Trim().Split('.');
+                        string[] strPieces = strVariableSource.Split('.');
                         for (int i = 0; i < lstFVSTablesList.Items.Count - 1; i++)
                         {
                             string strTable = lstFVSTablesList.Items[i].ToString();

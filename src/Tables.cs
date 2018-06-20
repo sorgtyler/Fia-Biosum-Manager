@@ -1720,7 +1720,8 @@ namespace FIA_Biosum_Manager
                     "VARIABLE_NAME CHAR(40)," +
                     "VARIABLE_DESCRIPTION CHAR(255)," +
                     "VARIABLE_TYPE CHAR(25)," +
-                    "BASELINE_RXPACKAGE CHAR(3))";
+                    "BASELINE_RXPACKAGE CHAR(3)," +
+                    "VARIABLE_SOURCE CHAR(100))";
             }
             public void CreateCalculatedEconVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -1751,7 +1752,6 @@ namespace FIA_Biosum_Manager
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "calculated_variables_id INTEGER," +
-                    "fvs_variable_source CHAR(100)," +
                     "weight_1_pre DOUBLE," +
                     "weight_1_post DOUBLE," +
                     "weight_2_pre DOUBLE," +
