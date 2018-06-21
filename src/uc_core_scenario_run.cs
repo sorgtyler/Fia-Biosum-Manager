@@ -1442,6 +1442,7 @@ namespace FIA_Biosum_Manager
                     else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
                     {
                         //@ToDo: Not sure what this is used for
+                        this.m_strOptimizationColumnNameSql = "post_variable_value";
                     }
 					else
 					{
@@ -5501,19 +5502,32 @@ namespace FIA_Biosum_Manager
                 // This is a default economic variable; They always end in _1
                 if (strCol[strCol.Length - 1] == "1")
                 {
-                    // We are storing the table and field name in the database
+                    // We are storing the table and field name in the database for most variables
                     if (oItem.strVariableSource.IndexOf(".") > -1)
                     {
                         string[] strDatabase = frmMain.g_oUtils.ConvertListToArray(oItem.strVariableSource, ".");
                         strSql = "UPDATE cycle1_optimization e " +
                                  "INNER JOIN " + strDatabase[0] + " p " +
                                  "ON e.biosum_cond_id=p.biosum_cond_id AND " +
-                                 "e.rxpackage=p.rxpackage AND " +
+                                 "e.rxpackage=p.rxpackage " +
                                  "SET e.pre_variable_name = '" + oItem.strVariableName + "'," +
                                  "e.post_variable_name = '" + oItem.strVariableName + "'," +
                                  "e.pre_variable_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
-                                "e.post_variable_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
-                                "e.change_value = 0";
+                                 "e.post_variable_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
+                                 "e.change_value = 0";
+                    }
+                    // We specify a calculation for the total volume
+                    else if (oItem.strVariableName.Equals("total_volume_1"))
+                    {
+                        strSql = "UPDATE cycle1_optimization e " +
+                             "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                             "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                             "e.rxpackage=p.rxpackage " +
+                             "SET e.pre_variable_name = '" + oItem.strVariableName + "'," +
+                             "e.post_variable_name = '" + oItem.strVariableName + "'," +
+                             "e.pre_variable_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
+                             "e.post_variable_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
+                             "e.change_value = 0";
                     }
                 }
                 // This is a custom-weighted economic variable
@@ -7019,6 +7033,10 @@ namespace FIA_Biosum_Manager
 			{
 				Cycle1_best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,false);
 			}
+            else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
+            {
+                Cycle1_best_rx_summary(oTieBreakerCollection, strTieBreakerAggregate, false);
+            }
 			else
 			{
 				Cycle1_best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,true);
@@ -7117,10 +7135,11 @@ namespace FIA_Biosum_Manager
 			string strSql="";
 
 
-			if (bFVSVariable==false)
+			
+            if (bFVSVariable==false)
 			{
 				//find the treatment for each plot that produces the MAX/MIN revenue value
-				strSql = "SELECT a.biosum_cond_id,a.rxpackage,a.rxpackage,a.rx,a." + this.m_strOptimizationColumnNameSql + " AS optimization_value " + //LPOTTS,a.rx_intensity " + 
+				strSql = "SELECT a.biosum_cond_id,a.rxpackage,a.rx,a." + this.m_strOptimizationColumnNameSql + " AS optimization_value " + //LPOTTS,a.rx_intensity " + 
 					"FROM cycle1_optimization a,";
 
 
