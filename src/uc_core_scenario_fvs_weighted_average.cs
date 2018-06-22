@@ -1224,23 +1224,120 @@ namespace FIA_Biosum_Manager
         }
 
 		//@ToDo: Need to write code to save values
-        public int savevalues()
+        public int savevalues(string strVariableType)
 		{
-			int x;
 			ado_data_access m_oAdo = new ado_data_access();
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				"\\" + Tables.CoreDefinitions.DefaultDbFile;
 			m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (m_oAdo.m_intError==0)
 			{
+                int intId = -1;
+                string strSql = "";
+                string strBaselinePackage = "";
+                // DELETE EXISTING RECORD ON SHARED DEFINITIONS TABLE
+                if (m_intCurVar > 0)
+                {
+                    m_oAdo.m_strSQL = "DELETE FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+                                    " WHERE ID = " + m_intCurVar;
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    string strTableName = Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName;
+                    if (strVariableType.Equals("ECON"))
+                    {
+                        strTableName = Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName;
+                    }
+                    m_oAdo.m_strSQL = "DELETE FROM " + strTableName +
+                        " WHERE calculated_variables_id = " + m_intCurVar;
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    intId = m_intCurVar;
+                }
+                else
+                {
+                    // GENERATE NEW ID NUMBER; ADD ONE TO HIGHEST EXISTING ID
+                    foreach (ListViewItem oItem in this.lstVariables.Items)
+                    {
+                        int intTestId = Convert.ToInt32(oItem.SubItems[3].Text.Trim());
+                        if (intTestId > intId)
+                            intId = intTestId;
+                    }
+                    intId = intId + 1;
+                }
+                // SHARED BEGINNING OF INSERT STATEMENT
+                strSql = "INSERT INTO " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+                    " (ID, VARIABLE_NAME, VARIABLE_DESCRIPTION, VARIABLE_TYPE, BASELINE_RXPACKAGE, VARIABLE_SOURCE)" +
+                    " VALUES ( " + intId + ", '";
 
+                if (strVariableType.Equals("FVS"))
+                {
+                    if (cboFvsVariableBaselinePkg.SelectedIndex > -1)
+                    {
+                        strBaselinePackage = cboFvsVariableBaselinePkg.SelectedItem.ToString();
+                    }
+                    string strDescription = "";
+                    if (!String.IsNullOrEmpty(txtFVSVariableDescr.Text))
+                        strDescription = txtFVSVariableDescr.Text.Trim();
+                    strSql = strSql + lblFvsVariableName.Text.Trim() + "','" + strDescription + "','" +
+                             strVariableType + "','" + strBaselinePackage + "','" + LblSelectedVariable.Text.Trim() + "')";
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, strSql);
+                    // ADD CHILD PERCENTAGE RECORD
+                    if (m_oAdo.m_intError == 0)
+                    {
+                        double[] arrPrePercents = new double[4];
+                        double[] arrPostPercents = new double[4];
+                        int intRxCycle;
+                        double dblWeight;
+                        string strPrePost = "";
+                        foreach (DataRow row in this.m_dv.Table.Rows)
+                        {
+                            intRxCycle = Convert.ToInt32(row["rxcycle"]);
+                            dblWeight = Convert.ToDouble(row["weight"]);
+                            strPrePost = row["pre_or_post"].ToString().Trim();
+                            if (strPrePost.Equals("PRE"))
+                            {
+                                arrPrePercents[intRxCycle - 1] = dblWeight;
+                            }
+                            else
+                            {
+                                arrPostPercents[intRxCycle - 1] = dblWeight;
+                            }
+                        }
+                        
+                        strSql = "INSERT INTO " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
+                            " (calculated_variables_id, weight_1_pre, weight_1_post, weight_2_pre, weight_2_post, " +
+                            "weight_3_pre, weight_3_post, weight_4_pre, weight_4_post)" +
+                            " VALUES ( " + intId + ", " + arrPrePercents[0];
+                    }
+                }
+                else
+                {
 
+                }
 			}
-			
-            return 1;
+
+            return m_oAdo.m_intError;
 		}
+
+        private void val_data(string strVariableType)
+        {
+            if (strVariableType.Equals("FVS"))
+            {
+                if (this.lblFvsVariableName.Text.Trim().Equals("Not Defined") ||
+                    this.LblSelectedVariable .Text.Trim().Equals("Not Defined"))
+                {
+                    MessageBox.Show("!!Select An FVS Variable!!", "FIA Biosum",
+                                     System.Windows.Forms.MessageBoxButtons.OK,
+                                     System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    this.m_intError = -1;
+                    this.btnFVSVariableValue.Focus();
+                    return;
+                }
+            }
+            else
+            {
+
+            }
+        }
 
         protected void loadEconVariablesGrid()
         {
@@ -1642,6 +1739,7 @@ namespace FIA_Biosum_Manager
 
         private void btnNewFvs_Click(object sender, EventArgs e)
         {
+            m_intCurVar = -1;
             cboFvsVariableBaselinePkg.Enabled = true;
             //Set to last package as that is usually the grow-only package
             cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
@@ -1668,6 +1766,7 @@ namespace FIA_Biosum_Manager
 
         private void btnNewEcon_Click(object sender, EventArgs e)
         {
+            m_intCurVar = -1;
             lstEconVariablesList.ClearSelected();
             lstEconVariablesList.Enabled = true;
             btnEconVariableType.Visible = true;
@@ -1786,6 +1885,7 @@ namespace FIA_Biosum_Manager
         private void lstFVSFieldsList_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.LblSelectedVariable.Text = "Not Defined";
+            this.lblFvsVariableName.Text = "Not Defined";
             //if (this.lstFVSFieldsList.SelectedIndex > -1)
             //{
             //    this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
@@ -1801,13 +1901,34 @@ namespace FIA_Biosum_Manager
             if (this.lstFVSTablesList.SelectedItems.Count == 0 || this.lstFVSFieldsList.SelectedItems.Count == 0) return;
             this.LblSelectedVariable.Text =
                 this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
+            string strVariableName = "";
+            bool bFoundIt = false;
+            bool bExists = false;
+            int intSuffix = 1;
+            do
+            {
+                strVariableName = this.lstFVSFieldsList.SelectedItems[0].ToString() + "_" + intSuffix;
+                bExists = false;
+                foreach (ListViewItem oItem in this.lstVariables.Items)
+                {
+                    if (oItem.Text.Trim().Equals(strVariableName))
+                    {
+                        intSuffix = intSuffix + 1;
+                        bExists = true;
+                        break;
+                    }
+                }
+                if (bExists == false)
+                    bFoundIt = true;
+            } while (bFoundIt == false);
+            lblFvsVariableName.Text = strVariableName;
         }
 
         private void btnProperties_Click(object sender, EventArgs e)
         {
             if (lstVariables.SelectedItems.Count == 0) return;
             this.grpboxSummary.Hide();
-            int intVariableId = Convert.ToInt32(lstVariables.SelectedItems[0].SubItems[3].Text.Trim());
+            m_intCurVar = Convert.ToInt32(lstVariables.SelectedItems[0].SubItems[3].Text.Trim());
             string strVariableSource = lstVariables.SelectedItems[0].SubItems[5].Text.Trim();
             string strVariableName = lstVariables.SelectedItems[0].Text.Trim();
             string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
@@ -1836,7 +1957,7 @@ namespace FIA_Biosum_Manager
                 btnEconVariableType.Visible = false;
                 lstEconVariablesList.SelectedIndex = idxType;
                 m_oAdo.m_strSQL = "select * from " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
-                    " where calculated_variables_id = " + intVariableId;
+                    " where calculated_variables_id = " + m_intCurVar;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -1862,7 +1983,7 @@ namespace FIA_Biosum_Manager
             else
             {
                 m_oAdo.m_strSQL = "select * from " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
-                    " where calculated_variables_id = " + intVariableId;
+                    " where calculated_variables_id = " + m_intCurVar;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -2046,224 +2167,230 @@ namespace FIA_Biosum_Manager
 
         private void btnFvsCalculate_Click(object sender, EventArgs e)
         {
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            this.val_data("FVS");
+            if (this.m_intError == 0)
             {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "btnFvsCalculate_Click: Calculate weighted variable " + lblFvsVariableName.Text +  "\r\n"); 
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Temporary database path: " + m_strTempMDB + "\r\n\r\n");
-            }
-
-            dao_data_access oDao = new dao_data_access();
-            //Determine database and table names based on the source FVS variable
-            string[] strPieces = LblSelectedVariable.Text.Split('.');
-            string strSourcePreTable = "PRE_" + strPieces[0];
-            string strSourcePostTable = "POST_" + strPieces[0];
-            string strSourceDatabaseName = "PREPOST_" + strPieces[0] + ".ACCDB";
-            string strTargetPreTable = "PRE_" + strPieces[0] + "_WEIGHTED";
-            string strTargetPostTable = "POST_" + strPieces[0] + "_WEIGHTED";
-            string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
-            string strWeightsByRxCyclePostTable = "WEIGHTS_BY_RX_CYCLE_POST";
-            string strWeightsByRxPkgPreTable = "WEIGHTS_BY_RXPACKAGE_PRE";
-            string strWeightsByRxPkgPostTable = "WEIGHTS_BY_RXPACKAGE_POST";
-
-
-            //Link to source FVS tables in temp .mdb
-            string strPrePostWeightedDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
-            string strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\fvs\\db\\" + strSourceDatabaseName;
-            oDao.CreateTableLink(m_strTempMDB, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
-            oDao.CreateTableLink(m_strTempMDB, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
-
-            //Open connection to temporary database and create starting temporary tables
-            //that is table for weights by rx and rxcycle
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempMDB, "", ""));
-
-            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                                  lblFvsVariableName.Text + " " +
-                                  "INTO " + strWeightsByRxCyclePreTable +
-                                  " FROM " + strSourcePreTable;
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                            
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Create temporary table for weights by rx and rxcycle\r\n"); 
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
-            }
-            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                              lblFvsVariableName.Text + " " +
-                              "INTO " + strWeightsByRxCyclePostTable +
-                              " FROM " + strSourcePostTable;
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-
-            //Calculate values for each row in table
-            //@ToDo: save config values to database before we calculate
-            double dblWeight = -1;
-            string strWeight = "";
-            string strRxCycle = "";
-            string strPrePost = "";
-            string strSourceTableName = "";
-            string strTargetTableName = "";
-            foreach (DataRow row in this.m_dv.Table.Rows)
-            {
-                strRxCycle = row["rxcycle"].ToString();
-                strWeight = row["weight"].ToString();
-                strPrePost = row["pre_or_post"].ToString().Trim();
-                if (strPrePost.Equals("PRE"))
-                {
-                    strTargetTableName = strWeightsByRxCyclePreTable;
-                    strSourceTableName = strSourcePreTable;
-                }
-                else
-                {
-                    strTargetTableName = strWeightsByRxCyclePostTable;
-                    strSourceTableName = strSourcePostTable;
-                }
-                if (Double.TryParse(strWeight, out dblWeight))
-                {
-                    // Apply weights to each cycle
-                    m_oAdo.m_strSQL = "UPDATE " + strTargetTableName + " w " +
-                                      "INNER JOIN " + strSourceTableName + " p " +
-                                      "ON w.biosum_cond_id = p.biosum_cond_id " +
-                                      "AND w.rxpackage = p.rxpackage AND w.rx = p.rx " +
-                                      "AND w.rxcycle = p.rxcycle AND w.fvs_variant = p.fvs_variant " +
-                                      "SET " + lblFvsVariableName.Text + " = " +
-                                      strPieces[1] + " * " + dblWeight + " " +
-                                      "WHERE w.rxcycle = '" + strRxCycle + "'";
-                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Calculate values for each row in m_dg \r\n"); 
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
-                    }
-
-                }
-            }
-
-            // Sum by rxpackage across cycles
-            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, \"0\" as [rx], sum(" + lblFvsVariableName.Text + ") as [sum_pre] " +
-                              "into " + strWeightsByRxPkgPreTable + " " +
-                              "from " + strWeightsByRxCyclePreTable + " " +
-                              "group by biosum_cond_id, rxpackage";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Sum by rxpackage across cycles \r\n"); 
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
-            }    
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            // Update rx with rx from cycle 1
-            m_oAdo.m_strSQL = "UPDATE " + strWeightsByRxPkgPreTable + " w " +
-                              "INNER JOIN " + strWeightsByRxCyclePreTable + " r ON w.biosum_cond_id = r.biosum_cond_id " +
-                              "AND w.rxpackage = r.rxpackage " + 
-                              "SET w.rx = r.rx " +
-                              "WHERE r.rxcycle = '1'";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Set rx to rx from cycle 1 \r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
-            }
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, \"0\" as [rx], sum(" + lblFvsVariableName.Text + ") as [sum_post] " +
-                              "into " + strWeightsByRxPkgPostTable + " " +
-                              "from " + strWeightsByRxCyclePostTable + " " +
-                              "group by biosum_cond_id, rxpackage";
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            // Update rx with rx from cycle 1
-            m_oAdo.m_strSQL = "UPDATE " + strWeightsByRxPkgPostTable + " w " +
-                              "INNER JOIN " + strWeightsByRxCyclePostTable + " r ON w.biosum_cond_id = r.biosum_cond_id " +
-                              "AND w.rxpackage = r.rxpackage " +
-                              "SET w.rx = r.rx " +
-                              "WHERE r.rxcycle = '1'";
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-
-            //Switch connection to the final storage location and prepare the tables to receive the output
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strPrePostWeightedDb, "", ""));
-            bool bNewTables = false;
-            if (!m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTargetPreTable))
-            {
-                //Link source tables to output database
-                oDao.CreateTableLink(strPrePostWeightedDb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
-                oDao.CreateTableLink(strPrePostWeightedDb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
-
-                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                      lblFvsVariableName.Text + " " +
-                      "INTO " + strTargetPreTable +
-                      " FROM " + strSourcePreTable +
-                      " WHERE rxcycle = '1'";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "btnFvsCalculate_Click: Calculate weighted variable " + lblFvsVariableName.Text + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Temporary database path: " + m_strTempMDB + "\r\n\r\n");
+                }
+
+                //Save associated configuration records
+                savevalues("FVS");
+
+                dao_data_access oDao = new dao_data_access();
+                //Determine database and table names based on the source FVS variable
+                string[] strPieces = LblSelectedVariable.Text.Split('.');
+                string strSourcePreTable = "PRE_" + strPieces[0];
+                string strSourcePostTable = "POST_" + strPieces[0];
+                string strSourceDatabaseName = "PREPOST_" + strPieces[0] + ".ACCDB";
+                string strTargetPreTable = "PRE_" + strPieces[0] + "_WEIGHTED";
+                string strTargetPostTable = "POST_" + strPieces[0] + "_WEIGHTED";
+                string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
+                string strWeightsByRxCyclePostTable = "WEIGHTS_BY_RX_CYCLE_POST";
+                string strWeightsByRxPkgPreTable = "WEIGHTS_BY_RXPACKAGE_PRE";
+                string strWeightsByRxPkgPostTable = "WEIGHTS_BY_RXPACKAGE_POST";
+
+
+                //Link to source FVS tables in temp .mdb
+                string strPrePostWeightedDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                    "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+                string strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                    "\\fvs\\db\\" + strSourceDatabaseName;
+                oDao.CreateTableLink(m_strTempMDB, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
+                oDao.CreateTableLink(m_strTempMDB, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
+
+                //Open connection to temporary database and create starting temporary tables
+                //that is table for weights by rx and rxcycle
+                m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempMDB, "", ""));
+
+                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                      lblFvsVariableName.Text + " " +
+                                      "INTO " + strWeightsByRxCyclePreTable +
+                                      " FROM " + strSourcePreTable;
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Create temporary table for weights by rx and rxcycle\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                }
+                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                  lblFvsVariableName.Text + " " +
+                                  "INTO " + strWeightsByRxCyclePostTable +
+                                  " FROM " + strSourcePostTable;
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+                //Calculate values for each row in table
+                //@ToDo: save config values to database before we calculate
+                double dblWeight = -1;
+                string strWeight = "";
+                string strRxCycle = "";
+                string strPrePost = "";
+                string strSourceTableName = "";
+                string strTargetTableName = "";
+                foreach (DataRow row in this.m_dv.Table.Rows)
+                {
+                    strRxCycle = row["rxcycle"].ToString();
+                    strWeight = row["weight"].ToString();
+                    strPrePost = row["pre_or_post"].ToString().Trim();
+                    if (strPrePost.Equals("PRE"))
+                    {
+                        strTargetTableName = strWeightsByRxCyclePreTable;
+                        strSourceTableName = strSourcePreTable;
+                    }
+                    else
+                    {
+                        strTargetTableName = strWeightsByRxCyclePostTable;
+                        strSourceTableName = strSourcePostTable;
+                    }
+                    if (Double.TryParse(strWeight, out dblWeight))
+                    {
+                        // Apply weights to each cycle
+                        m_oAdo.m_strSQL = "UPDATE " + strTargetTableName + " w " +
+                                          "INNER JOIN " + strSourceTableName + " p " +
+                                          "ON w.biosum_cond_id = p.biosum_cond_id " +
+                                          "AND w.rxpackage = p.rxpackage AND w.rx = p.rx " +
+                                          "AND w.rxcycle = p.rxcycle AND w.fvs_variant = p.fvs_variant " +
+                                          "SET " + lblFvsVariableName.Text + " = " +
+                                          strPieces[1] + " * " + dblWeight + " " +
+                                          "WHERE w.rxcycle = '" + strRxCycle + "'";
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Calculate values for each row in m_dg \r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                        }
+
+                    }
+                }
+
+                // Sum by rxpackage across cycles
+                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, \"0\" as [rx], sum(" + lblFvsVariableName.Text + ") as [sum_pre] " +
+                                  "into " + strWeightsByRxPkgPreTable + " " +
+                                  "from " + strWeightsByRxCyclePreTable + " " +
+                                  "group by biosum_cond_id, rxpackage";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Sum by rxpackage across cycles \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
                 }
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                                  lblFvsVariableName.Text + " " +
-                                  "INTO " + strTargetPostTable +
-                                  " FROM " + strSourcePostTable +
-                                  " WHERE rxcycle = '1'";
+                // Update rx with rx from cycle 1
+                m_oAdo.m_strSQL = "UPDATE " + strWeightsByRxPkgPreTable + " w " +
+                                  "INNER JOIN " + strWeightsByRxCyclePreTable + " r ON w.biosum_cond_id = r.biosum_cond_id " +
+                                  "AND w.rxpackage = r.rxpackage " +
+                                  "SET w.rx = r.rx " +
+                                  "WHERE r.rxcycle = '1'";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Set rx to rx from cycle 1 \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                }
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                bNewTables = true;
+                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, \"0\" as [rx], sum(" + lblFvsVariableName.Text + ") as [sum_post] " +
+                                  "into " + strWeightsByRxPkgPostTable + " " +
+                                  "from " + strWeightsByRxCyclePostTable + " " +
+                                  "group by biosum_cond_id, rxpackage";
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                // Update rx with rx from cycle 1
+                m_oAdo.m_strSQL = "UPDATE " + strWeightsByRxPkgPostTable + " w " +
+                                  "INNER JOIN " + strWeightsByRxCyclePostTable + " r ON w.biosum_cond_id = r.biosum_cond_id " +
+                                  "AND w.rxpackage = r.rxpackage " +
+                                  "SET w.rx = r.rx " +
+                                  "WHERE r.rxcycle = '1'";
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
-                oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePreTable);
-                oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePostTable);
-            }
-            //Check to see if columns exists, they shouldn't, warn that values will be overwritten
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Add receiving columns to pre/post tables if they don't exist \r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Warning message if they do! " + m_oAdo.m_strSQL + "\r\n\r\n");
-            }
-            if (m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, strTargetPreTable, lblFvsVariableName.Text))
-            {
-                if (bNewTables == false)
-                    MessageBox.Show("Values for " + lblFvsVariableName.Text + " were previously calculated! " +
-                                    "They will be overwritten!", "FIA Biosum");
-            }
-            else
-            {
-                m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, strTargetPreTable,
-                    lblFvsVariableName.Text, "DOUBLE", "");
-                m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, strTargetPostTable,
-                    lblFvsVariableName.Text, "DOUBLE", "");
-            }
+                //Switch connection to the final storage location and prepare the tables to receive the output
+                m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strPrePostWeightedDb, "", ""));
+                bool bNewTables = false;
+                if (!m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTargetPreTable))
+                {
+                    //Link source tables to output database
+                    oDao.CreateTableLink(strPrePostWeightedDb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
+                    oDao.CreateTableLink(strPrePostWeightedDb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
 
-            //Link receiving tables to temporary database
-            oDao.CreateTableLink(m_strTempMDB, strTargetPreTable, strPrePostWeightedDb, strTargetPreTable);
-            oDao.CreateTableLink(m_strTempMDB, strTargetPostTable, strPrePostWeightedDb, strTargetPostTable);
+                    m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                          lblFvsVariableName.Text + " " +
+                          "INTO " + strTargetPreTable +
+                          " FROM " + strSourcePreTable +
+                          " WHERE rxcycle = '1'";
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                    }
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                      lblFvsVariableName.Text + " " +
+                                      "INTO " + strTargetPostTable +
+                                      " FROM " + strSourcePostTable +
+                                      " WHERE rxcycle = '1'";
+                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    bNewTables = true;
 
-            //Switch connection to temporary database
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempMDB, "", ""));
-            m_oAdo.m_strSQL = "UPDATE (" + strWeightsByRxPkgPostTable + " pt " +
-                              "INNER JOIN " + strWeightsByRxPkgPreTable + " pe " + 
-                              "ON (pt.biosum_cond_id = pe.biosum_cond_id)) " +
-                              "INNER JOIN " + strTargetPreTable + " f " +
-                              "ON (pe.biosum_cond_id = f.biosum_cond_id) " +
-                              "SET " + lblFvsVariableName.Text + " = sum_pre + sum_post " +
-                              "WHERE pt.rxpackage = '" + cboFvsVariableBaselinePkg.SelectedItem.ToString() +
-                              "' and pe.rxpackage = '" + cboFvsVariableBaselinePkg.SelectedItem.ToString() + "'";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated weighted PRE table with weighted totals from baseline scenario \r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "SQL: " + m_oAdo.m_strSQL + "\r\n\r\n");
-            }
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            m_oAdo.m_strSQL = "UPDATE (" + strWeightsByRxPkgPostTable + " pt " +
-                              "INNER JOIN " + strWeightsByRxPkgPreTable + " pe " +
-                              "ON (pt.rxpackage = pe.rxpackage) AND (pt.biosum_cond_id = pe.biosum_cond_id)) " +
-                              "INNER JOIN " + strTargetPostTable + " f ON (pe.rxpackage = f.rxpackage) AND (pe.biosum_cond_id = f.biosum_cond_id) " +
-                              "SET " + lblFvsVariableName.Text + " = sum_pre + sum_post";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated weighted POST table with weighted totals from baseline scenario \r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "SQL: " + m_oAdo.m_strSQL + "\r\n\r\n");
-            }
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePreTable);
+                    oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePostTable);
+                }
+                //Check to see if columns exists, they shouldn't, warn that values will be overwritten
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Add receiving columns to pre/post tables if they don't exist \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Warning message if they do! " + m_oAdo.m_strSQL + "\r\n\r\n");
+                }
+                if (m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, strTargetPreTable, lblFvsVariableName.Text))
+                {
+                    if (bNewTables == false)
+                        MessageBox.Show("Values for " + lblFvsVariableName.Text + " were previously calculated! " +
+                                        "They will be overwritten!", "FIA Biosum");
+                }
+                else
+                {
+                    m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, strTargetPreTable,
+                        lblFvsVariableName.Text, "DOUBLE", "");
+                    m_oAdo.AddColumn(m_oAdo.m_OleDbConnection, strTargetPostTable,
+                        lblFvsVariableName.Text, "DOUBLE", "");
+                }
 
-            if (oDao != null)
-            {
-                oDao.m_DaoWorkspace.Close();
-                oDao = null;
-            }
+                //Link receiving tables to temporary database
+                oDao.CreateTableLink(m_strTempMDB, strTargetPreTable, strPrePostWeightedDb, strTargetPreTable);
+                oDao.CreateTableLink(m_strTempMDB, strTargetPostTable, strPrePostWeightedDb, strTargetPostTable);
 
+                //Switch connection to temporary database
+                m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempMDB, "", ""));
+                m_oAdo.m_strSQL = "UPDATE (" + strWeightsByRxPkgPostTable + " pt " +
+                                  "INNER JOIN " + strWeightsByRxPkgPreTable + " pe " +
+                                  "ON (pt.biosum_cond_id = pe.biosum_cond_id)) " +
+                                  "INNER JOIN " + strTargetPreTable + " f " +
+                                  "ON (pe.biosum_cond_id = f.biosum_cond_id) " +
+                                  "SET " + lblFvsVariableName.Text + " = sum_pre + sum_post " +
+                                  "WHERE pt.rxpackage = '" + cboFvsVariableBaselinePkg.SelectedItem.ToString() +
+                                  "' and pe.rxpackage = '" + cboFvsVariableBaselinePkg.SelectedItem.ToString() + "'";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated weighted PRE table with weighted totals from baseline scenario \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "SQL: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                }
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                m_oAdo.m_strSQL = "UPDATE (" + strWeightsByRxPkgPostTable + " pt " +
+                                  "INNER JOIN " + strWeightsByRxPkgPreTable + " pe " +
+                                  "ON (pt.rxpackage = pe.rxpackage) AND (pt.biosum_cond_id = pe.biosum_cond_id)) " +
+                                  "INNER JOIN " + strTargetPostTable + " f ON (pe.rxpackage = f.rxpackage) AND (pe.biosum_cond_id = f.biosum_cond_id) " +
+                                  "SET " + lblFvsVariableName.Text + " = sum_pre + sum_post";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated weighted POST table with weighted totals from baseline scenario \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "SQL: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                }
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+                if (oDao != null)
+                {
+                    oDao.m_DaoWorkspace.Close();
+                    oDao = null;
+                }
+            }
         }
 
         public class VariableItem

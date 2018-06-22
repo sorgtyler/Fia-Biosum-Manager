@@ -5529,6 +5529,18 @@ namespace FIA_Biosum_Manager
                              "e.post_variable_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
                              "e.change_value = 0";
                     }
+                    else if (oItem.strVariableName.Equals("treatment_haul_costs_1"))
+                    {
+                             strSql = "UPDATE cycle1_optimization e " +
+                             "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                             "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                             "e.rxpackage=p.rxpackage " +
+                             "SET e.pre_variable_name = '" + oItem.strVariableName + "'," +
+                             "e.post_variable_name = '" + oItem.strVariableName + "'," +
+                             "e.pre_variable_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
+                             "e.post_variable_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
+                             "e.change_value = 0";
+                    }
                 }
                 // This is a custom-weighted economic variable
                 else
