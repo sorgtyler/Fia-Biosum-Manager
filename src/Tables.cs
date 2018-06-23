@@ -3330,46 +3330,46 @@ namespace FIA_Biosum_Manager
 		               "CWDID DOUBLE," +
 		               "MEASYEAR LONG," +
 		               "CONDID LONG," +
-		               "SLOPDIST DOUBLE," +
-		               "HORIZ_DIST DOUBLE," +
+                       //"SLOPDIST DOUBLE," +
+                       //"HORIZ_DIST DOUBLE," +
 		               "SPCD LONG," +
 		               "DECAYCD LONG," +
 		               "TRANSDIA LONG," +
 		               "SMALLDIA LONG," +
 		               "LARGEDIA LONG," +
 		               "LENGTH LONG," +
-		               "HOLLOWCD TEXT(1)," +
-		               "CWDHSTCD LONG," +
-		               "VOLCF DOUBLE," +
-		               "DRYBIO DOUBLE," +
-		               "CARBON DOUBLE," +
-		               "COVER_PCT DOUBLE," +
-		               "LPA_UNADJ DOUBLE," +
-		               "LPA_PLOT DOUBLE," +
-		               "LPA_COND DOUBLE," +
-		               "LPA_UNADJ_RGN DOUBLE," +
-		               "LPA_PLOT_RGN DOUBLE," +
-		               "LPA_COND_RGN DOUBLE," +
-		               "COVER_PCT_RGN LONG," +
-		               "CHARRED_CD LONG," +
-		               "ORNTCD_PNWRS TEXT(1)," +
-		               "CREATED_BY TEXT(30)," +
-		               "CREATED_DATE DATETIME," +
-		               "CREATED_IN_INSTANCE TEXT(6)," +
-		               "MODIFIED_BY TEXT(30)," +
-		               "MODIFIED_DATE DATETIME," +
-		               "MODIFIED_IN_INSTANCE TEXT(6)," +
-		               "CWD_SAMPLE_METHOD TEXT(6)," +
-		               "HOLLOW_DIA LONG," +
-		               "HORIZ_DIST_CD LONG," +
-		               "INCLINATION LONG," +
-		               "LARGE_END_DIA_CLASS LONG," +
-		               "LENGTH_CD LONG," +
-		               "VOLCF_AC_UNADJ DOUBLE," +
-		               "VOLCF_AC_PLOT DOUBLE," +
-		               "VOLCF_AC_COND DOUBLE," +
-		               "DRYBIO_AC_UNADJ DOUBLE," +
-		               "DRYBIO_AC_PLOT DOUBLE," +
+                       //"HOLLOWCD TEXT(1)," +
+                       //"CWDHSTCD LONG," +
+                       //"VOLCF DOUBLE," +
+                       //"DRYBIO DOUBLE," +
+                       //"CARBON DOUBLE," +
+                       //"COVER_PCT DOUBLE," +
+                       //"LPA_UNADJ DOUBLE," +
+                       //"LPA_PLOT DOUBLE," +
+                       //"LPA_COND DOUBLE," +
+                       //"LPA_UNADJ_RGN DOUBLE," +
+                       //"LPA_PLOT_RGN DOUBLE," +
+                       //"LPA_COND_RGN DOUBLE," +
+                       //"COVER_PCT_RGN LONG," +
+                       //"CHARRED_CD LONG," +
+                       //"ORNTCD_PNWRS TEXT(1)," +
+                       //"CREATED_BY TEXT(30)," +
+                       //"CREATED_DATE DATETIME," +
+                       //"CREATED_IN_INSTANCE TEXT(6)," +
+                       //"MODIFIED_BY TEXT(30)," +
+                       //"MODIFIED_DATE DATETIME," +
+                       //"MODIFIED_IN_INSTANCE TEXT(6)," +
+                       //"CWD_SAMPLE_METHOD TEXT(6)," +
+                       //"HOLLOW_DIA LONG," +
+                       //"HORIZ_DIST_CD LONG," +
+                       //"INCLINATION LONG," +
+                       //"LARGE_END_DIA_CLASS LONG," +
+                       //"LENGTH_CD LONG," +
+                       //"VOLCF_AC_UNADJ DOUBLE," +
+                       //"VOLCF_AC_PLOT DOUBLE," +
+                       //"VOLCF_AC_COND DOUBLE," +
+                       //"DRYBIO_AC_UNADJ DOUBLE," +
+                       //"DRYBIO_AC_PLOT DOUBLE," +
 		               "DRYBIO_AC_COND DOUBLE," +
 		               "CARBON_AC_UNADJ DOUBLE," +
 		               "CARBON_AC_PLOT DOUBLE," +
@@ -3408,26 +3408,26 @@ namespace FIA_Biosum_Manager
 		               "SMALLCT LONG," +
 		               "MEDIUMCT LONG," +
 		               "LARGECT LONG," +
-		               "RSNCTCD LONG," +
-		               "PILESCD LONG," +
+                       //"RSNCTCD LONG," +
+                       //"PILESCD LONG," +
 		               "SMALL_TL_COND DOUBLE," +
-		               "SMALL_TL_PLOT DOUBLE," +
-		               "SMALL_TL_UNADJ DOUBLE," +
+                       //"SMALL_TL_PLOT DOUBLE," +
+                       //"SMALL_TL_UNADJ DOUBLE," +
 		               "MEDIUM_TL_COND DOUBLE," +
-		               "MEDIUM_TL_PLOT DOUBLE," +
-		               "MEDIUM_TL_UNADJ DOUBLE," +
+                       //"MEDIUM_TL_PLOT DOUBLE," +
+                       //"MEDIUM_TL_UNADJ DOUBLE," +
 		               "LARGE_TL_COND DOUBLE," +
-		               "LARGE_TL_PLOT DOUBLE," +
-		               "LARGE_TL_UNADJ DOUBLE," +
-		               "CREATED_BY TEXT(30)," +
-		               "CREATED_DATE DATETIME," +
-		               "CREATED_IN_INSTANCE TEXT(6)," +
-		               "MODIFIED_BY TEXT(30)," +
-		               "MODIFIED_DATE DATETIME," +
-		               "MODIFIED_IN_INSTANCE TEXT(6)," +
-		               "FWD_STATUS_CD LONG," +
-		               "FWD_NONSAMPLE_REASN_CD LONG," +
-		               "FWD_SAMPLE_METHOD TEXT(6)," +
+                       //"LARGE_TL_PLOT DOUBLE," +
+                       //"LARGE_TL_UNADJ DOUBLE," +
+                       //"CREATED_BY TEXT(30)," +
+                       //"CREATED_DATE DATETIME," +
+                       //"CREATED_IN_INSTANCE TEXT(6)," +
+                       //"MODIFIED_BY TEXT(30)," +
+                       //"MODIFIED_DATE DATETIME," +
+                       //"MODIFIED_IN_INSTANCE TEXT(6)," +
+                       //"FWD_STATUS_CD LONG," +
+                       //"FWD_NONSAMPLE_REASN_CD LONG," +
+                       //"FWD_SAMPLE_METHOD TEXT(6)," +
 		               "SLOPE LONG)";
 		    }
 
@@ -3458,25 +3458,26 @@ namespace FIA_Biosum_Manager
 		               "PLOT LONG," +
 		               "TRANSECT LONG," +
 		               "SUBP LONG," +
-		               "SMPLOCCD LONG," +
+                       //"SMPLOCCD LONG," +
 		               "MEASYEAR LONG," +
 		               "CONDID LONG," +
 		               "DUFFDEP DOUBLE," +
 		               "LITTDEP DOUBLE," +
-		               "FUELDEP DOUBLE," +
-		               "CREATED_BY TEXT(30)," +
-		               "CREATED_DATE DATETIME," +
-		               "CREATED_IN_INSTANCE TEXT(6)," +
-		               "MODIFIED_BY TEXT(30)," +
-		               "MODIFIED_DATE DATETIME," +
-		               "MODIFIED_IN_INSTANCE TEXT(6)," +
-		               "DLF_SAMPLE_METHOD TEXT(6)," +
-		               "DUFF_METHOD LONG," +
-		               "DUFF_NONSAMPLE_REASN_CD LONG," +
-		               "LITTER_METHOD LONG," +
-		               "LITTER_NONSAMPLE_REASN_CD LONG," +
-		               "FUELBED_METHOD LONG," +
-		               "FUELBED_NONSAMPLE_REASN_CD LONG)";
+		               "FUELDEP DOUBLE" +
+                       //",CREATED_BY TEXT(30)," +
+                       //"CREATED_DATE DATETIME," +
+                       //"CREATED_IN_INSTANCE TEXT(6)," +
+                       //"MODIFIED_BY TEXT(30)," +
+                       //"MODIFIED_DATE DATETIME," +
+                       //"MODIFIED_IN_INSTANCE TEXT(6)," +
+                       //"DLF_SAMPLE_METHOD TEXT(6)," +
+                       //"DUFF_METHOD LONG," +
+                       //"DUFF_NONSAMPLE_REASN_CD LONG," +
+                       //"LITTER_METHOD LONG," +
+                       //"LITTER_NONSAMPLE_REASN_CD LONG," +
+                       //"FUELBED_METHOD LONG," +
+                       //"FUELBED_NONSAMPLE_REASN_CD LONG" +
+		               ")";
 		    }
 
 		    public void CreateDWMMicroplotFuelTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
@@ -3619,15 +3620,16 @@ namespace FIA_Biosum_Manager
 		               "SLOPE LONG," +
 		               "HORIZ_LENGTH DOUBLE," +
 		               "HORIZ_BEGNDIST DOUBLE," +
-		               "HORIZ_ENDDIST DOUBLE," +
-		               "CREATED_BY TEXT(30)," +
-		               "CREATED_DATE DATETIME," +
-		               "CREATED_IN_INSTANCE TEXT(6)," +
-		               "MODIFIED_BY TEXT(30)," +
-		               "MODIFIED_IN_INSTANCE TEXT(6)," +
-		               "MODIFIED_DATE DATETIME," +
-		               "SEGMNT_STATUS_CD LONG," +
-		               "SEGMNT_NONSAMPLE_REASN_CD LONG)";
+		               "HORIZ_ENDDIST DOUBLE" +
+                       //",CREATED_BY TEXT(30)," +
+                       //"CREATED_DATE DATETIME," +
+                       //"CREATED_IN_INSTANCE TEXT(6)," +
+                       //"MODIFIED_BY TEXT(30)," +
+                       //"MODIFIED_IN_INSTANCE TEXT(6)," +
+                       //"MODIFIED_DATE DATETIME," +
+                       //"SEGMNT_STATUS_CD LONG," +
+                       //"SEGMNT_NONSAMPLE_REASN_CD LONG" +
+		               ")";
 		    }
 
 		    public void CreateDWMVisitTable(FIA_Biosum_Manager.ado_data_access p_oAdo,

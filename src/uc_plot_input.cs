@@ -2726,10 +2726,20 @@ namespace FIA_Biosum_Manager
                 if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
                 {
                     SetThermValue(m_frmTherm.progressBar1, "Value", 100);
-                    SetThermValue(m_frmTherm.progressBar2, "Value", 80);
+                    SetThermValue(m_frmTherm.progressBar2, "Value", 60);
                     this.UpdateColumns(m_ado);
                     m_intError = m_ado.m_intError;
                 }
+
+                //TODO: DWM checkbox should enable this functionality
+                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
+                {
+                    SetThermValue(m_frmTherm.progressBar1, "Value", 100);
+                    SetThermValue(m_frmTherm.progressBar2, "Value", 80);
+                    UpdateColumnsDownWoodyMaterials(p_ado);
+                    m_intError = m_ado.m_intError;
+                }
+
                 if (this.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
                 {
                     //Record counts associated with imported plots for each table
@@ -2904,6 +2914,29 @@ namespace FIA_Biosum_Manager
 	    }
 
 	    /// <summary>
+	    /// After importing DWM table data from FIADB to Master.mdb, join the DWM table with the plot/cond tables to get the BSCID
+	    /// </summary>
+	    /// <param name="p_ado">Reference to the temporary database used to link FIADB and Master during plot input phase</param>
+	    /// <param name="strDestTable">The DWM table to update</param>
+	    private void UpdateDwmBiosumCondIds(ado_data_access p_ado, string strDestTable = null)
+	    {
+	        p_ado.m_strSQL = String.Format(
+	            "UPDATE {0} t INNER JOIN ({1} p INNER JOIN {2} c ON c.biosum_plot_id = p.biosum_plot_id) ON (p.cn = t.plt_cn) AND (t.CONDID = c.condid) " +
+	            "SET t.biosum_cond_id=c.biosum_cond_id WHERE t.biosum_cond_id='9999999999999999999999999' AND p.biosum_status_cd=9;",
+	            strDestTable, m_strPlotTable, m_strCondTable);
+	        p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
+	        m_intError = p_ado.m_intError;
+
+	        using (System.IO.StreamWriter file =
+	            new System.IO.StreamWriter(
+	                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\DWM_sqloutput.txt", true))
+	        {
+	            file.WriteLine(String.Format("UPDATING BiosumCondId for: {1}{0}{0}strSQL:{2}{0}m_intError:{3}{0}",
+	                Environment.NewLine, strDestTable, p_ado.m_strSQL, m_intError));
+	        }
+	    }
+        
+	    /// <summary>
 	    /// Creates temporary DWM table from FIADB that associates dwm data with a biosum_cond_id. 
 	    /// Assumes that the FIADB DWM table has a plt_cn and condid.
 	    /// </summary>
@@ -2913,7 +2946,7 @@ namespace FIA_Biosum_Manager
 	    {
 	        p_ado.m_strSQL = String.Format(
 	            "SELECT TRIM(c.biosum_cond_id) AS biosum_cond_id, 9 as biosum_status_cd, t.* INTO {0} " +
-	            "FROM {1} t INNER JOIN ({2} p INNER JOIN {3} c ON c.biosum_plot_id = p.biosum_plot_id) ON (p.cn = t.plt_cn) AND (t.CONDID = c.condid)" +
+	            "FROM {1} t INNER JOIN ({2} p INNER JOIN {3} c ON c.biosum_plot_id = p.biosum_plot_id) ON (p.cn = t.plt_cn) AND (t.CONDID = c.condid) " +
 	            "WHERE p.biosum_status_cd=9;", strTempTable, strSourceTable, m_strPlotTable, m_strCondTable);
 	        p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
 	        m_intError = p_ado.m_intError;
@@ -2935,10 +2968,16 @@ namespace FIA_Biosum_Manager
         /// <param name="strDestTable"></param>
         /// <param name="strInsertFields"></param>
 	    private void InsertIntoDestTableFromSourceTable(ado_data_access p_ado, string strSourceTable = null, string strDestTable = null,
-	        string strInsertFields= null)
-	    {
-	        p_ado.m_strSQL = String.Format("INSERT INTO {0} ({1}) " +
-	                                       "SELECT {1} FROM {2}",
+	        string strInsertFields=null, bool InsertBiosumCondIdAndStatusCode = false)
+        {
+            string strInsertIntoValues = "INSERT INTO {0} ({1}) ";
+            string strSelectColumns = "SELECT {1} FROM {2};";
+            if (InsertBiosumCondIdAndStatusCode) 
+            {
+                strInsertIntoValues = "INSERT INTO {0} (biosum_cond_id, biosum_status_cd, {1}) ";
+                strSelectColumns = "SELECT '9999999999999999999999999' AS biosum_cond_id, 9 AS biosum_status_cd, {1} FROM {2};";
+            }
+	        p_ado.m_strSQL = String.Format(strInsertIntoValues + strSelectColumns,
 	            strDestTable, strInsertFields, strSourceTable);
 	        p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
 	        m_intError = p_ado.m_intError;
@@ -3189,7 +3228,6 @@ namespace FIA_Biosum_Manager
                         if (m_oOracleServices.m_oTree == null) MessageBox.Show("m_oTree==null");
                         m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
                         //if (m_strGridTableSource.Trim() != Tables.FVS.DefaultOracleInputVolumesTable)
-                        //{
                         //step 5 - delete and create work tables
                         if (p_ado.TableExist(this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputVolumesTable))
                             p_ado.SqlNonQuery(this.m_connTempMDBFile, "DROP TABLE " + Tables.FVS.DefaultOracleInputVolumesTable);
@@ -4178,142 +4216,143 @@ namespace FIA_Biosum_Manager
             SetThermValue(m_frmTherm.progressBar1, "Value", 3);
 
 
+		}
 
-            /*DWM Section*/
-            dao_data_access p_dao = new dao_data_access();
-            p_dao.CreateTableLink(this.m_strTempMDBFile, "fiadb_dwm_cwd_input", strFIADBDbFile, "DWM_COARSE_WOODY_DEBRIS");
-            p_dao.CreateTableLink(this.m_strTempMDBFile, "fiadb_dwm_fwd_input", strFIADBDbFile, "DWM_FINE_WOODY_DEBRIS");
-            p_dao.CreateTableLink(this.m_strTempMDBFile, "fiadb_dwm_dufflitter_input", strFIADBDbFile, "DWM_DUFF_LITTER_FUEL");
-            p_dao.CreateTableLink(this.m_strTempMDBFile, "fiadb_dwm_transect_segment_input", strFIADBDbFile, "DWM_TRANSECT_SEGMENT");
-            p_dao.CreateTableLink(this.m_strTempMDBFile, "fiadb_ref_forest_type_input", strFIADBDbFile, "REF_FOREST_TYPE");
-            p_dao.CreateTableLink(this.m_strTempMDBFile, "fiadb_ref_forest_type_group_input", strFIADBDbFile, "REF_FOREST_TYPE_GROUP");
-            m_intError = p_dao.m_intError;
-            p_dao.m_DaoWorkspace.Close();
+	    private void UpdateColumnsDownWoodyMaterials(ado_data_access p_ado)
+	    {
+            SetLabelValue(m_frmTherm.lblMsg,"Text","Importing DWM data...Stand By");
+            SetThermValue(m_frmTherm.progressBar1,"Maximum", 14);
+            SetThermValue(m_frmTherm.progressBar1, "Minimum", 0);
+            SetThermValue(m_frmTherm.progressBar1, "Value", 0);
+
+		    string strFIADBDbFile = "";
+		    strFIADBDbFile = (string) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.TextBox) txtMDBFiadbInputFile, "Text", false);
+		    strFIADBDbFile = strFIADBDbFile.Trim();
+		    String strFiaCWD = "fiadb_dwm_cwd_input";
+		    String strFiaFWD = "fiadb_dwm_fwd_input";
+		    String strFiaDL = "fiadb_dwm_dufflitter_input";
+		    String strFiaTS = "fiadb_dwm_transect_segment_input";
+		    String strFiaRFT = "fiadb_ref_forest_type_input";
+		    String strFiaRFTG = "fiadb_ref_forest_type_group_input";
+
+		    p_ado.CloseConnection(m_connTempMDBFile);
+		    dao_data_access p_dao = new dao_data_access();
+		    p_dao.CreateTableLink(m_strTempMDBFile, strFiaCWD, strFIADBDbFile, m_strDwmCwdTable);
+		    p_dao.CreateTableLink(m_strTempMDBFile, strFiaFWD, strFIADBDbFile, m_strDwmFwdTable);
+		    p_dao.CreateTableLink(m_strTempMDBFile, strFiaDL, strFIADBDbFile, m_strDwmDuffLitterTable);
+		    p_dao.CreateTableLink(m_strTempMDBFile, strFiaTS, strFIADBDbFile, m_strDwmTransectSegmentTable);
+		    p_dao.CreateTableLink(m_strTempMDBFile, strFiaRFT, strFIADBDbFile, m_strForestTypeTable);
+		    p_dao.CreateTableLink(m_strTempMDBFile, strFiaRFTG, strFIADBDbFile, m_strForestTypeGroupTable);
+		    m_intError = p_dao.m_intError;
+		    p_dao.m_DaoWorkspace.Close();
 		    p_dao = null;
+		    p_ado.OpenConnection(m_strTempMDBFileConn, ref m_connTempMDBFile);
+
+
+            SetThermValue(m_frmTherm.progressBar1, "Value", 1);
 
 		    String strFields = "";
 		    String strSourceTableLink = "";
-		    System.Data.DataTable dtDwmCwd = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strDwmCwdTable);
-		    System.Data.DataTable dtDwmFwd = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strDwmFwdTable);
-		    System.Data.DataTable dtDwmDuffLitter = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strDwmDuffLitterTable);
-		    System.Data.DataTable dtDwmTransectSegment = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strDwmTransectSegmentTable);
-		    System.Data.DataTable dtForestType = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strForestTypeTable);
-		    System.Data.DataTable dtForestTypeGroup = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from " + this.m_strForestTypeGroupTable);
-		    System.Data.DataTable dtFIADBDwmCwd = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from fiadb_dwm_cwd_input");
-		    System.Data.DataTable dtFIADBDwmFwd = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from fiadb_dwm_fwd_input");
-		    System.Data.DataTable dtFIADBDwmDuffLitter = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from fiadb_dwm_dufflitter_input");
-		    System.Data.DataTable dtFIADBDwmTransectSegment = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from fiadb_dwm_transect_segment_input");
-		    System.Data.DataTable dtFIADBForestType = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from fiadb_ref_forest_type_input");
-		    System.Data.DataTable dtFIADBForestTypeGroup = p_ado.getTableSchema(this.m_connTempMDBFile, "select * from fiadb_ref_forest_type_group_input");
+		    System.Data.DataTable dtDwmCwd = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + m_strDwmCwdTable);
+		    System.Data.DataTable dtDwmFwd = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + m_strDwmFwdTable);
+		    System.Data.DataTable dtDwmDuffLitter = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + m_strDwmDuffLitterTable);
+		    System.Data.DataTable dtDwmTransectSegment = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + m_strDwmTransectSegmentTable);
+		    System.Data.DataTable dtForestType = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + m_strForestTypeTable);
+		    System.Data.DataTable dtForestTypeGroup = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + m_strForestTypeGroupTable);
+		    System.Data.DataTable dtFIADBDwmCwd = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + strFiaCWD);
+		    System.Data.DataTable dtFIADBDwmFwd = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + strFiaFWD);
+		    System.Data.DataTable dtFIADBDwmDuffLitter = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + strFiaDL);
+		    System.Data.DataTable dtFIADBDwmTransectSegment = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + strFiaTS);
+		    System.Data.DataTable dtFIADBForestType = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + strFiaRFT);
+		    System.Data.DataTable dtFIADBForestTypeGroup = p_ado.getTableSchema(m_connTempMDBFile, "select * from " + strFiaRFTG);
 
-            //Since the plot table doesn't have a condid, but you need it to get the right biosum_cond_id for the DWM record, the cond table is joined.
-            //It might be more efficient to use this smaller table than cond and plot combined.
-            //Temporary table of plt_cn, condid, biosum_plot_id, biosum_cond_id for writing to DWM tables
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                //When importing plot information, its biosum_status_cd is 9 until all processing is done. 
-                //The associated DWM and Ref Forest [Group] information should be pulled in for these plots only (not all plots)
-                //TODO: verify that the number of unique plot CNs here is the same as the number of plots being imported
-                p_ado.m_strSQL = String.Format(
-                    "SELECT p.cn, c.condid, p.biosum_plot_id, c.biosum_cond_id INTO temp_id_lookup_table " +
-                    "FROM {0} p INNER JOIN {1} c ON p.biosum_plot_id=c.biosum_plot_id " +
-                    "WHERE p.biosum_status_cd=9;", m_strPlotTable, m_strCondTable);
-                p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
-                //TODO: delete temp table later
+
+		    //DWM Coarse Woody Debris FIADB into Master.MDB Table
+		    if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+		    {
+                SetLabelValue(m_frmTherm.lblMsg,"Text","Importing DWM CWD...Stand By");
+                SetThermValue(m_frmTherm.progressBar1, "Value", 2);
+		        strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmCwd, dtDestSchema: dtDwmCwd);
+		        InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strFiaCWD, strDestTable: m_strDwmCwdTable,
+		            strInsertFields: strFields, InsertBiosumCondIdAndStatusCode: true);
+		        UpdateDwmBiosumCondIds(p_ado, m_strDwmCwdTable);
                 m_intError = p_ado.m_intError;
-            }
-            //DWM Coarse Woody Debris FIADB into Temp Table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                strSourceTableLink = "fiadb_dwm_cwd_input";
-                strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmCwd, dtDestSchema: dtDwmCwd);
-                SelectIntoTempDWMTableFromSourceDWMTable(p_ado, strSourceTable: strSourceTableLink,
-                    strTempTable: "temp_CWD_table");
-            }
-            //DWM Coarse Woody Debris Temp Table into BioSum Master table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: "temp_CWD_table", strDestTable: m_strDwmCwdTable,
-                    strInsertFields: "biosum_cond_id, biosum_status_cd, " + strFields);
-            }
-            //DWM Fine Woody Debris FIADB into Temp Table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                strSourceTableLink = "fiadb_dwm_fwd_input";
-                strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmFwd, dtDestSchema: dtDwmFwd);
-                SelectIntoTempDWMTableFromSourceDWMTable(p_ado, strSourceTable: strSourceTableLink,
-                    strTempTable: "temp_FWD_table");
-            }
-            //DWM Fine Woody Debris Temp Table into BioSum Master table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: "temp_FWD_table", strDestTable: m_strDwmFwdTable,
-                    strInsertFields: "biosum_cond_id, biosum_status_cd, " + strFields);
-            }
-            //DWM Duff Litter Fuel FIADB into Temp Table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                strSourceTableLink = "fiadb_dwm_dufflitter_input";
-                strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmDuffLitter,
-                    dtDestSchema: dtDwmDuffLitter);
-                SelectIntoTempDWMTableFromSourceDWMTable(p_ado, strSourceTable: strSourceTableLink,
-                    strTempTable: "temp_dufflitter_table");
-            }
-            //DWM Duff Litter Fuel Temp Table into BioSum Master table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: "temp_dufflitter_table",
-                    strDestTable: m_strDwmDuffLitterTable,
-                    strInsertFields: "biosum_cond_id, biosum_status_cd, " + strFields);
-            }
-            //DWM Transect Segment FIADB into Temp Table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                strSourceTableLink = "fiadb_dwm_transect_segment_input";
-                strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmTransectSegment,
-                    dtDestSchema: dtDwmTransectSegment);
-                SelectIntoTempDWMTableFromSourceDWMTable(p_ado, strSourceTable: strSourceTableLink,
-                    strTempTable: "temp_transectsegment_table");
-            }
-            //DWM Transect Segment Temp Table into BioSum Master table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: "temp_transectsegment_table",
-                    strDestTable: m_strDwmTransectSegmentTable,
-                    strInsertFields: "biosum_cond_id, biosum_status_cd, " + strFields);
-            }
-            //REF FOREST TYPE insert into BioSum Master table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                strSourceTableLink = "fiadb_ref_forest_type_input";
-                strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBForestType,
-                    dtDestSchema: dtForestType);
-                InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strSourceTableLink,
-                    strDestTable: m_strForestTypeTable, strInsertFields: strFields);
-            }
-            //REF FOREST TYPE GROUP insert into BioSum Master table
-            if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-            {
-                strSourceTableLink = "fiadb_ref_forest_type_group_input";
-                strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBForestTypeGroup,
-                    dtDestSchema: dtForestTypeGroup);
-                InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strSourceTableLink,
-                    strDestTable: m_strForestTypeGroupTable, strInsertFields: strFields);
-            }
+		    }
 
+		    //DWM Fine Woody Debris FIADB into Master.MDB Table
+		    if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+		    {
+                SetLabelValue(m_frmTherm.lblMsg,"Text","Importing DWM FWD...Stand By");
+                SetThermValue(m_frmTherm.progressBar1, "Value", 4);
+		        strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmFwd, dtDestSchema: dtDwmFwd);
+		        InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strFiaFWD, strDestTable: m_strDwmFwdTable,
+		            strInsertFields: strFields, InsertBiosumCondIdAndStatusCode: true);
+		        UpdateDwmBiosumCondIds(p_ado, m_strDwmFwdTable);
+                m_intError = p_ado.m_intError;
+		    }
 
+		    //DWM Duff Litter Fuel FIADB into Master.MDB Table
+		    if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+		    {
+                SetLabelValue(m_frmTherm.lblMsg,"Text","Importing DWM DuffLitter...Stand By");
+                SetThermValue(m_frmTherm.progressBar1, "Value", 6);
+		        strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmDuffLitter,
+		            dtDestSchema: dtDwmDuffLitter);
+		        InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strFiaDL, strDestTable: m_strDwmDuffLitterTable,
+		            strInsertFields: strFields, InsertBiosumCondIdAndStatusCode: true);
+		        UpdateDwmBiosumCondIds(p_ado, m_strDwmDuffLitterTable);
+                m_intError = p_ado.m_intError;
+		    }
 
-            this.m_intError=p_ado.m_intError;
+		    //DWM Transect Segment FIADB into Master.MDB Table
+		    if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+		    {
+                SetLabelValue(m_frmTherm.lblMsg,"Text","Importing DWM Transect Segment...Stand By");
+                SetThermValue(m_frmTherm.progressBar1, "Value", 8);
+		        strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBDwmTransectSegment,
+		            dtDestSchema: dtDwmTransectSegment);
+		        InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strFiaTS,
+		            strDestTable: m_strDwmTransectSegmentTable,
+		            strInsertFields: strFields, InsertBiosumCondIdAndStatusCode: true);
+		        UpdateDwmBiosumCondIds(p_ado, m_strDwmTransectSegmentTable);
+                m_intError = p_ado.m_intError;
+		    }
 
+		    //REF FOREST TYPE insert into BioSum Master table
+		    if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+		    {
+                SetThermValue(m_frmTherm.progressBar1, "Value", 10);
+		        if (p_ado.getRecordCount(m_connTempMDBFile, String.Format("SELECT * FROM {0};", m_strForestTypeTable),
+		                m_strForestTypeTable) == 0)
+		        {
+                    SetLabelValue(m_frmTherm.lblMsg,"Text","Importing Ref Forest Types...Stand By");
+		            strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBForestType,
+		                dtDestSchema: dtForestType);
+		            InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strFiaRFT,
+		                strDestTable: m_strForestTypeTable, strInsertFields: strFields);
+		            m_intError = p_ado.m_intError;
+		        }
+		    }
 
+		    //REF FOREST TYPE GROUP insert into BioSum Master table
+		    if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
+		    {
+                SetThermValue(m_frmTherm.progressBar1, "Value", 12);
+		        if (p_ado.getRecordCount(m_connTempMDBFile, String.Format("SELECT * FROM {0};", m_strForestTypeGroupTable),
+		                m_strForestTypeGroupTable) == 0)
+		        {
+		            SetLabelValue(m_frmTherm.lblMsg, "Text", "Importing Ref Forest Type Groups...Stand By");
+		            strFields = CreateStrFieldsFromDataTables(dtSourceSchema: dtFIADBForestTypeGroup,
+		                dtDestSchema: dtForestTypeGroup);
+		            InsertIntoDestTableFromSourceTable(p_ado, strSourceTable: strFiaRFTG,
+		                strDestTable: m_strForestTypeGroupTable, strInsertFields: strFields);
+		            m_intError = p_ado.m_intError;
+		        }
+		    }
 
-
-
-
-
-			//MessageBox.Show(strTime);
-			
-		}
+            SetLabelValue(m_frmTherm.lblMsg,"Text","");
+            SetThermValue(m_frmTherm.progressBar1, "Value", GetThermValue(m_frmTherm.progressBar1, "Maximum"));
+	    }
 	
 		private void ThermCancel(object sender, System.EventArgs e)
 		{

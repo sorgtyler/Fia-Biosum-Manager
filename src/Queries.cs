@@ -3319,6 +3319,24 @@ namespace FIA_Biosum_Manager
                     {
                         return "DROP TABLE FVS_StandInit_WorkTable;";
                     }
+
+                    public static string UpdateNullCWDFuelsIfPositiveCWDTotalLength()
+                    {
+                        return "UPDATE FVS_StandInit_WorkTable " +
+                               "SET Fuel_3_6_H=IIF(Fuel_3_6_H is null, 0, Fuel_3_6_H), " +
+                               "Fuel_6_12_H=IIF(Fuel_6_12_H is null, 0, Fuel_6_12_H), " +
+                               "Fuel_12_20_H=IIF(Fuel_12_20_H is null, 0, Fuel_12_20_H), " +
+                               "Fuel_20_35_H=IIF(Fuel_20_35_H is null, 0, Fuel_20_35_H), " +
+                               "Fuel_35_50_H=IIF(Fuel_35_50_H is null, 0, Fuel_35_50_H), " +
+                               "Fuel_gt_50_H=IIF(Fuel_gt_50_H is null, 0, Fuel_gt_50_H), " +
+                               "Fuel_3_6_S=IIF(Fuel_3_6_S is null, 0, Fuel_3_6_S), " +
+                               "Fuel_6_12_S=IIF(Fuel_6_12_S is null, 0, Fuel_6_12_S), " +
+                               "Fuel_12_20_S=IIF(Fuel_12_20_S is null, 0, Fuel_12_20_S), " +
+                               "Fuel_20_35_S=IIF(Fuel_20_35_S is null, 0, Fuel_20_35_S), " +
+                               "Fuel_35_50_S=IIF(Fuel_35_50_S is null, 0, Fuel_35_50_S), " +
+                               "Fuel_gt_50_S=IIF(Fuel_gt_50_S is null, 0, Fuel_gt_50_S) " +
+                               "WHERE CWDTotalLength > 0;";
+                    }
                 }
 
                 //All the queries necessary to create the FVSIn.accdb FVS_TreeInit table using intermediate tables

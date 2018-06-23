@@ -539,38 +539,41 @@ namespace FIA_Biosum_Manager
             }
         }
 
-	    private void CreateDwmFuelbedTypeCodeFvsConversionTable()
-	    {
-	        m_ado.SqlNonQuery(m_ado.m_OleDbConnection,
-	            Queries.FVS.FVSInput.StandInit.CreateDWMFuelbedTypCdToFVSConversionTable());
-	        m_intError = m_ado.m_intError;
+        private void CreateDwmFuelbedTypeCodeFvsConversionTable()
+        {
+            if (!m_ado.TableExist(m_ado.m_OleDbConnection, "Ref_DWM_Fuelbed_Type_Codes"))
+            {
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection,
+                    Queries.FVS.FVSInput.StandInit.CreateDWMFuelbedTypCdToFVSConversionTable());
+                m_intError = m_ado.m_intError;
 
-	        Dictionary<string, int> fuelModelNumbers = new Dictionary<string, int>
-	        {
-	            {"GR1", 101}, {"GR2", 102}, {"GR3", 103}, {"GR4", 104},
-	            {"GR5", 105}, {"GR6", 106}, {"GR7", 107}, {"GR8", 108},
-	            {"GR9", 109}, {"GS1", 121}, {"GS2", 122}, {"GS3", 123},
-	            {"GS4", 124}, {"SH1", 141}, {"SH2", 142}, {"SH3", 143},
-	            {"SH4", 144}, {"SH5", 145}, {"SH6", 146}, {"SH7", 147},
-	            {"SH8", 148}, {"SH9", 149}, {"TU1", 161}, {"TU2", 162},
-	            {"TU3", 163}, {"TU4", 164}, {"TU5", 165}, {"TL1", 181},
-	            {"TL2", 182}, {"TL3", 183}, {"TL4", 184}, {"TL5", 185},
-	            {"TL6", 186}, {"TL7", 187}, {"TL8", 188}, {"TL9", 189},
-	            {"SB1", 201}, {"SB2", 202}, {"SB3", 203}, {"SB4", 204}
-	        };
+                Dictionary<string, int> fuelModelNumbers = new Dictionary<string, int>
+                {
+                    {"GR1", 101}, {"GR2", 102}, {"GR3", 103}, {"GR4", 104},
+                    {"GR5", 105}, {"GR6", 106}, {"GR7", 107}, {"GR8", 108},
+                    {"GR9", 109}, {"GS1", 121}, {"GS2", 122}, {"GS3", 123},
+                    {"GS4", 124}, {"SH1", 141}, {"SH2", 142}, {"SH3", 143},
+                    {"SH4", 144}, {"SH5", 145}, {"SH6", 146}, {"SH7", 147},
+                    {"SH8", 148}, {"SH9", 149}, {"TU1", 161}, {"TU2", 162},
+                    {"TU3", 163}, {"TU4", 164}, {"TU5", 165}, {"TL1", 181},
+                    {"TL2", 182}, {"TL3", 183}, {"TL4", 184}, {"TL5", 185},
+                    {"TL6", 186}, {"TL7", 187}, {"TL8", 188}, {"TL9", 189},
+                    {"SB1", 201}, {"SB2", 202}, {"SB3", 203}, {"SB4", 204}
+                };
 
-	        foreach (string key in fuelModelNumbers.Keys)
-	        {
-	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection,
-	                String.Format(
-	                    "INSERT INTO Ref_DWM_Fuelbed_Type_Codes " +
-	                    "(dwm_fuelbed_typcd, fuel_model) VALUES (\'{0}\', {1}) ",
-	                    key, fuelModelNumbers[key]));
-	            m_intError = m_ado.m_intError;
-	        }
-	    }
+                foreach (string key in fuelModelNumbers.Keys)
+                {
+                    m_ado.SqlNonQuery(m_ado.m_OleDbConnection,
+                        String.Format(
+                            "INSERT INTO Ref_DWM_Fuelbed_Type_Codes " +
+                            "(dwm_fuelbed_typcd, fuel_model) VALUES (\'{0}\', {1}) ",
+                            key, fuelModelNumbers[key]));
+                    m_intError = m_ado.m_intError;
+                }
+            }
+        }
 
-	    private bool GenerateSiteIndexAndSiteSpeciesSQL()
+        private bool GenerateSiteIndexAndSiteSpeciesSQL()
         {
             fvs_input.site_index oSiteIndex = new site_index();
             oSiteIndex.ado_data_access = m_ado;
@@ -642,11 +645,6 @@ namespace FIA_Biosum_Manager
 
 	    private void PopulateFuelColumns()
 	    {
-            /* TODO: sample size flag determined by sum of HORIZ_LENGTH in Transect segment table... 
-             If sum of horiz_length is 0 or null, all CWD bins should be null. 
-             Either don't import in first place or delete them later... if sum is non-zero, all CWD bins should be populated.
-            */
-
 	        //CWD
 	        m_ado.m_strSQL =
 	            Queries.FVS.FVSInput.StandInit.CalculateCoarseWoodyDebrisBiomassTonsPerAcre(m_strDwmCoarseWoodyDebrisTable);
@@ -656,10 +654,13 @@ namespace FIA_Biosum_Manager
 	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
 
             //CWD sum(horiz_length) using TS table 
-            //(don't join with CWD. just map the sums to CWD aggregates using BSCID)
 	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.CWDTotalLengthWorkTable(m_strDwmTransectSegmentTable);
 	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
 	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.UpdateCWDTotalLengthInStandInit();
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+
+            //Set CWD fuels to 0 if TS.horiz_length is non-null and positive
+	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.UpdateNullCWDFuelsIfPositiveCWDTotalLength();
 	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
 
 	        //FWD
@@ -681,13 +682,13 @@ namespace FIA_Biosum_Manager
 
 	        //Cleanup
 	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteCoarseWoodyDebrisWorkTable();
-//	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
 	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteCWDTotalLengthWorkTable();
-//	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
 	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteFineWoodyDebrisWorkTable();
-//	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
 	        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteDuffLitterWorkTable();
-//	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
+	        m_ado.SqlNonQuery(m_strConn, m_ado.m_strSQL);
 
 	        m_intError = m_ado.m_intError;
 	    }
