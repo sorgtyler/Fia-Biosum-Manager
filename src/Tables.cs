@@ -1367,7 +1367,6 @@ namespace FIA_Biosum_Manager
 		}
 		public class CoreScenarioRuleDefinitions
 		{
-			private string strSQL = "";
 			static public string DefaultScenarioFvsVariablesTieBreakerTableDbFile {get {return @"core\db\scenario_core_rule_definitions.mdb";}}
 			static public string DefaultScenarioFvsVariablesTieBreakerTableName {get {return "scenario_fvs_variables_tiebreaker";}}
 			static public string DefaultScenarioFvsVariablesOptimizationTableDbFile {get {return @"core\db\scenario_core_rule_definitions.mdb";}}
@@ -1694,8 +1693,6 @@ namespace FIA_Biosum_Manager
 
         public class CoreDefinitions
         {
-            private string strSQL = "";
-
             static public string DefaultDbFile { get { return @"core\db\core_definitions.accdb"; } }
             static public string DefaultCalculatedCoreVariablesTableName { get { return "calculated_core_variables"; } }
             static public string DefaultCalculatedEconVariablesTableName { get { return "calculated_econ_variables_definition"; } }

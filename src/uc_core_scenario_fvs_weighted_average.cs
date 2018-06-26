@@ -97,7 +97,7 @@ namespace FIA_Biosum_Manager
         public int m_DialogWd;
         private Panel pnlSummary;
         private Button btnProperties;
-        private Button btnDelete;
+        private Button btnDeleteFvsVariable;
         private Button btnNewFvs;
         private ListView lstVariables;
         private Button btnCancelSummary;
@@ -140,6 +140,7 @@ namespace FIA_Biosum_Manager
         private DataGrid m_dgEcon;
         private ColumnHeader vBaselineRxPkg;
         private ColumnHeader vVariableSource;
+        private Button BtnDeleteEconVariable;
         private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
 
         public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
@@ -237,7 +238,6 @@ namespace FIA_Biosum_Manager
             this.btnNewEcon = new System.Windows.Forms.Button();
             this.btnCancelSummary = new System.Windows.Forms.Button();
             this.btnProperties = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.btnNewFvs = new System.Windows.Forms.Button();
             this.lstVariables = new System.Windows.Forms.ListView();
             this.vName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -251,6 +251,7 @@ namespace FIA_Biosum_Manager
             this.lblFvsVariableName = new System.Windows.Forms.Label();
             this.btnFVSVariableValue = new System.Windows.Forms.Button();
             this.m_dg = new System.Windows.Forms.DataGrid();
+            this.btnDeleteFvsVariable = new System.Windows.Forms.Button();
             this.txtFvsVariableTotalWeight = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.BtnHelp = new System.Windows.Forms.Button();
@@ -268,6 +269,7 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.BtnDeleteEconVariable = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -314,6 +316,7 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.BtnDeleteEconVariable);
             this.panel1.Controls.Add(this.m_dgEcon);
             this.panel1.Controls.Add(this.lblEconVariableName);
             this.panel1.Controls.Add(this.btnEconVariableType);
@@ -386,7 +389,7 @@ namespace FIA_Biosum_Manager
             // button2
             // 
             this.button2.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.button2.Location = new System.Drawing.Point(565, 402);
+            this.button2.Location = new System.Drawing.Point(495, 402);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(64, 24);
             this.button2.TabIndex = 87;
@@ -488,7 +491,6 @@ namespace FIA_Biosum_Manager
             this.pnlSummary.Controls.Add(this.btnNewEcon);
             this.pnlSummary.Controls.Add(this.btnCancelSummary);
             this.pnlSummary.Controls.Add(this.btnProperties);
-            this.pnlSummary.Controls.Add(this.btnDelete);
             this.pnlSummary.Controls.Add(this.btnNewFvs);
             this.pnlSummary.Controls.Add(this.lstVariables);
             this.pnlSummary.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -509,7 +511,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnCancelSummary
             // 
-            this.btnCancelSummary.Location = new System.Drawing.Point(491, 360);
+            this.btnCancelSummary.Location = new System.Drawing.Point(421, 360);
             this.btnCancelSummary.Name = "btnCancelSummary";
             this.btnCancelSummary.Size = new System.Drawing.Size(114, 32);
             this.btnCancelSummary.TabIndex = 13;
@@ -518,21 +520,12 @@ namespace FIA_Biosum_Manager
             // 
             // btnProperties
             // 
-            this.btnProperties.Location = new System.Drawing.Point(371, 360);
+            this.btnProperties.Location = new System.Drawing.Point(301, 360);
             this.btnProperties.Name = "btnProperties";
             this.btnProperties.Size = new System.Drawing.Size(114, 32);
             this.btnProperties.TabIndex = 12;
             this.btnProperties.Text = "Properties";
             this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.Enabled = false;
-            this.btnDelete.Location = new System.Drawing.Point(301, 360);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(64, 32);
-            this.btnDelete.TabIndex = 11;
-            this.btnDelete.Text = "Delete";
             // 
             // btnNewFvs
             // 
@@ -616,6 +609,7 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Controls.Add(this.lblFvsVariableName);
             this.pnlDetails.Controls.Add(this.btnFVSVariableValue);
             this.pnlDetails.Controls.Add(this.m_dg);
+            this.pnlDetails.Controls.Add(this.btnDeleteFvsVariable);
             this.pnlDetails.Controls.Add(this.txtFvsVariableTotalWeight);
             this.pnlDetails.Controls.Add(this.label5);
             this.pnlDetails.Controls.Add(this.BtnHelp);
@@ -664,6 +658,15 @@ namespace FIA_Biosum_Manager
             this.m_dg.TabIndex = 91;
             this.m_dg.CurrentCellChanged += new System.EventHandler(this.m_dg_CurCellChange);
             // 
+            // btnDeleteFvsVariable
+            // 
+            this.btnDeleteFvsVariable.Location = new System.Drawing.Point(564, 402);
+            this.btnDeleteFvsVariable.Name = "btnDeleteFvsVariable";
+            this.btnDeleteFvsVariable.Size = new System.Drawing.Size(64, 24);
+            this.btnDeleteFvsVariable.TabIndex = 11;
+            this.btnDeleteFvsVariable.Text = "Delete";
+            this.btnDeleteFvsVariable.Click += new System.EventHandler(this.btnDeleteFvsVariable_Click);
+            // 
             // txtFvsVariableTotalWeight
             // 
             this.txtFvsVariableTotalWeight.BackColor = System.Drawing.SystemColors.Control;
@@ -688,7 +691,7 @@ namespace FIA_Biosum_Manager
             // BtnHelp
             // 
             this.BtnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelp.Location = new System.Drawing.Point(565, 402);
+            this.BtnHelp.Location = new System.Drawing.Point(494, 402);
             this.BtnHelp.Name = "BtnHelp";
             this.BtnHelp.Size = new System.Drawing.Size(64, 24);
             this.BtnHelp.TabIndex = 87;
@@ -823,6 +826,14 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(866, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
+            // 
+            // BtnDeleteEconVariable
+            // 
+            this.BtnDeleteEconVariable.Location = new System.Drawing.Point(565, 402);
+            this.BtnDeleteEconVariable.Name = "BtnDeleteEconVariable";
+            this.BtnDeleteEconVariable.Size = new System.Drawing.Size(64, 24);
+            this.BtnDeleteEconVariable.TabIndex = 96;
+            this.BtnDeleteEconVariable.Text = "Delete";
             // 
             // uc_core_scenario_weighted_average
             // 
@@ -2023,6 +2034,15 @@ namespace FIA_Biosum_Manager
                 this.SumWeights(true);
                 this.updateWeightColumn(VARIABLE_ECON, false);
                 this.enableEconVariableUc(false);
+                BtnDeleteEconVariable.Enabled = true;
+                for (int i = 0; i < PREFIX_ECON_VALUE_ARRAY.Length; i++)
+                {
+                    if (strVariableName.Equals(PREFIX_ECON_VALUE_ARRAY[i] + "_1"))
+                    {
+                        BtnDeleteEconVariable.Enabled = false;
+                        break;
+                    }
+                }
                 this.grpBoxEconomicVariable.Show();
             }
             else
@@ -2528,7 +2548,97 @@ namespace FIA_Biosum_Manager
                 return (FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem)List[Index];
             }
         }
+
+        private void btnDeleteFvsVariable_Click(object sender, EventArgs e)
+        {
+            string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db";
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strScenarioDir + "\\scenario_core_rule_definitions.mdb", "", ""));
+
+            // Check for usage as Effectiveness variable
+            string[] strPieces = LblSelectedVariable.Text.Split('.');
+            string strWeightedVariableSource = "";
+            if (strPieces.Length == 2)
+            {
+                strWeightedVariableSource = "PRE_" + strPieces[0] + "_WEIGHTED." + lblFvsVariableName.Text;
+            }
+            else
+            {
+                return;
+            }
+            m_oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName +
+                " WHERE (((UCase(Trim([PRE_FVS_VARIABLE]))) = UCase(Trim('" + strWeightedVariableSource + "'))))" +
+                " AND CURRENT_YN = 'Y'";
+            if ((int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "TEMP") > 0)
+            {
+                MessageBox.Show("!!This FVS Variable Cannot Be Deleted Because It Is In Use As An Effectiveness Variable!!", "FIA Biosum",
+                  System.Windows.Forms.MessageBoxButtons.OK,
+                  System.Windows.Forms.MessageBoxIcon.Exclamation);
+                 return;
+            }
+            // Check for usage as Optimization variable
+            strWeightedVariableSource = strPieces[0] + "_WEIGHTED." + lblFvsVariableName.Text;
+            m_oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName +
+                " WHERE (((UCase(Trim([fvs_variable_name]))) = UCase(Trim('" + strWeightedVariableSource + "'))))" +
+                " AND CURRENT_YN = 'Y'";
+            if ((int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "TEMP") > 0)
+            {
+                MessageBox.Show("!!This FVS Variable Cannot Be Deleted Because It Is In Use As An Optimization Variable!!", "FIA Biosum",
+                  System.Windows.Forms.MessageBoxButtons.OK,
+                  System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
+            // Check for usage as Tie-Breaker variable
+            m_oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName +
+                " WHERE (((UCase(Trim([fvs_variable_name]))) = UCase(Trim('" + strWeightedVariableSource + "'))))";
+            if ((int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "TEMP") > 0)
+            {
+                MessageBox.Show("!!This FVS Variable Cannot Be Deleted Because It Is In Use As An Tie-Breaker Variable!!", "FIA Biosum",
+                  System.Windows.Forms.MessageBoxButtons.OK,
+                  System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            DialogResult objResult = MessageBox.Show("!!You are about to delete an FVS weighted variable. This action cannot be undone. Do you wish to continue?", "FIA Biosum",
+                                        System.Windows.Forms.MessageBoxButtons.YesNo,
+                                        System.Windows.Forms.MessageBoxIcon.Question);
+            if (objResult == DialogResult.Yes)
+            {
+                // Delete data entries from FVS pre/post tables
+                string[] strFieldsArr = { lblFvsVariableName.Text };
+                dao_data_access oDao = new dao_data_access();
+                oDao.DeleteField(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
+                    "PRE_" + strPieces[0] + "_WEIGHTED", strFieldsArr);
+                oDao.DeleteField(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
+                    "POST_" + strPieces[0] + "_WEIGHTED", strFieldsArr);
+
+                // Delete entries from configuration database
+                string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                    "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
+                m_oAdo.m_strSQL = "DELETE FROM " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
+                                  " WHERE calculated_variables_id = " + m_intCurVar;
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                m_oAdo.m_strSQL = "DELETE FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+                                  " WHERE ID = " + m_intCurVar;
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                // Update UI
+                this.loadLstVariables();
+                this.btnFvsDetailsCancel.PerformClick();
+
+                if (oDao != null)
+                {
+                    oDao.m_DaoWorkspace.Close();
+                    oDao = null;
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
     }
+
+ 
 
 
     public class WeightedAverage_DataGridColoredTextBoxColumn : DataGridTextBoxColumn
