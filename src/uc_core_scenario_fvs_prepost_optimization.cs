@@ -105,7 +105,7 @@ namespace FIA_Biosum_Manager
         private ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private Label label1;
         private GroupBox grpBoxOptimizationNetRevenue;
-        private ComboBox cboNetRevOptimzFilter;
+        private ComboBox cmbNetRevOptimzFilter;
         private TextBox txtRevenueDescr;
         private Label LblNetRevenu;
         private ListBox lstFVSFieldsList;
@@ -129,7 +129,7 @@ namespace FIA_Biosum_Manager
         private TextBox txtEconAttribDescr;
         private Label label2;
         private TextBox txtEconRevenueDescr;
-        private ComboBox cboNetRevEconOptimzFilter;
+        private ComboBox cmbNetRevEconOptimzFilter;
         private TextBox txtOptVarDescr;
         private Label lblOptVarDescr;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
@@ -146,6 +146,7 @@ namespace FIA_Biosum_Manager
 			public string strFilterOperator="";
 			public double dblFilterValue=0;
 			public int intListViewIndex=-1;
+            public string strRevenueAttribute = "";
 
 			public void Copy(VariableItem p_oSource,ref VariableItem p_oDest)
 			{
@@ -159,6 +160,7 @@ namespace FIA_Biosum_Manager
 				p_oDest.dblFilterValue = p_oSource.dblFilterValue;
 				p_oDest.bUseFilter = p_oSource.bUseFilter;
 				p_oDest.intListViewIndex = p_oSource.intListViewIndex;
+                p_oDest.strRevenueAttribute = p_oSource.strRevenueAttribute;
 			}
 		}
 
@@ -264,8 +266,6 @@ namespace FIA_Biosum_Manager
             m_oValidate.MinValue = -1000;
             m_oValidate.TestForMin = true;
 
-            this.cboNetRevOptimzFilter.SelectedIndex = 0;
-
 			
 
 			
@@ -305,7 +305,7 @@ namespace FIA_Biosum_Manager
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtEconRevenueDescr = new System.Windows.Forms.TextBox();
-            this.cboNetRevEconOptimzFilter = new System.Windows.Forms.ComboBox();
+            this.cmbNetRevEconOptimzFilter = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.chkEnableEconFilter = new System.Windows.Forms.CheckBox();
             this.cmbEconOptimizationOperator = new System.Windows.Forms.ComboBox();
@@ -351,7 +351,7 @@ namespace FIA_Biosum_Manager
             this.LblNetRevenu = new System.Windows.Forms.Label();
             this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
             this.txtRevenueDescr = new System.Windows.Forms.TextBox();
-            this.cboNetRevOptimzFilter = new System.Windows.Forms.ComboBox();
+            this.cmbNetRevOptimzFilter = new System.Windows.Forms.ComboBox();
             this.btnOptimiztionPrev = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettingsPostPre = new System.Windows.Forms.GroupBox();
             this.cmbOptimizationSettingsPostPreValue = new System.Windows.Forms.ComboBox();
@@ -470,7 +470,7 @@ namespace FIA_Biosum_Manager
             // 
             this.groupBox5.Controls.Add(this.label2);
             this.groupBox5.Controls.Add(this.txtEconRevenueDescr);
-            this.groupBox5.Controls.Add(this.cboNetRevEconOptimzFilter);
+            this.groupBox5.Controls.Add(this.cmbNetRevEconOptimzFilter);
             this.groupBox5.Controls.Add(this.label3);
             this.groupBox5.Controls.Add(this.chkEnableEconFilter);
             this.groupBox5.Controls.Add(this.cmbEconOptimizationOperator);
@@ -497,19 +497,18 @@ namespace FIA_Biosum_Manager
             this.txtEconRevenueDescr.Location = new System.Drawing.Point(219, 46);
             this.txtEconRevenueDescr.Multiline = true;
             this.txtEconRevenueDescr.Name = "txtEconRevenueDescr";
+            this.txtEconRevenueDescr.ReadOnly = true;
             this.txtEconRevenueDescr.Size = new System.Drawing.Size(320, 40);
             this.txtEconRevenueDescr.TabIndex = 89;
-            this.txtEconRevenueDescr.Text = "Sums net revenue across all 4 cycles";
             // 
-            // cboNetRevEconOptimzFilter
+            // cmbNetRevEconOptimzFilter
             // 
-            this.cboNetRevEconOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboNetRevEconOptimzFilter.Items.AddRange(new object[] {
-            "net_revenue_1"});
-            this.cboNetRevEconOptimzFilter.Location = new System.Drawing.Point(46, 49);
-            this.cboNetRevEconOptimzFilter.Name = "cboNetRevEconOptimzFilter";
-            this.cboNetRevEconOptimzFilter.Size = new System.Drawing.Size(110, 24);
-            this.cboNetRevEconOptimzFilter.TabIndex = 88;
+            this.cmbNetRevEconOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNetRevEconOptimzFilter.Location = new System.Drawing.Point(46, 49);
+            this.cmbNetRevEconOptimzFilter.Name = "cmbNetRevEconOptimzFilter";
+            this.cmbNetRevEconOptimzFilter.Size = new System.Drawing.Size(110, 24);
+            this.cmbNetRevEconOptimzFilter.TabIndex = 88;
+            this.cmbNetRevEconOptimzFilter.SelectedIndexChanged += new System.EventHandler(this.cmbNetRevEconOptimzFilter_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -528,6 +527,7 @@ namespace FIA_Biosum_Manager
             this.chkEnableEconFilter.Size = new System.Drawing.Size(112, 32);
             this.chkEnableEconFilter.TabIndex = 17;
             this.chkEnableEconFilter.Text = "Enable Filter";
+            this.chkEnableEconFilter.CheckedChanged += new System.EventHandler(this.chkEnableEconFilter_CheckedChanged);
             // 
             // cmbEconOptimizationOperator
             // 
@@ -553,8 +553,6 @@ namespace FIA_Biosum_Manager
             this.txtEconOptimizationValue.TabIndex = 15;
             this.txtEconOptimizationValue.Text = "0";
             this.txtEconOptimizationValue.Leave += new System.EventHandler(this.txtEconOptimizationValue_Leave);
-
-
             // 
             // groupBox6
             // 
@@ -948,7 +946,7 @@ namespace FIA_Biosum_Manager
             // grpBoxOptimizationNetRevenue
             // 
             this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cboNetRevOptimzFilter);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cmbNetRevOptimzFilter);
             this.grpBoxOptimizationNetRevenue.Location = new System.Drawing.Point(80, 215);
             this.grpBoxOptimizationNetRevenue.Name = "grpBoxOptimizationNetRevenue";
             this.grpBoxOptimizationNetRevenue.Size = new System.Drawing.Size(464, 69);
@@ -963,19 +961,18 @@ namespace FIA_Biosum_Manager
             this.txtRevenueDescr.Location = new System.Drawing.Point(189, 21);
             this.txtRevenueDescr.Multiline = true;
             this.txtRevenueDescr.Name = "txtRevenueDescr";
+            this.txtRevenueDescr.ReadOnly = true;
             this.txtRevenueDescr.Size = new System.Drawing.Size(259, 40);
             this.txtRevenueDescr.TabIndex = 87;
-            this.txtRevenueDescr.Text = "Sums net revenue across all 4 cycles";
             // 
-            // cboNetRevOptimzFilter
+            // cmbNetRevOptimzFilter
             // 
-            this.cboNetRevOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboNetRevOptimzFilter.Items.AddRange(new object[] {
-            "net_revenue_1"});
-            this.cboNetRevOptimzFilter.Location = new System.Drawing.Point(16, 24);
-            this.cboNetRevOptimzFilter.Name = "cboNetRevOptimzFilter";
-            this.cboNetRevOptimzFilter.Size = new System.Drawing.Size(110, 24);
-            this.cboNetRevOptimzFilter.TabIndex = 20;
+            this.cmbNetRevOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNetRevOptimzFilter.Location = new System.Drawing.Point(16, 24);
+            this.cmbNetRevOptimzFilter.Name = "cmbNetRevOptimzFilter";
+            this.cmbNetRevOptimzFilter.Size = new System.Drawing.Size(110, 24);
+            this.cmbNetRevOptimzFilter.TabIndex = 20;
+            this.cmbNetRevOptimzFilter.SelectedIndexChanged += new System.EventHandler(this.cmbNetRevOptimzFilter_SelectedIndexChanged);
             // 
             // btnOptimiztionPrev
             // 
@@ -1037,6 +1034,7 @@ namespace FIA_Biosum_Manager
             this.chkEnableFilter.Size = new System.Drawing.Size(112, 32);
             this.chkEnableFilter.TabIndex = 17;
             this.chkEnableFilter.Text = "Enable Filter";
+            this.chkEnableFilter.CheckedChanged += new System.EventHandler(this.chkEnableFilter_CheckedChanged);
             // 
             // cmbOptimizationOperator
             // 
@@ -1243,7 +1241,14 @@ namespace FIA_Biosum_Manager
             foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
             {
                 if (oItem.strVariableType.Equals("ECON"))
+                {
                     lstEconVariables.Items.Add(oItem.strVariableName);
+                    if (oItem.strVariableName.IndexOf("revenue") > -1)
+                    {
+                        cmbNetRevOptimzFilter.Items.Add(oItem.strVariableName);
+                        cmbNetRevEconOptimzFilter.Items.Add(oItem.strVariableName);
+                    }
+                }
             }
 
 			this.lvOptimizationListValues.Items.Clear();
@@ -1288,7 +1293,7 @@ namespace FIA_Biosum_Manager
             this.m_oLvRowColors.AddRow();
             this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count - 1, lvOptimizationListValues.Columns.Count);
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Attribute";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
             this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
@@ -1413,6 +1418,11 @@ namespace FIA_Biosum_Manager
 								{
 									oItem.bSelected=false;
 								}
+                                //revenue attribute
+                                if (oAdo.m_OleDbDataReader["revenue_attribute"] != System.DBNull.Value)
+                                {
+                                    oItem.strRevenueAttribute = Convert.ToString(oAdo.m_OleDbDataReader["revenue_attribute"]).Trim();
+                                }
 								this.m_oOldVariableCollection.Add(oItem);
 							}
 						}
@@ -1593,7 +1603,7 @@ namespace FIA_Biosum_Manager
 					oAdo = null;
 					return x;
 				}
-				strColumns = "scenario_id,rxcycle,optimization_variable,fvs_variable_name,value_source,max_yn,min_yn,filter_enabled_yn,filter_operator,filter_value,checked_yn,current_yn";
+				strColumns = "scenario_id,rxcycle,optimization_variable,fvs_variable_name,value_source,max_yn,min_yn,filter_enabled_yn,filter_operator,filter_value,checked_yn,current_yn,revenue_attribute";
 				
 				
 				for (x=0;x<=this.m_oSavVariableCollection.Count-1;x++)
@@ -1634,6 +1644,14 @@ namespace FIA_Biosum_Manager
 						strValues = strValues + ",'N'";
 
 					strValues = strValues + ",'Y'";
+                    if (!String.IsNullOrEmpty(this.m_oSavVariableCollection.Item(x).strRevenueAttribute.Trim()))
+                    {
+                        strValues = strValues + ",'" + this.m_oSavVariableCollection.Item(x).strRevenueAttribute.Trim() + "'";
+                    }
+                    else
+                    {
+                        strValues = strValues + ",''";
+                    }
 
 					//delete duplicates
 					oAdo.m_strSQL = "DELETE FROM scenario_fvs_variables_optimization WHERE " + strWhere;
@@ -1915,6 +1933,7 @@ namespace FIA_Biosum_Manager
                         this.m_oSavVariableCollection.Item(x).bUseFilter = this.chkEnableEconFilter.Checked;
                         this.m_oSavVariableCollection.Item(x).strFilterOperator = this.cmbEconOptimizationOperator.Text.Trim();
                         this.m_oSavVariableCollection.Item(x).dblFilterValue = Convert.ToDouble(ValidateNumeric(this.txtEconOptimizationValue.Text.Trim()));
+                        this.m_oSavVariableCollection.Item(x).strRevenueAttribute = this.cmbNetRevEconOptimzFilter.Text.Trim();
                     }
                     else
                     {					
@@ -1947,7 +1966,8 @@ namespace FIA_Biosum_Manager
 					    this.m_oSavVariableCollection.Item(x).bUseFilter=this.chkEnableFilter.Checked;
 					    this.m_oSavVariableCollection.Item(x).strFilterOperator=this.cmbOptimizationOperator.Text.Trim();
                         this.m_oSavVariableCollection.Item(x).dblFilterValue = Convert.ToDouble(ValidateNumeric(this.txtOptimizationValue.Text.Trim()));
-					}
+                        this.m_oSavVariableCollection.Item(x).strRevenueAttribute = this.cmbNetRevOptimzFilter.Text.Trim();
+                    }
                     this.UpdateListViewItem(lvOptimizationListValues.SelectedItems[0], m_oSavVariableCollection.Item(x));
                     break;
 				}
@@ -2052,11 +2072,38 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.lvOptimizationListValues.SelectedItems.Count==0) return;
 
+            // Get item out of memory so we can access the revenue attribute
+            VariableItem oSelectedItem = null;
+            foreach (VariableItem oItem in m_oSavVariableCollection)
+            {
+                if (oItem.strOptimizedVariable.Equals(
+                    this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim()))
+                {
+                    oSelectedItem = oItem;
+                    break;
+                }
+            }
+
 			//Either Revenue or Merch Volume has been selected
             if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim()=="NA")
 			{
 				btnOptimiztionPrev.Hide();
 				this.lblOptimizationVariable.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
+                if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim().ToUpper() != "NOT DEFINED")
+                {
+                    this.cmbOptimizationOperator.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim();
+                }
+                this.txtOptimizationValue.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_VALUE].Text.Trim();
+                this.m_strLastValue = this.txtOptimizationValue.Text;
+
+                if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_USEFILTER].Text.Trim() == "Yes")
+                {
+                    this.chkEnableFilter.Checked = true;
+                }
+                else
+                {
+                    this.chkEnableFilter.Checked = false;
+                }
                 this.grpMaxMin.Location = grpboxOptimizationSettingsPostPre.Location;
                 // Hide the second (FVS) layer so the third is visible
                 this.grpboxOptimizationSettingsPostPre.Hide();
@@ -2070,11 +2117,10 @@ namespace FIA_Biosum_Manager
             {
                 if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim() != "Not Defined")
                 {
-                    this.lblEconomicAttribute.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
                     for (int index = 0; index < lstEconVariables.Items.Count + 1; index++)
                     {
                         string item = lstEconVariables.Items[index].ToString();
-                        if (this.lblEconomicAttribute.Text == item)
+                        if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim() == item)
                         {
                             lstEconVariables.SelectedIndex = index;
                             break;
@@ -2083,11 +2129,33 @@ namespace FIA_Biosum_Manager
                 }
 
                 if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_MAXMIN].Text.Trim() == "MAX")
-                    this.rdoOptimizationMaximum.Checked = true;
+                    this.rdoEconOptimizeMaximum.Checked = true;
                 else if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_MAXMIN].Text.Trim() == "MIN")
-                    this.rdoOptimizationMinimum.Checked = true;
+                    this.rdoEconOptimizeMinimum.Checked = true;
                 else
-                    this.rdoOptimizationMaximum.Checked = true;
+                    this.rdoEconOptimizeMaximum.Checked = true;
+
+                // Revenue filter settings
+                this.cmbNetRevEconOptimzFilter.SelectedIndex = -1;
+                this.cmbEconOptimizationOperator.Text = ">";
+                if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_USEFILTER].Text.Trim() == "Yes")
+                {
+                    this.chkEnableEconFilter.Checked = true;
+                    if (!String.IsNullOrEmpty(oSelectedItem.strRevenueAttribute))
+                    {
+                        cmbNetRevEconOptimzFilter.SelectedItem = oSelectedItem.strRevenueAttribute;
+                        if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim().ToUpper() != "NOT DEFINED")
+                        {
+                            this.cmbEconOptimizationOperator.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim();
+                        }
+                    }
+                    this.txtEconOptimizationValue.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_VALUE].Text.Trim();
+                    this.m_strLastValue = this.txtEconOptimizationValue.Text;
+                }
+                else
+                {
+                    this.chkEnableEconFilter.Checked = false;
+                }
                 
                 // Hide the second (FVS) layer so the fourth is visible
                 this.grpboxOptimizationSettingsPostPre.Hide();
@@ -2115,30 +2183,39 @@ namespace FIA_Biosum_Manager
 				else
 					this.cmbOptimizationSettingsPostPreValue.Text = 
 						this.cmbOptimizationSettingsPostPreValue.Items[0].ToString().Trim();
+
+                // Revenue filter settings
+                this.cmbNetRevOptimzFilter.SelectedIndex = -1;
+                this.cmbOptimizationOperator.Text = ">";
+                if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_USEFILTER].Text.Trim() == "Yes")
+                {
+                    this.chkEnableFilter.Checked = true;
+                    if (!String.IsNullOrEmpty(oSelectedItem.strRevenueAttribute))
+                    {
+                        cmbNetRevOptimzFilter.SelectedItem = oSelectedItem.strRevenueAttribute;
+                        if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim().ToUpper() != "NOT DEFINED")
+                        {
+                            this.cmbOptimizationOperator.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim();
+                        }
+                    }
+                    this.txtOptimizationValue.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_VALUE].Text.Trim();
+                    this.m_strLastValue = this.txtOptimizationValue.Text;
+                }
+                else
+                {
+                    this.chkEnableFilter.Checked = false;
+                }
 			}
 
-			if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_MAXMIN].Text.Trim()=="MAX")
+			// These fields are common to FVS variable, Merchantable Volume, and Revenue options. Not breaking these out for now.
+            // The interface only saves the values for the selected item, so setting these incidentally shouldn't be a problem
+            if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_MAXMIN].Text.Trim()=="MAX")
 				this.rdoOptimizationMaximum.Checked=true;
 			else if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_MAXMIN].Text.Trim()=="MIN")
 				this.rdoOptimizationMinimum.Checked=true;
 			else
 				this.rdoOptimizationMaximum.Checked=true;
 
-			if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim().ToUpper() != "NOT DEFINED")
-			{
-				this.cmbOptimizationOperator.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_OPERATOR].Text.Trim();
-			}
-			this.txtOptimizationValue.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FILTER_VALUE].Text.Trim();
-            this.m_strLastValue = this.txtOptimizationValue.Text;
-
-			if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_USEFILTER].Text.Trim()=="Yes")
-			{
-				this.chkEnableFilter.Checked=true;
-			}
-			else
-			{
-				this.chkEnableFilter.Checked=false;
-			}
 			// Hide the top Layer
             this.grpboxOptimization.Hide();
             // Fourth layer should be hidden because this is third
@@ -2291,6 +2368,11 @@ namespace FIA_Biosum_Manager
 								m_strError = m_strError + "Invalid filter operator for the optimization variable. \r\n";
 								break;
 						}
+                        if (String.IsNullOrEmpty(this.m_oSavVariableCollection.Item(x).strRevenueAttribute))
+                        {
+                            m_intError = -1;
+                            m_strError = m_strError + "Net Revenue calculation is required when using Net Revenue filter \r\n";
+                        }
 
 					}
 				}
@@ -2538,14 +2620,75 @@ namespace FIA_Biosum_Manager
                     if (oItem.strVariableName.Equals(Convert.ToString(this.lstEconVariables.SelectedItem)))
                     {
                         if (!String.IsNullOrEmpty(oItem.strVariableDescr))
-                            txtEconAttribDescr.Text = oItem.strVariableDescr;
-                        break;
+                        {
+                            this.txtEconAttribDescr.Text = oItem.strVariableDescr;
+                            this.lblEconomicAttribute.Text = oItem.strVariableName;
+                            break;
+                        }
                     }
                 }
             }
             else
             {
                 this.btnEconSelect.Enabled = false;
+            }
+        }
+
+        private void chkEnableEconFilter_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkEnableEconFilter.Checked == false)
+            {
+                this.cmbNetRevEconOptimzFilter.SelectedIndex = -1;
+                this.cmbEconOptimizationOperator.Text = ">";
+                this.txtEconOptimizationValue.Text = "0";
+            }
+        }
+
+        private void chkEnableFilter_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkEnableFilter.Checked == false)
+            {
+                this.cmbNetRevOptimzFilter.SelectedIndex = -1;
+                this.cmbOptimizationOperator.Text = ">";
+                this.txtOptimizationValue.Text = "0";
+            }
+        }
+
+        private void cmbNetRevEconOptimzFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.txtEconRevenueDescr.Text = "";
+            if (this.cmbNetRevEconOptimzFilter.SelectedIndex > -1)
+            {
+                foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                {
+                    if (oItem.strVariableName.Equals(Convert.ToString(this.cmbNetRevEconOptimzFilter.SelectedItem)))
+                    {
+                        if (!String.IsNullOrEmpty(oItem.strVariableDescr))
+                        {
+                            this.txtEconRevenueDescr.Text = oItem.strVariableDescr;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void cmbNetRevOptimzFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.txtRevenueDescr.Text = "";
+            if (this.cmbNetRevOptimzFilter.SelectedIndex > -1)
+            {
+                foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                {
+                    if (oItem.strVariableName.Equals(Convert.ToString(this.cmbNetRevOptimzFilter.SelectedItem)))
+                    {
+                        if (!String.IsNullOrEmpty(oItem.strVariableDescr))
+                        {
+                            this.txtRevenueDescr.Text = oItem.strVariableDescr;
+                            break;
+                        }
+                    }
+                }
             }
         }
 	
