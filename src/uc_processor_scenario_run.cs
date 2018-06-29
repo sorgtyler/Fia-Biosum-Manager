@@ -1209,16 +1209,6 @@ namespace FIA_Biosum_Manager
 
                         if (m_intError == 0)
                         {
-                            y++;
-                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                            RunScenario_UpdateBinTables(Tables.ProcessorScenarioRun.DefaultTreeDataInLowSlopeTableName,
-                                                       Tables.ProcessorScenarioRun.DefaultTreeBinLowSlopeTableName,
-                                                       Tables.ProcessorScenarioRun.DefaultTreeHwdBinLowSlopeTableName,
-                                                       Tables.ProcessorScenarioRun.DefaultDiametersLowSlopeTableName);
-                        }
-
-                        if (m_intError == 0)
-                        {
                             frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Sum Low Slope BINS by Plot/RxPackage/Rx/RxCyle/Species Group/Diameter Group...Stand By");
                             y++;
                             frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
@@ -1375,15 +1365,6 @@ namespace FIA_Biosum_Manager
                             RunScenario_InitBinsTables(Tables.ProcessorScenarioRun.DefaultTreeDataInSteepSlopeTableName,
                                                        Tables.ProcessorScenarioRun.DefaultTreeBinSteepSlopeTableName,
                                                        Tables.ProcessorScenarioRun.DefaultTreeHwdBinSteepSlopeTableName);
-                        }
-                        if (m_intError == 0)
-                        {
-                            y++;
-                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                            RunScenario_UpdateBinTables(Tables.ProcessorScenarioRun.DefaultTreeDataInSteepSlopeTableName,
-                                                       Tables.ProcessorScenarioRun.DefaultTreeBinSteepSlopeTableName,
-                                                       Tables.ProcessorScenarioRun.DefaultTreeHwdBinSteepSlopeTableName,
-                                                       Tables.ProcessorScenarioRun.DefaultDiametersSteepSlopeTableName);
                         }
                         if (m_intError == 0)
                         {
@@ -2639,135 +2620,7 @@ namespace FIA_Biosum_Manager
 
 
         }
-        private void RunScenario_UpdateBinTables(string p_strTreeDataInTableName,
-                                                string p_strBinTableName,
-                                                string p_strHwdBinTableName,
-                                                string p_strDiametersTableName)
-        {
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_UpdateBinTables\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-            }
-            //
-            //UPDATE BRUSH CUTTING CLASS
-            //
-            m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateBinsTable(
-                p_strDiametersTableName.Trim(),
-                p_strBinTableName.Trim(),
-                p_strTreeDataInTableName.Trim(),
-                "BC");
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            if (m_oAdo.m_intError == 0)
-            {
-                //
-                //UPDATE CHIPS CLASS
-                //
-                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateBinsTable(
-                    p_strDiametersTableName.Trim(),
-                    p_strBinTableName.Trim(),
-                    p_strTreeDataInTableName.Trim(),
-                    "CHIPS");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-            if (m_oAdo.m_intError == 0)
-            {
 
-                //
-                //UPDATE SMALL LOGS CLASS
-                //
-                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateBinsTable(
-                    p_strDiametersTableName.Trim(),
-                    p_strBinTableName.Trim(),
-                    p_strTreeDataInTableName.Trim(),
-                    "SMLOGS");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-            if (m_oAdo.m_intError == 0)
-            {
-
-                //
-                //UPDATE LARGE LOGS CLASS
-                //
-                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateBinsTable(
-                    p_strDiametersTableName.Trim(),
-                    p_strBinTableName.Trim(),
-                    p_strTreeDataInTableName.Trim(),
-                    "LGLOGS");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-            if (m_oAdo.m_intError == 0)
-            {
-                //HARDWOODS
-                //UPDATE BRUSH CUTTING CLASS
-                //
-                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHwdBinsTable(
-                    p_strDiametersTableName.Trim(),
-                    p_strHwdBinTableName.Trim(),
-                    p_strTreeDataInTableName.Trim(),
-                    "BC");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-            if (m_oAdo.m_intError == 0)
-            {
-                //
-                //UPDATE CHIPS CLASS
-                //
-                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHwdBinsTable(
-                    p_strDiametersTableName.Trim(),
-                    p_strHwdBinTableName.Trim(),
-                    p_strTreeDataInTableName.Trim(),
-                    "CHIPS");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-            if (m_oAdo.m_intError == 0)
-            {
-
-                //
-                //UPDATE SMALL LOGS CLASS
-                //
-                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHwdBinsTable(
-                    p_strDiametersTableName.Trim(),
-                    p_strHwdBinTableName.Trim(),
-                    p_strTreeDataInTableName.Trim(),
-                    "SMLOGS");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-            if (m_oAdo.m_intError == 0)
-            {
-
-                //
-                //UPDATE LARGE LOGS CLASS
-                //
-                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHwdBinsTable(
-                    p_strDiametersTableName.Trim(),
-                    p_strHwdBinTableName.Trim(),
-                    p_strTreeDataInTableName.Trim(),
-                    "LGLOGS");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-            }
-            m_intError = m_oAdo.m_intError;
-            m_strError = m_oAdo.m_strError;
-
-
-        }
         private void RunScenario_SumBinsByPlotRxSpcGrpDbhGrp(string p_strBinTableName,
                                                              string p_strHwdBinTableName,
                                                              string p_strBinSumTableName,

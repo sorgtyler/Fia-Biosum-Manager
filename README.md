@@ -1,2 +1,2 @@
 # fia-biosum-manager
-User interface and main code repository for Biosum
+User interface and main code repository for Biosum.

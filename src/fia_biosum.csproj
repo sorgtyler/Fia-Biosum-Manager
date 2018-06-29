@@ -165,6 +165,12 @@
     <Compile Include="btnMainForm.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="uc_delete_conditions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_delete_conditions.Designer.cs">
+      <DependentUpon>uc_delete_conditions.cs</DependentUpon>
+    </Compile>
     <Compile Include="uc_core_scenario_fvs_weighted_average.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -585,6 +591,9 @@
     <Content Include="table-select-row-icon.png" />
     <EmbeddedResource Include="btnMainForm.resx">
       <DependentUpon>btnMainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_delete_conditions.resx">
+      <DependentUpon>uc_delete_conditions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_core_scenario_fvs_weighted_average.resx">
       <DependentUpon>uc_core_scenario_fvs_weighted_average.cs</DependentUpon>

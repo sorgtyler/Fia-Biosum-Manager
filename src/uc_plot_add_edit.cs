@@ -29,6 +29,7 @@ namespace FIA_Biosum_Manager
 		public const int TABLESTATUS = 5;
 		public const int RECORDCOUNT = 6;
 		private System.Windows.Forms.ImageList imageList1;
+        private ToolBarButton tblbtnDeleteConds;
 		private System.ComponentModel.IContainer components;
 
 		public uc_plot_add_edit()
@@ -63,99 +64,111 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_plot_add_edit));
-			this.btnAdd = new System.Windows.Forms.Button();
-			this.btnEdit = new System.Windows.Forms.Button();
-			this.tlbPlotAddEdit = new System.Windows.Forms.ToolBar();
-			this.tlbbtnAdd = new System.Windows.Forms.ToolBarButton();
-			this.tlbbtnEdit = new System.Windows.Forms.ToolBarButton();
-			this.contextMenu1 = new System.Windows.Forms.ContextMenu();
-			this.mnuEditDeleteAll = new System.Windows.Forms.MenuItem();
-			this.mnuEditBrowse = new System.Windows.Forms.MenuItem();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.SuspendLayout();
-			// 
-			// btnAdd
-			// 
-			this.btnAdd.Location = new System.Drawing.Point(24, 72);
-			this.btnAdd.Name = "btnAdd";
-			this.btnAdd.Size = new System.Drawing.Size(80, 72);
-			this.btnAdd.TabIndex = 0;
-			this.btnAdd.Text = "Add Plot Data";
-			this.btnAdd.Visible = false;
-			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-			// 
-			// btnEdit
-			// 
-			this.btnEdit.Location = new System.Drawing.Point(168, 72);
-			this.btnEdit.Name = "btnEdit";
-			this.btnEdit.Size = new System.Drawing.Size(80, 72);
-			this.btnEdit.TabIndex = 1;
-			this.btnEdit.Text = "Edit Plot Data";
-			this.btnEdit.Visible = false;
-			// 
-			// tlbPlotAddEdit
-			// 
-			this.tlbPlotAddEdit.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
-																							  this.tlbbtnAdd,
-																							  this.tlbbtnEdit});
-			this.tlbPlotAddEdit.ButtonSize = new System.Drawing.Size(150, 55);
-			this.tlbPlotAddEdit.Divider = false;
-			this.tlbPlotAddEdit.Dock = System.Windows.Forms.DockStyle.None;
-			this.tlbPlotAddEdit.DropDownArrows = true;
-			this.tlbPlotAddEdit.ImageList = this.imageList1;
-			this.tlbPlotAddEdit.Location = new System.Drawing.Point(8, 8);
-			this.tlbPlotAddEdit.Name = "tlbPlotAddEdit";
-			this.tlbPlotAddEdit.ShowToolTips = true;
-			this.tlbPlotAddEdit.Size = new System.Drawing.Size(352, 59);
-			this.tlbPlotAddEdit.TabIndex = 2;
-			this.tlbPlotAddEdit.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.tlbPlotAddEdit_ButtonClick);
-			// 
-			// tlbbtnAdd
-			// 
-			this.tlbbtnAdd.ImageIndex = 0;
-			this.tlbbtnAdd.Text = "Add Plot Data";
-			// 
-			// tlbbtnEdit
-			// 
-			this.tlbbtnEdit.DropDownMenu = this.contextMenu1;
-			this.tlbbtnEdit.ImageIndex = 1;
-			this.tlbbtnEdit.Style = System.Windows.Forms.ToolBarButtonStyle.DropDownButton;
-			this.tlbbtnEdit.Text = "Delete Plot Data";
-			// 
-			// contextMenu1
-			// 
-			this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																						 this.mnuEditDeleteAll,
-																						 this.mnuEditBrowse});
-			// 
-			// mnuEditDeleteAll
-			// 
-			this.mnuEditDeleteAll.Index = 0;
-			this.mnuEditDeleteAll.Text = "Delete All Plot Records";
-			this.mnuEditDeleteAll.Click += new System.EventHandler(this.mnuEditDeleteAll_Click);
-			// 
-			// mnuEditBrowse
-			// 
-			this.mnuEditBrowse.Index = 1;
-			this.mnuEditBrowse.Text = "Browse And Delete Selected Plot Records";
-			this.mnuEditBrowse.Click += new System.EventHandler(this.mnuEditBrowse_Click);
-			// 
-			// imageList1
-			// 
-			this.imageList1.ImageSize = new System.Drawing.Size(30, 30);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
-			// uc_plot_add_edit
-			// 
-			this.Controls.Add(this.tlbPlotAddEdit);
-			this.Controls.Add(this.btnEdit);
-			this.Controls.Add(this.btnAdd);
-			this.Name = "uc_plot_add_edit";
-			this.Size = new System.Drawing.Size(344, 72);
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_plot_add_edit));
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.tlbPlotAddEdit = new System.Windows.Forms.ToolBar();
+            this.tlbbtnAdd = new System.Windows.Forms.ToolBarButton();
+            this.tlbbtnEdit = new System.Windows.Forms.ToolBarButton();
+            this.contextMenu1 = new System.Windows.Forms.ContextMenu();
+            this.mnuEditDeleteAll = new System.Windows.Forms.MenuItem();
+            this.mnuEditBrowse = new System.Windows.Forms.MenuItem();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.tblbtnDeleteConds = new System.Windows.Forms.ToolBarButton();
+            this.SuspendLayout();
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Location = new System.Drawing.Point(24, 72);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(80, 72);
+            this.btnAdd.TabIndex = 0;
+            this.btnAdd.Text = "Add Plot Data";
+            this.btnAdd.Visible = false;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Location = new System.Drawing.Point(168, 72);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(80, 72);
+            this.btnEdit.TabIndex = 1;
+            this.btnEdit.Text = "Edit Plot Data";
+            this.btnEdit.Visible = false;
+            // 
+            // tlbPlotAddEdit
+            // 
+            this.tlbPlotAddEdit.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
+            this.tlbbtnAdd,
+            this.tblbtnDeleteConds,
+            this.tlbbtnEdit});
+            this.tlbPlotAddEdit.ButtonSize = new System.Drawing.Size(150, 55);
+            this.tlbPlotAddEdit.Divider = false;
+            this.tlbPlotAddEdit.Dock = System.Windows.Forms.DockStyle.None;
+            this.tlbPlotAddEdit.DropDownArrows = true;
+            this.tlbPlotAddEdit.ImageList = this.imageList1;
+            this.tlbPlotAddEdit.Location = new System.Drawing.Point(5, 5);
+            this.tlbPlotAddEdit.Name = "tlbPlotAddEdit";
+            this.tlbPlotAddEdit.ShowToolTips = true;
+            this.tlbPlotAddEdit.Size = new System.Drawing.Size(495, 62);
+            this.tlbPlotAddEdit.TabIndex = 2;
+            this.tlbPlotAddEdit.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.tlbPlotAddEdit_ButtonClick);
+            // 
+            // tlbbtnAdd
+            // 
+            this.tlbbtnAdd.ImageIndex = 0;
+            this.tlbbtnAdd.Name = "tlbbtnAdd";
+            this.tlbbtnAdd.Text = "Add Plot Data";
+            // 
+            // tlbbtnEdit
+            // 
+            this.tlbbtnEdit.DropDownMenu = this.contextMenu1;
+            this.tlbbtnEdit.ImageIndex = 1;
+            this.tlbbtnEdit.Name = "tlbbtnEdit";
+            this.tlbbtnEdit.Style = System.Windows.Forms.ToolBarButtonStyle.DropDownButton;
+            this.tlbbtnEdit.Text = "Delete Plot Data";
+            // 
+            // contextMenu1
+            // 
+            this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.mnuEditDeleteAll,
+            this.mnuEditBrowse});
+            // 
+            // mnuEditDeleteAll
+            // 
+            this.mnuEditDeleteAll.Index = 0;
+            this.mnuEditDeleteAll.Text = "Delete All Plot Records";
+            this.mnuEditDeleteAll.Click += new System.EventHandler(this.mnuEditDeleteAll_Click);
+            // 
+            // mnuEditBrowse
+            // 
+            this.mnuEditBrowse.Index = 1;
+            this.mnuEditBrowse.Text = "Browse And Delete Selected Plot Records";
+            this.mnuEditBrowse.Click += new System.EventHandler(this.mnuEditBrowse_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "");
+            this.imageList1.Images.SetKeyName(1, "");
+            // 
+            // tblbtnDeleteConds
+            // 
+            this.tblbtnDeleteConds.ImageIndex = 1;
+            this.tblbtnDeleteConds.Name = "tblbtnDeleteConds";
+            this.tblbtnDeleteConds.Text = "Delete Conditions";
+            // 
+            // uc_plot_add_edit
+            // 
+            this.Controls.Add(this.tlbPlotAddEdit);
+            this.Controls.Add(this.btnEdit);
+            this.Controls.Add(this.btnAdd);
+            this.Name = "uc_plot_add_edit";
+            this.Size = new System.Drawing.Size(505, 72);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
@@ -205,10 +218,29 @@ namespace FIA_Biosum_Manager
                     frmTemp.MinimizeMainForm = true;
                     frmTemp.ParentControl = frmMain.g_oFrmMain;
                     frmTemp.ParentControl.Enabled = false;
-                    
 					frmTemp.Show();
-
 					break;
+
+				case "DELETE CONDITIONS":
+					frmDialog frmTemp2 = new frmDialog(((frmDialog)this.ParentForm).m_frmMain);
+					frmTemp2.Visible=false;
+					frmTemp2.Initialize_Delete_Conditions_User_Control();
+					frmTemp2.MaximizeBox = false;
+					frmTemp2.MinimizeBox = true;
+					frmTemp2.Width = frmTemp2.uc_delete_conditions.m_DialogWd;
+					frmTemp2.Height = frmTemp2.uc_delete_conditions.m_DialogHt;
+					frmTemp2.Text = "Database: Delete Conditions";
+					frmTemp2.uc_delete_conditions.Dock = System.Windows.Forms.DockStyle.Fill;
+					frmTemp2.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+					frmTemp2.uc_delete_conditions.Visible=true;
+					frmTemp2.DisposeOfFormWhenClosing=true;
+                    frmTemp2.uc_delete_conditions.ReferenceFormDialog = frmTemp2;
+                    frmTemp2.MinimizeMainForm = true;
+                    frmTemp2.ParentControl = frmMain.g_oFrmMain;
+                    frmTemp2.ParentControl.Enabled = false;
+					frmTemp2.Show();
+					break;
+
                 case "BROWSE AND DELETE SELECTED PLOT RECORDS":
 					//instantiate the datasource class
 					FIA_Biosum_Manager.Datasource p_datasource = new Datasource(((frmDialog)this.ParentForm).m_frmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());

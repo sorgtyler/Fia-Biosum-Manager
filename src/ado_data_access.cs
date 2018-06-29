@@ -483,71 +483,116 @@ namespace FIA_Biosum_Manager
         /// </summary>
         /// <param name="p_oConn"></param>
         /// <returns></returns>
-		public string[] getTableNames(System.Data.OleDb.OleDbConnection p_oConn)
-		{
-			string strDelimiter = ",";
-			string strTables="";
-			DataTable tables = p_oConn.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Tables_Info,new object[]{null,null,null,null});
-			int x=0;
-			foreach(DataRow row in tables.Rows) 
-			{
-				if (row["table_name"]!=System.DBNull.Value)
-				{
-					if (Convert.ToString(row["table_name"]).ToUpper().IndexOf("MSYS") < 0)
-					{
-						if (Convert.ToString(row["table_type"]).Trim().ToUpper() == 
-							"TABLE" || 
-							Convert.ToString(row["table_type"]).Trim().ToUpper() == 
-							"LINK") // || 
-						{
-							strTables = strTables + Convert.ToString(row["table_name"]) + ",";
-							x++;
-						}
-					}
-				}
-				
-			}
-			if (strTables.Trim().Length > 0) strTables=strTables.Substring(0,strTables.Length-1);
+        public string[] getTableNames(System.Data.OleDb.OleDbConnection p_oConn)
+        {
+            string strDelimiter = ",";
+            string strTables = "";
+            DataTable tables = p_oConn.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Tables_Info,
+                new object[] {null, null, null, null});
+            int x = 0;
+            foreach (DataRow row in tables.Rows)
+            {
+                if (row["table_name"] != System.DBNull.Value)
+                {
+                    if (Convert.ToString(row["table_name"]).ToUpper().IndexOf("MSYS") < 0)
+                    {
+                        if (Convert.ToString(row["table_type"]).Trim().ToUpper() == "TABLE" ||
+                            Convert.ToString(row["table_type"]).Trim().ToUpper() == "LINK" ||
+                            Convert.ToString(row["table_type"]).Trim().ToUpper() == "PASS-THROUGH")
+                        {
+                            strTables = strTables + Convert.ToString(row["table_name"]) + ",";
+                            x++;
+                        }
+                    }
+                }
+            }
+            if (strTables.Trim().Length > 0) strTables = strTables.Substring(0, strTables.Length - 1);
 
-			string[] strTablesArray = strTables.Split(strDelimiter.ToCharArray());
-			
-			return strTablesArray;
-		}
+            string[] strTablesArray = strTables.Split(strDelimiter.ToCharArray());
+
+            return strTablesArray;
+        }
+
+
+        /// <summary>
+        /// Get the table names (excluding linked tables) contained in the MS Access database file connection
+        /// </summary>
+        /// <param name="p_oConn"></param>
+        /// <returns></returns>
+        public string[] getTableNamesOfSpecificTypes(System.Data.OleDb.OleDbConnection p_oConn, bool includeRegularTables = true, bool includeLinkedTables = false, bool includePassThroughTables = false)
+        {
+            string strDelimiter = ",";
+            string strTables = "";
+            DataTable tables = p_oConn.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Tables_Info,
+                new object[] {null, null, null, null});
+            int x = 0;
+            foreach (DataRow row in tables.Rows)
+            {
+                if (row["table_name"] != System.DBNull.Value)
+                {
+                    if (Convert.ToString(row["table_name"]).ToUpper().IndexOf("MSYS") < 0)
+                    {
+                        if (includeRegularTables && Convert.ToString(row["table_type"]).Trim().ToUpper() ==
+                            "TABLE")
+                        {
+                            strTables = strTables + Convert.ToString(row["table_name"]) + ",";
+                            x++;
+                        }
+                        else if (includeLinkedTables && Convert.ToString(row["table_type"]).Trim().ToUpper() ==
+                            "LINK")
+                        {
+                            strTables = strTables + Convert.ToString(row["table_name"]) + ",";
+                            x++;
+                        }
+                        else if (includePassThroughTables && Convert.ToString(row["table_type"]).Trim().ToUpper() ==
+                            "PASS-THROUGH")
+                        {
+                            strTables = strTables + Convert.ToString(row["table_name"]) + ",";
+                            x++;
+                        }
+                    }
+                }
+            }
+            if (strTables.Trim().Length > 0) strTables = strTables.Substring(0, strTables.Length - 1);
+            string[] strTablesArray = strTables.Split(strDelimiter.ToCharArray());
+            return strTablesArray;
+        }
+
+
         /// <summary>
         /// Check if the table exists in the MS Access database file
         /// </summary>
         /// <param name="p_oConn"></param>
         /// <param name="p_strTableName"></param>
         /// <returns></returns>
-		public bool TableExist(System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-		{
-			
-			DataTable tables = p_oConn.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Tables_Info,new object[]{null,null,null,null});
-			bool bFound=false;
-			foreach(DataRow row in tables.Rows) 
-			{
-				if (row["table_name"]!=System.DBNull.Value)
-				{
-					if (Convert.ToString(row["table_name"]).ToUpper().IndexOf("MSYS") < 0)
-					{
-						if (Convert.ToString(row["table_type"]).Trim().ToUpper() == 
-							"TABLE" || 
-							Convert.ToString(row["table_type"]).Trim().ToUpper() == 
-							"LINK")
-						{
-							if (Convert.ToString(row["table_name"]).Trim().ToUpper() == 
-								p_strTableName.Trim().ToUpper())
-							{
-								bFound=true;
-								break;
-							}
-						}
-					}
-				}
-			}
-			tables.Dispose();
-			return bFound;
-		}
+        public bool TableExist(System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+        {
+            DataTable tables = p_oConn.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Tables_Info,
+                new object[] {null, null, null, null});
+            bool bFound = false;
+            foreach (DataRow row in tables.Rows)
+            {
+                if (row["table_name"] != System.DBNull.Value)
+                {
+                    if (Convert.ToString(row["table_name"]).ToUpper().IndexOf("MSYS") < 0)
+                    {
+                        if (Convert.ToString(row["table_type"]).Trim().ToUpper() == "TABLE" ||
+                            Convert.ToString(row["table_type"]).Trim().ToUpper() == "LINK" ||
+                            Convert.ToString(row["table_type"]).Trim().ToUpper() == "PASS-THROUGH")
+                        {
+                            if (Convert.ToString(row["table_name"]).Trim().ToUpper() ==
+                                p_strTableName.Trim().ToUpper())
+                            {
+                                bFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            tables.Dispose();
+            return bFound;
+        }
         /// <summary>
         /// Check if the table exists in the MS Access database file
         /// </summary>

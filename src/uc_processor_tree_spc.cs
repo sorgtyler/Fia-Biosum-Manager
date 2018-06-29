@@ -2589,7 +2589,7 @@ namespace FIA_Biosum_Manager
                 "fvsouttreetemp2",
                 m_oRxPackageItem_Collection,
                 m_strFVSVariantsArray,
-                "fvs_tree_id,fvs_variant,fvs_species");
+                "fvs_tree_id,fvs_variant,fvs_species,biosum_cond_id");
 			
             for (x = 0; x <= strSqlCommandList.Count - 1; x++)
             {
@@ -2612,14 +2612,14 @@ namespace FIA_Biosum_Manager
 				oAdo=null;
 				return;
 			}
-			
 
-			
 
-			oAdo.m_strSQL = "SELECT t.spcd,t.fvs_tree_id " + 
+
+
+            oAdo.m_strSQL = "SELECT t.spcd,t.fvs_tree_id,t.biosum_cond_id " + 
 				            "INTO treetemp " + 
-				            "FROM " + this.m_oQueries.m_oFIAPlot.m_strTreeTable + " t " + 
-				            "WHERE t.fvs_tree_id IS NOT NULL";
+				            "FROM " + this.m_oQueries.m_oFIAPlot.m_strTreeTable + " t " +
+                            "WHERE t.fvs_tree_id IS NOT NULL AND t.biosum_cond_id IS NOT NULL";
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 
 			
@@ -2632,7 +2632,8 @@ namespace FIA_Biosum_Manager
                                             "'N' AS exist_in_tree_species_table_yn " + 
 				             "INTO spcd_variant_temp_work_table " + 
 				             "FROM treetemp t,fvsouttreetemp f " + 
-				             "WHERE t.fvs_tree_id = f.fvs_tree_id";
+				             "WHERE t.fvs_tree_id = f.fvs_tree_id " +
+                             "AND t.biosum_cond_id = f.biosum_cond_id";
 			oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 			
 			//add the fvs two letter code 
@@ -3029,7 +3030,11 @@ namespace FIA_Biosum_Manager
 
         private void btnView_Click(object sender, EventArgs e)
         {
-            if (lstAudit.SelectedItems.Count == 0) return;
+            if (lstAudit.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No Rows Are Selected", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
 
             int x;
             string[] strFVSVariantArray = new string[1];
@@ -3055,7 +3060,7 @@ namespace FIA_Biosum_Manager
                 "fvsouttreetemp2",
                 m_oRxPackageItem_Collection,
                 m_strFVSVariantsArray,
-                "fvs_tree_id,fvs_species");
+                "fvs_tree_id,fvs_species,biosum_cond_id");
 
             for (x = 0; x <= strSqlCommandList.Count - 1; x++)
             {
@@ -3070,7 +3075,8 @@ namespace FIA_Biosum_Manager
                             "FROM " + m_oQueries.m_oFIAPlot.m_strTreeTable + " a," + 
                                     "fvsouttreetemp2 b " + 
                             "WHERE MID(a.fvs_tree_id,1,2)='" + strFvsVariant + "' AND " + 
-                                  "a.fvs_tree_id=b.fvs_tree_id AND " + 
+                                  "a.fvs_tree_id=b.fvs_tree_id AND " +
+                                  "a.biosum_cond_id=b.biosum_cond_id AND " + 
                                   "a.spcd=" + strFiaSpCd + " AND " + 
                                   "TRIM(b.fvs_species)='" + strFvsSpCd + "'";
 
