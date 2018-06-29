@@ -799,7 +799,7 @@ namespace FIA_Biosum_Manager
                 "fvsouttreetemp2",
                  m_oRxPackage_Collection,
                  m_strFVSVariantsArray,
-                "fvs_tree_id,fvs_variant,fvs_species,FvsCreatedTree_YN");
+                "fvs_tree_id,fvs_variant,fvs_species,FvsCreatedTree_YN,biosum_cond_id");
 
             for (x = 0; x <= strSqlCommandList.Count - 1; x++)
             {
@@ -871,7 +871,7 @@ namespace FIA_Biosum_Manager
                                   "INTO tree_spc_groups_temp " +
                                   "FROM " + this.m_oQueries.m_oFIAPlot.m_strTreeTable + " t, " +
                                             this.m_strFvsOutTreeTable + " f " +
-                                  "WHERE f.fvs_tree_id = t.fvs_tree_id";
+                                  "WHERE f.fvs_tree_id = t.fvs_tree_id AND f.biosum_cond_id = t.biosum_cond_id";
             this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
 
             m_ado.m_strSQL = "SELECT DISTINCT s.common_name " +

@@ -310,7 +310,23 @@ namespace FIA_Biosum_Manager
 			this.m_dao = null;
 			this.m_DataSource = null;
 		}
+
+
 		public void Start(string p_strFVSInDir,string p_strVariant)
+		{
+	        bool bUseNewFVSIn = true;
+
+	        if (bUseNewFVSIn)
+	        {
+	            StartFVSInAccdb(p_strFVSInDir, p_strVariant);
+	        }
+	        else
+	        {
+	            StartFVSInTextFiles(p_strFVSInDir, p_strVariant);
+	        }
+	    }
+
+	    public void StartFVSInTextFiles(string p_strFVSInDir,string p_strVariant)
 		{
             if (frmMain.g_bDebug)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
@@ -333,6 +349,397 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
 
 		}
+
+        public void StartFVSInAccdb(string p_strFVSInDir, string p_strVariant)
+        {
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
+            this.m_intError = 0;
+            this.m_strInDir = p_strFVSInDir.Trim() + "\\" + p_strVariant.Trim();
+            this.m_strVariant = p_strVariant.Trim();
+            this.strFVSInMDBFile = "FVSIn.accdb";
+
+            CheckDir();
+            DeleteFiles();
+
+            CopyFVSBlankDatabaseToFVSInDir(this.m_strInDir);
+
+            if (m_ado.m_OleDbConnection != null && m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open) //TODO: if (not null) {if (open conn)}
+            {
+                m_ado.m_OleDbConnection.Close();
+            }
+
+            CreateTablesLinksToFVSIn(); //uses a dao_data_access exclusively on the temp database
+
+            m_ado.OpenConnection(m_strConn); //reopen the connection after the dao connection is released
+            //create work tables with similar schemas to the FVS Input tables
+            CreateFVSWorkTables();
+
+            //Create FVS input text files
+            if (this.m_intError != 0) return;
+            InitializeFields();
+            if (this.m_intError != 0) return;
+
+            //Create/append to database input files
+            if (this.m_intError != 0) return;
+            CreateFVSInputDbLOC();
+            if (this.m_intError != 0) return;
+            CreateFVSStandInit();
+            if (this.m_intError != 0) return;
+            CreateFVSTreeInit();
+            if (this.m_intError != 0) return;
+
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
+        }
+
+	    private void CreateFVSWorkTables()
+	    {
+	        /* Sometimes when processing multiple variants during FVSIn workflow, 
+             * processing will stop before these tables are deleted 
+             * if there are no stands in the standlist dataset.
+             */
+	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_StandInit_WorkTable"))
+	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.StandInit.DeleteWorkTable());
+	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_TreeInit_WorkTable"))
+	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.TreeInit.DeleteWorkTable());
+	        frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTable(m_ado, m_ado.m_OleDbConnection,
+	            "FVS_StandInit_WorkTable");
+	        frmMain.g_oTables.m_oFvs.CreateFVSInputTreeInitWorkTable(m_ado, m_ado.m_OleDbConnection,
+	            "FVS_TreeInit_WorkTable");
+	    }
+
+	    public void CopyFVSBlankDatabaseToFVSInDir(string strFVSInDir)
+        {
+            env p_env = new env();
+            string strFVSInSourcePath = p_env.strAppDir + "\\db\\" + this.strFVSInMDBFile;
+            string strFVSInDestPath = strFVSInDir + "\\" + this.strFVSInMDBFile;
+            File.Copy(strFVSInSourcePath, strFVSInDestPath, true);
+            string strFVSInConn = this.m_ado.getMDBConnString(strFVSInDestPath, "", "");
+
+            string strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllPlots(this.strFVSInMDBFile);
+            this.m_ado.SqlNonQuery(strFVSInConn, strSQL);
+            strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllStands(this.strFVSInMDBFile);
+            this.m_ado.SqlNonQuery(strFVSInConn, strSQL);
+
+            p_env = null;
+        }
+
+
+        public void CreateTablesLinksToFVSIn()
+        {
+            //Create links to the fvs\data\currentvariant\FVSIn.accdb tables in the temp database fia_biosum_xxx_xxx.accdb, and overwrite links if they exist
+            m_dao = new dao_data_access();
+
+            m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_StandInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
+                "FVS_StandInit", true);
+            m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_TreeInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
+                "FVS_TreeInit", true);
+
+            m_dao = null;
+        }
+
+        private void CreateFVSInputDbLOC()
+        {
+            try
+            {
+                System.IO.FileStream p_fs = new System.IO.FileStream(
+                    this.m_strInDir + "\\" + this.m_strVariant + ".loc", System.IO.FileMode.Create,
+                    System.IO.FileAccess.Write);
+
+                System.IO.StreamWriter p_sw = new System.IO.StreamWriter(p_fs);
+                p_sw.WriteLine("{0} {1} {2}", "C",
+                    '"' + "FVS Input Database for " + this.m_strVariant + " variant" + '"',
+                    this.strFVSInMDBFile);
+                p_sw.Close();
+                p_fs.Close();
+                p_sw = null;
+                p_fs = null;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("!!Error!! \n" +
+                                "Module - fvs_input:CreateFVSInputDbLOC  \n" +
+                                "Err Msg - " + e.Message.ToString().Trim(),
+                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+            }
+        }
+
+        private void CreateFVSStandInit()
+        {
+            try
+            {
+                this.m_ado.OpenConnection(this.m_strConn);
+                string strStandInitWorkTable = "FVS_StandInit_WorkTable"; //TODO: Add to fvs_input members?
+                string strStandInit = "FVS_StandInit"; //TODO: Add to fvs_input members?
+                string strSQL;
+
+                strSQL = Queries.FVS.FVSInput.StandInit.BulkImportStandDataFromBioSumMaster(m_strVariant,
+                    strStandInitWorkTable, m_strCondTable, m_strPlotTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                //Site index and site species sequential insertion into FVS_StandInit_WorkTable
+                if (GenerateSiteIndexAndSiteSpeciesSQL() == false)
+                    return; //if m_intError translated to bool cond by refactoring tool
+
+                strSQL = Queries.FVS.FVSInput.StandInit.TranslateWorkTableToStandInitTable(strStandInitWorkTable,
+                    strStandInit);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                //Delete work table
+                strSQL = Queries.FVS.FVSInput.StandInit.DeleteWorkTable();
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                //close connection to temp database
+                m_ado.CloseConnection(m_ado.m_OleDbConnection);
+                m_ado.m_OleDbConnection.Dispose();
+                m_ado.m_OleDbConnection = null;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("!!Error!! \n" +
+                                "Module - fvs_input:CreateFVSStandInit  \n" +
+                                "Err Msg - " + e.Message.ToString().Trim(),
+                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+            }
+            finally
+            {
+                if (m_ado.m_OleDbConnection != null)
+                {
+                    //Todo: do I use close connection here?
+                    while (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
+                        System.Threading.Thread.Sleep(1000);
+                    m_ado.m_OleDbConnection.Dispose();
+                    m_ado.m_OleDbConnection = null;
+                }
+            }
+        }
+
+        private bool GenerateSiteIndexAndSiteSpeciesSQL()
+        {
+            fvs_input.site_index oSiteIndex = new site_index();
+            oSiteIndex.ado_data_access = m_ado;
+            oSiteIndex.CondTable = this.m_strCondTable;
+            oSiteIndex.PlotTable = this.m_strPlotTable;
+            oSiteIndex.TreeTable = this.m_strTreeTable;
+            oSiteIndex.SiteTreeTable = this.m_strSiteTreeTable;
+            oSiteIndex.TreeSpeciesTable = this.m_strTreeSpcTable;
+            oSiteIndex.FVSTreeSpeciesTable = this.m_strFVSTreeSpcTable;
+            oSiteIndex.SiteIndexEquations = LoadSiteIndexEquations(this.m_strVariant.Trim().ToUpper());
+            oSiteIndex.DebugFile = this.m_strDebugFile;
+
+            this.m_ado.m_strSQL =
+                Queries.FVS.FVSInput.StandInit.CreateSiteIndexDataset(m_strVariant, m_strCondTable, m_strPlotTable);
+
+            this.m_ado.CreateDataSet(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL, "standlist");
+            if (this.m_ado.m_DataSet.Tables["standlist"].Rows.Count == 0)
+            {
+                this.m_intError = -1;
+                MessageBox.Show("!!No standlist Records To Process!!", "FVS Input",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_ado.m_DataSet.Clear();
+                this.m_ado.m_DataSet.Dispose();
+                m_ado.CloseConnection(m_ado.m_OleDbConnection);
+                this.m_ado.m_OleDbConnection.Dispose();
+                return false;
+            }
+
+            frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
+                "Writing FVS_StandInit For Variant " + this.m_strVariant);
+            frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
+            frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum",
+                this.m_ado.m_DataSet.Tables["standlist"].Rows.Count);
+            this.m_dt = this.m_ado.m_DataSet.Tables["standlist"];
+
+            for (int x = 0; x <= this.m_dt.Rows.Count - 1; x++)
+            {
+                //Variables used for writing SQL insert statements, to be assigned using m_dt.Rows[x]["columnname"]
+                string strStand_ID = "null";
+                string strSite_Species = "null";
+                string strSite_Index = "null";
+
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", x);
+                //Set stand id
+                strStand_ID = "\'" + this.m_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "\'";
+                //Set site index and site species
+                oSiteIndex.getSiteIndex(m_dt.Rows[x]);
+                strSite_Species = "\'" + oSiteIndex.SiteIndexSpeciesAlphaCode + "\'";
+                strSite_Index = oSiteIndex.SiteIndex;
+
+                if (strSite_Species.Contains("@"))
+                {
+                    strSite_Species = "null";
+                }
+
+                if (strSite_Index.Contains("@"))
+                {
+                    strSite_Index = "null";
+                }
+
+                if (strSite_Species != "null" && strSite_Index != "null") //to save a little work
+                {
+                    //Creating the SQL Insert for this record's FVS_StandInit entry
+                    string strUpdateSiteIndexPerStand =
+                        Queries.FVS.FVSInput.StandInit.InsertSiteIndexSpeciesRow(strStand_ID, strSite_Species,
+                            strSite_Index);
+                    this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strUpdateSiteIndexPerStand);
+                }
+            }
+            return true;
+        }
+
+
+        private void CreateFVSTreeInit()
+        {
+            try
+            {
+                this.m_ado.OpenConnection(this.m_strConn);
+
+                int intProgressBarCounter = 0;
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
+                    "Writing FVS_TreeInit For Variant " + this.m_strVariant);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", 30);
+
+                string strTreeInitWorkTable = "FVS_TreeInit_WorkTable";
+                string strTreeInit = "FVS_TreeInit";
+
+                //Insert records from Master.mdb
+                string strSQL = Queries.FVS.FVSInput.TreeInit.BulkImportTreeDataFromBioSumMaster(
+                    m_strVariant, strTreeInitWorkTable, m_strCondTable, m_strPlotTable, m_strTreeTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Set FVS_Species_Names using FIA_SPCD & Variant to map FVS_TreeInit_WorkTable to Tree_Species table
+                //These species names are used to determine mistletoe damage codes
+                //strSQL = Queries.FVS.FVSInput.TreeInit.UpdateFVSSpeciesNameColumn(m_strVariant, strTreeInitWorkTable, m_strTreeSpcTable);
+                //m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                //Updating FIA Species Codes to FVS Species Codes
+                //Build the temporary species code conversion table
+                strSQL = Queries.FVS.FVSInput.TreeInit.CreateSpcdConversionTable(m_strCondTable, m_strPlotTable,
+                    m_strTreeTable, m_strTreeSpcTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Execute the Species code update
+                strSQL = Queries.FVS.FVSInput.TreeInit.UpdateFVSSpeciesCodeColumn(m_strVariant, strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Dead trees don't have Compacted Crown Ratio logic in text file approach, so set CrRatio to null where history=9
+                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteCrRatiosForDeadTrees(strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Round Cr<10 to Crown Ratio Class 1 (so that FVS rounds it up to 5% to make it the middle of the threshold)
+                strSQL = Queries.FVS.FVSInput.TreeInit.RoundSingleDigitPercentageCrRatiosDownTo1(strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                /*This logic is present in the CreateFVS code, but Jeremy Fried said we should keep CrRatios for HtCd==4*/
+                //strSQL = "UPDATE FVS_TreeInit_WorkTable SET CrRatio=null WHERE HtCd not in (1,2,3);";
+                //m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                // /*This is a test to compare predispose and fvsin CrRatio when you round up*/
+                //strSQL = Queries.FVS.FVSInput.TreeInit.RoundCrRatioSingleDigitCodes(strTreeInitWorkTable);
+                //m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+
+                //If Htcd not in {1,2,3} then set the Ht and HtTopK to 0
+                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteHtAndHtTopKForNonMeasuredHeights(strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Calculating Broken top using Ht > ActualHt (HtTopK) before setting HtTopK>=Ht to 0. The 0<HtTopK means we could execute this after setting HtTopK's to 0
+                //Broken tops can determine damage codes
+                strSQL = Queries.FVS.FVSInput.TreeInit.SetBrokenTopFlag(strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //If HtTopK >= Ht, set it to 0
+                strSQL = Queries.FVS.FVSInput.TreeInit.SetHtTopKToZeroIfGteHt(strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Set Dbh to 0.1 if Tpa > 25 and dbh <= 0 and live tree (implies seedlings) 
+                strSQL = Queries.FVS.FVSInput.TreeInit.SetInferredSeedlingDbh(strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Pad FVS_TreeInit.Species with 0 in case it's not 3-digits
+                strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInitWorkTable);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Damage code section
+                string[] strDamageCodes = Queries.FVS.FVSInput.TreeInit.DamageCodes(strTreeInitWorkTable);
+                foreach (string strDamageCodeSQL in strDamageCodes)
+                {
+                    m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strDamageCodeSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+                }
+
+                string[] strTreeValues = Queries.FVS.FVSInput.TreeInit.TreeValueClass(strTreeInitWorkTable);
+                foreach (string strTreeValueUpdate in strTreeValues)
+                {
+                    m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strTreeValueUpdate);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+                }
+
+                //Insert into linked FVS_TreeInit after doing intermediate work in the work table
+                strSQL = Queries.FVS.FVSInput.TreeInit.TranslateWorkTableToTreeInitTable(strTreeInitWorkTable,
+                    strTreeInit);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Pad and trim the Species column again so FVS works with it properly
+                strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInit);
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //Delete work tables
+                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteWorkTable();
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteSpcdChangeWorkTable();
+                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+
+                //close the connection to the temp mdb file
+                m_ado.CloseConnection(m_ado.m_OleDbConnection);
+                m_ado.m_OleDbConnection.Dispose();
+                m_ado.m_OleDbConnection = null;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("!!Error!! \n" +
+                                "Module - fvs_input:CreateFVSTreeInit  \n" +
+                                "Err Msg - " + e.Message.ToString().Trim(),
+                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+            }
+            finally
+            {
+                if (m_ado.m_OleDbConnection != null)
+                {
+                    //TODO: Do I use close connection here?
+                    while (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
+                        System.Threading.Thread.Sleep(1000);
+                    m_ado.m_OleDbConnection.Dispose();
+                    m_ado.m_OleDbConnection = null;
+                }
+            }
+        }
+
+
+
+
 		private void CreateLOC()
 		{
 			try
@@ -2116,6 +2523,7 @@ namespace FIA_Biosum_Manager
 			}
 			System.IO.File.Delete(this.m_strVariant.Trim() + ".loc");
 			System.IO.File.Delete(this.m_strVariant.Trim() + ".slf");
+            System.IO.File.Delete(this.m_strFVSInMDBFile);
 			System.IO.Directory.SetCurrentDirectory(strCurrDir);
 
 		}
