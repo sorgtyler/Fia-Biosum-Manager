@@ -1493,39 +1493,7 @@ namespace FIA_Biosum_Manager
                         else
                             this.m_strOptimizationTableName = this.m_strOptimizationTableName + "N" + Convert.ToString(this.m_oOptimizationVariable.dblFilterValue*-1).Trim();
 					}
-					else
-					{
-						if (oFvsVar.m_bOverallEffectiveNetRevEnabled)
-						{
-							switch (oFvsVar.m_strOverallEffectiveNetRevOperator.Trim())
-							{
-								case "<":
-									this.m_strOptimizationTableName = this.m_strOptimizationTableName + "lt";
-									break;
-								case ">":
-									this.m_strOptimizationTableName = this.m_strOptimizationTableName + "gt";
-									break;
-								case "<=":
-									this.m_strOptimizationTableName = this.m_strOptimizationTableName + "lte";
-									break;
-								case ">=":
-									this.m_strOptimizationTableName = this.m_strOptimizationTableName + "gte";
-									break;
-								case "<>":
-									this.m_strOptimizationTableName = this.m_strOptimizationTableName + "ne";
-									break;
-								case "=":
-									this.m_strOptimizationTableName = this.m_strOptimizationTableName + "e";
-									break;
-							}
-                            if (Convert.ToDouble(oFvsVar.m_strOverallEffectiveNetRevValue.Trim().Replace("$", "")) >= 0)
-                                this.m_strOptimizationTableName = this.m_strOptimizationTableName + "P" + oFvsVar.m_strOverallEffectiveNetRevValue.Trim().Replace("$", "");
-                            else
-                            {
-                                this.m_strOptimizationTableName = this.m_strOptimizationTableName + "N" + Convert.ToString(Convert.ToDouble(oFvsVar.m_strOverallEffectiveNetRevValue.Trim().Replace("$", "")) * -1);
-                            }
-						}
-					}
+
                     m_strOptimizationTableName = "cycle1_" + m_strOptimizationTableName;
 
                     getVariants();
@@ -5258,13 +5226,9 @@ namespace FIA_Biosum_Manager
 					strEffectiveSql = strEffectiveSql + "variable" + strVariableNumber + "_effective_yn=IIF(" + strEffectiveIsNotNull[x].Trim() + ",IIF(" + oFvsVar.m_strEffectiveExpr[x].Trim() + ",'Y','N'),null),";
 				}
 			}
-			if (oFvsVar.m_strOverallEffectiveExpr.Trim().Length > 0)
-			{
-				if (oFvsVar.m_bOverallEffectiveNetRevEnabled)
-					m_strSQL = m_strSQL + "overall_effective_yn=IIF(" + strOverallEffectiveIsNotNull.Trim() + ",IIF(" + oFvsVar.m_strOverallEffectiveExpr.Trim() + " AND nr_dpa IS NOT NULL AND nr_dpa " + oFvsVar.m_strOverallEffectiveNetRevOperator.Trim() + " " + oFvsVar.m_strOverallEffectiveNetRevValue.Trim() + ",'Y','N'),null),";
-				else
-			  	    m_strSQL = m_strSQL + "overall_effective_yn=IIF(" + strOverallEffectiveIsNotNull.Trim() + ",IIF(" + oFvsVar.m_strOverallEffectiveExpr.Trim() + ",'Y','N'),null),";
-			}
+			// Mark effective treatments with a 'Y'
+            m_strSQL = m_strSQL + "overall_effective_yn=IIF(" + strOverallEffectiveIsNotNull.Trim() + ",IIF(" + oFvsVar.m_strOverallEffectiveExpr.Trim() + ",'Y','N'),null),";
+
 			//better
             if (strBetterSql.Trim().Length > 0)
             {

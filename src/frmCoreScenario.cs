@@ -1973,9 +1973,6 @@ namespace FIA_Biosum_Manager
             public string[] m_strWorseExpr = new string[NUMBER_OF_VARIABLES];
             public string[] m_strEffectiveExpr = new string[NUMBER_OF_VARIABLES];
             public string m_strOverallEffectiveExpr = "";
-            public bool m_bOverallEffectiveNetRevEnabled = false;
-            public string m_strOverallEffectiveNetRevOperator = ">";
-            public string m_strOverallEffectiveNetRevValue = "0";
             private string _strRxCycle = "";
             private string _strType="";
 
@@ -2015,11 +2012,7 @@ namespace FIA_Biosum_Manager
 
                 }
                 p_oDest.RxCycle = p_oSource.RxCycle;
-                p_oDest.m_strOverallEffectiveExpr = p_oSource.m_strOverallEffectiveExpr;
-                p_oDest.m_bOverallEffectiveNetRevEnabled = p_oSource.m_bOverallEffectiveNetRevEnabled;
-                p_oDest.m_strOverallEffectiveNetRevOperator = p_oSource.m_strOverallEffectiveNetRevOperator;
-                p_oDest.m_strOverallEffectiveNetRevValue = p_oSource.m_strOverallEffectiveNetRevValue;
-                
+                p_oDest.m_strOverallEffectiveExpr = p_oSource.m_strOverallEffectiveExpr;                
             }
             /// <summary>
             /// return the table names found in the either m_strPreVarArray or m_strPostVarArray variables
@@ -2106,10 +2099,6 @@ namespace FIA_Biosum_Manager
             public bool Modified(EffectiveVariablesItem p_oCompare)
             {
                 if (m_strOverallEffectiveExpr.Trim().ToUpper() != p_oCompare.m_strOverallEffectiveExpr.Trim().ToUpper()) return true;
-                if (m_strOverallEffectiveNetRevValue.Trim() != p_oCompare.m_strOverallEffectiveNetRevValue.Trim()) return true;
-                if (m_bOverallEffectiveNetRevEnabled != p_oCompare.m_bOverallEffectiveNetRevEnabled) return true;
-                if (m_strOverallEffectiveNetRevOperator.Trim() != p_oCompare.m_strOverallEffectiveNetRevOperator) return true;
-
 
                 for (int x = 0; x <= NUMBER_OF_VARIABLES - 1; x++)
                 {
@@ -2855,8 +2844,7 @@ namespace FIA_Biosum_Manager
             //
             //overall expression
             p_oAdo.m_strSQL = "SELECT b.overall_effective_expression,b.current_yn," +
-                                   "b.nr_dpa_filter_enabled_yn,b.nr_dpa_filter_operator," +
-                                   "b.nr_dpa_filter_value,b.rxcycle " +
+                            "b.rxcycle " +
                             "FROM scenario_fvs_variables_overall_effective b " +
                             "WHERE TRIM(b.scenario_id)='" + p_strScenarioId.Trim() + "' AND " +
                             "b.current_yn='Y'";
@@ -2879,38 +2867,6 @@ namespace FIA_Biosum_Manager
                         p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveExpr.Trim().Length == 0)
                         p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveExpr =
                                 Convert.ToString(p_oAdo.m_OleDbDataReader["overall_effective_expression"]).Trim();
-
-                    //enable filter
-                    if (p_oAdo.m_OleDbDataReader["nr_dpa_filter_enabled_yn"] != System.DBNull.Value)
-                    {
-                        if (Convert.ToString(p_oAdo.m_OleDbDataReader["nr_dpa_filter_enabled_yn"]).Trim() == "Y")
-                            p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_bOverallEffectiveNetRevEnabled = true;
-                        else
-                            p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_bOverallEffectiveNetRevEnabled = false;
-                    }
-                    else
-                    {
-                        p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_bOverallEffectiveNetRevEnabled = false;
-                    }
-                    //filter operator
-                    if (p_oAdo.m_OleDbDataReader["nr_dpa_filter_operator"] != System.DBNull.Value)
-                    {
-
-                        p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveNetRevOperator = Convert.ToString(p_oAdo.m_OleDbDataReader["nr_dpa_filter_operator"]).Trim();
-                    }
-                    else
-                    {
-                        p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveNetRevOperator = ">";
-                    }
-                    //filter value
-                    if (p_oAdo.m_OleDbDataReader["nr_dpa_filter_value"] != System.DBNull.Value)
-                    {
-                        p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveNetRevValue = Convert.ToString(p_oAdo.m_OleDbDataReader["nr_dpa_filter_value"]).Trim();
-                    }
-                    else p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveNetRevValue = "0";
-
-                    
-
 
                 }
             }
@@ -3828,15 +3784,6 @@ namespace FIA_Biosum_Manager
                     }
                     strLine = strLine + "Overall Effective Expression: " +
                          p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveExpr + "\r\n";
-
-                    if (p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_bOverallEffectiveNetRevEnabled)
-                    {
-                        strLine = strLine + "Overall Effective Net Revenue Filter: " +
-                         p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveNetRevOperator + " " +
-                         p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).m_strOverallEffectiveNetRevValue + "\r\n";
-
-
-                    }
                 }
             }
             strLine = strLine + "//\r\n";
