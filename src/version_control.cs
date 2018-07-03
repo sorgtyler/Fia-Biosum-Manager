@@ -463,15 +463,15 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    //5.8.1 modifications to Core, tree species, harvest methods tables and new OPCOST reference database
+                    //5.8.4 modifications to Core, tree species, harvest methods tables and new OPCOST reference database
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
-                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 1) &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 4) &&
                            (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 8 &&
                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 1))
                     {
-                        UpdateDatasources_5_8_1();
+                        UpdateDatasources_5_8_4();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
@@ -5143,8 +5143,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        //@ToDo: Integrate this into versioning once we know deployment version 
-        private void UpdateDatasources_5_8_1()
+        private void UpdateDatasources_5_8_4()
         {
             frmMain.g_sbpInfo.Text = "Version Update: Updating Core Analysis Configurations ...Stand by";
             ado_data_access oAdo = new ado_data_access();
