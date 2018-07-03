@@ -605,6 +605,23 @@ namespace FIA_Biosum_Manager
 		}
 
 		#endregion
+	    public bool createFvsCutListIfDNE(string strOutDirAndFile)
+	    {
+	        bool bCutListPresent = true;
+            ado_data_access oAdo = new ado_data_access();
+            oAdo.OpenConnection(oAdo.getMDBConnString(strOutDirAndFile, "", ""));
+	        if (oAdo.TableExist(oAdo.m_OleDbConnection, "FVS_CUTLIST") == false)
+	        {
+	            Tables.FVS.CreateFVSCutListTable(oAdo);
+	            bCutListPresent = false;
+	        }
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            oAdo.m_OleDbConnection.Dispose();
+            oAdo.m_OleDbConnection = null;
+	        oAdo = null;
+	        return bCutListPresent;
+	    }
+
 		public void loadvalues()
 		{
 			
@@ -725,6 +742,7 @@ namespace FIA_Biosum_Manager
 					if (System.IO.File.Exists(strOutDirAndFile) == true)
 					{
 
+					    createFvsCutListIfDNE(strOutDirAndFile);
 						strTableNames = new string[300];						
 						oDao2.getTableNames(strOutDirAndFile,ref strTableNames);
 						for (x=0;x<=strTableNames.Length-1;x++)
@@ -4243,10 +4261,8 @@ namespace FIA_Biosum_Manager
                                             oAdo.m_strSQL = "SELECT DISTINCT c.StandID AS biosum_cond_id,'" + p_strPackage.Trim() + "' AS rxpackage," +
                                                 "'" + strRx.Trim() + "' AS rx,'" + strCycle.Trim() + "' AS rxcycle," +
                                                 "CSTR(t.year) AS rxyear," +
-                                                "c.Variant AS fvs_variant, IIf(Len(Trim(t.treeid))=4," +
-                                                "c.variant+'000'+Trim(t.treeid),IIf(Len(Trim(t.treeid))=5," +
-                                                "c.variant+'00'+Trim(t.treeid),IIf(Len(Trim(t.treeid))=6," +
-                                                "c.variant+'0'+Trim(t.treeid),c.variant+Trim(t.treeid)))) AS fvs_tree_id," +
+                                                "c.Variant AS fvs_variant, " +
+                                                "Trim(t.treeid) AS fvs_tree_id," +
                                                 "'C' AS cut_leave," +
                                                 "t.Species AS fvs_species, t.TPA, ROUND(t.DBH,1) AS DBH , t.Ht,t.estht,t.pctcr,t.TCuFt,'N' AS FvsCreatedTree_YN," +
                                                 "'" + m_strDateTimeCreated + "' AS DateTimeCreated " + 

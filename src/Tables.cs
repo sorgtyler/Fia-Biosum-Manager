@@ -1752,6 +1752,49 @@ namespace FIA_Biosum_Manager
 			public FVS()
 			{
 			}
+
+		    public static void CreateFVSCutListTable(ado_data_access p_oAdo)
+		    {
+		        p_oAdo.SqlNonQuery(p_oAdo.m_OleDbConnection, CreateFVSCutListTableSQL());
+		    }
+
+		    public static string CreateFVSCutListTableSQL()
+		    {
+		        return "CREATE TABLE FVS_CutList " +
+		            "(CaseID CHAR(255)," +
+		            "StandID CHAR(255)," +
+                    "`Year` LONG," +
+                    "PrdLen LONG," +
+		            "TreeId CHAR(255)," +
+                    "TreeIndex LONG," +
+		            "Species CHAR(255)," +
+                    "TreeVal LONG," +
+                    "SSCD LONG," +
+                    "PtIndex LONG," +
+		            "TPA DOUBLE," +
+		            "MortPA DOUBLE," +
+		            "DBH DOUBLE," +
+		            "DG DOUBLE," +
+		            "Ht DOUBLE," +
+		            "HtG DOUBLE," +
+                    "PctCr LONG," +
+		            "CrWidth DOUBLE," +
+                    "MistCD LONG," +
+		            "BAPctile DOUBLE," +
+		            "PtBAL DOUBLE," +
+		            "TCuFt DOUBLE," +
+		            "MCuFt DOUBLE," +
+		            "BdFt DOUBLE," +
+                    "MDefect LONG," +
+                    "BDefect LONG," +
+                    "TruncHt LONG," +
+		            "EstHt DOUBLE," +
+                    "ActPt LONG," +
+		            "Ht2TDCF SINGLE," +
+		            "Ht2TDBF SINGLE," +
+		            "TreeAge DOUBLE)";
+		    }
+
 			//
 			//FVS_tree table
 			//
@@ -2484,7 +2527,160 @@ namespace FIA_Biosum_Manager
                 }
             }
 
+            //To be used in fvs_input.cs for creating FVS_StandInit_WorkTable in the temporary biosum database, which will then be translated to FVS_StandInit
+            public void CreateFVSInputStandInitTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+                System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateFVSInputStandInitTableSQL(p_strTableName));
+                CreateFVSInputStandInitTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
 
+            public void CreateFVSInputStandInitTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,
+                System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "Stand_ID"); //TODO: Note that the Blank_Database used as an FVSIn.accdb template doesn't have primary keys.
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_Groups_idx", "Groups");
+            }
+
+            public string CreateFVSInputStandInitTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                       "Stand_ID CHAR(26)," + //indexed, duplicates okay //REQUIRED
+                       "Variant CHAR(11)," + //REQUIRED
+                       "Inv_Year LONG," + //REQUIRED
+                       "Groups MEMO," + //indexed, duplicates okay
+                       "AddFiles MEMO," +
+                       "FVSKeywords MEMO," +
+                       "Latitude DOUBLE," +
+                       "Longitude DOUBLE," +
+                       "Region LONG," +
+                       "Forest LONG," +
+                       "District LONG," +
+                       "Compartment LONG," +
+                       "Location LONG," + //RECOMMENDED
+                       "Ecoregion CHAR(6)," +
+                       "PV_Code CHAR(10)," +
+                       "PV_Ref_Code LONG," +
+                       "Age LONG," +
+                       "Aspect DOUBLE," + //RECOMMENDED
+                       "Slope DOUBLE," + //RECOMMENDED
+                       "Elevation DOUBLE," +
+                       "ElevFt DOUBLE," + //RECOMMENDED
+                       "Basal_Area_Factor DOUBLE," + //REQUIRED
+                       "Inv_Plot_Size DOUBLE," + //REQUIRED
+                       "Brk_DBH DOUBLE," + //REQUIRED
+                       "Num_Plots LONG," + //RECOMMENDED
+                       "NonStk_Plots LONG," +
+                       "Sam_Wt DOUBLE," +
+                       "Stk_Pcnt DOUBLE," +
+                       "DG_Trans LONG," +
+                       "DG_Measure LONG," +
+                       "HTG_Trans LONG," +
+                       "HTG_Measure LONG," +
+                       "Mort_Measure LONG," +
+                       "Max_BA DOUBLE," +
+                       "Max_SDI DOUBLE," +
+                       "Site_Species CHAR(8)," +
+                       "Site_Index DOUBLE," +
+                       "Model_Type LONG," +
+                       "Physio_Region LONG," +
+                       "Forest_Type LONG," +
+                       "State LONG," +
+                       "County LONG," +
+                       "Fuel_Model LONG," +
+                       "Fuel_0_25_H DOUBLE," +
+                       "Fuel_25_1_H DOUBLE," +
+                       "Fuel_1_3_H DOUBLE," +
+                       "Fuel_3_6_H DOUBLE," +
+                       "Fuel_6_12_H DOUBLE," +
+                       "Fuel_12_20_H DOUBLE," +
+                       "Fuel_20_35_H DOUBLE," +
+                       "Fuel_35_50_H DOUBLE," +
+                       "Fuel_gt_50_H DOUBLE," +
+                       "Fuel_0_25_S DOUBLE," +
+                       "Fuel_25_1_S DOUBLE," +
+                       "Fuel_1_3_S DOUBLE," +
+                       "Fuel_3_6_S DOUBLE," +
+                       "Fuel_6_12_S DOUBLE," +
+                       "Fuel_12_20_S DOUBLE," +
+                       "Fuel_20_35_S DOUBLE," +
+                       "Fuel_35_50_S DOUBLE," +
+                       "Fuel_gt_50_S DOUBLE," +
+                       "Fuel_Litter DOUBLE," +
+                       "Fuel_Duff DOUBLE," +
+                       "Photo_Ref LONG," +
+                       "Photo_code CHAR(13)" +
+                       ")";
+            }
+
+
+            //To be used in fvs_input.cs for creating FVS_TreeInit_WorkTable in the temporary biosum database, which will then be translated to FVS_TreeInit
+            public void CreateFVSInputTreeInitWorkTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+                System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateFVSInputTreeInitWorkTableSQL(p_strTableName));
+                CreateFVSInputTreeInitWorkTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+
+            public void CreateFVSInputTreeInitWorkTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,
+                System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "TreeInitID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_Stand_ID_idx", "Stand_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_StandPlot_ID_idx", "StandPlot_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_Tree_ID_idx", "Tree_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_PV_Code_idx", "PV_Code");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_TopoCode_idx", "TopoCode");
+            }
+
+            public string CreateFVSInputTreeInitWorkTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                       "TreeInitID AUTOINCREMENT, " + //Pkey and indexed
+                       "Stand_ID CHAR(26)," + //indexed, duplicates okay //REQUIRED
+                       "StandPlot_ID CHAR(40)," +
+                    //"Plot_ID CHAR(4)," + //RECOMMENDED (how FVS defines this field)
+                    //"Tree_ID CHAR(40)," + // (how FVS defines this field)
+                       "Plot_ID DOUBLE," + //RECOMMENDED //This deviates from FVS DB documentation. Our current approach is to not use plot_IDs
+                       "Tree_ID DOUBLE," + //This deviates from FVS DB documentation because we calculate Tree_ID as Tree.Subp*1000+Tree.Tree. Also indexed.
+                       "Tree_Count DOUBLE," + //RECOMMENDED
+                       "History DOUBLE," +
+                       "Species CHAR(8)," + //REQUIRED
+                       "DBH DOUBLE," + //REQUIRED
+                       "DG DOUBLE," +
+                       "Htcd DOUBLE," + //Temporary table only: If Htcd in {1,2,3}, then we import Ht and HtTopK from Biosum Ht and ActualHt
+                       "Ht DOUBLE," + //RECOMMENDED
+                       "HTG DOUBLE," +
+                       "HtTopK DOUBLE," +
+                       "CrRatio DOUBLE," + //RECOMMENDED
+                       "Damage1 DOUBLE," +
+                       "Severity1 DOUBLE," +
+                       "Damage2 DOUBLE," +
+                       "Severity2 DOUBLE," +
+                       "Damage3 DOUBLE," +
+                       "Severity3 DOUBLE," +
+                       "TreeValue DOUBLE," +
+                       "Prescription DOUBLE," +
+                       "Age DOUBLE," +
+                       "Slope DOUBLE," +
+                       "Aspect DOUBLE," +
+                       "PV_Code CHAR(10)," + //indexed, duplicates okay
+                       "TopoCode DOUBLE," + //indexed, duplicates okay
+                       "SitePrep DOUBLE" +
+
+                       //To be used in the work table in the temp biosum mdb before the above records are inserted into FVS_TreeInit
+                       ", fvs_dmg_ag1 CHAR(2)," +
+                       "fvs_dmg_sv1 CHAR(2)," +
+                       "fvs_dmg_ag2 CHAR(2)," +
+                       "fvs_dmg_sv2 CHAR(2)," +
+                       "fvs_dmg_ag3 CHAR(2)," +
+                       "fvs_dmg_sv3 CHAR(2)," +
+                       "mist_cl_cd LONG, " +
+                       "hasBrokenTop BIT, " +
+                       "cullbf DOUBLE,  " +
+                       "TreeCN CHAR(34)  " +
+                       ")";
+            }
 
 
 			

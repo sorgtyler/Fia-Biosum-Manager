@@ -2724,7 +2724,7 @@ namespace FIA_Biosum_Manager
 
                     this.m_ado.m_strSQL = "SELECT TRIM(p.biosum_plot_id) + TRIM(CSTR(t.condid)) AS biosum_cond_id,9 AS biosum_status_cd,t.* INTO temptree FROM " + strSourceTableLink + " t " +
                         " INNER JOIN " + this.m_strPlotTable + " p ON t.plt_cn=p.cn " +
-                        " WHERE p.biosum_status_cd=9";
+                        " WHERE p.biosum_status_cd=9 AND t.statuscd<>0;";
                     this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
                     m_intError = m_ado.m_intError;
                 }
@@ -3170,12 +3170,14 @@ namespace FIA_Biosum_Manager
 
                     }
 
+            		//Update fvs_tree_id column for tracking a tree between BioSum and FVS for lifetime of project
+            		SetLabelValue(m_frmTherm.lblMsg, "Text", "Updating Tree fvs_tree_id Column...Stand By");
+            		frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control) this.m_frmTherm, "Refresh");
+            		m_ado.m_strSQL = "UPDATE " + this.m_strTreeTable + " SET fvs_tree_id = CStr(subp*1000+tree);";
+            		this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
 
                     SetLabelValue(m_frmTherm.lblMsg,"Text","Updating Tree tpacurr Column...Stand By");
                     frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                    
-                    
-
 					//update tree tpacurr column
                     p_ado.m_strSQL = "UPDATE " + this.m_strTreeTable + " t " +
                         "SET tpacurr = IIF(t.tpa_unadj IS NOT NULL AND t.condprop_specific IS NOT NULL," +
