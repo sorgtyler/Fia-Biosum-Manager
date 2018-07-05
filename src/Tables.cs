@@ -285,24 +285,28 @@ namespace FIA_Biosum_Manager
 			//
 			//EFFECTIVE TABLE
 			//
-			public void CreateEffectiveTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateEffectiveTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,
+                string p_strTableName, string p_strFilterColumnName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateEffectiveTableSQL(p_strTableName));
+				p_oAdo.SqlNonQuery(p_oConn,CreateEffectiveTableSQL(p_strTableName, p_strFilterColumnName));
 				CreateEffectiveTableIndexes(p_oAdo,p_oConn,p_strTableName);
 			}
 			public void CreateEffectiveTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id,rxpackage,rx,rxcycle");
 			}
-			static public string CreateEffectiveTableSQL(string p_strTableName)
+			static public string CreateEffectiveTableSQL(string p_strTableName, string p_strFilterColumnName)
 			{
-				return   "CREATE TABLE " + p_strTableName + " (" +
-			             "biosum_cond_id CHAR(25)," + 
+                string strSql = "CREATE TABLE " + p_strTableName + " (" +
+                         "biosum_cond_id CHAR(25)," +
                          "rxpackage CHAR(3)," +
-		                 "rx CHAR(3)," + 
-                         "rxcycle CHAR(1)," + 
-						 "nr_dpa DOUBLE," + 
-			             "pre_variable1_name CHAR(100)," + 
+                         "rx CHAR(3)," +
+                         "rxcycle CHAR(1)," +
+                         "nr_dpa DOUBLE,";
+                if (!String.IsNullOrEmpty(p_strFilterColumnName))
+                    strSql = strSql + p_strFilterColumnName + " DOUBLE,";
+			    strSql = strSql + 
+                         "pre_variable1_name CHAR(100)," + 
 			             "post_variable1_name CHAR(100)," + 
   			             "pre_variable1_value DOUBLE," + 
 			             "post_variable1_value DOUBLE," + 
@@ -335,6 +339,7 @@ namespace FIA_Biosum_Manager
 						 "variable4_worse_yn CHAR(1)," + 
 						 "variable4_effective_yn CHAR(1)," + 
 						 "overall_effective_yn CHAR(1))";
+                return strSql;
 			}
             //
             //NEW EFFECTIVE TABLE

@@ -2933,7 +2933,20 @@ namespace FIA_Biosum_Manager
             ado_data_access oAdo = new ado_data_access();
 			oAdo.OpenConnection(oAdo.getMDBConnString(strTempFile,"",""));
 
-			frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection, Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName);
+            // Query the optimization uc for the selected revenue attribute so we can pass it to the table
+            uc_core_scenario_fvs_prepost_optimization.Variable_Collection oOptimizationVariableCollection = this._uc_optimization.m_oSavVariableCollection;
+            string strColumnFilterName = "";
+            for (int x = 0; x <= oOptimizationVariableCollection.Count - 1; x++)
+            {
+                if (oOptimizationVariableCollection.Item(x).bSelected)
+                {
+                    if (oOptimizationVariableCollection.Item(x).bUseFilter == true)
+                        strColumnFilterName = oOptimizationVariableCollection.Item(x).strRevenueAttribute;
+                    break;
+                }
+            }
+            frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection, 
+                Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName, strColumnFilterName);
 
 			strSQL = "SELECT * FROM " + Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName + " WHERE " +
 				strSQL + ";";

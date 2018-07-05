@@ -1064,9 +1064,9 @@ namespace FIA_Biosum_Manager
 				//core scenario rule definitions
 				//
 				p_frmTherm.Increment(7);
-                p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + Tables.CoreDefinitions.DefaultDbFile;
+                p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
 				p_frmTherm.lblMsg.Refresh();
-                CreateCoreDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + Tables.CoreDefinitions.DefaultDbFile);
+                CreateCoreDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile);
 				p_frmTherm.Increment(8);
                 p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 				p_frmTherm.lblMsg.Refresh();
@@ -1221,11 +1221,6 @@ namespace FIA_Biosum_Manager
 				p_ado.OpenConnection(strConn);
 				if (p_ado.m_intError == 0)
 				{
-
-					frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(p_ado,p_ado.m_OleDbConnection,"effective");
-					frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboFVSPostTable(p_ado,p_ado.m_OleDbConnection,"validcombos_fvspost");
-					frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboFVSPreTable(p_ado,p_ado.m_OleDbConnection,"validcombos_fvspre");
-
 					if (this.txtDescription.Text.Trim().Length > 0)
 						strDesc = p_ado.FixString(this.txtDescription.Text.Trim(),"'","''");
 					strSQL = "INSERT INTO project (proj_id,created_by,created_date,company,description,shared_file,project_root_directory,application_version) VALUES " + "(" +  
@@ -1655,7 +1650,6 @@ namespace FIA_Biosum_Manager
 			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterMiscTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName);
 			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName);
             frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
-            
 
 			oAdo.CloseConnection(oAdo.m_OleDbConnection);
 			oDao = null;
@@ -1670,8 +1664,9 @@ namespace FIA_Biosum_Manager
             string strConn = oAdo.getMDBConnString(p_strPathAndFile, "admin", "");
             oAdo.OpenConnection(strConn);
             frmMain.g_oTables.m_oCoreDef.CreateCalculatedCoreVariableTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName);
+            frmMain.g_oTables.m_oCoreDef.CreateCalculatedFVSVariableTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName);
+            frmMain.g_oTables.m_oCoreDef.CreateCalculatedEconVariableTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName);
  
-
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
             oDao = null;
         }

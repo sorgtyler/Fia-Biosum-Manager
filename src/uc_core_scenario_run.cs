@@ -2279,13 +2279,16 @@ namespace FIA_Biosum_Manager
                 }
             }
 
-			
-
+            // Query the optimization variable for the selected revenue attribute so we can pass it to the table
+            string strColumnFilterName = "";
+            if (this.m_oOptimizationVariable.bUseFilter == true)
+                strColumnFilterName = this.m_oOptimizationVariable.strRevenueAttribute;
+ 
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsValidCombosTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboFVSPrePostTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsValidCombosFVSPrePostTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateTieBreakerTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsTieBreakerTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateOptimizationTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1OptimizationTableName);
-			frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName);
+			frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName, strColumnFilterName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateBestRxSummaryCycle1WithIntensityTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1BestRxSummaryWithIntensityTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateBestRxSummaryCycle1Table(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1BestRxSummaryTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateBestRxSummaryCycle1Table(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1BestRxSummaryTableName + "_air_dest");
@@ -4973,7 +4976,7 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//sumTreeVolVal\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Cycle1Effective\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 			int x,y;
@@ -5049,6 +5052,36 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
+
+            //insert revenue filter field into the effective table
+            if (this.m_oOptimizationVariable.bUseFilter == true)
+            {
+                uc_core_scenario_weighted_average.VariableItem oItem = null;
+                foreach (uc_core_scenario_weighted_average.VariableItem oNextItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                {
+                    if (oNextItem.strVariableName.Equals(this.m_oOptimizationVariable.strRevenueAttribute))
+                    {
+                        oItem = oNextItem;
+                        break;
+                    }
+                }
+                if (oItem != null)
+                {
+                    if (oItem.strVariableSource.IndexOf(".") > -1)
+                    {
+                        string[] strDatabase = frmMain.g_oUtils.ConvertListToArray(oItem.strVariableSource, ".");
+                        m_strSQL = "UPDATE cycle1_effective e " +
+                                    "INNER JOIN " + strDatabase[0] + " p " +
+                                    "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                                    "e.rxpackage=p.rxpackage " +
+                                    "SET e." + this.m_oOptimizationVariable.strRevenueAttribute + " = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)";
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                        this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                    }
+                }
+            }
+
 
             FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
 
