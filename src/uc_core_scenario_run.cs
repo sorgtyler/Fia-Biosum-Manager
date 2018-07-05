@@ -2287,7 +2287,7 @@ namespace FIA_Biosum_Manager
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsValidCombosTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboFVSPrePostTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsValidCombosFVSPrePostTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateTieBreakerTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsTieBreakerTableName);
-			frmMain.g_oTables.m_oCoreScenarioResults.CreateOptimizationTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1OptimizationTableName);
+			frmMain.g_oTables.m_oCoreScenarioResults.CreateOptimizationTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1OptimizationTableName, strColumnFilterName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName, strColumnFilterName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateBestRxSummaryCycle1WithIntensityTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1BestRxSummaryWithIntensityTableName);
 			frmMain.g_oTables.m_oCoreScenarioResults.CreateBestRxSummaryCycle1Table(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioResults.DefaultScenarioResultsCycle1BestRxSummaryTableName);
@@ -5384,7 +5384,7 @@ namespace FIA_Biosum_Manager
 
 
 			/********************************************
-			 **delete all records in the tie breaker table
+			 **delete all records in the optimization table
 			 ********************************************/
 			this.m_strSQL = "delete from cycle1_optimization";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -5393,9 +5393,15 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
 
-			//insert the valid combos into the tiebreakre table
-			m_strSQL = "INSERT INTO cycle1_optimization (biosum_cond_id,rxpackage,rx,rxcycle) " + 
-				         "SELECT biosum_cond_id,rxpackage,rx,rxcycle FROM cycle1_effective WHERE overall_effective_yn='Y'";
+			//insert the valid combos into the optimization table
+
+            m_strSQL = "INSERT INTO cycle1_optimization (biosum_cond_id,rxpackage,rx,rxcycle,affordable_YN";
+            if (this.m_oOptimizationVariable.bUseFilter == true)
+                m_strSQL = m_strSQL + "," + this.m_oOptimizationVariable.strRevenueAttribute;
+            m_strSQL = m_strSQL + ") SELECT biosum_cond_id,rxpackage,rx,rxcycle,'Y' ";
+            if (this.m_oOptimizationVariable.bUseFilter == true)
+                m_strSQL = m_strSQL + "," + this.m_oOptimizationVariable.strRevenueAttribute;
+            m_strSQL = m_strSQL + " FROM cycle1_effective WHERE overall_effective_yn='Y'";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
@@ -5405,7 +5411,7 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nOptimization Type: " + this.m_oOptimizationVariable.strOptimizedVariable.ToUpper() + "\r\n");
             
-			//populate the variable table.column name and its value to the effective table
+			//populate the variable table.column name and its value to the optimization table
 			if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "REVENUE")
 			{
 				m_strSQL = "UPDATE cycle1_optimization e " + 
@@ -5418,9 +5424,7 @@ namespace FIA_Biosum_Manager
 					    "e.post_variable_name = 'product_yields_net_rev_costs_summary_by_rx.max_nr_dpa'," + 
 					    "e.pre_variable_value = IIF(p.max_nr_dpa IS NOT NULL,p.max_nr_dpa,0)," + 
 					    "e.post_variable_value = IIF(p.max_nr_dpa IS NOT NULL,p.max_nr_dpa,0)," + 
-					    "e.change_value = 0";
-
-																									 ;
+					    "e.change_value = 0";																									 
 			}
 			else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "MERCHANTABLE VOLUME")
 			{
@@ -5476,6 +5480,18 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
+
+            // Update affordable flag for revenue filter
+            if (this.m_oOptimizationVariable.bUseFilter == true)
+            {
+                m_strSQL = "UPDATE cycle1_optimization e " +
+                           "SET e.affordable_YN = IIF(e." + this.m_oOptimizationVariable.strRevenueAttribute +
+                           " " + this.m_oOptimizationVariable.strFilterOperator + " " + this.m_oOptimizationVariable.dblFilterValue + ",'Y','N')";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            }
+
             FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
             FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunCore.g_oCurrentProgressBarBasic, "Done");
 
@@ -5604,7 +5620,7 @@ namespace FIA_Biosum_Manager
 
 			//insert the valid combos into the tiebreakre table
 			m_strSQL = "INSERT INTO tiebreaker (biosum_cond_id,rxpackage,rx,rxcycle) " + 
-				          "SELECT biosum_cond_id,rxpackage,rx,rxcycle FROM cycle1_effective WHERE overall_effective_yn='Y'";
+				          "SELECT biosum_cond_id,rxpackage,rx,rxcycle FROM cycle1_optimization WHERE affordable_YN='Y'";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
@@ -7566,12 +7582,6 @@ namespace FIA_Biosum_Manager
 
 			
 			string strWhereExpr="";
-			if (this.m_oOptimizationVariable.bUseFilter)
-			{
-					strWhereExpr = "max_nr_dpa " + this.m_oOptimizationVariable.strFilterOperator + " " + 
-						Convert.ToString(this.m_oOptimizationVariable.dblFilterValue);
-			}
-
 			this.Cycle1BestRxAcreageExpansionTableInsert(m_strOptimizationTableName + "_stands","biosum_cond_id","rx",strWhereExpr);
             if (this.UserCancel(FIA_Biosum_Manager.RunCore.g_oCurrentProgressBarBasic) == true) return;
 			

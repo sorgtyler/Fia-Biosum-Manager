@@ -676,18 +676,19 @@ namespace FIA_Biosum_Manager
 			//
 			//OPTIMIZATION VARIABLE
 			//
-			public void CreateOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,
+                string p_strTableName, string p_strFilterColumnName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateOptimizationTableSQL(p_strTableName));
+				p_oAdo.SqlNonQuery(p_oConn,CreateOptimizationTableSQL(p_strTableName, p_strFilterColumnName));
 				CreateOptimizationTableIndexes(p_oAdo,p_oConn,p_strTableName);
 			}
 			public void CreateOptimizationTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id,rxpackage,rx,rxcycle");
 			}
-			static public string CreateOptimizationTableSQL(string p_strTableName)
+            static public string CreateOptimizationTableSQL(string p_strTableName, string p_strFilterColumnName)
 			{
-				return   "CREATE TABLE " + p_strTableName + " (" +
+				string strSQL = "CREATE TABLE " + p_strTableName + " (" +
 					"biosum_cond_id CHAR(25)," + 
                     "rxpackage CHAR(3)," + 
                     "rx CHAR(3)," + 
@@ -696,8 +697,14 @@ namespace FIA_Biosum_Manager
 					"post_variable_name CHAR(100)," + 
 					"pre_variable_value DOUBLE," + 
 					"post_variable_value DOUBLE," + 
-					"change_value DOUBLE)";
-					
+					"change_value DOUBLE," +
+                    "affordable_YN CHAR(1)";
+                if (!String.IsNullOrEmpty(p_strFilterColumnName))
+                {
+                    strSQL = strSQL + "," + p_strFilterColumnName + " DOUBLE ";
+                }
+                strSQL = strSQL + ")";
+                return strSQL;
 			}
 			//
 			//OPTIMIZATION VARIABLE PLOT
