@@ -6959,10 +6959,10 @@ namespace FIA_Biosum_Manager
 				"SELECT DISTINCT c.biosum_cond_id,c.acres,c.owngrpcd " + 
 				"FROM " + this.m_strCondTable.Trim() + " c, " + 
 				this.m_strPlotTable.Trim() + " p, "  + 
-				Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName + " e " + 
+				Tables.CoreScenarioResults.DefaultScenarioResultsCycle1OptimizationTableName + " e " + 
 				"WHERE c.biosum_plot_id = p.biosum_plot_id  AND " + 
 				"e.biosum_cond_id = c.biosum_cond_id AND " + 
-				"e.overall_effective_yn = 'Y' AND e.rxcycle='1' AND " + 
+				"e.affordable_YN = 'Y' AND e.rxcycle='1' AND " + 
 				"(p.merch_haul_cost_id IS NOT NULL OR " + 
 				"p.chip_haul_cost_id IS NOT NULL);";
 
@@ -7168,8 +7168,8 @@ namespace FIA_Biosum_Manager
 					"FROM cycle1_optimization a,";
 
 
-				strSql=strSql + "(SELECT " + this.m_strOptimizationAggregateSql + "(" + this.m_strOptimizationColumnNameSql + ") AS " + this.m_strOptimizationAggregateColumnName + ",biosum_cond_id " + 
-					"FROM cycle1_optimization";
+				strSql=strSql + "(SELECT " + this.m_strOptimizationAggregateSql + "(" + this.m_strOptimizationColumnNameSql + ") AS " + this.m_strOptimizationAggregateColumnName + ",biosum_cond_id " +
+                    "FROM cycle1_optimization where affordable_YN = 'Y'";
 
 				strSql = strSql + " GROUP BY biosum_cond_id) b ";
 
@@ -7182,11 +7182,11 @@ namespace FIA_Biosum_Manager
 
 
 				strSql=strSql + "(SELECT " + this.m_strOptimizationAggregateSql + "(" + this.m_strOptimizationColumnNameSql + ") AS " + this.m_strOptimizationAggregateColumnName + ",biosum_cond_id " + 
-					"FROM cycle1_optimization";
+					"FROM cycle1_optimization where affordable_YN = 'Y'";
 
 				strSql = strSql + " GROUP BY biosum_cond_id) b ";
 
-				strSql = strSql + "WHERE a.biosum_cond_id=b.biosum_cond_id AND a." + this.m_strOptimizationColumnNameSql + " = b." + this.m_strOptimizationAggregateColumnName;
+                strSql = strSql + "WHERE a.biosum_cond_id=b.biosum_cond_id AND a." + this.m_strOptimizationColumnNameSql + " = b." + this.m_strOptimizationAggregateColumnName;
 			}
 
 			strSql = "INSERT INTO cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
