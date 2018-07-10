@@ -1243,7 +1243,7 @@ namespace FIA_Biosum_Manager
                 if (oItem.strVariableType.Equals("ECON"))
                 {
                     lstEconVariables.Items.Add(oItem.strVariableName);
-                    if (oItem.strVariableName.IndexOf("revenue") > -1)
+                    if (oItem.strVariableName.IndexOf("revenue") > -1 || oItem.strVariableName.IndexOf("onsite_treatment") > -1)
                     {
                         cmbNetRevOptimzFilter.Items.Add(oItem.strVariableName);
                         cmbNetRevEconOptimzFilter.Items.Add(oItem.strVariableName);

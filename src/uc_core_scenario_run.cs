@@ -7173,7 +7173,8 @@ namespace FIA_Biosum_Manager
 
 				strSql = strSql + " GROUP BY biosum_cond_id) b ";
 
-				strSql = strSql + "WHERE a.biosum_cond_id=b.biosum_cond_id AND a." + this.m_strOptimizationColumnNameSql + " = b." + this.m_strOptimizationAggregateColumnName;
+				strSql = strSql + "WHERE a.biosum_cond_id=b.biosum_cond_id AND a." + this.m_strOptimizationColumnNameSql + " = b." + this.m_strOptimizationAggregateColumnName +
+                                  " AND a.affordable_YN = 'Y'";
 			}
 			else
 			{
@@ -7186,7 +7187,8 @@ namespace FIA_Biosum_Manager
 
 				strSql = strSql + " GROUP BY biosum_cond_id) b ";
 
-                strSql = strSql + "WHERE a.biosum_cond_id=b.biosum_cond_id AND a." + this.m_strOptimizationColumnNameSql + " = b." + this.m_strOptimizationAggregateColumnName;
+                strSql = strSql + "WHERE a.biosum_cond_id=b.biosum_cond_id AND a." + this.m_strOptimizationColumnNameSql + " = b." + this.m_strOptimizationAggregateColumnName +
+                    " AND a.affordable_YN = 'Y'";
 			}
 
 			strSql = "INSERT INTO cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 

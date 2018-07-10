@@ -62,11 +62,12 @@ namespace FIA_Biosum_Manager
         const string PREFIX_TOTAL_VOLUME = "total_volume";
         const string PREFIX_NET_REVENUE = "net_revenue";
         const string PREFIX_TREATMENT_HAUL_COSTS = "treatment_haul_costs";
+        const string PREFIX_ONSITE_TREATMENT_COSTS = "onsite_treatment_costs";
         //These parallel arrays must remain in the same order
         static readonly string[] PREFIX_ECON_VALUE_ARRAY = { PREFIX_TOTAL_VOLUME, PREFIX_MERCH_VOLUME, PREFIX_CHIP_VOLUME,  
-                                                             PREFIX_NET_REVENUE, PREFIX_TREATMENT_HAUL_COSTS };
+                                                             PREFIX_NET_REVENUE, PREFIX_TREATMENT_HAUL_COSTS, PREFIX_ONSITE_TREATMENT_COSTS };
         static readonly string[] PREFIX_ECON_NAME_ARRAY = { "Total Volume", "Merch Volume", "Chip Volume",
-                                                            "Net Revenue","Treatment And Haul Costs"};
+                                                            "Net Revenue","Treatment And Haul Costs", "OnSite Treatment Costs"};
 
 
         private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
@@ -2182,6 +2183,10 @@ namespace FIA_Biosum_Manager
             else if (strName.Contains(PREFIX_TREATMENT_HAUL_COSTS))
             {
                 return PREFIX_TREATMENT_HAUL_COSTS;
+            }
+            else if (strName.Contains(PREFIX_ONSITE_TREATMENT_COSTS))
+            {
+                return PREFIX_ONSITE_TREATMENT_COSTS;
             }
             else
             {
