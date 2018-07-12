@@ -782,8 +782,8 @@ namespace FIA_Biosum_Manager
 								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_RX_INTENSITY":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioRxIntensityTable(oAdo,oConn,strTableName);
+                                strTableName = Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName;
+								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_FVS_VARIABLES_TIEBREAKER":
 								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName;
@@ -916,8 +916,8 @@ namespace FIA_Biosum_Manager
 							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_RX_INTENSITY":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioRxIntensityTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName;
+							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_FVS_VARIABLES_TIEBREAKER":
 							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName;

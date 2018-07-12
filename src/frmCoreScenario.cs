@@ -1849,7 +1849,7 @@ namespace FIA_Biosum_Manager
         public EffectiveVariablesItem_Collection m_oEffectiveVariablesItem_Collection = new EffectiveVariablesItem_Collection();
         public OptimizationVariableItem_Collection m_oOptimizationVariableItem_Collection = new OptimizationVariableItem_Collection();
         public TieBreaker_Collection m_oTieBreaker_Collection = new TieBreaker_Collection();
-        public RxIntensityItem_Collection m_oRxIntensityItem_Collection = new RxIntensityItem_Collection();
+        public LastTieBreakRankItem_Collection m_oLastTieBreakRankItem_Collection = new LastTieBreakRankItem_Collection();
         public ProcessingSiteItem_Collection m_oProcessingSiteItem_Collection = new ProcessingSiteItem_Collection();
         public TransportationCosts m_oTranCosts = new TransportationCosts();
         public ProcessorScenarioItem_Collection m_oProcessorScenarioItem_Collection = new ProcessorScenarioItem_Collection();
@@ -1927,9 +1927,9 @@ namespace FIA_Biosum_Manager
             p_oDest.m_oProcessingSiteItem_Collection.Copy(
                 p_oSource.m_oProcessingSiteItem_Collection,
             ref p_oDest.m_oProcessingSiteItem_Collection, true);
-            p_oDest.m_oRxIntensityItem_Collection.Copy(
-                p_oSource.m_oRxIntensityItem_Collection,
-            ref p_oDest.m_oRxIntensityItem_Collection, true);
+            p_oDest.m_oLastTieBreakRankItem_Collection.Copy(
+                p_oSource.m_oLastTieBreakRankItem_Collection,
+            ref p_oDest.m_oLastTieBreakRankItem_Collection, true);
             p_oDest.m_oTieBreaker_Collection.Copy(
                 p_oSource.m_oTieBreaker_Collection,
             ref p_oDest.m_oTieBreaker_Collection, true);
@@ -2370,52 +2370,46 @@ namespace FIA_Biosum_Manager
 
 
         }
-        public class RxIntensityItem
+        public class LastTieBreakRankItem
         {
-
-            
-
-
-
-           
-            private string _strRx = "";
-            public string Rx
+            private string _strRxPackage = "";
+            public string RxPackage
             {
-                get { return _strRx; }
-                set { _strRx = value; }
+                get { return _strRxPackage; }
+                set { _strRxPackage = value; }
             }
-            private int _intRxIntensity = -1;
-            public int RxIntensity
+            private int _intLastTieBreakRank = -1;
+            public int LastTieBreakRank
             {
-                get { return _intRxIntensity; }
-                set { _intRxIntensity = value; }
+                get { return _intLastTieBreakRank; }
+                set { _intLastTieBreakRank = value; }
             }
-            public void Copy(RxIntensityItem p_oSource, ref RxIntensityItem p_oDest)
+            public void Copy(LastTieBreakRankItem p_oSource, ref LastTieBreakRankItem p_oDest)
             {
-                p_oDest.Rx = p_oSource.Rx;
-                p_oDest.RxIntensity = p_oSource.RxIntensity;
+                p_oDest.RxPackage = p_oSource.RxPackage;
+                p_oDest.LastTieBreakRank = p_oSource.LastTieBreakRank;
                 
 
             }
         }
 
-        public class RxIntensityItem_Collection : System.Collections.CollectionBase
+        public class LastTieBreakRankItem_Collection : System.Collections.CollectionBase
         {
-            public RxIntensityItem_Collection()
+            public LastTieBreakRankItem_Collection()
             {
                 //
                 // TODO: Add constructor logic here
                 //
             }
 
-            public void Add(RxIntensityItem m_oRxIntensityItem)
+            public void Add(LastTieBreakRankItem m_oLastTieBreakRankItem)
             {
                 // vérify if object is not already in
-                if (this.List.Contains(m_oRxIntensityItem))
+                if (this.List.Contains(m_oLastTieBreakRankItem))
                     throw new InvalidOperationException();
 
                 // adding it
-                this.List.Add(m_oRxIntensityItem);
+                this.List.Add(m_oLastTieBreakRankItem);
 
                 // return collection
                 //return this;
@@ -2434,21 +2428,21 @@ namespace FIA_Biosum_Manager
                     List.RemoveAt(index);
                 }
             }
-            public RxIntensityItem Item(int Index)
+            public LastTieBreakRankItem Item(int Index)
             {
                 // The appropriate item is retrieved from the List object and
                 // explicitly cast to the Widget type, then returned to the 
                 // caller.
-                return (RxIntensityItem)List[Index];
+                return (LastTieBreakRankItem)List[Index];
             }
-            public void Copy(RxIntensityItem_Collection p_oSource,
-                         ref RxIntensityItem_Collection p_oDest, bool p_bInitializeDest)
+            public void Copy(LastTieBreakRankItem_Collection p_oSource,
+                         ref LastTieBreakRankItem_Collection p_oDest, bool p_bInitializeDest)
             {
                 int x;
                 if (p_bInitializeDest) p_oDest.Clear();
                 for (x = 0; x <= p_oSource.Count - 1; x++)
                 {
-                    RxIntensityItem oItem = new RxIntensityItem();
+                    LastTieBreakRankItem oItem = new LastTieBreakRankItem();
                     oItem.Copy(p_oSource.Item(x), ref oItem);
                     p_oDest.Add(oItem);
 
@@ -3097,12 +3091,12 @@ namespace FIA_Biosum_Manager
             //GET ALL THE CURRENT TREATMENTS
             //
             /*************************************************************************
-			 **get the treatment prescription mdb file,table, and connection strings
+			 **get the treatment packages mdb file,table, and connection strings
 			 *************************************************************************/
-            string strRxMDBFile = "", strRxTableName = "", strRxConn = "";
+            string strRxMDBFile = "", strRxPackageTableName = "", strRxConn = "";
             p_oAdo.getScenarioDataSourceConnStringAndTable(ref strRxMDBFile,
-                                            ref strRxTableName, ref strRxConn,
-                                            "Treatment Prescriptions",
+                                            ref strRxPackageTableName, ref strRxConn,
+                                            "Treatment Packages",
                                             p_strScenarioId,
                                             p_oConn);
             //
@@ -3110,39 +3104,39 @@ namespace FIA_Biosum_Manager
             //
             System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
             p_oAdo.OpenConnection(strRxConn,ref oConn);
-            string strRxList = p_oAdo.CreateCommaDelimitedList(oConn, "SELECT RX FROM " + strRxTableName, "'");
+            string strRxList = p_oAdo.CreateCommaDelimitedList(oConn, "SELECT RXPACKAGE FROM " + strRxPackageTableName, "'");
             string[] strRxArray = frmMain.g_oUtils.ConvertListToArray(strRxList, ",");
             p_oAdo.CloseConnection(oConn);
             //
             //INITIALIZE RXINTENSITY COLLECTION
             //
-            p_oCoreAnalysisScenarioItem.m_oRxIntensityItem_Collection.Clear();
+            p_oCoreAnalysisScenarioItem.m_oLastTieBreakRankItem_Collection.Clear();
             //
-            //FIRST DELETE THE RX'S THAT NO LONGER EXIST
+            //FIRST DELETE THE RXPACKAGES THAT NO LONGER EXIST
             //
-            p_oAdo.m_strSQL = "DELETE FROM scenario_rx_intensity WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' AND rx NOT IN (" + strRxList + ")";
+            p_oAdo.m_strSQL = "DELETE FROM scenario_last_tiebreak_rank WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' AND rxpackage NOT IN (" + strRxList + ")";
             p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
             //
-            //NEXT INSERT INTO THE SCENARIO_RX_INTENSITY THOSE RX'S THAT DO NOT CURRENTLY EXIST
+            //NEXT INSERT INTO THE SCENARIO_LAST_TIEBREAK_RANK THOSE RX'S THAT DO NOT CURRENTLY EXIST
             //
             if (p_oAdo.TableExist(p_oConn, "rxtemp"))
                 p_oAdo.SqlNonQuery(p_oConn, "DROP TABLE rxtemp");
-            p_oAdo.SqlNonQuery(p_oConn, Tables.CoreScenarioRuleDefinitions.CreateScenarioRxIntensityTableSQL("rxtemp"));
+            p_oAdo.SqlNonQuery(p_oConn, Tables.CoreScenarioRuleDefinitions.CreateScenarioLastTieBreakTableSQL("rxtemp"));
             for (x = 0; x <= strRxArray.Length - 1; x++)
             {
-                // SET THE DEFAULT TREATMENT INTENSITY TO BE THE SAME AS RX SO IT IS ALWAYS UNIQUE AND NEVER NULL
+                // SET THE DEFAULT TREATMENT INTENSITY TO BE THE SAME AS RXPACKAGE SO IT IS ALWAYS UNIQUE AND NEVER NULL
                 int intIntensity = -1;
                 char[] charsToTrim = {' ', '\'' };
                 bool bResult = Int32.TryParse(strRxArray[x].Trim(charsToTrim), out intIntensity);
-                p_oAdo.SqlNonQuery(p_oConn, "INSERT INTO rxtemp (scenario_id,rx,rx_intensity) VALUES ('" + p_strScenarioId + "'," + strRxArray[x].Trim() + ", " + intIntensity + " )");
+                p_oAdo.SqlNonQuery(p_oConn, "INSERT INTO rxtemp (scenario_id,rxpackage,last_tiebreak_rank) VALUES ('" + p_strScenarioId + "'," + strRxArray[x].Trim() + ", " + intIntensity + " )");
             }
-            p_oAdo.m_strSQL = "INSERT INTO scenario_rx_intensity " +
-                             "(scenario_id,rx,rx_intensity) " +
-                             "SELECT a.scenario_id, a.RX, a.rx_intensity " +
+            p_oAdo.m_strSQL = "INSERT INTO scenario_last_tiebreak_rank " +
+                             "(scenario_id,rxpackage,last_tiebreak_rank) " +
+                             "SELECT a.scenario_id, a.RXPACKAGE, a.last_tiebreak_rank " +
                              "FROM rxtemp a " +
-                             "WHERE NOT EXISTS (SELECT b.scenario_id,b.rx " +
-                                               "FROM scenario_rx_intensity b " +
-                                               "WHERE a.rx=b.rx AND TRIM(UCASE(a.scenario_id))=TRIM(UCASE(b.scenario_id)))";
+                             "WHERE NOT EXISTS (SELECT b.scenario_id,b.rxpackage " +
+                                               "FROM scenario_last_tiebreak_rank b " +
+                                               "WHERE a.rxpackage=b.rxpackage AND TRIM(UCASE(a.scenario_id))=TRIM(UCASE(b.scenario_id)))";
             p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
             if (p_oAdo.TableExist(p_oConn, "rxtemp"))
                 p_oAdo.SqlNonQuery(p_oConn, "DROP TABLE rxtemp");
@@ -3150,7 +3144,7 @@ namespace FIA_Biosum_Manager
             //LOAD RXINTENSITY ITEMS
             //
             p_oAdo.m_strSQL = "SELECT * FROM " +
-                              Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName + " " +
+                              Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName + " " +
                               "WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
 
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
@@ -3160,19 +3154,19 @@ namespace FIA_Biosum_Manager
                 {
 
 
-                    if (p_oAdo.m_OleDbDataReader["rx"] != System.DBNull.Value)
+                    if (p_oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
                     {
-                        CoreAnalysisScenarioItem.RxIntensityItem oItem = new CoreAnalysisScenarioItem.RxIntensityItem();
-                        oItem.Rx = p_oAdo.m_OleDbDataReader["rx"].ToString().Trim();
-                        if (p_oAdo.m_OleDbDataReader["rx_intensity"] != System.DBNull.Value)
+                        CoreAnalysisScenarioItem.LastTieBreakRankItem oItem = new CoreAnalysisScenarioItem.LastTieBreakRankItem();
+                        oItem.RxPackage = p_oAdo.m_OleDbDataReader["rxpackage"].ToString().Trim();
+                        if (p_oAdo.m_OleDbDataReader["last_tiebreak_rank"] != System.DBNull.Value)
                         {
-                            oItem.RxIntensity = Convert.ToInt32(p_oAdo.m_OleDbDataReader["rx_intensity"]);
+                            oItem.LastTieBreakRank = Convert.ToInt32(p_oAdo.m_OleDbDataReader["last_tiebreak_rank"]);
                         }
                         else
                         {
-                            oItem.RxIntensity = -1;
+                            oItem.LastTieBreakRank = -1;
                         }
-                        p_oCoreAnalysisScenarioItem.m_oRxIntensityItem_Collection.Add(oItem);
+                        p_oCoreAnalysisScenarioItem.m_oLastTieBreakRankItem_Collection.Add(oItem);
                     }
 
                 }
@@ -3559,7 +3553,6 @@ namespace FIA_Biosum_Manager
             p_oAdo.SqlQueryReader(p_oConn, strSQL);
 
 
-            //insert records into the scenario_rx_intensity table from the master rx table
             if (p_oAdo.m_intError == 0)
             {
 
@@ -3596,8 +3589,6 @@ namespace FIA_Biosum_Manager
                 " TRIM(UCASE(scenario_id)) = '" + p_strScenarioId.Trim().ToUpper() + "';";
             p_oAdo.SqlQueryReader(p_oConn, strSQL);
 
-
-            //insert records into the scenario_rx_intensity table from the master rx table
             if (p_oAdo.m_intError == 0)
             {
 
@@ -3858,13 +3849,13 @@ namespace FIA_Biosum_Manager
             {
                 strLine = strLine + "\r\nLast Tie-Break Rank Assignments\r\n";
                 strLine = strLine + "------------------------------------\r\n";
-                strLine = strLine + "--Rx-- --Intensity--\r\n";
+                strLine = strLine + "--RxPackage-- --Last_TieBreak_Rank--\r\n";
                 
-                for (x = 0; x <= p_oScenarioItem.m_oRxIntensityItem_Collection.Count - 1; x++)
+                for (x = 0; x <= p_oScenarioItem.m_oLastTieBreakRankItem_Collection.Count - 1; x++)
                 {
                     strLine = strLine + String.Format("{0,-3}{1,11}",
-                              " " + p_oScenarioItem.m_oRxIntensityItem_Collection.Item(x).Rx,
-                              p_oScenarioItem.m_oRxIntensityItem_Collection.Item(x).RxIntensity) + "\r\n";
+                              " " + p_oScenarioItem.m_oLastTieBreakRankItem_Collection.Item(x).RxPackage,
+                              p_oScenarioItem.m_oLastTieBreakRankItem_Collection.Item(x).LastTieBreakRank) + "\r\n";
                 }
             }
             strLine = strLine + "\r\n";

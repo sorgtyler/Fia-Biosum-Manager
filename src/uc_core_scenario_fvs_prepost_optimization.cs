@@ -1236,21 +1236,6 @@ namespace FIA_Biosum_Manager
                 lstFVSTablesList.Items.Add(strKey);
             }
 
-            //Load economic variables list
-            lstEconVariables.Items.Clear();
-            foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
-            {
-                if (oItem.strVariableType.Equals("ECON"))
-                {
-                    lstEconVariables.Items.Add(oItem.strVariableName);
-                    if (oItem.strVariableName.IndexOf("revenue") > -1 || oItem.strVariableName.IndexOf("onsite_treatment") > -1)
-                    {
-                        cmbNetRevOptimzFilter.Items.Add(oItem.strVariableName);
-                        cmbNetRevEconOptimzFilter.Items.Add(oItem.strVariableName);
-                    }
-                }
-            }
-
 			this.lvOptimizationListValues.Items.Clear();
 			this.m_oLvRowColors.InitializeRowCollection();
 			this.m_oLvRowColors.m_intSelectedRow=-1;
@@ -1451,6 +1436,24 @@ namespace FIA_Biosum_Manager
 		public void UpdateValues()
 		{
 			int x,y;
+
+            //Load economic variables list
+            lstEconVariables.Items.Clear();
+            cmbNetRevOptimzFilter.Items.Clear();
+            cmbNetRevEconOptimzFilter.Items.Clear();
+            foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+            {
+                if (oItem.strVariableType.Equals("ECON"))
+                {
+                    lstEconVariables.Items.Add(oItem.strVariableName);
+                    if (oItem.strVariableName.IndexOf("revenue") > -1 || oItem.strVariableName.IndexOf("onsite_treatment") > -1)
+                    {
+                        cmbNetRevOptimzFilter.Items.Add(oItem.strVariableName);
+                        cmbNetRevEconOptimzFilter.Items.Add(oItem.strVariableName);
+                    }
+                }
+            }
+
 			//
 			//update list view items
 			//

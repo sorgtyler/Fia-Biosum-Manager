@@ -262,7 +262,7 @@ namespace FIA_Biosum_Manager
                 ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection, ref ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection, true);
                 ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oOptimizationVariableItem_Collection, ref ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection, true);
                 ReferenceCurrentScenarioItem.m_oProcessingSiteItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oProcessingSiteItem_Collection, ref ReferenceCurrentScenarioItem.m_oProcessingSiteItem_Collection, true);
-                ReferenceCurrentScenarioItem.m_oRxIntensityItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oRxIntensityItem_Collection, ref ReferenceCurrentScenarioItem.m_oRxIntensityItem_Collection, true);
+                ReferenceCurrentScenarioItem.m_oLastTieBreakRankItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oLastTieBreakRankItem_Collection, ref ReferenceCurrentScenarioItem.m_oLastTieBreakRankItem_Collection, true);
                 ReferenceCurrentScenarioItem.m_oTieBreaker_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oTieBreaker_Collection, ref ReferenceCurrentScenarioItem.m_oTieBreaker_Collection, true);
                 ReferenceCurrentScenarioItem.m_oTranCosts.Copy(m_oCoreAnalysisScenarioItem.m_oTranCosts, ReferenceCurrentScenarioItem.m_oTranCosts);
                 ReferenceCurrentScenarioItem.m_oProcessorScenarioItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oProcessorScenarioItem_Collection, ref ReferenceCurrentScenarioItem.m_oProcessorScenarioItem_Collection, true);

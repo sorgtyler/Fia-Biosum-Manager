@@ -5698,7 +5698,7 @@ namespace FIA_Biosum_Manager
 			oItem = oTieBreakerCollection.Item(1);
 			if (oItem.bSelected)
 			{
-				m_strSQL = "UPDATE tiebreaker a INNER JOIN scenario_rx_intensity b ON a.rx=b.rx SET a.rx_intensity=b.rx_intensity " + 
+                m_strSQL = "UPDATE tiebreaker a INNER JOIN scenario_last_tiebreak_rank b ON a.rxpackage=b.rxpackage SET a.last_tiebreak_rank=b.last_tiebreak_rank " + 
 					       "WHERE trim(ucase(b.scenario_id))= '" + ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -7229,8 +7229,8 @@ namespace FIA_Biosum_Manager
 				{
 					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
 						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " + 
-						"SET a.tiebreaker_value = b.post_variable1_value,a.rx_intensity=b.rx_intensity";
+						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rxpackage=b.rxpackage " +
+                        "SET a.tiebreaker_value = b.post_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
 					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
@@ -7240,8 +7240,8 @@ namespace FIA_Biosum_Manager
 				{
 					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
 						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " + 
-						"SET a.tiebreaker_value = b.pre_variable1_value,a.rx_intensity=b.rx_intensity";
+						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rxpackage=b.rxpackage " +
+                        "SET a.tiebreaker_value = b.pre_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
 					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
@@ -7250,8 +7250,8 @@ namespace FIA_Biosum_Manager
 				{
 					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
 						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " + 
-						"SET a.tiebreaker_value = b.variable1_change,a.rx_intensity=b.rx_intensity";
+						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rxpackage=b.rxpackage " +
+                        "SET a.tiebreaker_value = b.variable1_change,a.last_tiebreak_rank=b.last_tiebreak_rank";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
 					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
@@ -7264,7 +7264,7 @@ namespace FIA_Biosum_Manager
 
 
 				//find the treatment for each plot that produces the MAX/MIN tiebreaker value
-				m_ado.m_strSQL ="SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
+				m_ado.m_strSQL ="SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rxpackage,a.rx,a.last_tiebreak_rank " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a," +
 					"(SELECT biosum_cond_id," + strTieBreakerAggregate + "(tiebreaker_value) AS tiebreaker " +
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
@@ -7296,12 +7296,12 @@ namespace FIA_Biosum_Manager
 
 
 				m_ado.m_strSQL = "SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value," + 
-					"a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
+					"a.tiebreaker_value,a.rxpackage,a.rx,a.last_tiebreak_rank " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table2 a," +
-					"(SELECT biosum_cond_id,MIN(rx_intensity) AS min_intensity " + 
+					"(SELECT biosum_cond_id,MIN(last_tiebreak_rank) AS min_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table2 " + 
-					"GROUP BY biosum_cond_id) c " + 
-					"WHERE a.biosum_cond_id=c.biosum_cond_id AND a.rx_intensity=c.min_intensity";
+					"GROUP BY biosum_cond_id) c " +
+                    "WHERE a.biosum_cond_id=c.biosum_cond_id AND a.last_tiebreak_rank=c.min_intensity";
 
 				m_ado.m_strSQL = "INSERT INTO cycle1_best_rx_summary_optimization_and_tiebreaker_work_table3 " + m_ado.m_strSQL;
 
@@ -7329,8 +7329,8 @@ namespace FIA_Biosum_Manager
 					"SET a.optimization_value=b.optimization_value," + 
 					"a.tiebreaker_value=b.tiebreaker_value," +
                     "a.rxpackage=b.rxpackage," + 
-					"a.rx=b.rx," + 
-					"a.rx_intensity=b.rx_intensity";
+					"a.rx=b.rx," +
+                    "a.last_tiebreak_rank=b.last_tiebreak_rank";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + m_ado.m_strSQL + "\r\n");
 				m_ado.SqlNonQuery(m_TempMDBFileConn,m_ado.m_strSQL);
@@ -7360,8 +7360,8 @@ namespace FIA_Biosum_Manager
 				{
 					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
 						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " + 
-						"SET a.tiebreaker_value = b.post_variable1_value,a.rx_intensity=b.rx_intensity";
+						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " +
+                        "SET a.tiebreaker_value = b.post_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n\r\n");
 					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
@@ -7371,8 +7371,8 @@ namespace FIA_Biosum_Manager
 				{
 					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
 						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " + 
-						"SET a.tiebreaker_value = b.pre_variable1_value,a.rx_intensity=b.rx_intensity";
+						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " +
+                        "SET a.tiebreaker_value = b.pre_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n\r\n");
 					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
@@ -7381,8 +7381,8 @@ namespace FIA_Biosum_Manager
 				{
 					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
 						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx  " + 
-						"SET a.tiebreaker_value = b.variable1_change,a.rx_intensity=b.rx_intensity";
+						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx  " +
+                        "SET a.tiebreaker_value = b.variable1_change,a.last_tiebreak_rank=b.last_tiebreak_rank";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n\r\n");
                         
@@ -7396,7 +7396,7 @@ namespace FIA_Biosum_Manager
 
 
 				//find the treatment for each plot that produces the MAX/MIN tiebreaker value
-				m_ado.m_strSQL ="SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
+                m_ado.m_strSQL = "SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value,a.tiebreaker_value,a.rxpackage,a.rx,a.last_tiebreak_rank " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a," +
 					"(SELECT biosum_cond_id," + strTieBreakerAggregate + "(tiebreaker_value) AS tiebreaker " +
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
@@ -7429,8 +7429,8 @@ namespace FIA_Biosum_Manager
 					"SET a.optimization_value=b.optimization_value," + 
 					"a.tiebreaker_value=b.tiebreaker_value," + 
                     "a.rxpackage=b.rxpackage," +
-					"a.rx=b.rx," + 
-					"a.rx_intensity=b.rx_intensity";
+					"a.rx=b.rx," +
+                    "a.last_tiebreak_rank=b.last_tiebreak_rank";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + m_ado.m_strSQL + "\r\n");
 				m_ado.SqlNonQuery(m_TempMDBFileConn,m_ado.m_strSQL);
@@ -7458,8 +7458,8 @@ namespace FIA_Biosum_Manager
 				//update the rx intensity fields for each plot
 				strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
 					"INNER JOIN tiebreaker b " + 
-					"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " + 
-					"SET a.rx_intensity=b.rx_intensity";
+					"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " +
+                    "SET a.last_tiebreak_rank=b.last_tiebreak_rank";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
 				m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
@@ -7472,13 +7472,13 @@ namespace FIA_Biosum_Manager
 
 
 					
-				m_ado.m_strSQL = "SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value," + 
-					"a.tiebreaker_value,a.rxpackage,a.rx,a.rx_intensity " + 
+				m_ado.m_strSQL = "SELECT a.biosum_cond_id,a.acres,a.owngrpcd,a.optimization_value," +
+                    "a.tiebreaker_value,a.rxpackage,a.rx,a.last_tiebreak_rank " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a," +
-					"(SELECT biosum_cond_id,MIN(rx_intensity) AS min_intensity " + 
+                    "(SELECT biosum_cond_id,MIN(last_tiebreak_rank) AS min_intensity " + 
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
-					"GROUP BY biosum_cond_id) c " + 
-					"WHERE a.biosum_cond_id=c.biosum_cond_id AND a.rx_intensity=c.min_intensity";
+					"GROUP BY biosum_cond_id) c " +
+                    "WHERE a.biosum_cond_id=c.biosum_cond_id AND a.last_tiebreak_rank=c.min_intensity";
 
 				m_ado.m_strSQL = "INSERT INTO cycle1_best_rx_summary_optimization_and_tiebreaker_work_table2 " + m_ado.m_strSQL;
 
@@ -7506,8 +7506,8 @@ namespace FIA_Biosum_Manager
 					"SET a.optimization_value=b.optimization_value," + 
 					"a.tiebreaker_value=b.tiebreaker_value," +
                     "a.rxpackage=b.rxpackage," +
-					"a.rx=b.rx," + 
-					"a.rx_intensity=b.rx_intensity";
+					"a.rx=b.rx," +
+                    "a.last_tiebreak_rank=b.last_tiebreak_rank";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + m_ado.m_strSQL + "\r\n");
 				m_ado.SqlNonQuery(m_TempMDBFileConn,m_ado.m_strSQL);

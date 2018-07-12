@@ -1838,8 +1838,8 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerTreatmentIntensityClear_Click(object sender, System.EventArgs e)
 		{
-			for (int x=0;x<=uc_scenario_treatment_intensity1.m_DataSet.Tables["scenario_rx_intensity"].Rows.Count-1;x++)
-				this.uc_scenario_treatment_intensity1.m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"]=System.DBNull.Value;
+            for (int x = 0; x <= uc_scenario_treatment_intensity1.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows.Count - 1; x++)
+                this.uc_scenario_treatment_intensity1.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"] = System.DBNull.Value;
 		}
 
 		private void btnFVSVariablesTieBreakerVariableCancel_Click(object sender, System.EventArgs e)

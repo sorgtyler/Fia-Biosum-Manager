@@ -2191,7 +2191,6 @@ namespace FIA_Biosum_Manager
 			p_ado.SqlQueryReader(this.m_OleDbConnectionScenario, strSQL);
 
 				  
-			//insert records into the scenario_rx_intensity table from the master rx table
 			if (p_ado.m_intError == 0)
 			{
 				
@@ -2952,8 +2951,6 @@ namespace FIA_Biosum_Manager
 				strSQL + ";";
 			oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
 
-				  
-			//insert records into the scenario_rx_intensity table from the master rx table
 			if (oAdo.m_intError == 0)
 			{
 				

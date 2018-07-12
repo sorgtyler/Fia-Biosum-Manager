@@ -605,9 +605,9 @@ namespace FIA_Biosum_Manager
 
               
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName);
+                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName,
+                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTieBreakRankTableDbFile,
+                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
 
                 p_oDao.CreateTableLink(
                     p_DaoDatabase,

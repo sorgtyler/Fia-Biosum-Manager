@@ -1513,7 +1513,7 @@ namespace FIA_Biosum_Manager
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
             }

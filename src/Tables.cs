@@ -519,7 +519,7 @@ namespace FIA_Biosum_Manager
                     "rxpackage CHAR(3)," + 
                     "rx CHAR(3)," + 
                     "rxcycle CHAR(1)," + 
-                    "rx_intensity INTEGER," + 
+                    "last_tiebreak_rank INTEGER," + 
 					"pre_variable1_name CHAR(100)," + 
 					"post_variable1_name CHAR(100)," + 
 					"pre_variable1_value DOUBLE," + 
@@ -630,7 +630,7 @@ namespace FIA_Biosum_Manager
 					"owngrpcd INTEGER," + 
 					"optimization_value DOUBLE," + 
 					"tiebreaker_value DOUBLE," + 
-					"rx_intensity INTEGER)";
+					"last_tiebreak_rank INTEGER)";
 			}
 			public void CreateBestRxSummaryCycle1WithIntensityTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -648,7 +648,7 @@ namespace FIA_Biosum_Manager
                     "rx text(3)," + 
 					"acres double," + 
 					"owngrpcd INTEGER," + 
-					"rx_intensity INTEGER)";
+					"last_tiebreak_rank INTEGER)";
 			}
 			public void CreateBestRxSummaryCycle1TieBreakerTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -669,7 +669,7 @@ namespace FIA_Biosum_Manager
 					"owngrpcd INTEGER," + 
 					"optimization_value DOUBLE," + 
 					"tiebreaker_value DOUBLE," + 
-					"rx_intensity INTEGER)";
+					"last_tiebreak_rank INTEGER)";
 			}
             
            
@@ -1387,8 +1387,8 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioFvsVariablesOverallEffectiveTableName { get { return "scenario_fvs_variables_overall_effective"; } }
             static public string DefaultScenarioFvsVariablesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesTableName { get { return "scenario_fvs_variables"; } }
-            static public string DefaultScenarioRxIntensityTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
-            static public string DefaultScenarioRxIntensityTableName { get { return "scenario_rx_intensity"; } }
+            static public string DefaultScenarioTieBreakRankTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioLastTieBreakRankTableName { get { return "scenario_last_tiebreak_rank"; } }
             static public string DefaultScenarioPSitesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
             static public string DefaultScenarioPSitesTableName { get { return "scenario_psites"; } }
             static public string DefaultScenarioPlotFilterMiscTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
@@ -1597,21 +1597,21 @@ namespace FIA_Biosum_Manager
 					"biocd BYTE," + 
 					"selected_yn CHAR(1))";
 			}
-			public void CreateScenarioRxIntensityTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateScenarioLastTieBreakRankTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateScenarioRxIntensityTableSQL(p_strTableName));
-				CreateScenarioRxIntensityTableIndexes(p_oAdo,p_oConn,p_strTableName);
+				p_oAdo.SqlNonQuery(p_oConn,CreateScenarioLastTieBreakTableSQL(p_strTableName));
+				CreateScenarioLastTieBreakRankTableIndexes(p_oAdo,p_oConn,p_strTableName);
 			}
-			public void CreateScenarioRxIntensityTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateScenarioLastTieBreakRankTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","scenario_id");
 			}
-            static public string CreateScenarioRxIntensityTableSQL(string p_strTableName)
+            static public string CreateScenarioLastTieBreakTableSQL(string p_strTableName)
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
 					"scenario_id CHAR(20)," + 
-                   	"rx CHAR(3)," + 
-					"rx_intensity INTEGER)";
+                   	"rxpackage CHAR(3)," +
+                    "last_tiebreak_rank INTEGER)";
 			}
 
 			public void CreateScenarioFVSVariablesTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
