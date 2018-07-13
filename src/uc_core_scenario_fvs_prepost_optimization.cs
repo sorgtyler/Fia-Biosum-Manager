@@ -1187,6 +1187,10 @@ namespace FIA_Biosum_Manager
 					//min value
                     oItem.strMinYN =
                         ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).strMinYN;
+                    //revenue attribute
+                    //oItem.strRevenueAttribute =
+                    //    //ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).s 
+                    //    ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).
                     //enable filter
                     oItem.bUseFilter = 
                         ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).bUseFilter;
@@ -2077,7 +2081,7 @@ namespace FIA_Biosum_Manager
 
             // Get item out of memory so we can access the revenue attribute
             VariableItem oSelectedItem = null;
-            foreach (VariableItem oItem in m_oSavVariableCollection)
+            foreach (VariableItem oItem in m_oOldVariableCollection)
             {
                 if (oItem.strOptimizedVariable.Equals(
                     this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim()))

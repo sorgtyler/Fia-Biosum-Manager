@@ -245,8 +245,6 @@ namespace FIA_Biosum_Manager
 		public class CoreScenarioResults
 		{
             //cycle1
-			static public string DefaultScenarioResultsCycle1BestRxSummaryWithIntensityTableDbFile {get {return @"db\scenario_results.mdb";}}
-			static public string DefaultScenarioResultsCycle1BestRxSummaryWithIntensityTableName {get {return "cycle1_best_rx_summary_with_intensity";}}
 			static public string DefaultScenarioResultsCycle1BestRxSummaryTableDbFile {get {return @"db\scenario_results.mdb";}}
 			static public string DefaultScenarioResultsCycle1BestRxSummaryTableName {get {return "cycle1_best_rx_summary";}}
             static public string DefaultScenarioResultsCycle1OptimizationTableDbFile { get { return @"db\scenario_results.mdb"; } }
