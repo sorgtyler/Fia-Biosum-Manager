@@ -2933,7 +2933,8 @@ namespace FIA_Biosum_Manager
 			oAdo.OpenConnection(oAdo.getMDBConnString(strTempFile,"",""));
 
             // Query the optimization uc for the selected revenue attribute so we can pass it to the table
-            uc_core_scenario_fvs_prepost_optimization.Variable_Collection oOptimizationVariableCollection = this._uc_optimization.m_oSavVariableCollection;
+            CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableCollection = 
+                this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
             string strColumnFilterName = "";
             for (int x = 0; x <= oOptimizationVariableCollection.Count - 1; x++)
             {

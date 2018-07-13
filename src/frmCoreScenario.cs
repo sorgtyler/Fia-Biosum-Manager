@@ -233,9 +233,6 @@ namespace FIA_Biosum_Manager
 				this.tbRun.Controls.Add(uc_scenario_run1);
 				this.uc_scenario_run1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_run1.ReferenceCoreScenarioForm=this;
-				this.uc_scenario_run1.ReferenceFVSPrePostVariables=this.uc_scenario_fvs_prepost_variables_effective1.m_oSavVar;
-				this.uc_scenario_run1.ReferenceFVSPrePostOptimization=this.uc_scenario_fvs_prepost_optimization1.m_oSavVariableCollection;
-				this.uc_scenario_run1.ReferenceFVSPrePostTieBreaker = this.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection;
                 this.uc_scenario_run1.ReferenceCoreScenarioForm = this;
                 this.btnClose.Enabled=true;
 				this.resize_frmScenario();
@@ -2194,6 +2191,7 @@ namespace FIA_Biosum_Manager
 			public int intListViewIndex=-1;
             private string _strRxCycle = "";
             private string _strType = "";
+            public string strRevenueAttribute = "";
 
             public string RxCycle
             {
@@ -2220,6 +2218,7 @@ namespace FIA_Biosum_Manager
 				p_oDest.intListViewIndex = p_oSource.intListViewIndex;
                 p_oDest.RxCycle = p_oSource.RxCycle;
                 p_oDest.Type = p_oSource.Type;
+                p_oDest.strRevenueAttribute = p_oSource.strRevenueAttribute;
 			}
 		}
 
@@ -2965,6 +2964,11 @@ namespace FIA_Biosum_Manager
                         if (p_oAdo.m_OleDbDataReader["filter_value"] != System.DBNull.Value)
                         {
                             oItem.dblFilterValue = Convert.ToDouble(p_oAdo.m_OleDbDataReader["filter_value"]);
+                        }
+                        //revenue filter attribute
+                        if (p_oAdo.m_OleDbDataReader["revenue_attribute"] != System.DBNull.Value)
+                        {
+                            oItem.strRevenueAttribute = Convert.ToString(p_oAdo.m_OleDbDataReader["revenue_attribute"]);
                         }
                         //filter operator
                         if (p_oAdo.m_OleDbDataReader["checked_yn"] != System.DBNull.Value)

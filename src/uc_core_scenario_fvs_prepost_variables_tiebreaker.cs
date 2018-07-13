@@ -1698,11 +1698,11 @@ namespace FIA_Biosum_Manager
 				else
 				{
 					//cannot be equal to the optimization variable
-					for (x=0;x<=this.ReferenceOptimizationUserControl.m_oSavVariableCollection.Count-1;x++)
+                    for (x = 0; x <= this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
 					{
-						if (this.ReferenceOptimizationUserControl.m_oSavVariableCollection.Item(x).bSelected)
+                        if (this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).bSelected)
 						{
-							if (this.ReferenceOptimizationUserControl.m_oSavVariableCollection.Item(x).strFVSVariableName.Trim().ToUpper() == 
+                            if (this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).strFVSVariableName.Trim().ToUpper() == 
 								lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim().ToUpper())
 							{
 								p_intError=-1;
