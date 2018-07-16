@@ -1059,14 +1059,20 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.Increment(6);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
-				System.IO.File.Copy(strSourceFile, strDestFile,true);	
-     			//
-				//core scenario rule definitions
-				//
-				p_frmTherm.Increment(7);
-                p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
+				System.IO.File.Copy(strSourceFile, strDestFile,true);
+                //
+                //prepopulated weighted variable core_definitions.accdb file
+                //
+                //copy default core_definitions.accdb to the new project directory
+                strSourceFile = this.m_oEnv.strAppDir + "\\db\\core_definitions.accdb";
+                strDestFile = this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                p_frmTherm.Increment(7);
+                p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
-                CreateCoreDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile);
+                System.IO.File.Copy(strSourceFile, strDestFile, true);
+                //
+                //core scenario rule definitions
+                //
 				p_frmTherm.Increment(8);
                 p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 				p_frmTherm.lblMsg.Refresh();
@@ -1654,22 +1660,6 @@ namespace FIA_Biosum_Manager
 			oAdo.CloseConnection(oAdo.m_OleDbConnection);
 			oDao = null;
 		}
-
-        public void CreateCoreDefinitionDbAndTables(string p_strPathAndFile)
-        {
-            dao_data_access oDao = new dao_data_access();
-            ado_data_access oAdo = new ado_data_access();
-
-            oDao.CreateMDB(p_strPathAndFile);
-            string strConn = oAdo.getMDBConnString(p_strPathAndFile, "admin", "");
-            oAdo.OpenConnection(strConn);
-            frmMain.g_oTables.m_oCoreDef.CreateCalculatedCoreVariableTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName);
-            frmMain.g_oTables.m_oCoreDef.CreateCalculatedFVSVariableTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName);
-            frmMain.g_oTables.m_oCoreDef.CreateCalculatedEconVariableTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName);
- 
-            oAdo.CloseConnection(oAdo.m_OleDbConnection);
-            oDao = null;
-        }
 
 		public void CreateProcessorScenarioRuleDefinitionDbAndTables(string p_strPathAndFile)
 		{
