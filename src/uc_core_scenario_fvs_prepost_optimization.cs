@@ -410,7 +410,7 @@ namespace FIA_Biosum_Manager
             this.cmbNetRevEconOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbNetRevEconOptimzFilter.Location = new System.Drawing.Point(46, 49);
             this.cmbNetRevEconOptimzFilter.Name = "cmbNetRevEconOptimzFilter";
-            this.cmbNetRevEconOptimzFilter.Size = new System.Drawing.Size(110, 24);
+            this.cmbNetRevEconOptimzFilter.Size = new System.Drawing.Size(160, 24);
             this.cmbNetRevEconOptimzFilter.TabIndex = 88;
             this.cmbNetRevEconOptimzFilter.SelectedIndexChanged += new System.EventHandler(this.cmbNetRevEconOptimzFilter_SelectedIndexChanged);
             // 
@@ -874,7 +874,7 @@ namespace FIA_Biosum_Manager
             this.cmbNetRevOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbNetRevOptimzFilter.Location = new System.Drawing.Point(16, 24);
             this.cmbNetRevOptimzFilter.Name = "cmbNetRevOptimzFilter";
-            this.cmbNetRevOptimzFilter.Size = new System.Drawing.Size(110, 24);
+            this.cmbNetRevOptimzFilter.Size = new System.Drawing.Size(160, 24);
             this.cmbNetRevOptimzFilter.TabIndex = 20;
             this.cmbNetRevOptimzFilter.SelectedIndexChanged += new System.EventHandler(this.cmbNetRevOptimzFilter_SelectedIndexChanged);
             // 
