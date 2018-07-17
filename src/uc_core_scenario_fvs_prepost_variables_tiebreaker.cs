@@ -107,6 +107,9 @@ namespace FIA_Biosum_Manager
         private Label lblTieBreakVarDescr;
         private ListBox lstEconVariablesList;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;
+        private Point _objGrpMaxMinLocation;
+        private Point _objLblTieBreakVarDescrLocation;
+        private Point _objtxtTieBreakVarDescrLocation;
 
 
 		public class TieBreakerItem
@@ -923,7 +926,7 @@ namespace FIA_Biosum_Manager
                             this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName;
                         this.lblFVSVariablesTieBreakerVariableValuesSelected.Text =
                             this.m_oOldTieBreakerCollection.Item(0).strFVSVariableName;
-                        this.loadFVSTableAndField();
+                        this.loadFVSTableAndField(lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text);
 
                         //fvs value source (POST or POST/PRE change)
                         this.m_oOldTieBreakerCollection.Item(0).strValueSource =
@@ -1015,7 +1018,12 @@ namespace FIA_Biosum_Manager
                 }
             }
 
-			this.m_oOldTieBreakerCollection.Clear();
+			//Stash original location of some controls so we can move them later
+            _objGrpMaxMinLocation = this.grpMaxMin.Location;
+            _objLblTieBreakVarDescrLocation = this.lblTieBreakVarDescr.Location;
+            _objtxtTieBreakVarDescrLocation = this.txtTieBreakVarDescr.Location;
+            
+            this.m_oOldTieBreakerCollection.Clear();
 
 			// Stand Attribute
             uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem = new TieBreakerItem();
@@ -1109,17 +1117,6 @@ namespace FIA_Biosum_Manager
 								this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName=oAdo.m_OleDbDataReader["fvs_variable_name"].ToString().Trim();
                                 lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_FVSVARIABLE].Text =
                                     this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName;
-								this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = 
-									this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName;
-                                if (idxAttribute == 0)
-                                {
-                                    this.loadFVSTableAndField();
-                                }
-                                else
-                                {
-                                    lstEconVariablesList.SelectedItem = 
-                                        this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName;
-                                }
 
 								//fvs value source (POST or POST/PRE change)
                                 this.m_oOldTieBreakerCollection.Item(idxAttribute).strValueSource = oAdo.m_OleDbDataReader["value_source"].ToString().Trim();
@@ -1179,7 +1176,7 @@ namespace FIA_Biosum_Manager
 								{
 									this.m_oOldTieBreakerCollection.Item(2).bSelected=false;
 								}
-								this.lvFVSVariablesTieBreakerValues.Items[3].Checked = this.m_oOldTieBreakerCollection.Item(2).bSelected;
+								this.lvFVSVariablesTieBreakerValues.Items[2].Checked = this.m_oOldTieBreakerCollection.Item(2).bSelected;
 							}
 						}
 
@@ -1270,34 +1267,79 @@ namespace FIA_Biosum_Manager
 
 				oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
 
+                //
+                //ECONOMIC VARIABLE
+                //
+                //scenario id
+                strValues = "'" + strScenarioId + "','1',";
+                //method
+                strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_METHOD].Text.Trim() + "',";
+                this.m_oSavTieBreakerCollection.Item(1).strMethod = lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_METHOD].Text.Trim();
+                //fvs variable name
+                strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text.Trim() + "',";
+                this.m_oSavTieBreakerCollection.Item(0).strFVSVariableName = lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
+                //value source
+                strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[2].SubItems[COLUMN_VALUESOURCE].Text.Trim() + "',";
+                m_oSavTieBreakerCollection.Item(0).strValueSource = lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_VALUESOURCE].Text.Trim();
+                //aggregate MAX or MIN
+                if (this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_MAXMIN].Text.Trim().ToUpper() == "MAX")
+                {
+                    strValues = strValues + "'Y','N',";
+                    this.m_oSavTieBreakerCollection.Item(1).strMaxYN = "Y";
+                    this.m_oSavTieBreakerCollection.Item(1).strMinYN = "N";
+                }
+                else
+                {
+                    strValues = strValues + "'N','Y',";
+                    this.m_oSavTieBreakerCollection.Item(1).strMaxYN = "N";
+                    this.m_oSavTieBreakerCollection.Item(1).strMinYN = "Y";
+                }
+                //checked
+                if (this.lvFVSVariablesTieBreakerValues.Items[1].Checked)
+                {
+                    strValues = strValues + "'Y'";
+                    this.m_oSavTieBreakerCollection.Item(1).bSelected = true;
+                }
+                else
+                {
+                    strValues = strValues + "'N'";
+                    this.m_oSavTieBreakerCollection.Item(1).bSelected = false;
+                }
+
+                oAdo.m_strSQL = "INSERT INTO " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " +
+                                "(" + strColumns + ") VALUES " +
+                                "(" + strValues + ")";
+
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
 				//
                 //LAST TIE-BREAK RANK
 				//
 				//scenario id
 				strValues = "'" + strScenarioId + "','1',";
 				//method
-				strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_METHOD].Text.Trim()  + "',";
-				this.m_oSavTieBreakerCollection.Item(1).strMethod = lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_METHOD].Text.Trim();
+				strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[2].SubItems[COLUMN_METHOD].Text.Trim()  + "',";
+				this.m_oSavTieBreakerCollection.Item(2).strMethod = lvFVSVariablesTieBreakerValues.Items[2].SubItems[COLUMN_METHOD].Text.Trim();
 				//fvs variable name
-				strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text.Trim() + "',";
-				this.m_oSavTieBreakerCollection.Item(1).strFVSVariableName = lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
+				strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[2].SubItems[COLUMN_FVSVARIABLE].Text.Trim() + "',";
+				this.m_oSavTieBreakerCollection.Item(2).strFVSVariableName = lvFVSVariablesTieBreakerValues.Items[2].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
 				//value source
-				strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_VALUESOURCE].Text.Trim() + "',";
-				m_oSavTieBreakerCollection.Item(1).strValueSource = lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_VALUESOURCE].Text.Trim();
+				strValues = strValues + "'" + this.lvFVSVariablesTieBreakerValues.Items[2].SubItems[COLUMN_VALUESOURCE].Text.Trim() + "',";
+				m_oSavTieBreakerCollection.Item(2).strValueSource = lvFVSVariablesTieBreakerValues.Items[2].SubItems[COLUMN_VALUESOURCE].Text.Trim();
 				//aggregate MAX or MIN
-				strValues = strValues + "'N','N',";
-				this.m_oSavTieBreakerCollection.Item(1).strMinYN="N";
-				this.m_oSavTieBreakerCollection.Item(1).strMaxYN="N";
+				strValues = strValues + "'N','Y',";
+                this.m_oSavTieBreakerCollection.Item(1).strMaxYN = "N";
+				this.m_oSavTieBreakerCollection.Item(1).strMinYN = "Y";
 				//checked
 				if (this.lvFVSVariablesTieBreakerValues.Items[2].Checked)
 				{
 					strValues = strValues + "'Y'";
-					this.m_oSavTieBreakerCollection.Item(1).bSelected=true;
+					this.m_oSavTieBreakerCollection.Item(2).bSelected=true;
 				}
 				else
 				{
 					strValues = strValues + "'N'";
-					this.m_oSavTieBreakerCollection.Item(1).bSelected=false;
+					this.m_oSavTieBreakerCollection.Item(2).bSelected=false;
 				}
 
 				oAdo.m_strSQL = "INSERT INTO " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " + 
@@ -1422,39 +1464,6 @@ namespace FIA_Biosum_Manager
 			//grpboxFVSVariablesPrePostExpression.Width = grpboxFVSVariablesPrePost.Width;
 			
 		}
-
-	
-		
-
-	
-
-		
-		
-
-		
-		/// <summary>
-		/// Load the Pre-Post variable values
-		/// Each pre-post variable set has these variables
-		///1. Pre variable name
-		///2. Post variable name
-		///3. Better SQL 
-		///4. Worse  SQL
-		///5. Effective SQL
-		/// </summary>
-		/// <param name="p_intVariable">Current Pre-Post Variable Set</param>
-		/// <param name="p_intStep">The variable item within the set to load</param>
-		private void loadvalues_variable(int p_intVariable,int p_intStep)
-		{
-			
-			
-			
-			
-			
-		}
-		
-		
-		
-		
 
 		private void RollBack()
 		{
@@ -1829,17 +1838,19 @@ namespace FIA_Biosum_Manager
 
             //idxAttribute = 0 for FVS Variables and 1 for Economic Variables; They share grpboxStandAttributeTieBreakerVariable
             int idxAttribute = this.lvFVSVariablesTieBreakerValues.SelectedItems[0].Index;
-            grpboxStandAttributeTieBreakerVariable.Text = lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_METHOD].Text;
-
-            this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = this.lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
-
+            grpboxStandAttributeTieBreakerVariable.Text = lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_METHOD].Text;            
             if (idxAttribute == 0)
             {
                 this.lstFVSTablesList.Visible = true;
                 this.lstFVSFieldsList.Visible = true;
                 this.grpboxFVSVariablesTieBreakerVariableValueSource.Visible = true;
                 this.lstEconVariablesList.Visible = false;
+                this.lblTieBreakVarDescr.Visible = false;
                 this.txtTieBreakVarDescr.Visible = false;
+                this.grpMaxMin.Location = _objGrpMaxMinLocation;
+                this.lblTieBreakVarDescr.Location = _objLblTieBreakVarDescrLocation;
+                this.txtTieBreakVarDescr.Location = _objtxtTieBreakVarDescrLocation;
+                this.loadFVSTableAndField(lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text);
             }
             else if (idxAttribute == 1)
             {
@@ -1847,8 +1858,27 @@ namespace FIA_Biosum_Manager
                 this.lstFVSFieldsList.Visible = false;
                 this.grpboxFVSVariablesTieBreakerVariableValueSource.Visible = false;
                 this.lstEconVariablesList.Visible = true;
+                this.lblTieBreakVarDescr.Visible = true;
                 this.txtTieBreakVarDescr.Visible = true;
+                this.grpMaxMin.Location = new Point(this.grpboxFVSVariablesTieBreakerVariableValueSource.Location.X, 
+                    this.grpMaxMin.Location.Y);
+                this.lblTieBreakVarDescr.Location = new Point(this.lstFVSFieldsList.Location.X,
+                    this.lblTieBreakVarDescr.Location.Y);
+                this.txtTieBreakVarDescr.Location = new Point(this.lblTieBreakVarDescr.Location.X + 80,
+                    this.txtTieBreakVarDescr.Location.Y);
+                lstEconVariablesList.SelectedIndex = -1;
+                for (int index = 0; index < lstEconVariablesList.Items.Count + 1; index++)
+                {
+                    string item = lstEconVariablesList.Items[index].ToString();
+                    if (lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text == item)
+                    {
+                        lstEconVariablesList.SelectedIndex = index;
+                        break;
+                    }
+                }
             }
+            // Do this after the lists are set so it doesn't get reset
+            this.lblFVSVariablesTieBreakerVariableValuesSelected.Text = this.lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
             
             if (this.lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_MAXMIN].Text.Trim() == "MAX")
 				this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Checked=true;
@@ -1950,33 +1980,38 @@ namespace FIA_Biosum_Manager
 		
 		private void UpdateFVSVariableListView()
 		{
-			this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text;
-			this.m_oSavTieBreakerCollection.Item(0).strFVSVariableName = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text;
-
-			if (this.cmbFVSVariablesTieBreakerVariableValueSource.Text.Trim().ToUpper() == "POST VALUE")
-			{
-				this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_VALUESOURCE].Text = "POST";
-			}
-			else
-			{
-			    this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_VALUESOURCE].Text = "POST-PRE";
-			}
-			this.m_oSavTieBreakerCollection.Item(0).strValueSource=this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_VALUESOURCE].Text;
-
-
+            int idxListView = 0;
+            if (grpboxStandAttributeTieBreakerVariable.Text.ToUpper().Equals("STAND ATTRIBUTE"))
+            {
+                if (this.cmbFVSVariablesTieBreakerVariableValueSource.Text.Trim().ToUpper() == "POST VALUE")
+                {
+                    this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_VALUESOURCE].Text = "POST";
+                }
+                else
+                {
+                    this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_VALUESOURCE].Text = "POST-PRE";
+                }
+                this.m_oSavTieBreakerCollection.Item(0).strValueSource = this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_VALUESOURCE].Text;
+            }
+            else if (grpboxStandAttributeTieBreakerVariable.Text.ToUpper().Equals("ECONOMIC ATTRIBUTE"))
+            {
+                idxListView = 1;
+            }
+            this.lvFVSVariablesTieBreakerValues.Items[idxListView].SubItems[COLUMN_FVSVARIABLE].Text = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text;
+            this.m_oSavTieBreakerCollection.Item(idxListView).strFVSVariableName = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text;
 			if (this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Checked)
 			{
-				this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_MAXMIN].Text = 
+                this.lvFVSVariablesTieBreakerValues.Items[idxListView].SubItems[COLUMN_MAXMIN].Text = 
 					"MAX";
-				this.m_oSavTieBreakerCollection.Item(0).strMaxYN="Y";
-				this.m_oSavTieBreakerCollection.Item(0).strMinYN="N";
+                this.m_oSavTieBreakerCollection.Item(idxListView).strMaxYN = "Y";
+                this.m_oSavTieBreakerCollection.Item(idxListView).strMinYN = "N";
 			}
 			else
 			{
-				this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_MAXMIN].Text = 
+                this.lvFVSVariablesTieBreakerValues.Items[idxListView].SubItems[COLUMN_MAXMIN].Text = 
 					"MIN";
-				this.m_oSavTieBreakerCollection.Item(0).strMaxYN="N";
-				this.m_oSavTieBreakerCollection.Item(0).strMinYN="Y";
+                this.m_oSavTieBreakerCollection.Item(idxListView).strMaxYN = "N";
+                this.m_oSavTieBreakerCollection.Item(idxListView).strMinYN = "Y";
 
 			}
 		}
@@ -2031,9 +2066,9 @@ namespace FIA_Biosum_Manager
 			}
 		}
 
-        private void loadFVSTableAndField()
+        private void loadFVSTableAndField(string strFvsVariableName)
         {
-            string[] strPieces = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text.Split('.');
+            string[] strPieces = strFvsVariableName.Split('.');
             //set FVS table and variable
             if (strPieces.Length == 2)
             {
