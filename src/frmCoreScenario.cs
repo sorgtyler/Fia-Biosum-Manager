@@ -3030,7 +3030,7 @@ namespace FIA_Biosum_Manager
                         CoreAnalysisScenarioItem.TieBreakerItem oItem = new CoreAnalysisScenarioItem.TieBreakerItem();
                         oItem.RxCycle = p_oAdo.m_OleDbDataReader["rxcycle"].ToString().Trim();
                         oItem.strMethod = p_oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim();
-                        if (oItem.strMethod.ToUpper() == "STAND ATTRIBUTE")
+                        if (oItem.strMethod.ToUpper().IndexOf("ATTRIBUTE") > -1)
                         {
 
 
