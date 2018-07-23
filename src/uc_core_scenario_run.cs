@@ -5558,7 +5558,6 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection =
 		        ReferenceUserControlScenarioRun.ReferenceCoreScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection;
-
 			FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem;
 
 
@@ -5604,10 +5603,8 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
 
-			//populate the variable table.column name and its value to the effective table
-			
-				
-			oItem = oTieBreakerCollection.Item(0);
+			//populate the variable table.column name and its value to the tiebreaker table
+			oItem = oTieBreakerCollection.Item(0);  // STAND ATTRIBUTE
 			if (oItem.bSelected)
 			{
 				strArray=frmMain.g_oUtils.ConvertListToArray(oItem.strFVSVariableName,".");
@@ -5670,9 +5667,84 @@ namespace FIA_Biosum_Manager
 				
 			}
 
+            oItem = oTieBreakerCollection.Item(1);  // ECONOMIC ATTRIBUTE
+            if (oItem.bSelected)
+            {
+                string[] strCol = frmMain.g_oUtils.ConvertListToArray(oItem.strFVSVariableName, "_");
+                uc_core_scenario_weighted_average.VariableItem oWeightItem = null;
+                foreach (uc_core_scenario_weighted_average.VariableItem oNextItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                {
+                    if (oNextItem.strVariableName.Equals(oItem.strFVSVariableName))
+                    {
+                        oWeightItem = oNextItem;
+                        break;
+                    }
+                }
+
+                if (strCol.Length > 1)
+                {
+                    // This is a default economic variable; They always end in _1
+                    if (strCol[strCol.Length - 1] == "1")
+                    {
+                        // We are storing the table and field name in the database for most variables
+                        if (oWeightItem.strVariableSource.IndexOf(".") > -1)
+                        {
+                            string[] strDatabase = frmMain.g_oUtils.ConvertListToArray(oWeightItem.strVariableSource, ".");
+                            m_strSQL = "UPDATE tiebreaker e " +
+                                     "INNER JOIN " + strDatabase[0] + " p " +
+                                     "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                                     "e.rxpackage=p.rxpackage " +
+                                     "SET e.pre_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                                     "e.post_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                                     "e.pre_variable1_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
+                                     "e.post_variable1_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
+                                     "e.variable1_change = 0";
+
+
+                        }
+                        // We specify a calculation for the total volume
+                        else if (oItem.strFVSVariableName.Equals("total_volume_1"))
+                        {
+                            m_strSQL = "UPDATE tiebreaker e " +
+                                 "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                                 "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                                 "e.rxpackage=p.rxpackage " +
+                                 "SET e.pre_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                                 "e.post_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                                 "e.pre_variable1_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
+                                 "e.post_variable1_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
+                                 "e.variable1_change = 0";
+                        }
+                        else if (oItem.strFVSVariableName.Equals("treatment_haul_costs_1"))
+                        {
+                            m_strSQL = "UPDATE tiebreaker e " +
+                            "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                            "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                            "e.rxpackage=p.rxpackage " +
+                            "SET e.pre_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                            "e.post_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                            "e.pre_variable1_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
+                            "e.post_variable1_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
+                            "e.variable1_change = 0";
+                        }
+                    }
+                    // This is a custom-weighted economic variable
+                    // @ToDo
+                    else
+                    {
+
+                    }
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                    this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                }
+            }
+
+
             FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
 
-			oItem = oTieBreakerCollection.Item(1);
+			oItem = oTieBreakerCollection.Item(2);  // LAST TIEBREAK RANK
 			if (oItem.bSelected)
 			{
                 m_strSQL = "UPDATE tiebreaker a INNER JOIN scenario_last_tiebreak_rank b ON a.rxpackage=b.rxpackage SET a.last_tiebreak_rank=b.last_tiebreak_rank " + 
@@ -7198,41 +7270,30 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile,"Execute SQL:" + m_ado.m_strSQL + "\r\n");
 			m_ado.SqlNonQuery(m_TempMDBFileConn,m_ado.m_strSQL);
 
-			if (oTieBreakerCollection.Item(0).bSelected && 
-				oTieBreakerCollection.Item(1).bSelected)
+			//Stand OR Economic Attribute selected AND Last Tie-Break Rank
+            
+            if ((oTieBreakerCollection.Item(0).bSelected || oTieBreakerCollection.Item(1).bSelected) && 
+				oTieBreakerCollection.Item(2).bSelected)
 			{
-				//update the tiebreaker and rx intensity fields for each plot
-				if (oTieBreakerCollection.Item(0).strValueSource=="POST")
-				{
-					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
-						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rxpackage=b.rxpackage " +
-                        "SET a.tiebreaker_value = b.post_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
-					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
-						
-				}
-				else if (oTieBreakerCollection.Item(0).strValueSource=="PRE")
-				{
-					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
-						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rxpackage=b.rxpackage " +
-                        "SET a.tiebreaker_value = b.pre_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
-					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
-				}
-				else if (oTieBreakerCollection.Item(0).strValueSource=="POST-PRE")
-				{
-					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
-						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rxpackage=b.rxpackage " +
-                        "SET a.tiebreaker_value = b.variable1_change,a.last_tiebreak_rank=b.last_tiebreak_rank";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
-					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
-				}
+                string strTiebreakerValueField = "post_variable1_value";    //Economic attributes will always write the post value
+                if (oTieBreakerCollection.Item(0).strValueSource == "PRE")
+                {
+                    strTiebreakerValueField = "pre_variable1_value";
+                }
+                else if (oTieBreakerCollection.Item(0).strValueSource == "POST-PRE")
+                {
+                    strTiebreakerValueField = "variable1_change";
+                }
+
+                //update the tiebreaker and rx intensity fields for each plot
+				strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
+					"INNER JOIN tiebreaker b " + 
+					"ON a.biosum_cond_id=b.biosum_cond_id AND a.rxpackage=b.rxpackage " +
+                    "SET a.tiebreaker_value = b." + strTiebreakerValueField + ",a.last_tiebreak_rank=b.last_tiebreak_rank";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n");
+		        m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);						
+
 
 				m_ado.m_strSQL ="INSERT INTO cycle1_best_rx_summary_before_tiebreaks SELECT DISTINCT * FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -7247,7 +7308,6 @@ namespace FIA_Biosum_Manager
 					"FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table " + 
 					"GROUP BY biosum_cond_id) c " + 
 					"WHERE a.biosum_cond_id=c.biosum_cond_id AND a.tiebreaker_value=c.tiebreaker";
-
 
 					
 				m_ado.m_strSQL = "INSERT INTO cycle1_best_rx_summary_optimization_and_tiebreaker_work_table2 " + m_ado.m_strSQL;
@@ -7330,41 +7390,29 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			else if (oTieBreakerCollection.Item(0).bSelected)
+            //Stand OR Economic Attribute selected but NOT Last Tie-Break Rank
+			else if (oTieBreakerCollection.Item(0).bSelected ||
+                     oTieBreakerCollection.Item(1).bSelected)
 			{
-				//update the tiebreaker and rx intensity fields for each plot
-				if (oTieBreakerCollection.Item(0).strValueSource=="POST")
-				{
-					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
-						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " +
-                        "SET a.tiebreaker_value = b.post_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n\r\n");
-					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
+                string strTiebreakerValueField = "post_variable1_value";    //Economic attributes will always write the post value
+                if (oTieBreakerCollection.Item(0).strValueSource == "PRE")
+                {
+                    strTiebreakerValueField = "pre_variable1_value";
+                }
+                else if (oTieBreakerCollection.Item(0).strValueSource == "POST-PRE")
+                {
+                    strTiebreakerValueField = "variable1_change";
+                }
+                
+                //update the tiebreakerfields for each plot
+				strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
+					"INNER JOIN tiebreaker b " + 
+					"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " +
+                    "SET a.tiebreaker_value = b." + strTiebreakerValueField + ",a.last_tiebreak_rank=b.last_tiebreak_rank";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n\r\n");
+			    m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
 						
-				}
-				else if (oTieBreakerCollection.Item(0).strValueSource=="PRE")
-				{
-					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
-						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx " +
-                        "SET a.tiebreaker_value = b.pre_variable1_value,a.last_tiebreak_rank=b.last_tiebreak_rank";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n\r\n");
-					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
-				}
-				else if (oTieBreakerCollection.Item(0).strValueSource=="POST-PRE")
-				{
-					strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
-						"INNER JOIN tiebreaker b " + 
-						"ON a.biosum_cond_id=b.biosum_cond_id AND a.rx=b.rx  " +
-                        "SET a.tiebreaker_value = b.variable1_change,a.last_tiebreak_rank=b.last_tiebreak_rank";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + strSql + "\r\n\r\n");
-                        
-					m_ado.SqlNonQuery(m_TempMDBFileConn,strSql);
-				}
 
 				m_ado.m_strSQL ="INSERT INTO cycle1_best_rx_summary_before_tiebreaks SELECT DISTINCT * FROM cycle1_best_rx_summary_optimization_and_tiebreaker_work_table";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -7430,7 +7478,8 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			else if (oTieBreakerCollection.Item(1).bSelected)
+			// Last tie-break rank ONLY
+            else if (oTieBreakerCollection.Item(2).bSelected)
 			{
 				//update the rx intensity fields for each plot
 				strSql = "UPDATE cycle1_best_rx_summary_optimization_and_tiebreaker_work_table a " + 
