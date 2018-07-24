@@ -5378,6 +5378,46 @@ namespace FIA_Biosum_Manager
             }
             System.IO.File.Copy(strSourceFile, strDestFile);
 
+            frmMain.g_sbpInfo.Text = "Version Update: Updating CORE scenario configuration tables ...Stand by";
+
+            strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                            "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile;
+            //open the scenario_core_rule_definitions.mdb file
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
+            //add new revenue_attribute field if it is missing
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
+                "revenue_attribute"))
+            {
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
+                    "revenue_attribute", "CHAR", "100");
+            }
+            //remove filter fields from scenario_fvs_variables_overall_effective
+            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
+                "nr_dpa_filter_enabled_yn"))
+            {
+                string[] arrFieldsToDelete = new string[] { "nr_dpa_filter_enabled_yn", "nr_dpa_filter_operator", "nr_dpa_filter_value" };
+                oDao.DeleteField(strDestFile, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
+                    arrFieldsToDelete);
+            }
+            //replace scenario_rx_intensity with scenario_last_tiebreak_rank 
+            if (oAdo.TableExist(oAdo.m_OleDbConnection, "scenario_rx_intensity"))
+            {
+                oDao.RenameTable(strDestFile, "scenario_rx_intensity", "scenario_rx_intensity" + strTableSuffix, true, false);
+            }
+            frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo, oAdo.m_OleDbConnection,
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
+            //populate scenario_last_tiebreak_rank with all packages
+            
+            string strConn="";
+            oAdo.getScenarioConnStringAndMDBFile(ref strSourceFile,
+                              ref strConn, frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());
+
+            oAdo.m_OleDbConnection = new System.Data.OleDb.OleDbConnection();
+            oAdo.OpenConnection(strConn, ref oAdo.m_OleDbConnection);
+
+
+
+
             if (oDao != null)
             {
                 oDao.m_DaoWorkspace.Close();

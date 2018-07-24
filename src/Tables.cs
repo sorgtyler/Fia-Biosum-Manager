@@ -1667,7 +1667,8 @@ namespace FIA_Biosum_Manager
 					"filter_operator CHAR(2)," + 
 					"filter_value DOUBLE," + 
 					"checked_yn CHAR(1)," + 
-					"current_yn CHAR(1))";
+					"current_yn CHAR(1)," +
+                    "revenue_attribute CHAR(100))";
 			}
 			public void CreateScenarioFVSVariablesTieBreakerTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
