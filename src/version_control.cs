@@ -5406,16 +5406,89 @@ namespace FIA_Biosum_Manager
             }
             frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo, oAdo.m_OleDbConnection,
                 Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
-            //populate scenario_last_tiebreak_rank with all packages
-            
+            //populate scenario_last_tiebreak_rank with packages for each scenario            
             string strConn="";
+            string strRxMDBFile = "";
+            string strRxPackageTableName = "";
+            string strRxConn = "";
             oAdo.getScenarioConnStringAndMDBFile(ref strSourceFile,
                               ref strConn, frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());
+            oAdo.OpenConnection(strConn);
 
-            oAdo.m_OleDbConnection = new System.Data.OleDb.OleDbConnection();
-            oAdo.OpenConnection(strConn, ref oAdo.m_OleDbConnection);
+            //retrieve paths for all scenarios in the project and put them in list
+            List<string> lstScenario = new List<string>();
+            oAdo.m_strSQL = "SELECT path, scenario_id from scenario";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strPath = "";
+                    if (oAdo.m_OleDbDataReader["path"] != System.DBNull.Value)
+                        strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                    if (!String.IsNullOrEmpty(strPath))
+                    {
+                        if (System.IO.Directory.Exists(strPath))
+                            lstScenario.Add(oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim());
+                    }
+                }
+                oAdo.m_OleDbDataReader.Close();
+            }
 
+            foreach (string strScenarioId in lstScenario)
+            {
+                
+                /*************************************************************************
+                 **get the treatment prescription mdb file,table, and connection strings
+                 *************************************************************************/
+                oAdo.getScenarioDataSourceConnStringAndTable(ref strRxMDBFile,
+                                                ref strRxPackageTableName, ref strRxConn,
+                                                "Treatment Packages",
+                                                strScenarioId,
+                                                oAdo.m_OleDbConnection);
 
+                oAdo.OpenConnection(strRxConn);
+                if (oAdo.m_intError != 0)
+                {
+                    oAdo.m_OleDbConnection.Close();
+                    oAdo.m_OleDbConnection = null;
+                    return;
+                }
+                oAdo.m_strSQL = "select * from " + strRxPackageTableName;
+                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+                /********************************************************************************
+                 **insert records into the scenario_last_tiebreak_rank table from the master rxpackage table
+                 ********************************************************************************/
+                List<string> lstRxPackages = new List<string>();
+                if (oAdo.m_intError == 0)
+                {
+                    if (oAdo.m_OleDbDataReader.HasRows)
+                    {
+                        while (oAdo.m_OleDbDataReader.Read())
+                        {
+                            string strRxPackage = "";
+                            if (oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
+                                strRxPackage = oAdo.m_OleDbDataReader["rxpackage"].ToString().Trim();
+                            if (!String.IsNullOrEmpty(strRxPackage))
+                            {
+                                lstRxPackages.Add(strRxPackage);
+                            }
+                        }
+                        oAdo.m_OleDbDataReader.Close();
+
+                        oAdo.OpenConnection(strConn);
+                        foreach (string strRxPackage in lstRxPackages)
+                        {
+                            oAdo.m_strSQL = "INSERT INTO scenario_last_tiebreak_rank (scenario_id," +
+                            "rxpackage) VALUES " +
+                            "('" + strScenarioId + "'," +
+                            "'" + strRxPackage + "')";
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                        }
+                    }
+                }
+            }
 
 
             if (oDao != null)
