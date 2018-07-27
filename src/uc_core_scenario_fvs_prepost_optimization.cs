@@ -1963,7 +1963,8 @@ namespace FIA_Biosum_Manager
             }
 
 			//Either Revenue or Merch Volume has been selected
-            if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim()=="NA")
+            if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim() == "Revenue" ||
+                this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim() == "Merchantable Volume")
 			{
 				btnOptimiztionPrev.Hide();
 				this.lblOptimizationVariable.Text = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
@@ -1995,7 +1996,7 @@ namespace FIA_Biosum_Manager
             {
                 if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim() != "Not Defined")
                 {
-                    for (int index = 0; index < lstEconVariables.Items.Count + 1; index++)
+                    for (int index = 0; index < lstEconVariables.Items.Count - 1; index++)
                     {
                         string item = lstEconVariables.Items[index].ToString();
                         if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim() == item)

@@ -1991,7 +1991,10 @@ namespace FIA_Biosum_Manager
             {
                 idxListView = 1;
             }
-            this.lvFVSVariablesTieBreakerValues.Items[idxListView].SubItems[COLUMN_FVSVARIABLE].Text = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text;
+            if (!this.lblFVSVariablesTieBreakerVariableValuesSelected.Text.ToUpper().Equals("NA"))
+            {
+                this.lvFVSVariablesTieBreakerValues.Items[idxListView].SubItems[COLUMN_FVSVARIABLE].Text = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text;
+            }
             this.m_oSavTieBreakerCollection.Item(idxListView).strFVSVariableName = this.lblFVSVariablesTieBreakerVariableValuesSelected.Text;
 			if (this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax.Checked)
 			{
