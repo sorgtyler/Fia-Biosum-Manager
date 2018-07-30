@@ -3321,13 +3321,11 @@ namespace FIA_Biosum_Manager
                     "harvest_cpa DOUBLE ," +
                     "chip_cpa DOUBLE ," +
                     "assumed_movein_cpa DOUBLE ," +
-                    "ideal_complete_cpa DOUBLE DEFAULT 0," +
+                    "ideal_complete_cpa DOUBLE ," +
                     "ideal_harvest_cpa DOUBLE ," +
                     "ideal_chip_cpa DOUBLE ," +
                     "ideal_assumed_movein_cpa DOUBLE ," +
                     "harvest_cpa_warning_msg CHAR(240)," +
-				//						"water_barring_roads_cpa DOUBLE," +
-                //    "brush_cutting_cpa DOUBLE," +                     
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "override_YN CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";

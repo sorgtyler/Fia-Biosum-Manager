@@ -870,15 +870,17 @@ namespace FIA_Biosum_Manager
                 // load opcostIdeal into memory if user asked for low-cost harvest system
                 System.Collections.Generic.IDictionary<String, opcostIdeal> dictIdeal = new System.Collections.Generic.Dictionary<String, opcostIdeal>();
                 bool blnUseIdeal = false;
-                if (m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.LOWEST_COST))
-                {
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Load opcost_output_ideal into memory - " + System.DateTime.Now.ToString() + "\r\n");
+                // 2018-30-JUL Disabling lowest-cost harvest method option. blnUseIdeal should always be false and
+                // dictIdeal will never be used.
+                //if (m_scenarioHarvestMethod.HarvMethodSelection.Equals(HarvestMethodSelection.LOWEST_COST))
+                //{
+                //    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                //        frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Load opcost_output_ideal into memory - " + System.DateTime.Now.ToString() + "\r\n");
 
-                    blnUseIdeal = true;
-                    //key: strCondId + strRxPackage + strRx + strRxCycle;
-                    dictIdeal = loadOpcostIdeal();
-                }
+                //    blnUseIdeal = true;
+                //    //key: strCondId + strRxPackage + strRx + strRxCycle;
+                //    dictIdeal = loadOpcostIdeal();
+                //}
                 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createTreeVolValWorkTable: Read trees into tree vol val - " + System.DateTime.Now.ToString() + "\r\n");
@@ -1827,11 +1829,11 @@ namespace FIA_Biosum_Manager
             {
                 get
                 {
-                    if (_objLowestCostHarvestMethod != null)
-                    {
-                        return _objLowestCostHarvestMethod.BiosumCategory;
-                    }
-                    else if (_objHarvestMethod != null)
+                    //if (_objLowestCostHarvestMethod != null)
+                    //{
+                    //    return _objLowestCostHarvestMethod.BiosumCategory;
+                    //}
+                    if (_objHarvestMethod != null)
                     {
                         return _objHarvestMethod.BiosumCategory;
                     }
