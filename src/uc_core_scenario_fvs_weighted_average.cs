@@ -875,7 +875,44 @@ namespace FIA_Biosum_Manager
             }
 
             this.loadLstVariables();
+
+            //load datagrid for economic variables
+            loadEconVariablesGrid();
+                    
+            // load listbox for economic variables
+            lstEconVariablesList.Items.Clear();
+            foreach (string strName in PREFIX_ECON_NAME_ARRAY)
+            {
+                lstEconVariablesList.Items.Add(strName);
+            }
+
+            m_dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(m_oAdo);
+            foreach (string strKey in m_dictFVSTables.Keys)
+            {
+                // 
+                if (strKey.IndexOf("_WEIGHTED") < 0)
+                {
+                    lstFVSTablesList.Items.Add(strKey);
+                }
+            }
             
+            //Set Defaults
+            if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
+            {
+                //Set to last package as that is usually the grow-only package
+                cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
+            }
+
+            
+            
+            
+            if (m_oAdo != null)
+                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            
+        }
+
+        private void loadm_dg()
+        {
             string strDestinationLinkDir = this.m_oEnv.strTempDir;
             //used to get the temporary random file name
             utils objUtils = new utils();
@@ -889,7 +926,7 @@ namespace FIA_Biosum_Manager
 
             // Load project data sources table
             FIA_Biosum_Manager.Datasource oDs = new Datasource();
-            oDs.m_strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() 
+            oDs.m_strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim()
                 + "\\db\\project.mdb";
             oDs.m_strDataSourceTableName = "datasource";
             oDs.m_strScenarioId = "";
@@ -901,7 +938,7 @@ namespace FIA_Biosum_Manager
             string strDirectoryPath = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
             string strFileName = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
             string strPlotTable = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            oDao.CreateTableLink(m_strTempMDB, strPlotTable, strDirectoryPath + "\\" + strFileName, 
+            oDao.CreateTableLink(m_strTempMDB, strPlotTable, strDirectoryPath + "\\" + strFileName,
                 strPlotTable);
             intTable = oDs.getDataSourceTableNameRow("Treatment Packages");
             strDirectoryPath = oDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
@@ -941,226 +978,226 @@ namespace FIA_Biosum_Manager
                         cboFvsVariableBaselinePkg.Items.Add(strPackage);
                 }
             }
-            if (lstSeqNumTables.Count >0 )
+            if (lstSeqNumTables.Count > 0)
             {
-            //Create temporary table to populate datagrid
-            string strViewTableName = "view_weights";
-            frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFvsVariableWeightsReferenceTable(m_oAdoFvs,
-                m_oAdoFvs.m_OleDbConnection, strViewTableName);
-            string[] sqlWhereArray = new string[8];
-            sqlWhereArray[0] = " WHERE CYCLE1_PRE_YN = 'Y'";
-            sqlWhereArray[1] = " WHERE CYCLE1_POST_YN = 'Y'";
-            sqlWhereArray[2] = " WHERE CYCLE2_PRE_YN = 'Y'";
-            sqlWhereArray[3] = " WHERE CYCLE2_POST_YN = 'Y'";
-            sqlWhereArray[4] = " WHERE CYCLE3_PRE_YN = 'Y'";
-            sqlWhereArray[5] = " WHERE CYCLE3_POST_YN = 'Y'";
-            sqlWhereArray[6] = " WHERE CYCLE4_PRE_YN = 'Y'";
-            sqlWhereArray[7] = " WHERE CYCLE4_POST_YN = 'Y'";
-            for (int i = 0; i < sqlWhereArray.Length; i++)
-            {
-                string strSql = "SELECT MIN(MinSeqNum) as MinSeqNum1, MIN(MinYear) as MinYear1 " +
-                                "FROM ( ";
-                foreach (string strTableName in lstSeqNumTables)
+                //Create temporary table to populate datagrid
+                string strViewTableName = "view_weights";
+                frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFvsVariableWeightsReferenceTable(m_oAdoFvs,
+                    m_oAdoFvs.m_OleDbConnection, strViewTableName);
+                string[] sqlWhereArray = new string[8];
+                sqlWhereArray[0] = " WHERE CYCLE1_PRE_YN = 'Y'";
+                sqlWhereArray[1] = " WHERE CYCLE1_POST_YN = 'Y'";
+                sqlWhereArray[2] = " WHERE CYCLE2_PRE_YN = 'Y'";
+                sqlWhereArray[3] = " WHERE CYCLE2_POST_YN = 'Y'";
+                sqlWhereArray[4] = " WHERE CYCLE3_PRE_YN = 'Y'";
+                sqlWhereArray[5] = " WHERE CYCLE3_POST_YN = 'Y'";
+                sqlWhereArray[6] = " WHERE CYCLE4_PRE_YN = 'Y'";
+                sqlWhereArray[7] = " WHERE CYCLE4_POST_YN = 'Y'";
+                for (int i = 0; i < sqlWhereArray.Length; i++)
                 {
-                    strSql = strSql + "SELECT MIN(SEQNUM) as MinSeqNum, MIN(YEAR) as MinYear " +
-                                      "FROM " + strTableName +
-                                      sqlWhereArray[i] +
-                                      " UNION ALL ";    
-                }
-                //Trim off trailing union
-                strSql = strSql.Remove(strSql.LastIndexOf(" UNION ALL "));
-                strSql = strSql + ")";
-
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Query for seqnum, year, and rxcycle from FVS tables \r\n"); 
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, strSql + "\r\n\r\n");
-                }
-
-                m_oAdoFvs.SqlQueryReader(m_oAdoFvs.m_OleDbConnection, strSql);
-                while (m_oAdoFvs.m_OleDbDataReader.Read())
-                {
-                    string strPrePost = "";
-                    string strRxCycle = "";
-                    int intSeqNum = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinSeqNum1"]);
-                    int intYear = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinYear1"]);
-                    switch (i)
+                    string strSql = "SELECT MIN(MinSeqNum) as MinSeqNum1, MIN(MinYear) as MinYear1 " +
+                                    "FROM ( ";
+                    foreach (string strTableName in lstSeqNumTables)
                     {
-                        case 0:
-                            strPrePost = "PRE";
-                            strRxCycle = "1";
-                            break;
-                        case 1:
-                            strPrePost = "POST";
-                            strRxCycle = "1";
-                            break;
-                        case 2:
-                            strPrePost = "PRE";
-                            strRxCycle = "2";
-                            break;
-                        case 3:
-                            strPrePost = "POST";
-                            strRxCycle = "2";
-                            break;
-                        case 4:
-                            strPrePost = "PRE";
-                            strRxCycle = "3";
-                            break;
-                        case 5:
-                            strPrePost = "POST";
-                            strRxCycle = "3";
-                            break;
-                        case 6:
-                            strPrePost = "PRE";
-                            strRxCycle = "4";
-                            break;
-                        case 7:
-                            strPrePost = "POST";
-                            strRxCycle = "4";
-                            break;
+                        strSql = strSql + "SELECT MIN(SEQNUM) as MinSeqNum, MIN(YEAR) as MinYear " +
+                                          "FROM " + strTableName +
+                                          sqlWhereArray[i] +
+                                          " UNION ALL ";
                     }
-                    if (!String.IsNullOrEmpty(strPrePost))
-                    {
-                        string insertSql = "INSERT INTO " + strViewTableName +
-                                           " VALUES('" + strPrePost + "','" + strRxCycle +
-                                           "'," + intYear + "," + intSeqNum + ",0)";
+                    //Trim off trailing union
+                    strSql = strSql.Remove(strSql.LastIndexOf(" UNION ALL "));
+                    strSql = strSql + ")";
 
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        {
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Insert records into " + strViewTableName + "\r\n"); 
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, insertSql + "\r\n\r\n");
-                        }      
-                        m_oAdoFvs.SqlNonQuery(m_oAdoFvs.m_OleDbConnection, insertSql);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Query for seqnum, year, and rxcycle from FVS tables \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, strSql + "\r\n\r\n");
                     }
-                }
 
-            }
-
-            m_oAdoFvs.m_DataSet = new DataSet("view_weights");
-            m_oAdoFvs.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-            m_oAdoFvs.m_strSQL = "select * from " + strViewTableName;
-            this.m_dtTableSchema = m_oAdoFvs.getTableSchema(m_oAdoFvs.m_OleDbConnection,
-                                                       m_oAdoFvs.m_OleDbTransaction,
-                                                       m_oAdoFvs.m_strSQL);
-            if (m_oAdoFvs.m_intError == 0)
-            {
-                m_oAdoFvs.m_OleDbCommand = m_oAdoFvs.m_OleDbConnection.CreateCommand();
-                m_oAdoFvs.m_OleDbCommand.CommandText = m_oAdoFvs.m_strSQL;
-                m_oAdoFvs.m_OleDbDataAdapter.SelectCommand = m_oAdoFvs.m_OleDbCommand;
-                m_oAdoFvs.m_OleDbDataAdapter.SelectCommand.Transaction = m_oAdoFvs.m_OleDbTransaction;
-                try
-                {
-
-                    m_oAdoFvs.m_OleDbDataAdapter.Fill(m_oAdoFvs.m_DataSet, "view_weights");
-                    this.m_dv = new DataView(m_oAdoFvs.m_DataSet.Tables["view_weights"]);
-
-                    this.m_dv.AllowNew = false;       //cannot append new records
-                    this.m_dv.AllowDelete = false;    //cannot delete records
-                    this.m_dv.AllowEdit = true;
-                    this.m_dg.CaptionText = "view_weights";
-                    m_dg.BackgroundColor = frmMain.g_oGridViewBackgroundColor;
-                    /***********************************************************************************
-                     **assign the aColumnTextColumn as type DataGridColoredTextBoxColumn object class
-                     ***********************************************************************************/
-                    WeightedAverage_DataGridColoredTextBoxColumn aColumnTextColumn;
-
-
-                    /***************************************************************
-                     **custom define the grid style
-                     ***************************************************************/
-                    DataGridTableStyle tableStyle = new DataGridTableStyle();
-
-                    /***********************************************************************
-                     **map the data grid table style to the scenario rx intensity dataset
-                     ***********************************************************************/
-                    tableStyle.MappingName = "view_weights";
-                    tableStyle.AlternatingBackColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
-                    tableStyle.BackColor = frmMain.g_oGridViewRowBackgroundColor;
-                    tableStyle.ForeColor = frmMain.g_oGridViewRowForegroundColor;
-                    tableStyle.SelectionBackColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
-
-
-
-                    /******************************************************************************
-                     **since the dataset has things like field name and number of columns,
-                     **we will use those to create new columnstyles for the columns in our grid
-                     ******************************************************************************/
-                    //get the number of columns from the view_weights data set
-                    int numCols = m_oAdoFvs.m_DataSet.Tables["view_weights"].Columns.Count;
-
-                    /************************************************
-                     **loop through all the columns in the dataset	
-                     ************************************************/
-                    string strColumnName;
-                    for (int i = 0; i < numCols; ++i)
+                    m_oAdoFvs.SqlQueryReader(m_oAdoFvs.m_OleDbConnection, strSql);
+                    while (m_oAdoFvs.m_OleDbDataReader.Read())
                     {
-                        strColumnName = m_oAdoFvs.m_DataSet.Tables["view_weights"].Columns[i].ColumnName;
-
-                        /***********************************
-                        **all columns are read-only except weight
-                        ***********************************/
-                        if (strColumnName.Trim().ToUpper() == "WEIGHT")
+                        string strPrePost = "";
+                        string strRxCycle = "";
+                        int intSeqNum = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinSeqNum1"]);
+                        int intYear = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinYear1"]);
+                        switch (i)
                         {
-                            /******************************************************************
-                            **create a new instance of the DataGridColoredTextBoxColumn class
-                            ******************************************************************/
-                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(true, true, this);
-                            aColumnTextColumn.Format = "#0.000";
-                            aColumnTextColumn.ReadOnly = false;
+                            case 0:
+                                strPrePost = "PRE";
+                                strRxCycle = "1";
+                                break;
+                            case 1:
+                                strPrePost = "POST";
+                                strRxCycle = "1";
+                                break;
+                            case 2:
+                                strPrePost = "PRE";
+                                strRxCycle = "2";
+                                break;
+                            case 3:
+                                strPrePost = "POST";
+                                strRxCycle = "2";
+                                break;
+                            case 4:
+                                strPrePost = "PRE";
+                                strRxCycle = "3";
+                                break;
+                            case 5:
+                                strPrePost = "POST";
+                                strRxCycle = "3";
+                                break;
+                            case 6:
+                                strPrePost = "PRE";
+                                strRxCycle = "4";
+                                break;
+                            case 7:
+                                strPrePost = "POST";
+                                strRxCycle = "4";
+                                break;
                         }
-                        else
+                        if (!String.IsNullOrEmpty(strPrePost))
                         {
-                            /******************************************************************
-                            **create a new instance of the DataGridColoredTextBoxColumn class
-                            ******************************************************************/
-                            aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
-                            aColumnTextColumn.ReadOnly = true;
+                            string insertSql = "INSERT INTO " + strViewTableName +
+                                               " VALUES('" + strPrePost + "','" + strRxCycle +
+                                               "'," + intYear + "," + intSeqNum + ",0)";
+
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Insert records into " + strViewTableName + "\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, insertSql + "\r\n\r\n");
+                            }
+                            m_oAdoFvs.SqlNonQuery(m_oAdoFvs.m_OleDbConnection, insertSql);
                         }
-                        aColumnTextColumn.HeaderText = strColumnName;
-
-                        /********************************************************************
-                         **assign the mappingname property the data sets column name
-                         ********************************************************************/
-                        aColumnTextColumn.MappingName = strColumnName;
-
-                        /********************************************************************
-						 **add the datagridcoloredtextboxcolumn object to the data grid 
-						 **table style object
-						 ********************************************************************/
-                        tableStyle.GridColumnStyles.Add(aColumnTextColumn);
-
-                        /**********************************
-                         * Hide pre_or_post column
-                         * *******************************/
-                        if (strColumnName.Equals("pre_or_post"))
-                            tableStyle.GridColumnStyles.Remove(aColumnTextColumn);
                     }
-                    /*********************************************************************
-                     ** make the dataGrid use our new tablestyle and bind it to our table
-                     *********************************************************************/
-                    if (frmMain.g_oGridViewFont != null) this.m_dg.Font = frmMain.g_oGridViewFont;
-                    this.m_dg.TableStyles.Clear();
-                    this.m_dg.TableStyles.Add(tableStyle);
-                    //this.m_dg.CaptionText = strCaption;
-                    this.m_dg.DataSource = this.m_dv;
-                    this.m_dg.Expand(-1);
-                    //sum up the weights after the grid loads
-                    this.SumWeights(false);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message, "view_weights Table", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    this.m_intError = -1;
-                    m_oAdoFvs.m_OleDbConnection.Close();
-                    m_oAdoFvs.m_OleDbConnection = null;
-                    m_oAdoFvs.m_DataSet.Clear();
-                    m_oAdoFvs.m_DataSet = null;
-                    m_oAdoFvs.m_OleDbDataAdapter.Dispose();
-                    m_oAdoFvs.m_OleDbDataAdapter = null;
-                    return;
 
                 }
-              }
+
+                m_oAdoFvs.m_DataSet = new DataSet("view_weights");
+                m_oAdoFvs.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
+                m_oAdoFvs.m_strSQL = "select * from " + strViewTableName;
+                this.m_dtTableSchema = m_oAdoFvs.getTableSchema(m_oAdoFvs.m_OleDbConnection,
+                                                           m_oAdoFvs.m_OleDbTransaction,
+                                                           m_oAdoFvs.m_strSQL);
+                if (m_oAdoFvs.m_intError == 0)
+                {
+                    m_oAdoFvs.m_OleDbCommand = m_oAdoFvs.m_OleDbConnection.CreateCommand();
+                    m_oAdoFvs.m_OleDbCommand.CommandText = m_oAdoFvs.m_strSQL;
+                    m_oAdoFvs.m_OleDbDataAdapter.SelectCommand = m_oAdoFvs.m_OleDbCommand;
+                    m_oAdoFvs.m_OleDbDataAdapter.SelectCommand.Transaction = m_oAdoFvs.m_OleDbTransaction;
+                    try
+                    {
+
+                        m_oAdoFvs.m_OleDbDataAdapter.Fill(m_oAdoFvs.m_DataSet, "view_weights");
+                        this.m_dv = new DataView(m_oAdoFvs.m_DataSet.Tables["view_weights"]);
+
+                        this.m_dv.AllowNew = false;       //cannot append new records
+                        this.m_dv.AllowDelete = false;    //cannot delete records
+                        this.m_dv.AllowEdit = true;
+                        this.m_dg.CaptionText = "view_weights";
+                        m_dg.BackgroundColor = frmMain.g_oGridViewBackgroundColor;
+                        /***********************************************************************************
+                         **assign the aColumnTextColumn as type DataGridColoredTextBoxColumn object class
+                         ***********************************************************************************/
+                        WeightedAverage_DataGridColoredTextBoxColumn aColumnTextColumn;
+
+
+                        /***************************************************************
+                         **custom define the grid style
+                         ***************************************************************/
+                        DataGridTableStyle tableStyle = new DataGridTableStyle();
+
+                        /***********************************************************************
+                         **map the data grid table style to the scenario rx intensity dataset
+                         ***********************************************************************/
+                        tableStyle.MappingName = "view_weights";
+                        tableStyle.AlternatingBackColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
+                        tableStyle.BackColor = frmMain.g_oGridViewRowBackgroundColor;
+                        tableStyle.ForeColor = frmMain.g_oGridViewRowForegroundColor;
+                        tableStyle.SelectionBackColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
+
+
+
+                        /******************************************************************************
+                         **since the dataset has things like field name and number of columns,
+                         **we will use those to create new columnstyles for the columns in our grid
+                         ******************************************************************************/
+                        //get the number of columns from the view_weights data set
+                        int numCols = m_oAdoFvs.m_DataSet.Tables["view_weights"].Columns.Count;
+
+                        /************************************************
+                         **loop through all the columns in the dataset	
+                         ************************************************/
+                        string strColumnName;
+                        for (int i = 0; i < numCols; ++i)
+                        {
+                            strColumnName = m_oAdoFvs.m_DataSet.Tables["view_weights"].Columns[i].ColumnName;
+
+                            /***********************************
+                            **all columns are read-only except weight
+                            ***********************************/
+                            if (strColumnName.Trim().ToUpper() == "WEIGHT")
+                            {
+                                /******************************************************************
+                                **create a new instance of the DataGridColoredTextBoxColumn class
+                                ******************************************************************/
+                                aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(true, true, this);
+                                aColumnTextColumn.Format = "#0.000";
+                                aColumnTextColumn.ReadOnly = false;
+                            }
+                            else
+                            {
+                                /******************************************************************
+                                **create a new instance of the DataGridColoredTextBoxColumn class
+                                ******************************************************************/
+                                aColumnTextColumn = new WeightedAverage_DataGridColoredTextBoxColumn(false, false, this);
+                                aColumnTextColumn.ReadOnly = true;
+                            }
+                            aColumnTextColumn.HeaderText = strColumnName;
+
+                            /********************************************************************
+                             **assign the mappingname property the data sets column name
+                             ********************************************************************/
+                            aColumnTextColumn.MappingName = strColumnName;
+
+                            /********************************************************************
+                             **add the datagridcoloredtextboxcolumn object to the data grid 
+                             **table style object
+                             ********************************************************************/
+                            tableStyle.GridColumnStyles.Add(aColumnTextColumn);
+
+                            /**********************************
+                             * Hide pre_or_post column
+                             * *******************************/
+                            if (strColumnName.Equals("pre_or_post"))
+                                tableStyle.GridColumnStyles.Remove(aColumnTextColumn);
+                        }
+                        /*********************************************************************
+                         ** make the dataGrid use our new tablestyle and bind it to our table
+                         *********************************************************************/
+                        if (frmMain.g_oGridViewFont != null) this.m_dg.Font = frmMain.g_oGridViewFont;
+                        this.m_dg.TableStyles.Clear();
+                        this.m_dg.TableStyles.Add(tableStyle);
+                        //this.m_dg.CaptionText = strCaption;
+                        this.m_dg.DataSource = this.m_dv;
+                        this.m_dg.Expand(-1);
+                        //sum up the weights after the grid loads
+                        this.SumWeights(false);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message, "view_weights Table", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        this.m_intError = -1;
+                        m_oAdoFvs.m_OleDbConnection.Close();
+                        m_oAdoFvs.m_OleDbConnection = null;
+                        m_oAdoFvs.m_DataSet.Clear();
+                        m_oAdoFvs.m_DataSet = null;
+                        m_oAdoFvs.m_OleDbDataAdapter.Dispose();
+                        m_oAdoFvs.m_OleDbDataAdapter = null;
+                        return;
+
+                    }
+                }
             }
             else
             {
@@ -1170,35 +1207,6 @@ namespace FIA_Biosum_Manager
                  System.Windows.Forms.MessageBoxIcon.Exclamation);
             }
 
-                     //load datagrid for economic variables
-                    loadEconVariablesGrid();
-                    
-                    // load listbox for economic variables
-                    lstEconVariablesList.Items.Clear();
-                    foreach (string strName in PREFIX_ECON_NAME_ARRAY)
-                    {
-                        lstEconVariablesList.Items.Add(strName);
-                    }
-
-            m_dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(m_oAdo);
-            foreach (string strKey in m_dictFVSTables.Keys)
-            {
-                lstFVSTablesList.Items.Add(strKey);
-            }
-            
-            //Set Defaults
-            if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
-            {
-                //Set to last package as that is usually the grow-only package
-                cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
-            }
-
-            
-            
-            
-            if (m_oAdo != null)
-                m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            
             if (oDao != null)
             {
                 oDao.m_DaoWorkspace.Close();
@@ -1812,6 +1820,7 @@ namespace FIA_Biosum_Manager
         private void btnNewFvs_Click(object sender, EventArgs e)
         {
             m_intCurVar = -1;
+            this.loadm_dg();
             this.enableFvsVariableUc(true);
             //Set to last package as that is usually the grow-only package
             cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
@@ -2061,6 +2070,7 @@ namespace FIA_Biosum_Manager
             }
             else
             {
+                this.loadm_dg();
                 m_oAdo.m_strSQL = "select * from " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
                     " where calculated_variables_id = " + m_intCurVar;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
