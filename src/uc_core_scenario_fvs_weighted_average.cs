@@ -219,6 +219,7 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.BtnDeleteEconVariable = new System.Windows.Forms.Button();
             this.m_dgEcon = new System.Windows.Forms.DataGrid();
             this.lblEconVariableName = new System.Windows.Forms.Label();
             this.btnEconVariableType = new System.Windows.Forms.Button();
@@ -270,7 +271,6 @@ namespace FIA_Biosum_Manager
             this.LblSelectedVariable = new System.Windows.Forms.Label();
             this.lblSelectedFVSVariable = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.BtnDeleteEconVariable = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpBoxEconomicVariable.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -337,6 +337,14 @@ namespace FIA_Biosum_Manager
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(850, 451);
             this.panel1.TabIndex = 70;
+            // 
+            // BtnDeleteEconVariable
+            // 
+            this.BtnDeleteEconVariable.Location = new System.Drawing.Point(565, 402);
+            this.BtnDeleteEconVariable.Name = "BtnDeleteEconVariable";
+            this.BtnDeleteEconVariable.Size = new System.Drawing.Size(64, 24);
+            this.BtnDeleteEconVariable.TabIndex = 96;
+            this.BtnDeleteEconVariable.Text = "Delete";
             // 
             // m_dgEcon
             // 
@@ -661,6 +669,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnDeleteFvsVariable
             // 
+            this.btnDeleteFvsVariable.Enabled = false;
             this.btnDeleteFvsVariable.Location = new System.Drawing.Point(564, 402);
             this.btnDeleteFvsVariable.Name = "btnDeleteFvsVariable";
             this.btnDeleteFvsVariable.Size = new System.Drawing.Size(64, 24);
@@ -827,14 +836,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(866, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
-            // 
-            // BtnDeleteEconVariable
-            // 
-            this.BtnDeleteEconVariable.Location = new System.Drawing.Point(565, 402);
-            this.BtnDeleteEconVariable.Name = "BtnDeleteEconVariable";
-            this.BtnDeleteEconVariable.Size = new System.Drawing.Size(64, 24);
-            this.BtnDeleteEconVariable.TabIndex = 96;
-            this.BtnDeleteEconVariable.Text = "Delete";
             // 
             // uc_core_scenario_weighted_average
             // 
@@ -2269,6 +2270,7 @@ namespace FIA_Biosum_Manager
                     }
 
                     this.enableFvsVariableUc(false);
+                    this.btnDeleteFvsVariable.Enabled = false;
                     this.btnFvsCalculate.Visible = true;
                     frmMain.g_oFrmMain.ActivateStandByAnimation(
                        frmMain.g_oFrmMain.WindowState,
@@ -2517,6 +2519,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariableValue.Visible = bEnabled;
             this.txtFVSVariableDescr.ReadOnly = !bEnabled;
             this.btnFvsCalculate.Enabled = bEnabled;
+            this.btnDeleteFvsVariable.Enabled = !bEnabled;
         }
 
         private void enableEconVariableUc(bool bEnabled)
