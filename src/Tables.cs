@@ -1747,7 +1747,10 @@ namespace FIA_Biosum_Manager
 
             static public string DefaultFVSPrePostSeqNumRxPackageAssgnTable { get { return "fvs_output_prepost_seqnum_rxpackage_assignment"; } }
             static public string DefaultFVSPrePostSeqNumRxPackageAssgnTableDbFile { get { return @"db\fvsmaster.mdb"; } }
-			
+
+            static public string DefaultPreFVSSummaryTableName { get { return "PRE_FVS_SUMMARY"; } }
+            static public string DefaultPreFVSSummaryDbFile { get { return @"\fvs\db\PREPOST_FVS_SUMMARY.ACCDB"; } }
+
 
 			public FVS()
 			{
@@ -3530,7 +3533,8 @@ namespace FIA_Biosum_Manager
                             " [Unadjusted Small log trees per acre] single," +
                             " [Unadjusted Small log trees average volume (ft3)] single," +
                             " [Unadjusted Large log trees per acre] single," +
-                            " [Unadjusted Large log trees average vol(ft3)] single" +
+                            " [Unadjusted Large log trees average vol(ft3)] single," +
+                            " ba_frac_cut single" +
                             " )";
             }
 

@@ -102,6 +102,11 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableDbFile,
                 frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName, true);
 
+            // link to PRE_FVS_SUMMARY table
+            oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
+                Tables.FVS.DefaultPreFVSSummaryTableName,
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSSummaryDbFile,
+                Tables.FVS.DefaultPreFVSSummaryTableName, true);
 
             oDao.m_DaoDbEngine.Idle(1);
             oDao.m_DaoDbEngine.Idle(8);
@@ -629,6 +634,9 @@ namespace FIA_Biosum_Manager
                             dictOpcostInput.Add(strStand, nextInput);
                         }
 
+                        // All trees add their BaFracCutNumerator to the total, regardless of treeType
+                        nextInput.TotalBaFracCutNumerator = nextInput.TotalBaFracCutNumerator + nextTree.BaFracCutNumerator;
+                        
                         // Metrics for brush cut trees
                         if (nextTree.TreeType == OpCostTreeType.BC)
                         {
@@ -668,7 +676,7 @@ namespace FIA_Biosum_Manager
                                 nextInput.SmLogHwdVolCfPa = nextInput.SmLogHwdVolCfPa + nextTree.TotalVolCfPa;
                         }
 
-                            // Metrics for large log trees
+                        // Metrics for large log trees
                         else if (nextTree.TreeType == OpCostTreeType.LL)
                         {
                             nextInput.TotalLgLogTpa = nextInput.TotalLgLogTpa + nextTree.Tpa;
@@ -692,6 +700,16 @@ namespace FIA_Biosum_Manager
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Finished reading trees - " + System.DateTime.Now.ToString() + "\r\n");
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Load Basal Area for all conditions from PRE_FVS_SUMMARY - " + System.DateTime.Now.ToString() + "\r\n");
+
+                System.Collections.Generic.IDictionary<string, double> dictFvsPreBasalArea = this.loadFvsPreBasalArea();
+
+                if (dictFvsPreBasalArea.Keys.Count == 0)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: NO BASAL AREA (BA) RECORDS FOUND IN PRE_FVS_SUMMARY TABLE!!   \r\n");
+                }
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Begin writing opcost input table - " + System.DateTime.Now.ToString() + "\r\n");
@@ -788,6 +806,33 @@ namespace FIA_Biosum_Manager
                             }
                         }
 
+                        // ** BA FRAC CUT (INTENSITY) **
+                        if (dictFvsPreBasalArea.ContainsKey(nextStand.OpCostStand))
+                        {
+                            double dblBaFracCutDenominator = dictFvsPreBasalArea[nextStand.OpCostStand];
+                            if (dblBaFracCutDenominator > 0)
+                            {
+                                double dblTestBaFracCut = nextStand.TotalBaFracCutNumerator / dblBaFracCutDenominator;
+                                if (dblTestBaFracCut > 0 &&
+                                    dblTestBaFracCut < 1)
+                                {
+                                    nextStand.BaFracCut = dblTestBaFracCut;
+                                }
+                                else
+                                {
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "BA_FRAC_CUT --> INVALID VALUE: " + dblTestBaFracCut + " from opcost stand " + nextStand.OpCostStand + "\r\n");
+                                }
+                            }
+                            else
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "BA_FRAC_CUT --> INVALID VALUE FOR PRE_FVS_SUMMARY.BA: " + dblBaFracCutDenominator + " from opcost stand " + nextStand.OpCostStand + "\r\n");
+                            }
+                        }
+                        else
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "BA_FRAC_CUT --> OPCOST STAND MISSING FROM PRE_FVS_SUMMARY TABLE: " + nextStand.OpCostStand + "\r\n");
+                        }
+
                         m_oAdo.m_strSQL = "INSERT INTO " + m_strOpcostTableName + " " +
                         "(Stand, [Percent Slope], [One-way Yarding Distance], YearCostCalc, " +
                         "[Project Elevation], [Harvesting System], [Chip tree per acre], [Chip trees MerchAsPctOfTotal], " +
@@ -800,7 +845,8 @@ namespace FIA_Biosum_Manager
                         "BrushCutTPA, [BrushCutAvgVol], RxPackage_Rx_RxCycle, biosum_cond_id, RxPackage, Rx, RxCycle, Move_In_Hours, " +
                         "Harvest_Area_Assumed_Acres, [Unadjusted One-way Yarding distance], " +
                         "[Unadjusted Small log trees per acre], [Unadjusted Small log trees average volume (ft3)], " +
-                        "[Unadjusted Large log trees per acre], [Unadjusted Large log trees average vol(ft3)]) " +
+                        "[Unadjusted Large log trees per acre], [Unadjusted Large log trees average vol(ft3)], " +
+                        "ba_frac_cut )" +
                         "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
                         nextStand.Elev + ", '" + nextStand.HarvestMethod.Method + "', " + nextStand.TotalChipTpa + ", " +
                         dblCtMerchPctTotal + ", " + dblCtAvgVolume + ", " + dblCtAvgDensity + ", " + dblCtHwdPct + ", " +
@@ -813,7 +859,7 @@ namespace FIA_Biosum_Manager
                         nextStand.Rx + "', '" + nextStand.RxCycle + "', " + nextStand.MoveInHours + ", " + 
                         nextStand.HarvestAreaAssumedAc + ", " + nextStand.YardingDistanceUnadj + ", " +
                         nextStand.TotalSmLogTpaUnadj + ", " + dblSmLogAvgVolumeAdj + ", " +
-                        nextStand.TotalLgLogTpaUnadj + ", " + dblLgLogAvgVolumeAdj +
+                        nextStand.TotalLgLogTpaUnadj + ", " + dblLgLogAvgVolumeAdj + ", " + nextStand.BaFracCut +
                         " )";
 
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
@@ -1579,6 +1625,7 @@ namespace FIA_Biosum_Manager
             double _dblTravelTime;
             harvestMethod _objHarvestMethod;
             harvestMethod _objLowestCostHarvestMethod;
+            double _dblBaFracCutNumerator;
 
             string _strDebugFile = "";
 
@@ -1843,6 +1890,13 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
+
+            public double BaFracCutNumerator
+            {
+                //tpa * pi * ( dbh/24)^2 
+                get { return _dblTpa * Math.PI * Math.Pow((_dblDbh / 24), 2); }
+            }
+
             public string DebugFile
             {
                 set { _strDebugFile = value; }
@@ -2119,8 +2173,8 @@ namespace FIA_Biosum_Manager
             double _dblYardingDistanceUnadj;
             double _dblTotalSmLogTpaUnadj;
             double _dblTotalLgLogTpaUnadj;
-
-
+            double _dblTotalBaFracCutNumerator;
+            double _dblBaFracCut = -1;
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
                                string rxYear, double yardingDistance, int elev, harvestMethod harvestMethod, double moveInHours,
@@ -2332,6 +2386,16 @@ namespace FIA_Biosum_Manager
             {
                 set { _dblTotalLgLogTpaUnadj = value; }
                 get { return _dblTotalLgLogTpaUnadj; }
+            }
+            public double TotalBaFracCutNumerator
+            {
+                set { _dblTotalBaFracCutNumerator = value; }
+                get { return _dblTotalBaFracCutNumerator; }
+            }
+            public double BaFracCut
+            {
+                set { _dblBaFracCut = value; }
+                get { return _dblBaFracCut; }
             }
         }
 
@@ -2689,6 +2753,28 @@ namespace FIA_Biosum_Manager
                 }
             }
             return dictTravelTimes;
+        }
+
+        private System.Collections.Generic.IDictionary<String, double> loadFvsPreBasalArea()
+        {
+            System.Collections.Generic.IDictionary<String, double> dictPreBasalArea =
+                new System.Collections.Generic.Dictionary<String, double>();
+            if (m_oAdo.m_intError == 0)
+            {
+                string strSQL = "SELECT TRIM(biosum_cond_id) + TRIM(rxpackage)  + TRIM(rx) + TRIM(rxcycle) as [OpCostStandId], BA" +
+                                " FROM " + Tables.FVS.DefaultPreFVSSummaryTableName;
+                m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
+                if (m_oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (m_oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strOpCostStandId = Convert.ToString(m_oAdo.m_OleDbDataReader["OpCostStandId"]).Trim();
+                        double dblBasalArea = Convert.ToDouble(m_oAdo.m_OleDbDataReader["BA"]);
+                        dictPreBasalArea.Add(strOpCostStandId, dblBasalArea);
+                    }
+                }
+            }
+            return dictPreBasalArea;
         }
 
     }

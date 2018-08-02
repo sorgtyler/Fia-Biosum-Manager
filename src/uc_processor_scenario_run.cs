@@ -420,6 +420,12 @@ namespace FIA_Biosum_Manager
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName,
                 strScenarioResultsMDB,
                 Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, true);
+            // link to PRE_FVS_SUMMARY table
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                Tables.FVS.DefaultPreFVSSummaryTableName,
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSSummaryDbFile,
+                Tables.FVS.DefaultPreFVSSummaryTableName, true);
+
 
             oDao.m_DaoDbEngine.Idle(1);
             oDao.m_DaoDbEngine.Idle(8);
