@@ -877,6 +877,9 @@ namespace FIA_Biosum_Manager
 
             this.loadLstVariables();
 
+            //load datagrid for FVS variables
+            this.loadm_dg();
+
             //load datagrid for economic variables
             loadEconVariablesGrid();
                     
@@ -1821,7 +1824,6 @@ namespace FIA_Biosum_Manager
         private void btnNewFvs_Click(object sender, EventArgs e)
         {
             m_intCurVar = -1;
-            this.loadm_dg();
             this.enableFvsVariableUc(true);
             //Set to last package as that is usually the grow-only package
             cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
@@ -2071,7 +2073,6 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                this.loadm_dg();
                 m_oAdo.m_strSQL = "select * from " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
                     " where calculated_variables_id = " + m_intCurVar;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
