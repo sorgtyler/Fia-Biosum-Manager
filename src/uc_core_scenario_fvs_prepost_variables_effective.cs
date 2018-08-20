@@ -148,7 +148,14 @@ namespace FIA_Biosum_Manager
         private ListBox lstFVSTablesList;
         private ListBox lstFVSFieldsList;
         private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
+        private Button BtnHelpEffective;
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
+
+        private env m_oEnv;
+        private Help m_oHelp;
+        private Button BtnHelpFvsAttrib;
+        private Button BtnHelpExpressionBuilder;
+        private string m_xpsFile = Help.DefaultCoreAnalysisXPSFile;
         
         public class Variables
 		{
@@ -483,6 +490,8 @@ namespace FIA_Biosum_Manager
             m_oValidate.MinValue = -1000;
             m_oValidate.TestForMin = true;
 
+            this.m_oEnv = new env();
+
 			// TODO: Add any initialization after the InitializeComponent call
 
 		}
@@ -509,7 +518,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "1",
             "Not Defined",
@@ -517,7 +526,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "2",
             "Not Defined",
@@ -525,7 +534,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "3",
             "Not Defined",
@@ -533,7 +542,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "4",
             "Not Defined",
@@ -614,6 +623,9 @@ namespace FIA_Biosum_Manager
             this.lblTitle = new System.Windows.Forms.Label();
             this.cmbFVSVariablesPrePost = new System.Windows.Forms.ComboBox();
             this.btnFVSVariablesPrePostGo = new System.Windows.Forms.Button();
+            this.BtnHelpEffective = new System.Windows.Forms.Button();
+            this.BtnHelpFvsAttrib = new System.Windows.Forms.Button();
+            this.BtnHelpExpressionBuilder = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesPrePost.SuspendLayout();
             this.pnlFVSVariablesPrePost.SuspendLayout();
@@ -636,6 +648,7 @@ namespace FIA_Biosum_Manager
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.BtnHelpEffective);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesPrePost);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesPrePostExpression);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesPrePostVariable);
@@ -710,15 +723,15 @@ namespace FIA_Biosum_Manager
             this.lvFVSVariablesPrePostValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvFVSVariablesPrePostValues.GridLines = true;
             this.lvFVSVariablesPrePostValues.HideSelection = false;
-            listViewItem1.StateImageIndex = 0;
-            listViewItem2.StateImageIndex = 0;
-            listViewItem3.StateImageIndex = 0;
-            listViewItem4.StateImageIndex = 0;
+            listViewItem5.StateImageIndex = 0;
+            listViewItem6.StateImageIndex = 0;
+            listViewItem7.StateImageIndex = 0;
+            listViewItem8.StateImageIndex = 0;
             this.lvFVSVariablesPrePostValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4});
+            listViewItem5,
+            listViewItem6,
+            listViewItem7,
+            listViewItem8});
             this.lvFVSVariablesPrePostValues.Location = new System.Drawing.Point(8, 48);
             this.lvFVSVariablesPrePostValues.MultiSelect = false;
             this.lvFVSVariablesPrePostValues.Name = "lvFVSVariablesPrePostValues";
@@ -869,6 +882,7 @@ namespace FIA_Biosum_Manager
             // pnlFVSVariablesPrePostExpression
             // 
             this.pnlFVSVariablesPrePostExpression.AutoScroll = true;
+            this.pnlFVSVariablesPrePostExpression.Controls.Add(this.BtnHelpExpressionBuilder);
             this.pnlFVSVariablesPrePostExpression.Controls.Add(this.grpboxFVSVariablesPrePostExpressionSelectedVariables);
             this.pnlFVSVariablesPrePostExpression.Controls.Add(this.groupBox2);
             this.pnlFVSVariablesPrePostExpression.Controls.Add(this.lblFVSVariablesPrePostExpressionVariable1);
@@ -1246,6 +1260,7 @@ namespace FIA_Biosum_Manager
             // pnlFVSVariablesPrePostVariable
             // 
             this.pnlFVSVariablesPrePostVariable.AutoScroll = true;
+            this.pnlFVSVariablesPrePostVariable.Controls.Add(this.BtnHelpFvsAttrib);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpboxFVSVariablesPrePostVariableValues);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpboxFVSVariablesPrePostVariablePreSelected);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpboxFVSVariablesPrePostVariablePostSelected);
@@ -1368,7 +1383,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnFVSVariablesPrePostVariableClearAll
             // 
-            this.btnFVSVariablesPrePostVariableClearAll.Location = new System.Drawing.Point(24, 376);
+            this.btnFVSVariablesPrePostVariableClearAll.Location = new System.Drawing.Point(99, 376);
             this.btnFVSVariablesPrePostVariableClearAll.Name = "btnFVSVariablesPrePostVariableClearAll";
             this.btnFVSVariablesPrePostVariableClearAll.Size = new System.Drawing.Size(72, 40);
             this.btnFVSVariablesPrePostVariableClearAll.TabIndex = 5;
@@ -1455,6 +1470,37 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesPrePostGo.TabIndex = 6;
             this.btnFVSVariablesPrePostGo.Text = "Go";
             this.btnFVSVariablesPrePostGo.Click += new System.EventHandler(this.btnFVSVariablesPrePostGo_Click);
+            // 
+            // BtnHelpEffective
+            // 
+            this.BtnHelpEffective.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnHelpEffective.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelpEffective.Location = new System.Drawing.Point(598, 50);
+            this.BtnHelpEffective.Name = "BtnHelpEffective";
+            this.BtnHelpEffective.Size = new System.Drawing.Size(50, 24);
+            this.BtnHelpEffective.TabIndex = 91;
+            this.BtnHelpEffective.Text = "Help";
+            this.BtnHelpEffective.Click += new System.EventHandler(this.BtnHelpEffective_Click);
+            // 
+            // BtnHelpFvsAttrib
+            // 
+            this.BtnHelpFvsAttrib.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelpFvsAttrib.Location = new System.Drawing.Point(24, 376);
+            this.BtnHelpFvsAttrib.Name = "BtnHelpFvsAttrib";
+            this.BtnHelpFvsAttrib.Size = new System.Drawing.Size(72, 40);
+            this.BtnHelpFvsAttrib.TabIndex = 12;
+            this.BtnHelpFvsAttrib.Text = "Help";
+            this.BtnHelpFvsAttrib.Click += new System.EventHandler(this.BtnHelpFvsAttrib_Click);
+            // 
+            // BtnHelpExpressionBuilder
+            // 
+            this.BtnHelpExpressionBuilder.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelpExpressionBuilder.Location = new System.Drawing.Point(24, 383);
+            this.BtnHelpExpressionBuilder.Name = "BtnHelpExpressionBuilder";
+            this.BtnHelpExpressionBuilder.Size = new System.Drawing.Size(72, 40);
+            this.BtnHelpExpressionBuilder.TabIndex = 71;
+            this.BtnHelpExpressionBuilder.Text = "Help";
+            this.BtnHelpExpressionBuilder.Click += new System.EventHandler(this.BtnHelpExpressionBuilder_Click);
             // 
             // uc_core_scenario_fvs_prepost_variables_effective
             // 
@@ -4160,6 +4206,33 @@ namespace FIA_Biosum_Manager
             {
                 this.btnFVSVariablesPrePostVariableValue.Enabled = false;
             }
+        }
+
+        private void BtnHelpEffective_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+        }
+
+        private void BtnHelpFvsAttrib_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+        }
+
+        private void BtnHelpExpressionBuilder_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
         }
        
 	

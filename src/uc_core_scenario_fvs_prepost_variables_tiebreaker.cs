@@ -57,6 +57,10 @@ namespace FIA_Biosum_Manager
 		const int COLUMN_VALUESOURCE=3;
 		const int COLUMN_MAXMIN=4;
 
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultCoreAnalysisXPSFile;
+
 		public bool m_bSave=false;
 		private bool _bDisplayAuditMsg=true;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreaker;
@@ -109,6 +113,9 @@ namespace FIA_Biosum_Manager
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;
         private Point _objGrpMaxMinLocation;
         private Point _objLblTieBreakVarDescrLocation;
+        private Button BtnHelpTieBreaker;
+        private Button BtnHelpAttribute;
+        private Button BtnHelpLastTieBreakRank;
         private Point _objtxtTieBreakVarDescrLocation;
 
 
@@ -222,7 +229,8 @@ namespace FIA_Biosum_Manager
 			this.grpboxStandAttributeTieBreakerVariable.Hide();
             this.lstEconVariablesList.Location = this.lstFVSTablesList.Location;
 			this.grpboxFVSVariablesTieBreaker.Show();
-		}
+            this.m_oEnv = new env();
+        }
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -280,6 +288,7 @@ namespace FIA_Biosum_Manager
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin = new System.Windows.Forms.RadioButton();
             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMax = new System.Windows.Forms.RadioButton();
             this.grpboxFVSVariablesTieBreakerVariableValues = new System.Windows.Forms.GroupBox();
+            this.lstEconVariablesList = new System.Windows.Forms.ListBox();
             this.txtTieBreakVarDescr = new System.Windows.Forms.TextBox();
             this.lblTieBreakVarDescr = new System.Windows.Forms.Label();
             this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
@@ -305,8 +314,10 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.lstEconVariablesList = new System.Windows.Forms.ListBox();
+            this.BtnHelpTieBreaker = new System.Windows.Forms.Button();
             this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_core_scenario_treatment_intensity();
+            this.BtnHelpAttribute = new System.Windows.Forms.Button();
+            this.BtnHelpLastTieBreakRank = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -325,6 +336,7 @@ namespace FIA_Biosum_Manager
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.BtnHelpTieBreaker);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerLastTieBreakRank);
             this.groupBox1.Controls.Add(this.grpboxStandAttributeTieBreakerVariable);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreaker);
@@ -355,6 +367,7 @@ namespace FIA_Biosum_Manager
             // panel2
             // 
             this.panel2.AutoScroll = true;
+            this.panel2.Controls.Add(this.BtnHelpLastTieBreakRank);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.uc_scenario_treatment_intensity1);
             this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev);
@@ -388,7 +401,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnFVSVariablesTieBreakerTreatmentIntensityClear
             // 
-            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Location = new System.Drawing.Point(24, 376);
+            this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Location = new System.Drawing.Point(100, 376);
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Name = "btnFVSVariablesTieBreakerTreatmentIntensityClear";
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Size = new System.Drawing.Size(72, 40);
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear.TabIndex = 5;
@@ -429,6 +442,7 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.BtnHelpAttribute);
             this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValueSource);
             this.panel1.Controls.Add(this.grpMaxMin);
             this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValues);
@@ -509,6 +523,17 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerVariableValues.Text = "Attribute for resolving ties when there is more than one optimal silvicultural se" +
     "quence";
             // 
+            // lstEconVariablesList
+            // 
+            this.lstEconVariablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstEconVariablesList.ItemHeight = 16;
+            this.lstEconVariablesList.Location = new System.Drawing.Point(134, 38);
+            this.lstEconVariablesList.Name = "lstEconVariablesList";
+            this.lstEconVariablesList.Size = new System.Drawing.Size(202, 180);
+            this.lstEconVariablesList.TabIndex = 91;
+            this.lstEconVariablesList.Visible = false;
+            this.lstEconVariablesList.SelectedIndexChanged += new System.EventHandler(this.lstEconVariablesList_SelectedIndexChanged);
+            // 
             // txtTieBreakVarDescr
             // 
             this.txtTieBreakVarDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -583,7 +608,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnFVSVariablesTieBreakerVariableClear
             // 
-            this.btnFVSVariablesTieBreakerVariableClear.Location = new System.Drawing.Point(24, 376);
+            this.btnFVSVariablesTieBreakerVariableClear.Location = new System.Drawing.Point(100, 376);
             this.btnFVSVariablesTieBreakerVariableClear.Name = "btnFVSVariablesTieBreakerVariableClear";
             this.btnFVSVariablesTieBreakerVariableClear.Size = new System.Drawing.Size(72, 40);
             this.btnFVSVariablesTieBreakerVariableClear.TabIndex = 5;
@@ -765,16 +790,15 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
             // 
-            // lstEconVariablesList
+            // BtnHelpTieBreaker
             // 
-            this.lstEconVariablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstEconVariablesList.ItemHeight = 16;
-            this.lstEconVariablesList.Location = new System.Drawing.Point(134, 38);
-            this.lstEconVariablesList.Name = "lstEconVariablesList";
-            this.lstEconVariablesList.Size = new System.Drawing.Size(202, 180);
-            this.lstEconVariablesList.TabIndex = 91;
-            this.lstEconVariablesList.Visible = false;
-            this.lstEconVariablesList.SelectedIndexChanged += new System.EventHandler(this.lstEconVariablesList_SelectedIndexChanged);
+            this.BtnHelpTieBreaker.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelpTieBreaker.Location = new System.Drawing.Point(222, 16);
+            this.BtnHelpTieBreaker.Name = "BtnHelpTieBreaker";
+            this.BtnHelpTieBreaker.Size = new System.Drawing.Size(72, 32);
+            this.BtnHelpTieBreaker.TabIndex = 71;
+            this.BtnHelpTieBreaker.Text = "Help";
+            this.BtnHelpTieBreaker.Click += new System.EventHandler(this.BtnHelpTieBreaker_Click);
             // 
             // uc_scenario_treatment_intensity1
             // 
@@ -785,6 +809,26 @@ namespace FIA_Biosum_Manager
             this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
             this.uc_scenario_treatment_intensity1.TabIndex = 13;
             this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
+            // 
+            // BtnHelpAttribute
+            // 
+            this.BtnHelpAttribute.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelpAttribute.Location = new System.Drawing.Point(24, 376);
+            this.BtnHelpAttribute.Name = "BtnHelpAttribute";
+            this.BtnHelpAttribute.Size = new System.Drawing.Size(72, 40);
+            this.BtnHelpAttribute.TabIndex = 20;
+            this.BtnHelpAttribute.Text = "Help";
+            this.BtnHelpAttribute.Click += new System.EventHandler(this.BtnHelpAttribute_Click);
+            // 
+            // BtnHelpLastTieBreakRank
+            // 
+            this.BtnHelpLastTieBreakRank.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.BtnHelpLastTieBreakRank.Location = new System.Drawing.Point(24, 376);
+            this.BtnHelpLastTieBreakRank.Name = "BtnHelpLastTieBreakRank";
+            this.BtnHelpLastTieBreakRank.Size = new System.Drawing.Size(72, 40);
+            this.BtnHelpLastTieBreakRank.TabIndex = 21;
+            this.BtnHelpLastTieBreakRank.Text = "Help";
+            this.BtnHelpLastTieBreakRank.Click += new System.EventHandler(this.BtnHelpLastTieBreakRank_Click);
             // 
             // uc_core_scenario_fvs_prepost_variables_tiebreaker
             // 
@@ -2191,6 +2235,33 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
+        }
+
+        private void BtnHelpTieBreaker_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+        }
+
+        private void BtnHelpAttribute_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+        }
+
+        private void BtnHelpLastTieBreakRank_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
         }
 	
 	}

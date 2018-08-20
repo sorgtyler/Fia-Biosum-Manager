@@ -171,7 +171,7 @@
     <Compile Include="uc_delete_conditions.Designer.cs">
       <DependentUpon>uc_delete_conditions.cs</DependentUpon>
     </Compile>
-    <Compile Include="uc_core_scenario_fvs_weighted_average.cs">
+    <Compile Include="uc_core_scenario_calculated_variables.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_textboxWithButtons.cs">
@@ -595,8 +595,8 @@
     <EmbeddedResource Include="uc_delete_conditions.resx">
       <DependentUpon>uc_delete_conditions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_core_scenario_fvs_weighted_average.resx">
-      <DependentUpon>uc_core_scenario_fvs_weighted_average.cs</DependentUpon>
+    <EmbeddedResource Include="uc_core_scenario_calculated_variables.resx">
+      <DependentUpon>uc_core_scenario_calculated_variables.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_textboxWithButtons.resx">
       <DependentUpon>uc_textboxWithButtons.cs</DependentUpon>

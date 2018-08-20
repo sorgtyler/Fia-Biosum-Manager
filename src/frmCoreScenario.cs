@@ -98,6 +98,11 @@ namespace FIA_Biosum_Manager
         private ToolBarButton tlbSeparator;
         private ToolBarButton btnScenarioCopy;
         public FIA_Biosum_Manager.CoreAnalysisScenarioItem m_oSavCoreAnalysisScenarioItem = new CoreAnalysisScenarioItem();
+        private Button btnHelp;
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultCoreAnalysisXPSFile;
+        private string m_helpChapter = "CASE_STUDY_SCENARIO";
         public FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection m_oWeightedVariableCollection =
             new FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection();
 
@@ -316,6 +321,7 @@ namespace FIA_Biosum_Manager
             this.tbOptimization = new System.Windows.Forms.TabPage();
             this.tbTieBreaker = new System.Windows.Forms.TabPage();
             this.tbRun = new System.Windows.Forms.TabPage();
+            this.btnHelp = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataView1)).BeginInit();
             this.tabControlScenario.SuspendLayout();
             this.tbRules.SuspendLayout();
@@ -666,11 +672,22 @@ namespace FIA_Biosum_Manager
             this.tbRun.TabIndex = 6;
             this.tbRun.Text = "Run";
             // 
+            // btnHelp
+            // 
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(8, 398);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
+            this.btnHelp.TabIndex = 48;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
             // frmCoreScenario
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(909, 762);
+            this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.tlbScenario);
             this.Controls.Add(this.tabControlScenario);
             this.Controls.Add(this.btnClose);
@@ -760,7 +777,7 @@ namespace FIA_Biosum_Manager
 				this.tabControlScenario.Top = this.tlbScenario.Top + this.tlbScenario.Height + 2;
 				this.tabControlScenario.Height = this.btnClose.Top - this.tabControlScenario.Top - 2;
 				this.tabControlScenario.Width = this.ClientSize.Width;
-
+                this.btnHelp.Top = this.ClientSize.Height - this.btnHelp.Height - 8;
 				
 			}
 			catch
@@ -1046,6 +1063,7 @@ namespace FIA_Biosum_Manager
 					this.uc_scenario_filter1.Height + 5;
 				if (this.btnClose.Top + this.btnClose.Height + 300 > this.m_vScrollBar.Maximum)
 					this.m_vScrollBar.Maximum = this.btnClose.Top + this.btnClose.Height + 300;
+                this.btnHelp.Top = this.ClientSize.Height - this.btnHelp.Height - 8;
 			}
 			catch
 			{
@@ -1588,7 +1606,8 @@ namespace FIA_Biosum_Manager
 							}
 							else
 								uc_scenario_fvs_prepost_optimization1.lblTitle.Text = "Optimization Settings (Read Only)";
-						
+
+                            m_helpChapter = "INTRODUCTION";
 					}
 					else if (tabControlFVSVariables.SelectedTab.Text.Trim().ToUpper()=="EFFECTIVE")
 					{
@@ -1599,7 +1618,8 @@ namespace FIA_Biosum_Manager
 						}
 						else
 							uc_scenario_fvs_prepost_variables_effective1.lblTitle.Text = "Effective Settings (Read Only)";
-						
+
+                        m_helpChapter = "CASE_STUDY_SCENARIO";
 					}
 					else if (tabControlFVSVariables.SelectedTab.Text.Trim().ToUpper()=="TIE BREAKER")
 					{
@@ -1610,7 +1630,8 @@ namespace FIA_Biosum_Manager
 						}
 						else
 							uc_scenario_fvs_prepost_variables_tiebreaker1.lblTitle.Text = "Tie Breaker Settings (Read Only)";
-						
+
+                        m_helpChapter = "INTRODUCTION";
 					}
 					
 				}
@@ -1836,6 +1857,18 @@ namespace FIA_Biosum_Manager
             if (uc_scenario_run1 != null)
             {
                 this.uc_scenario_run1.groupBox1_Resize();
+            }
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(m_helpChapter))
+            {
+                if (m_oHelp == null)
+                {
+                    m_oHelp = new Help(m_xpsFile, m_oEnv);
+                }
+                m_oHelp.ShowHelp(new string[] { "PROCESSOR", m_helpChapter });
             }
         }
 	
@@ -3625,6 +3658,7 @@ namespace FIA_Biosum_Manager
                
             }
         }
+
 
         public System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> LoadFvsTablesAndVariables(FIA_Biosum_Manager.ado_data_access p_oAdo)
         {
