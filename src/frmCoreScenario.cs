@@ -693,7 +693,7 @@ namespace FIA_Biosum_Manager
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.txtDropDown);
             this.Name = "frmCoreScenario";
-            this.Text = "Case Study Scenario";
+            this.Text = "Optimization Scenario";
             this.Activated += new System.EventHandler(this.frmCoreScenario_Activated);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.frmScenario_Closing);
             this.Load += new System.EventHandler(this.frmscenarioScenario_Load);
@@ -863,7 +863,7 @@ namespace FIA_Biosum_Manager
 				frmTemp.Height = intHt + ((intHt - frmTemp.ClientSize.Height) * 2);
 				frmTemp.SetMenu("new");
 				frmTemp.BackColor = System.Drawing.SystemColors.Control;
-				frmTemp.Text = "Core Analysis: Case Study Scenario";
+				frmTemp.Text = "Core Analysis: Optimization Scenario";
 				frmTemp.MdiParent = this.ParentForm;
 				frmTemp.uc_scenario1.lblTitle.Text="New Scenario";
 				frmTemp.uc_scenario1.txtDescription.Enabled=true;
@@ -1021,7 +1021,7 @@ namespace FIA_Biosum_Manager
 				frmTemp.m_vScrollBar.Visible=false;
 				frmTemp.m_hScrollBar.Visible=false;
 				frmTemp.BackColor = System.Drawing.SystemColors.Control;
-				frmTemp.Text = "Core Analysis: Case Study Scenario";
+				frmTemp.Text = "Core Analysis: Optimization Scenario";
 				frmTemp.MdiParent = this.ParentForm;
 
 				frmTemp.SetMenu("new");

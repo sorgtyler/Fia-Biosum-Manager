@@ -397,7 +397,7 @@ namespace FIA_Biosum_Manager
 				oUtils.m_intLevel=-1;
 				if (this.ScenarioType.Trim().ToUpper()=="CORE")
 				{
-					if (oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Core Analysis: Case Study Scenario (" + this.lstScenario.SelectedItem.ToString().Trim() + ")","*",true,false) > 0)
+					if (oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Core Analysis: Optimization Scenario (" + this.lstScenario.SelectedItem.ToString().Trim() + ")","*",true,false) > 0)
 					{
 						MessageBox.Show("!!Scenario Already Open!!","Scenario Open",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;
@@ -460,10 +460,10 @@ namespace FIA_Biosum_Manager
 			if (this.lstScenario.Visible == true) //new scenario
 			{
 				//validate the input
-				//case study id
+				//Optimization id
 				if (this.txtScenarioId.Text.Length == 0 ) 
 				{
-					MessageBox.Show("Enter A Unique Case Study scenario Id");
+					MessageBox.Show("Enter A Unique Optimization scenario Id");
 					this.txtScenarioId.Focus();
 					return;
 				}
@@ -477,7 +477,7 @@ namespace FIA_Biosum_Manager
 						strTemp1 = this.lstScenario.Items[x].ToString().Trim();
 						if (strTemp1.ToUpper() == strTemp2.ToUpper()) 
 						{
-							MessageBox.Show("Cannot have a duplicate case study scenario id");
+							MessageBox.Show("Cannot have a duplicate Optimization scenario id");
 							this.txtScenarioId.Focus();
 							return;
 						}
@@ -513,7 +513,7 @@ namespace FIA_Biosum_Manager
 				}
 				else 
 				{
-					MessageBox.Show("Enter A Directory Location To Save Case Study scenario Files");
+					MessageBox.Show("Enter A Directory Location To Save Optimization scenario Files");
 					this.txtScenarioPath.Focus();
 					return;
 				}	
@@ -712,7 +712,7 @@ namespace FIA_Biosum_Manager
 			{
 				if (((frmCoreScenario)this.ParentForm).m_bScenarioOpen == false) 
 				{
-					((frmCoreScenario)this.ParentForm).Text = "Core Analysis: Case Study Scenario (" + this.txtScenarioId.Text.Trim() + ")";
+					((frmCoreScenario)this.ParentForm).Text = "Core Analysis: Optimization Scenario (" + this.txtScenarioId.Text.Trim() + ")";
 					((frmCoreScenario)this.ParentForm).SetMenu("scenario");
 					((frmCoreScenario)this.ParentForm).m_bScenarioOpen = true;
 					this.lblTitle.Text = "";

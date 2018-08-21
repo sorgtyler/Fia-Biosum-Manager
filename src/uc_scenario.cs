@@ -364,11 +364,11 @@ namespace FIA_Biosum_Manager
 			m_intError=0;
 			//validate the input
 			//
-			//case study id
+			//Optimization id
 			//
 			if (this.txtScenarioId.Text.Length == 0 ) 
 			{
-					MessageBox.Show("Enter A Unique Case Study scenario Id");
+					MessageBox.Show("Enter A Unique Optimization scenario Id");
 					this.txtScenarioId.Focus();
 					m_intError=-1;
 					return;
@@ -396,7 +396,7 @@ namespace FIA_Biosum_Manager
 							Convert.ToString(oAdo.m_OleDbDataReader["scenario_id"]).Trim().ToUpper())
 						{
 							this.m_intError=-1;
-							MessageBox.Show("Cannot have a duplicate case study scenario id");
+							MessageBox.Show("Cannot have a duplicate Optimization scenario id");
 							oAdo.m_OleDbDataReader.Close();
 							oAdo.m_OleDbDataReader=null;
 							oAdo=null;
@@ -797,7 +797,7 @@ namespace FIA_Biosum_Manager
 				p_oUtils.m_intLevel=1;
 				if (ScenarioType.Trim().ToUpper() == "CORE")
 				{
-					if (p_oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Core Analysis: Case Study Scenario (" + this.txtScenarioId.Text.Trim() + ")","*",true,false) > 0)
+					if (p_oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Core Analysis: Optimization Scenario (" + this.txtScenarioId.Text.Trim() + ")","*",true,false) > 0)
 					{
 						MessageBox.Show("!!Scenario Already Open!!","Scenario Open",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;

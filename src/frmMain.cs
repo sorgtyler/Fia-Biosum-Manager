@@ -473,6 +473,7 @@ namespace FIA_Biosum_Manager
             this.mnuSettings = new System.Windows.Forms.MenuItem();
             this.mnuTools = new System.Windows.Forms.MenuItem();
             this.mnuToolsFCS = new System.Windows.Forms.MenuItem();
+            this.mnuToolsProjectRootFolder = new System.Windows.Forms.MenuItem();
             this.mnuHelp = new System.Windows.Forms.MenuItem();
             this.mnuHelpBiosummatic = new System.Windows.Forms.MenuItem();
             this.menuItem23 = new System.Windows.Forms.MenuItem();
@@ -501,7 +502,6 @@ namespace FIA_Biosum_Manager
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.txtDropDown = new System.Windows.Forms.TextBox();
-            this.mnuToolsProjectRootFolder = new System.Windows.Forms.MenuItem();
             this.grpboxLeft.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -656,6 +656,13 @@ namespace FIA_Biosum_Manager
             this.mnuToolsFCS.Index = 0;
             this.mnuToolsFCS.Text = "Tree Volume and Biomass Calculator Troubleshooter Tool";
             this.mnuToolsFCS.Click += new System.EventHandler(this.mnuToolsFCS_Click);
+            // 
+            // mnuToolsProjectRootFolder
+            // 
+            this.mnuToolsProjectRootFolder.Enabled = false;
+            this.mnuToolsProjectRootFolder.Index = 1;
+            this.mnuToolsProjectRootFolder.Text = "Scan and Synchronize Project Root Folder Tool";
+            this.mnuToolsProjectRootFolder.Click += new System.EventHandler(this.mnuToolsProjectRootFolder_Click);
             // 
             // mnuHelp
             // 
@@ -838,9 +845,9 @@ namespace FIA_Biosum_Manager
             // btnMain1
             // 
             this.btnMain1.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMain1.Location = new System.Drawing.Point(15, 8);
+            this.btnMain1.Location = new System.Drawing.Point(12, 8);
             this.btnMain1.Name = "btnMain1";
-            this.btnMain1.Size = new System.Drawing.Size(70, 56);
+            this.btnMain1.Size = new System.Drawing.Size(75, 56);
             this.btnMain1.TabIndex = 13;
             this.btnMain1.MouseEnter += new System.EventHandler(this.btnMain1_MouseEnter);
             this.btnMain1.MouseLeave += new System.EventHandler(this.btnMain1_MouseLeave);
@@ -870,13 +877,6 @@ namespace FIA_Biosum_Manager
             this.txtDropDown.Size = new System.Drawing.Size(152, 24);
             this.txtDropDown.TabIndex = 11;
             this.txtDropDown.Visible = false;
-            // 
-            // mnuToolsProjectRootFolder
-            // 
-            this.mnuToolsProjectRootFolder.Enabled = false;
-            this.mnuToolsProjectRootFolder.Index = 1;
-            this.mnuToolsProjectRootFolder.Text = "Scan and Synchronize Project Root Folder Tool";
-            this.mnuToolsProjectRootFolder.Click += new System.EventHandler(this.mnuToolsProjectRootFolder_Click);
             // 
             // frmMain
             // 
@@ -1302,7 +1302,7 @@ namespace FIA_Biosum_Manager
 				if (result == DialogResult.OK)
 				{
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
-					oFrmScenario.Text = "Core Analysis: Case Study Scenario (" + this.m_frmScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
+					oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + this.m_frmScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
 					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
@@ -1329,7 +1329,7 @@ namespace FIA_Biosum_Manager
 				if (result == DialogResult.OK)
 				{
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
-					oFrmScenario.Text = "Core Analysis: Case Study Scenario (" + this.m_frmScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
+					oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + this.m_frmScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
 					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
@@ -1661,7 +1661,7 @@ namespace FIA_Biosum_Manager
 
                     }
                 }
-                else if (strText.Trim().ToUpper() == "CASE STUDY SCENARIO") 
+                else if (strText.Trim().ToUpper() == "OPTIMIZATION SCENARIO") 
 				{
 					
 					System.Text.StringBuilder strFullPath;
@@ -3470,7 +3470,7 @@ namespace FIA_Biosum_Manager
 				foreach (Form child in this.MdiChildren)
 
 				{
-					if (child.Text.IndexOf("Core Analysis: Case Study") >= 0) 
+					if (child.Text.IndexOf("Core Analysis: Optimization") >= 0) 
 					{
 						/*************************************************************
 						 **cast the child form to get a reference to its controls,
@@ -3642,13 +3642,13 @@ namespace FIA_Biosum_Manager
             this.m_btnCoreUserVariables.Size = this.btnMain1.Size;
             this.m_btnCoreUserVariables.Location = this.btnMain1.Location;
             this.m_btnCoreUserVariables.Text = "Define Calculated Variables";
-			//case study scenario
+			//Optimization scenario
 			this.m_btnCoreScenario = new btnMainForm(this);
 			this.m_pnlCore.Controls.Add(this.m_btnCoreScenario);
 			this.m_btnCoreScenario.Size = this.btnMain1.Size;
             this.m_btnCoreScenario.Left = this.m_btnCoreUserVariables.Left;
             this.m_btnCoreScenario.Top = this.m_btnCoreUserVariables.Top + this.m_btnCoreUserVariables.Height + 5;
-			this.m_btnCoreScenario.Text = "Case Study Scenario";
+			this.m_btnCoreScenario.Text = "Optimization Scenario";
 			//merge scenarios
 			this.m_btnCoreMerge = new btnMainForm(this);
 			this.m_pnlCore.Controls.Add(this.m_btnCoreMerge);

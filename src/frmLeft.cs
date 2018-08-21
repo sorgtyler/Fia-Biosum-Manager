@@ -175,7 +175,7 @@ namespace FIA_Biosum_Manager
 				this.btnfrcs.Dock = DockStyle.Bottom;
 				this.btnfrcs.Enabled = true;
 				this.listbox1.Items.Clear();
-				this.listbox1.Items.Add("Case Study Analysis");
+				this.listbox1.Items.Add("Optimization Analysis");
 				this.listbox1.Items.Add("Rules");
 				this.listbox1.Top = intListTopPosition;
 			}			
@@ -186,7 +186,7 @@ namespace FIA_Biosum_Manager
 			if (this.btnCoreAnalysis.Enabled == false) 
 			{
 
-				if (listbox1.Text == "Case Study Analysis") 
+				if (listbox1.Text == "Optimization Analysis") 
 				{
 					
             
