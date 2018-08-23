@@ -58,7 +58,7 @@ namespace FIA_Biosum_Manager
         private Label label15;
         private TextBox txtSaplingMerchPct;
         private RadioButton rdoProcessorSpecified;
-        private RadioButton rdoLowestCost;
+        private RadioButton rdoHideLowestCost;
         private RadioButton rdoTreatment;
         private Label label18;
         
@@ -106,11 +106,7 @@ namespace FIA_Biosum_Manager
         {
             get
             {
-                if (rdoLowestCost.Checked)
-                {
-                    return HarvestMethodSelection.LOWEST_COST.Value;
-                }
-                else if (rdoProcessorSpecified.Checked)
+                if (rdoProcessorSpecified.Checked)
                 {
                     return HarvestMethodSelection.SELECTED.Value;
                 }
@@ -119,14 +115,6 @@ namespace FIA_Biosum_Manager
                     return HarvestMethodSelection.RX.Value;
                 }
             }
-        }
-        public bool UseOpCostIdealHarvestMethod
-        {
-            get { return this.rdoLowestCost.Checked; }
-        }
-        public bool UseSpecifiedHarvestMethod
-        {
-            get { return this.rdoProcessorSpecified.Checked; }
         }
         public string HarvestMethodSteepSlope
         {
@@ -181,7 +169,7 @@ namespace FIA_Biosum_Manager
             this.lblTitle = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.rdoProcessorSpecified = new System.Windows.Forms.RadioButton();
-            this.rdoLowestCost = new System.Windows.Forms.RadioButton();
+            this.rdoHideLowestCost = new System.Windows.Forms.RadioButton();
             this.rdoTreatment = new System.Windows.Forms.RadioButton();
             this.label18 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -250,7 +238,7 @@ namespace FIA_Biosum_Manager
             // 
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.rdoProcessorSpecified);
-            this.panel1.Controls.Add(this.rdoLowestCost);
+            this.panel1.Controls.Add(this.rdoHideLowestCost);
             this.panel1.Controls.Add(this.rdoTreatment);
             this.panel1.Controls.Add(this.label18);
             this.panel1.Controls.Add(this.label16);
@@ -290,7 +278,7 @@ namespace FIA_Biosum_Manager
             this.rdoProcessorSpecified.AutoSize = true;
             this.rdoProcessorSpecified.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rdoProcessorSpecified.ForeColor = System.Drawing.Color.Black;
-            this.rdoProcessorSpecified.Location = new System.Drawing.Point(522, 35);
+            this.rdoProcessorSpecified.Location = new System.Drawing.Point(355, 35);
             this.rdoProcessorSpecified.Name = "rdoProcessorSpecified";
             this.rdoProcessorSpecified.Size = new System.Drawing.Size(127, 19);
             this.rdoProcessorSpecified.TabIndex = 43;
@@ -299,19 +287,20 @@ namespace FIA_Biosum_Manager
             this.rdoProcessorSpecified.UseVisualStyleBackColor = true;
             this.rdoProcessorSpecified.CheckedChanged += new System.EventHandler(this.rdoProcessorSpecified_CheckedChanged);
             // 
-            // rdoLowestCost
+            // rdoHideLowestCost
             // 
-            this.rdoLowestCost.AutoSize = true;
-            this.rdoLowestCost.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoLowestCost.ForeColor = System.Drawing.Color.Black;
-            this.rdoLowestCost.Location = new System.Drawing.Point(350, 35);
-            this.rdoLowestCost.Name = "rdoLowestCost";
-            this.rdoLowestCost.Size = new System.Drawing.Size(161, 19);
-            this.rdoLowestCost.TabIndex = 42;
-            this.rdoLowestCost.TabStop = true;
-            this.rdoLowestCost.Text = "Lowest per acre cost ";
-            this.rdoLowestCost.UseVisualStyleBackColor = true;
-            this.rdoLowestCost.CheckedChanged += new System.EventHandler(this.rdoLowestCost_CheckedChanged);
+            this.rdoHideLowestCost.AutoSize = true;
+            this.rdoHideLowestCost.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoHideLowestCost.ForeColor = System.Drawing.Color.Black;
+            this.rdoHideLowestCost.Location = new System.Drawing.Point(522, 35);
+            this.rdoHideLowestCost.Name = "rdoHideLowestCost";
+            this.rdoHideLowestCost.Size = new System.Drawing.Size(161, 19);
+            this.rdoHideLowestCost.TabIndex = 42;
+            this.rdoHideLowestCost.TabStop = true;
+            this.rdoHideLowestCost.Text = "Lowest per acre cost ";
+            this.rdoHideLowestCost.UseVisualStyleBackColor = true;
+            this.rdoHideLowestCost.Visible = false;
+            this.rdoHideLowestCost.CheckedChanged += new System.EventHandler(this.rdoHideLowestCost_CheckedChanged);
             // 
             // rdoTreatment
             // 
@@ -762,31 +751,24 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
             if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
             {
-                if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.LOWEST_COST))
-                {
-                    this.rdoTreatment.Checked = false;
-                    this.rdoProcessorSpecified.Checked = false;
-                    this.rdoLowestCost.Checked = true;
-                }
-                else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.SELECTED))
+                if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.SELECTED))
                 {
                     this.rdoTreatment.Checked = false;
                     this.rdoProcessorSpecified.Checked = true;
-                    this.rdoLowestCost.Checked = false;
+                    //this.rdoHideLowestCost.Checked = false;
                 }
                 else
                 {
                     this.rdoTreatment.Checked = true;
                     this.rdoProcessorSpecified.Checked = false;
-                    this.rdoLowestCost.Checked = false;
+                    //this.rdoHideLowestCost.Checked = false;
                 }
 
                 cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                 cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
                 // Set default harvest methods if otherwise empty; We need them populated if analyst
-                // selects processor-specified or lowest-cost treatment
-                if (this.rdoProcessorSpecified.Checked == true ||
-                    this.rdoLowestCost.Checked == true)
+                // selects processor-specified or LOWEST-COST treatment
+                if (this.rdoProcessorSpecified.Checked == true)
                 {
                     if (String.IsNullOrEmpty(cmbMethod.Text))
                         cmbMethod.Text = "Ground-Based Mech WT";
@@ -827,23 +809,17 @@ namespace FIA_Biosum_Manager
                 FIA_Biosum_Manager.ProcessorScenarioItem oItem = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem;
                 if (ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.m_intError == 0)
                 {
-                    if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.LOWEST_COST))
-                    {
-                        this.rdoTreatment.Checked = false;
-                        this.rdoProcessorSpecified.Checked = false;
-                        this.rdoLowestCost.Checked = true;
-                    }
-                    else if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.SELECTED))
+                    if (oItem.m_oHarvestMethod.SelectedHarvestMethod.Equals(HarvestMethodSelection.SELECTED))
                     {
                         this.rdoTreatment.Checked = false;
                         this.rdoProcessorSpecified.Checked = true;
-                        this.rdoLowestCost.Checked = false;
+                        //this.rdoHideLowestCost.Checked = false;
                     }
                     else
                     {
                         this.rdoTreatment.Checked = true;
                         this.rdoProcessorSpecified.Checked = false;
-                        this.rdoLowestCost.Checked = false;
+                        //this.rdoHideLowestCost.Checked = false;
                     }
                     this.cmbMethod.Text = oItem.m_oHarvestMethod.HarvestMethodLowSlope;
                     cmbSteepSlopeMethod.Text = oItem.m_oHarvestMethod.HarvestMethodSteepSlope;
@@ -903,11 +879,7 @@ namespace FIA_Biosum_Manager
 			//
 			//HARVEST METHOD SELECTION
 			//
-            if (this.rdoLowestCost.Checked)
-            {
-                strValues = strValues + "'" + HarvestMethodSelection.LOWEST_COST.Value + "',";
-            }
-            else if (this.rdoProcessorSpecified.Checked)
+            if (this.rdoProcessorSpecified.Checked)
             {
                 strValues = strValues + "'" + HarvestMethodSelection.SELECTED.Value + "',";
             }
@@ -1275,10 +1247,10 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void rdoLowestCost_CheckedChanged(object sender, EventArgs e)
+        private void rdoHideLowestCost_CheckedChanged(object sender, EventArgs e)
         {
             if (ReferenceProcessorScenarioForm.m_bRulesFirstTime == false) ReferenceProcessorScenarioForm.m_bSave = true;
-            if (this.rdoLowestCost.Checked)
+            if (this.rdoHideLowestCost.Checked)
             {
                 this.cmbSteepSlopeMethod.Enabled = false;
                 this.cmbMethod.Enabled = false;
