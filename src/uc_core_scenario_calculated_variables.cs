@@ -2315,15 +2315,30 @@ namespace FIA_Biosum_Manager
                     oDao.CreateTableLink(m_strTempMDB, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
                     oDao.CreateTableLink(m_strTempMDB, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
 
-                    //Open connection to temporary database and create starting temporary tables
-                    //that is table for weights by rx and rxcycle
-                    m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempMDB, "", ""));
-
                     //Drop strWeightsByRxCyclePreTable if it exists so we can recreate it
                     if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePreTable))
                     {
                         oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePreTable);
                     }
+                    //Drop strWeightsByRxCyclePostTable if it exists so we can recreate it
+                    if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePostTable))
+                    {
+                        oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePostTable);
+                    }
+                    //Drop strWeightsByRxPkgPreTable if it exists so we can recreate it
+                    if (oDao.TableExists(m_strTempMDB, strWeightsByRxPkgPreTable))
+                    {
+                        oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxPkgPreTable);
+                    }
+                    //Drop strWeightsByRxPkgPostTable if it exists so we can recreate it
+                    if (oDao.TableExists(m_strTempMDB, strWeightsByRxPkgPostTable))
+                    {
+                        oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxPkgPostTable);
+                    }
+
+                    //Open connection to temporary database and create starting temporary tables
+                    //that is table for weights by rx and rxcycle
+                    m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strTempMDB, "", ""));
                     m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                           lblFvsVariableName.Text + " " +
                                           "INTO " + strWeightsByRxCyclePreTable +
@@ -2426,39 +2441,45 @@ namespace FIA_Biosum_Manager
                                       "SET w.rx = r.rx " +
                                       "WHERE r.rxcycle = '1'";
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-
-                    //Switch connection to the final storage location and prepare the tables to receive the output
-                    m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strPrePostWeightedDb, "", ""));
+                    m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
                     bool bNewTables = false;
-                    if (!m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTargetPreTable))
+                    if (!oDao.TableExists(strPrePostWeightedDb, strTargetPreTable))
                     {
                         //Link source tables to output database
                         oDao.CreateTableLink(strPrePostWeightedDb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
                         oDao.CreateTableLink(strPrePostWeightedDb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
 
-                        m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                              lblFvsVariableName.Text + " " +
-                              "INTO " + strTargetPreTable +
-                              " FROM " + strSourcePreTable +
-                              " WHERE rxcycle = '1'";
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        string strConn = m_oAdo.getMDBConnString(strPrePostWeightedDb, "", "");
+                        using (var conn = new System.Data.OleDb.OleDbConnection(strConn))
                         {
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                  lblFvsVariableName.Text + " " +
+                                  "INTO " + strTargetPreTable +
+                                  " FROM " + strSourcePreTable +
+                                  " WHERE rxcycle = '1'";
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                            }
+
+                            m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
+                            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                              lblFvsVariableName.Text + " " +
+                                              "INTO " + strTargetPostTable +
+                                              " FROM " + strSourcePostTable +
+                                              " WHERE rxcycle = '1'";
+                            m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
+                            bNewTables = true;
+
+                            oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePreTable);
+                            oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePostTable);
                         }
-
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                        m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                                          lblFvsVariableName.Text + " " +
-                                          "INTO " + strTargetPostTable +
-                                          " FROM " + strSourcePostTable +
-                                          " WHERE rxcycle = '1'";
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                        bNewTables = true;
-
-                        oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePreTable);
-                        oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePostTable);
                     }
+
+                    //Switch connection to the final storage location and prepare the tables to receive the output
+                    m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strPrePostWeightedDb, "", ""));
+
                     //Check to see if columns exists, they shouldn't, warn that values will be overwritten
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     {
@@ -2514,6 +2535,9 @@ namespace FIA_Biosum_Manager
                     //Reload the main grid
                     this.loadLstVariables();
 
+                    frmMain.g_sbpInfo.Text = "Ready";
+                    frmMain.g_oFrmMain.DeactivateStandByAnimation();
+
                     MessageBox.Show("Variable calculation complete! Click Cancel to return to the main Calculated Variables page", "FIA Biosum");
                 }
             }
@@ -2521,6 +2545,8 @@ namespace FIA_Biosum_Manager
             {
                 MessageBox.Show(e2.Message, "Weighted Average", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.m_intError = -1;
+                frmMain.g_sbpInfo.Text = "Ready";
+                frmMain.g_oFrmMain.DeactivateStandByAnimation();
             }
             finally
             {
@@ -2529,8 +2555,6 @@ namespace FIA_Biosum_Manager
                     oDao.m_DaoWorkspace.Close();
                     oDao = null;
                 }
-                frmMain.g_sbpInfo.Text = "Ready";
-                frmMain.g_oFrmMain.DeactivateStandByAnimation();
             }
 
         }
