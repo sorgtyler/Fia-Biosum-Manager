@@ -5346,12 +5346,18 @@ namespace FIA_Biosum_Manager
                 frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
             if (System.IO.File.Exists(strDestFile) == true)
             {
+                // Create backup copy of biosum_ref.accdb if one wasn't already made today
                 string strBackupFileName = System.IO.Path.GetFileNameWithoutExtension(strSourceFile) + strTableSuffix + ".accdb";
-                if (System.IO.File.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
-                    frmMain.g_strBiosumDataDir + "\\" + strBackupFileName) == false)
+                if (!System.IO.File.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
+                    frmMain.g_strBiosumDataDir + "\\" + strBackupFileName))
                 {
                     System.IO.File.Move(strDestFile, frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
                     frmMain.g_strBiosumDataDir + "\\" + strBackupFileName);
+                }
+                else
+                {
+                    // Delete the file if we already have a backup. Otherwise the copy will fail
+                    System.IO.File.Delete(strDestFile);
                 }
             }
             System.IO.File.Copy(strSourceFile, strDestFile);
