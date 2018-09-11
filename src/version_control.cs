@@ -2543,13 +2543,14 @@ namespace FIA_Biosum_Manager
                         oDao = new dao_data_access();
                         //
                         //CREATE THE MDB IF NOT EXIST
+                        //This table no longer lives in ref_master.mdb; In shared appdata directory
                         //
-                        if (oDs.m_strDataSource[x, Datasource.FILESTATUS] == "NF") //NF=table not found
-                        {
-                            oDao.CreateMDB(strCurrDbFile);
-                        }
-                        strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\" + Tables.Reference.DefaultFiadbFVSVariantTableDbFile;
-                        strSourceTableName = Tables.Reference.DefaultFiadbFVSVariantTableName;
+                        //if (oDs.m_strDataSource[x, Datasource.FILESTATUS] == "NF") //NF=table not found
+                        //{
+                        //    oDao.CreateMDB(strCurrDbFile);
+                        //}
+                        //strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\" + Tables.Reference.DefaultFiadbFVSVariantTableDbFile;
+                        //strSourceTableName = Tables.Reference.DefaultFiadbFVSVariantTableName;
                         //
                         //DELETE ANY OLD TABLES
                         //
@@ -5400,6 +5401,29 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName);
             }
 
+            //rename fvs_tree_species table and re-map to %appData%
+            frmMain.g_sbpInfo.Text = "Version Update: Move  table ...Stand by";
+
+            int intFvsVariantTable = oDs.getValidTableNameRow("FIADB FVS Variant");
+            strDirectoryPath = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strFileName = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            strFileStatus = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            strTargetTable = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            strTableStatus = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Moving FVS Variant table ...Stand by";
+            string strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            oAdo.m_strSQL = "UPDATE datasource " +
+                            "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
+                            "WHERE TABLE_TYPE = '" + Datasource.TableTypes.FVSVariant + "'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            oAdo.m_OleDbConnection.Close();
+            
             frmMain.g_sbpInfo.Text = "Version Update: Updating OPCOST configuration database ...Stand by";
             strSourceFile = frmMain.g_oEnv.strAppDir + "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
             strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +

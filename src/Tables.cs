@@ -4533,7 +4533,6 @@ namespace FIA_Biosum_Manager
 			static public string DefaultInventoriesTableName {get {return "inventories";}}
 			static public string DefaultFVSTreeSpeciesTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultFVSTreeSpeciesTableName {get {return "fvs_tree_species";}}
-			static public string DefaultFiadbFVSVariantTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultFiadbFVSVariantTableName {get {return "fiadb_fvs_variant";}}
 			static public string DefaultHarvestMethodsTableDbFile {get {return @"db\ref_master.mdb";}}
             static public string DefaultHarvestMethodsTableName { get { return "harvest_methods"; } }

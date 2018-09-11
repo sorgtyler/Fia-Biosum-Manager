@@ -1412,12 +1412,13 @@ namespace FIA_Biosum_Manager
 						"'processing_site');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 					
-					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " + 
-						"('FIADB FVS Variant'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
-						"'ref_master.mdb'," +
-						"'fiadb_fvs_variant');";
-					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
+                    strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
+                        "('" + Datasource.TableTypes.FVSVariant + "'," +
+                        "'@@AppData@@" + frmMain.g_strBiosumDataDir + "'," +
+                        "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "'," +
+                        "'fiadb_fvs_variant');";
+                    p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
+
 
                     strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
                         "('FIA Tree Macro Plot Breakpoint Diameter'," +
