@@ -1747,7 +1747,10 @@ namespace FIA_Biosum_Manager
 
             static public string DefaultFVSPrePostSeqNumRxPackageAssgnTable { get { return "fvs_output_prepost_seqnum_rxpackage_assignment"; } }
             static public string DefaultFVSPrePostSeqNumRxPackageAssgnTableDbFile { get { return @"db\fvsmaster.mdb"; } }
-			
+
+            static public string DefaultPreFVSSummaryTableName { get { return "PRE_FVS_SUMMARY"; } }
+            static public string DefaultPreFVSSummaryDbFile { get { return @"\fvs\db\PREPOST_FVS_SUMMARY.ACCDB"; } }
+
 
 			public FVS()
 			{
@@ -3490,13 +3493,11 @@ namespace FIA_Biosum_Manager
                     "harvest_cpa DOUBLE ," +
                     "chip_cpa DOUBLE ," +
                     "assumed_movein_cpa DOUBLE ," +
-                    "ideal_complete_cpa DOUBLE DEFAULT 0," +
+                    "ideal_complete_cpa DOUBLE ," +
                     "ideal_harvest_cpa DOUBLE ," +
                     "ideal_chip_cpa DOUBLE ," +
                     "ideal_assumed_movein_cpa DOUBLE ," +
                     "harvest_cpa_warning_msg CHAR(240)," +
-				//						"water_barring_roads_cpa DOUBLE," +
-                //    "brush_cutting_cpa DOUBLE," +                     
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "override_YN CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
@@ -3701,7 +3702,8 @@ namespace FIA_Biosum_Manager
                             " [Unadjusted Small log trees per acre] single," +
                             " [Unadjusted Small log trees average volume (ft3)] single," +
                             " [Unadjusted Large log trees per acre] single," +
-                            " [Unadjusted Large log trees average vol(ft3)] single" +
+                            " [Unadjusted Large log trees average vol(ft3)] single," +
+                            " ba_frac_cut single" +
                             " )";
             }
 
