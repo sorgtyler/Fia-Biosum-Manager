@@ -4,6 +4,12 @@ using System.Windows.Forms;
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Data.OleDb;
+using System.Drawing.Text;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
 
 
 namespace FIA_Biosum_Manager
@@ -14,7 +20,7 @@ namespace FIA_Biosum_Manager
 	public class fvs_input
 	{ 
 		public ado_data_access m_ado;
-		public dao_data_access m_dao;
+		public dao_data_access m_dao = null;
 		public int m_intError=0;
 		private string m_strPlotTable;
 		private string m_strCondTable;
@@ -34,364 +40,239 @@ namespace FIA_Biosum_Manager
 		private System.Data.DataTable m_dt;
 		private string m_strFVSTreeIdIDBWorkTable;
 		private string m_strFVSTreeIdFIAWorkTable;
-        private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_fvs_input_debug.txt";
 
         // Constants for site index equation table
         const String SI_DELIM = "|";
         const String SI_EMPTY = "@";
 
-		/*******************************************************
-		 **RECORD TYPE A
-		 *******************************************************/
-		private string[] m_strSlfALineArray;
-		/// <summary>
-		/// 0
-		/// </summary>
-		const int A_RECORDTYPE=0;
-		/// <summary>
-		/// 1
-		/// </summary>
-		const int A_STANDID=1;
-		/// <summary>
-		/// combination of state,plot,and condition id
-		/// 2 
-		/// </summary>
-		const int A_FVSTREEFILENAME=2;
-		/// <summary>
-		/// 3
-		/// </summary>
-		const int A_SAMPLEPOINTSITEDATAFLAG=3;
-		/// <summary>
-		/// 4
-		/// </summary>
-		const int A_FVSVARIANTSUSED=4;
-		/*******************************************************
-		 **RECORD TYPE B
-		 *******************************************************/
-		private string[] m_strSlfBLineArray;
-		/// <summary>
-		/// 0
-		/// </summary>
-		const int B_RECORDTYPE=0;
-		/// <summary>
-		/// 1
-		/// </summary>
-		const int B_STANDID=1;
-		/// <summary>
-		/// 2
-		/// </summary>
-		const int B_INVYR=2;
-		/// <summary>
-		/// 3
-		/// </summary>
-		const int B_LAT=3;
-		/// <summary>
-		/// 4
-		/// </summary>
-		const int B_LON=4;
-		/// <summary>
-		/// 5
-		/// </summary>
-		const int B_FORESTCD=5;
-		/// <summary>
-		/// 6
-		/// </summary>
-		const int B_PLANTASSOC=6;
-		/// <summary>
-		/// 7
-		/// </summary>
-		const int B_STANDYEAROFORIGIN=7;
-		/// <summary>
-		/// 8
-		/// </summary>
-		const int B_ASPECT=8;
-		/// <summary>
-		/// 9
-		/// </summary>
-		const int B_SLOPEPERCENT=9;
-		/// <summary>
-		/// 10
-		/// </summary>
-		const int B_ELEV=10;
-		/// <summary>
-		/// 11
-		/// </summary>
-		const int B_BASALAREAFACTOR=11;
-		/// <summary>
-		/// 12
-		/// </summary>
-		const int B_INVERSESMALLTREE=12;
-		/// <summary>
-		/// 13
-		/// </summary>
-		const int B_DBHBREAKPOINT=13;
-		/// <summary>
-		/// 14
-		/// </summary>
-		const int B_NUMBEROFPLOTSPERFILE=14;
-		/// <summary>
-		/// 15
-		/// </summary>
-		const int B_NUMBEROFNONSTOCKABLEPLOTS=15;
-		/// <summary>
-		/// 16
-		/// </summary>
-		const int B_STANDSAMPLINGWEIGHT=16;
-		/// <summary>
-		/// 17
-		/// </summary>
-		const int B_STOCKABLEPERCENT=17;
-		/// <summary>
-		/// 18
-		/// </summary>
-		const int B_DBHGROWTHTRANSLATIONCODE=18;
-		/// <summary>
-		/// 19
-		/// </summary>
-		const int B_DBHGROWTHMEASUREMENTPERIOD=19;
-		/// <summary>
-		/// 20
-		/// </summary>
-		const int B_HTGROWTHTRANSLATIONCODE=20;
-		/// <summary>
-		/// 21
-		/// </summary>
-		const int B_HTGROWTHMEASUREMENTPERIOD=21;
-		/// <summary>
-		/// 22
-		/// </summary>
-		const int B_MORTMEASUREMENTPERIOD=22;
-		/// <summary>
-		/// 23
-		/// </summary>
-		const int B_MAXBASALAREA=23;
-		/// <summary>
-		/// 24
-		/// </summary>
-		const int B_MAXSTANDDENSITYINDEX=24;
-		/// <summary>
-		/// 25
-		/// </summary>
-		const int B_SITEINDEXSPECIES=25;
-		/// <summary>
-		/// 26
-		/// </summary>
-		const int B_SITEINDEX=26;
-		/// <summary>
-		/// 27
-		/// </summary>
-		const int B_MODELTYPE=27;
-		/// <summary>
-		/// 28
-		/// </summary>
-		const int B_PHYSIOGRAPHICREGIONCODE=28;
+	    public enum m_enumDWMOption
+	    {
+	        SKIP_FUEL_MODEL_AND_DWM_DATA,
+	        USE_FUEL_MODEL_OR_DWM_DATA,
+            USE_FUEL_MODEL_ONLY,
+            USE_DWM_DATA_ONLY,
+	    };
 
-        struct FVS_TREE_ID
-        {
-            static public string strVariant;
-            static public int intPlotId;
-            static public int intTreeId;
-            static public string strPlotId_formatted;
-            static public string strTreeId_formatted;
-        }
+	    private int m_intDWMOption;
 
-        
+	    private string m_strDwmCoarseWoodyDebrisTable;
+	    private string m_strDwmFineWoodyDebrisTable;
+	    private string m_strDwmTransectSegmentTable;
+	    private string m_strDwmDuffLitterTable;
+	    private string m_strRefForestTypeTable;
+	    private string m_strRefForestTypeGroupTable;
+	    private string m_strFiaTreeSpeciesRefTable;
+	    private string m_strPopPlotStratumAssignTable;
 
+	    private string m_strMinSmallFwdTransectLengthTotal = "10";
+	    private string m_strMinLargeFwdTransectLengthTotal = "30";
+	    private string m_strMinCwdTransectLengthTotal = "48";
+	    private string m_strMinDuffLitterPitCount;
+	    private string m_strDuffExcludedYears;
+	    private string m_strLitterExcludedYears;
 
-        
+        private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_fvs_input_debug.txt";
 
-		
-
-
-
-		public fvs_input(string p_strProjDir,frmTherm p_frmTherm)
+	    public fvs_input(string p_strProjDir,frmTherm p_frmTherm)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
-			
-			m_DataSource = new Datasource();
-			m_DataSource.LoadTableColumnNamesAndDataTypes=false;
-			m_DataSource.LoadTableRecordCount=false;
-			m_DataSource.m_strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
-			m_DataSource.m_strDataSourceTableName = "datasource";
-			m_DataSource.m_strScenarioId="";
-			m_DataSource.populate_datasource_array();
-			this.m_strProjDir=p_strProjDir.Trim();
+		    m_strProjDir = p_strProjDir.Trim();
+		    InitializeDataSource();
 
-			this.m_strPlotTable = this.m_DataSource.getValidDataSourceTableName("PLOT");
-			this.m_strCondTable = this.m_DataSource.getValidDataSourceTableName("CONDITION");
-			this.m_strTreeTable = this.m_DataSource.getValidDataSourceTableName("TREE");
-			this.m_strTreeSpcTable = this.m_DataSource.getValidDataSourceTableName("TREE SPECIES");
-			this.m_strSiteTreeTable = this.m_DataSource.getValidDataSourceTableName("SITE TREE");
-			this.m_strFVSTreeSpcTable = this.m_DataSource.getValidDataSourceTableName("FVS TREE SPECIES");
-			
-			if (this.m_strPlotTable.Trim().Length == 0) 
-			{
-				MessageBox.Show("!!Could Not Locate Plot Table!!","FVS Input",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-				return;
-			}
-			if (this.m_strCondTable.Trim().Length == 0) 
-			{
-				MessageBox.Show("!!Could Not Locate Condition Table!!","FVS Input",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-				return;
-			}
-			if (this.m_strTreeTable.Trim().Length == 0)
-			{
-				MessageBox.Show("!!Could Not Locate Tree Table!!","FVS Input",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-				return;
-			}
-			
-			if (this.m_strTreeSpcTable.Trim().Length == 0)
-			{
-				MessageBox.Show("!!Could Not Locate Tree Species Table!!","FVS Input",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-				return;
-			}
-			if (this.m_strSiteTreeTable.Trim().Length == 0)
-			{
-				MessageBox.Show("!!Could Not Locate Site Tree Table!!","FVS Input",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-				return;
-			}
-			if (this.m_strFVSTreeSpcTable.Trim().Length == 0)
-			{
-				MessageBox.Show("!!Could Not Locate FVS Tree Species Table!!","FVS Input",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-				return;
-			}
+		    this.m_strPlotTable = this.m_DataSource.getValidDataSourceTableName("PLOT");
+		    this.m_strCondTable = this.m_DataSource.getValidDataSourceTableName("CONDITION");
+		    this.m_strTreeTable = this.m_DataSource.getValidDataSourceTableName("TREE");
+		    this.m_strTreeSpcTable = this.m_DataSource.getValidDataSourceTableName("TREE SPECIES");
+		    this.m_strSiteTreeTable = this.m_DataSource.getValidDataSourceTableName("SITE TREE");
+		    this.m_strFVSTreeSpcTable = this.m_DataSource.getValidDataSourceTableName("FVS TREE SPECIES");
 
-			this.m_strTempMDBFile = this.m_DataSource.CreateMDBAndTableDataSourceLinks();
-			this.m_dao = new dao_data_access();
-			this.m_ado = new ado_data_access();
-			this.m_strConn = this.m_ado.getMDBConnString(this.m_strTempMDBFile,"","");
-			this.m_frmTherm = p_frmTherm;
+            m_strDwmCoarseWoodyDebrisTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName;
+            m_strDwmFineWoodyDebrisTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName;
+            m_strDwmTransectSegmentTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName;
+            m_strDwmDuffLitterTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName;
+		    this.m_strRefForestTypeTable = "REF_FOREST_TYPE";
+		    this.m_strRefForestTypeGroupTable = "REF_FOREST_TYPE_GROUP";
+		    this.m_strFiaTreeSpeciesRefTable = m_DataSource.getValidDataSourceTableName("FIA Tree Species Reference");
+		    this.m_strPopPlotStratumAssignTable =
+		        m_DataSource.getValidDataSourceTableName("Population Plot Stratum Assignment");
 
-			/*****************************************************************
-			 **create a table structure to save biosum_cond_id, idb_alltree_id,
-			 **tree cn,fvs_tree_id,fvs_filename
-			 *****************************************************************/
-			System.Data.DataTable p_dtSchema = this.m_ado.getTableSchema(this.m_strConn,"select biosum_cond_id,idb_alltree_id,fvs_tree_id,biosum_cond_id AS fvs_filename from " + this.m_strTreeTable + ";");
-			this.m_strFVSTreeIdIDBWorkTable = this.m_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"fvs_tree_id_update_idb_work_table",p_dtSchema,true);
-			p_dtSchema.Clear();
-			p_dtSchema = this.m_ado.getTableSchema(this.m_strConn,"select biosum_cond_id,cn,fvs_tree_id,biosum_cond_id AS fvs_filename from " + this.m_strTreeTable + ";");
-			
-			this.m_strFVSTreeIdFIAWorkTable = this.m_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"fvs_tree_id_update_fia_work_table",p_dtSchema,true);
 
-			m_strSlfALineArray = new string[5];
-			m_strSlfBLineArray = new string[29];
-			
+		    if (this.m_strPlotTable.Trim().Length == 0)
+		    {
+		        MessageBox.Show("!!Could Not Locate Plot Table!!", "FVS Input",
+		            System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+		        this.m_intError = -1;
+		        return;
+		    }
 
-		}
-		~fvs_input()
-		{
-			try
-			{
-				if (this.m_ado.m_OleDbDataAdapter != null)
-				{
-					this.m_ado.m_OleDbDataAdapter.Dispose();
-					this.m_ado.m_OleDbDataAdapter = null;
-				}
-				if (this.m_ado.m_OleDbConnection != null)
-				{
-					this.m_ado.m_OleDbConnection.Close();
-					this.m_ado.m_OleDbConnection.Dispose();
-					this.m_ado.m_OleDbConnection=null;
-				}
-				
-			}
-			catch
-			{
-			}
-			this.m_ado = null;
-			this.m_dao = null;
-			this.m_DataSource = null;
+		    if (this.m_strCondTable.Trim().Length == 0)
+		    {
+		        MessageBox.Show("!!Could Not Locate Condition Table!!", "FVS Input",
+		            System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+		        this.m_intError = -1;
+		        return;
+		    }
+
+		    if (this.m_strTreeTable.Trim().Length == 0)
+		    {
+		        MessageBox.Show("!!Could Not Locate Tree Table!!", "FVS Input",
+		            System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+		        this.m_intError = -1;
+		        return;
+		    }
+
+		    if (this.m_strTreeSpcTable.Trim().Length == 0)
+		    {
+		        MessageBox.Show("!!Could Not Locate Tree Species Table!!", "FVS Input",
+		            System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+		        this.m_intError = -1;
+		        return;
+		    }
+
+		    if (this.m_strSiteTreeTable.Trim().Length == 0)
+		    {
+		        MessageBox.Show("!!Could Not Locate Site Tree Table!!", "FVS Input",
+		            System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+		        this.m_intError = -1;
+		        return;
+		    }
+
+		    if (this.m_strFVSTreeSpcTable.Trim().Length == 0)
+		    {
+		        MessageBox.Show("!!Could Not Locate FVS Tree Species Table!!", "FVS Input",
+		            System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+		        this.m_intError = -1;
+		        return;
+		    }
+
+		    this.m_strTempMDBFile = this.m_DataSource.CreateMDBAndTableDataSourceLinks();
+		    this.m_dao = new dao_data_access();
+		    m_ado = new ado_data_access();
+		    this.m_strConn = m_ado.getMDBConnString(this.m_strTempMDBFile, "", "");
+		    this.m_frmTherm = p_frmTherm;
 		}
 
-
-		public void Start(string p_strFVSInDir,string p_strVariant)
-		{
-	        bool bUseNewFVSIn = true;
-
-	        if (bUseNewFVSIn)
-	        {
-	            StartFVSInAccdb(p_strFVSInDir, p_strVariant);
-	        }
-	        else
-	        {
-	            StartFVSInTextFiles(p_strFVSInDir, p_strVariant);
-	        }
+	    private void InitializeDataSource()
+	    {
+	        m_DataSource = new Datasource();
+	        m_DataSource.LoadTableColumnNamesAndDataTypes = false;
+	        m_DataSource.LoadTableRecordCount = false;
+	        m_DataSource.m_strDataSourceMDBFile = m_strProjDir + "\\db\\project.mdb";
+	        m_DataSource.m_strDataSourceTableName = "datasource";
+	        m_DataSource.m_strScenarioId = "";
+	        m_DataSource.populate_datasource_array();
 	    }
 
-	    public void StartFVSInTextFiles(string p_strFVSInDir,string p_strVariant)
-		{
-            if (frmMain.g_bDebug)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
-            
-            this.m_intError=0;
-			this.m_strInDir = p_strFVSInDir.Trim() + "\\" + p_strVariant.Trim();
-			this.m_strVariant = p_strVariant.Trim();
-			CheckDir();
-			DeleteFiles();
-			if (this.m_intError!=0) return;
-			InitializeFields();
-			if (this.m_intError != 0) return;
-			CreateLOC();
-			if (this.m_intError != 0) return;
-			CreateSLF();
-			if (this.m_intError !=0) return;
-			CreateFVS();
+	    ~fvs_input()
+	    {
+	        try
+	        {
+	            if (m_ado.m_OleDbDataAdapter != null)
+	            {
+	                m_ado.m_OleDbDataAdapter.Dispose();
+	                m_ado.m_OleDbDataAdapter = null;
+	            }
 
-            if (frmMain.g_bDebug)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
+	            if (m_ado.m_OleDbConnection != null)
+	            {
+	                m_ado.m_OleDbConnection.Close();
+	                m_ado.m_OleDbConnection.Dispose();
+	                m_ado.m_OleDbConnection = null;
+	            }
 
-		}
+	            m_ado = null;
+	        }
+	        catch
+	        {
+	        }
+	        m_ado = null;
+	        if (m_dao != null)
+	        {
+	            if (this.m_dao.m_DaoWorkspace != null)
+	            {
+	                this.m_dao.m_DaoWorkspace.Close();
+	                this.m_dao.m_DaoWorkspace = null;
+	            }
+	            this.m_dao = null;
+	        }
+	        this.m_DataSource = null;
+	    }
 
-        public void StartFVSInAccdb(string p_strFVSInDir, string p_strVariant)
-        {
-            if (frmMain.g_bDebug)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
-            this.m_intError = 0;
-            this.m_strInDir = p_strFVSInDir.Trim() + "\\" + p_strVariant.Trim();
-            this.m_strVariant = p_strVariant.Trim();
-            this.strFVSInMDBFile = "FVSIn.accdb";
 
-            CheckDir();
-            DeleteFiles();
+	    public void Start(string p_strFVSInDir, string p_strVariant)
+	    {
+	        try
+	        {
+	            DebugLogMessage("*****START*****" + System.DateTime.Now.ToString() + "\r\n");
+	            DebugLogMessage("//Start(" + p_strFVSInDir + "," + p_strVariant + ")\r\n", 1);
 
-            CopyFVSBlankDatabaseToFVSInDir(this.m_strInDir);
+	            this.m_intError = 0;
+	            this.m_strInDir = p_strFVSInDir.Trim() + "\\" + p_strVariant.Trim();
+	            this.m_strVariant = p_strVariant.Trim();
+	            this.strFVSInMDBFile = "FVSIn.accdb";
 
-            if (m_ado.m_OleDbConnection != null && m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open) //TODO: if (not null) {if (open conn)}
-            {
-                m_ado.m_OleDbConnection.Close();
-            }
+	            CheckDir();
+	            DeleteFiles();
 
-            CreateTablesLinksToFVSIn(); //uses a dao_data_access exclusively on the temp database
+	            CopyFVSBlankDatabaseToFVSInDir(this.m_strInDir);
 
-            m_ado.OpenConnection(m_strConn); //reopen the connection after the dao connection is released
-            //create work tables with similar schemas to the FVS Input tables
-            CreateFVSWorkTables();
+	            CreateTableLinks();
 
-            //Create FVS input text files
-            if (this.m_intError != 0) return;
-            InitializeFields();
-            if (this.m_intError != 0) return;
+	            //create work tables with similar schemas to the FVS Input tables
+	            CreateFVSWorkTables();
 
-            //Create/append to database input files
-            if (this.m_intError != 0) return;
-            CreateFVSInputDbLOC();
-            if (this.m_intError != 0) return;
-            CreateFVSStandInit();
-            if (this.m_intError != 0) return;
-            CreateFVSTreeInit();
-            if (this.m_intError != 0) return;
+	            //Create FVS input text files
+	            if (this.m_intError != 0) return;
+	            InitializeFields();
+	            if (this.m_intError != 0) return;
 
-            if (frmMain.g_bDebug)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
-        }
+	            //Create/append to database input files
+	            if (this.m_intError != 0) return;
+	            CreateFVSInputDbLOC();
+	            if (this.m_intError != 0) return;
+	            CreateFVSStandInit();
+	            if (this.m_intError != 0) return;
+	            CreateFVSTreeInit();
+	            if (this.m_intError != 0) return;
+
+
+	            if (frmMain.g_bDebug)
+	                frmMain.g_oUtils.WriteText(m_strDebugFile,
+	                    "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
+	        }
+	        finally
+	        {
+	            if (m_ado.m_DataSet != null)
+	            {
+	                m_ado.m_DataSet.Clear();
+	                m_ado.m_DataSet.Dispose();
+	                m_ado.m_DataSet = null;
+	            }
+
+	            if (m_ado.m_OleDbCommand != null)
+	            {
+	                m_ado.m_OleDbCommand.Dispose();
+	                m_ado.m_OleDbCommand = null;
+	            }
+
+	            if (m_ado.m_OleDbConnection != null)
+	            {
+	                m_ado.m_OleDbConnection.Dispose();
+	                m_ado.m_OleDbConnection = null;
+	            }
+
+	            if (m_ado.m_OleDbDataAdapter != null)
+	            {
+	                m_ado.m_OleDbDataAdapter.Dispose();
+	                m_ado.m_OleDbDataAdapter = null;
+	            }
+
+	            if (m_ado.m_OleDbDataReader != null)
+	            {
+	                m_ado.m_OleDbDataReader.Dispose();
+	                m_ado.m_OleDbDataReader = null;
+	            }
+	        }
+	    }
 
 	    private void CreateFVSWorkTables()
 	    {
@@ -399,14 +280,30 @@ namespace FIA_Biosum_Manager
              * processing will stop before these tables are deleted 
              * if there are no stands in the standlist dataset.
              */
-	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_StandInit_WorkTable"))
-	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.StandInit.DeleteWorkTable());
-	        if (m_ado.TableExist(m_ado.m_OleDbConnection, "FVS_TreeInit_WorkTable"))
-	            m_ado.SqlNonQuery(m_ado.m_OleDbConnection, Queries.FVS.FVSInput.TreeInit.DeleteWorkTable());
-	        frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTable(m_ado, m_ado.m_OleDbConnection,
-	            "FVS_StandInit_WorkTable");
-	        frmMain.g_oTables.m_oFvs.CreateFVSInputTreeInitWorkTable(m_ado, m_ado.m_OleDbConnection,
-	            "FVS_TreeInit_WorkTable");
+            DebugLogMessage("//CreateFVSWorkTables()\r\n", 1);
+
+	        using (var conn = new OleDbConnection(m_strConn))
+	        {
+                conn.Open();
+	            if (m_ado.TableExist(conn, "FVS_StandInit_WorkTable"))
+	            {
+	                DebugLogSQL(Queries.FVS.FVSInput.StandInit.DeleteFvsStandInitWorkTable());
+	                m_ado.SqlNonQuery(conn, Queries.FVS.FVSInput.StandInit.DeleteFvsStandInitWorkTable());
+	            }
+
+	            if (m_ado.TableExist(conn, "FVS_TreeInit_WorkTable"))
+	            {
+	                DebugLogSQL(Queries.FVS.FVSInput.TreeInit.DeleteWorkTable());
+	                m_ado.SqlNonQuery(conn, Queries.FVS.FVSInput.TreeInit.DeleteWorkTable());
+	            }
+
+	            DebugLogSQL(frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTableSQL("FVS_StandInit_WorkTable"));
+	            frmMain.g_oTables.m_oFvs.CreateFVSInputStandInitTable(m_ado, conn,
+	                "FVS_StandInit_WorkTable");
+	            DebugLogSQL(frmMain.g_oTables.m_oFvs.CreateFVSInputTreeInitTableSQL("FVS_TreeInit_WorkTable"));
+	            frmMain.g_oTables.m_oFvs.CreateFVSInputTreeInitWorkTable(m_ado, conn,
+	                "FVS_TreeInit_WorkTable");
+	        }
 	    }
 
 	    public void CopyFVSBlankDatabaseToFVSInDir(string strFVSInDir)
@@ -415,32 +312,138 @@ namespace FIA_Biosum_Manager
             string strFVSInSourcePath = p_env.strAppDir + "\\db\\" + this.strFVSInMDBFile;
             string strFVSInDestPath = strFVSInDir + "\\" + this.strFVSInMDBFile;
             File.Copy(strFVSInSourcePath, strFVSInDestPath, true);
-            string strFVSInConn = this.m_ado.getMDBConnString(strFVSInDestPath, "", "");
+            string strFVSInConn = m_ado.getMDBConnString(strFVSInDestPath, "", "");
 
-            string strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllPlots(this.strFVSInMDBFile);
-            this.m_ado.SqlNonQuery(strFVSInConn, strSQL);
-            strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllStands(this.strFVSInMDBFile);
-            this.m_ado.SqlNonQuery(strFVSInConn, strSQL);
+            using (var conn = new OleDbConnection(strFVSInConn))
+            {
+                conn.Open();
+                string strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllPlots(this.strFVSInMDBFile);
+                m_ado.SqlNonQuery(conn, strSQL);
+                strSQL = Queries.FVS.FVSInput.GroupAddFilesAndKeywords.UpdateAllStands(this.strFVSInMDBFile);
+                m_ado.SqlNonQuery(conn, strSQL);
+            }
 
             p_env = null;
         }
 
+	    public void CreateTableLinks()
+	    {
+            DebugLogMessage("//CreateTableLinks()\r\n", 1);
 
-        public void CreateTablesLinksToFVSIn()
-        {
-            //Create links to the fvs\data\currentvariant\FVSIn.accdb tables in the temp database fia_biosum_xxx_xxx.accdb, and overwrite links if they exist
-            m_dao = new dao_data_access();
+	        if (m_dao != null)
+	        {
+	            if (m_dao.m_DaoDatabase != null)
+	            {
+	                m_dao.m_DaoDatabase.Close();
+	                System.Threading.Thread.Sleep(5000);
+	                m_dao.m_DaoDatabase = null;
+	            }
 
-            m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_StandInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
-                "FVS_StandInit", true);
-            m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_TreeInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
-                "FVS_TreeInit", true);
+	            if (m_dao.m_DaoWorkspace != null)
+	            {
+	                m_dao.m_DaoWorkspace.Close();
+	                System.Threading.Thread.Sleep(5000);
+	                m_dao.m_DaoWorkspace = null;
+	            }
 
-            m_dao = null;
-        }
+	            m_dao = null;
+	        }
+
+	        if (m_dao == null)
+	        {
+	            m_dao = new dao_data_access();
+	        }
+
+            //Destination FVSIn.accdb tables
+	        m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_StandInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
+	            "FVS_StandInit", true);
+	        m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_TreeInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
+	            "FVS_TreeInit", true);
+
+	        
+            //Reference Tables in biosum_ref.accdb
+	        m_dao.CreateTableLink(this.m_strTempMDBFile, m_strRefForestTypeTable,
+	            frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
+	            frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile,
+	            m_strRefForestTypeTable, true);
+	        m_dao.CreateTableLink(this.m_strTempMDBFile, m_strRefForestTypeGroupTable,
+	            frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
+	            frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile,
+	            m_strRefForestTypeGroupTable, true);
+
+            //DWM Source Tables
+            m_dao.CreateTableLink(this.m_strTempMDBFile, m_strDwmCoarseWoodyDebrisTable, m_strProjDir + "\\db\\master_aux.accdb", m_strDwmCoarseWoodyDebrisTable, true);
+            m_dao.CreateTableLink(this.m_strTempMDBFile, m_strDwmFineWoodyDebrisTable, m_strProjDir + "\\db\\master_aux.accdb", m_strDwmFineWoodyDebrisTable, true);
+            m_dao.CreateTableLink(this.m_strTempMDBFile, m_strDwmDuffLitterTable, m_strProjDir + "\\db\\master_aux.accdb", m_strDwmDuffLitterTable, true);
+            m_dao.CreateTableLink(this.m_strTempMDBFile, m_strDwmTransectSegmentTable, m_strProjDir + "\\db\\master_aux.accdb", m_strDwmTransectSegmentTable, true);
+
+            //TODO: GRM Source Tables
+
+	        if (m_dao.m_DaoDatabase != null)
+	        {
+	            m_dao.m_DaoDatabase.Close();
+	            System.Threading.Thread.Sleep(5000);
+	            m_dao.m_DaoDatabase = null;
+	        }
+
+	        if (m_dao.m_DaoWorkspace != null)
+	        {
+	            m_dao.m_DaoWorkspace.Close();
+	            System.Threading.Thread.Sleep(5000);
+	            m_dao.m_DaoWorkspace = null;
+	        }
+
+	    }
+	    public void CreateTablesLinksToFVSIn()
+	    {
+            DebugLogMessage("//CreateTablesLinksToFVSIn()\r\n", 1);
+
+	        if (m_dao != null)
+	        {
+	            if (m_dao.m_DaoDatabase != null)
+	            {
+	                m_dao.m_DaoDatabase.Close();
+	                System.Threading.Thread.Sleep(5000);
+	                m_dao.m_DaoDatabase = null;
+	            }
+
+	            if (m_dao.m_DaoWorkspace != null)
+	            {
+	                m_dao.m_DaoWorkspace.Close();
+	                System.Threading.Thread.Sleep(5000);
+	                m_dao.m_DaoWorkspace = null;
+	            }
+
+	            m_dao = null;
+	        }
+
+	        if (m_dao == null)
+	        {
+	            m_dao = new dao_data_access();
+	        }
+
+	        m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_StandInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
+	            "FVS_StandInit", true);
+	        m_dao.CreateTableLink(this.m_strTempMDBFile, "FVS_TreeInit", this.m_strInDir + "\\" + this.strFVSInMDBFile,
+	            "FVS_TreeInit", true);
+	        if (m_dao.m_DaoDatabase != null)
+	        {
+	            m_dao.m_DaoDatabase.Close();
+	            System.Threading.Thread.Sleep(5000);
+	            m_dao.m_DaoDatabase = null;
+	        }
+
+	        if (m_dao.m_DaoWorkspace != null)
+	        {
+	            m_dao.m_DaoWorkspace.Close();
+	            System.Threading.Thread.Sleep(5000);
+	            m_dao.m_DaoWorkspace = null;
+	        }
+	    }
 
         private void CreateFVSInputDbLOC()
         {
+            DebugLogMessage("//CreateFVSInputDbLOC()\r\n", 1);
             try
             {
                 System.IO.FileStream p_fs = new System.IO.FileStream(
@@ -469,40 +472,88 @@ namespace FIA_Biosum_Manager
 
         private void CreateFVSStandInit()
         {
+            DebugLogMessage("//CreateFVSStandInit()\r\n", 1);
             try
             {
-                this.m_ado.OpenConnection(this.m_strConn);
-                string strStandInitWorkTable = "FVS_StandInit_WorkTable"; //TODO: Add to fvs_input members?
-                string strStandInit = "FVS_StandInit"; //TODO: Add to fvs_input members?
-                string strSQL;
+                string strStandInitWorkTable = "FVS_StandInit_WorkTable";
+                string strStandInit = "FVS_StandInit";
 
-                strSQL = Queries.FVS.FVSInput.StandInit.BulkImportStandDataFromBioSumMaster(m_strVariant,
-                    strStandInitWorkTable, m_strCondTable, m_strPlotTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                //Import Plot/Cond data that doesn't require much extra transformation
+                if (m_intError == 0)
+                {
+                    using (var conn = new OleDbConnection(m_strConn))
+                    {
+                        conn.Open();
+                        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.BulkImportStandDataFromBioSumMaster(
+                            m_strVariant,
+                            strStandInitWorkTable, m_strCondTable, m_strPlotTable);
+                        m_ado.SqlNonQuery(conn, m_ado.m_strSQL);
+                        DebugLogSQL(m_ado.m_strSQL);
+                    }
+                }
 
                 //Site index and site species sequential insertion into FVS_StandInit_WorkTable
-                if (GenerateSiteIndexAndSiteSpeciesSQL() == false)
-                    return; //if m_intError translated to bool cond by refactoring tool
+                if (m_intError == 0)
+                {
+                    GenerateSiteIndexAndSiteSpeciesSQL();
+                }
 
-                strSQL = Queries.FVS.FVSInput.StandInit.TranslateWorkTableToStandInitTable(strStandInitWorkTable,
-                    strStandInit);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                //Create lookup table for DWM Fuelbed Type Code to convert to FVS format
+                if (m_intError == 0 && new int[]
+                {
+                    (int) m_enumDWMOption.USE_FUEL_MODEL_OR_DWM_DATA,
+                    (int) m_enumDWMOption.USE_FUEL_MODEL_ONLY
+                }.Contains(m_intDWMOption))
+                {
+                    using (var conn = new OleDbConnection(m_strConn))
+                    {
+                        conn.Open();
+                        CreateDwmFuelbedTypeCodeFvsConversionTable(conn);
+                        m_ado.m_strSQL =
+                            Queries.FVS.FVSInput.StandInit.UpdateFuelModel(strStandInitWorkTable, m_strCondTable);
+                        m_ado.SqlNonQuery(conn, m_ado.m_strSQL);
+                        m_ado.SqlNonQuery(conn, "DROP TABLE Ref_DWM_Fuelbed_Type_Codes;");
+                    }
+                }
 
-                //Delete work table
-                strSQL = Queries.FVS.FVSInput.StandInit.DeleteWorkTable();
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
+                //Calculate DWM biomass (tons/acre)
+                if (m_intError == 0 && new int[]
+                {
+                    (int) m_enumDWMOption.USE_FUEL_MODEL_OR_DWM_DATA,
+                    (int) m_enumDWMOption.USE_DWM_DATA_ONLY
+                }.Contains(m_intDWMOption))
+                {
+                    PopulateFuelColumns();
+                }
 
-                //close connection to temp database
-                m_ado.CloseConnection(m_ado.m_OleDbConnection);
-                m_ado.m_OleDbConnection.Dispose();
-                m_ado.m_OleDbConnection = null;
+
+                //Write the final results to /projectroot/fvs/data/variant/FVSIn.accdb and clean up
+                if (m_intError == 0)
+                {
+                    using (OleDbConnection conn = new OleDbConnection(m_strConn))
+                    {
+                        conn.Open();
+                        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.TranslateWorkTableToStandInitTable(
+                            strStandInitWorkTable,
+                            strStandInit);
+                        m_ado.SqlNonQuery(conn, m_ado.m_strSQL);
+                        DebugLogSQL(m_ado.m_strSQL);
+                        //Delete work table
+                        m_ado.m_strSQL = Queries.FVS.FVSInput.StandInit.DeleteFvsStandInitWorkTable();
+                        m_ado.SqlNonQuery(conn, m_ado.m_strSQL);
+                        DebugLogSQL(m_ado.m_strSQL);
+                    }
+
+                    UpdateFvsInConfigurationTable();
+                    CreateConfigurationTextFile();
+                }
+
             }
             catch (Exception e)
             {
-                MessageBox.Show("!!Error!! \n" +
-                                "Module - fvs_input:CreateFVSStandInit  \n" +
-                                "Err Msg - " + e.Message.ToString().Trim(),
-                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
+                MessageBox.Show(
+                    "!!Error!! \n" + "Module - fvs_input:CreateFVSStandInit  \n" + "Err Msg - " +
+                    e.Message.ToString().Trim(), "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Exclamation);
                 this.m_intError = -1;
             }
@@ -510,1870 +561,470 @@ namespace FIA_Biosum_Manager
             {
                 if (m_ado.m_OleDbConnection != null)
                 {
-                    //Todo: do I use close connection here?
                     while (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
+                    {
+                        m_ado.CloseConnection(m_ado.m_OleDbConnection);
                         System.Threading.Thread.Sleep(1000);
+                    }
                     m_ado.m_OleDbConnection.Dispose();
                     m_ado.m_OleDbConnection = null;
                 }
             }
         }
 
-        private bool GenerateSiteIndexAndSiteSpeciesSQL()
+	    private void CreateConfigurationTextFile()
+	    {
+	        string logFile = m_strProjDir + "/fvs/data/" + m_strVariant + "/biosum_fvs_input_configurations.txt";
+	        StringBuilder stringBuilder = new StringBuilder();
+	        stringBuilder.AppendLine("========================================================");
+	        stringBuilder.AppendLine("FVSIn.accdb created: " + DateTime.Now.ToString());
+	        stringBuilder.AppendLine("========================================================");
+	        string choice =
+	            (intDWMOption == (int) m_enumDWMOption.USE_FUEL_MODEL_ONLY ||
+	             intDWMOption == (int) m_enumDWMOption.USE_FUEL_MODEL_OR_DWM_DATA)
+	                ? "Yes"
+	                : "No";
+	        stringBuilder.AppendLine("DWM Scott and Burgan (2005) Surface Fuel Model used: " + choice);
+            choice = (intDWMOption == (int) m_enumDWMOption.USE_DWM_DATA_ONLY ||
+	             intDWMOption == (int) m_enumDWMOption.USE_FUEL_MODEL_OR_DWM_DATA)
+	                ? "Yes"
+	                : "No";
+	        stringBuilder.AppendLine("DWM Fuel Biomass (tons/acre) calculated: " + choice);
+	        stringBuilder.AppendLine("Minimum Small/Medium FWD Transect Length (ft): " + m_strMinSmallFwdTransectLengthTotal);
+	        stringBuilder.AppendLine("Minimum Large FWD Transect Length (ft): " + m_strMinLargeFwdTransectLengthTotal);
+	        stringBuilder.AppendLine("Minimum CWD Transect Length (ft): " + m_strMinCwdTransectLengthTotal);
+	        stringBuilder.AppendLine("Duff years excluded: " + m_strDuffExcludedYears);
+	        stringBuilder.AppendLine("Litter years excluded: " + m_strLitterExcludedYears);
+	        frmMain.g_oUtils.WriteText(logFile, stringBuilder.ToString());
+	    }
+
+        /// <summary>
+        /// Connect to FVSIn for the current variant, add a table with two columns to record configurations
+        /// </summary>
+        private void UpdateFvsInConfigurationTable()
         {
-            fvs_input.site_index oSiteIndex = new site_index();
-            oSiteIndex.ado_data_access = m_ado;
-            oSiteIndex.CondTable = this.m_strCondTable;
-            oSiteIndex.PlotTable = this.m_strPlotTable;
-            oSiteIndex.TreeTable = this.m_strTreeTable;
-            oSiteIndex.SiteTreeTable = this.m_strSiteTreeTable;
-            oSiteIndex.TreeSpeciesTable = this.m_strTreeSpcTable;
-            oSiteIndex.FVSTreeSpeciesTable = this.m_strFVSTreeSpcTable;
-            oSiteIndex.SiteIndexEquations = LoadSiteIndexEquations(this.m_strVariant.Trim().ToUpper());
-            oSiteIndex.DebugFile = this.m_strDebugFile;
-
-            this.m_ado.m_strSQL =
-                Queries.FVS.FVSInput.StandInit.CreateSiteIndexDataset(m_strVariant, m_strCondTable, m_strPlotTable);
-
-            this.m_ado.CreateDataSet(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL, "standlist");
-            if (this.m_ado.m_DataSet.Tables["standlist"].Rows.Count == 0)
+            string strFvsInPathFile = m_strProjDir + "/fvs/data/" + m_strVariant + "/" + strFVSInMDBFile;
+            using (var conn = new OleDbConnection(m_ado.getMDBConnString(strFvsInPathFile, "", "")))
             {
-                this.m_intError = -1;
-                MessageBox.Show("!!No standlist Records To Process!!", "FVS Input",
-                    System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Exclamation);
-                this.m_ado.m_DataSet.Clear();
-                this.m_ado.m_DataSet.Dispose();
-                m_ado.CloseConnection(m_ado.m_OleDbConnection);
-                this.m_ado.m_OleDbConnection.Dispose();
-                return false;
-            }
+                conn.Open();
+                m_ado.m_strSQL = "CREATE TABLE biosum_fvsin_configuration (Setting TEXT(255), `Value` TEXT(255));";
+                m_ado.SqlNonQuery(conn, m_ado.m_strSQL);
+                DebugLogSQL(m_ado.m_strSQL);
 
-            frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
-                "Writing FVS_StandInit For Variant " + this.m_strVariant);
-            frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
-            frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum",
-                this.m_ado.m_DataSet.Tables["standlist"].Rows.Count);
-            this.m_dt = this.m_ado.m_DataSet.Tables["standlist"];
-
-            for (int x = 0; x <= this.m_dt.Rows.Count - 1; x++)
-            {
-                //Variables used for writing SQL insert statements, to be assigned using m_dt.Rows[x]["columnname"]
-                string strStand_ID = "null";
-                string strSite_Species = "null";
-                string strSite_Index = "null";
-
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", x);
-                //Set stand id
-                strStand_ID = "\'" + this.m_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "\'";
-                //Set site index and site species
-                oSiteIndex.getSiteIndex(m_dt.Rows[x]);
-                strSite_Species = "\'" + oSiteIndex.SiteIndexSpeciesAlphaCode + "\'";
-                strSite_Index = oSiteIndex.SiteIndex;
-
-                if (strSite_Species.Contains("@"))
+                List<string[]> configs = CreateFVSInConfigurationList();
+                foreach (string[] pair in configs)
                 {
-                    strSite_Species = "null";
-                }
-
-                if (strSite_Index.Contains("@"))
-                {
-                    strSite_Index = "null";
-                }
-
-                if (strSite_Species != "null" && strSite_Index != "null") //to save a little work
-                {
-                    //Creating the SQL Insert for this record's FVS_StandInit entry
-                    string strUpdateSiteIndexPerStand =
-                        Queries.FVS.FVSInput.StandInit.InsertSiteIndexSpeciesRow(strStand_ID, strSite_Species,
-                            strSite_Index);
-                    this.m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strUpdateSiteIndexPerStand);
+                    m_ado.m_strSQL = String.Format("INSERT INTO biosum_fvsin_configuration (Setting, `Value`) " +
+                                                   "VALUES ('{0}','{1}');", pair[0], pair[1]);
+                    m_ado.SqlNonQuery(conn, m_ado.m_strSQL);
+                    DebugLogSQL(m_ado.m_strSQL);
                 }
             }
-            return true;
         }
+
+	    private List<string[]> CreateFVSInConfigurationList()
+	    {
+	        List<string[]> rows = new List<string[]>();
+	        rows.Add(new string[] {"Created date and time", DateTime.Now.ToString()});
+	        string choice =
+	            (intDWMOption == (int) m_enumDWMOption.USE_FUEL_MODEL_ONLY ||
+	             intDWMOption == (int) m_enumDWMOption.USE_FUEL_MODEL_OR_DWM_DATA)
+	                ? "Yes"
+	                : "No";
+	        rows.Add(new string[] {"Included DWM Scott and Burgan (2005) Surface Fuel Model", choice});
+	        choice = (intDWMOption == (int) m_enumDWMOption.USE_DWM_DATA_ONLY ||
+	                  intDWMOption == (int) m_enumDWMOption.USE_FUEL_MODEL_OR_DWM_DATA)
+	            ? "Yes"
+	            : "No";
+	        rows.Add(new string[] {"Included DWM Fuel Biomass calculations (tons/acre)", choice});
+	        rows.Add(new string[]
+	            {"Minimum Small/Medium FWD Transect Length (ft)", m_strMinSmallFwdTransectLengthTotal});
+	        rows.Add(new string[] {"Minimum Large FWD Transect Length (ft)", m_strMinLargeFwdTransectLengthTotal});
+	        rows.Add(new string[] {"Minimum CWD Transect Length (ft)", m_strMinCwdTransectLengthTotal});
+	        rows.Add(new string[] {"Duff years excluded", m_strDuffExcludedYears});
+	        rows.Add(new string[] {"Litter years excluded", m_strLitterExcludedYears});
+	        return rows;
+	    }
+
+	    private void CreateDwmFuelbedTypeCodeFvsConversionTable(OleDbConnection conn)
+	    {
+	        if (!m_ado.TableExist(conn, "Ref_DWM_Fuelbed_Type_Codes"))
+	        {
+	            DebugLogMessage("Creating Fuelbed Type Code lookup table\r\n", 1);
+	            DebugLogSQL(Queries.FVS.FVSInput.StandInit.CreateDWMFuelbedTypCdToFVSConversionTable());
+	            m_ado.SqlNonQuery(conn, Queries.FVS.FVSInput.StandInit.CreateDWMFuelbedTypCdToFVSConversionTable());
+	            m_intError = m_ado.m_intError;
+
+	            Dictionary<string, int> fuelModelNumbers = new Dictionary<string, int>
+	            {
+	                {"GR1", 101},
+	                {"GR2", 102},
+	                {"GR3", 103},
+	                {"GR4", 104},
+	                {"GR5", 105},
+	                {"GR6", 106},
+	                {"GR7", 107},
+	                {"GR8", 108},
+	                {"GR9", 109},
+	                {"GS1", 121},
+	                {"GS2", 122},
+	                {"GS3", 123},
+	                {"GS4", 124},
+	                {"SH1", 141},
+	                {"SH2", 142},
+	                {"SH3", 143},
+	                {"SH4", 144},
+	                {"SH5", 145},
+	                {"SH6", 146},
+	                {"SH7", 147},
+	                {"SH8", 148},
+	                {"SH9", 149},
+	                {"TU1", 161},
+	                {"TU2", 162},
+	                {"TU3", 163},
+	                {"TU4", 164},
+	                {"TU5", 165},
+	                {"TL1", 181},
+	                {"TL2", 182},
+	                {"TL3", 183},
+	                {"TL4", 184},
+	                {"TL5", 185},
+	                {"TL6", 186},
+	                {"TL7", 187},
+	                {"TL8", 188},
+	                {"TL9", 189},
+	                {"SB1", 201},
+	                {"SB2", 202},
+	                {"SB3", 203},
+	                {"SB4", 204}
+	            };
+
+	            foreach (string key in fuelModelNumbers.Keys)
+	            {
+	                string strSQL = String.Format(
+	                    "INSERT INTO Ref_DWM_Fuelbed_Type_Codes " +
+	                    "(dwm_fuelbed_typcd, fuel_model) VALUES (\'{0}\', {1}) ",
+	                    key, fuelModelNumbers[key]);
+	                DebugLogSQL(strSQL);
+	                m_ado.SqlNonQuery(conn, strSQL);
+	                m_intError = m_ado.m_intError;
+	            }
+	        }
+	    }
+
+        private void GenerateSiteIndexAndSiteSpeciesSQL()
+        {
+            using (var conn = new OleDbConnection(m_strConn))
+            {
+                m_ado.m_OleDbConnection = conn;
+                conn.Open();
+                fvs_input.site_index oSiteIndex = new site_index();
+                oSiteIndex.ado_data_access = m_ado;
+                oSiteIndex.CondTable = this.m_strCondTable;
+                oSiteIndex.PlotTable = this.m_strPlotTable;
+                oSiteIndex.TreeTable = this.m_strTreeTable;
+                oSiteIndex.SiteTreeTable = this.m_strSiteTreeTable;
+                oSiteIndex.TreeSpeciesTable = this.m_strTreeSpcTable;
+                oSiteIndex.FVSTreeSpeciesTable = this.m_strFVSTreeSpcTable;
+                oSiteIndex.SiteIndexEquations = LoadSiteIndexEquations(this.m_strVariant.Trim().ToUpper());
+                oSiteIndex.DebugFile = this.m_strDebugFile;
+
+                m_ado.m_strSQL =
+                    Queries.FVS.FVSInput.StandInit.CreateSiteIndexDataset(m_strVariant, m_strCondTable, m_strPlotTable);
+
+                m_ado.CreateDataSet(conn, m_ado.m_strSQL, "standlist");
+                if (m_ado.m_DataSet.Tables["standlist"].Rows.Count == 0)
+                {
+                    this.m_intError = -1;
+                    MessageBox.Show("!!No standlist Records To Process!!", "FVS Input",
+                        System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    m_ado.m_DataSet.Clear();
+                    m_ado.m_DataSet.Dispose();
+                    return;
+                }
+
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
+                    "Writing FVS_StandInit For Variant " + this.m_strVariant);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
+                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum",
+                    m_ado.m_DataSet.Tables["standlist"].Rows.Count);
+                this.m_dt = m_ado.m_DataSet.Tables["standlist"];
+
+                DebugLogMessage("Inserting Site Index/Site Species\r\n", 1);
+                for (int x = 0; x <= this.m_dt.Rows.Count - 1; x++)
+                {
+                    string strStand_ID = "null";
+                    string strSite_Species = "null";
+                    string strSite_Index = "null";
+
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", x);
+                    strStand_ID = "\'" + this.m_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "\'";
+                    oSiteIndex.getSiteIndex(m_dt.Rows[x]);
+                    strSite_Species = "\'" + oSiteIndex.SiteIndexSpeciesAlphaCode + "\'";
+                    strSite_Index = oSiteIndex.SiteIndex;
+
+                    if (strSite_Species.Contains("@"))
+                    {
+                        strSite_Species = "null";
+                    }
+
+                    if (strSite_Index.Contains("@"))
+                    {
+                        strSite_Index = "null";
+                    }
+
+                    if (strSite_Species != "null" && strSite_Index != "null")
+                    {
+                        m_ado.m_strSQL =
+                            Queries.FVS.FVSInput.StandInit.InsertSiteIndexSpeciesRow(strStand_ID, strSite_Species,
+                                strSite_Index);
+                        DebugLogSQL(m_ado.m_strSQL);
+                        m_ado.SqlNonQuery(conn, m_ado.m_strSQL);
+                    }
+                }
+
+                m_ado.m_DataSet.Clear();
+                m_ado.m_DataSet.Dispose();
+                m_ado.m_DataSet = null;
+            }
+        }
+
+	    private void PopulateFuelColumns()
+	    {
+	        //COARSE WOODY DEBRIS
+            DebugLogMessage("Executing Coarse Woody Debris SQL (multiple steps)\r\n", 1);
+	        foreach (string strSQL in Queries.FVS.FVSInput.StandInit.CalculateCoarseWoodyDebrisBiomassTonsPerAcre(
+	            m_strDwmCoarseWoodyDebrisTable, m_strCondTable, m_strFiaTreeSpeciesRefTable,
+	            m_strDwmTransectSegmentTable, m_strMinCwdTransectLengthTotal))
+	        {
+	            if (!String.IsNullOrEmpty(strSQL) && m_intError == 0)
+	            {
+	                using (OleDbConnection conn = new OleDbConnection(m_strConn))
+	                {
+	                    conn.Open();
+                        DebugLogSQL(strSQL);
+	                    m_ado.SqlNonQuery(conn, strSQL);
+	                    m_intError = m_ado.m_intError;
+	                }
+	            }
+	        }
+
+	        //FINE WOODY DEBRIS
+            DebugLogMessage("Executing Fine Woody Debris SQL (multiple steps)\r\n", 1);
+	        if (m_intError == 0)
+	        {
+	            foreach (string strSQL in Queries.FVS.FVSInput.StandInit.CalculateFineWoodyDebrisBiomassTonsPerAcre(
+	                m_strDwmFineWoodyDebrisTable, m_strCondTable, m_strMinSmallFwdTransectLengthTotal,
+	                m_strMinLargeFwdTransectLengthTotal))
+	            {
+	                using (OleDbConnection conn = new OleDbConnection(m_strConn))
+	                {
+	                    conn.Open();
+
+	                    if (!String.IsNullOrEmpty(strSQL) && m_intError == 0)
+	                    {
+                            DebugLogSQL(strSQL);
+	                        m_ado.SqlNonQuery(conn, strSQL);
+	                        m_intError = m_ado.m_intError;
+                            if (m_intError != 0)
+                                break;
+	                    }
+	                }
+	            }
+	        }
+
+	        //DUFF LITTER
+            DebugLogMessage("Executing Duff Litter SQL (multiple steps)\r\n", 1);
+	        if (m_intError == 0)
+	        {
+	            using (OleDbConnection conn = new OleDbConnection(m_strConn))
+	            {
+	                conn.Open();
+	                string strSQL =
+	                    Queries.FVS.FVSInput.StandInit.CalculateDuffLitterBiomassTonsPerAcre(m_strDwmDuffLitterTable,
+	                        m_strCondTable);
+	                DebugLogSQL(m_ado.m_strSQL);
+	                m_ado.SqlNonQuery(conn, strSQL);
+	                m_intError = m_ado.m_intError;
+
+	                strSQL = Queries.FVS.FVSInput.StandInit.UpdateFvsStandInitDuffLitterColumns();
+	                DebugLogSQL(strSQL);
+	                m_ado.SqlNonQuery(conn, strSQL);
+	                m_intError = m_ado.m_intError;
+
+	                if (!string.IsNullOrEmpty(m_strDuffExcludedYears))
+	                {
+	                    strSQL = Queries.FVS.FVSInput.StandInit.RemoveDuffYears(m_strDuffExcludedYears);
+	                    DebugLogSQL(strSQL);
+	                    m_ado.SqlNonQuery(conn, strSQL);
+	                    m_intError = m_ado.m_intError;
+	                }
+	                if (!string.IsNullOrEmpty(m_strLitterExcludedYears))
+	                {
+	                    strSQL = Queries.FVS.FVSInput.StandInit.RemoveLitterYears(m_strLitterExcludedYears);
+	                    DebugLogSQL(strSQL);
+	                    m_ado.SqlNonQuery(conn, strSQL);
+	                    m_intError = m_ado.m_intError;
+	                }
+	            }
+	        }
+
+            //Clean up worktables
+            DebugLogMessage("Deleting work tables\r\n", 1);
+	        if (m_intError == 0)
+	        {
+	            foreach (string strSQL in Queries.FVS.FVSInput.StandInit.DeleteDwmWorkTables())
+	            {
+	                using (OleDbConnection conn = new OleDbConnection(m_strConn))
+	                {
+	                    conn.Open();
+                        DebugLogSQL(strSQL);
+	                    m_ado.SqlNonQuery(conn, strSQL);
+	                    m_intError = m_ado.m_intError;
+	                    if (m_intError != 0)
+	                        break;
+	                }
+	            }
+	        }
+	    }
 
 
         private void CreateFVSTreeInit()
         {
-            try
+            using (var conn = new OleDbConnection(m_strConn))
             {
-                this.m_ado.OpenConnection(this.m_strConn);
-
-                int intProgressBarCounter = 0;
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
-                    "Writing FVS_TreeInit For Variant " + this.m_strVariant);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", 30);
-
-                string strTreeInitWorkTable = "FVS_TreeInit_WorkTable";
-                string strTreeInit = "FVS_TreeInit";
-
-                //Insert records from Master.mdb
-                string strSQL = Queries.FVS.FVSInput.TreeInit.BulkImportTreeDataFromBioSumMaster(
-                    m_strVariant, strTreeInitWorkTable, m_strCondTable, m_strPlotTable, m_strTreeTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Set FVS_Species_Names using FIA_SPCD & Variant to map FVS_TreeInit_WorkTable to Tree_Species table
-                //These species names are used to determine mistletoe damage codes
-                //strSQL = Queries.FVS.FVSInput.TreeInit.UpdateFVSSpeciesNameColumn(m_strVariant, strTreeInitWorkTable, m_strTreeSpcTable);
-                //m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-
-                //Updating FIA Species Codes to FVS Species Codes
-                //Build the temporary species code conversion table
-                strSQL = Queries.FVS.FVSInput.TreeInit.CreateSpcdConversionTable(m_strCondTable, m_strPlotTable,
-                    m_strTreeTable, m_strTreeSpcTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Execute the Species code update
-                strSQL = Queries.FVS.FVSInput.TreeInit.UpdateFVSSpeciesCodeColumn(m_strVariant, strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Dead trees don't have Compacted Crown Ratio logic in text file approach, so set CrRatio to null where history=9
-                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteCrRatiosForDeadTrees(strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Round Cr<10 to Crown Ratio Class 1 (so that FVS rounds it up to 5% to make it the middle of the threshold)
-                strSQL = Queries.FVS.FVSInput.TreeInit.RoundSingleDigitPercentageCrRatiosDownTo1(strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                /*This logic is present in the CreateFVS code, but Jeremy Fried said we should keep CrRatios for HtCd==4*/
-                //strSQL = "UPDATE FVS_TreeInit_WorkTable SET CrRatio=null WHERE HtCd not in (1,2,3);";
-                //m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-
-                // /*This is a test to compare predispose and fvsin CrRatio when you round up*/
-                //strSQL = Queries.FVS.FVSInput.TreeInit.RoundCrRatioSingleDigitCodes(strTreeInitWorkTable);
-                //m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-
-                //If Htcd not in {1,2,3} then set the Ht and HtTopK to 0
-                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteHtAndHtTopKForNonMeasuredHeights(strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Calculating Broken top using Ht > ActualHt (HtTopK) before setting HtTopK>=Ht to 0. The 0<HtTopK means we could execute this after setting HtTopK's to 0
-                //Broken tops can determine damage codes
-                strSQL = Queries.FVS.FVSInput.TreeInit.SetBrokenTopFlag(strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //If HtTopK >= Ht, set it to 0
-                strSQL = Queries.FVS.FVSInput.TreeInit.SetHtTopKToZeroIfGteHt(strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Set Dbh to 0.1 if Tpa > 25 and dbh <= 0 and live tree (implies seedlings) 
-                strSQL = Queries.FVS.FVSInput.TreeInit.SetInferredSeedlingDbh(strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Pad FVS_TreeInit.Species with 0 in case it's not 3-digits
-                strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInitWorkTable);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Damage code section
-                string[] strDamageCodes = Queries.FVS.FVSInput.TreeInit.DamageCodes(strTreeInitWorkTable);
-                foreach (string strDamageCodeSQL in strDamageCodes)
+                try
                 {
-                    m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strDamageCodeSQL);
-                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
+                    conn.Open();
+                    int intProgressBarCounter = 0;
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
+                        "Writing FVS_TreeInit For Variant " + this.m_strVariant);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", 30);
+
+                    string strTreeInitWorkTable = "FVS_TreeInit_WorkTable";
+                    string strTreeInit = "FVS_TreeInit";
+
+                    //Insert records from Master.mdb
+                    string strSQL = Queries.FVS.FVSInput.TreeInit.BulkImportTreeDataFromBioSumMaster(
+                        m_strVariant, strTreeInitWorkTable, m_strCondTable, m_strPlotTable, m_strTreeTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Updating FIA Species Codes to FVS Species Codes
+                    strSQL = Queries.FVS.FVSInput.TreeInit.CreateSpcdConversionTable(m_strCondTable, m_strPlotTable,
+                        m_strTreeTable, m_strTreeSpcTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Execute the Species code update
+                    strSQL = Queries.FVS.FVSInput.TreeInit.UpdateFVSSpeciesCodeColumn(m_strVariant,
+                        strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Dead trees don't have Compacted Crown Ratio logic in text file approach, so set CrRatio to null where history=9
+                    strSQL = Queries.FVS.FVSInput.TreeInit.DeleteCrRatiosForDeadTrees(strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Round Cr<10 to Crown Ratio Class 1 (so that FVS rounds it up to 5% to make it the middle of the threshold)
+                    strSQL =
+                        Queries.FVS.FVSInput.TreeInit.RoundSingleDigitPercentageCrRatiosDownTo1(strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //If Htcd not in {1,2,3} then set the Ht and HtTopK to 0
+                    strSQL = Queries.FVS.FVSInput.TreeInit.DeleteHtAndHtTopKForNonMeasuredHeights(strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Calculating Broken top using Ht > ActualHt (HtTopK) before setting HtTopK>=Ht to 0.
+                    //The 0<HtTopK means we could execute this after setting HtTopK's to 0
+                    //Broken tops can determine damage codes
+                    strSQL = Queries.FVS.FVSInput.TreeInit.SetBrokenTopFlag(strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //If HtTopK >= Ht, set it to 0
+                    strSQL = Queries.FVS.FVSInput.TreeInit.SetHtTopKToZeroIfGteHt(strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Set Dbh to 0.1 if Tpa > 25 and dbh <= 0 and live tree (implies seedlings) 
+                    strSQL = Queries.FVS.FVSInput.TreeInit.SetInferredSeedlingDbh(strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Pad FVS_TreeInit.Species with 0 in case it's not 3-digits
+                    strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInitWorkTable);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Damage code section
+                    string[] strDamageCodes = Queries.FVS.FVSInput.TreeInit.DamageCodes(strTreeInitWorkTable);
+                    foreach (string strDamageCodeSQL in strDamageCodes)
+                    {
+                        m_ado.SqlNonQuery(conn, strDamageCodeSQL);
+                        frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                            intProgressBarCounter++);
+                    }
+
+                    string[] strTreeValues = Queries.FVS.FVSInput.TreeInit.TreeValueClass(strTreeInitWorkTable);
+                    foreach (string strTreeValueUpdate in strTreeValues)
+                    {
+                        m_ado.SqlNonQuery(conn, strTreeValueUpdate);
+                        frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                            intProgressBarCounter++);
+                    }
+
+                    //Insert into linked FVS_TreeInit after doing intermediate work in the work table
+                    strSQL = Queries.FVS.FVSInput.TreeInit.TranslateWorkTableToTreeInitTable(strTreeInitWorkTable,
+                        strTreeInit);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Pad and trim the Species column again so FVS works with it properly
+                    strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInit);
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+
+                    //Delete work tables
+                    strSQL = Queries.FVS.FVSInput.TreeInit.DeleteWorkTable();
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
+                    strSQL = Queries.FVS.FVSInput.TreeInit.DeleteSpcdChangeWorkTable();
+                    m_ado.SqlNonQuery(conn, strSQL);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
+                        intProgressBarCounter++);
                 }
-
-                string[] strTreeValues = Queries.FVS.FVSInput.TreeInit.TreeValueClass(strTreeInitWorkTable);
-                foreach (string strTreeValueUpdate in strTreeValues)
+                catch (Exception e)
                 {
-                    m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strTreeValueUpdate);
-                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-                }
-
-                //Insert into linked FVS_TreeInit after doing intermediate work in the work table
-                strSQL = Queries.FVS.FVSInput.TreeInit.TranslateWorkTableToTreeInitTable(strTreeInitWorkTable,
-                    strTreeInit);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Pad and trim the Species column again so FVS works with it properly
-                strSQL = Queries.FVS.FVSInput.TreeInit.PadSpeciesWithZero(strTreeInit);
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //Delete work tables
-                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteWorkTable();
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-                strSQL = Queries.FVS.FVSInput.TreeInit.DeleteSpcdChangeWorkTable();
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, strSQL);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
-
-                //close the connection to the temp mdb file
-                m_ado.CloseConnection(m_ado.m_OleDbConnection);
-                m_ado.m_OleDbConnection.Dispose();
-                m_ado.m_OleDbConnection = null;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("!!Error!! \n" +
-                                "Module - fvs_input:CreateFVSTreeInit  \n" +
-                                "Err Msg - " + e.Message.ToString().Trim(),
-                    "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Exclamation);
-                this.m_intError = -1;
-            }
-            finally
-            {
-                if (m_ado.m_OleDbConnection != null)
-                {
-                    //TODO: Do I use close connection here?
-                    while (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
-                        System.Threading.Thread.Sleep(1000);
-                    m_ado.m_OleDbConnection.Dispose();
-                    m_ado.m_OleDbConnection = null;
+                    MessageBox.Show("!!Error!! \n" +
+                                    "Module - fvs_input:CreateFVSTreeInit  \n" +
+                                    "Err Msg - " + e.Message.ToString().Trim(),
+                        "FVS Input", System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    this.m_intError = -1;
                 }
             }
         }
 
 
-
-
-		private void CreateLOC()
-		{
-			try
-			{
-
-				System.IO.FileStream p_fs = new System.IO.FileStream(this.m_strInDir + "\\" + this.m_strVariant + ".loc", System.IO.FileMode.Create, 
-					System.IO.FileAccess.Write);
-				System.IO.StreamWriter p_sw = new System.IO.StreamWriter(p_fs);
-				p_sw.WriteLine("{0,-2}{1,-27}{2,-11}{3,-35}{4,-2}{5,-2}","A",'"' + this.m_strVariant + '"',"@",this.m_strVariant + ".slf","@","@");
-				p_sw.Close();
-				p_fs.Close();
-				p_sw=null;
-				p_fs=null;
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - fvs_input:CreateLOC  \n" + 
-					"Err Msg - " + e.Message.ToString().Trim(),
-					"FVS Input",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-			}
-
-
-        
-		}
-
-		private void CreateSLF()
-		{
-			try
-			{
-				int x;
-				int y;
-
-				this.m_ado.OpenConnection(this.m_strConn);
-
-				fvs_input.site_index oSiteIndex = new site_index();
-                oSiteIndex.ado_data_access = m_ado;
-				oSiteIndex.CondTable = this.m_strCondTable;
-				oSiteIndex.PlotTable = this.m_strPlotTable;
-				oSiteIndex.TreeTable = this.m_strTreeTable;
-				oSiteIndex.SiteTreeTable = this.m_strSiteTreeTable;
-				oSiteIndex.TreeSpeciesTable = this.m_strTreeSpcTable;
-				oSiteIndex.FVSTreeSpeciesTable = this.m_strFVSTreeSpcTable;
-                oSiteIndex.SiteIndexEquations = LoadSiteIndexEquations(this.m_strVariant.Trim().ToUpper());
-                oSiteIndex.DebugFile = this.m_strDebugFile;
-
-				this.m_ado.m_strSQL = "SELECT p.biosum_plot_id, c.biosum_cond_id, p.statecd ," + 
-					"p.countycd, p.plot, p.fvs_variant, p.measyear," + 
-					"c.adforcd,p.elev,c.condid, c.habtypcd1," + 
-					"c.stdage,c.slope,c.aspect,c.ground_land_class_pnw," + 
-					"c.sisp,p.lat,p.lon,p.idb_plot_id,c.adforcd,c.habtypcd1, " +
-                    "p.elev,c.landclcd,c.ba_ft2_ac,c.habtypcd1 " + 
-					"FROM " + this.m_strCondTable + " c," + 
-					this.m_strPlotTable + " p " + 
-					"WHERE p.biosum_plot_id = c.biosum_plot_id AND " + 
-                    "c.landclcd=1 AND " + 
-					"ucase(trim(p.fvs_variant)) = '" + this.m_strVariant.Trim().ToUpper() + "';";
-
-
-				this.m_ado.CreateDataSet(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL,"slf");
-
-				if (this.m_ado.m_DataSet.Tables["slf"].Rows.Count == 0)
-				{
-					this.m_intError = -1;
-					MessageBox.Show("!!No SLF Records To Process!!", "FVS Input",
-						System.Windows.Forms.MessageBoxButtons.OK,
-						System.Windows.Forms.MessageBoxIcon.Exclamation);
-					this.m_ado.m_DataSet.Clear();
-					this.m_ado.m_DataSet.Dispose();
-					this.m_ado.m_OleDbConnection.Close();
-					this.m_ado.m_OleDbConnection.Dispose();
-					return;
-
-				}
-				string strPlot="";
-				int intStdAge=0;
-				System.IO.FileStream p_fs = new System.IO.FileStream(this.m_strInDir + "\\" + this.m_strVariant + ".slf", System.IO.FileMode.Create, 
-					System.IO.FileAccess.Write);
-				System.IO.StreamWriter p_sw = new System.IO.StreamWriter(p_fs);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text", "Building SLF File For Variant " + this.m_strVariant);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", this.m_ado.m_DataSet.Tables["slf"].Rows.Count);
-				this.m_dt = this.m_ado.m_DataSet.Tables["slf"];
-
-				for (x=0; x<= this.m_dt.Rows.Count-1;x++)
-				{
-                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", x);
-
-				
-					
-					strPlot="";
-					intStdAge=0;
-
-					for (y=0;y<=this.m_strSlfALineArray.Length-1;y++)
-					{
-						this.m_strSlfALineArray[y]="";
-					}
-
-					for (y=0;y<=this.m_strSlfBLineArray.Length-1;y++)
-					{
-						this.m_strSlfBLineArray[y]="";
-					}
-
-					m_strSlfALineArray[fvs_input.A_RECORDTYPE]="A";
-					m_strSlfALineArray[fvs_input.A_STANDID]=this.m_dt.Rows[x]["biosum_cond_id"].ToString().Trim();
-					m_strSlfBLineArray[fvs_input.B_RECORDTYPE]="B";
-					m_strSlfBLineArray[fvs_input.B_STANDID]=this.m_dt.Rows[x]["biosum_cond_id"].ToString().Trim();
-					
-					//process fields that are different for idb and fiadb
-					if (this.m_dt.Rows[x]["biosum_plot_id"].ToString().Substring(0,1) == "1")
-					{
-						m_strSlfALineArray[fvs_input.A_FVSTREEFILENAME] = this.m_dt.Rows[x]["statecd"].ToString().PadLeft(2,'0');
-						strPlot= this.m_dt.Rows[x]["plot"].ToString().PadLeft(5,'0');
-						this.m_strSlfBLineArray[fvs_input.B_INVYR] = this.m_dt.Rows[x]["measyear"].ToString().Trim();
-						
-						//stand age
-						if (this.m_dt.Rows[x]["stdage"] == System.DBNull.Value)
-						{
-							intStdAge=0;
-						}
-						else
-						{
-							if (this.m_dt.Rows[x]["stdage"].ToString().Trim().Length > 0)
-							{
-								intStdAge = Convert.ToInt32(this.m_dt.Rows[x]["stdage"]);
-							}
-							else
-							{
-								intStdAge=0;
-							}
-						}
-					}
-					else
-					{
-						m_strSlfALineArray[fvs_input.A_FVSTREEFILENAME] = this.IDB_getStateCd(this.m_dt.Rows[x]["statecd"].ToString().Trim());
-						strPlot= this.m_dt.Rows[x]["idb_plot_id"].ToString().Trim();
-						strPlot= strPlot.PadLeft(5,'0');
-						/*******************************************************
-						 **a few of the idb records do not have a 
-						 **value in the measured year field. Get the year
-						 **of the inventory as the year measured
-						 *******************************************************/
-						if (this.m_dt.Rows[x]["measyear"] == System.DBNull.Value)
-						{
-							this.m_strSlfBLineArray[fvs_input.B_INVYR] = IDB_getInvYear(this.m_dt.Rows[x]["biosum_plot_id"].ToString().Substring(1,4));
-						}
-						else
-						{
-							this.m_strSlfBLineArray[fvs_input.B_INVYR] = this.m_dt.Rows[x]["measyear"].ToString().Trim();
-							if (m_strSlfBLineArray[fvs_input.B_INVYR].Length ==0)
-							{
-								this.m_strSlfBLineArray[fvs_input.B_INVYR] = IDB_getInvYear(this.m_dt.Rows[x]["biosum_plot_id"].ToString().Substring(1,4));
-							}
-							if (this.m_strSlfBLineArray[fvs_input.B_INVYR]=="1197")
-							{
-								this.m_strSlfBLineArray[fvs_input.B_INVYR]="1997";
-							}
-						}
-
-						//stand age
-						if (this.m_dt.Rows[x]["stdage"] == System.DBNull.Value)
-						{
-							intStdAge=0;
-						}
-						else
-						{
-							if (this.m_dt.Rows[x]["stdage"].ToString().Trim().Length > 0)
-							{
-								intStdAge = this.IDB_getStandAge(Convert.ToInt32(this.m_dt.Rows[x]["stdage"]));
-							}
-							else
-							{
-								intStdAge=0;
-							}
-
-						}
-					}
-					m_strSlfALineArray[fvs_input.A_FVSTREEFILENAME]+=strPlot + this.m_dt.Rows[x]["condid"].ToString().Trim() + ".fvs"; 
-					m_strSlfALineArray[fvs_input.A_SAMPLEPOINTSITEDATAFLAG]="NoPointData  ";
-					m_strSlfALineArray[fvs_input.A_FVSVARIANTSUSED] = m_strVariant;
-					p_sw.WriteLine("{0,-2}{1,-27}{2,-102}{3,-13}{4,-5}{5,-2}",
-						this.m_strSlfALineArray[fvs_input.A_RECORDTYPE],
-						this.m_strSlfALineArray[fvs_input.A_STANDID],
-						this.m_strSlfALineArray[fvs_input.A_FVSTREEFILENAME],
-						this.m_strSlfALineArray[fvs_input.A_SAMPLEPOINTSITEDATAFLAG],
-						this.m_strSlfALineArray[fvs_input.A_FVSVARIANTSUSED]," @");
-
-					
-
-
-					//latitude (fvs field 4)
-					if (this.m_dt.Rows[x]["lat"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_LAT] = "@";
-					}
-					else
-					{
-						this.m_strSlfBLineArray[fvs_input.B_LAT] = this.m_dt.Rows[x]["lat"].ToString().Trim();
-						if (this.m_strSlfBLineArray[fvs_input.B_LAT].Length ==0)
-						{
-							this.m_strSlfBLineArray[fvs_input.B_LAT]="@";							
-						}
-						else
-						{
-							if (this.m_strSlfBLineArray[fvs_input.B_LAT] == ".") 
-								this.m_strSlfBLineArray[fvs_input.B_LAT] = "@";
-						}
-					}
-					this.m_strSlfBLineArray[fvs_input.B_LAT] = 
-						this.m_strSlfBLineArray[fvs_input.B_LAT].PadRight(18,' ');
-
-					//longitude (fvs field 5)
-					if (this.m_dt.Rows[x]["lon"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_LON] = "@";
-					}
-					else
-					{
-						this.m_strSlfBLineArray[fvs_input.B_LON] = this.m_dt.Rows[x]["lon"].ToString().Trim();
-						if (this.m_strSlfBLineArray[fvs_input.B_LON].Length ==0)
-						{
-							this.m_strSlfBLineArray[fvs_input.B_LON]="@";							
-						}
-						else
-						{
-							if (this.m_strSlfBLineArray[fvs_input.B_LON] == ".") 
-								this.m_strSlfBLineArray[fvs_input.B_LON] = "@";
-						}
-					}
-					this.m_strSlfBLineArray[fvs_input.B_LON] = 
-						this.m_strSlfBLineArray[fvs_input.B_LON].PadRight(18,' ');
-
-					//USFS Region and Forest Code (location) (fvs field 6)
-					if (this.m_dt.Rows[x]["adforcd"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_FORESTCD] = "0";
-					}
-					else
-					{
-						this.m_strSlfBLineArray[fvs_input.B_FORESTCD] = this.m_dt.Rows[x]["adforcd"].ToString().Trim();
-						if (this.m_strSlfBLineArray[fvs_input.B_FORESTCD].Length ==0)
-						{
-							this.m_strSlfBLineArray[fvs_input.B_FORESTCD]="0";							
-						}
-					}
-					this.m_strSlfBLineArray[fvs_input.B_FORESTCD] = 
-						this.m_strSlfBLineArray[fvs_input.B_FORESTCD].PadRight(5,' ');
-
-					//Plant Association (habtypcd1) (fvs field 7)
-					if (this.m_dt.Rows[x]["habtypcd1"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC] = "@";
-					}
-					else
-					{
-						this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC] = this.m_dt.Rows[x]["habtypcd1"].ToString().Trim();
-						if (this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC].Length ==0)
-						{
-							this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC]="@";							
-						}
-						if (this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC] == "n.a.")
-							this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC] = "@";
-					}
-					this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC] = 
-						this.m_strSlfBLineArray[fvs_input.B_PLANTASSOC].PadRight(10,' ');
-
-					//Stand Year Of Origin (fvs field 8)
-					this.m_strSlfBLineArray[fvs_input.B_STANDYEAROFORIGIN]= 
-						Convert.ToString(Convert.ToInt32(this.m_strSlfBLineArray[fvs_input.B_INVYR]) - intStdAge);
-
-
-					//aspect in degrees (fvs field 9)
-					if (this.m_dt.Rows[x]["aspect"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_ASPECT] = "@";
-					}
-					else
-					{
-						this.m_strSlfBLineArray[fvs_input.B_ASPECT] = this.m_dt.Rows[x]["Aspect"].ToString().Trim();
-						if (this.m_strSlfBLineArray[fvs_input.B_ASPECT].Length ==0)
-						{
-							this.m_strSlfBLineArray[fvs_input.B_ASPECT]="@";							
-						}
-						if (this.m_strSlfBLineArray[fvs_input.B_ASPECT] == "-1") 
-							this.m_strSlfBLineArray[fvs_input.B_ASPECT] = "@";
-					}
-					this.m_strSlfBLineArray[fvs_input.B_ASPECT] = 
-						this.m_strSlfBLineArray[fvs_input.B_ASPECT].PadRight(4,' ');
-
-					//slope percent (fvs field 10)
-					if (this.m_dt.Rows[x]["elev"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT] = "@";
-					}
-					else
-					{
-						m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT] = this.m_dt.Rows[x]["Slope"].ToString().Trim();
-						if (m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT].Length ==0)
-						{
-							m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT]="@";							
-						}
-						if (m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT] == "-1")
-							m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT] = "@";
-					}
-					m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT] = m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT].PadRight(4,' ');
-
-					//elevation in 100's of feet (fvs field 11)
-					if (this.m_dt.Rows[x]["elev"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_ELEV] = "@";
-					}
-					else
-					{
-						m_strSlfBLineArray[fvs_input.B_ELEV] = this.m_dt.Rows[x]["elev"].ToString().Trim();
-						if (m_strSlfBLineArray[fvs_input.B_ELEV].Length ==0)
-						{
-							m_strSlfBLineArray[fvs_input.B_ELEV]="@";							
-						}
-						if (m_strSlfBLineArray[fvs_input.B_ELEV] != "@")
-						{
-							if (Convert.ToInt32(m_strSlfBLineArray[fvs_input.B_ELEV]) > 0)
-							{
-								m_strSlfBLineArray[fvs_input.B_ELEV] = 
-									Convert.ToString(Convert.ToInt32(m_strSlfBLineArray[fvs_input.B_ELEV]) / 100);
-								m_strSlfBLineArray[fvs_input.B_ELEV] = 
-									Convert.ToString(Math.Round(Convert.ToDouble(m_strSlfBLineArray[fvs_input.B_ELEV])));
-							}
-
-						}
-					}
-					m_strSlfBLineArray[fvs_input.B_ELEV]= 
-						m_strSlfBLineArray[fvs_input.B_ELEV].PadRight(4,' ');
-
-					this.m_strSlfBLineArray[fvs_input.B_BASALAREAFACTOR]="0";
-
-					this.m_strSlfBLineArray[fvs_input.B_INVERSESMALLTREE]="1";
-
-					this.m_strSlfBLineArray[fvs_input.B_DBHBREAKPOINT]="999";
-
-					this.m_strSlfBLineArray[fvs_input.B_NUMBEROFPLOTSPERFILE]="1";
-
-					m_strSlfBLineArray[fvs_input.B_NUMBEROFNONSTOCKABLEPLOTS]="0";
-
-					m_strSlfBLineArray[fvs_input.B_STANDSAMPLINGWEIGHT]="1";
-
-					//land class code (proportion of stand considered stockable) (fvs field 12)
-					if (this.m_dt.Rows[x]["landclcd"] == System.DBNull.Value)
-					{
-						this.m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT] = "0";
-					}
-					else
-					{
-						m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT] = 
-							this.m_dt.Rows[x]["landclcd"].ToString().Trim();
-						if (m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT].Length ==0)
-						{
-							m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT]="0";							
-						}
-						else if (m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT] != "1")
-							m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT] = "0";
-					}
-					m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT] = 
-						m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT].PadRight(2,' ');
-
-
-					m_strSlfBLineArray[fvs_input.B_DBHGROWTHTRANSLATIONCODE]="1";
-
-					m_strSlfBLineArray[fvs_input.B_DBHGROWTHMEASUREMENTPERIOD]="10";
-
-					m_strSlfBLineArray[fvs_input.B_HTGROWTHTRANSLATIONCODE]="1";
-
-					m_strSlfBLineArray[fvs_input.B_HTGROWTHMEASUREMENTPERIOD]="5";
-
-					m_strSlfBLineArray[fvs_input.B_MORTMEASUREMENTPERIOD]="5";
-
-					m_strSlfBLineArray[fvs_input.B_MAXBASALAREA]="@";
-
-					m_strSlfBLineArray[fvs_input.B_MAXSTANDDENSITYINDEX]="@";
-
-					oSiteIndex.getSiteIndex(m_dt.Rows[x]);
-
-                    m_strSlfBLineArray[fvs_input.B_SITEINDEXSPECIES] = oSiteIndex.SiteIndexSpeciesAlphaCode;
-
-					m_strSlfBLineArray[fvs_input.B_SITEINDEX]=oSiteIndex.SiteIndex;
-
-					m_strSlfBLineArray[fvs_input.B_MODELTYPE]="@";
-
-					m_strSlfBLineArray[fvs_input.B_PHYSIOGRAPHICREGIONCODE]="@";
-
-					p_sw.WriteLine("{0,-2}{1,-27}{2,-5}{3,-5}{4,-5}{5,-5}{6,-11}" + 
-						"{7,-5}{8,-4}{9,-4}{10,-4}{11,-2}{12,-2}{13,-4}{14,-2}{15,-2}" + 
-						"{16,-2}{17,-2}{18,-2}{19,-3}{20,-2}{21,-2}{22,-2}{23,-2}" + 
-						"{24,-2}{25,-4}{26,-17}{27,-2}{28,-2}{29,-2}",
-						m_strSlfBLineArray[fvs_input.B_RECORDTYPE],
-						m_strSlfBLineArray[fvs_input.B_STANDID],
-						m_strSlfBLineArray[fvs_input.B_INVYR],
-						m_strSlfBLineArray[fvs_input.B_LAT],
-						m_strSlfBLineArray[fvs_input.B_LON],
-						m_strSlfBLineArray[fvs_input.B_FORESTCD],
-						m_strSlfBLineArray[fvs_input.B_PLANTASSOC],
-						m_strSlfBLineArray[fvs_input.B_STANDYEAROFORIGIN],
-						m_strSlfBLineArray[fvs_input.B_ASPECT],
-						m_strSlfBLineArray[fvs_input.B_SLOPEPERCENT],
-						m_strSlfBLineArray[fvs_input.B_ELEV],
-						m_strSlfBLineArray[fvs_input.B_BASALAREAFACTOR],
-						m_strSlfBLineArray[fvs_input.B_INVERSESMALLTREE],
-						m_strSlfBLineArray[fvs_input.B_DBHBREAKPOINT],
-						m_strSlfBLineArray[fvs_input.B_NUMBEROFPLOTSPERFILE],
-						m_strSlfBLineArray[fvs_input.B_NUMBEROFNONSTOCKABLEPLOTS],
-						m_strSlfBLineArray[fvs_input.B_STANDSAMPLINGWEIGHT],
-						m_strSlfBLineArray[fvs_input.B_STOCKABLEPERCENT],
-						m_strSlfBLineArray[fvs_input.B_DBHGROWTHTRANSLATIONCODE],
-						m_strSlfBLineArray[fvs_input.B_DBHGROWTHMEASUREMENTPERIOD],
-						m_strSlfBLineArray[fvs_input.B_HTGROWTHTRANSLATIONCODE],
-						m_strSlfBLineArray[fvs_input.B_HTGROWTHMEASUREMENTPERIOD],
-						m_strSlfBLineArray[fvs_input.B_MORTMEASUREMENTPERIOD],
-						m_strSlfBLineArray[fvs_input.B_MAXBASALAREA],
-						m_strSlfBLineArray[fvs_input.B_MAXSTANDDENSITYINDEX],
-						m_strSlfBLineArray[fvs_input.B_SITEINDEXSPECIES],
-						m_strSlfBLineArray[fvs_input.B_SITEINDEX],
-						m_strSlfBLineArray[fvs_input.B_MODELTYPE],
-						m_strSlfBLineArray[fvs_input.B_PHYSIOGRAPHICREGIONCODE],
-						"@");
-
-
-
-
-					//B 00525C03          1997 42  -125 0       @         1932 315 15  1   0      1      999 1    0    1       1    1 10 1 5  5  @   @   DF  97        @ @  @    @
-
-				}
-				//close the connection to the temp mdb file
-				this.m_ado.m_OleDbConnection.Close();
-				while (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
-					System.Threading.Thread.Sleep(1000);
-				m_ado.m_OleDbConnection.Dispose();
-				m_ado.m_OleDbConnection=null;
-				oSiteIndex = null;
-				p_sw.Close();
-				p_fs.Close();
-				p_sw=null;
-				p_fs=null;
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - fvs_input:CreateSLF  \n" + 
-					"Err Msg - " + e.Message.ToString().Trim(),
-					"FVS Input",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-			}
-			finally
-			{
-				if (m_ado.m_OleDbConnection != null)
-				{
-					while (m_ado.m_OleDbConnection.State == System.Data.ConnectionState.Open)
-						System.Threading.Thread.Sleep(1000);
-					m_ado.m_OleDbConnection.Dispose();
-					m_ado.m_OleDbConnection=null;
-				}
-				
-			}
-
-
-        
-		}
-
-		/// <summary>
-		/// create fvs tree input
-		/// </summary>
-		public void CreateFVS()
-		{
-			int x;
-			int y;
-			int z;
-			
-
-			const int LIVE_TREE = 1;
-			const int MORT_TREE = 2;
-			const int FIA_SPCD = 0;
-			const int CONVERT_TO_FIA_SPCD = 1;
-			const int FVS_SPECIES=2;
-			string str="";
-			int intPlotCnt=0;
-			int intTreeCnt=0;
-			string strPlotId="";
-			string strTreeId="";
-			string strSQLWhereExp="";
-			string strCurRecordId="";			
-			string strRecordId;					//biosum condition id
-			string strStateCd;					//state code
-			string strPlotCd;					//plot code
-			string strCondId;					//condition id
-			string strCN="";					//fiadb unique id for a tree record
-			string strIDBAlltreeId="";          //idb unique id for a tree record
-			
-			string strFVSDirAndFile="";	
-			string strFVSFile="";
-			string strFVSTreeId="";
-			string strTpa="";					//trees per acre. 1 decimal place
-			string strTpa2="";					//trees per acre. 2 decimal places
-			double dblTpa=0;					//trees per acre. 1 decimal place
-			double dblTpa2=0;                   //trees per acre. 2 decimal places
-			bool bUsePlotCnt = true;
-			bool bSkip;
-			int intDec;							
-			int intFVSPlotId=0;					//fvs assigned plot id
-			string strHistCd="";				//history code
-			string strFvsCvtSpCd="";				//converted species code
-			
-			string strDbh="";					//diameter
-			double dblDbh;						//diameter
-            string strDbhInc10yr="";            //diameter 10 year increment
-            double dblDbhInc10yr;               //diameter 10 year increment
-			string strHtCd;						//height code
-			string strHt;						//height in feet
-			string strActualHt;					//actual height
-			string strCr;                       //crown ratio
-			System.IO.FileStream p_fs;
-			System.IO.StreamWriter p_sw;
-			string[,] strSpCd;
-			strSpCd = new string[700,3];
-			int intSpcCvtCnt;
-			int intSpcRec=0;
-            bool bNewPlot = false;
-            int intMaxPlotId = -1;
-            int intMaxTreeId = -1;
-
-			string [,] strFvsSpCd;
-			strFvsSpCd = new string[700,2];
-			
-			
-
-			string strDmgAg1="";
-			string strDmgAg2="";
-			string strDmgAg3="";
-			string strDmgSv1="";
-			string strDmgSv2="";
-			string strDmgSv3="";
-			
-		    double    dblCullBf=0;
-			
-			string strValueClass="";
-			string strMistClCd = "";
-			bool bBrokenTop;
-            int intFvsTreeIdRecordCount = 0;
-
-
-		
-
-			p_fs = new System.IO.FileStream(this.m_strProjDir + "\\fvs\\data\\null.txt", System.IO.FileMode.Create, 
-				System.IO.FileAccess.Write);
-
-			p_sw = new System.IO.StreamWriter(p_fs);
-
-
-			try
-			{
- 
-				this.m_ado.OpenConnection(this.m_strConn);
-
-				//load up the spcd conversion table into an array
-                /**************************************************************
-                 **Some FIA species are not recognized by FVS within the 
-                 **FVS variant context. FVS will automatically convert those
-                 **unrecognized species to either 298, 998 or other generic
-                 ***species. The tree species table provides a conversion matrix
-                 **to avoid FVS changing the species codes. FVS unrecognized
-                 **species can be converted to a species code within the 
-                 **family genus.
-                 **************************************************************/
-                this.m_ado.m_strSQL = "SELECT t.spcd,t.fvs_input_spcd,f.fvs_species " +
-                    "FROM " + this.m_strTreeSpcTable + " t, " + this.m_strFVSTreeSpcTable + " f " +
-                    "WHERE t.fvs_input_spcd = f.spcd " +
-                    "AND t.fvs_variant = f.fvs_variant " +
-                    "AND trim(ucase(t.fvs_variant)) = '" + this.m_strVariant.Trim() + "';";
-
-
-				this.m_ado.SqlQueryReader(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL);
-
-				x=0;
-				while (this.m_ado.m_OleDbDataReader.Read())
-				{
-					strSpCd[x,FIA_SPCD] = this.m_ado.m_OleDbDataReader["spcd"].ToString().Trim();
-					if (this.m_ado.m_OleDbDataReader["fvs_input_spcd"] == System.DBNull.Value)
-					{
-						strSpCd[x,CONVERT_TO_FIA_SPCD] = strSpCd[x,FIA_SPCD];
-					}
-					else
-					{
-						strSpCd[x,CONVERT_TO_FIA_SPCD] = this.m_ado.m_OleDbDataReader["fvs_input_spcd"].ToString().Trim();
-					}
-					if (this.m_ado.m_OleDbDataReader["fvs_species"] == System.DBNull.Value ||
-						this.m_ado.m_OleDbDataReader["fvs_species"].ToString().Trim().Length == 0)
-					{
-						strSpCd[x,FVS_SPECIES] = "";
-					}
-					else
-					{
-						strSpCd[x,FVS_SPECIES] = this.m_ado.m_OleDbDataReader["fvs_species"].ToString().Trim();
-					}
-					x++;
-				}
-				this.m_ado.m_OleDbDataReader.Close();
-				intSpcCvtCnt=x;	
-
-                //load up any previously assigned fvs_tree_id's into a table
-                if (m_ado.TableExist(m_ado.m_OleDbConnection,"fvs_tree_id_work_table"))
-                    m_ado.SqlNonQuery(m_ado.m_OleDbConnection, "DROP TABLE fvs_tree_id_work_table");
-
-                m_ado.m_strSQL = Tables.FVS.CreateFVSTreeIdWorkTableSQL("fvs_tree_id_work_table");
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, m_ado.m_strSQL);
-
-                m_ado.m_strSQL = "INSERT INTO fvs_tree_id_work_table " + 
-                                 "SELECT biosum_cond_id, " +
-                                        "fvs_tree_id," + 
-                                        "MID(FVS_TREE_ID,1,2) AS fvs_variant," +
-                                        "MID(FVS_TREE_ID,3,4) AS plotid," +
-                                        "MID(FVS_TREE_ID,7,3) AS treeid," +
-                                        "MID(FVS_TREE_ID,3,10) AS plottreeid " +
-                                 "FROM " + this.m_strTreeTable + " " +
-                                 "WHERE FVS_TREE_ID IS NOT NULL AND " +
-                                       "MID(FVS_TREE_ID,1,2)='" + m_strVariant.Trim() + "'";
-                m_ado.SqlNonQuery(m_ado.m_OleDbConnection, m_ado.m_strSQL);
-
-                /*****************************************************************
-                 **If intFvsTreeIdRecordCount
-                 **is zero then no tree record has
-                 **a fvs_tree_id value and input files will be created within the
-                 **code and will not reference the fvs_tree_id_work_table.
-                 **
-                 **If intFvsTreeIdRecordCount
-                 **is greater than zero then fvs_tree_id will be created using
-                 **fvs_tree_id_work_table
-                 *****************************************************************/
-                intFvsTreeIdRecordCount = (int)m_ado.getRecordCount(
-                                                m_ado.m_OleDbConnection,
-                                                "SELECT COUNT(*) FROM fvs_tree_id_work_table",
-                                                "fvs_tree_id_work_table");
-
-				System.Data.DataTable p_dt = new System.Data.DataTable("id");
-				p_dt.Columns.Add("biosum_cond_id",typeof(string));
-				p_dt.Columns.Add("fvs_plot_id",typeof(int));
-				p_dt.Columns.Add("fvs_tree_id",typeof(int));
-				p_dt.Columns.Add("idb_alltree_id",typeof(int));
-				p_dt.Columns.Add("cn",typeof(string));
-
-				for (x=LIVE_TREE;x<=MORT_TREE;x++)
-				{
-					if (x==LIVE_TREE)
-					{
-						
-						this.m_ado.m_strSQL = "SELECT c.biosum_cond_id, p.statecd, " + 
-							"p.countycd, p.plot,p.measyear,c.adforcd, " + 
-							"p.elev,c.condid, c.habtypcd1,c.stdage,c.slope,c.aspect," + 
-							"c.ground_land_class_pnw,c.landclcd, " + 
-							"c.sisp,p.idb_plot_id,t.spcd, t.condid as tree_condid," + 
-							"t.idb_alltree_id,t.cn,t.dia,t.ht,t.htcd,t.actualht,t.cr,t.tpacurr, " + 
-							"t.agentcd,t.damtyp1,t.damsev1," + 
-							"t.damtyp2,t.damsev2,t.idb_dmg_agent3_cd,t.idb_severity3_cd," + 
-							"t.cullbf,t.mist_cl_cd,t.fvs_dmg_ag1,t.fvs_dmg_sv1," + 
-							"t.fvs_dmg_ag2,t.fvs_dmg_sv2,t.fvs_dmg_ag3,t.fvs_dmg_sv3,t.inc10yr,t.fvs_tree_id " + 
-							"FROM " + this.m_strCondTable + " c," + 
-							this.m_strPlotTable + " p," + 
-							this.m_strTreeTable + " t ";
-							
-						
-
-
-
-						strSQLWhereExp = "WHERE ucase(trim(p.fvs_variant)) = '" + this.m_strVariant.Trim().ToUpper() + "' AND " + 
-							"p.biosum_plot_id = c.biosum_plot_id AND " + 
-							"t.biosum_cond_id = c.biosum_cond_id AND t.statuscd=1 AND c.landclcd=1";
-
-					}
-					else
-					{
-						this.m_ado.m_strSQL = "SELECT c.biosum_cond_id, p.statecd, " + 
-							"p.countycd, p.plot,p.measyear,c.adforcd, " + 
-							"p.elev,c.condid, c.habtypcd1,c.stdage,c.slope,c.aspect," + 
-							"c.ground_land_class_pnw,c.landclcd, " + 
-							"c.sisp,p.idb_plot_id,t.spcd, t.condid as tree_condid," + 
-							"t.idb_alltree_id,t.cn,t.dia,t.ht,t.htcd,t.actualht,t.cr,t.tpacurr,t.inc10yr,t.fvs_tree_id " + 
-							"FROM " + this.m_strCondTable + " c," + 
-							this.m_strPlotTable + " p," + 
-							this.m_strTreeTable + " t ";
-
-						strSQLWhereExp = "WHERE ucase(trim(p.fvs_variant)) = '" + this.m_strVariant.Trim().ToUpper() + "' AND " + 
-							"p.biosum_plot_id = c.biosum_plot_id AND " + 
-							"t.biosum_cond_id = c.biosum_cond_id AND t.statuscd <> 1 AND c.landclcd=1";
-					}
-					this.m_ado.m_strSQL += " " + strSQLWhereExp + " ORDER BY c.biosum_cond_id;";
-
-					//initialize the dataset
-					this.m_ado.m_DataSet.Clear();
-					//initialize the datatable
-					this.m_dt.Clear();
-
-					//create the dataset
-					this.m_ado.CreateDataSet(this.m_ado.m_OleDbConnection,this.m_ado.m_strSQL,"fvs");
-                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
-                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", this.m_ado.m_DataSet.Tables["fvs"].Rows.Count);
-                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", 0);
-					if (x == LIVE_TREE)
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text", "Building FVS File(s) - Live Trees");
-					}
-					else
-					{
-                        frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text", "Building FVS File(s) - Mortality Trees");
-					}
-                    frmMain.g_oDelegate.ExecuteControlMethod(m_frmTherm, "Refresh");
-
-					if (this.m_ado.m_DataSet.Tables["fvs"].Rows.Count > 0)
-					{
-						this.m_dt = this.m_ado.m_DataSet.Tables["fvs"];
-                    
-						//process each tree record
-						for (y=0;y<=this.m_dt.Rows.Count-1;y++)
-						{
-							//initialize record variables
-							strTreeId="";			   //FVS assigned value
-							strCN = "";				   //FIADB tree unique identifier
-							strIDBAlltreeId="";        //IDB tree unique identifier
-							dblTpa=0;
-							dblTpa2=0;
-							strTpa="";				   //trees per acre
-							strTpa2="";
-							strHistCd="";
-							strFvsCvtSpCd="";
-							strDbh="";
-							dblDbh=0;
-                            strDbhInc10yr = "";
-                            dblDbhInc10yr = 0;
-							strHt="0";
-							strHtCd="";
-							strActualHt="0";
-							strCr=" ";
-							strDmgAg1="0";
-							strDmgAg2="0";
-							strDmgAg3="0";
-							strDmgSv1="0";
-							strDmgSv2="0";
-							strDmgSv3="0";
-							dblCullBf=0;
-							strValueClass="3";
-							strMistClCd = "";
-							intSpcRec=-1;
-							bBrokenTop=false;
-
-
-							bSkip=false;
-                            frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", y);
-
-							//biosum_cond_id
-							strRecordId = Convert.ToString(this.m_dt.Rows[y]["biosum_cond_id"]).Trim();
-
-                            
-							//statecd
-							strStateCd = Convert.ToString(this.m_dt.Rows[y]["statecd"]).Trim();
-
-							//check if this record is FIADB or IDB
-							if (strRecordId.Substring(0,1) == "1")
-							{
-								//fiadb
-								strPlotCd = Convert.ToString(this.m_dt.Rows[y]["plot"]).Trim();
-							}
-							else
-							{
-								//idb
-								strPlotCd = Convert.ToString(this.m_dt.Rows[y]["idb_plot_id"]).Trim();
-								strStateCd = this.IDB_getStateCd(strStateCd);
-							}
-						
-							strCondId = Convert.ToString(this.m_dt.Rows[y]["condid"]).Trim();
-
-                            if (this.m_dt.Rows[y]["fvs_tree_id"] != DBNull.Value &&
-                                this.m_dt.Rows[y]["fvs_tree_id"].ToString().Trim().Length > 0)
-                            {
-                                FVS_TREE_ID.strVariant = m_dt.Rows[y]["FVS_TREE_ID"].ToString().Substring(0, 2);
-                                FVS_TREE_ID.intPlotId = Convert.ToInt32(m_dt.Rows[y]["FVS_TREE_ID"].ToString().Substring(2, 4));
-                                FVS_TREE_ID.strPlotId_formatted = m_dt.Rows[y]["FVS_TREE_ID"].ToString().Substring(2, 4);
-                                FVS_TREE_ID.intTreeId = Convert.ToInt32(m_dt.Rows[y]["FVS_TREE_ID"].ToString().Substring(6, 3));
-                                FVS_TREE_ID.strTreeId_formatted = m_dt.Rows[y]["FVS_TREE_ID"].ToString().Substring(6, 3);
-                            }
-                            else
-                            {
-                                
-                                FVS_TREE_ID.intPlotId = -1;
-                                FVS_TREE_ID.intTreeId = -1;
-                                FVS_TREE_ID.strVariant = this.m_strVariant;
-                                FVS_TREE_ID.strPlotId_formatted = "";
-                                FVS_TREE_ID.strTreeId_formatted = "";
-
-                            }
-						
-
-							//check if this is a new plot/condition
-							if (strCurRecordId != strRecordId)
-							{
-								bUsePlotCnt=false;
-								strCurRecordId = strRecordId;
-								
-								//initialize to the file to output fvs data
-								strFVSDirAndFile= strStateCd.PadLeft(2,'0') + strPlotCd.PadLeft(5,'0') + strCondId + ".fvs";
-								strFVSFile = strFVSDirAndFile;
-								strFVSDirAndFile = this.m_strProjDir + "\\fvs\\data\\" + this.m_strVariant.Trim() + "\\" + strFVSDirAndFile;
-
-								//close the old out fvs data file if it is open
-								if (p_fs != null)
-								{
-									p_sw.Close();
-									p_fs.Close();
-								}
-
-								//if the output fvs data file exists than append data
-                                if (System.IO.File.Exists(strFVSDirAndFile) == true)
-                                {
-                                    if (intFvsTreeIdRecordCount == 0)
-                                    {
-                                        if (x == MORT_TREE)
-                                        {
-                                            //read the first line to get the previous FVS assigned plot id
-                                            System.IO.StreamReader p_sr = new System.IO.StreamReader(strFVSDirAndFile);
-                                            string strLine = p_sr.ReadLine();
-                                            if (strLine != null && strLine.Trim().Length > 4)
-                                            {
-                                                intFVSPlotId = Convert.ToInt32(strLine.Substring(0, 4));
-                                            }
-                                            else
-                                            {
-                                                bUsePlotCnt = true;
-                                                intPlotCnt++;
-                                            }
-                                            p_sr.Close();
-                                            p_sr = null;
-                                            p_fs = new System.IO.FileStream(strFVSDirAndFile, System.IO.FileMode.Append,
-                                                System.IO.FileAccess.Write);
-
-                                        }
-                                        else
-                                        {
-                                            p_fs = new System.IO.FileStream(strFVSDirAndFile, System.IO.FileMode.Append,
-                                                System.IO.FileAccess.Write);
-
-                                            bUsePlotCnt = true;
-                                            intPlotCnt++;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (x == MORT_TREE)
-                                        {
-                                            p_fs = new System.IO.FileStream(strFVSDirAndFile, System.IO.FileMode.Append,
-                                                System.IO.FileAccess.Write);
-
-                                        }
-                                        else
-                                        {
-                                            p_fs = new System.IO.FileStream(strFVSDirAndFile, System.IO.FileMode.Append,
-                                                System.IO.FileAccess.Write);
-                                        }
-
-                                    }
-
-                                }
-                                else
-                                {
-                                    p_fs = new System.IO.FileStream(strFVSDirAndFile, System.IO.FileMode.Create,
-                                        System.IO.FileAccess.Write);
-                                    if (intFvsTreeIdRecordCount == 0)
-                                    {
-                                        bUsePlotCnt = true;
-                                        intPlotCnt++;
-                                    }
-
-                                }
-
-                                if (intFvsTreeIdRecordCount == 0)
-                                {
-                                    //check if we use the incremented plot id count
-                                    //or the previously fvs assigned plot id
-                                    if (bUsePlotCnt == true) intFVSPlotId = intPlotCnt;
-
-                                    strPlotId = Convert.ToString(intFVSPlotId).Trim();
-                                    strPlotId = strPlotId.PadLeft(4, '0');
-                                }
-                               							
-								//create a new instance of the stream writer class
-								p_sw = new System.IO.StreamWriter(p_fs);
-
-                                if (intFvsTreeIdRecordCount == 0)
-                                {
-                                    //live trees are assigned fvs tree ids from 0 to 499
-                                    //mortality trees are assigned fvs tree ids from 500 to 999.
-                                    //initialize the counts since this is a new plot/condition
-                                    if (x == LIVE_TREE)
-                                    {
-                                        intTreeCnt = 0;
-                                    }
-                                    else
-                                    {
-                                        intTreeCnt = 499;
-                                    }
-                                }
-								
-							}
-                            //check which tree id record to use
-							if (strRecordId.Substring(0,1) == "1")
-							{
-								//FIADB
-								strCN = Convert.ToString(this.m_dt.Rows[y]["cn"]).Trim();
-							}
-							else
-							{
-								//IDB
-								strIDBAlltreeId = Convert.ToString(this.m_dt.Rows[y]["idb_alltree_id"]);
-							}
-
-
-                            if (intFvsTreeIdRecordCount == 0)
-                            {
-                                /********************************************************************************
-                                **to get a unique tree id for each plot, live trees are numbered from 1 to 499
-                                **and dead trees are numbered from 500 to 999
-                                ************************ ********************************************************/
-                                if (x == LIVE_TREE)
-                                {
-                                    if (intTreeCnt == 499)
-                                    {
-                                        intTreeCnt = 1;
-                                    }
-                                    else
-                                        intTreeCnt++;
-                                }
-                                else
-                                {
-                                    if (intTreeCnt == 999)
-                                    {
-                                        intTreeCnt = 500;
-                                    }
-                                    else
-                                        intTreeCnt++;
-                                }
-
-                                strTreeId = Convert.ToString(intTreeCnt).Trim();
-                                strTreeId = strTreeId.PadLeft(3, '0');
-                            }
-
-							//tpa (trees per acre)
-							if (this.m_dt.Rows[y]["tpacurr"] == System.DBNull.Value)
-							{
-								strTpa = "0";
-							}
-							else
-							{
-								strTpa = this.m_dt.Rows[y]["tpacurr"].ToString().Trim();
-								strTpa2=strTpa;
-								if (strTpa.Length ==0)
-								{
-									strTpa="0";							
-								}
-								
-							}
-							dblTpa = Convert.ToDouble(strTpa);
-							dblTpa = Math.Round(dblTpa,1);
-							
-							//do not write this tree record if TPA <=0
-							if (dblTpa <= 0) bSkip=true;
-
-							if (bSkip==false)
-							{
-
-                                if (dblTpa > 9999.9)
-                                {
-                                    dblTpa = Math.Round(dblTpa, 0);
-                                    strTpa = Convert.ToString(dblTpa);
-
-                                }
-                                else
-                                {
-                                    strTpa = Convert.ToString(dblTpa);
-
-                                    intDec = strTpa.IndexOf(".", 0);
-
-
-                                    if (intDec < 0)
-                                    {
-                                        strTpa = strTpa + ".0";
-                                    }
-                                }
-
-                                strTpa = strTpa.PadLeft(6, ' ');
-
-
-								//tree hist cd
-								if (x==LIVE_TREE) strHistCd="1";
-								else strHistCd="9";
-
-								//convert FIA SpCd to  FVS SpCd
-								if (this.m_dt.Rows[y]["spcd"] == System.DBNull.Value)
-								{
-									strFvsCvtSpCd="";
-								}
-								else
-								{
-									str = Convert.ToString(this.m_dt.Rows[y]["spcd"]).Trim();
-									for (z=0;z<=intSpcCvtCnt-1;z++)
-									{
-										if (str  == strSpCd[z,FIA_SPCD]) 
-										{
-											strFvsCvtSpCd = strSpCd[z,CONVERT_TO_FIA_SPCD];
-											intSpcRec = z;
-											break;
-										}
-									}
-								}
-								strFvsCvtSpCd = strFvsCvtSpCd.PadLeft(3,'0');
-
-
-								//dbh
-								if (this.m_dt.Rows[y]["dia"] == System.DBNull.Value)
-								{
-									dblDbh = 0;
-								}
-								else
-								{
-									dblDbh = Convert.ToDouble(this.m_dt.Rows[y]["dia"]);
-								}
-								dblDbh = Math.Round(dblDbh,1);
-								if (x==LIVE_TREE)
-								{
-									if (dblTpa > 25 && dblDbh <= 0) dblDbh = 0.1; //assume to be a seedling
-								}
-								if (dblDbh <= 0) bSkip=true;
-								if (bSkip == false)
-								{
-									strDbh = Convert.ToString(dblDbh).Trim();
-									intDec = strDbh.IndexOf(".",0);
-                                    if (intDec < 0)
-                                    {
-                                        if (strDbh.Trim().Length == 3)
-                                        {
-                                            strDbh = strDbh + "0";
-                                        }
-                                        else if (strDbh.Trim().Length == 2)
-                                        {
-                                            strDbh = "0" + strDbh + "0";
-                                        }
-                                        else if (strDbh.Trim().Length == 1)
-                                        {
-                                            strDbh = "00" + strDbh + "0";
-                                        }
-                                    }
-                                    else if (strDbh.Trim().Length == 5)
-                                    {
-                                        strDbh = strDbh.Replace(".", "");
-                                    }
-                                    else if (strDbh.Trim().Length == 4)
-                                    {
-                                        strDbh = "0" + strDbh.Replace(".", "");
-                                    }
-                                    else if (strDbh.Trim().Length == 3)
-                                    {
-                                        strDbh = "00" + strDbh.Replace(".", "");
-                                    }
-                                    else if (strDbh.Trim().Length == 2)
-                                    {
-                                        strDbh = "000" + strDbh.Replace(".", "");
-                                    }
-                                    //10 year increment
-                                    if (this.m_dt.Rows[y]["inc10yr"] == System.DBNull.Value)
-                                    {
-                                        strDbhInc10yr = "   ";
-                                    }
-                                    else
-                                    {
-                                        dblDbhInc10yr = (double)Convert.ToDouble(this.m_dt.Rows[y]["inc10yr"]) * (double).1;
-                                        dblDbhInc10yr = (double)Math.Round(dblDbhInc10yr, 1);
-                                        strDbhInc10yr = Convert.ToString(dblDbhInc10yr).Trim();
-                                        intDec = strDbhInc10yr.IndexOf(".", 0);
-                                        if (intDec < 0)
-                                        {
-                                            if (strDbhInc10yr.Trim().Length == 2)
-                                            {
-                                                strDbhInc10yr = strDbhInc10yr + "0";
-                                            }
-                                            else if (strDbhInc10yr.Trim().Length == 1)
-                                            {
-                                                strDbhInc10yr = "0" + strDbhInc10yr + "0";
-                                            }
-                                        }
-                                        else if (strDbhInc10yr.Trim().Length == 4)
-                                        {
-                                            strDbhInc10yr = strDbhInc10yr.Replace(".", "");
-                                        }
-                                        else if (strDbhInc10yr.Trim().Length == 3)
-                                        {
-                                            strDbhInc10yr = "0" + strDbhInc10yr.Replace(".", "");
-                                        }
-                                        else if (strDbhInc10yr.Trim().Length == 2)
-                                        {
-                                            strDbhInc10yr = "00" + strDbhInc10yr.Replace(".", "");
-                                        }
-                                        
-                                       
-
-                                    }
-								    
-
-                                    //note: did not process dbh increment because no growth estimates
-
-                                    //height code
-									if (this.m_dt.Rows[y]["htcd"] == System.DBNull.Value)
-									{
-										strHtCd = " ";
-									}
-									else
-									{
-										strHtCd= Convert.ToString(this.m_dt.Rows[y]["htcd"]);
-
-									}
-
-									//height in feet
-									//if htcd has a value or pnw idb record then process ht value
-									if (strHtCd=="1" || strHtCd=="2" || strHtCd=="3" || strRecordId.Substring(0,1) == "2") 
-									{
-										if (this.m_dt.Rows[y]["ht"] == System.DBNull.Value)
-										{
-											strHt = "0";
-										}
-										else
-										{
-											strHt= Convert.ToString(this.m_dt.Rows[y]["ht"]).Trim();
-											if (strHt.Trim().Length==0) strHt="0";
-											if (Convert.ToDouble(strHt) < 0) strHt="0";
-
-										}
-
-										//height to top kill (broken tops)
-										//pnw idb does not have broken tops for live trees so by pass actual ht
-										if (strRecordId.Substring(0,1) != "2")
-										{
-											if (this.m_dt.Rows[y]["actualht"] == System.DBNull.Value)
-											{
-												strActualHt="0";
-											}
-											else
-											{
-												strActualHt= Convert.ToString(this.m_dt.Rows[y]["actualht"]).Trim();
-												if (strActualHt.Length ==0) strActualHt="0";
-												if (Convert.ToDouble(strHt) <= Convert.ToDouble(strActualHt))
-												{
-													strActualHt="0";
-												}
-												else
-												{
-													bBrokenTop=true;
-												}
-											}
-										}
-									}
-
-									//note: by pass ht increment because not doing growth estimates
-
-
-									//compacted crown ratio
-									if (x==LIVE_TREE)
-									{
-										//if have measured htcd or pnw idb record than process crown ratio
-										if (strHtCd=="1" || strHtCd=="2" || strHtCd=="3" || strRecordId.Substring(0,1) == "2") 
-										{
-											if (this.m_dt.Rows[y]["cr"] != System.DBNull.Value)
-											{
-												strCr= Convert.ToString(this.m_dt.Rows[y]["cr"]).Trim();
-												if (strCr.Length ==0) strCr="0";
-												if (Convert.ToDouble(strCr) > 0)
-												{
-													double dblCr = Convert.ToDouble(strCr);
-													if (dblCr <= 10) strCr = "1";
-													else if (dblCr <= 20) strCr = "2";
-													else if (dblCr <= 30) strCr = "3";
-													else if (dblCr <= 40) strCr = "4";
-													else if (dblCr <= 50) strCr = "5";
-													else if (dblCr <= 60) strCr = "6";
-													else if (dblCr <= 70) strCr = "7";
-													else if (dblCr <= 80) strCr = "8";
-													else if (dblCr <= 100) strCr = "9";
-												}
-											}
-										}
-
-
-										//damage codes
-										if (this.m_dt.Rows[y]["fvs_dmg_ag1"] == System.DBNull.Value)
-										{
-										
-											//cull board feet is the priority damage code
-											if (this.m_dt.Rows[y]["cullbf"] != System.DBNull.Value)
-											{
-												dblCullBf = Convert.ToDouble(this.m_dt.Rows[y]["cullbf"]);
-												if (dblCullBf > 0)
-												{
-													dblCullBf = Math.Round(dblCullBf,0);
-													if (dblCullBf >= 100)
-													{
-														strDmgAg1 = "25";
-														strDmgSv1 = "99";
-													}
-													else
-													{
-														strDmgAg1 = "25";
-														strDmgSv1 = Convert.ToString(dblCullBf).Trim();
-													}
-												}
-											}
-
-											//dwarf mistletoe
-											if (this.m_dt.Rows[y]["mist_cl_cd"] != System.DBNull.Value)
-											{
-												strMistClCd = Convert.ToString(this.m_dt.Rows[y]["mist_cl_cd"]).Trim();
-												if (strMistClCd.Length > 0 && strMistClCd != "0")
-												{
-													/********************************************************
-													 **attempt to convert FIA IDB dwarf mistletoe code 30
-													 **to FVS dwarf mistletoe code that is based on species.
-													 ********************************************************/
-													
-													if (intSpcRec != -1)
-													{
-														switch (strSpCd[intSpcRec,FVS_SPECIES].Trim())
-														{
-															case "LP":
-																if (strDmgAg1=="0")
-																{
-																	strDmgAg1="31";
-																	strDmgSv1=strMistClCd.Trim();
-																}
-																else
-																{
-																	strDmgAg2="31";
-																	strDmgSv2=strMistClCd.Trim();
-																}
-																break;
-															case "WL":
-																if (strDmgAg1=="0")
-																{
-																	strDmgAg1="32";
-																	strDmgSv1=strMistClCd.Trim();
-																}
-																else
-																{
-																	strDmgAg2="32";
-																	strDmgSv2=strMistClCd.Trim();
-																}
-																break;
-															case "DF":
-																if (strDmgAg1=="0")
-																{
-																	strDmgAg1="33";
-																	strDmgSv1=strMistClCd.Trim();
-																}
-																else
-																{
-																	strDmgAg2="33";
-																	strDmgSv2=strMistClCd.Trim();
-																}
-																break;
-															case "PP":
-																if (strDmgAg1=="0")
-																{
-																	strDmgAg1="34";
-																	strDmgSv1=strMistClCd.Trim();
-																}
-																else
-																{
-																	strDmgAg2="34";
-																	strDmgSv2=strMistClCd.Trim();
-																}
-																break;
-															default:
-																if (strDmgAg1=="0")
-																{
-																	strDmgAg1="30";
-																	strDmgSv1=strMistClCd.Trim();
-																}
-																else
-																{
-																	strDmgAg2="30";
-																	strDmgSv2=strMistClCd.Trim();
-																}
-
-																break;
-
-														}
-													}
-													else
-													{
-														if (strDmgAg1=="0")
-														{
-															strDmgAg1="30";
-															strDmgSv1=strMistClCd.Trim();
-														}
-														else
-														{
-															strDmgAg2="30";
-															strDmgSv2=strMistClCd.Trim();
-														}
-														
-													}
-												}
-											}
-											if (bBrokenTop==true)
-											{
-												if (strDmgAg1=="0")
-												{
-													strDmgAg1="96";
-												}
-												else if (strDmgAg2=="0")
-												{
-													strDmgAg2="96";
-												}
-												else
-												{
-													strDmgAg3="96";
-												}
-											}
-											
-										}
-										else
-										{
-											//fvs damage code fields used in tree table
-											strDmgAg1 = Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_ag1"]).Trim();
-											if (this.m_dt.Rows[y]["fvs_dmg_sv1"] != System.DBNull.Value)
-											{
-												if (Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_sv1"]).Trim().Length > 0)
-												{
-													strDmgSv1 = Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_sv1"]).Trim();
-												}
-											}
-											if (this.m_dt.Rows[y]["fvs_dmg_ag2"] != System.DBNull.Value)
-											{
-												if (Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_ag2"]).Trim().Length > 0 &&
-													Convert.ToInt32(this.m_dt.Rows[y]["fvs_dmg_ag2"]) != Convert.ToInt32(strDmgAg1))
-												{
-													strDmgAg2 = Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_ag2"]).Trim();
-													if (this.m_dt.Rows[y]["fvs_dmg_sv2"] != System.DBNull.Value)
-													{
-														if (Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_sv2"]).Trim().Length > 0)
-														{
-															strDmgSv2 = Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_sv2"]).Trim();
-														}
-													}
-
-												}
-											}
-											if (this.m_dt.Rows[y]["fvs_dmg_ag3"] != System.DBNull.Value)
-											{
-												if (Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_ag3"]).Trim().Length > 0 &&
-													Convert.ToInt32(this.m_dt.Rows[y]["fvs_dmg_ag3"]) != Convert.ToInt32(strDmgAg2) &&
-													Convert.ToInt32(this.m_dt.Rows[y]["fvs_dmg_ag3"]) != Convert.ToInt32(strDmgAg1))
-												{
-													strDmgAg3 = Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_ag3"]).Trim();
-													if (this.m_dt.Rows[y]["fvs_dmg_sv3"] != System.DBNull.Value)
-													{
-														if (Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_sv3"]).Trim().Length > 0)
-														{
-															strDmgSv3 = Convert.ToString(this.m_dt.Rows[y]["fvs_dmg_sv3"]).Trim();
-														}
-													}
-
-												}
-											}
-
-										}
-                                         
-										if (strDmgAg1.Trim() == "25")
-										{
-											strValueClass = "3";
-										}
-										else if (Convert.ToInt32(strDmgSv1) > 0)
-										{
-											strValueClass = "2";
-										}
-										else
-										{
-											strValueClass="1";
-										}
-
-
-									}
-								}
-							}
-							if (bSkip==false)
-							{
-                                if (intFvsTreeIdRecordCount > 0)
-                                {
-                                    //
-                                    //PROCESS FVS_TREE_ID
-                                    //
-                                    if (FVS_TREE_ID.intPlotId == -1)
-                                    {
-                                        //check to see if any records in the fvs_tree_id_work_table
-                                        if (intFvsTreeIdRecordCount > 0)
-                                        {
-                                            //the current tree does not have an assigned fvs_tree_id
-                                            //so lets determine if the biosum_cond_id exists in the 
-                                            //fvs_tree_id work table
-                                            intPlotCnt = (int)m_ado.getSingleDoubleValueFromSQLQuery(m_ado.m_OleDbConnection, "SELECT COUNT(*) AS tempcount FROM fvs_tree_id_work_table WHERE biosum_cond_id='" + strRecordId.Trim() + "'", "temp");
-                                            if (intPlotCnt > 0)
-                                            {
-                                                //biosum_cond_id is found so lets get its plot id and last tree id
-                                                strPlotId = (string)m_ado.getSingleStringValueFromSQLQuery(
-                                                    m_ado.m_OleDbConnection,
-                                                    "SELECT DISTINCT plotid " +
-                                                    "FROM fvs_tree_id_work_table " +
-                                                    "WHERE biosum_cond_id='" + strRecordId.Trim() + "'", "temp");
-                                                if (x == MORT_TREE)
-                                                {
-                                                    intTreeCnt = GetMaximumDeadTreeId(strRecordId) + 1;
-                                                    if (intTreeCnt > 999)
-                                                    {
-                                                        //for dead trees valid treeid is 500 to 999.
-                                                        //attempt to find an unused treeid between
-                                                        //500 and 999
-                                                        intTreeCnt = this.GetAvailableDeadTreeId(strRecordId);
-                                                        if (intTreeCnt > 999)
-                                                        {
-                                                            m_intError = -1;
-                                                            MessageBox.Show("Maximum tree id's have been reached for biosum_cond_id " + strRecordId, "FIA Biosum");
-                                                            break;
-                                                        }
-
-                                                    }
-
-                                                }
-                                                else
-                                                {
-                                                    intTreeCnt = GetMaximumLiveTreeId(strRecordId) + 1;
-                                                    if (intTreeCnt > 499)
-                                                    {
-                                                        //for live trees valid treeid is 001 to 499.
-                                                        //attempt to find an unused treeid between
-                                                        //001 and 499
-                                                        intTreeCnt = this.GetAvailableLiveTreeId(strRecordId);
-                                                        if (intTreeCnt > 499)
-                                                        {
-                                                            m_intError = -1;
-                                                            MessageBox.Show("Maximum tree id's have been reached for biosum_cond_id " + strRecordId, "FIA Biosum");
-                                                            break;
-                                                        }
-
-                                                    }
-                                                }
-                                                strTreeId = Convert.ToString(intTreeCnt).Trim();
-                                                strTreeId = strTreeId.PadLeft(3, '0');
-
-
-                                            }
-                                            else
-                                            {
-                                                //okay, this is a new plot so 
-                                                //lets get the last plot id and assign the 
-                                                //first tree
-                                                intPlotCnt = GetMaximumPlotId() + 1;
-                                                if (intPlotCnt > 9999)
-                                                {
-                                                    intPlotCnt = GetAvailablePlotId();
-                                                    if (intPlotCnt > 9999)
-                                                    {
-                                                        m_intError = -1;
-                                                        MessageBox.Show("Maximum plot id's have been reached.", "FIA Biosum");
-                                                        break;
-                                                    }
-                                                }
-                                                strPlotId = Convert.ToString(intPlotCnt).Trim();
-                                                strPlotId = strPlotId.PadLeft(4, '0');
-                                                if (x == MORT_TREE)
-                                                {
-                                                    strTreeId = "500";
-                                                }
-                                                else
-                                                {
-                                                    strTreeId = "001";
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            strPlotId = "0001";
-                                            if (x == MORT_TREE)
-                                            {
-                                                strTreeId = "500";
-                                            }
-                                            else
-                                            {
-                                                strTreeId = "001";
-                                            }
-
-                                        }
-                                    }
-                                    else
-                                    {
-                                        strPlotId = FVS_TREE_ID.strPlotId_formatted;
-                                        strTreeId = FVS_TREE_ID.strTreeId_formatted;
-
-                                    }
-                                }
-
-                                if (m_intError == 0)
-                                {
-                                    strDbh = strDbh.PadLeft(4, ' ');
-                                    strHt = strHt.PadLeft(3, ' ');
-                                    strActualHt = strActualHt.PadLeft(3, ' ');
-                                    strDmgAg1 = strDmgAg1.PadLeft(2, ' ');
-                                    strDmgSv1 = strDmgSv1.PadLeft(2, ' ');
-                                    strDmgAg2 = strDmgAg2.PadLeft(2, ' ');
-                                    strDmgSv2 = strDmgSv2.PadLeft(2, ' ');
-                                    strDmgAg3 = strDmgAg3.PadLeft(2, ' ');
-                                    strDmgSv3 = strDmgSv3.PadLeft(2, ' ');
-
-
-                                    p_sw.WriteLine("{0,-4}{1,-3}{2,-6}{3,-1}{4,-3}{5,-4}{6,-3}{7,-3}{8,-3}{9,-4}{10,-1}{11,-2}{12,-2}{13,-2}{14,-2}{15,-2}{16,-2}{17,-1}{18,-1}",
-                                        strPlotId, strTreeId, strTpa, strHistCd,
-                                        strFvsCvtSpCd, strDbh, strDbhInc10yr, strHt, strActualHt, "    ", strCr,
-                                        strDmgAg1, strDmgSv1, strDmgAg2, strDmgSv2, strDmgAg3, strDmgSv3, strValueClass, "0");
-
-                                    strFVSTreeId = this.m_strVariant.Trim() +
-                                        strPlotId.Trim() +
-                                        strTreeId.Trim();
-                                    if (FVS_TREE_ID.intPlotId == -1)
-                                    {
-                                        //
-                                        //Save the newly assigned FVS_TREE_ID 
-                                        //
-                                        if (strCN.Trim().Length > 0)
-                                        {
-                                            this.m_ado.m_strSQL = "INSERT INTO " +
-                                                this.m_strFVSTreeIdFIAWorkTable + " " +
-                                                "(biosum_cond_id,cn,fvs_tree_id,fvs_filename) VALUES (" +
-                                                "'" + strCurRecordId.Trim() + "'," +
-                                                "'" + strCN.Trim() + "'," +
-                                                "'" + strFVSTreeId.Trim() + "'," +
-                                                "'" + strFVSFile.Trim() + "');";
-                                        }
-                                        else
-                                        {
-                                            this.m_ado.m_strSQL = "INSERT INTO " +
-                                                this.m_strFVSTreeIdIDBWorkTable + " " +
-                                                "(biosum_cond_id,idb_alltree_id,fvs_tree_id,fvs_filename) VALUES (" +
-                                                "'" + strCurRecordId.Trim() + "'," +
-                                                strIDBAlltreeId.Trim() + "," +
-                                                "'" + strFVSTreeId.Trim() + "'," +
-                                                "'" + strFVSFile.Trim() + "');";
-                                        }
-                                        this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-                                        if (intFvsTreeIdRecordCount > 0)
-                                        {
-                                            m_ado.m_strSQL = "INSERT INTO fvs_tree_id_work_table " +
-                                                           "(biosum_cond_id,fvs_tree_id,fvs_variant," +
-                                                            "plotid,treeid,plottreeid) VALUES " +
-                                                           "('" + strCurRecordId.Trim() + "'," +
-                                                            "'" + strFVSTreeId.Trim() + "'," +
-                                                            "'" + m_strVariant + "'," +
-                                                            "'" + strPlotId + "'," +
-                                                            "'" + strTreeId + "'," +
-                                                            "'" + strPlotId + strTreeId + "')";
-                                            this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-                                        }
-                                        
-
-                                    }
-                                }
-							}
-                            if (m_intError < 0) break;
-						
-						}
-					}
-				}
-
-                frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text", "Finishing Up With FVS Variant " + this.m_strVariant.Trim() + "...Stand By");
-                if (m_intError == 0)
-                {
-                    if (Convert.ToInt32(this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection, "select count(*) from " + this.m_strFVSTreeIdIDBWorkTable, this.m_strFVSTreeIdIDBWorkTable)) > 0)
-                    {
-                        this.m_ado.m_strSQL = "UPDATE " + this.m_strTreeTable + " t " +
-                            "INNER JOIN " + this.m_strFVSTreeIdIDBWorkTable + " w " +
-                            "ON t.idb_alltree_id = w.idb_alltree_id " +
-                            "SET t.fvs_tree_id=w.fvs_tree_id;";
-                        this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-                        this.m_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " +
-                                              "INNER JOIN " + this.m_strFVSTreeIdIDBWorkTable + " w " +
-                                              "ON c.biosum_cond_id = w.biosum_cond_id " +
-                                              "SET c.fvs_filename = mid(w.fvs_filename,1,12);";
-                        this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-
-                    }
-                    if (Convert.ToInt32(this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection, "select count(*) from " + this.m_strFVSTreeIdFIAWorkTable, this.m_strFVSTreeIdFIAWorkTable)) > 0)
-                    {
-                        this.m_ado.m_strSQL = "UPDATE " + this.m_strTreeTable + " t " +
-                            "INNER JOIN " + this.m_strFVSTreeIdFIAWorkTable + " w " +
-                            "ON t.cn = w.cn " +
-                            "SET t.fvs_tree_id=w.fvs_tree_id;";
-                        this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-                        this.m_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " +
-                            "INNER JOIN " + this.m_strFVSTreeIdFIAWorkTable + " w " +
-                            "ON c.biosum_cond_id = w.biosum_cond_id " +
-                            "SET c.fvs_filename = mid(w.fvs_filename,1,12);";
-                        this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection, this.m_ado.m_strSQL);
-                    }
-                }
-				
-																	
-
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - fvs_input:CreateFVS  \n" + 
-					"Err Msg - " + e.Message.ToString().Trim(),
-					"FVS Input",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				this.m_intError=-1;
-			}
-			if (this.m_ado.m_OleDbConnection != null)
-				this.m_ado.m_OleDbConnection.Close();
-			p_sw.Close();
-			p_fs.Close();
-			p_sw=null;
-			p_fs=null;
-		}
-        
 		private void CheckDir()
 		{
 			try
@@ -2529,14 +1180,15 @@ namespace FIA_Biosum_Manager
 		}
 		private void InitializeFields()
 		{
-			this.m_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
+			m_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
 				                   " INNER JOIN " + this.m_strPlotTable + " p " + 
 				                   " ON c.biosum_plot_id = p.biosum_plot_id " + 
 				                   " SET c.fvs_filename = NULL " + 
 				                   " WHERE TRIM(p.fvs_variant)='" + this.m_strVariant.Trim() + "';";
-			this.m_ado.SqlNonQuery(this.m_strConn,this.m_ado.m_strSQL);
-			if (this.m_ado.m_intError != 0) this.m_intError = -1;
+			m_ado.SqlNonQuery(this.m_strConn,m_ado.m_strSQL);
+			if (m_ado.m_intError != 0) this.m_intError = -1;
 		}
+
 		/// <summary>
 		/// full directory path and file name to the fvsin mdb file
 		/// </summary>
@@ -2551,17 +1203,92 @@ namespace FIA_Biosum_Manager
 			{
 				return this.m_strFVSInMDBFile;
 			}
-
-
 		}
-        /// <summary>
+
+	    public void DebugLogMessage(string strMessage)
+	    {
+	        if (frmMain.g_bDebug)
+	        {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, strMessage);
+	        }
+	    }
+	    public void DebugLogMessage(string strMessage, int intDebugLevel)
+	    {
+	        
+	        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > intDebugLevel)
+	        {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, strMessage);
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+	    }
+	    public void DebugLogSQL(string strSQL)
+	    {
+	        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+	            frmMain.g_oUtils.WriteText(m_strDebugFile, strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
+	    }
+
+		/// <summary>
+		/// Set the DWM behavior in the FVS_StandInit creation process.
+		/// Use the Enum 
+		/// </summary>
+		/// <returns>string name of the Input MDB File</returns>
+		public int intDWMOption
+		{
+		    set
+			{
+				m_intDWMOption =  value;
+			}
+			get
+			{
+				return m_intDWMOption;
+			}
+		}
+
+	    public string strMinSmallFwdTransectLengthTotal
+	    {
+	        set { m_strMinSmallFwdTransectLengthTotal = value; }
+	        get { return m_strMinSmallFwdTransectLengthTotal; }
+	    }
+
+	    public string strMinLargeFwdTransectLengthTotal
+	    {
+	        set { m_strMinLargeFwdTransectLengthTotal = value; }
+	        get { return m_strMinLargeFwdTransectLengthTotal; }
+	    }
+
+	    public string strMinCwdTransectLengthTotal
+	    {
+	        set { m_strMinCwdTransectLengthTotal = value; }
+	        get { return m_strMinCwdTransectLengthTotal; }
+	    }
+
+	    public string strMinDuffLitterPitCount
+	    {
+	        set { m_strMinDuffLitterPitCount = value; }
+	        get { return m_strMinDuffLitterPitCount; }
+	    }
+
+	    public string strDuffExcludedYears 
+	    {
+	        set { m_strDuffExcludedYears = value; }
+	        get { return m_strDuffExcludedYears; }
+	    }
+	    public string strLitterExcludedYears 
+	    {
+	        set { m_strLitterExcludedYears = value; }
+	        get { return m_strLitterExcludedYears; }
+	    }
+
+
+	    /// <summary>
         /// Get the maximum dead tree id for a biosum_cond_id
         /// </summary>
         /// <param name="p_strBiosum_Cond_Id"></param>
         /// <returns></returns>
         private int GetMaximumDeadTreeId(string p_strBiosum_Cond_Id)
         {
-            int intValue = (int)this.m_ado.getSingleDoubleValueFromSQLQuery(
+            int intValue = (int)m_ado.getSingleDoubleValueFromSQLQuery(
                m_ado.m_OleDbConnection,
                "SELECT MAX(VAL(treeid)) FROM fvs_tree_id_work_table WHERE biosum_cond_id='" +
                p_strBiosum_Cond_Id.Trim() + "' AND VAL(treeid) > 499",
@@ -2576,7 +1303,7 @@ namespace FIA_Biosum_Manager
         /// <returns></returns>
         private int GetMaximumLiveTreeId(string p_strBiosum_Cond_Id)
         {
-            int intValue = (int)this.m_ado.getSingleDoubleValueFromSQLQuery(
+            int intValue = (int)m_ado.getSingleDoubleValueFromSQLQuery(
                m_ado.m_OleDbConnection,
                "SELECT MAX(VAL(treeid)) FROM fvs_tree_id_work_table WHERE biosum_cond_id='" + 
                p_strBiosum_Cond_Id.Trim() + "' AND VAL(treeid) < 500",
@@ -2590,7 +1317,7 @@ namespace FIA_Biosum_Manager
         /// <returns></returns>
         private int GetMaximumPlotId()
         {
-            int intValue = (int)this.m_ado.getSingleDoubleValueFromSQLQuery(
+            int intValue = (int)m_ado.getSingleDoubleValueFromSQLQuery(
                 m_ado.m_OleDbConnection, 
                 "SELECT MAX(VAL(plotid))  as max_plotid FROM fvs_tree_id_work_table",
                 "fvs_tree_id_work_table");
@@ -5022,7 +3749,7 @@ namespace FIA_Biosum_Manager
             //create env object so we can get the appDir
             env pEnv = new env();
             //open the project db file; db name is hard-coded
-            oAdo.OpenConnection(oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\ref_master.mdb", "", ""));
+            oAdo.OpenConnection(oAdo.getMDBConnString(m_strProjDir + "\\db\\ref_master.mdb", "", ""));
             string strSQL = "select * from site_index_equations where FVS_VARIANT = '" + strVariant + "'";
             oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
             if (oAdo.m_OleDbDataReader.HasRows)
