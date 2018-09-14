@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Devart.Common;
 
 namespace FIA_Biosum_Manager
 {
@@ -41,6 +43,8 @@ namespace FIA_Biosum_Manager
         private string m_strPlotCNs;
         private string m_strTreeCNs;
         Dictionary<string, object[]> m_dictIdentityColumnsToValues;
+        Dictionary<string, Dictionary<string, int>> m_dictDeletedRowCountsByDatabaseAndTable =
+            new Dictionary<string, Dictionary<string, int>>();
 
         //TODO: Help files
         private env m_oEnv;
@@ -59,6 +63,7 @@ namespace FIA_Biosum_Manager
         private string m_strTempMDBFile;
         private string m_strSQL;
         private string m_strProjDir;
+        private string m_strMessage = "";
 
         public uc_delete_conditions()
         {
@@ -130,7 +135,7 @@ namespace FIA_Biosum_Manager
             m_oDatasource = new Datasource();
             m_oDatasource.LoadTableColumnNamesAndDataTypes = false;
             m_oDatasource.LoadTableRecordCount = false;
-            m_oDatasource.m_strDataSourceMDBFile = m_strProjDir.Trim() + "\\db\\project.mdb";
+            m_oDatasource.m_strDataSourceMDBFile = m_strProjDir + "\\db\\project.mdb";
             m_oDatasource.m_strDataSourceTableName = "datasource";
             m_oDatasource.m_strScenarioId = "";
             m_oDatasource.populate_datasource_array();
@@ -335,6 +340,18 @@ namespace FIA_Biosum_Manager
                     strTableExceptions: new string[] {"FVS_TREE"});
                 UpdateProgressBar2(100);
 
+                //Results
+                if (Checked(chkCreateLog))
+                {
+                    CreateLogFile(frmMain.g_oEnv.strTempDir + "\\biosum_deleted_records" +
+                                  String.Format("{0:yyyyMMdd}", DateTime.Now) + ".txt");
+                }
+
+                MessageBox.Show(
+                    String.Format("Successfully deleted data associated with {0} Conditions!",
+                        ((HashSet<string>) m_dictIdentityColumnsToValues["biosum_cond_id"][0]).Count),
+                    "Delete Conditions Results");
+
                 //Cleanup section, assuming no exceptions were thrown
                 this.m_connTempMDBFile.Close();
                 while (m_connTempMDBFile.State != System.Data.ConnectionState.Closed)
@@ -350,6 +367,8 @@ namespace FIA_Biosum_Manager
                 }
                 if (m_dao != null)
                 {
+                    this.m_dao.m_DaoWorkspace.Close();
+                    this.m_dao.m_DaoWorkspace = null;
                     this.m_dao = null;
                 }
 
@@ -519,70 +538,116 @@ namespace FIA_Biosum_Manager
             };
         }
 
+
         private void ExecuteDeleteOnTables(string strDbPathFile, string[] tables = null, string[] exceptions = null)
         {
-            OleDbConnection oConn = new OleDbConnection();
-            m_ado.OpenConnection(m_ado.getMDBConnString(strDbPathFile, "", ""), ref oConn);
-
-            string[] strTables = tables;
-            if (tables == null || tables.Length == 0)
+            using (var conn = new OleDbConnection(m_ado.getMDBConnString(strDbPathFile, "", "")))
             {
-                strTables = m_ado.getTableNamesOfSpecificTypes(oConn);
-                //In case none of the tables are valid
-                if (strTables.Length == 1 && strTables[0] == "") 
-                    return;
-            }
+                conn.Open();
 
-            string column;
-            foreach (string table in strTables)
-            {
-                if (exceptions != null && exceptions.Contains(table))
+                string[] strTables = tables;
+                if (tables == null || tables.Length == 0)
                 {
-                    continue;
+                    strTables = m_ado.getTableNamesOfSpecificTypes(conn);
+                    //In case none of the tables are valid
+                    if (strTables.Length == 1 && strTables[0] == "")
+                        return;
                 }
-                column = null;
-                foreach (string col in m_dictIdentityColumnsToValues.Keys)
+
+                string column;
+                foreach (string table in strTables)
                 {
-                    if (m_ado.ColumnExist(oConn, table, col))
+                    if (exceptions != null && exceptions.Contains(table))
                     {
-                        column = col;
-                        break;
+                        continue;
+                    }
+
+                    column = null;
+                    foreach (string col in m_dictIdentityColumnsToValues.Keys)
+                    {
+                        if (m_ado.ColumnExist(conn, table, col))
+                        {
+                            column = col;
+                            break;
+                        }
+                    }
+
+                    if (!(String.IsNullOrEmpty(column)) &&
+                        ((HashSet<string>) m_dictIdentityColumnsToValues[column][0]).Count > 0)
+                    {
+                        m_ado.AddIndex(conn, table, column + "_delete_idx", column);
+                        int deletedRecords = BuildAndExecuteDeleteSQLStmts(conn, table, column);
+                        AddDeletedCountToDictionary(strDbPathFile, table, deletedRecords);
+                        m_ado.SqlNonQuery(conn, String.Format("DROP INDEX {0} ON {1}", column + "_delete_idx", table));
                     }
                 }
-                if (!(String.IsNullOrEmpty(column)) && ((HashSet<string>) m_dictIdentityColumnsToValues[column][0]).Count > 0)
-                {
-                    m_ado.AddIndex(oConn, table, column + "_delete_idx",column);
-                    BuildAndExecuteDeleteSQLStmts(oConn, table, column);
-                    m_ado.SqlNonQuery(oConn, String.Format("DROP INDEX {0} ON {1}", column + "_delete_idx", table));
-                }
             }
-            m_ado.CloseConnection(oConn);
             m_dao.CompactMDB(strDbPathFile);
         }
 
-        private void BuildAndExecuteDeleteSQLStmts(OleDbConnection oConn, string table, string column)
+        private void AddDeletedCountToDictionary(string strDbPathFile, string table, int deletedRecords)
         {
+            if (!m_dictDeletedRowCountsByDatabaseAndTable.Keys.Contains(strDbPathFile))
+            {
+                m_dictDeletedRowCountsByDatabaseAndTable.Add(strDbPathFile,
+                    new Dictionary<string, int>());
+            }
+            m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Add(table, deletedRecords);
+        }
+
+        private int BuildAndExecuteDeleteSQLStmts(OleDbConnection oConn, string table, string column)
+        {
+            int deletedRecords = 0;
             string column_key = column;
             string strSQL;
             string[] edgeCaseTables = new string[] {"fcs_biosum_volumes_input"};
+
             if (edgeCaseTables.Contains(table))
             {
                 //FCS schema uses cnd_cn/plt_cn, but we set these values to biosum_cond_id/biosum_plot_id in FVSOUT stage
-                if (table.ToLower() =="fcs_biosum_volumes_input" && column.ToLower() == "cnd_cn")
+                if (table.ToLower() == "fcs_biosum_volumes_input" && column.ToLower() == "cnd_cn")
                     column_key = "biosum_cond_id";
             }
+
             if (((HashSet<string>) m_dictIdentityColumnsToValues[column_key][0]).Count < 5000)
             {
-                strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column, m_dictIdentityColumnsToValues[column_key][1]);
+                deletedRecords += (int) m_ado.getSingleDoubleValueFromSQLQuery(oConn, String.Format(
+                    "SELECT COUNT(*) FROM {0} WHERE {1} IN ({2});", table, column,
+                    m_dictIdentityColumnsToValues[column_key][1]), table);
+                strSQL = String.Format("DELETE FROM {0} WHERE {1} IN ({2});", table, column,
+                    m_dictIdentityColumnsToValues[column_key][1]);
                 m_ado.SqlNonQuery(oConn, strSQL);
             }
+
             else
             {
-                //loop over individual values or chunks of the set (how to do that without missing values? convert to array for this?) LINQ query?
                 foreach (string id in (HashSet<string>) m_dictIdentityColumnsToValues[column_key][0])
                 {
+                    deletedRecords += (int) m_ado.getSingleDoubleValueFromSQLQuery(oConn,
+                        String.Format("SELECT COUNT(*) FROM {0} WHERE {1} = {2};", table, column, id), table);
                     strSQL = String.Format("DELETE FROM {0} WHERE {1} = {2};", table, column, id);
                     m_ado.SqlNonQuery(oConn, strSQL);
+                }
+            }
+
+            return deletedRecords;
+        }
+
+        private void CreateLogFile(string strPathFile)
+        {
+            int deletedRecordsCount;
+            foreach (var strDbPathFile in m_dictDeletedRowCountsByDatabaseAndTable.Keys)
+            {
+                frmMain.g_oUtils.WriteText(strPathFile, String.Concat(strDbPathFile, Environment.NewLine));
+                foreach (var strTable in m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Keys)
+                {
+                    deletedRecordsCount = m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile][strTable];
+                    if (deletedRecordsCount > 0)
+                    {
+                        frmMain.g_oUtils.WriteText(strPathFile,
+                            String.Format("  {0} records deleted from {1}{2}", deletedRecordsCount, strTable,
+                                Environment.NewLine));
+                    }
                 }
             }
         }
@@ -701,6 +766,15 @@ namespace FIA_Biosum_Manager
 //                this.ThreadCleanUp();
                 throw new NotImplementedException();
             }
+        }
+
+        private bool Checked(System.Windows.Forms.RadioButton p_rdoButton)
+        {
+            return (bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.RadioButton)p_rdoButton, "Checked", false);
+        }
+        private bool Checked(System.Windows.Forms.CheckBox p_chkBox)
+        {
+            return (bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox)p_chkBox, "Checked", false);
         }
 
         private void SetThermValue(System.Windows.Forms.ProgressBar p_oPb, string p_strPropertyName, int p_intValue)

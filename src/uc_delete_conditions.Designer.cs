@@ -60,8 +60,9 @@
             this.btnFilterByFileBrowse = new System.Windows.Forms.Button();
             this.txtFilterByFile = new System.Windows.Forms.TextBox();
             this.rdoFilterByFile = new System.Windows.Forms.RadioButton();
-            this.rdoDeleteAllConds = new System.Windows.Forms.RadioButton();
             this.rdoFilterByMenu = new System.Windows.Forms.RadioButton();
+            this.rdoDeleteAllConds = new System.Windows.Forms.RadioButton();
+            this.chkCreateLog = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.grpboxFilterByState.SuspendLayout();
             this.grpboxFilterByCondId.SuspendLayout();
@@ -340,6 +341,7 @@
             // 
             // grpboxFilterOptions
             // 
+            this.grpboxFilterOptions.Controls.Add(this.chkCreateLog);
             this.grpboxFilterOptions.Controls.Add(this.label1);
             this.grpboxFilterOptions.Controls.Add(this.btnFilterByFileBrowse);
             this.grpboxFilterOptions.Controls.Add(this.txtFilterByFile);
@@ -393,6 +395,17 @@
             this.rdoFilterByFile.Text = "Delete Conditions with Text File of Cond.CN values";
             this.rdoFilterByFile.Click += new System.EventHandler(this.rdoFilterByFile_Click);
             // 
+            // rdoFilterByMenu
+            // 
+            this.rdoFilterByMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdoFilterByMenu.Location = new System.Drawing.Point(51, 182);
+            this.rdoFilterByMenu.Name = "rdoFilterByMenu";
+            this.rdoFilterByMenu.Size = new System.Drawing.Size(400, 32);
+            this.rdoFilterByMenu.TabIndex = 1;
+            this.rdoFilterByMenu.Text = "Delete Conditions By Menu Selection";
+            this.rdoFilterByMenu.Visible = false;
+            this.rdoFilterByMenu.Click += new System.EventHandler(this.rdoFilterByMenu_Click);
+            // 
             // rdoDeleteAllConds
             // 
             this.rdoDeleteAllConds.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -404,16 +417,17 @@
             this.rdoDeleteAllConds.Visible = false;
             this.rdoDeleteAllConds.Click += new System.EventHandler(this.rdoDeleteAllConds_Click);
             // 
-            // rdoFilterByMenu
+            // chkCreateLog
             // 
-            this.rdoFilterByMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFilterByMenu.Location = new System.Drawing.Point(51, 182);
-            this.rdoFilterByMenu.Name = "rdoFilterByMenu";
-            this.rdoFilterByMenu.Size = new System.Drawing.Size(400, 32);
-            this.rdoFilterByMenu.TabIndex = 1;
-            this.rdoFilterByMenu.Text = "Delete Conditions By Menu Selection";
-            this.rdoFilterByMenu.Visible = false;
-            this.rdoFilterByMenu.Click += new System.EventHandler(this.rdoFilterByMenu_Click);
+            this.chkCreateLog.AutoSize = true;
+            this.chkCreateLog.Checked = true;
+            this.chkCreateLog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCreateLog.Location = new System.Drawing.Point(51, 220);
+            this.chkCreateLog.Name = "chkCreateLog";
+            this.chkCreateLog.Size = new System.Drawing.Size(97, 17);
+            this.chkCreateLog.TabIndex = 7;
+            this.chkCreateLog.Text = "Create Log File";
+            this.chkCreateLog.UseVisualStyleBackColor = true;
             // 
             // uc_delete_conditions
             // 
@@ -466,5 +480,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton rdoFilterByMenu;
         private System.Windows.Forms.RadioButton rdoDeleteAllConds;
+        private System.Windows.Forms.CheckBox chkCreateLog;
     }
 }
