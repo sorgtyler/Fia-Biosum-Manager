@@ -899,7 +899,7 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.Refresh();
 				p_frmTherm.progressBar1.Minimum = 1;
 				p_frmTherm.AbortProcess = false;
-				p_frmTherm.progressBar1.Maximum = 15;
+				p_frmTherm.progressBar1.Maximum = 16;
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Visible=true;
 				p_frmTherm.lblMsg.Refresh();
@@ -964,7 +964,7 @@ namespace FIA_Biosum_Manager
 				//
 				//master file
 				//
-				//copy default master database to the new project directory
+				//copy default master database to the new project directory (not currently used)
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\master.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\master.mdb";
 				p_frmTherm.Increment(3);
@@ -1002,14 +1002,36 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_vol_val_by_species_diam_groups");
                 //biosum pop stratum adjustment factors table
                 frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
+
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
+
+                //
+                //master_aux file: Where additional input tables are stored
+                //
+				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\master_aux.accdb";
+				p_frmTherm.Increment(4);
+				p_frmTherm.lblMsg.Text = strDestFile;
+				p_frmTherm.lblMsg.Refresh();
+				//System.IO.File.Copy(strSourceFile, strDestFile,true);	
+				p_dao.CreateMDB(strDestFile);
+				strConn = p_ado.getMDBConnString(strDestFile,"admin","");
+				p_ado.OpenConnection(strConn);
+                //DWM Section
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMCoarseWoodyDebrisTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMFineWoodyDebrisTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMDuffLitterFuelTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMTransectSegmentTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName);
+                //TODO: GRM Section
+
+				p_ado.CloseConnection(p_ado.m_OleDbConnection);
+
 				//
 				//fvsmaster file
 				//
 				//copy default fvsmaster database to the new project directory
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\fvsmaster.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\fvsmaster.mdb";
-				p_frmTherm.Increment(4);
+				p_frmTherm.Increment(5);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				//System.IO.File.Copy(strSourceFile, strDestFile,true);	
@@ -1039,7 +1061,7 @@ namespace FIA_Biosum_Manager
 				//copy default master database to the new project directory
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\ref_master.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\ref_master.mdb";
-				p_frmTherm.Increment(5);
+				p_frmTherm.Increment(6);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
@@ -1056,21 +1078,21 @@ namespace FIA_Biosum_Manager
 				//copy default master database to the new project directory
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\ref_fvscommands.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\ref_fvscommands.mdb";
-				p_frmTherm.Increment(6);
+				p_frmTherm.Increment(7);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);	
      			//
 				//core scenario rule definitions
 				//
-				p_frmTherm.Increment(7);
+				p_frmTherm.Increment(8);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				CreateCoreScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb");
 				//copy default scenario_results database to the new project directory
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\scenario_results.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_results.mdb";
-				p_frmTherm.Increment(8);
+				p_frmTherm.Increment(9);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);		
@@ -1084,7 +1106,7 @@ namespace FIA_Biosum_Manager
 				CreateProcessorScenarioRunDbAndTables(this.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_results.mdb");
 				//strSourceFile = this.m_oEnv.strAppDir + "\\db\\scenario_results.mdb";
 				//strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_results.mdb";
-				p_frmTherm.Increment(9);
+				p_frmTherm.Increment(10);
 				//p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				//System.IO.File.Copy(strSourceFile, strDestFile,true);		
@@ -1092,14 +1114,14 @@ namespace FIA_Biosum_Manager
 				//copy default fvsin database to the new project directory
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\fvsin.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\fvsin.mdb";
-				p_frmTherm.Increment(10);
+				p_frmTherm.Increment(11);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
 
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\fvsout.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\fvsout.mdb";
-				p_frmTherm.Increment(11);
+				p_frmTherm.Increment(12);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
@@ -1107,7 +1129,7 @@ namespace FIA_Biosum_Manager
 				
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\fvs_out_processor_in.mdb";
 				p_dao.CreateMDB(strDestFile);
-				p_frmTherm.Increment(12);
+				p_frmTherm.Increment(13);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				strConn = p_ado.getMDBConnString(strDestFile,"admin","");
@@ -1129,7 +1151,7 @@ namespace FIA_Biosum_Manager
 
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\biosum_processor.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.mdb";
-				p_frmTherm.Increment(13);
+				p_frmTherm.Increment(14);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
@@ -1503,7 +1525,6 @@ namespace FIA_Biosum_Manager
                              "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "'," +
                              "'" + Tables.ProcessorScenarioRun.DefaultFiaTreeSpeciesRefTableName + "');";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
-
 
                     frmMain.g_oGeneralMacroSubstitutionVariable_Collection.Item(frmMain.PROJDIR).VariableSubstitutionString = this.txtRootDirectory.Text.Trim();
 					

@@ -2614,7 +2614,8 @@ namespace FIA_Biosum_Manager
                        "SmallMediumTotalLength DOUBLE," +
                        "LargeTotalLength DOUBLE," +
                        "CWDTotalLength DOUBLE," +
-                       "PitCount LONG," +
+                       "DuffPitCount LONG," +
+                       "LitterPitCount LONG," +
                        "Photo_Ref LONG," +
                        "Photo_code CHAR(13)" +
                        ")";
@@ -2646,8 +2647,8 @@ namespace FIA_Biosum_Manager
                        "TreeInitID AUTOINCREMENT, " + //Pkey and indexed
                        "Stand_ID CHAR(26)," + //indexed, duplicates okay //REQUIRED
                        "StandPlot_ID CHAR(40)," +
-                    //"Plot_ID CHAR(4)," + //RECOMMENDED (how FVS defines this field)
-                    //"Tree_ID CHAR(40)," + // (how FVS defines this field)
+                       //"Plot_ID CHAR(4)," + //RECOMMENDED (how FVS defines this field)
+                       //"Tree_ID CHAR(40)," + // (how FVS defines this field)
                        "Plot_ID DOUBLE," + //RECOMMENDED //This deviates from FVS DB documentation. Our current approach is to not use plot_IDs
                        "Tree_ID DOUBLE," + //This deviates from FVS DB documentation because we calculate Tree_ID as Tree.Subp*1000+Tree.Tree. Also indexed.
                        "Tree_Count DOUBLE," + //RECOMMENDED
