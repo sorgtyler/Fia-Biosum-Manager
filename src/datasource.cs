@@ -44,105 +44,115 @@ namespace FIA_Biosum_Manager
 		public int m_intNumberOfTables;
 		bool _bLoadFieldNamesAndDatatypes=false;
 		bool _bLoadTableRecordCount=true;
-		public static string[] g_strProjectDatasourceTableTypesArray = {"Plot",
-															  "Condition",
-															  "Tree",
-															  "Owner Groups",
-															  "Treatment Prescriptions",
-															  "Treatment Prescriptions Assigned FVS Commands",
-															  "Treatment Prescriptions Harvest Cost Columns",
-															  "Treatment Prescription Categories",
-															  "Treatment Prescription Subcategories",
-															  "Treatment Packages",
-															  "Treatment Package Assigned FVS Commands",
-															  "Treatment Package Members",
-															  "Treatment Package FVS Commands Order",
-															  "FVS Commands",
-                                                              "FVS PRE-POST SeqNum Definitions",
-                                                              "FVS PRE-POST SeqNum Treatment Package Assign", 
-															  "Tree Species",
-															  Datasource.TableTypes.FvsTreeSpecies,
-                                                              "FVS Western Tree Species Translator",
-                                                              "FVS Eastern Tree Species Translator",
-															  "Travel Times",
-															  "Processing Sites",
-															  "FVS Tree List For Processor",
-															  "FIADB FVS Variant",
-                                                              "FIA Tree Macro Plot Breakpoint Diameter",
-															  Datasource.TableTypes.HarvestMethods,
-															  "Plot And Condition Record Audit",
-															  "Plot, Condition And Treatment Record Audit",
-															  "Tree Regional Biomass",
-															  "Population Evaluation",
-															  "Population Estimation Unit",
-															  "Population Stratum",
-															  "Population Plot Stratum Assignment",
-                                                              "BIOSUM Pop Stratum Adjustment Factors",
-															  "Site Tree",
-                                                              Datasource.TableTypes.FiaTreeSpeciesReference};
+	    public static string[] g_strProjectDatasourceTableTypesArray =
+	    {
+			"Plot",
+			"Condition",
+			"Tree",
+			"Owner Groups",
+			"Treatment Prescriptions",
+			"Treatment Prescriptions Assigned FVS Commands",
+			"Treatment Prescriptions Harvest Cost Columns",
+			"Treatment Prescription Categories",
+			"Treatment Prescription Subcategories",
+			"Treatment Packages",
+			"Treatment Package Assigned FVS Commands",
+			"Treatment Package Members",
+			"Treatment Package FVS Commands Order",
+			"FVS Commands",
+			"FVS PRE-POST SeqNum Definitions",
+			"FVS PRE-POST SeqNum Treatment Package Assign", 
+			"Tree Species",
+			Datasource.TableTypes.FvsTreeSpecies,
+			"FVS Western Tree Species Translator",
+			"FVS Eastern Tree Species Translator",
+			"Travel Times",
+			"Processing Sites",
+			"FVS Tree List For Processor",
+			"FIADB FVS Variant",
+			"FIA Tree Macro Plot Breakpoint Diameter",
+			Datasource.TableTypes.HarvestMethods,
+			"Plot And Condition Record Audit",
+			"Plot, Condition And Treatment Record Audit",
+			"Tree Regional Biomass",
+			"Population Evaluation",
+			"Population Estimation Unit",
+			"Population Stratum",
+			"Population Plot Stratum Assignment",
+			"BIOSUM Pop Stratum Adjustment Factors",
+			"Site Tree",
+			Datasource.TableTypes.FiaTreeSpeciesReference,
+	    };
 
-        public static string[] g_strCoreDatasourceTableTypesArray = {"Plot",
-															  "Condition",
-															  "Tree",
-															  "Owner Groups",
-															  "Treatment Prescriptions",
-															  "Treatment Prescriptions Assigned FVS Commands",
-															  "Treatment Prescriptions Harvest Cost Columns",
-															  "Treatment Prescription Categories",
-															  "Treatment Prescription Subcategories",
-															  "Treatment Packages",
-															  "Treatment Package Assigned FVS Commands",
-															  "Treatment Package Members",
-															  "Treatment Package FVS Commands Order",
-															  "FVS Commands",
-															  "Tree Species",
-															  "FVS Tree Species",
-															  "Travel Times",
-															  "Processing Sites",
-															  "FVS Tree List For Processor",
-															  "FIADB FVS Variant",
-                                                              "FIA Tree Macro Plot Breakpoint Diameter",
-															  Datasource.TableTypes.HarvestMethods,
-															  "Plot And Condition Record Audit",
-															  "Plot, Condition And Treatment Record Audit",
-															  "Tree Regional Biomass",
-															  "Population Evaluation",
-															  "Population Estimation Unit",
-															  "Population Stratum",
-															  "Population Plot Stratum Assignment",
-                                                              "BIOSUM Pop Stratum Adjustment Factors",
-															  "Site Tree"};
-        public static string[] g_strProcessorDatasourceTableTypesArray = {"Plot",
-															  "Condition",
-															  "Tree",
-															  "Owner Groups",
-															  "Treatment Prescriptions",
-															  "Treatment Prescriptions Assigned FVS Commands",
-															  "Treatment Prescriptions Harvest Cost Columns",
-															  "Treatment Prescription Categories",
-															  "Treatment Prescription Subcategories",
-															  "Treatment Packages",
-															  "Treatment Package Assigned FVS Commands",
-															  "Treatment Package Members",
-															  "Treatment Package FVS Commands Order",
-															  "FVS Commands",
-															  "Tree Species",
-															  "FVS Tree Species",
-															  "Travel Times",
-															  "Processing Sites",
-															  "FVS Tree List For Processor",
-															  "FIADB FVS Variant",
-                                                              "FIA Tree Macro Plot Breakpoint Diameter",
-															  Datasource.TableTypes.HarvestMethods,
-															  "Plot And Condition Record Audit",
-															  "Plot, Condition And Treatment Record Audit",
-															  "Tree Regional Biomass",
-															  "Population Evaluation",
-															  "Population Estimation Unit",
-															  "Population Stratum",
-															  "Population Plot Stratum Assignment",
-                                                              "BIOSUM Pop Stratum Adjustment Factors",
-															  "Site Tree"};
+	    public static string[] g_strCoreDatasourceTableTypesArray =
+	    {
+	        "Plot",
+	        "Condition",
+	        "Tree",
+	        "Owner Groups",
+	        "Treatment Prescriptions",
+	        "Treatment Prescriptions Assigned FVS Commands",
+	        "Treatment Prescriptions Harvest Cost Columns",
+	        "Treatment Prescription Categories",
+	        "Treatment Prescription Subcategories",
+	        "Treatment Packages",
+	        "Treatment Package Assigned FVS Commands",
+	        "Treatment Package Members",
+	        "Treatment Package FVS Commands Order",
+	        "FVS Commands",
+	        "Tree Species",
+	        "FVS Tree Species",
+	        "Travel Times",
+	        "Processing Sites",
+	        "FVS Tree List For Processor",
+	        "FIADB FVS Variant",
+	        "FIA Tree Macro Plot Breakpoint Diameter",
+	        Datasource.TableTypes.HarvestMethods,
+	        "Plot And Condition Record Audit",
+	        "Plot, Condition And Treatment Record Audit",
+	        "Tree Regional Biomass",
+	        "Population Evaluation",
+	        "Population Estimation Unit",
+	        "Population Stratum",
+	        "Population Plot Stratum Assignment",
+	        "BIOSUM Pop Stratum Adjustment Factors",
+	        "Site Tree"
+	    };
+
+	    public static string[] g_strProcessorDatasourceTableTypesArray =
+	    {
+	        "Plot",
+	        "Condition",
+	        "Tree",
+	        "Owner Groups",
+	        "Treatment Prescriptions",
+	        "Treatment Prescriptions Assigned FVS Commands",
+	        "Treatment Prescriptions Harvest Cost Columns",
+	        "Treatment Prescription Categories",
+	        "Treatment Prescription Subcategories",
+	        "Treatment Packages",
+	        "Treatment Package Assigned FVS Commands",
+	        "Treatment Package Members",
+	        "Treatment Package FVS Commands Order",
+	        "FVS Commands",
+	        "Tree Species",
+	        "FVS Tree Species",
+	        "Travel Times",
+	        "Processing Sites",
+	        "FVS Tree List For Processor",
+	        "FIADB FVS Variant",
+	        "FIA Tree Macro Plot Breakpoint Diameter",
+	        Datasource.TableTypes.HarvestMethods,
+	        "Plot And Condition Record Audit",
+	        "Plot, Condition And Treatment Record Audit",
+	        "Tree Regional Biomass",
+	        "Population Evaluation",
+	        "Population Estimation Unit",
+	        "Population Stratum",
+	        "Population Plot Stratum Assignment",
+	        "BIOSUM Pop Stratum Adjustment Factors",
+	        "Site Tree"
+	    };
 		public static FIA_Biosum_Manager.SQLMacroSubstitutionVariableItem g_oCurrentSQLMacroSubstitutionVariableItem=
 			            new SQLMacroSubstitutionVariableItem();
 
@@ -232,14 +242,15 @@ namespace FIA_Biosum_Manager
 			intRecCnt = Convert.ToInt32(p_ado.getRecordCount(oConn,"select count(*) from " + this.m_strDataSourceTableName,this.m_strDataSourceTableName));
 			this.m_strDataSource = new String[intRecCnt,10];
 			System.Data.OleDb.OleDbCommand oCommand = oConn.CreateCommand();
-      if (this.m_strScenarioId.Trim().Length > 0)
-      {
-			oCommand.CommandText = "select table_type,path,file,table_name from scenario_datasource" + 
-				                   " where scenario_id = '" + this.m_strScenarioId.Trim() + "';";
-		  }
-		  else
-		  {
-			  oCommand.CommandText = "select table_type,path,file,table_name from " + this.m_strDataSourceTableName + ";" ;
+		    if (this.m_strScenarioId.Trim().Length > 0)
+		    {
+		        oCommand.CommandText = "select table_type,path,file,table_name from scenario_datasource" +
+		                               " where scenario_id = '" + this.m_strScenarioId.Trim() + "';";
+		    }
+		    else
+		    {
+		        oCommand.CommandText =
+		            "select table_type,path,file,table_name from " + this.m_strDataSourceTableName + ";";
 			}
 				                           
 			try
@@ -281,6 +292,9 @@ namespace FIA_Biosum_Manager
 									if (this.LoadTableRecordCount) this.m_strDataSource[x,RECORDCOUNT] = Convert.ToString(p_ado.getRecordCount(strConn,strSQL,oDataReader["table_name"].ToString()));
 									if (this.LoadTableColumnNamesAndDataTypes) p_ado.getFieldNamesAndDataTypes(strConn,"select * from " + oDataReader["table_name"].ToString(), ref this.m_strDataSource[x,COLUMN_LIST],ref this.m_strDataSource[x,DATATYPE_LIST]);
 									p_ado.CloseConnection(p_ado.m_OleDbConnection);
+								    while (p_ado.m_OleDbConnection.State != ConnectionState.Closed)
+								        System.Threading.Thread.Sleep(5000);
+								    p_ado.m_OleDbConnection.Dispose();
 								}
 							}
 						}
@@ -289,8 +303,10 @@ namespace FIA_Biosum_Manager
 							this.m_strDataSource[x,TABLESTATUS] = "NF";
 							this.m_strDataSource[x,RECORDCOUNT] = "0";
 						}
-						p_dao.m_DaoWorkspace.Close();
-						p_dao = null;
+					    if (p_dao.m_DaoWorkspace != null)
+					    {
+					        p_dao.m_DaoWorkspace.Close();
+					    } p_dao = null;
 					}
 					else 
 					{
@@ -304,6 +320,7 @@ namespace FIA_Biosum_Manager
 					x++;
 				}
 				oDataReader.Close();
+                oDataReader.Dispose();
 			}
 			catch
 			{
@@ -317,7 +334,7 @@ namespace FIA_Biosum_Manager
 						oConn.Close();
 						while (oConn.State != System.Data.ConnectionState.Closed)
 							System.Threading.Thread.Sleep(1000);
-
+                        oConn.Dispose();
 						oConn = null;
 					}
 				}
@@ -333,7 +350,7 @@ namespace FIA_Biosum_Manager
 						oConn.Close();
 						while (oConn.State != System.Data.ConnectionState.Closed)
 							System.Threading.Thread.Sleep(1000);
-
+                        oConn.Dispose();
 						oConn = null;
 					}
 				}
@@ -605,9 +622,9 @@ namespace FIA_Biosum_Manager
 
               
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTieBreakRankTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
+                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName,
+                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableDbFile,
+                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName);
 
                 p_oDao.CreateTableLink(
                     p_DaoDatabase,
@@ -1243,6 +1260,7 @@ namespace FIA_Biosum_Manager
             static public string FvsTreeSpecies = "FVS Tree Species";
             static public string FiaTreeSpeciesReference = "FIA Tree Species Reference";
             static public string HarvestMethods = "Harvest Methods";
+            static public string FVSVariant = "FIADB FVS Variant";
         }
 		
 	}

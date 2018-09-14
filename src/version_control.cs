@@ -2543,12 +2543,15 @@ namespace FIA_Biosum_Manager
                         //
                         //CREATE THE MDB IF NOT EXIST
                         //
-                        if (oDs.m_strDataSource[x, Datasource.FILESTATUS] == "NF") //NF=table not found
-                        {
-                            oDao.CreateMDB(strCurrDbFile);
-                        }
-                        strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\" + Tables.Reference.DefaultFiadbFVSVariantTableDbFile;
-                        strSourceTableName = Tables.Reference.DefaultFiadbFVSVariantTableName;
+                        //This table no longer lives in ref_master.mdb; In shared appdata directory
+                        //
+                        //if (oDs.m_strDataSource[x, Datasource.FILESTATUS] == "NF") //NF=table not found
+                        //{
+                        //    oDao.CreateMDB(strCurrDbFile);
+                        //}
+                        //strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\" + Tables.Reference.DefaultFiadbFVSVariantTableDbFile;
+                        //strSourceTableName = Tables.Reference.DefaultFiadbFVSVariantTableName;
+                        //
                         //
                         //DELETE ANY OLD TABLES
                         //
@@ -5296,19 +5299,6 @@ namespace FIA_Biosum_Manager
             ado_data_access oAdo = new ado_data_access();
             dao_data_access oDao = new dao_data_access();
 
-            frmMain.g_sbpInfo.Text = "Version Update: Creating new Core Analysis databases ...Stand by";
-            string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\core_definitions.accdb";
-            string strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
-            if (!System.IO.File.Exists(strDestFile))
-            {
-                System.IO.File.Copy(strSourceFile, strDestFile);
-            }
-            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
-            if (!System.IO.File.Exists(strDestFile))
-            {
-                oDao.CreateMDB(strDestFile);
-            }
-
             frmMain.g_sbpInfo.Text = "Version Update: Updating tree species tables ...Stand by";
             // Load project data sources table
             FIA_Biosum_Manager.Datasource oDs = new Datasource();
@@ -5323,7 +5313,7 @@ namespace FIA_Biosum_Manager
             int intTreeSpeciesTable = oDs.getValidTableNameRow("Tree Species");
             string strDirectoryPath = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
             string strFileName = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+            //(?F? = FILE FOUND, ?NF? = NOT FOUND)
             string strFileStatus = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
             string strTargetTable = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
             string strTableStatus = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
@@ -5335,9 +5325,9 @@ namespace FIA_Biosum_Manager
 
             // Copying the updated tree_species table into ref_master.accdb
             string strTreeSpeciesWorkTableName = "treespecies_worktable";
-            strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\ref_master.mdb";
+            string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\ref_master.mdb";
             // Tree species table
-            oDao.CreateTableLink(strDirectoryPath + "\\" + strFileName, strTreeSpeciesWorkTableName, 
+            oDao.CreateTableLink(strDirectoryPath + "\\" + strFileName, strTreeSpeciesWorkTableName,
                                  strSourceFile, strTargetTable);
 
             //copy contents of new tree_species table into place
@@ -5354,19 +5344,86 @@ namespace FIA_Biosum_Manager
 
             //refresh biosum_ref.accdb from application directory
             strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\biosum_ref.accdb";
-            strDestFile = frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
+            string strDestFile = frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
                 frmMain.g_strBiosumDataDir + "\\" + Tables.Reference.DefaultBiosumReferenceDbFile;
             if (System.IO.File.Exists(strDestFile) == true)
             {
+                // Create backup copy of biosum_ref.accdb if one wasn't already made today
                 string strBackupFileName = System.IO.Path.GetFileNameWithoutExtension(strSourceFile) + strTableSuffix + ".accdb";
-                if (System.IO.File.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
-                    frmMain.g_strBiosumDataDir + "\\" + strBackupFileName) == false)
+                if (!System.IO.File.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
+                    frmMain.g_strBiosumDataDir + "\\" + strBackupFileName))
                 {
                     System.IO.File.Move(strDestFile, frmMain.g_oEnv.strApplicationDataDirectory.Trim() +
                     frmMain.g_strBiosumDataDir + "\\" + strBackupFileName);
                 }
+                else
+                {
+                    // Delete the file if we already have a backup. Otherwise the copy will fail
+                    System.IO.File.Delete(strDestFile);
+                }
             }
             System.IO.File.Copy(strSourceFile, strDestFile);
+
+            frmMain.g_sbpInfo.Text = "Version Update: Add DWM field to Cond table ...Stand by";
+            // New column on cond table for dwm
+            int intCondTable = oDs.getValidTableNameRow("Condition");
+            strDirectoryPath = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strFileName = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            //(?F? = FILE FOUND, ?NF? = NOT FOUND)
+            strFileStatus = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            strTargetTable = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            strTableStatus = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                oAdo.OpenConnection(oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", ""));
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strTargetTable, "dwm_fuelbed_typcd"))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, strTargetTable, "dwm_fuelbed_typcd", "TEXT", "3");
+                }
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Creating empty DWM tables ...Stand by";
+            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMDbFile;
+            if (!System.IO.File.Exists(strDestFile))
+            {
+                oDao.CreateMDB(strDestFile);
+            }
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
+            if (!oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName))
+            {
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMCoarseWoodyDebrisTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMDuffLitterFuelTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMFineWoodyDebrisTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName);
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMTransectSegmentTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName);
+            }
+
+            //rename fvs_tree_species table and re-map to %appData%
+            frmMain.g_sbpInfo.Text = "Version Update: Move  table ...Stand by";
+
+            int intFvsVariantTable = oDs.getValidTableNameRow("FIADB FVS Variant");
+            strDirectoryPath = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strFileName = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            strFileStatus = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            strTargetTable = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            strTableStatus = oDs.m_strDataSource[intFvsVariantTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Moving FVS Variant table ...Stand by";
+            string strDataSourceMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            oAdo.m_strSQL = "UPDATE datasource " +
+                            "SET PATH = '@@appdata@@\\fiabiosum', file = '" + Tables.Reference.DefaultBiosumReferenceDbFile + "' " +
+                            "WHERE TABLE_TYPE = '" + Datasource.TableTypes.FVSVariant + "'";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            oAdo.m_OleDbConnection.Close();
 
             frmMain.g_sbpInfo.Text = "Version Update: Updating OPCOST configuration database ...Stand by";
             strSourceFile = frmMain.g_oEnv.strAppDir + "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
@@ -5377,6 +5434,37 @@ namespace FIA_Biosum_Manager
                 System.IO.File.Delete(strDestFile);
             }
             System.IO.File.Copy(strSourceFile, strDestFile);
+
+            if (oDao != null)
+            {
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
+            if (oAdo != null)
+            {
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                oAdo = null;
+            }
+        }
+        
+        private void UpdateDatasources_5_8_6()
+        {
+            ado_data_access oAdo = new ado_data_access();
+            dao_data_access oDao = new dao_data_access();
+
+            string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
+            frmMain.g_sbpInfo.Text = "Version Update: Creating new Core Analysis databases ...Stand by";
+            string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\core_definitions.accdb";
+            string strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
+            if (!System.IO.File.Exists(strDestFile))
+            {
+                System.IO.File.Copy(strSourceFile, strDestFile);
+            }
+            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            if (!System.IO.File.Exists(strDestFile))
+            {
+                oDao.CreateMDB(strDestFile);
+            }
 
             frmMain.g_sbpInfo.Text = "Version Update: Updating CORE scenario configuration tables ...Stand by";
 

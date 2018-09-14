@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 		public Project m_oProject = new Project();
 		public CoreScenarioResults m_oCoreScenarioResults = new CoreScenarioResults();
 		public CoreDefinitions m_oCoreDef = new CoreDefinitions();
-        public CoreScenarioRuleDefinitions m_oCoreScenarioRuleDef = new CoreScenarioRuleDefinitions();
+		public CoreScenarioRuleDefinitions m_oCoreScenarioRuleDef = new CoreScenarioRuleDefinitions();
 		public FIAPlot m_oFIAPlot = new FIAPlot();
 		public FVS m_oFvs = new FVS();
 		public TravelTime m_oTravelTime = new TravelTime();
@@ -275,6 +275,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsOwnerRxPackageCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
             static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"core\db\prepost_fvs_weighted.accdb"; } }
 
+
 			
 			private string strSQL = "";
 			public CoreScenarioResults()
@@ -304,7 +305,7 @@ namespace FIA_Biosum_Manager
                 if (!String.IsNullOrEmpty(p_strFilterColumnName))
                     strSql = strSql + p_strFilterColumnName + " DOUBLE,";
 			    strSql = strSql + 
-                         "pre_variable1_name CHAR(100)," + 
+			             "pre_variable1_name CHAR(100)," + 
 			             "post_variable1_name CHAR(100)," + 
   			             "pre_variable1_value DOUBLE," + 
 			             "post_variable1_value DOUBLE," + 
@@ -674,8 +675,8 @@ namespace FIA_Biosum_Manager
 			//
 			//OPTIMIZATION VARIABLE
 			//
-			public void CreateOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,
-                string p_strTableName, string p_strFilterColumnName)
+            public void CreateOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,
+                                                string p_strTableName, string p_strFilterColumnName)
 			{
 				p_oAdo.SqlNonQuery(p_oConn,CreateOptimizationTableSQL(p_strTableName, p_strFilterColumnName));
 				CreateOptimizationTableIndexes(p_oAdo,p_oConn,p_strTableName);
@@ -685,17 +686,17 @@ namespace FIA_Biosum_Manager
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id,rxpackage,rx,rxcycle");
 			}
             static public string CreateOptimizationTableSQL(string p_strTableName, string p_strFilterColumnName)
-			{
-				string strSQL = "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id CHAR(25)," + 
-                    "rxpackage CHAR(3)," + 
-                    "rx CHAR(3)," + 
-					"rxcycle CHAR(1)," + 
-					"pre_variable_name CHAR(100)," + 
-					"post_variable_name CHAR(100)," + 
-					"pre_variable_value DOUBLE," + 
-					"post_variable_value DOUBLE," + 
-					"change_value DOUBLE," +
+            {
+                string strSQL = "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id CHAR(25)," +
+                    "rxpackage CHAR(3)," +
+                    "rx CHAR(3)," +
+                    "rxcycle CHAR(1)," +
+                    "pre_variable_name CHAR(100)," +
+                    "post_variable_name CHAR(100)," +
+                    "pre_variable_value DOUBLE," +
+                    "post_variable_value DOUBLE," +
+                    "change_value DOUBLE," +
                     "affordable_YN CHAR(1)";
                 if (!String.IsNullOrEmpty(p_strFilterColumnName))
                 {
@@ -703,7 +704,7 @@ namespace FIA_Biosum_Manager
                 }
                 strSQL = strSQL + ")";
                 return strSQL;
-			}
+            }
 			//
 			//OPTIMIZATION VARIABLE PLOT
 			//
@@ -1714,7 +1715,7 @@ namespace FIA_Biosum_Manager
             {
                 p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedCoreVariableTableSQL(p_strTableName));
                 CreateCalculatedCoreVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
-            }
+		}
             public void CreateCalculatedCoreVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.AddAutoNumber(p_oConn, p_strTableName, "ID");
@@ -2703,6 +2704,11 @@ namespace FIA_Biosum_Manager
                        "Fuel_gt_50_S DOUBLE," +
                        "Fuel_Litter DOUBLE," +
                        "Fuel_Duff DOUBLE," +
+                       "SmallMediumTotalLength DOUBLE," +
+                       "LargeTotalLength DOUBLE," +
+                       "CWDTotalLength DOUBLE," +
+                       "DuffPitCount LONG," +
+                       "LitterPitCount LONG," +
                        "Photo_Ref LONG," +
                        "Photo_code CHAR(13)" +
                        ")";
@@ -2713,7 +2719,7 @@ namespace FIA_Biosum_Manager
             public void CreateFVSInputTreeInitWorkTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
                 System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
-                p_oAdo.SqlNonQuery(p_oConn, CreateFVSInputTreeInitWorkTableSQL(p_strTableName));
+                p_oAdo.SqlNonQuery(p_oConn, CreateFVSInputTreeInitTableSQL(p_strTableName));
                 CreateFVSInputTreeInitWorkTableIndexes(p_oAdo, p_oConn, p_strTableName);
             }
 
@@ -2728,14 +2734,14 @@ namespace FIA_Biosum_Manager
                 p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_TopoCode_idx", "TopoCode");
             }
 
-            public string CreateFVSInputTreeInitWorkTableSQL(string p_strTableName)
+            public string CreateFVSInputTreeInitTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                        "TreeInitID AUTOINCREMENT, " + //Pkey and indexed
                        "Stand_ID CHAR(26)," + //indexed, duplicates okay //REQUIRED
                        "StandPlot_ID CHAR(40)," +
-                    //"Plot_ID CHAR(4)," + //RECOMMENDED (how FVS defines this field)
-                    //"Tree_ID CHAR(40)," + // (how FVS defines this field)
+                       //"Plot_ID CHAR(4)," + //RECOMMENDED (how FVS defines this field)
+                       //"Tree_ID CHAR(40)," + // (how FVS defines this field)
                        "Plot_ID DOUBLE," + //RECOMMENDED //This deviates from FVS DB documentation. Our current approach is to not use plot_IDs
                        "Tree_ID DOUBLE," + //This deviates from FVS DB documentation because we calculate Tree_ID as Tree.Subp*1000+Tree.Tree. Also indexed.
                        "Tree_Count DOUBLE," + //RECOMMENDED
@@ -2977,6 +2983,11 @@ namespace FIA_Biosum_Manager
 			public string DefaultSiteTreeTableDbFile {get {return @"db\master.mdb";}}
 			public string DefaultSiteTreeTableName {get {return "sitetree";}}
 
+            public string DefaultDWMDbFile { get { return @"db\master_aux.accdb"; } }
+            public string DefaultDWMCoarseWoodyDebrisName {get { return "DWM_COARSE_WOODY_DEBRIS"; }}
+            public string DefaultDWMDuffLitterFuelName {get { return "DWM_DUFF_LITTER_FUEL"; }}
+            public string DefaultDWMFineWoodyDebrisName {get { return "DWM_FINE_WOODY_DEBRIS"; }}
+            public string DefaultDWMTransectSegmentName {get { return "DWM_TRANSECT_SEGMENT"; }}
 
 
 
@@ -3108,7 +3119,8 @@ namespace FIA_Biosum_Manager
 					"idb_cond_id LONG," + 
 					"idb_plot_id LONG," + 
 					"cn CHAR(34)," + 
-					"biosum_status_cd BYTE)";
+                    "biosum_status_cd BYTE, " +
+                    "dwm_fuelbed_typcd TEXT(3))";
 
 			}
 			public void CreateTreeTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
@@ -3381,6 +3393,165 @@ namespace FIA_Biosum_Manager
                     "adj_factor_micr DECIMAL (5,4)," +
                     "biosum_status_cd BYTE)";
             }
+
+		    public void CreateDWMCoarseWoodyDebrisTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMCoarseWoodyDebrisTableSQL(p_strTableName));
+		        CreateDWMCoarseWoodyDebrisTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMCoarseWoodyDebrisTableIndexes(ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMCoarseWoodyDebrisTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+		               "biosum_cond_id text(25)" +
+		               ",biosum_status_cd BYTE" +
+		               ",CN TEXT(34)" +
+		               ",PLT_CN TEXT(34)" +
+		               ",INVYR LONG" +
+		               ",STATECD LONG" +
+		               ",COUNTYCD LONG" +
+		               ",PLOT LONG" +
+		               ",SUBP LONG" +
+		               ",TRANSECT LONG" +
+		               ",CWDID DOUBLE" +
+		               ",MEASYEAR LONG" +
+		               ",CONDID LONG" +
+		               ",SPCD LONG" +
+		               ",DECAYCD LONG" +
+		               ",TRANSDIA LONG" +
+		               ",LENGTH LONG" +
+                       ",CWD_SAMPLE_METHOD TEXT(6)" +
+                       ",INCLINATION LONG" +
+		               ")";
+		    }
+
+		    public void CreateDWMFineWoodyDebrisTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMFineWoodyDebrisTableSQL(p_strTableName));
+		        CreateDWMFineWoodyDebrisTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMFineWoodyDebrisTableIndexes(ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMFineWoodyDebrisTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id text(25)" + 
+		               ",biosum_status_cd BYTE" +
+		               ",CN TEXT(34)" +
+		               ",PLT_CN TEXT(34)" +
+		               ",INVYR LONG" +
+		               ",STATECD LONG" +
+		               ",COUNTYCD LONG" +
+		               ",PLOT LONG" +
+		               ",TRANSECT LONG" +
+		               ",SUBP LONG" +
+		               ",CONDID LONG" +
+		               ",MEASYEAR LONG" +
+		               ",SMALLCT LONG" +
+		               ",MEDIUMCT LONG" +
+		               ",LARGECT LONG" +
+                       ",RSNCTCD LONG" +
+		               ",SMALL_TL_COND DOUBLE" +
+		               ",MEDIUM_TL_COND DOUBLE" +
+		               ",LARGE_TL_COND DOUBLE" +
+                       ",FWD_NONSAMPLE_REASN_CD LONG" +
+                       ",FWD_SAMPLE_METHOD TEXT(6)" +
+		               ")";
+		    }
+
+		    public void CreateDWMDuffLitterFuelTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMDuffLitterFuelTableSQL(p_strTableName));
+		        CreateDWMDuffLitterFuelTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMDuffLitterFuelTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn,
+		        string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMDuffLitterFuelTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id text(25)" + 
+		               ",biosum_status_cd BYTE" +
+		               ",CN TEXT(34)" +
+		               ",PLT_CN TEXT(34)" +
+		               ",INVYR LONG" +
+		               ",STATECD LONG" +
+		               ",COUNTYCD LONG" +
+		               ",PLOT LONG" +
+		               ",TRANSECT LONG" +
+		               ",SUBP LONG" +
+		               ",MEASYEAR LONG" +
+		               ",CONDID LONG" +
+		               ",DUFFDEP DOUBLE" +
+		               ",LITTDEP DOUBLE" +
+		               ",FUELDEP DOUBLE" +
+                       ",DUFF_METHOD LONG" +
+                       ",DUFF_NONSAMPLE_REASN_CD LONG" +
+                       ",LITTER_METHOD LONG" +
+                       ",LITTER_NONSAMPLE_REASN_CD LONG" +
+		               ")";
+		    }
+
+		    public void CreateDWMTransectSegmentTable(FIA_Biosum_Manager.ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.SqlNonQuery(p_oConn, CreateDWMTransectSegmentTableSQL(p_strTableName));
+		        CreateDWMTransectSegmentTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		    }
+
+		    public void CreateDWMTransectSegmentTableIndexes(ado_data_access p_oAdo,
+		        System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+		    {
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+		        p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "plt_cn");
+		    }
+
+		    public string CreateDWMTransectSegmentTableSQL(string p_strTableName)
+		    {
+		        return "CREATE TABLE " + p_strTableName + " (" +
+		               "biosum_cond_id text(25)" +
+		               ",biosum_status_cd BYTE" +
+		               ",CN TEXT(34)" +
+		               ",PLT_CN TEXT(34)" +
+		               ",INVYR LONG" +
+		               ",STATECD LONG" +
+		               ",COUNTYCD LONG" +
+		               ",PLOT LONG" +
+		               ",SUBP LONG" +
+		               ",TRANSECT LONG" +
+		               ",SEGMNT LONG" +
+		               ",MEASYEAR LONG" +
+		               ",CONDID LONG" +
+		               ",SLOPE_BEGNDIST DOUBLE" +
+		               ",SLOPE_ENDDIST DOUBLE" +
+		               ",SLOPE LONG" +
+		               ",HORIZ_LENGTH DOUBLE" +
+		               ",HORIZ_BEGNDIST DOUBLE" +
+		               ",HORIZ_ENDDIST DOUBLE" +
+		               ")";
+		    }
+
 		}
         public class Processor
         {
@@ -4458,7 +4629,6 @@ namespace FIA_Biosum_Manager
 			static public string DefaultInventoriesTableName {get {return "inventories";}}
 			static public string DefaultFVSTreeSpeciesTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultFVSTreeSpeciesTableName {get {return "fvs_tree_species";}}
-			static public string DefaultFiadbFVSVariantTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultFiadbFVSVariantTableName {get {return "fiadb_fvs_variant";}}
 			static public string DefaultHarvestMethodsTableDbFile {get {return @"db\ref_master.mdb";}}
             static public string DefaultHarvestMethodsTableName { get { return "harvest_methods"; } }
@@ -4476,7 +4646,6 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeMacroPlotBreakPointDiaTableName { get { return "TreeMacroPlotBreakPointDia"; } }
             static public string DefaultBiosumReferenceDbFile { get { return "biosum_ref.accdb"; } }
             static public string DefaultOpCostReferenceDbFile { get { return @"db\opcost_ref.accdb"; } }
-
 
 
 			public void CreateTreeSpeciesTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
