@@ -3704,7 +3704,9 @@ namespace FIA_Biosum_Manager
                             " [Unadjusted Small log trees average volume (ft3)] single," +
                             " [Unadjusted Large log trees per acre] single," +
                             " [Unadjusted Large log trees average vol(ft3)] single," +
-                            " ba_frac_cut single" +
+                            " ba_frac_cut single," +
+                            " QMD_SL single," +
+                            " QMD_LL single" +
                             " )";
             }
 
