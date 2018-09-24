@@ -3049,7 +3049,7 @@ namespace FIA_Biosum_Manager
                     "SELECT '9999999999999999999999999' AS biosum_cond_id, 9 AS biosum_status_cd, {2} FROM {3} dwm INNER JOIN {4} p ON dwm.plt_cn=p.cn;";
             }
             p_ado.m_strSQL = String.Format(strInsertIntoValues + strSelectColumns, 
-                strDestTable, strDestFields, strSourceFields, strSourceTable, m_strPlotTable);
+                strDestTable, strDestFields, strSourceFields, strSourceTable, "tempplot");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n");
             p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
