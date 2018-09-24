@@ -27,7 +27,6 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtChipValue;
 		private RxTools m_oRxTools = new RxTools();
-		private Queries m_oQueries = new Queries();
 		private ado_data_access m_oAdo = null;
 		private string _strScenarioId="";
 		private frmProcessorScenario _frmProcessorScenario=null;
@@ -100,17 +99,11 @@ namespace FIA_Biosum_Manager
 			//
 			ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			//
-			//LOAD PROJECT DATATASOURCES INFO
-			//
-			m_oQueries.m_oFvs.LoadDatasource=true;
-			m_oQueries.m_oReference.LoadDatasource=true;
-			m_oQueries.LoadDatasources(true,"processor",ScenarioId);
-			//
 			//CREATE LINK IN TEMP MDB TO SCENARIO TREE SPECIES DIAM DOLLAR VALUES TABLE
 			//
 			dao_data_access oDao = new dao_data_access();
 			//link to tree species groups table
-			oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
                                  "scenario_tree_species_diam_dollar_values",
                                  strScenarioMDB,"scenario_tree_species_diam_dollar_values",true);
             oDao.m_DaoWorkspace.Close();
@@ -119,12 +112,11 @@ namespace FIA_Biosum_Manager
 			//OPEN CONNECTION TO TEMP DB FILE
 			//
 			m_oAdo = new ado_data_access();
-			m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile,"",""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "", ""));
 			if (m_oAdo.m_intError==0)
 			{
                 ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadSpeciesAndDiameterGroupDollarValues
-                    (m_oAdo, m_oAdo.m_OleDbConnection, m_oQueries,
-                     ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
+                    (m_oAdo, m_oAdo.m_OleDbConnection, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
 
                 //REMOVE OLD CONTROLS FROM FORM IF THEY EXIST
                 string strName = "uc_processor_scenario_spc_dbh_group_value2";

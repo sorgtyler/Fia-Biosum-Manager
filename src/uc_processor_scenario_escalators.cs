@@ -30,7 +30,6 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label lblCycleLengthDesc;
 		private System.Windows.Forms.Label lblCycleLength;
 		private RxTools m_oRxTools = new RxTools();
-		private Queries m_oQueries = new Queries();
 		private ado_data_access m_oAdo = null;
 		private string _strScenarioId="";
 		private frmProcessorScenario _frmProcessorScenario=null;
@@ -322,17 +321,11 @@ namespace FIA_Biosum_Manager
 			//
 			ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			//
-			//LOAD PROJECT DATATASOURCES INFO
-			//
-			m_oQueries.m_oFvs.LoadDatasource=true;
-			m_oQueries.m_oReference.LoadDatasource=true;
-			m_oQueries.LoadDatasources(true,"processor",ScenarioId);
-			//
 			//CREATE LINK IN TEMP MDB TO SCENARIO COST REVENUE ESCALATORS TABLE
 			//
 			dao_data_access oDao = new dao_data_access();
 			//link to tree species groups table
-			oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
 				"scenario_cost_revenue_escalators",
 				strScenarioMDB,"scenario_cost_revenue_escalators",true);
 			oDao.m_DaoWorkspace.Close();
@@ -341,12 +334,11 @@ namespace FIA_Biosum_Manager
 			//OPEN CONNECTION TO TEMP DB FILE
 			//
 			m_oAdo = new ado_data_access();
-			m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile,"",""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "", ""));
 			if (m_oAdo.m_intError==0)
 			{
                 ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadEscalators(
-                    m_oAdo, m_oAdo.m_OleDbConnection, m_oQueries,
-                    ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
+                    m_oAdo, m_oAdo.m_OleDbConnection, ReferenceProcessorScenarioForm.LoadedQueries, ReferenceProcessorScenarioForm.m_oProcessorScenarioItem);
                 ProcessorScenarioItem.Escalators oEscalators = ReferenceProcessorScenarioForm.m_oProcessorScenarioItem.m_oEscalators;
                 //
                 //UPDATE CYCLE ESCALATOR TEXT BOXES

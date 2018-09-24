@@ -19,7 +19,6 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Label lblYardDistThreshold;
 		private RxTools m_oRxTools = new RxTools();
-		private Queries m_oQueries = new Queries();
 		private ado_data_access m_oAdo = null;
 		private string _strScenarioId="";
         private frmProcessorScenario _frmProcessorScenario = null;
@@ -327,12 +326,8 @@ namespace FIA_Biosum_Manager
 		public void loadvalues()
 		{
             ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
-
-            m_oQueries.m_oFvs.LoadDatasource = true;
-            m_oQueries.m_oReference.LoadDatasource = true;
-            m_oQueries.LoadDatasources(true, "processor", ScenarioId);
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "", ""));
      
             ReferenceProcessorScenarioForm.m_oProcessorScenarioTools.LoadMoveInCosts
                 (frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +

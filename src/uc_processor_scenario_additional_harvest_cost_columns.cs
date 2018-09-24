@@ -16,7 +16,6 @@ namespace FIA_Biosum_Manager
         ado_data_access m_oAdo=null;
         private string _strScenarioId = "";
         private frmProcessorScenario _frmProcessorScenario = null;
-        private Queries m_oQueries = new Queries();
         System.Data.OleDb.OleDbConnection m_oConnAdditionalHarvestCosts = new System.Data.OleDb.OleDbConnection();
 
         private FIA_Biosum_Manager.frmGridView m_frmHarvestCosts;
@@ -79,25 +78,17 @@ namespace FIA_Biosum_Manager
             //
             ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
             //
-            //LOAD PROJECT DATATASOURCES INFO
-            //
-            m_oQueries.m_oFvs.LoadDatasource = true;
-            m_oQueries.m_oReference.LoadDatasource = true;
-            m_oQueries.m_oProcessor.LoadDatasource = true;
-
-            m_oQueries.LoadDatasources(true, "processor", ScenarioId);
-            //
             //CREATE LINK IN TEMP MDB TO SCENARIO HARVEST COST COLUMNS TABLE AND SCENARIO ADDITIONAL HARVEST COSTS TABLE
             //
             dao_data_access oDao = new dao_data_access();
             //link to to scenario harvest cost columns
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
                                  "scenario_harvest_cost_columns",
                                  strScenarioMDB, "scenario_harvest_cost_columns", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
                                  "scenario_additional_harvest_costs",
                                  strScenarioMDB, "scenario_additional_harvest_costs",true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
                                  "scenario",
                                  strScenarioMDB, "scenario", true);
 
@@ -107,7 +98,7 @@ namespace FIA_Biosum_Manager
             //OPEN CONNECTION TO TEMP DB FILE
             //
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
                 //m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_oDataSource.getFullPathAndFile("ADDITIONAL HARVEST COSTS"), "", ""), ref m_oConnAdditionalHarvestCosts);
@@ -167,10 +158,10 @@ namespace FIA_Biosum_Manager
                 //GET ALL BIOSUM_COND_ID + RX possible combinations from tree and rx tables
                 //
                 m_oAdo.m_strSQL = "SELECT b.biosum_cond_id,a.rx " + 
-                                  "INTO plotrx " + 
-                                  "FROM " + this.m_oQueries.m_oFvs.m_strRxTable + " a," + 
-                                    "(SELECT DISTINCT biosum_cond_id " + 
-                                     "FROM " + this.m_oQueries.m_oFIAPlot.m_strTreeTable + ") b";
+                                  "INTO plotrx " +
+                                  "FROM " + this.ReferenceProcessorScenarioForm.LoadedQueries.m_oFvs.m_strRxTable + " a," + 
+                                    "(SELECT DISTINCT biosum_cond_id " +
+                                     "FROM " + this.ReferenceProcessorScenarioForm.LoadedQueries.m_oFIAPlot.m_strTreeTable + ") b";
 
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
                 m_oAdo.AddIndex(m_oAdo.m_OleDbConnection, "plotrx", "plotrx_idx", "biosum_cond_id,rx");
@@ -203,7 +194,7 @@ namespace FIA_Biosum_Manager
                 //
                 //load rx columns
                 //
-                m_oAdo.m_strSQL = "SELECT rx,ColumnName,Description FROM " + this.m_oQueries.m_oFvs.m_strRxHarvestCostColumnsTable;
+                m_oAdo.m_strSQL = "SELECT rx,ColumnName,Description FROM " + this.ReferenceProcessorScenarioForm.LoadedQueries.m_oFvs.m_strRxHarvestCostColumnsTable;
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -373,42 +364,46 @@ namespace FIA_Biosum_Manager
             //SCENARIO ID
             //
             ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
-            //
-            //LOAD PROJECT DATATASOURCES INFO
-            //
-            m_oQueries.m_oFvs.LoadDatasource = true;
-            m_oQueries.m_oReference.LoadDatasource = true;
-            m_oQueries.m_oProcessor.LoadDatasource = true;
 
-            m_oQueries.LoadDatasources(true, "processor", ScenarioId);
             //
             //CREATE LINK IN TEMP MDB TO SCENARIO HARVEST COST COLUMNS TABLE AND SCENARIO ADDITIONAL HARVEST COSTS TABLE
             //
             dao_data_access oDao = new dao_data_access();
             //link to to scenario harvest cost columns
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
                                  "scenario_harvest_cost_columns",
                                  strScenarioMDB, "scenario_harvest_cost_columns", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
                                  "scenario_additional_harvest_costs",
                                  strScenarioMDB, "scenario_additional_harvest_costs", true);
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+            oDao.CreateTableLink(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile,
                                  "scenario",
                                  strScenarioMDB, "scenario", true);
 
-            oDao.m_DaoWorkspace.Close();
-            oDao = null;
             //
             //OPEN CONNECTION TO TEMP DB FILE
             //
             m_oAdo = new ado_data_access();
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "", ""));
             if (m_oAdo.m_intError == 0)
             {
-                //m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_oDataSource.getFullPathAndFile("ADDITIONAL HARVEST COSTS"), "", ""), ref m_oConnAdditionalHarvestCosts);
-                //
-                //create a work table from the additional harvests costs table
-                //
+                // DELETE OLD TABLE LINKS IF THEY EXIST IN TEMP DB
+                if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "additional_harvest_costs_work_table"))
+                {
+                    oDao.DeleteTableFromMDB(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "additional_harvest_costs_work_table");
+                }
+                if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "plotrx"))
+                {
+                    oDao.DeleteTableFromMDB(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "plotrx");
+                }
+                if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "NewPlotRx"))
+                {
+                    oDao.DeleteTableFromMDB(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "NewPlotRx");
+                }
+
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+
                 m_oAdo.m_strSQL = Tables.Processor.CreateAdditionalHarvestCostsTableSQL("additional_harvest_costs_work_table");
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                 //create primary key
@@ -462,9 +457,9 @@ namespace FIA_Biosum_Manager
                 //
                 m_oAdo.m_strSQL = "SELECT b.biosum_cond_id,a.rx " +
                                   "INTO plotrx " +
-                                  "FROM " + this.m_oQueries.m_oFvs.m_strRxTable + " a," +
+                                  "FROM " + this.ReferenceProcessorScenarioForm.LoadedQueries.m_oFvs.m_strRxTable + " a," +
                                     "(SELECT DISTINCT biosum_cond_id " +
-                                     "FROM " + this.m_oQueries.m_oFIAPlot.m_strTreeTable + ") b";
+                                     "FROM " + this.ReferenceProcessorScenarioForm.LoadedQueries.m_oFIAPlot.m_strTreeTable + ") b";
 
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                 m_oAdo.AddIndex(m_oAdo.m_OleDbConnection, "plotrx", "plotrx_idx", "biosum_cond_id,rx");
@@ -494,6 +489,8 @@ namespace FIA_Biosum_Manager
                     this.lblNewAddedDescription.Visible = true;
                     this.ReferenceProcessorScenarioForm.m_bSave = true;
                 }
+
+
                 //
                 //load rx columns
                 //
@@ -833,7 +830,7 @@ namespace FIA_Biosum_Manager
                     //
                     if (uc_collection.Item(z).Type.Trim().ToUpper() != "SCENARIO")
                     {
-                        m_oAdo.m_strSQL = "UPDATE " + m_oQueries.m_oFvs.m_strRxHarvestCostColumnsTable + " " +
+                        m_oAdo.m_strSQL = "UPDATE " + this.ReferenceProcessorScenarioForm.LoadedQueries.m_oFvs.m_strRxHarvestCostColumnsTable + " " +
                                            "SET Description='" + uc_collection.Item(z).Description + "'" +
                                            "WHERE rx='" + uc_collection.Item(z).Type.Trim() + "' AND " +
                                                  "TRIM(ColumnName)='" + uc_collection.Item(z).ColumnName.Trim() + "'";
@@ -911,7 +908,8 @@ namespace FIA_Biosum_Manager
                     m_oAdo.m_strSQL = "SELECT COUNT(*) AS null_count FROM additional_harvest_costs_work_table  " +
                                       "WHERE " + strColumnName + " IS NULL";
                 }
-                intCount = Convert.ToInt32(m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, m_oQueries.m_oProcessor.m_strAdditionalHarvestCostsTable));
+                intCount = Convert.ToInt32(m_oAdo.getSingleDoubleValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, 
+                    this.ReferenceProcessorScenarioForm.LoadedQueries.m_oProcessor.m_strAdditionalHarvestCostsTable));
                 uc_collection.Item(x).NullCount = Convert.ToString(intCount);
             }
            
