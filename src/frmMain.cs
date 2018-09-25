@@ -3482,48 +3482,52 @@ namespace FIA_Biosum_Manager
                     else if (child.Text.IndexOf("Project") >= 0)
                     {
                         //cast the child form to get a reference to its controls, properties and methods
-                        FIA_Biosum_Manager.frmDialog temp = ((FIA_Biosum_Manager.frmDialog)child);
-                        if (temp.uc_project1.btnSave.Enabled == true)
+                        FIA_Biosum_Manager.frmDialog temp = child as FIA_Biosum_Manager.frmDialog;
+                        if (temp != null)
                         {
-                            if (bPromptMsg == false && p_bPrompt)
+                            if (temp.uc_project1.btnSave.Enabled == true)
                             {
-                                result = MessageBox.Show("Save Changes to " + child.Text.Trim() + " Y/N", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
-                                if (result == System.Windows.Forms.DialogResult.No)
+                                if (bPromptMsg == false && p_bPrompt)
                                 {
-                                    break;
+                                    result = MessageBox.Show("Save Changes to " + child.Text.Trim() + " Y/N", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+                                    if (result == System.Windows.Forms.DialogResult.No)
+                                    {
+                                        break;
+                                    }
+                                    else bPromptMsg = true;
                                 }
-                                else bPromptMsg = true;
+                                temp.uc_project1.SaveProjectProperties();
                             }
-                            temp.uc_project1.SaveProjectProperties();
-                        }
-                        if (temp.uc_project_notes1.btnSave.Enabled == true)
-                        {
-                            if (bPromptMsg == false && p_bPrompt)
+                            if (temp.uc_project_notes1.btnSave.Enabled == true)
                             {
-                                result = MessageBox.Show("Save Changes to " + child.Text.Trim() + " Y/N", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
-                                if (result == System.Windows.Forms.DialogResult.No)
+                                if (bPromptMsg == false && p_bPrompt)
                                 {
-                                    break;
+                                    result = MessageBox.Show("Save Changes to " + child.Text.Trim() + " Y/N", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+                                    if (result == System.Windows.Forms.DialogResult.No)
+                                    {
+                                        break;
+                                    }
+                                    else bPromptMsg = true;
                                 }
-                                else bPromptMsg = true;
+                                temp.uc_project_notes1.savevalues();
                             }
-                            temp.uc_project_notes1.savevalues();
-                        }
-                        if (temp.uc_contact_list1.btnSave.Enabled == true)
-                        {
-                            if (bPromptMsg == false && p_bPrompt)
+                            if (temp.uc_contact_list1.btnSave.Enabled == true)
                             {
-                                result = MessageBox.Show("Save Changes to " + child.Text.Trim() + " Y/N", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
-                                if (result == System.Windows.Forms.DialogResult.No)
+                                if (bPromptMsg == false && p_bPrompt)
                                 {
-                                    break;
+                                    result = MessageBox.Show("Save Changes to " + child.Text.Trim() + " Y/N", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+                                    if (result == System.Windows.Forms.DialogResult.No)
+                                    {
+                                        break;
+                                    }
+                                    else bPromptMsg = true;
                                 }
-                                else bPromptMsg = true;
+                                temp.uc_contact_list1.savevalues();
                             }
-                            temp.uc_contact_list1.savevalues();
+                            temp = null;
                         }
-                        temp = null;
                     }
+
                     else if (child.Text.IndexOf("Core Analysis: Edit Harvest Costs") >= 0)
                     {
                         FIA_Biosum_Manager.frmGridView temp = ((FIA_Biosum_Manager.frmGridView)child);
