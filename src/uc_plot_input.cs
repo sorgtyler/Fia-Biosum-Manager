@@ -102,7 +102,6 @@ namespace FIA_Biosum_Manager
         private string m_strDwmFwdTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName;
         private string m_strDwmDuffLitterTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName;
         private string m_strDwmTransectSegmentTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName;
-        //TODO: GRM
 
 		private string m_strSQL;
 
@@ -207,6 +206,7 @@ namespace FIA_Biosum_Manager
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+
 
 
 	    public frmDialog ReferenceFormDialog
@@ -978,7 +978,7 @@ namespace FIA_Biosum_Manager
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(58, 241);
+            this.label2.Location = new System.Drawing.Point(58, 247);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(339, 13);
             this.label2.TabIndex = 9;
@@ -987,7 +987,7 @@ namespace FIA_Biosum_Manager
             // cmbCondPropPercent
             // 
             this.cmbCondPropPercent.FormattingEnabled = true;
-            this.cmbCondPropPercent.Location = new System.Drawing.Point(376, 214);
+            this.cmbCondPropPercent.Location = new System.Drawing.Point(376, 220);
             this.cmbCondPropPercent.Name = "cmbCondPropPercent";
             this.cmbCondPropPercent.Size = new System.Drawing.Size(52, 21);
             this.cmbCondPropPercent.TabIndex = 8;
@@ -996,7 +996,7 @@ namespace FIA_Biosum_Manager
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(58, 217);
+            this.label1.Location = new System.Drawing.Point(58, 223);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(302, 13);
             this.label1.TabIndex = 7;
@@ -2388,16 +2388,12 @@ namespace FIA_Biosum_Manager
                 this.m_ado.OpenConnection(this.m_strTempMDBFileConn, ref this.m_connTempMDBFile);
 
                 //Before processing new plot information, delete any records that were not completely processed
-                DeleteFromTablesWhereFilter(m_ado, this.m_strPlotTable, " WHERE biosum_status_cd=9 OR LEN(biosum_plot_id)=0;");
-                DeleteFromTablesWhereFilter(m_ado, new string[]
+                DeleteFromTablesWhereFilter(m_ado, m_connTempMDBFile, new string[] {this.m_strPlotTable},
+                    " WHERE biosum_status_cd=9 OR LEN(biosum_plot_id)=0;");
+                DeleteFromTablesWhereFilter(m_ado, m_connTempMDBFile, new string[]
                 {
-                    m_strCondTable, m_strTreeTable, m_strSiteTreeTable,
+                    m_strCondTable, m_strTreeTable, m_strSiteTreeTable, m_strTreeRegionalBiomassTable
                 }, " WHERE biosum_status_cd=9;");
-                if (m_strTreeRegionalBiomassTable.Trim().Length > 0 &&
-                    m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable))
-                {
-                    DeleteFromTablesWhereFilter(m_ado, this.m_strTreeRegionalBiomassTable, " WHERE biosum_status_cd=9;");
-                }
 
                 if (m_intError == 0)
                     m_intError = m_ado.m_intError;
@@ -2748,8 +2744,23 @@ namespace FIA_Biosum_Manager
                     SetThermValue(m_frmTherm.progressBar1, "Value",
                         GetThermValue(m_frmTherm.progressBar1, "Maximum"));
                     SetThermValue(m_frmTherm.progressBar2, "Value", 80);
-                    UpdateColumnsDownWoodyMaterials(m_ado);
-                    m_intError = m_ado.m_intError;
+                    int intDwmResult = ImportDownWoodyMaterials(m_ado);
+                    if (intDwmResult < 0)
+                    {
+                        m_intError = intDwmResult;
+                    }
+                    else
+                    {
+                        m_intError = m_ado.m_intError;
+                    }
+                }
+
+
+                //After importing plot data and optionally DWM and GRM data, the connection may need to be reopened.
+                if (m_connTempMDBFile == null || m_connTempMDBFile.State == System.Data.ConnectionState.Closed)
+                {
+                    m_connTempMDBFile = new OleDbConnection(m_strTempMDBFileConn);
+                    m_connTempMDBFile.Open();
                 }
 
                 if (this.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
@@ -2794,22 +2805,18 @@ namespace FIA_Biosum_Manager
                     foreach (string table in new string[]
                     {
                         m_strPlotTable, m_strCondTable, m_strTreeTable, m_strPopEvalTable, m_strPopStratumTable,
-                        m_strPpsaTable, m_strPopEstUnitTable, m_strSiteTreeTable, m_strBiosumPopStratumAdjustmentFactorsTable
+                        m_strPpsaTable, m_strPopEstUnitTable, m_strSiteTreeTable, m_strBiosumPopStratumAdjustmentFactorsTable, m_strTreeRegionalBiomassTable
                     })
                     {
-                        m_ado.m_strSQL = "UPDATE " + table + " SET biosum_status_cd = 1 WHERE biosum_status_cd = 9;";
-                        m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                            frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,
-                                m_ado.m_strSQL + "\r\n");
-                    }
-
-                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 &&
-                        m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable))
-                    {
-                        this.m_strSQL = " UPDATE " + this.m_strTreeRegionalBiomassTable +
-                                        " SET biosum_status_cd=1 WHERE biosum_status_cd = 9;";
-                        this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_strSQL);
+                        if (m_ado.TableExist(m_connTempMDBFile, table))
+                        {
+                            m_ado.m_strSQL = "UPDATE " + table +
+                                             " SET biosum_status_cd = 1 WHERE biosum_status_cd = 9;";
+                            m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,
+                                    m_ado.m_strSQL + "\r\n");
+                        }
                     }
 
                     if (Checked(chkDwmImport))
@@ -2866,21 +2873,16 @@ namespace FIA_Biosum_Manager
                 else
                 {
                     //An ADO error occurred when updating columns so delete the records
-                    DeleteFromTablesWhereFilter(
-                        m_ado,
-                        new string[]
+                    DeleteFromTablesWhereFilter(m_ado, m_connTempMDBFile, new string[]
                         {
                             m_strPlotTable, m_strCondTable, m_strTreeTable, m_strPopEvalTable, m_strPopStratumTable,
                             m_strPpsaTable, m_strPopEstUnitTable, m_strSiteTreeTable,
-                            m_strBiosumPopStratumAdjustmentFactorsTable, m_strDwmCwdTable, m_strDwmFwdTable,
-                            m_strDwmDuffLitterTable, m_strDwmTransectSegmentTable
+                            m_strBiosumPopStratumAdjustmentFactorsTable, m_strTreeRegionalBiomassTable, 
+                            m_strDwmCwdTable, m_strDwmFwdTable, m_strDwmDuffLitterTable, m_strDwmTransectSegmentTable
                         },
                         " WHERE biosum_status_cd=9;");
-                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 && m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable))
-                    {
-                        DeleteFromTablesWhereFilter(m_ado, this.m_strTreeRegionalBiomassTable, " WHERE biosum_status_cd=9;");
-                    }
-                    MessageBox.Show("!!Error Occured Adding Plot Records: 0 Records Added!!", "Add Plot Data", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MessageBox.Show("!!Error Occured Adding Plot Records: 0 Records Added!!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 }
 
                 this.m_connTempMDBFile.Close();
@@ -2927,7 +2929,7 @@ namespace FIA_Biosum_Manager
 				MessageBox.Show("!!Error!! \n" + 
 					"Module - uc_plot_input:mdbFIADBFileInput  \n" + 
 					"Err Msg - " + err.Message.ToString().Trim(),
-					"FVS Biosum",System.Windows.Forms.MessageBoxButtons.OK,
+					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
 					System.Windows.Forms.MessageBoxIcon.Exclamation);
 				this.m_intError=-1;
 			}
@@ -2963,31 +2965,22 @@ namespace FIA_Biosum_Manager
 
 
 	    /// <summary>
-	    /// Delete records from strTableName in the database p_ado is currently connected to using the strDeleteFilter.
-	    /// </summary>
-	    /// <param name="strTableName">The name of the table</param>
-	    /// <param name="strDeleteFilter">A WHERE clause for the delete query</param>
-	    private void DeleteFromTablesWhereFilter(ado_data_access p_ado, string strTableName, string strDeleteFilter)
-	    {
-	        p_ado.m_strSQL = "DELETE FROM " + strTableName + strDeleteFilter;
-	        p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n");
-	    }
-
-	    /// <summary>
 	    /// Delete records from strTableNames in the database p_ado is currently connected to using the strDeleteFilter.
 	    /// </summary>
 	    /// <param name="strTableName">An array of table names to delete</param>
 	    /// <param name="strDeleteFilter">A WHERE clause for the delete query</param>
-	    private void DeleteFromTablesWhereFilter(ado_data_access p_ado, string[] strTableNames, string strDeleteFilter)
+	    private void DeleteFromTablesWhereFilter(ado_data_access p_ado, OleDbConnection conn, string[] strTableNames, string strDeleteFilter)
 	    {
 	        foreach (string table in strTableNames)
 	        {
-	            p_ado.m_strSQL = "DELETE FROM " + table + strDeleteFilter;
-	            p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n");
+	            if (p_ado.TableExist(conn, table))
+	            {
+	                p_ado.m_strSQL = "DELETE FROM " + table + strDeleteFilter;
+	                p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
+	                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+	                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,
+	                        p_ado.m_strSQL + "\r\n");
+	            }
 	        }
 	    }
 
@@ -3049,7 +3042,7 @@ namespace FIA_Biosum_Manager
                     "SELECT '9999999999999999999999999' AS biosum_cond_id, 9 AS biosum_status_cd, {2} FROM {3} dwm INNER JOIN {4} p ON dwm.plt_cn=p.cn;";
             }
             p_ado.m_strSQL = String.Format(strInsertIntoValues + strSelectColumns, 
-                strDestTable, strDestFields, strSourceFields, strSourceTable, m_strPlotTable);
+                strDestTable, strDestFields, strSourceFields, strSourceTable, "tempplot");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n");
             p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
@@ -4283,15 +4276,15 @@ namespace FIA_Biosum_Manager
 
 		}
 
-	    private void UpdateColumnsDownWoodyMaterials(ado_data_access p_ado)
+	    private int ImportDownWoodyMaterials(ado_data_access p_ado)
 	    {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//uc_plot_input.UpdateColumnsDownWoodyMaterials\r\n");
+                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//uc_plot_input.ImportDownWoodyMaterials\r\n");
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//\r\n");
             }
-
+            
 
             SetLabelValue(m_frmTherm.lblMsg,"Text","Importing DWM data...Stand By");
             SetThermValue(m_frmTherm.progressBar1,"Maximum", 14);
@@ -4309,6 +4302,47 @@ namespace FIA_Biosum_Manager
 		    p_ado.CloseConnection(m_connTempMDBFile);
 	        m_connTempMDBFile.Dispose();
 	        m_connTempMDBFile = null;
+
+
+	        //If any of the FIADB source DWM tables do not exist,
+	        //show message, uncheck the DWM checkbox, return early
+	        using (var conn = new OleDbConnection(p_ado.getMDBConnString(strFIADBDbFile, "", "")))
+	        {
+	            conn.Open();
+	            if (!p_ado.TableExist(conn, m_strDwmCwdTable) ||
+	                !p_ado.TableExist(conn, m_strDwmFwdTable) ||
+	                !p_ado.TableExist(conn, m_strDwmDuffLitterTable) ||
+	                !p_ado.TableExist(conn, m_strDwmTransectSegmentTable))
+	            {
+	                Func<bool, string, string> result = (boolTableExists, tableName) =>
+	                {
+	                    if (!boolTableExists) return "\r\n - " + tableName;
+	                    else return "";
+	                };
+	                DialogResult dlgResult = MessageBox.Show(String.Format(
+	                        "!!Error!!\nModule - uc_plot_input:ImportDownWoodyMaterials\n" + "Err Msg - " +
+	                        "At least one FIADB Source DWM table was not found:{0}{1}{2}{3}\r\nDo you wish to continue plot data input without DWM?",
+	                        result(p_ado.TableExist(conn, m_strDwmCwdTable), m_strDwmCwdTable),
+	                        result(p_ado.TableExist(conn, m_strDwmFwdTable), m_strDwmFwdTable),
+	                        result(p_ado.TableExist(conn, m_strDwmDuffLitterTable), m_strDwmDuffLitterTable),
+	                        result(p_ado.TableExist(conn, m_strDwmTransectSegmentTable), m_strDwmTransectSegmentTable)),
+	                    "FIA Biosum",
+	                    MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation);
+	                //Disable functionality related to DWM option down the pipeline
+	                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.CheckBox) chkDwmImport,
+	                    "Checked", false);
+
+	                if (dlgResult == DialogResult.No)
+	                {
+	                    return -1; //terminates plot input processing.
+	                }
+	                else if (dlgResult == DialogResult.Yes)
+	                {
+                        //m_intError == 0 keeps performing plot input.
+	                    return 0;
+	                }
+	            }
+	        }
 
 		    dao_data_access p_dao = new dao_data_access();
             //Link to FIADB source tables in temporary database
@@ -4349,7 +4383,7 @@ namespace FIA_Biosum_Manager
 
 
             //Preemptively remove any records that were not imported successfully 
-	        DeleteFromTablesWhereFilter(p_ado,
+	        DeleteFromTablesWhereFilter(p_ado, m_connTempMDBFile,
 	            new string[]
 	                {m_strDwmCwdTable, m_strDwmFwdTable, m_strDwmDuffLitterTable, m_strDwmTransectSegmentTable},
 	            " WHERE biosum_status_cd=9");
@@ -4425,7 +4459,9 @@ namespace FIA_Biosum_Manager
 
             SetLabelValue(m_frmTherm.lblMsg,"Text","");
             SetThermValue(m_frmTherm.progressBar1, "Value", GetThermValue(m_frmTherm.progressBar1, "Maximum"));
+	        return 0;
 	    }
+
 	
 		private void ThermCancel(object sender, System.EventArgs e)
 		{
