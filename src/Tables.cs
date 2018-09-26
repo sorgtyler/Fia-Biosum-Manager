@@ -1386,7 +1386,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioFvsVariablesOverallEffectiveTableName { get { return "scenario_fvs_variables_overall_effective"; } }
             static public string DefaultScenarioFvsVariablesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesTableName { get { return "scenario_fvs_variables"; } }
-            static public string DefaultScenarioTieBreakRankTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioLastTieBreakRankTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
             static public string DefaultScenarioLastTieBreakRankTableName { get { return "scenario_last_tiebreak_rank"; } }
             static public string DefaultScenarioPSitesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
             static public string DefaultScenarioPSitesTableName { get { return "scenario_psites"; } }

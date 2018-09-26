@@ -475,7 +475,7 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    //5.8.5 modifications to Core; Phase 1 of redesign
+                    //5.8.5 modifications for DWM
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 5) &&
@@ -484,6 +484,18 @@ namespace FIA_Biosum_Manager
                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 5))
                     {
                         UpdateDatasources_5_8_5();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
+                    //5.8.6 modifications to Core; Phase 1 of redesign
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 6) &&
+                           (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 8 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 6))
+                    {
+                        UpdateDatasources_5_8_6();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
