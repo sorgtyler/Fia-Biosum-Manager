@@ -59,7 +59,7 @@ namespace FIA_Biosum_Manager
 
         private env m_oEnv;
         private Help m_oHelp;
-        private string m_xpsFile = Help.DefaultCoreAnalysisXPSFile;
+        private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
 
 		public bool m_bSave=false;
 		private bool _bDisplayAuditMsg=true;
@@ -2243,7 +2243,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 
         private void BtnHelpAttribute_Click(object sender, EventArgs e)
@@ -2252,7 +2252,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 
         private void BtnHelpLastTieBreakRank_Click(object sender, EventArgs e)
@@ -2261,7 +2261,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 	
 	}

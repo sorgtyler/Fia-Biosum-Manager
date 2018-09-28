@@ -34,7 +34,7 @@ namespace FIA_Biosum_Manager
         string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_core_weighted_average_debug.txt";
         private env m_oEnv;
         private Help m_oHelp;
-        private string m_xpsFile = Help.DefaultCoreAnalysisXPSFile;
+        private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
 		
 		private int m_intCurVar=-1;
         private System.Windows.Forms.GroupBox grpboxDetails;
@@ -2747,7 +2747,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 
         private void BtnHelp_Click(object sender, EventArgs e)
@@ -2756,7 +2756,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "FVS_VARIABLE" });
         }
 
         private void BtnHelpEconVariable_Click(object sender, EventArgs e)
@@ -2765,7 +2765,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "ECONOMIC_VARIABLE" });
         }
 
 

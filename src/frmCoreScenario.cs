@@ -101,8 +101,8 @@ namespace FIA_Biosum_Manager
         private Button btnHelp;
         private env m_oEnv;
         private Help m_oHelp;
-        private string m_xpsFile = Help.DefaultCoreAnalysisXPSFile;
-        private string m_helpChapter = "CASE_STUDY_SCENARIO";
+        private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
+        private string m_helpChapter = "OPEN_SCENARIO";
         public FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection m_oWeightedVariableCollection =
             new FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection();
 
@@ -240,13 +240,7 @@ namespace FIA_Biosum_Manager
 				this.uc_scenario_run1.ReferenceCoreScenarioForm=this;
                 this.uc_scenario_run1.ReferenceCoreScenarioForm = this;
                 this.btnClose.Enabled=true;
-				this.resize_frmScenario();
-
-                //load weighted variable definitions
-                ado_data_access oAdo = new ado_data_access();
-                m_oCoreAnalysisScenarioTools.LoadWeightedVariables(oAdo, m_oWeightedVariableCollection);
-                oAdo.m_OleDbDataReader.Close();
-                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                this.resize_frmScenario();
 
 			}
 			catch (Exception p_msg)
@@ -275,6 +269,14 @@ namespace FIA_Biosum_Manager
 		public frmCoreScenario()
 		{
 			this.InitializeComponent();
+
+            this.m_oEnv = new env();
+
+            //load weighted variable definitions
+            ado_data_access oAdo = new ado_data_access();
+            m_oCoreAnalysisScenarioTools.LoadWeightedVariables(oAdo, m_oWeightedVariableCollection);
+            oAdo.m_OleDbDataReader.Close();
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
 		}
 
 		#region Windows Form Designer generated code
@@ -1868,7 +1870,7 @@ namespace FIA_Biosum_Manager
                 {
                     m_oHelp = new Help(m_xpsFile, m_oEnv);
                 }
-                m_oHelp.ShowHelp(new string[] { "PROCESSOR", m_helpChapter });
+                m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", m_helpChapter });
             }
         }
 	

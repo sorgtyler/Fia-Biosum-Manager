@@ -155,7 +155,7 @@ namespace FIA_Biosum_Manager
         private Help m_oHelp;
         private Button BtnHelpFvsAttrib;
         private Button BtnHelpExpressionBuilder;
-        private string m_xpsFile = Help.DefaultCoreAnalysisXPSFile;
+        private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
         
         public class Variables
 		{
@@ -4214,7 +4214,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 
         private void BtnHelpFvsAttrib_Click(object sender, EventArgs e)
@@ -4223,7 +4223,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 
         private void BtnHelpExpressionBuilder_Click(object sender, EventArgs e)
@@ -4232,7 +4232,7 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "CORE_ANALYSIS", "INTRODUCTION" });
+            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
        
 	

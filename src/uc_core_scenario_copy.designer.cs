@@ -170,12 +170,12 @@
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Copy Core Analysis Scenario";
             // 
-            // uc_scenario_core_scenario_copy
+            // uc_core_scenario_copy
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_scenario_core_scenario_copy";
+            this.Name = "uc_core_scenario_copy";
             this.Size = new System.Drawing.Size(804, 497);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
