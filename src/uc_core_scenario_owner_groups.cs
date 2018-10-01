@@ -370,13 +370,6 @@ namespace FIA_Biosum_Manager
 			((frmCoreScenario)this.ParentForm).m_bSave=true;
 		}
 
-		private void cmdOwnerGroups_Click(object sender, System.EventArgs e)
-		{
-			((frmCoreScenario)this.ParentForm).RulesRepositionControls();
-
-
-		}
-
 		private void uc_scenario_owner_groups_Resize(object sender, System.EventArgs e)
 		{
 			this.groupBox1.Left = (int)(this.ClientSize.Width * .5) - (int)(this.groupBox1.Width * .5);

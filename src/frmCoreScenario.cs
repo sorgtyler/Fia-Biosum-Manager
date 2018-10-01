@@ -242,6 +242,14 @@ namespace FIA_Biosum_Manager
                 this.btnClose.Enabled=true;
                 this.resize_frmScenario();
 
+                this.m_oEnv = new env();
+
+                //load weighted variable definitions
+                ado_data_access oAdo = new ado_data_access();
+                m_oCoreAnalysisScenarioTools.LoadWeightedVariables(oAdo, m_oWeightedVariableCollection);
+                oAdo.m_OleDbDataReader.Close();
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+
 			}
 			catch (Exception p_msg)
 			{
@@ -270,13 +278,6 @@ namespace FIA_Biosum_Manager
 		{
 			this.InitializeComponent();
 
-            this.m_oEnv = new env();
-
-            //load weighted variable definitions
-            ado_data_access oAdo = new ado_data_access();
-            m_oCoreAnalysisScenarioTools.LoadWeightedVariables(oAdo, m_oWeightedVariableCollection);
-            oAdo.m_OleDbDataReader.Close();
-            oAdo.CloseConnection(oAdo.m_OleDbConnection);
 		}
 
 		#region Windows Form Designer generated code
@@ -471,7 +472,6 @@ namespace FIA_Biosum_Manager
             this.tabControlScenario.TabIndex = 41;
             this.tabControlScenario.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlScenario_DrawItem);
             this.tabControlScenario.SelectedIndexChanged += new System.EventHandler(this.tabControlScenario_SelectedIndexChanged);
-            this.tabControlScenario.TabIndexChanged += new System.EventHandler(this.tabControlScenario_TabIndexChanged);
             this.tabControlScenario.Enter += new System.EventHandler(this.tabControlScenario_Enter);
             this.tabControlScenario.Leave += new System.EventHandler(this.tabControlScenario_Leave);
             this.tabControlScenario.ChangeUICues += new System.Windows.Forms.UICuesEventHandler(this.tabControlScenario_ChangeUICues);
@@ -677,7 +677,7 @@ namespace FIA_Biosum_Manager
             // btnHelp
             // 
             this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.btnHelp.Location = new System.Drawing.Point(8, 398);
+            this.btnHelp.Location = new System.Drawing.Point(8, 416);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(96, 32);
             this.btnHelp.TabIndex = 48;
@@ -776,10 +776,10 @@ namespace FIA_Biosum_Manager
 				}
 				this.btnClose.Top = this.ClientSize.Height - this.btnClose.Height - 2;
 				this.btnClose.Left = this.ClientSize.Width - this.btnClose.Width - 2;
+                this.btnHelp.Top = btnClose.Top;
 				this.tabControlScenario.Top = this.tlbScenario.Top + this.tlbScenario.Height + 2;
 				this.tabControlScenario.Height = this.btnClose.Top - this.tabControlScenario.Top - 2;
 				this.tabControlScenario.Width = this.ClientSize.Width;
-                this.btnHelp.Top = this.ClientSize.Height - this.btnHelp.Height - 8;
 				
 			}
 			catch
@@ -818,66 +818,6 @@ namespace FIA_Biosum_Manager
 		
 		}
 
-		
-
-		
-		
-
-		
-
-
-		private void btnNew_Click(object sender, System.EventArgs e)
-		{
-			int intHt=0;
-			if (this.m_bScenarioOpen == false) 
-			{
-				this.uc_datasource1.Visible=false;
-				this.uc_scenario_notes1.Visible=false;
-				this.uc_scenario1.Visible=false;
-				this.uc_scenario_owner_groups1.Visible=false;
-				this.uc_scenario_costs1.Visible=false;
-				this.uc_scenario_psite1.Visible=false;
-				this.uc_scenario_filter1.Visible=false;
-				this.m_vScrollBar.Visible=false;
-				this.m_hScrollBar.Visible=false;
-				this.Height = intHt;
-				this.Height = intHt + ((intHt - this.ClientSize.Height) * 2);
-				this.SetMenu("new");
-				this.uc_scenario1.lblTitle.Text = "New Scenario";
-				this.uc_scenario1.txtDescription.Enabled=true;
-				this.uc_scenario1.resize_uc_scenario();
-				this.uc_scenario1.Visible=true;
-				
-				this.uc_scenario1.NewScenario();
-			}
-			else 
-			{
-				frmCoreScenario frmTemp = new frmCoreScenario((frmMain)this.ParentForm);
-				frmTemp.Visible=false;
-				frmTemp.uc_datasource1.Visible = false;
-				frmTemp.uc_scenario_notes1.Visible=false;
-				frmTemp.uc_scenario1.Visible=false;
-				frmTemp.uc_scenario_owner_groups1.Visible=false;
-				frmTemp.uc_scenario_costs1.Visible=false;
-				frmTemp.uc_scenario_psite1.Visible=false;
-				frmTemp.uc_scenario_filter1.Visible=false;
-				frmTemp.Height = intHt;
-				frmTemp.Height = intHt + ((intHt - frmTemp.ClientSize.Height) * 2);
-				frmTemp.SetMenu("new");
-				frmTemp.BackColor = System.Drawing.SystemColors.Control;
-				frmTemp.Text = "Core Analysis: Optimization Scenario";
-				frmTemp.MdiParent = this.ParentForm;
-				frmTemp.uc_scenario1.lblTitle.Text="New Scenario";
-				frmTemp.uc_scenario1.txtDescription.Enabled=true;
-				frmTemp.Visible=true;
-				frmTemp.uc_scenario1.resize_uc_scenario();
-				frmTemp.uc_scenario1.Visible=true;
-				frmTemp.uc_scenario1.txtScenarioId.Visible=false;
-				frmTemp.uc_scenario1.lblNewScenario.Visible=false;
-				frmTemp.uc_scenario1.NewScenario();
-				frmTemp.Show();
-			}
-		}
 		public void InitializeNewScenario()
 		{
 			this.uc_scenario1 = new uc_scenario();
@@ -1053,25 +993,6 @@ namespace FIA_Biosum_Manager
 			if (m_bPopup == true) m_bPopup =false;
 		}
 
-		public void RulesRepositionControls()
-		{
-			try
-			{
-				this.uc_scenario_ffe1.Top = this.uc_scenario_owner_groups1.Top + this.uc_scenario_owner_groups1.Height;
-				this.uc_scenario_costs1.Top = this.uc_scenario_ffe1.Top + this.uc_scenario_ffe1.Height;			  
-				this.uc_scenario_psite1.Top = this.uc_scenario_costs1.Top + this.uc_scenario_costs1.Height;
-				this.uc_scenario_filter1.Top = this.uc_scenario_psite1.Top + this.uc_scenario_psite1.Height;
-				this.btnClose.Top = this.uc_scenario_filter1.Top + 
-					this.uc_scenario_filter1.Height + 5;
-				if (this.btnClose.Top + this.btnClose.Height + 300 > this.m_vScrollBar.Maximum)
-					this.m_vScrollBar.Maximum = this.btnClose.Top + this.btnClose.Height + 300;
-                this.btnHelp.Top = this.ClientSize.Height - this.btnHelp.Height - 8;
-			}
-			catch
-			{
-			}
-		}
-
 		private void btnSave_Click(object sender, System.EventArgs e)
 		{
 			SaveRuleDefinitions();
@@ -1222,54 +1143,19 @@ namespace FIA_Biosum_Manager
             return result;
 		}
 
+        public void HelpChapter(string strHelpChapter)
+        {
+            m_helpChapter = strHelpChapter;
+        }
+
 		private void vScrollBar_Scroll(Object sender, ScrollEventArgs e)
 		{
 		}
 
-		private void vScrollBar_ValueChanged(Object sender, EventArgs e)
-		{
-			this.RulesRepositionControls();
-		}
 		private void vScrollBar_MouseWheel(Object sender, MouseEventArgs e)
 		{
 		}
-		private void frmScenario_MouseWheel(Object sender, MouseEventArgs e)
-		{
-			if (e.Delta == 120)
-			{
-				if (this.m_vScrollBar.Value > this.m_vScrollBar.Minimum) 
-				{
-					if (this.m_vScrollBar.Value - this.m_vScrollBar.LargeChange < this.m_vScrollBar.Minimum) 
-					{
-						this.m_vScrollBar.Value = this.m_vScrollBar.Minimum;
-					}
-					else 
-					{
-						this.m_vScrollBar.Value = this.m_vScrollBar.Value - 
-							this.m_vScrollBar.LargeChange;
-					}
-					this.RulesRepositionControls();
-				}
-			}
-			else 
-			{
-				if (this.m_vScrollBar.Value <= this.m_vScrollBar.Maximum) 
-				{
-					if (this.m_vScrollBar.Value + this.m_vScrollBar.LargeChange > 
-						this.m_vScrollBar.Maximum) 
-					{
-						this.m_vScrollBar.Value = this.m_vScrollBar.Maximum;
-					}
-					else 
-					{
-						this.m_vScrollBar.Value = this.m_vScrollBar.Value +
-							this.m_vScrollBar.LargeChange;
-					}
-					this.RulesRepositionControls();
-				}
 
-			}
-		}
 		public void HScrollRepositionControls()
 		{
 			try
@@ -1519,11 +1405,6 @@ namespace FIA_Biosum_Manager
         }
 		private void tbRules_Click(object sender, System.EventArgs e)
 		{
-		}
-
-		private void tabControlScenario_TabIndexChanged(object sender, System.EventArgs e)
-		{
-			MessageBox.Show("tabControlScenario_TabIndexChanged");
 		}
 
 		private void tabControlScenario_SelectedIndexChanged(object sender, System.EventArgs e)

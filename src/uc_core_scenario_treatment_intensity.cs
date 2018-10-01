@@ -561,11 +561,6 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void cmdRxIntensity_Click(object sender, System.EventArgs e)
-		{
-			((frmCoreScenario)this.ParentForm).RulesRepositionControls();
-		}
-
 		private void grpboxRxIntensity_Enter(object sender, System.EventArgs e)
 		{
 		

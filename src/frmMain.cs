@@ -1287,31 +1287,33 @@ namespace FIA_Biosum_Manager
 		}
         public void OpenCoreScenario(string p_strType, frmCoreScenario p_frmCoreScenario)
 		{
-			this.m_frmScenario = new frmCoreScenario();
+            FIA_Biosum_Manager.frmCoreScenario oFrmCoreScenario = new frmCoreScenario(this);
+
 			DialogResult result;
 			if (p_strType=="Open")
 			{
-				this.m_frmScenario.InitializeOpenScenario();
+                oFrmCoreScenario.InitializeOpenScenario();
 
 
-				this.m_frmScenario.uc_scenario_open1.Height = this.m_frmScenario.uc_scenario_open1.m_intFullHt;
-				this.m_frmScenario.uc_scenario_open1.Width = this.m_frmScenario.uc_scenario_open1.m_intFullWd;
-				this.m_frmScenario.Height = this.m_frmScenario.uc_scenario_open1.Height + this.m_frmScenario.uc_scenario_open1.Top + 50;
+                oFrmCoreScenario.uc_scenario_open1.Height = oFrmCoreScenario.uc_scenario_open1.m_intFullHt;
+                oFrmCoreScenario.uc_scenario_open1.Width = oFrmCoreScenario.uc_scenario_open1.m_intFullWd;
+                oFrmCoreScenario.Height = oFrmCoreScenario.uc_scenario_open1.Height + oFrmCoreScenario.uc_scenario_open1.Top + 50;
 
-				result = this.m_frmScenario.ShowDialog();
+                result = oFrmCoreScenario.ShowDialog();
 				if (result == DialogResult.OK)
 				{
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
-					oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + this.m_frmScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
+                    oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
+                    oFrmScenario.HelpChapter("EDIT_SCENARIO");
 					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
-					oFrmScenario.uc_datasource1.strScenarioId = this.m_frmScenario.uc_scenario_open1.txtScenarioId.Text.Trim();
+                    oFrmScenario.uc_datasource1.strScenarioId = oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim();
 					oFrmScenario.uc_datasource1.strProjectDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
 					oFrmScenario.uc_datasource1.LoadValues();
-					oFrmScenario.uc_scenario1.strScenarioDescription = m_frmScenario.uc_scenario_open1.strScenarioDescription;
-					oFrmScenario.uc_scenario1.strScenarioId = m_frmScenario.uc_scenario_open1.strScenarioId;
-					oFrmScenario.uc_scenario1.strScenarioPath = m_frmScenario.uc_scenario_open1.strScenarioPath;
+                    oFrmScenario.uc_scenario1.strScenarioDescription = oFrmCoreScenario.uc_scenario_open1.strScenarioDescription;
+                    oFrmScenario.uc_scenario1.strScenarioId = oFrmCoreScenario.uc_scenario_open1.strScenarioId;
+                    oFrmScenario.uc_scenario1.strScenarioPath = oFrmCoreScenario.uc_scenario_open1.strScenarioPath;
                     oFrmScenario.uc_scenario_notes1.ReferenceCoreScenarioForm=oFrmScenario;
 					oFrmScenario.uc_scenario_notes1.LoadValues();
                     oFrmScenario.tlbScenario.Buttons[5].Visible = true; //properties
@@ -1322,23 +1324,24 @@ namespace FIA_Biosum_Manager
 			}
 			else
 			{
-				this.m_frmScenario.InitializeNewScenario();
-                this.m_frmScenario.MinimizeBox = false;
-							 
-				result = this.m_frmScenario.ShowDialog();
+                oFrmCoreScenario.InitializeNewScenario();
+                oFrmCoreScenario.MinimizeBox = false;
+
+                result = oFrmCoreScenario.ShowDialog();
 				if (result == DialogResult.OK)
 				{
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
-					oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + this.m_frmScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
+                    oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
+                    oFrmScenario.HelpChapter("EDIT_SCENARIO");
 					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
-					oFrmScenario.uc_datasource1.strScenarioId = this.m_frmScenario.uc_scenario1.txtScenarioId.Text.Trim();
+                    oFrmScenario.uc_datasource1.strScenarioId = oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim();
 					oFrmScenario.uc_datasource1.strProjectDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
 					oFrmScenario.uc_datasource1.LoadValues();
-					oFrmScenario.uc_scenario1.strScenarioDescription = m_frmScenario.uc_scenario1.strScenarioDescription;
-					oFrmScenario.uc_scenario1.strScenarioId = m_frmScenario.uc_scenario1.strScenarioId;
-					oFrmScenario.uc_scenario1.strScenarioPath = m_frmScenario.uc_scenario1.strScenarioPath;
+                    oFrmScenario.uc_scenario1.strScenarioDescription = oFrmCoreScenario.uc_scenario1.strScenarioDescription;
+                    oFrmScenario.uc_scenario1.strScenarioId = oFrmCoreScenario.uc_scenario1.strScenarioId;
+                    oFrmScenario.uc_scenario1.strScenarioPath = oFrmCoreScenario.uc_scenario1.strScenarioPath;
                     oFrmScenario.tlbScenario.Buttons[5].Visible = true; //properties
                     oFrmScenario.tlbScenario.Buttons[7].Visible = true; //copy
 					oFrmScenario.MdiParent = this;
