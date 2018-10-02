@@ -3097,13 +3097,12 @@ namespace FIA_Biosum_Manager
 		                    "HTG_Trans, HTG_Measure, Mort_Measure, Forest_Type, State, County) ";
 		                string strBioSumWorkTableSelectStmt =
 		                    "SELECT c.biosum_cond_id, p.fvs_variant, p.measyear, p.lat, p.lon, " +
-		                    "ref.FVSLocCode, c.habtypcd1, c.stdage, c.aspect, c.slope, p.elev, 0, 1, 999, 1, 0, 1,  " +
+		                    "p.fvsloccode, c.habtypcd1, c.stdage, c.aspect, c.slope, p.elev, 0, 1, 999, 1, 0, 1,  " +
 		                    "iif(c.landclcd is null, 0, c.landclcd), 1, 10, 1, 5, 5, c.fortypcd, p.statecd, p.countycd ";
 		                string strFromTableExpr =
 		                    String.Format(
-		                        "FROM ({0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id) LEFT JOIN {2} ref " +
-		                        "ON p.statecd=ref.statecd AND p.countycd=ref.countycd AND p.plot=ref.plot ",
-		                        strCondTableName, strPlotTableName, Tables.Reference.DefaultFiadbFVSVariantTableName);
+		                        "FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id ",
+		                        strCondTableName, strPlotTableName);
 		                string strFilters = "WHERE c.landclcd = 1 AND ucase(trim(p.fvs_variant)) = \'" +
 		                                    strVariant.Trim().ToUpper() + "\'";
 		                return strInsertIntoStandInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
