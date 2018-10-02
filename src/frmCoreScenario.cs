@@ -1281,6 +1281,14 @@ namespace FIA_Biosum_Manager
                 
 
 				case "COST AND REVENUE":
+                    if (tabControlCosts.SelectedTab.Text.Trim().ToUpper() == "HAUL COSTS")
+                    {
+                        m_helpChapter = "HAUL_COSTS";
+                    }
+                    else
+                    {
+                        m_helpChapter = "PROCESSOR_SCENARIO";
+                    }
 					if (((Control)this.tbCosts).Enabled)
 						this.uc_scenario_costs1.lblTitle.Text = "Cost And Revenue";
 					else
@@ -1293,6 +1301,7 @@ namespace FIA_Biosum_Manager
 						this.uc_scenario_filter1.lblTitle.Text = "Plot Filter (Read Only)";
 					break;
 				case "LAND OWNERSHIP GROUPS":
+                    m_helpChapter = "LAND_OWNERSHIP_GROUPS";
 					if (((Control)this.tbOwners).Enabled)
 						this.uc_scenario_owner_groups1.lblTitle.Text = "Owner Groups";
 					else
@@ -1411,7 +1420,8 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.tabControlRules.Enabled)
 			{
-				if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS")
+                m_helpChapter = "LAND_OWNERSHIP_GROUPS";
+                if (tabControlScenario.SelectedTab.Text.Trim().ToUpper()=="RULE DEFINITIONS")
 				{
 					if (m_lrulesfirsttime==true)
 						LoadRuleDefinitions();
@@ -1419,7 +1429,8 @@ namespace FIA_Biosum_Manager
 				}
 				else if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "NOTES")
 				{
-					if (((Control)this.tbNotes).Enabled)
+                    m_helpChapter = "EDIT_SCENARIO";
+                    if (((Control)this.tbNotes).Enabled)
 					{
 					  this.uc_scenario_notes1.lblTitle.Text = "Notes";
 					}
@@ -1430,7 +1441,8 @@ namespace FIA_Biosum_Manager
 				}
 				else if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "DESCRIPTION")
 				{
-					if (((Control)this.tbDesc).Enabled)
+                    m_helpChapter = "EDIT_SCENARIO";
+                    if (((Control)this.tbDesc).Enabled)
 					{
 						this.uc_scenario1.lblTitle.Text = "Description";
 					}
@@ -1441,7 +1453,8 @@ namespace FIA_Biosum_Manager
 				}
 				else if (tabControlScenario.SelectedTab.Text.Trim().ToUpper() == "DATA SOURCES")
 				{
-					if (((Control)this.tbDataSources).Enabled)
+                    m_helpChapter = "DATA_SOURCES";
+                    if (((Control)this.tbDataSources).Enabled)
 					{
 						this.uc_datasource1.lblTitle.Text = "Scenario Datasource";
 					}
@@ -1704,7 +1717,7 @@ namespace FIA_Biosum_Manager
                 {
                     if (tabControlCosts.SelectedTab.Text.Trim().ToUpper() == "HAUL COSTS")
                     {
-
+                        m_helpChapter = "HAUL_COSTS";
                         if (((Control)this.tbCosts).Enabled)
                         {
                             this.uc_scenario_costs1.lblTitle.Text = "Costs And Revenue";
@@ -1713,9 +1726,9 @@ namespace FIA_Biosum_Manager
                             this.uc_scenario_costs1.lblTitle.Text = "Costs And Revenue (Read Only)";
 
                     }
-                    else if (tabControlFVSVariables.SelectedTab.Text.Trim().ToUpper() == "PROCESSOR SCENARIO")
+                    else if (tabControlCosts.SelectedTab.Text.Trim().ToUpper() == "PROCESSOR SCENARIO")
                     {
-
+                        m_helpChapter = "PROCESSOR_SCENARIO";
                         if (((Control)this.tbProcessorScenario).Enabled)
                         {
                         }
