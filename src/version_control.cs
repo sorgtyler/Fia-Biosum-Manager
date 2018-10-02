@@ -5423,7 +5423,25 @@ namespace FIA_Biosum_Manager
                             "WHERE TABLE_TYPE = '" + Datasource.TableTypes.FVSVariant + "'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             oAdo.m_OleDbConnection.Close();
-            
+
+            frmMain.g_sbpInfo.Text = "Version Update: Adding fvsloccode to Plot table ...Stand by";
+            int intPlotTable = oDs.getValidTableNameRow("Plot");
+            strDirectoryPath = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strFileName = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            strFileStatus = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            strTargetTable = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            strTableStatus = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                string strLocCodeFieldName = "fvsloccode";
+                oAdo.OpenConnection(oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", ""));
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strTargetTable, strLocCodeFieldName))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, strTargetTable, strLocCodeFieldName, "INTEGER", "");
+                }
+                oAdo.m_OleDbConnection.Close();
+            }
+
             frmMain.g_sbpInfo.Text = "Version Update: Updating OPCOST configuration database ...Stand by";
             strSourceFile = frmMain.g_oEnv.strAppDir + "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
             strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
