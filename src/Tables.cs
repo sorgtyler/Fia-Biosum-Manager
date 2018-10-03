@@ -2925,6 +2925,7 @@ namespace FIA_Biosum_Manager
 					"measday INTEGER," + 
 					"elev INTEGER," + 
 					"fvs_variant CHAR(2)," + 
+					"fvsloccode INTEGER," + 
 					"half_state CHAR(10)," + 
 					"subplot_count_plot BYTE," + 
 					"gis_yard_dist DOUBLE," + 
