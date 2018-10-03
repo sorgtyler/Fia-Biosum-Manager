@@ -2730,12 +2730,11 @@ namespace FIA_Biosum_Manager
                     m_intError = m_ado.m_intError;
                 }
 
-                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
+                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
                 {
                     SetThermValue(m_frmTherm.progressBar1, "Value", 100);
                     SetThermValue(m_frmTherm.progressBar2, "Value", 60);
-                    this.UpdateColumns(m_ado);
-                    m_intError = m_ado.m_intError;
+                    m_intError = UpdateColumns(m_ado);
                 }
 
                 if (m_intError == 0 && Checked(chkDwmImport) &&
@@ -2744,17 +2743,8 @@ namespace FIA_Biosum_Manager
                     SetThermValue(m_frmTherm.progressBar1, "Value",
                         GetThermValue(m_frmTherm.progressBar1, "Maximum"));
                     SetThermValue(m_frmTherm.progressBar2, "Value", 80);
-                    int intDwmResult = ImportDownWoodyMaterials(m_ado);
-                    if (intDwmResult < 0)
-                    {
-                        m_intError = intDwmResult;
-                    }
-                    else
-                    {
-                        m_intError = m_ado.m_intError;
-                    }
+                    m_intError = ImportDownWoodyMaterials(m_ado);
                 }
-
 
                 //After importing plot data and optionally DWM and GRM data, the connection may need to be reopened.
                 if (m_connTempMDBFile == null || m_connTempMDBFile.State == System.Data.ConnectionState.Closed)
@@ -3084,7 +3074,7 @@ namespace FIA_Biosum_Manager
 	    }
 
 
-	    private void UpdateColumns(FIA_Biosum_Manager.ado_data_access p_ado)
+	    private int UpdateColumns(FIA_Biosum_Manager.ado_data_access p_ado)
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -3388,6 +3378,18 @@ namespace FIA_Biosum_Manager
                                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n\r\n");
                             p_ado.SqlNonQuery(m_connTempMDBFile, p_ado.m_strSQL);
 
+                        }
+                        else
+                        {
+                            DialogResult dlgResult = MessageBox.Show("!!Error!! \n" +
+                                                                     "Module - uc_plot_input:UpdateColumns\n" +
+                                                                     "Err Msg - Failed to update tree VOLTSGRS, DRYBIOT, DRYBIOM columns with Oracle Calculated Values. Continue plot input?",
+                                "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo,
+                                System.Windows.Forms.MessageBoxIcon.Exclamation);
+                            if (dlgResult == DialogResult.No)
+                            {
+                                return m_oOracleServices.m_intError;
+                            }
                         }
                         SetThermValue(m_frmTherm.progressBar1, "Value", 5);
   
@@ -4273,7 +4275,7 @@ namespace FIA_Biosum_Manager
 			}
             SetThermValue(m_frmTherm.progressBar1, "Value", 3);
 
-
+		    return p_ado.m_intError;
 		}
 
 	    private int ImportDownWoodyMaterials(ado_data_access p_ado)
@@ -4459,7 +4461,7 @@ namespace FIA_Biosum_Manager
 
             SetLabelValue(m_frmTherm.lblMsg,"Text","");
             SetThermValue(m_frmTherm.progressBar1, "Value", GetThermValue(m_frmTherm.progressBar1, "Maximum"));
-	        return 0;
+	        return p_ado.m_intError;
 	    }
 
 	
