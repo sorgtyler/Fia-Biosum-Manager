@@ -113,9 +113,6 @@ namespace FIA_Biosum_Manager
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;
         private Point _objGrpMaxMinLocation;
         private Point _objLblTieBreakVarDescrLocation;
-        private Button BtnHelpTieBreaker;
-        private Button BtnHelpAttribute;
-        private Button BtnHelpLastTieBreakRank;
         private Point _objtxtTieBreakVarDescrLocation;
 
 
@@ -276,6 +273,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
+            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_core_scenario_treatment_intensity();
             this.btnFVSVariablesTieBreakerTreatmentIntensityPrev = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
@@ -314,10 +312,6 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.BtnHelpTieBreaker = new System.Windows.Forms.Button();
-            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_core_scenario_treatment_intensity();
-            this.BtnHelpAttribute = new System.Windows.Forms.Button();
-            this.BtnHelpLastTieBreakRank = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -336,7 +330,6 @@ namespace FIA_Biosum_Manager
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Controls.Add(this.BtnHelpTieBreaker);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreakerLastTieBreakRank);
             this.groupBox1.Controls.Add(this.grpboxStandAttributeTieBreakerVariable);
             this.groupBox1.Controls.Add(this.grpboxFVSVariablesTieBreaker);
@@ -367,7 +360,6 @@ namespace FIA_Biosum_Manager
             // panel2
             // 
             this.panel2.AutoScroll = true;
-            this.panel2.Controls.Add(this.BtnHelpLastTieBreakRank);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.uc_scenario_treatment_intensity1);
             this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev);
@@ -389,6 +381,16 @@ namespace FIA_Biosum_Manager
             this.label1.TabIndex = 14;
             this.label1.Text = "Assign integer ranks for silvicultural sequences; lowest numbered sequence will b" +
     "e best when there is more than one optimal sequence";
+            // 
+            // uc_scenario_treatment_intensity1
+            // 
+            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
+            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
+            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
+            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
+            this.uc_scenario_treatment_intensity1.TabIndex = 13;
+            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // btnFVSVariablesTieBreakerTreatmentIntensityPrev
             // 
@@ -442,7 +444,6 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.BtnHelpAttribute);
             this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValueSource);
             this.panel1.Controls.Add(this.grpMaxMin);
             this.panel1.Controls.Add(this.grpboxFVSVariablesTieBreakerVariableValues);
@@ -789,46 +790,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(894, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
-            // 
-            // BtnHelpTieBreaker
-            // 
-            this.BtnHelpTieBreaker.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpTieBreaker.Location = new System.Drawing.Point(222, 16);
-            this.BtnHelpTieBreaker.Name = "BtnHelpTieBreaker";
-            this.BtnHelpTieBreaker.Size = new System.Drawing.Size(72, 32);
-            this.BtnHelpTieBreaker.TabIndex = 71;
-            this.BtnHelpTieBreaker.Text = "Help";
-            this.BtnHelpTieBreaker.Click += new System.EventHandler(this.BtnHelpTieBreaker_Click);
-            // 
-            // uc_scenario_treatment_intensity1
-            // 
-            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
-            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
-            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
-            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
-            this.uc_scenario_treatment_intensity1.TabIndex = 13;
-            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
-            // 
-            // BtnHelpAttribute
-            // 
-            this.BtnHelpAttribute.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpAttribute.Location = new System.Drawing.Point(24, 376);
-            this.BtnHelpAttribute.Name = "BtnHelpAttribute";
-            this.BtnHelpAttribute.Size = new System.Drawing.Size(72, 40);
-            this.BtnHelpAttribute.TabIndex = 20;
-            this.BtnHelpAttribute.Text = "Help";
-            this.BtnHelpAttribute.Click += new System.EventHandler(this.BtnHelpAttribute_Click);
-            // 
-            // BtnHelpLastTieBreakRank
-            // 
-            this.BtnHelpLastTieBreakRank.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpLastTieBreakRank.Location = new System.Drawing.Point(24, 376);
-            this.BtnHelpLastTieBreakRank.Name = "BtnHelpLastTieBreakRank";
-            this.BtnHelpLastTieBreakRank.Size = new System.Drawing.Size(72, 40);
-            this.BtnHelpLastTieBreakRank.TabIndex = 21;
-            this.BtnHelpLastTieBreakRank.Text = "Help";
-            this.BtnHelpLastTieBreakRank.Click += new System.EventHandler(this.BtnHelpLastTieBreakRank_Click);
             // 
             // uc_core_scenario_fvs_prepost_variables_tiebreaker
             // 

@@ -535,7 +535,6 @@ namespace FIA_Biosum_Manager
             this.tabControlRules.TabIndex = 0;
             this.tabControlRules.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlRules_DrawItem);
             this.tabControlRules.SelectedIndexChanged += new System.EventHandler(this.tabControlRules_SelectedIndexChanged);
-            this.tabControlRules.TabIndexChanged += new System.EventHandler(this.tabControlRules_TabIndexChanged);
             // 
             // tbOwners
             // 
@@ -1143,9 +1142,28 @@ namespace FIA_Biosum_Manager
             return result;
 		}
 
-        public void HelpChapter(string strHelpChapter)
+        public string HelpChapter
         {
-            m_helpChapter = strHelpChapter;
+            get 
+            {
+                if (tabControlRules.SelectedTab.Text.Trim().ToUpper() == "FVS VARIABLES")
+                {
+                    switch (tabControlFVSVariables.SelectedTab.Text.Trim().ToUpper())
+                    {
+                        case "OPTIMIZATION":
+                            m_helpChapter = this.uc_scenario_fvs_prepost_optimization1.HelpChapter;
+                            break;
+                        case "EFFECTIVE":
+                            m_helpChapter = this.uc_scenario_fvs_prepost_variables_effective1.HelpChapter;
+                            break;
+                        case "TIE BREAKER":
+                            m_helpChapter = "TIEBREAKER_SETTINGS";
+                            break;
+                    }
+                }
+                return m_helpChapter;
+            }
+            set { this.m_helpChapter = value; }
         }
 
 		private void vScrollBar_Scroll(Object sender, ScrollEventArgs e)
@@ -1272,14 +1290,13 @@ namespace FIA_Biosum_Manager
 			switch (tabControlRules.SelectedTab.Text.Trim().ToUpper())
 			{
 				case "WOOD PROCESSING SITES":
+                    m_helpChapter = "WOOD_PROCESSING_SITES";
 					if (((Control)this.tbPSites).Enabled)
 					    this.uc_scenario_psite1.lblTitle.Text = "Wood Processing Sites";
 					else
 						this.uc_scenario_psite1.lblTitle.Text = "Wood Processing Sites (Read Only)";
 
 					break;
-                
-
 				case "COST AND REVENUE":
                     if (tabControlCosts.SelectedTab.Text.Trim().ToUpper() == "HAUL COSTS")
                     {
@@ -1295,11 +1312,19 @@ namespace FIA_Biosum_Manager
 						this.uc_scenario_costs1.lblTitle.Text = "Cost And Revenue (Read Only)";
 					break;
 				case "FILTER PLOT RECORDS":
+                    m_helpChapter = "FILTER_PLOT";
 					if (((Control)this.tbFilterPlots).Enabled)
 						this.uc_scenario_filter1.lblTitle.Text = "Plot Filter";
 					else
 						this.uc_scenario_filter1.lblTitle.Text = "Plot Filter (Read Only)";
 					break;
+                case "FILTER CONDITION RECORDS":
+                    m_helpChapter = "FILTER_CONDITION";
+                    if (((Control)this.tbFilterPlots).Enabled)
+                        this.uc_scenario_filter1.lblTitle.Text = "Condition Filter";
+                    else
+                        this.uc_scenario_filter1.lblTitle.Text = "Condition Filter (Read Only)";
+                    break;
 				case "LAND OWNERSHIP GROUPS":
                     m_helpChapter = "LAND_OWNERSHIP_GROUPS";
 					if (((Control)this.tbOwners).Enabled)
@@ -1307,7 +1332,11 @@ namespace FIA_Biosum_Manager
 					else
 						this.uc_scenario_owner_groups1.lblTitle.Text = "Owner Groups (Read Only)";
 					break;
+                case "FVS VARIABLES":
+                    // This logic is in the HelpChapter getter
+                    break;
 				case "RUN":
+                    m_helpChapter = "RUN";
 					if (((Control)this.tbRun).Enabled)
 						this.uc_scenario_run1.lblTitle.Text = "Run";
 					else
@@ -1494,7 +1523,6 @@ namespace FIA_Biosum_Manager
 				{
 					if (tabControlFVSVariables.SelectedTab.Text.Trim().ToUpper()=="OPTIMIZATION")
 					{
-						
 							if (((Control)this.tbOptimization).Enabled)
 							{
 						
@@ -1503,11 +1531,9 @@ namespace FIA_Biosum_Manager
 							else
 								uc_scenario_fvs_prepost_optimization1.lblTitle.Text = "Optimization Settings (Read Only)";
 
-                            m_helpChapter = "INTRODUCTION";
 					}
 					else if (tabControlFVSVariables.SelectedTab.Text.Trim().ToUpper()=="EFFECTIVE")
 					{
-						
 						if (((Control)this.tbEffective).Enabled)
 						{
 						    uc_scenario_fvs_prepost_variables_effective1.lblTitle.Text  = "Effective Settings";
@@ -1515,11 +1541,9 @@ namespace FIA_Biosum_Manager
 						else
 							uc_scenario_fvs_prepost_variables_effective1.lblTitle.Text = "Effective Settings (Read Only)";
 
-                        m_helpChapter = "CASE_STUDY_SCENARIO";
 					}
 					else if (tabControlFVSVariables.SelectedTab.Text.Trim().ToUpper()=="TIE BREAKER")
 					{
-						
 						if (((Control)this.tbTieBreaker).Enabled)
 						{
 							uc_scenario_fvs_prepost_variables_tiebreaker1.lblTitle.Text  = "Tie Breaker Settings";
@@ -1527,8 +1551,8 @@ namespace FIA_Biosum_Manager
 						else
 							uc_scenario_fvs_prepost_variables_tiebreaker1.lblTitle.Text = "Tie Breaker Settings (Read Only)";
 
-                        m_helpChapter = "INTRODUCTION";
 					}
+                    m_helpChapter = this.HelpChapter;
 					
 				}
 				
@@ -1614,11 +1638,6 @@ namespace FIA_Biosum_Manager
 		private void tbFVSVariablesSelect_DrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
 		{
 			TabControl_DrawItem(sender,e,Color.DarkRed,System.Drawing.Brushes.White);
-		}
-
-		private void tabControlRules_TabIndexChanged(object sender, System.EventArgs e)
-		{
-			MessageBox.Show("tabControlRules_TabIndexChanged");
 		}
 
 		private void tabControlScenario_Leave(object sender, System.EventArgs e)
@@ -1764,7 +1783,7 @@ namespace FIA_Biosum_Manager
                 {
                     m_oHelp = new Help(m_xpsFile, m_oEnv);
                 }
-                m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", m_helpChapter });
+                m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", this.HelpChapter });
             }
         }
 	

@@ -122,17 +122,11 @@ namespace FIA_Biosum_Manager
         private ComboBox cmbNetRevEconOptimzFilter;
         private TextBox txtOptVarDescr;
         private Label lblOptVarDescr;
-        private Button BtnHelpOptimization;
-        private env m_oEnv;
-        private Help m_oHelp;
-        private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
-        private Button BtnHelpFvsAttrib;
-        private Button BtnHelpFvsOptimization;
-        private Button BtnHelpEconOptimization;
         private GroupBox grpBoxOptimizationNetRevenue;
         private Label label4;
 
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
+        private string m_strHelpChapter = "OPTIMIZATION_SETTINGS";
 
 		public uc_core_scenario_fvs_prepost_optimization()
 		{
@@ -170,11 +164,8 @@ namespace FIA_Biosum_Manager
             m_oValidate.NullsAllowed = false;
             m_oValidate.TestForMaxMin = false;
             m_oValidate.MinValue = -1000;
-            m_oValidate.TestForMin = true;
-
-            this.m_oEnv = new env();
-
-			
+            m_oValidate.TestForMin = true;	
+	
 
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -203,10 +194,8 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.BtnHelpOptimization = new System.Windows.Forms.Button();
             this.grpboxEconOptimizSettings = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.BtnHelpEconOptimization = new System.Windows.Forms.Button();
             this.btnEconSelect = new System.Windows.Forms.Button();
             this.txtEconAttribDescr = new System.Windows.Forms.TextBox();
             this.lstEconVariables = new System.Windows.Forms.ListBox();
@@ -226,7 +215,6 @@ namespace FIA_Biosum_Manager
             this.btnEconOptimizationCancel = new System.Windows.Forms.Button();
             this.grpboxOptimizationFVSVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.BtnHelpFvsAttrib = new System.Windows.Forms.Button();
             this.grpboxFVSVariablesOptimizationVariableValues = new System.Windows.Forms.GroupBox();
             this.txtOptVarDescr = new System.Windows.Forms.TextBox();
             this.lblOptVarDescr = new System.Windows.Forms.Label();
@@ -257,16 +245,17 @@ namespace FIA_Biosum_Manager
             this.btnOptimizationAudit = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettings = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostVariable = new System.Windows.Forms.Panel();
-            this.BtnHelpFvsOptimization = new System.Windows.Forms.Button();
+            this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.txtRevenueDescr = new System.Windows.Forms.TextBox();
+            this.chkEnableFilter = new System.Windows.Forms.CheckBox();
             this.cmbNetRevOptimzFilter = new System.Windows.Forms.ComboBox();
+            this.cmbOptimizationOperator = new System.Windows.Forms.ComboBox();
+            this.txtOptimizationValue = new System.Windows.Forms.TextBox();
             this.btnOptimiztionPrev = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettingsPostPre = new System.Windows.Forms.GroupBox();
             this.cmbOptimizationSettingsPostPreValue = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.chkEnableFilter = new System.Windows.Forms.CheckBox();
-            this.cmbOptimizationOperator = new System.Windows.Forms.ComboBox();
-            this.txtOptimizationValue = new System.Windows.Forms.TextBox();
             this.grpMaxMin = new System.Windows.Forms.GroupBox();
             this.rdoOptimizationMinimum = new System.Windows.Forms.RadioButton();
             this.rdoOptimizationMaximum = new System.Windows.Forms.RadioButton();
@@ -274,8 +263,6 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxEconOptimizSettings.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -292,15 +279,14 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationAudit.SuspendLayout();
             this.grpboxOptimizationSettings.SuspendLayout();
             this.pnlFVSVariablesPrePostVariable.SuspendLayout();
+            this.grpBoxOptimizationNetRevenue.SuspendLayout();
             this.grpboxOptimizationSettingsPostPre.SuspendLayout();
             this.grpMaxMin.SuspendLayout();
-            this.grpBoxOptimizationNetRevenue.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Controls.Add(this.BtnHelpOptimization);
             this.groupBox1.Controls.Add(this.grpboxEconOptimizSettings);
             this.groupBox1.Controls.Add(this.grpboxOptimizationFVSVariable);
             this.groupBox1.Controls.Add(this.grpboxOptimization);
@@ -314,16 +300,6 @@ namespace FIA_Biosum_Manager
             this.groupBox1.TabStop = false;
             this.groupBox1.Leave += new System.EventHandler(this.groupBox1_Leave);
             this.groupBox1.Resize += new System.EventHandler(this.groupBox1_Resize);
-            // 
-            // BtnHelpOptimization
-            // 
-            this.BtnHelpOptimization.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpOptimization.Location = new System.Drawing.Point(222, 16);
-            this.BtnHelpOptimization.Name = "BtnHelpOptimization";
-            this.BtnHelpOptimization.Size = new System.Drawing.Size(72, 32);
-            this.BtnHelpOptimization.TabIndex = 13;
-            this.BtnHelpOptimization.Text = "Help";
-            this.BtnHelpOptimization.Click += new System.EventHandler(this.BtnHelpOptimization_Click);
             // 
             // grpboxEconOptimizSettings
             // 
@@ -341,7 +317,6 @@ namespace FIA_Biosum_Manager
             // panel2
             // 
             this.panel2.AutoScroll = true;
-            this.panel2.Controls.Add(this.BtnHelpEconOptimization);
             this.panel2.Controls.Add(this.btnEconSelect);
             this.panel2.Controls.Add(this.txtEconAttribDescr);
             this.panel2.Controls.Add(this.lstEconVariables);
@@ -355,16 +330,6 @@ namespace FIA_Biosum_Manager
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(850, 427);
             this.panel2.TabIndex = 12;
-            // 
-            // BtnHelpEconOptimization
-            // 
-            this.BtnHelpEconOptimization.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpEconOptimization.Location = new System.Drawing.Point(33, 376);
-            this.BtnHelpEconOptimization.Name = "BtnHelpEconOptimization";
-            this.BtnHelpEconOptimization.Size = new System.Drawing.Size(72, 40);
-            this.BtnHelpEconOptimization.TabIndex = 89;
-            this.BtnHelpEconOptimization.Text = "Help";
-            this.BtnHelpEconOptimization.Click += new System.EventHandler(this.BtnHelpEconOptimization_Click);
             // 
             // btnEconSelect
             // 
@@ -556,7 +521,6 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.BtnHelpFvsAttrib);
             this.panel1.Controls.Add(this.grpboxFVSVariablesOptimizationVariableValues);
             this.panel1.Controls.Add(this.grpFVSVariablesOptimizationVariableValuesSelected);
             this.panel1.Controls.Add(this.btnOptimizationFVSVariableClear);
@@ -568,16 +532,6 @@ namespace FIA_Biosum_Manager
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(866, 427);
             this.panel1.TabIndex = 12;
-            // 
-            // BtnHelpFvsAttrib
-            // 
-            this.BtnHelpFvsAttrib.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpFvsAttrib.Location = new System.Drawing.Point(24, 376);
-            this.BtnHelpFvsAttrib.Name = "BtnHelpFvsAttrib";
-            this.BtnHelpFvsAttrib.Size = new System.Drawing.Size(72, 40);
-            this.BtnHelpFvsAttrib.TabIndex = 12;
-            this.BtnHelpFvsAttrib.Text = "Help";
-            this.BtnHelpFvsAttrib.Click += new System.EventHandler(this.BtnHelpFvsAttrib_Click);
             // 
             // grpboxFVSVariablesOptimizationVariableValues
             // 
@@ -860,7 +814,6 @@ namespace FIA_Biosum_Manager
             // 
             this.pnlFVSVariablesPrePostVariable.AutoScroll = true;
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpBoxOptimizationNetRevenue);
-            this.pnlFVSVariablesPrePostVariable.Controls.Add(this.BtnHelpFvsOptimization);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.btnOptimiztionPrev);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpboxOptimizationSettingsPostPre);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpMaxMin);
@@ -874,15 +827,40 @@ namespace FIA_Biosum_Manager
             this.pnlFVSVariablesPrePostVariable.TabIndex = 12;
             this.pnlFVSVariablesPrePostVariable.Resize += new System.EventHandler(this.pnlFVSVariablesPrePostVariable_Resize);
             // 
-            // BtnHelpFvsOptimization
+            // grpBoxOptimizationNetRevenue
             // 
-            this.BtnHelpFvsOptimization.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpFvsOptimization.Location = new System.Drawing.Point(29, 376);
-            this.BtnHelpFvsOptimization.Name = "BtnHelpFvsOptimization";
-            this.BtnHelpFvsOptimization.Size = new System.Drawing.Size(72, 40);
-            this.BtnHelpFvsOptimization.TabIndex = 24;
-            this.BtnHelpFvsOptimization.Text = "Help";
-            this.BtnHelpFvsOptimization.Click += new System.EventHandler(this.BtnHelpFvsOptimization_Click);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.label4);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.label1);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.chkEnableFilter);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cmbNetRevOptimzFilter);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cmbOptimizationOperator);
+            this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtOptimizationValue);
+            this.grpBoxOptimizationNetRevenue.Location = new System.Drawing.Point(29, 177);
+            this.grpBoxOptimizationNetRevenue.Name = "grpBoxOptimizationNetRevenue";
+            this.grpBoxOptimizationNetRevenue.Size = new System.Drawing.Size(584, 139);
+            this.grpBoxOptimizationNetRevenue.TabIndex = 25;
+            this.grpBoxOptimizationNetRevenue.TabStop = false;
+            this.grpBoxOptimizationNetRevenue.Text = "Dollars Per Acre Filter Setting";
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(43, 24);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(158, 20);
+            this.label4.TabIndex = 91;
+            this.label4.Text = "Filter Calculation";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(313, 102);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(24, 25);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "$";
             // 
             // txtRevenueDescr
             // 
@@ -895,6 +873,15 @@ namespace FIA_Biosum_Manager
             this.txtRevenueDescr.Size = new System.Drawing.Size(259, 40);
             this.txtRevenueDescr.TabIndex = 87;
             // 
+            // chkEnableFilter
+            // 
+            this.chkEnableFilter.Location = new System.Drawing.Point(46, 98);
+            this.chkEnableFilter.Name = "chkEnableFilter";
+            this.chkEnableFilter.Size = new System.Drawing.Size(112, 32);
+            this.chkEnableFilter.TabIndex = 17;
+            this.chkEnableFilter.Text = "Enable Filter";
+            this.chkEnableFilter.CheckedChanged += new System.EventHandler(this.chkEnableFilter_CheckedChanged);
+            // 
             // cmbNetRevOptimzFilter
             // 
             this.cmbNetRevOptimzFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -903,6 +890,31 @@ namespace FIA_Biosum_Manager
             this.cmbNetRevOptimzFilter.Size = new System.Drawing.Size(160, 24);
             this.cmbNetRevOptimzFilter.TabIndex = 20;
             this.cmbNetRevOptimzFilter.SelectedIndexChanged += new System.EventHandler(this.cmbNetRevOptimzFilter_SelectedIndexChanged);
+            // 
+            // cmbOptimizationOperator
+            // 
+            this.cmbOptimizationOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbOptimizationOperator.Items.AddRange(new object[] {
+            ">",
+            "<",
+            ">=",
+            "<=",
+            "<>"});
+            this.cmbOptimizationOperator.Location = new System.Drawing.Point(224, 100);
+            this.cmbOptimizationOperator.Name = "cmbOptimizationOperator";
+            this.cmbOptimizationOperator.Size = new System.Drawing.Size(83, 32);
+            this.cmbOptimizationOperator.TabIndex = 16;
+            this.cmbOptimizationOperator.Text = ">";
+            // 
+            // txtOptimizationValue
+            // 
+            this.txtOptimizationValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOptimizationValue.Location = new System.Drawing.Point(339, 99);
+            this.txtOptimizationValue.Name = "txtOptimizationValue";
+            this.txtOptimizationValue.Size = new System.Drawing.Size(200, 29);
+            this.txtOptimizationValue.TabIndex = 15;
+            this.txtOptimizationValue.Text = "0";
+            this.txtOptimizationValue.Leave += new System.EventHandler(this.txtOptimizationValue_Leave);
             // 
             // btnOptimiztionPrev
             // 
@@ -933,50 +945,6 @@ namespace FIA_Biosum_Manager
             this.cmbOptimizationSettingsPostPreValue.Name = "cmbOptimizationSettingsPostPreValue";
             this.cmbOptimizationSettingsPostPreValue.Size = new System.Drawing.Size(320, 24);
             this.cmbOptimizationSettingsPostPreValue.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(313, 102);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(24, 25);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "$";
-            // 
-            // chkEnableFilter
-            // 
-            this.chkEnableFilter.Location = new System.Drawing.Point(46, 98);
-            this.chkEnableFilter.Name = "chkEnableFilter";
-            this.chkEnableFilter.Size = new System.Drawing.Size(112, 32);
-            this.chkEnableFilter.TabIndex = 17;
-            this.chkEnableFilter.Text = "Enable Filter";
-            this.chkEnableFilter.CheckedChanged += new System.EventHandler(this.chkEnableFilter_CheckedChanged);
-            // 
-            // cmbOptimizationOperator
-            // 
-            this.cmbOptimizationOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbOptimizationOperator.Items.AddRange(new object[] {
-            ">",
-            "<",
-            ">=",
-            "<=",
-            "<>"});
-            this.cmbOptimizationOperator.Location = new System.Drawing.Point(224, 100);
-            this.cmbOptimizationOperator.Name = "cmbOptimizationOperator";
-            this.cmbOptimizationOperator.Size = new System.Drawing.Size(83, 32);
-            this.cmbOptimizationOperator.TabIndex = 16;
-            this.cmbOptimizationOperator.Text = ">";
-            // 
-            // txtOptimizationValue
-            // 
-            this.txtOptimizationValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtOptimizationValue.Location = new System.Drawing.Point(339, 99);
-            this.txtOptimizationValue.Name = "txtOptimizationValue";
-            this.txtOptimizationValue.Size = new System.Drawing.Size(200, 29);
-            this.txtOptimizationValue.TabIndex = 15;
-            this.txtOptimizationValue.Text = "0";
-            this.txtOptimizationValue.Leave += new System.EventHandler(this.txtOptimizationValue_Leave);
             // 
             // grpMaxMin
             // 
@@ -1045,31 +1013,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
             // 
-            // grpBoxOptimizationNetRevenue
-            // 
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.label4);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.label1);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtRevenueDescr);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.chkEnableFilter);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cmbNetRevOptimzFilter);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.cmbOptimizationOperator);
-            this.grpBoxOptimizationNetRevenue.Controls.Add(this.txtOptimizationValue);
-            this.grpBoxOptimizationNetRevenue.Location = new System.Drawing.Point(29, 177);
-            this.grpBoxOptimizationNetRevenue.Name = "grpBoxOptimizationNetRevenue";
-            this.grpBoxOptimizationNetRevenue.Size = new System.Drawing.Size(584, 139);
-            this.grpBoxOptimizationNetRevenue.TabIndex = 25;
-            this.grpBoxOptimizationNetRevenue.TabStop = false;
-            this.grpBoxOptimizationNetRevenue.Text = "Dollars Per Acre Filter Setting";
-            // 
-            // label4
-            // 
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(43, 24);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(158, 20);
-            this.label4.TabIndex = 91;
-            this.label4.Text = "Filter Calculation";
-            // 
             // uc_core_scenario_fvs_prepost_optimization
             // 
             this.Controls.Add(this.groupBox1);
@@ -1094,10 +1037,10 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationAudit.ResumeLayout(false);
             this.grpboxOptimizationSettings.ResumeLayout(false);
             this.pnlFVSVariablesPrePostVariable.ResumeLayout(false);
-            this.grpboxOptimizationSettingsPostPre.ResumeLayout(false);
-            this.grpMaxMin.ResumeLayout(false);
             this.grpBoxOptimizationNetRevenue.ResumeLayout(false);
             this.grpBoxOptimizationNetRevenue.PerformLayout();
+            this.grpboxOptimizationSettingsPostPre.ResumeLayout(false);
+            this.grpMaxMin.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -2607,40 +2550,12 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void BtnHelpOptimization_Click(object sender, EventArgs e)
+        public string HelpChapter
         {
-            if (m_oHelp == null)
+            get
             {
-                m_oHelp = new Help(m_xpsFile, m_oEnv);
+                return m_strHelpChapter;
             }
-            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
-        }
-
-        private void BtnHelpFvsAttrib_Click(object sender, EventArgs e)
-        {
-            if (m_oHelp == null)
-            {
-                m_oHelp = new Help(m_xpsFile, m_oEnv);
-            }
-            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
-        }
-
-        private void BtnHelpFvsOptimization_Click(object sender, EventArgs e)
-        {
-            if (m_oHelp == null)
-            {
-                m_oHelp = new Help(m_xpsFile, m_oEnv);
-            }
-            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
-        }
-
-        private void BtnHelpEconOptimization_Click(object sender, EventArgs e)
-        {
-            if (m_oHelp == null)
-            {
-                m_oHelp = new Help(m_xpsFile, m_oEnv);
-            }
-            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 	
 	}

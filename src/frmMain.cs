@@ -1305,7 +1305,7 @@ namespace FIA_Biosum_Manager
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
                     oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
-                    oFrmScenario.HelpChapter("EDIT_SCENARIO");
+                    oFrmScenario.HelpChapter = "EDIT_SCENARIO";
 					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
                     oFrmScenario.uc_datasource1.strScenarioId = oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim();
@@ -1333,7 +1333,7 @@ namespace FIA_Biosum_Manager
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
                     oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
-                    oFrmScenario.HelpChapter("EDIT_SCENARIO");
+                    oFrmScenario.HelpChapter = "EDIT_SCENARIO";
 					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
                     oFrmScenario.uc_datasource1.strScenarioId = oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim();
