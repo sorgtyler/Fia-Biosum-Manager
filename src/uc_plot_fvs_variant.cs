@@ -1293,7 +1293,7 @@ namespace FIA_Biosum_Manager
             this.btnAuditPlotFVSVariants.Name = "btnAuditPlotFVSVariants";
             this.btnAuditPlotFVSVariants.Size = new System.Drawing.Size(400, 24);
             this.btnAuditPlotFVSVariants.TabIndex = 29;
-            this.btnAuditPlotFVSVariants.Text = "Check For Plots Without Variant Codes";
+            this.btnAuditPlotFVSVariants.Text = "Check For Plots Without Variant Or Location Codes";
             this.btnAuditPlotFVSVariants.Click += new System.EventHandler(this.btnAuditPlotFVSVariants_Click);
             // 
             // lstAudit
@@ -1923,11 +1923,10 @@ namespace FIA_Biosum_Manager
 				{
 					while (this.m_ado.m_OleDbDataReader.Read())
 					{
-						
-						if (this.m_ado.m_OleDbDataReader["statecd"] != System.DBNull.Value && 
-							this.m_ado.m_OleDbDataReader["countycd"] != System.DBNull.Value && 
-							this.m_ado.m_OleDbDataReader["plot"] != System.DBNull.Value && 
-							this.m_ado.m_OleDbDataReader["fvs_variant"] != System.DBNull.Value)
+					    if (this.m_ado.m_OleDbDataReader["statecd"] != System.DBNull.Value &&
+					        this.m_ado.m_OleDbDataReader["countycd"] != System.DBNull.Value &&
+					        this.m_ado.m_OleDbDataReader["plot"] != System.DBNull.Value &&
+					        this.m_ado.m_OleDbDataReader["fvs_variant"] != System.DBNull.Value)
 						{
 							this.lstAudit.Items.Add(this.m_ado.m_OleDbDataReader["biosum_plot_id"].ToString().Trim());
 							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["statecd"].ToString().Trim());
@@ -1952,16 +1951,15 @@ namespace FIA_Biosum_Manager
 				else
 				{
 					if (intPlotCount-intPlotCountWithVariant > 1)
-					   strMsg="Audit Failed.\r\n\r\n" + Convert.ToString(intPlotCount-intPlotCountWithVariant).Trim() + " plots do not have FVS variant assignments.";
+					   strMsg="Audit Failed.\r\n\r\n" + Convert.ToString(intPlotCount-intPlotCountWithVariant).Trim() + " plots do not have FVS variant and/or location code assignments.";
 					else
-					   strMsg="Audit Failed.\r\n\r\n" + Convert.ToString(intPlotCount-intPlotCountWithVariant).Trim() + " plot does not have an FVS variant assignment.";
-
+					   strMsg="Audit Failed.\r\n\r\n" + Convert.ToString(intPlotCount-intPlotCountWithVariant).Trim() + " plot does not have an FVS variant and/or location code assignment.";
 				}
 				if (intPlotMissingVariantFoundInMasterVariantTableCount > 0)
 				{
 					strMsg+="\r\n\r\n" + Convert.ToString(intPlotMissingVariantFoundInMasterVariantTableCount).Trim() + " of the project plots were found in the master plot variant table " + this.m_strVariantTable + ". \r\n" ;
-				    strMsg+="The plot/variant assignments are listed at the top of the form.\r\n"; 
-					strMsg+="To update the plots in the project with these plot/variant combinations\r\n";
+				    strMsg+="The plot/variant/location code assignments are listed at the top of the form.\r\n"; 
+					strMsg+="To update the plots in the project with these plot/variant/location code combinations\r\n";
 					strMsg+="select the <Update Plot Records With FIADB FVS Variant Table> button.";
 				}
 				if (intPlotCount != intJoinCount)
@@ -1969,29 +1967,13 @@ namespace FIA_Biosum_Manager
 					strMsg+="\r\n\r\n" + "Additional Information" + "\r\n";
 					strMsg+="------------------------------\r\n";
 					strMsg+=Convert.ToString(intPlotCount - intJoinCount) + " StateCd + CountyCd + Plot + Variant Combination(s) were NOT FOUND in the " + this.m_strVariantTable + " table.\r\n\r\n";
-					strMsg+="You may want to update the " + this.m_strVariantTable + " table with plot/variant assignments. By using the " + this.m_strVariantTable + " table,\r\n";
-					strMsg+="FIA Biosum will automatically populate your project plots with the appropriate plot/variant assignments.";
-
-					//MessageBox.Show(Convert.ToString(this.lstAudit.Items.Count) + " StateCd + CountyCd + Plot + FVS Variant Combination(s) NOT In The Plot Table ",
-					//	"Tree Species", 
-					//	System.Windows.Forms.MessageBoxButtons.OK,
-					//	System.Windows.Forms.MessageBoxIcon.Information);
+                    strMsg += "You may want to ask your Biosum administrator to update the " + this.m_strVariantTable + " table with plot/variant assignments. By using the " + this.m_strVariantTable + " table,\r\n";
+					strMsg+="FIA Biosum will automatically populate your project plots with the appropriate plot/variant/location code assignments.";
 				}
-///				else
-//				{
-//					MessageBox.Show(Convert.ToString(intPlotCount - intJoinCount) + " StateCd + CountyCd + Plot + Combination(s) were NOT FOUND in the " + this.m_strVariantTable + " table.\r\n\r\n Update the " + this.m_strVariantTable + " table with plot and variant information",
-//						"Tree Species", 
-//						System.Windows.Forms.MessageBoxButtons.OK,
-//						System.Windows.Forms.MessageBoxIcon.Information);
-
-//				}
 				MessageBox.Show(strMsg,
-					"Tree Species", 
+					"FIA Biosum", 
 					System.Windows.Forms.MessageBoxButtons.OK,
 					System.Windows.Forms.MessageBoxIcon.Information);
-
-				
-
 
 			}
 
