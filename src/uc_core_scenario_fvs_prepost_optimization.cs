@@ -101,7 +101,7 @@ namespace FIA_Biosum_Manager
         private ListBox lstFVSFieldsList;
         private ListBox lstFVSTablesList;
         private string m_strLastValue = "";
-        private GroupBox grpboxEconOptimizSettings;
+        private GroupBox grpboxOptimizationEconSettings;
         private Panel panel2;
         private GroupBox groupBox5;
         private Label label3;
@@ -143,10 +143,10 @@ namespace FIA_Biosum_Manager
 			this.grpboxOptimizationFVSVariable.Left = this.grpboxOptimization.Left;
 			this.grpboxOptimizationFVSVariable.Height = this.grpboxOptimization.Height;
 			this.grpboxOptimizationFVSVariable.Width = this.grpboxOptimization.Width;
-            this.grpboxEconOptimizSettings.Top = grpboxOptimization.Top;
-            this.grpboxEconOptimizSettings.Left = this.grpboxOptimization.Left;
-            this.grpboxEconOptimizSettings.Height = this.grpboxOptimization.Height;
-            this.grpboxEconOptimizSettings.Width = this.grpboxOptimization.Width;
+            this.grpboxOptimizationEconSettings.Top = grpboxOptimization.Top;
+            this.grpboxOptimizationEconSettings.Left = this.grpboxOptimization.Left;
+            this.grpboxOptimizationEconSettings.Height = this.grpboxOptimization.Height;
+            this.grpboxOptimizationEconSettings.Width = this.grpboxOptimization.Width;
 
 
 			this.m_oLvRowColors.ReferenceListView = this.lvOptimizationListValues;
@@ -156,7 +156,7 @@ namespace FIA_Biosum_Manager
 
 
 			this.grpboxOptimizationFVSVariable.Hide();
-            this.grpboxEconOptimizSettings.Hide();
+            this.grpboxOptimizationEconSettings.Hide();
 
 
             m_oValidate.RoundDecimalLength = 0;
@@ -194,7 +194,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.grpboxEconOptimizSettings = new System.Windows.Forms.GroupBox();
+            this.grpboxOptimizationEconSettings = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnEconSelect = new System.Windows.Forms.Button();
             this.txtEconAttribDescr = new System.Windows.Forms.TextBox();
@@ -264,7 +264,7 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
-            this.grpboxEconOptimizSettings.SuspendLayout();
+            this.grpboxOptimizationEconSettings.SuspendLayout();
             this.panel2.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -287,7 +287,7 @@ namespace FIA_Biosum_Manager
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Controls.Add(this.grpboxEconOptimizSettings);
+            this.groupBox1.Controls.Add(this.grpboxOptimizationEconSettings);
             this.groupBox1.Controls.Add(this.grpboxOptimizationFVSVariable);
             this.groupBox1.Controls.Add(this.grpboxOptimization);
             this.groupBox1.Controls.Add(this.grpboxOptimizationSettings);
@@ -301,18 +301,20 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Leave += new System.EventHandler(this.groupBox1_Leave);
             this.groupBox1.Resize += new System.EventHandler(this.groupBox1_Resize);
             // 
-            // grpboxEconOptimizSettings
+            // grpboxOptimizationEconSettings
             // 
-            this.grpboxEconOptimizSettings.BackColor = System.Drawing.SystemColors.Control;
-            this.grpboxEconOptimizSettings.Controls.Add(this.panel2);
-            this.grpboxEconOptimizSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpboxEconOptimizSettings.ForeColor = System.Drawing.Color.Black;
-            this.grpboxEconOptimizSettings.Location = new System.Drawing.Point(12, 1458);
-            this.grpboxEconOptimizSettings.Name = "grpboxEconOptimizSettings";
-            this.grpboxEconOptimizSettings.Size = new System.Drawing.Size(856, 448);
-            this.grpboxEconOptimizSettings.TabIndex = 36;
-            this.grpboxEconOptimizSettings.TabStop = false;
-            this.grpboxEconOptimizSettings.Text = "Economic Attribute Optimization Settings";
+            this.grpboxOptimizationEconSettings.BackColor = System.Drawing.SystemColors.Control;
+            this.grpboxOptimizationEconSettings.Controls.Add(this.panel2);
+            this.grpboxOptimizationEconSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpboxOptimizationEconSettings.ForeColor = System.Drawing.Color.Black;
+            this.grpboxOptimizationEconSettings.Location = new System.Drawing.Point(12, 1458);
+            this.grpboxOptimizationEconSettings.Name = "grpboxOptimizationEconSettings";
+            this.grpboxOptimizationEconSettings.Size = new System.Drawing.Size(856, 448);
+            this.grpboxOptimizationEconSettings.TabIndex = 36;
+            this.grpboxOptimizationEconSettings.TabStop = false;
+            this.grpboxOptimizationEconSettings.Text = "Economic Attribute Optimization Settings";
+            this.grpboxOptimizationEconSettings.Visible = false;
+            this.grpboxOptimizationEconSettings.VisibleChanged += new System.EventHandler(this.grpboxOptimization_VisibleChanged);
             // 
             // panel2
             // 
@@ -517,6 +519,8 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationFVSVariable.TabIndex = 35;
             this.grpboxOptimizationFVSVariable.TabStop = false;
             this.grpboxOptimizationFVSVariable.Text = "Stand Attribute";
+            this.grpboxOptimizationFVSVariable.Visible = false;
+            this.grpboxOptimizationFVSVariable.VisibleChanged += new System.EventHandler(this.grpboxOptimization_VisibleChanged);
             // 
             // panel1
             // 
@@ -808,6 +812,8 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationSettings.TabIndex = 30;
             this.grpboxOptimizationSettings.TabStop = false;
             this.grpboxOptimizationSettings.Text = "Stand Attribute Settings";
+            this.grpboxOptimizationSettings.Visible = false;
+            this.grpboxOptimizationSettings.VisibleChanged += new System.EventHandler(this.grpboxOptimization_VisibleChanged);
             this.grpboxOptimizationSettings.Resize += new System.EventHandler(this.grpboxFVSVariablesPrePostVariable_Resize);
             // 
             // pnlFVSVariablesPrePostVariable
@@ -1019,7 +1025,7 @@ namespace FIA_Biosum_Manager
             this.Name = "uc_core_scenario_fvs_prepost_optimization";
             this.Size = new System.Drawing.Size(872, 2000);
             this.groupBox1.ResumeLayout(false);
-            this.grpboxEconOptimizSettings.ResumeLayout(false);
+            this.grpboxOptimizationEconSettings.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -1600,8 +1606,8 @@ namespace FIA_Biosum_Manager
 			grpboxOptimizationSettings.Width =  grpboxOptimization.Width;
 			this.grpboxOptimizationFVSVariable.Height = grpboxOptimization.Height;
 			this.grpboxOptimizationFVSVariable.Width = grpboxOptimization.Width;
-            this.grpboxEconOptimizSettings.Height = grpboxOptimization.Height;
-            this.grpboxEconOptimizSettings.Width = grpboxOptimization.Width;
+            this.grpboxOptimizationEconSettings.Height = grpboxOptimization.Height;
+            this.grpboxOptimizationEconSettings.Width = grpboxOptimization.Width;
 
 		
 		}
@@ -1748,7 +1754,7 @@ namespace FIA_Biosum_Manager
 			this.EnableTabs(true);
 			this.grpboxOptimizationSettings.Hide();
 			this.grpboxOptimizationFVSVariable.Hide();
-            this.grpboxEconOptimizSettings.Hide();
+            this.grpboxOptimizationEconSettings.Hide();
 			this.grpboxOptimization.Show();
 			
 		}
@@ -1763,7 +1769,7 @@ namespace FIA_Biosum_Manager
 			this.EnableTabs(true);
 			this.grpboxOptimizationSettings.Hide();
 			this.grpboxOptimizationFVSVariable.Hide();
-            this.grpboxEconOptimizSettings.Hide();
+            this.grpboxOptimizationEconSettings.Hide();
 			this.grpboxOptimization.Show();
 
             CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
@@ -1966,7 +1972,7 @@ namespace FIA_Biosum_Manager
                 // Hide the second (FVS) layer so the third is visible
                 this.grpboxOptimizationSettingsPostPre.Hide();
                 // Hide the fourth (Economic) layer
-                this.grpboxEconOptimizSettings.Hide();
+                this.grpboxOptimizationEconSettings.Hide();
                 // Show the third layer
                 this.grpboxOptimizationSettings.Show();
 			}
@@ -2020,7 +2026,7 @@ namespace FIA_Biosum_Manager
                 // Hide the third layer; This layer replaces it
                 this.grpboxOptimizationSettings.Hide();
                 // Show the fourth layer
-                this.grpboxEconOptimizSettings.Show();
+                this.grpboxOptimizationEconSettings.Show();
             }
 			else
 			{
@@ -2457,7 +2463,7 @@ namespace FIA_Biosum_Manager
             this.EnableTabs(true);
             this.grpboxOptimizationSettings.Hide();
             this.grpboxOptimizationFVSVariable.Hide();
-            this.grpboxEconOptimizSettings.Hide();
+            this.grpboxOptimizationEconSettings.Hide();
             this.grpboxOptimization.Show();
         }
 
@@ -2555,6 +2561,20 @@ namespace FIA_Biosum_Manager
             get
             {
                 return m_strHelpChapter;
+            }
+        }
+
+        private void grpboxOptimization_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.grpboxOptimizationFVSVariable.Visible == true ||
+                this.grpboxOptimizationSettings.Visible == true ||
+                this.grpboxOptimizationEconSettings.Visible == true)
+            {
+                m_strHelpChapter = "EDIT_OPTIMIZE_ATTRIBUTE";
+            }
+            else
+            {
+                m_strHelpChapter = "OPTIMIZATION_SETTINGS";
             }
         }
 	

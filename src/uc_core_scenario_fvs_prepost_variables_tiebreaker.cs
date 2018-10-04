@@ -57,9 +57,7 @@ namespace FIA_Biosum_Manager
 		const int COLUMN_VALUESOURCE=3;
 		const int COLUMN_MAXMIN=4;
 
-        private env m_oEnv;
-        private Help m_oHelp;
-        private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
+        private string m_strHelpChapter = "TIEBREAKER_SETTINGS";
 
 		public bool m_bSave=false;
 		private bool _bDisplayAuditMsg=true;
@@ -226,7 +224,6 @@ namespace FIA_Biosum_Manager
 			this.grpboxStandAttributeTieBreakerVariable.Hide();
             this.lstEconVariablesList.Location = this.lstFVSTablesList.Location;
 			this.grpboxFVSVariablesTieBreaker.Show();
-            this.m_oEnv = new env();
         }
 
 		/// <summary> 
@@ -355,7 +352,9 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.TabIndex = 35;
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.TabStop = false;
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Text = "Last Tie-Break Rank";
+            this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Visible = false;
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreakerTreatmentIntensity_Resize);
+            this.grpboxFVSVariablesTieBreakerLastTieBreakRank.VisibleChanged += new System.EventHandler(this.grpboxFVSVariablesTieBreakerLastTieBreakRank_VisibleChanged);
             // 
             // panel2
             // 
@@ -440,6 +439,8 @@ namespace FIA_Biosum_Manager
             this.grpboxStandAttributeTieBreakerVariable.TabIndex = 34;
             this.grpboxStandAttributeTieBreakerVariable.TabStop = false;
             this.grpboxStandAttributeTieBreakerVariable.Text = "Stand Attribute";
+            this.grpboxStandAttributeTieBreakerVariable.Visible = false;
+            this.grpboxStandAttributeTieBreakerVariable.VisibleChanged += new System.EventHandler(this.grpboxStandAttributeTieBreakerVariable_VisibleChanged);
             // 
             // panel1
             // 
@@ -1866,7 +1867,7 @@ namespace FIA_Biosum_Manager
                 this.txtTieBreakVarDescr.Location = new Point(this.lblTieBreakVarDescr.Location.X + 80,
                     this.txtTieBreakVarDescr.Location.Y);
                 lstEconVariablesList.SelectedIndex = -1;
-                for (int index = 0; index < lstEconVariablesList.Items.Count + 1; index++)
+                for (int index = 0; index < lstEconVariablesList.Items.Count; index++)
                 {
                     string item = lstEconVariablesList.Items[index].ToString();
                     if (lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text == item)
@@ -2198,32 +2199,36 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void BtnHelpTieBreaker_Click(object sender, EventArgs e)
+        public string HelpChapter
         {
-            if (m_oHelp == null)
+            get
             {
-                m_oHelp = new Help(m_xpsFile, m_oEnv);
+                return m_strHelpChapter;
             }
-            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
         }
 
-        private void BtnHelpAttribute_Click(object sender, EventArgs e)
+        private void grpboxStandAttributeTieBreakerVariable_VisibleChanged(object sender, EventArgs e)
         {
-            if (m_oHelp == null)
+            if (grpboxStandAttributeTieBreakerVariable.Visible == false)
             {
-                m_oHelp = new Help(m_xpsFile, m_oEnv);
+                m_strHelpChapter = "TIEBREAKER_SETTINGS";
             }
-            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
+            else
+            {
+                m_strHelpChapter = "EDIT_TIEBREAKER_ATTRIBUTE";
+            }
         }
 
-        private void BtnHelpLastTieBreakRank_Click(object sender, EventArgs e)
+        private void grpboxFVSVariablesTieBreakerLastTieBreakRank_VisibleChanged(object sender, EventArgs e)
         {
-            if (m_oHelp == null)
+            if (grpboxFVSVariablesTieBreakerLastTieBreakRank.Visible == false)
             {
-                m_oHelp = new Help(m_xpsFile, m_oEnv);
+                m_strHelpChapter = "TIEBREAKER_SETTINGS";
             }
-            m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "INTRODUCTION" });
+            else
+            {
+                m_strHelpChapter = "EDIT_LAST_TIEBREAK_RANK";
+            }
         }
-	
 	}
 }

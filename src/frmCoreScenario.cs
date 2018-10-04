@@ -1157,7 +1157,7 @@ namespace FIA_Biosum_Manager
                             m_helpChapter = this.uc_scenario_fvs_prepost_variables_effective1.HelpChapter;
                             break;
                         case "TIE BREAKER":
-                            m_helpChapter = "TIEBREAKER_SETTINGS";
+                            m_helpChapter = this.uc_scenario_fvs_prepost_variables_tiebreaker1.HelpChapter;
                             break;
                     }
                 }
