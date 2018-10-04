@@ -167,9 +167,9 @@
             this.label2.ForeColor = System.Drawing.Color.Red;
             this.label2.Location = new System.Drawing.Point(187, 122);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(299, 16);
+            this.label2.Size = new System.Drawing.Size(310, 16);
             this.label2.TabIndex = 8;
-            this.label2.Text = "WITH CURENT PROJECT ROOT FOLDER";
+            this.label2.Text = "WITH CURRENT PROJECT ROOT FOLDER";
             // 
             // grpStatus
             // 

@@ -156,7 +156,7 @@ namespace FIA_Biosum_Manager
 			this.m_ado.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
 			
 			this.InitializeOleDbTransactionCommands();
-            this.m_ado.m_strSQL = "select biosum_plot_id,statecd,countycd,plot,fvs_variant,half_state from " + this.m_strPlotTable + ";";
+            this.m_ado.m_strSQL = "select biosum_plot_id,statecd,countycd,plot,fvs_variant,fvsloccode,half_state from " + this.m_strPlotTable + ";";
 			this.m_dtTableSchema = this.m_ado.getTableSchema(this.m_ado.m_OleDbConnection,
 				                                             this.m_ado.m_OleDbTransaction,
 				                                             this.m_ado.m_strSQL);
@@ -219,7 +219,7 @@ namespace FIA_Biosum_Manager
 					{
 						strColumnName = this.m_ado.m_DataSet.Tables["plot"].Columns[i].ColumnName;
 					
-						if (strColumnName.Trim().ToUpper() == "FVS_VARIANT")
+						if (strColumnName.Trim().ToUpper() == "FVS_VARIANT" || strColumnName.Trim().ToUpper() == "FVSLOCCODE")
 						{
 							/******************************************************************
 							**create a new instance of the DataGridColoredTextBoxColumn class
@@ -1423,6 +1423,7 @@ namespace FIA_Biosum_Manager
 					if (p_rowFound != null)
 					{
 						p_rowFound["fvs_variant"] = this.lstAudit.Items[x].SubItems[4].Text.Trim();
+						p_rowFound["fvsloccode"] = this.lstAudit.Items[x].SubItems[5].Text.Trim();
 					}
 				}
 			}
@@ -1717,7 +1718,7 @@ namespace FIA_Biosum_Manager
 			this.m_ado.m_OleDbTransaction = this.m_ado.m_OleDbConnection.BeginTransaction();
 
 			//declare in an sql select command the column(s) that can be updated
-            this.m_ado.m_strSQL = "select fvs_variant from " + this.m_strPlotTable + ";";
+            this.m_ado.m_strSQL = "select fvs_variant, fvsloccode from " + this.m_strPlotTable + ";";
 			this.m_ado.ConfigureDataAdapterUpdateCommand(this.m_ado.m_OleDbConnection,
 				this.m_ado.m_OleDbDataAdapter,
 				this.m_ado.m_OleDbTransaction,
@@ -1824,6 +1825,7 @@ namespace FIA_Biosum_Manager
             p_uc.strBiosumPlotId = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("biosum_plot_id")].ToString().Trim();
 			p_uc.strStateCd = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("statecd")].ToString().Trim();
 			p_uc.strVariant = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_variant")].ToString().Trim();
+			p_uc.strFvsLocation = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvsloccode")].ToString().Trim();
 			p_uc.strCountyCd = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("countycd")].ToString().Trim();
 			p_uc.strHalfState = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("half_state")].ToString().Trim();
 			p_uc.strPlot = this.m_dg[this.m_intCurrRow-1,this.getGridColumn("plot")].ToString().Trim();
@@ -1834,7 +1836,16 @@ namespace FIA_Biosum_Manager
 			if (result==System.Windows.Forms.DialogResult.OK)
 			{
 				this.m_dg[this.m_intCurrRow-1,this.getGridColumn("fvs_variant")] = p_uc.strVariant;
-				this.m_dg.SetDataBinding(this.m_dv,"");
+			    if (String.IsNullOrEmpty(p_uc.strFvsLocation))
+			    {
+			        this.m_dg[this.m_intCurrRow - 1, this.getGridColumn("fvsloccode")] = DBNull.Value;
+			    }
+			    else
+			    {
+			        this.m_dg[this.m_intCurrRow - 1, this.getGridColumn("fvsloccode")] = p_uc.strFvsLocation;
+			    }
+
+			    this.m_dg.SetDataBinding(this.m_dv,"");
 				this.m_dg.Update();
 				if (this.btnSave.Enabled==false) this.btnSave.Enabled=true;
 				if (this.btnEdit.Enabled==false) this.btnEdit.Enabled=true;
@@ -1872,6 +1883,7 @@ namespace FIA_Biosum_Manager
 			this.lstAudit.Columns.Add("countycd", 80, HorizontalAlignment.Left);
 			this.lstAudit.Columns.Add("plot", 80, HorizontalAlignment.Left);
 			this.lstAudit.Columns.Add("fvs_variant", 80, HorizontalAlignment.Left);
+			this.lstAudit.Columns.Add("fvsloccode", 80, HorizontalAlignment.Left);
 
 			//get the total plot record count
 			this.m_ado.m_strSQL = "select count(*) from " + this.m_strPlotTable + " p where len(trim(p.biosum_plot_id)) > 0 AND mid(p.biosum_plot_id,1,1)='1'";
@@ -1893,7 +1905,7 @@ namespace FIA_Biosum_Manager
 
 			intJoinCount = (int)m_ado.getSingleDoubleValueFromSQLQuery(m_ado.m_OleDbConnection,m_ado.m_OleDbTransaction, m_ado.m_strSQL, "join");
             
-			this.m_ado.m_strSQL = "select p.biosum_plot_id,p.statecd,p.countycd,p.plot,v.fvs_variant " + 
+			this.m_ado.m_strSQL = "select p.biosum_plot_id,p.statecd,p.countycd,p.plot,v.fvs_variant, v.fvsloccode " + 
 				"from " + this.m_strVariantTable + " v," + 
 				this.m_strPlotTable + " p " + 
 				"where LEN(TRIM(p.biosum_plot_id)) > 0 AND mid(p.biosum_plot_id,1,1)='1' and " + 
@@ -1922,6 +1934,7 @@ namespace FIA_Biosum_Manager
 							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["countycd"].ToString().Trim());
 							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["plot"].ToString().Trim());              
 							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim());
+							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["fvsloccode"].ToString().Trim());
 							intPlotMissingVariantFoundInMasterVariantTableCount++;
 						}
 					}

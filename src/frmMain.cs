@@ -3524,7 +3524,9 @@ namespace FIA_Biosum_Manager
                     else if (child.Text.IndexOf("Project") >= 0)
                     {
                         //cast the child form to get a reference to its controls, properties and methods
-                        FIA_Biosum_Manager.frmDialog temp = ((FIA_Biosum_Manager.frmDialog)child);
+                        FIA_Biosum_Manager.frmDialog temp = child as FIA_Biosum_Manager.frmDialog;
+                        if (temp != null)
+                        {
                         if (temp.uc_project1.btnSave.Enabled == true)
                         {
                             if (bPromptMsg == false && p_bPrompt)
@@ -3566,6 +3568,8 @@ namespace FIA_Biosum_Manager
                         }
                         temp = null;
                     }
+                    }
+
                     else if (child.Text.IndexOf("Core Analysis: Edit Harvest Costs") >= 0)
                     {
                         FIA_Biosum_Manager.frmGridView temp = ((FIA_Biosum_Manager.frmGridView)child);

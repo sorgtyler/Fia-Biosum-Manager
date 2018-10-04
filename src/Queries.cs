@@ -3066,403 +3066,723 @@ namespace FIA_Biosum_Manager
                                "f.drybiom=o.DRYBIOM_CALC," + 
                                "f.voltsgrs=o.VOLTSGRS_CALC" ;
                 }
-
-               
-                
-
-
-                
             }
-
 
             public class FVSInput
             {
-                FVSInput()
-                {
-                }
+		        FVSInput()
+		        {
+		        }
 
-                //All the queries necessary to create the FVSIn.accdb FVS_StandInit table using intermediate tables
-                public class StandInit
-                {
-                    StandInit()
-                    {
-                    }
+		        //All the queries necessary to create the FVSIn.accdb FVS_StandInit table using intermediate tables
+		        public class StandInit
+		        {
+		            StandInit()
+		            {
+		            }
 
-                    public static string BulkImportStandDataFromBioSumMaster(string strVariant, string strDestTable,
-                        string strCondTableName, string strPlotTableName)
-                    {
-                        string strInsertIntoStandInit =
-                            "INSERT INTO " + strDestTable +
-                            " (Stand_ID, Variant, Inv_Year, Latitude, Longitude, Location, PV_Code, " +
-                            "Age, Aspect, Slope, ElevFt, Basal_Area_Factor, Inv_Plot_Size, Brk_DBH, " +
-                            "Num_Plots, NonStk_Plots, Sam_Wt, Stk_Pcnt, DG_Trans, DG_Measure, " +
-                            "HTG_Trans, HTG_Measure, Mort_Measure, State, County) ";
-                        string strBioSumWorkTableSelectStmt =
-                            "SELECT c.biosum_cond_id, p.fvs_variant, p.measyear, p.lat, p.lon, IIF(c.adforcd is null, 0, c.adforcd), " +
-                            "c.habtypcd1, c.stdage, c.aspect, c.slope, p.elev, 0, 1, 999, 1, 0, 1,  " +
-                            "iif(c.landclcd is null, 0, c.landclcd), 1, 10, 1, 5, 5, p.statecd, p.countycd ";
-                        string strFromTableExpr =
-                            "FROM " + strCondTableName + " c INNER JOIN " + strPlotTableName +
-                            " p ON c.biosum_plot_id = p.biosum_plot_id ";
-                        string strFilters = "WHERE c.landclcd = 1 AND ucase(trim(p.fvs_variant)) = \'" +
-                                            strVariant.Trim().ToUpper() + "\'";
+		            public static string CreateDWMFuelbedTypCdToFVSConversionTable()
+		            {
+		                return "CREATE TABLE Ref_DWM_Fuelbed_Type_Codes (dwm_fuelbed_typcd TEXT(3), fuel_model LONG);";
+		            }
 
-                        return strInsertIntoStandInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
-                               strFilters;
-                    }
+		            public static string BulkImportStandDataFromBioSumMaster(string strVariant, string strDestTable,
+		                string strCondTableName, string strPlotTableName)
+		            {
+		                string strInsertIntoStandInit =
+		                    "INSERT INTO " + strDestTable +
+		                    " (Stand_ID, Variant, Inv_Year, Latitude, Longitude, Location, PV_Code, " +
+		                    "Age, Aspect, Slope, ElevFt, Basal_Area_Factor, Inv_Plot_Size, Brk_DBH, " +
+		                    "Num_Plots, NonStk_Plots, Sam_Wt, Stk_Pcnt, DG_Trans, DG_Measure, " +
+		                    "HTG_Trans, HTG_Measure, Mort_Measure, Forest_Type, State, County) ";
+		                string strBioSumWorkTableSelectStmt =
+		                    "SELECT c.biosum_cond_id, p.fvs_variant, p.measyear, p.lat, p.lon, " +
+		                    "p.fvsloccode, c.habtypcd1, c.stdage, c.aspect, c.slope, p.elev, 0, 1, 999, 1, 0, 1,  " +
+		                    "iif(c.landclcd is null, 0, c.landclcd), 1, 10, 1, 5, 5, c.fortypcd, p.statecd, p.countycd ";
+		                string strFromTableExpr =
+		                    String.Format(
+		                        "FROM {0} c INNER JOIN {1} p ON c.biosum_plot_id = p.biosum_plot_id ",
+		                        strCondTableName, strPlotTableName);
+		                string strFilters = "WHERE c.landclcd = 1 AND ucase(trim(p.fvs_variant)) = \'" +
+		                                    strVariant.Trim().ToUpper() + "\'";
+		                return strInsertIntoStandInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
+		                       strFilters;
+		            }
 
-                    public static string CreateSiteIndexDataset(string strVariant,
-                        string strCondTableName, string strPlotTableName)
-                    {
-                        string strSQL = "SELECT p.biosum_plot_id, c.biosum_cond_id, p.statecd ," +
-                                        "p.countycd, p.plot, p.fvs_variant, p.measyear," +
-                                        "c.adforcd,p.elev,c.condid, c.habtypcd1," +
-                                        "c.stdage,c.slope,c.aspect,c.ground_land_class_pnw," +
-                                        "c.sisp,p.lat,p.lon,p.idb_plot_id,c.adforcd,c.habtypcd1, " +
-                                        "p.elev,c.landclcd,c.ba_ft2_ac,c.habtypcd1 " +
-                                        "FROM " + strCondTableName + " c," +
-                                        strPlotTableName + " p " +
-                                        "WHERE p.biosum_plot_id = c.biosum_plot_id AND " +
-                                        "c.landclcd=1 AND " +
-                                        "ucase(trim(p.fvs_variant)) = '" + strVariant.Trim().ToUpper() + "';";
-                        return strSQL;
-                    }
+		            public static string UpdateFuelModel(string strDestTable, string strCondTableName)
+		            {
+		                return String.Format(
+		                    "UPDATE ({0} fvs INNER JOIN {1} c ON fvs.Stand_ID=c.biosum_cond_id) " +
+		                    "LEFT JOIN {2} ref ON c.dwm_fuelbed_typcd=ref.dwm_fuelbed_typcd " +
+		                    "SET fvs.Fuel_Model=IIF(c.dwm_fuelbed_typcd IS NULL, NULL, ref.Fuel_Model);",
+		                    strDestTable, strCondTableName, "Ref_DWM_Fuelbed_Type_Codes");
+		            }
 
-                    public static string TranslateWorkTableToStandInitTable(string strSourceTable, string strDestTable)
-                    {
-                        string strInsertIntoStandInit =
-                            "INSERT INTO " + strDestTable +
-                            " (Stand_ID, Variant, Inv_Year, " +
-                            "Latitude, Longitude, Region, Forest, District, Compartment, " +
-                            "Location, Ecoregion, PV_Code, PV_Ref_Code, Age, Aspect, Slope, " +
-                            "Elevation, ElevFt, Basal_Area_Factor, Inv_Plot_Size, Brk_DBH, " +
-                            "Num_Plots, NonStk_Plots, Sam_Wt, Stk_Pcnt, DG_Trans, DG_Measure, " +
-                            "HTG_Trans, HTG_Measure, Mort_Measure, Max_BA, Max_SDI, " +
-                            "Site_Species, Site_Index, Model_Type, Physio_Region, Forest_Type, " +
-                            "State, County, Fuel_Model, Fuel_0_25_H, Fuel_25_1_H, Fuel_1_3_H, " +
-                            "Fuel_3_6_H, Fuel_6_12_H, Fuel_12_20_H, Fuel_20_35_H, Fuel_35_50_H, " +
-                            "Fuel_gt_50_H, Fuel_0_25_S, Fuel_25_1_S, Fuel_1_3_S, Fuel_3_6_S, " +
-                            "Fuel_6_12_S, Fuel_12_20_S, Fuel_20_35_S, Fuel_35_50_S, Fuel_gt_50_S, " +
-                            "Fuel_Litter, Fuel_Duff, Photo_Ref, Photo_code) ";
-                        string strBioSumWorkTableSelectStmt =
-                            "SELECT Stand_ID, Variant, Inv_Year, " +
-                            "Latitude, Longitude, Region, Forest, District, Compartment, " +
-                            "Location, Ecoregion, PV_Code, PV_Ref_Code, Age, Aspect, Slope, " +
-                            "Elevation, ElevFt, Basal_Area_Factor, Inv_Plot_Size, Brk_DBH, " +
-                            "Num_Plots, NonStk_Plots, Sam_Wt, Stk_Pcnt, DG_Trans, DG_Measure, " +
-                            "HTG_Trans, HTG_Measure, Mort_Measure, Max_BA, Max_SDI, " +
-                            "Site_Species, Site_Index, Model_Type, Physio_Region, Forest_Type, " +
-                            "State, County, Fuel_Model, Fuel_0_25_H, Fuel_25_1_H, Fuel_1_3_H, " +
-                            "Fuel_3_6_H, Fuel_6_12_H, Fuel_12_20_H, Fuel_20_35_H, Fuel_35_50_H, " +
-                            "Fuel_gt_50_H, Fuel_0_25_S, Fuel_25_1_S, Fuel_1_3_S, Fuel_3_6_S, " +
-                            "Fuel_6_12_S, Fuel_12_20_S, Fuel_20_35_S, Fuel_35_50_S, Fuel_gt_50_S, " +
-                            "Fuel_Litter, Fuel_Duff, Photo_Ref, Photo_code ";
-                        string strFromTableExpr = "FROM " + strSourceTable + ";";
-                        return strInsertIntoStandInit + strBioSumWorkTableSelectStmt + strFromTableExpr;
-                    }
+		            /// <summary>
+		            /// Calculate biomass contribution to condition per CWD piece so that they can be summed
+		            /// ScalingConstants * SpeciesBulkDensity * SpeciesDecayRatio * PieceTransectDiameter^2 / TotalTransectLengthForCondition
+		            /// </summary>
+		            /// <param name="strCoarseWoodyDebrisTable"></param>
+		            /// <param name="strCondTable"></param>
+		            /// <param name="strRefSpecies"></param>
+		            /// <param name="strTransectSegmentTable"></param>
+		            /// <returns></returns>
+		            public static string[] CalculateCoarseWoodyDebrisBiomassTonsPerAcre(string strCoarseWoodyDebrisTable,
+		                string strCondTable, string strRefSpecies, string strTransectSegmentTable, string strMinCwdTransectLengthTotal)
+		            {
+		                string[] strCwdSqlStmts = new string[11];
+		                int idx = 0;
 
-                    public static string InsertSiteIndexSpeciesRow(string strStandID, string strSiteSpecies,
-                        string strSiteIndex)
-                    {
-                        return String.Format(
-                            "UPDATE FVS_StandInit_WorkTable SET Site_Species={1}, Site_Index={2} WHERE STAND_ID={0}; ",
-                            strStandID, strSiteSpecies, strSiteIndex);
-                    }
+		                //Sum horizontal lengths for transects
+		                strCwdSqlStmts[idx++] = String.Format(
+		                    "SELECT biosum_cond_id, SUM(horiz_length) as CWDTotalLength " +
+		                    "INTO CWDTotalLengthWorkTable " +
+		                    "FROM {0} " +
+		                    "GROUP BY biosum_cond_id;", strTransectSegmentTable);
 
-                    public static string DeleteWorkTable()
-                    {
-                        return "DROP TABLE FVS_StandInit_WorkTable;";
-                    }
-                }
+		                //Create worktable for calculation of cwd piece biomass
+		                strCwdSqlStmts[idx++] = String.Format("SELECT cwd.biosum_cond_id, " +
+		                                                      "cwd.spcd, " +
+		                                                      "cwd.transdia, " +
+		                                                      "cwd.inclination, " +
+		                                                      "cwd.decaycd, " +
+		                                                      "CDbl(0) as BulkDensity, " +
+		                                                      "CDbl(0) as DecayRatio, " +
+		                                                      "tl.CWDTotalLength, " +
+		                                                      "CDbl(0) as Biomass, " +
+		                                                      //from NRS-22 Eqn 3.27
+		                                                      //.1865972082080956863 = (1.0/2000.0)*(43560.0/144.0)*(3.141592654^2/8.0)
+		                                                      "0.186597208 as ScalingConstants " +
+		                                                      "INTO CwdPieceWorkTable " +
+		                                                      "FROM {0} cwd " +
+		                                                      "INNER JOIN CWDTotalLengthWorkTable tl " +
+		                                                      "ON cwd.biosum_cond_id=tl.biosum_cond_id;",
+		                    strCoarseWoodyDebrisTable);
 
-                //All the queries necessary to create the FVSIn.accdb FVS_TreeInit table using intermediate tables
-                public class TreeInit
-                {
-                    TreeInit()
-                    {
-                    }
+		                //Set BulkDensity And DecayRatios for each piece for easy multiplication across row
+		                strCwdSqlStmts[idx++] = String.Format("UPDATE CwdPieceWorkTable cwd " +
+		                                                      "INNER JOIN {0} spc ON cwd.spcd=spc.spcd " +
+		                                                      "SET cwd.BulkDensity=spc.CWD_Bulk_Density," +
+		                                                      "cwd.DecayRatio=IIF(cwd.decaycd=1, spc.CWD_Decay_Ratio1, " +
+		                                                      "IIF(cwd.decaycd=2, spc.CWD_Decay_Ratio2, " +
+		                                                      "IIF(cwd.decaycd=3, spc.CWD_Decay_Ratio3, " +
+		                                                      "IIF(cwd.decaycd=4, spc.CWD_Decay_Ratio4, " +
+		                                                      "IIF(cwd.decaycd=5, spc.CWD_Decay_Ratio5, 0)))));",
+		                    strRefSpecies);
 
-                    public static string BulkImportTreeDataFromBioSumMaster(string strVariant, string strDestTable,
-                        string strCondTableName, string strPlotTableName, string strTreeTableName)
-                    {
-                        string strInsertIntoTreeInit =
-                            "INSERT INTO " + strDestTable +
-                            " (Stand_ID, Tree_ID, Tree_Count, History, Species, " +
-                            "DBH, DG, Htcd, Ht, HtTopK, CrRatio, " +
-                            "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
-                            "Prescription, Slope, Aspect, PV_Code, TreeValue, cullbf, mist_cl_cd, " +
-                            "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, TreeCN)  ";
-                        string strBioSumWorkTableSelectStmt =
-                            "SELECT c.biosum_cond_id, VAL(t.fvs_tree_id) as Tree_ID, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
-                            "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
-                            "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
-                            "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
-                            "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
-                        string strFromTableExpr = "FROM " +
-                                                  strCondTableName + " c, " + strPlotTableName + " p, " +
-                                                  strTreeTableName + " t ";
-                        string strFilters =
-                            "WHERE t.biosum_cond_id=c.biosum_cond_id AND p.biosum_plot_id=c.biosum_plot_id " +
-                            "AND t.dia > 0 AND c.landclcd=1 " +
-                            "AND ucase(trim(p.fvs_variant)) = \'" + strVariant.Trim().ToUpper() + "\'";
-                        string strSQL = strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
-                                        strFilters;
-                        return strSQL;
-                    }
-
-                    public static string CreateSpcdConversionTable(string strCondTableName, string strPlotTableName,
-                        string strTreeTableName, string strTreeSpeciesTableName)
-                    {
-                        //Updating FIA Species Codes to FVS Species Codes
-                        //Build the temporary species code conversion table
-                        string strSelectIntoTempConversionTable =
-                            "SELECT DISTINCT p.FVS_VARIANT AS PLOT_FVS_VARIANT, ts.FVS_VARIANT AS TREE_SPECIES_FVS_VARIANT, t.SPCD AS FIA_SPCD, ts.FVS_INPUT_SPCD INTO SPCD_CHANGE_WORK_TABLE ";
-                        string strSpcdSources =
-                            "FROM ((" + strCondTableName + " AS c INNER JOIN " + strPlotTableName +
-                            " AS p ON c.biosum_plot_id = p.biosum_plot_id) INNER JOIN " + strTreeTableName +
-                            " AS t ON c.BIOSUM_COND_ID = t.biosum_cond_id) LEFT JOIN " + strTreeSpeciesTableName +
-                            " AS ts ON t.SPCD = ts.SPCD ";
-                        string strSpcdConversionFilters =
-                            "WHERE ts.FVS_VARIANT = p.FVS_VARIANT AND ts.FVS_INPUT_SPCD Is Not Null And ts.FVS_INPUT_SPCD <> t.SPCD;";
-                        string strSQL = strSelectIntoTempConversionTable + strSpcdSources + strSpcdConversionFilters;
-                        return strSQL;
-                    }
+		                //TODO: null spcd needs bulkdensity and decayratio
+		                strCwdSqlStmts[idx++] = String.Format(
+		                    "UPDATE CwdPieceWorkTable cwd, (SELECT * FROM {0} WHERE spcd=998) spc " +
+		                    "SET cwd.BulkDensity=spc.CWD_Bulk_Density," +
+		                    "cwd.DecayRatio=IIF(cwd.decaycd=1, spc.CWD_Decay_Ratio1, " +
+		                    "IIF(cwd.decaycd=2, spc.CWD_Decay_Ratio2, " +
+		                    "IIF(cwd.decaycd=3, spc.CWD_Decay_Ratio3, " +
+		                    "IIF(cwd.decaycd=4, spc.CWD_Decay_Ratio4, " +
+		                    "IIF(cwd.decaycd=5, spc.CWD_Decay_Ratio5, 0))))) " +
+		                    "WHERE cwd.spcd IS NULL;",
+		                    strRefSpecies);
 
 
-                    public static string UpdateFVSSpeciesCodeColumn(string strVariant, string strFVSTreeInitWorkTable)
-                    {
-                        string strSQL = "UPDATE " + strFVSTreeInitWorkTable +
-                                        " AS fvstree INNER JOIN SPCD_CHANGE_WORK_TABLE AS spcdchange ON VAL(fvstree.SPECIES) = spcdchange.FIA_SPCD " +
-                                        "SET fvstree.SPECIES = CSTR(spcdchange.FVS_INPUT_SPCD) " +
-                                        "WHERE TRIM(spcdchange.PLOT_FVS_VARIANT)=\'" + strVariant.Trim().ToUpper() +
-                                        "\'; ";
-                        return strSQL;
-                    }
-
-                    public static string DeleteCrRatiosForDeadTrees(string strDestTable)
-                    {
-                        return "UPDATE " + strDestTable + " SET CrRatio=null WHERE History=9;";
-                    }
-
-                    public static string RoundCrRatioToSingleDigitCodes(string strDestTable)
-                    {
-                        /*This is a test to compare predispose and fvsin CrRatio when you round up*/
-                        string strSQL = "UPDATE " + strDestTable + " SET " +
-                                        "CrRatio=iif(crratio is null, null, iif(len(trim(cstr(crratio)))=0, 0, " +
-                                        "iif(0 <= crratio AND crratio <= 10, 1, " +
-                                        "iif(crratio <= 20, 2, " +
-                                        "iif(crratio <= 30, 3, " +
-                                        "iif(crratio <= 40, 4, " +
-                                        "iif(crratio <= 50, 5, " +
-                                        "iif(crratio <= 60, 6, " +
-                                        "iif(crratio <= 70, 7, " +
-                                        "iif(crratio <= 80, 8, " +
-                                        "iif(crratio <= 100, 9, null)))))))))));";
-                        return strSQL;
-                    }
-
-                    public static string DeleteHtAndHtTopKForNonMeasuredHeights(string strDestTable)
-                    {
-                        return "UPDATE " + strDestTable + " SET Ht=0, HtTopK=0 WHERE Htcd NOT IN (1,2,3);";
-                    }
-
-                    public static string SetBrokenTopFlag(string strDestTable)
-                    {
-                        return "UPDATE " + strDestTable +
-                               " SET hasBrokenTop = -1 " + //-1 is true in access
-                               "WHERE HtTopK < Ht AND 0 < HtTopK;";
-                    }
+		                //Calculate the CWD piece's biomass contribution to the condition
+		                //The last step is to group these by biosum_cond_id and sum them
+		                strCwdSqlStmts[idx++] = "UPDATE CwdPieceWorkTable cwd " +
+		                                        "SET cwd.Biomass=cwd.ScalingConstants*cwd.BulkDensity*cwd.DecayRatio*cwd.transdia^2/cwd.CWDTotalLength;";
 
 
-                    public static string SetHtTopKToZeroIfGteHt(string strDestTable)
-                    {
-                        return "UPDATE " + strDestTable + " SET HtTopK=0 WHERE Ht <= HtTopK";
-                    }
+                        //Update CWD piece's biomass: scale by cosine_inclination or 1 if inclination is null 
+                        //Piece inclination is measured in degrees from 0 to 90. Convert to radians for Access cosine function
+		                strCwdSqlStmts[idx++] = "UPDATE CwdPieceWorkTable cwd " +
+		                                        "SET cwd.Biomass=cwd.Biomass/COS(cwd.inclination * 3.141592654/180)" +
+		                                        "WHERE cwd.inclination IS NOT NULL;";
+
+		                //Sum by size and decay bins to match FVS_StandInit columns
+		                strCwdSqlStmts[idx++] = "SELECT cwd.biosum_cond_id, " +
+		                                        "SUM(IIF((cwd.transdia >= 3 AND cwd.transdia < 6) AND (cwd.decaycd IN (1,2,3)), " +
+		                                        "cwd.Biomass, 0)) as fuel_3_6_H, " +
+		                                        "SUM(IIF((cwd.transdia >= 6 AND cwd.transdia < 12) AND (cwd.decaycd IN (1,2,3)), " +
+		                                        "cwd.Biomass, 0)) as fuel_6_12_H, " +
+		                                        "SUM(IIF((cwd.transdia >= 12 AND cwd.transdia < 20) AND (cwd.decaycd IN (1,2,3)), " +
+		                                        "cwd.Biomass, 0)) as fuel_12_20_H, " +
+		                                        "SUM(IIF((cwd.transdia >= 20 AND cwd.transdia < 35) AND (cwd.decaycd IN (1,2,3)), " +
+		                                        "cwd.Biomass, 0)) as fuel_20_35_H, " +
+		                                        "SUM(IIF((cwd.transdia >= 35 AND cwd.transdia < 50) AND (cwd.decaycd IN (1,2,3)), " +
+		                                        "cwd.Biomass, 0)) as fuel_35_50_H, " +
+		                                        "SUM(IIF((cwd.transdia >= 50 AND cwd.transdia < 999) AND (cwd.decaycd IN (1,2,3)), " +
+		                                        "cwd.Biomass, 0)) as fuel_gt_50_H, " +
+		                                        "SUM(IIF((cwd.transdia >= 3 AND cwd.transdia < 6) AND (cwd.decaycd IN (4,5)), " +
+		                                        "cwd.Biomass, 0)) as fuel_3_6_S, " +
+		                                        "SUM(IIF((cwd.transdia >= 6 AND cwd.transdia < 12) AND (cwd.decaycd IN (4,5)), " +
+		                                        "cwd.Biomass, 0)) as fuel_6_12_S, " +
+		                                        "SUM(IIF((cwd.transdia >= 12 AND cwd.transdia < 20) AND (cwd.decaycd IN (4,5)), " +
+		                                        "cwd.Biomass, 0)) as fuel_12_20_S, " +
+		                                        "SUM(IIF((cwd.transdia >= 20 AND cwd.transdia < 35) AND (cwd.decaycd IN (4,5)), " +
+		                                        "cwd.Biomass, 0)) as fuel_20_35_S, " +
+		                                        "SUM(IIF((cwd.transdia >= 35 AND cwd.transdia < 50) AND (cwd.decaycd IN (4,5)), " +
+		                                        "cwd.Biomass, 0)) as fuel_35_50_S, " +
+		                                        "SUM(IIF((cwd.transdia >= 50 AND cwd.transdia < 999) AND (cwd.decaycd IN (4,5)), " +
+		                                        "cwd.Biomass, 0)) as fuel_gt_50_S " +
+		                                        "INTO DWM_CWD_Aggregates_WorkTable " +
+		                                        "FROM CwdPieceWorkTable cwd " +
+		                                        "GROUP BY cwd.biosum_cond_id;";
+
+		                //Update CWD columns in FVS_StandInit
+		                strCwdSqlStmts[idx++] = "UPDATE FVS_StandInit_WorkTable fvs " +
+		                                        "INNER JOIN DWM_CWD_Aggregates_WorkTable cwd ON fvs.Stand_ID=cwd.biosum_cond_id " +
+		                                        "SET fvs.fuel_3_6_H=cwd.fuel_3_6_H, " +
+		                                        "fvs.fuel_6_12_H=cwd.fuel_6_12_H, " +
+		                                        "fvs.fuel_12_20_H=cwd.fuel_12_20_H, " +
+		                                        "fvs.fuel_20_35_H=cwd.fuel_20_35_H, " +
+		                                        "fvs.fuel_35_50_H=cwd.fuel_35_50_H, " +
+		                                        "fvs.fuel_gt_50_H=cwd.fuel_gt_50_H, " +
+		                                        "fvs.fuel_3_6_S=cwd.fuel_3_6_S, " +
+		                                        "fvs.fuel_6_12_S=cwd.fuel_6_12_S, " +
+		                                        "fvs.fuel_12_20_S=cwd.fuel_12_20_S, " +
+		                                        "fvs.fuel_20_35_S=cwd.fuel_20_35_S, " +
+		                                        "fvs.fuel_35_50_S=cwd.fuel_35_50_S, " +
+		                                        "fvs.fuel_gt_50_S=cwd.fuel_gt_50_S;";
+
+		                //Write them to fvs_standinit column
+		                strCwdSqlStmts[idx++] = "UPDATE FVS_StandInit_WorkTable fvs " +
+		                                        "INNER JOIN CWDTotalLengthWorkTable t ON fvs.stand_id=t.biosum_cond_id " +
+		                                        "SET fvs.cwdtotallength=t.CWDTotalLength;";
+		                
+		                //Nullify CWD where total horizontal length is less than the minimum
+		                strCwdSqlStmts[idx++] = String.Format("UPDATE FVS_StandInit_WorkTable fvs " +
+		                                        "INNER JOIN CWDTotalLengthWorkTable t ON fvs.stand_id=t.biosum_cond_id " +
+		                                        "SET fvs.fuel_3_6_H=NULL, " +
+		                                        "fvs.fuel_6_12_H=NULL, " +
+		                                        "fvs.fuel_12_20_H=NULL, " +
+		                                        "fvs.fuel_20_35_H=NULL, " +
+		                                        "fvs.fuel_35_50_H=NULL, " +
+		                                        "fvs.fuel_gt_50_H=NULL, " +
+		                                        "fvs.fuel_3_6_S=NULL, " +
+		                                        "fvs.fuel_6_12_S=NULL, " +
+		                                        "fvs.fuel_12_20_S=NULL, " +
+		                                        "fvs.fuel_20_35_S=NULL, " +
+		                                        "fvs.fuel_35_50_S=NULL, " +
+		                                        "fvs.fuel_gt_50_S=NULL " + 
+		                                        "WHERE fvs.CwdTotalLength < {0};", strMinCwdTransectLengthTotal);
+
+		                //Set cwd fuels to 0 if TS.horiz_length is non-null and positive
+		                //FVS interprets 0s as 0 tons/acre, but null lets it insert default values for the variant.
+                        strCwdSqlStmts[idx++] = String.Format("UPDATE FVS_StandInit_WorkTable " +
+                                                              "SET Fuel_3_6_H=IIF(Fuel_3_6_H is null, 0, Fuel_3_6_H), " +
+                                                              "Fuel_6_12_H=IIF(Fuel_6_12_H is null, 0, Fuel_6_12_H), " +
+                                                              "Fuel_12_20_H=IIF(Fuel_12_20_H is null, 0, Fuel_12_20_H), " +
+                                                              "Fuel_20_35_H=IIF(Fuel_20_35_H is null, 0, Fuel_20_35_H), " +
+                                                              "Fuel_35_50_H=IIF(Fuel_35_50_H is null, 0, Fuel_35_50_H), " +
+                                                              "Fuel_gt_50_H=IIF(Fuel_gt_50_H is null, 0, Fuel_gt_50_H), " +
+                                                              "Fuel_3_6_S=IIF(Fuel_3_6_S is null, 0, Fuel_3_6_S), " +
+                                                              "Fuel_6_12_S=IIF(Fuel_6_12_S is null, 0, Fuel_6_12_S), " +
+                                                              "Fuel_12_20_S=IIF(Fuel_12_20_S is null, 0, Fuel_12_20_S), " +
+                                                              "Fuel_20_35_S=IIF(Fuel_20_35_S is null, 0, Fuel_20_35_S), " +
+                                                              "Fuel_35_50_S=IIF(Fuel_35_50_S is null, 0, Fuel_35_50_S), " +
+                                                              "Fuel_gt_50_S=IIF(Fuel_gt_50_S is null, 0, Fuel_gt_50_S) " +
+                                                              "WHERE CWDTotalLength > 0;");
+
+		                return strCwdSqlStmts;
+		            }
+
+                    /// <summary>
+                    /// Calculate biomass for FWD columns in FVS_StandInit_WorkTable. 
+                    /// </summary>
+                    /// <param name="strDwmFineWoodyDebrisTable"></param>
+                    /// <param name="strCondTable"></param>
+                    /// <param name="strRefForestTypeTable"></param>
+                    /// <param name="strRefForestTypeGroupTable"></param>
+                    /// <param name="strMinSmallFwdTransectLengthTotal"></param>
+                    /// <param name="strMinLargeFwdTransectLengthTotal"></param>
+                    /// <returns></returns>
+		            public static string[] CalculateFineWoodyDebrisBiomassTonsPerAcre(string strDwmFineWoodyDebrisTable,
+		                string strCondTable, string strMinSmallFwdTransectLengthTotal, string strMinLargeFwdTransectLengthTotal)
+		            {
+		                string[] strFwdSqlStmts = new string[7];
+		                int idx = 0;
+
+                        //Gather variables for NRS-22 FWD equation into temporary table
+		                strFwdSqlStmts[idx++] = String.Format(
+		                    "SELECT fwd.biosum_cond_id, first(fwd.rsnctcd) as rsncntcd, " +
+		                    "sum(fwd.smallct) as smallTotal, first(fwd.small_tl_cond) as smallTL, " +
+		                    "sum(fwd.mediumct) as mediumTotal, first(fwd.medium_tl_cond) as mediumTL, " +
+		                    "sum(fwd.largect) as largeTotal, first(fwd.large_tl_cond) as largeTL, " +
+		                    "first(rftg.fwd_decay_ratio) as decayRatio, first(rftg.fwd_density) as bulkDensity, " +
+		                    "first(rftg.fwd_small_qmd) as smallQMD,  " +
+		                    "first(rftg.fwd_medium_qmd) as mediumQMD,  " +
+		                    "first(rftg.fwd_large_qmd) as largeQMD, " +
+		                    "first(small_tl_cond) as SmallMediumTotalLength, " +
+		                    "first(large_tl_cond) as LargeTotalLength, " +
+		                    "0.186597208 as ScalingConstants " +
+		                    "INTO DWM_FWD_Aggregates_WorkTable " +
+		                    "FROM (({0} fwd INNER JOIN {1} c ON fwd.biosum_cond_id = c.biosum_cond_id) " +
+		                    "INNER JOIN REF_FOREST_TYPE rft ON c.fortypcd = rft.`VALUE`) " +
+		                    "INNER JOIN REF_FOREST_TYPE_GROUP rftg ON rft.TYPGRPCD = rftg.`VALUE` " +
+		                    "WHERE fwd.rsnctcd < 2 OR fwd.rsnctcd IS NULL " +
+		                    "GROUP BY fwd.biosum_cond_id;", strDwmFineWoodyDebrisTable, strCondTable);
 
 
-                    public static string SetInferredSeedlingDbh(string strDestTable)
-                    {
-                        return "UPDATE " + strDestTable +
-                               " SET Dbh=0.1 WHERE Tree_Count > 25 AND Dbh <= 0 AND History=1;";
-                    }
+                        //Creates a table for scaling FWD TLs because the counts (small, medium, large) are filtered by RsnCtCd
+		                strFwdSqlStmts[idx++] = String.Format("SELECT fwd.biosum_cond_id, " +
+		                                                      "COUNT(iif(rsnctcd < 2 OR rsnctcd IS NULL, true, null)) as totalAcceptabelRsnCtCd, " +
+		                                                      "COUNT(*) as totalFWDRecords, " +
+		                                                      "CDbl(totalAcceptabelRsnCtCd)/totalFWDRecords as RsnCtCdScalingFactor " +
+		                                                      "INTO Dwm_Fwd_RsnCtCd_WorkTable " +
+		                                                      "FROM {0} fwd INNER JOIN FVS_StandInit_WorkTable fvs ON fwd.biosum_cond_id=fvs.stand_id " +
+		                                                      "GROUP BY fwd.biosum_cond_id", strDwmFineWoodyDebrisTable);
 
-                    public static string[] DamageCodes(string strDestTable)
-                    {
-                        string[] strDamageCodeUpdates = new string[15];
+                        //Multiply the FWD transect lengths for biomass calculations by the proportion of TLs with accepted RsnCtCds.
+                        //These RsnCtCd values are currently filtered out (2,3,4). Nulls are kept in.
+		                strFwdSqlStmts[idx++] = String.Format("UPDATE DWM_FWD_Aggregates_WorkTable fwd " +
+		                                                      "INNER JOIN Dwm_Fwd_RsnCtCd_WorkTable rsn " +
+		                                                      "ON fwd.biosum_cond_id=rsn.biosum_cond_id " +
+		                                                      "SET fwd.smallTL=fwd.smallTL*rsn.RsnCtCdScalingFactor, " +
+		                                                      "fwd.mediumTL=fwd.mediumTL*rsn.RsnCtCdScalingFactor, " +
+		                                                      "fwd.largeTL=fwd.largeTL*rsn.RsnCtCdScalingFactor, " +
+		                                                      "fwd.SmallMediumTotalLength=fwd.SmallMediumTotalLength*rsn.RsnCtCdScalingFactor, " +
+		                                                      "fwd.LargeTotalLength=fwd.LargeTotalLength*rsn.RsnCtCdScalingFactor;");
 
-                        //use precalculated damage codes if possible
-                        strDamageCodeUpdates[0] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=fvs_dmg_ag1, Damage2=fvs_dmg_ag2, Damage3=fvs_dmg_ag3, Severity1=fvs_dmg_sv1, Severity2=fvs_dmg_sv2, Severity3=fvs_dmg_sv3 WHERE History=1 AND fvs_dmg_ag1 is not null;";
 
-                        //Cull board feet
-                        strDamageCodeUpdates[1] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=25, Severity1=IIF(cullbf>=100, 99, cullbf) WHERE History=1 AND cullbf>0;";
+		                strFwdSqlStmts[idx++] = "UPDATE FVS_StandInit_WorkTable fvs " +
+		                                        "INNER JOIN DWM_FWD_Aggregates_WorkTable fwd " +
+		                                        "ON fvs.stand_id=fwd.biosum_cond_id " +
+		                                        "SET fvs.fuel_0_25_H=IIF(smallTL=0 OR smallTL IS NULL, NULL, " +
+		                                        "(fwd.ScalingConstants * (fwd.smallTotal * fwd.smallQMD^2) / fwd.smallTL) * fwd.bulkDensity * fwd.decayRatio), " +
+		                                        "fvs.fuel_25_1_H=IIF(mediumTL=0 OR mediumTL IS NULL, NULL, " +
+		                                        "(fwd.ScalingConstants * (fwd.mediumTotal * fwd.mediumQMD^2) / fwd.mediumTL) * fwd.bulkDensity * fwd.decayRatio), " +
+		                                        "fvs.fuel_1_3_H=IIF(largeTL=0 OR largeTL IS NULL, NULL, " +
+		                                        "(fwd.ScalingConstants * (fwd.largeTotal * fwd.largeQMD^2) / fwd.largeTL) * fwd.bulkDensity * fwd.decayRatio), " +
+		                                        "fvs.fuel_0_25_S=IIF(smallTL=0 OR smallTL IS NULL, NULL, 0), " +
+		                                        "fvs.fuel_25_1_S=IIF(mediumTL=0 OR mediumTL IS NULL, NULL, 0), " +
+		                                        "fvs.fuel_1_3_S=IIF(largeTL=0 OR largeTL IS NULL, NULL, 0), " +
+		                                        "fvs.SmallMediumTotalLength=fwd.SmallMediumTotalLength," +
+		                                        "fvs.LargeTotalLength=fwd.LargeTotalLength;";
 
-                        //FVS Mistletoe damage codes
-                        string strDamage1_Filter =
-                            "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
-                        string strDamage2_Filter =
-                            "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 NOT IN (0, 30, 31, 32, 33, 34) AND fvs_dmg_ag1 is null;";
-                        strDamageCodeUpdates[2] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=31, Severity1=mist_cl_cd WHERE Species=\'108\' AND " +
-                            strDamage1_Filter;
+		                // Set FWD columns to null if the scaling factor determined by all the DWM_Fine_Woody_Debris.RsnCtCd is 0.
+		                strFwdSqlStmts[idx++] = "UPDATE FVS_StandInit_WorkTable fvs " +
+		                                        "INNER JOIN Dwm_Fwd_RsnCtCd_WorkTable rsn " +
+		                                        "ON fvs.stand_id=rsn.biosum_cond_id " +
+		                                        "SET fvs.fuel_0_25_H=NULL, " +
+		                                        "fvs.fuel_25_1_H=NULL," +
+		                                        "fvs.fuel_1_3_H=NULL, " +
+		                                        "fvs.fuel_0_25_S=NULL, " +
+		                                        "fvs.fuel_25_1_S=NULL, " +
+		                                        "fvs.fuel_1_3_S=NULL, " +
+		                                        "fvs.SmallMediumTotalLength=NULL, " +
+		                                        "fvs.LargeTotalLength=NULL " +
+		                                        "WHERE rsn.RsnCtCdScalingFactor=0;";
 
-                        strDamageCodeUpdates[3] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage2=31, Severity2=mist_cl_cd WHERE Species=\'108\' AND " +
-                            strDamage2_Filter;
+		                //Filter out FWD Small and Medium fuels where the minimum Small TL is larger
+		                strFwdSqlStmts[idx++] = String.Format("UPDATE FVS_StandInit_WorkTable fvs " +
+		                                                      "SET fvs.fuel_0_25_H=NULL, " +
+		                                                      "fvs.fuel_25_1_H=NULL, " +
+		                                                      "fvs.fuel_0_25_S=NULL, " +
+		                                                      "fvs.fuel_25_1_S=NULL " +
+		                                                      "WHERE fvs.SmallMediumTotalLength < {0} ",
+		                    strMinSmallFwdTransectLengthTotal);
 
-                        strDamageCodeUpdates[4] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=32, Severity1=mist_cl_cd WHERE Species=\'073\' AND " +
-                            strDamage1_Filter;
+		                //Filter out FWD Large fuels where the minimum Large TL is larger
+		                strFwdSqlStmts[idx++] = String.Format("UPDATE FVS_StandInit_WorkTable fvs " +
+		                                                      "SET fvs.fuel_1_3_H=NULL, " +
+		                                                      "fvs.fuel_1_3_S=NULL " +
+		                                                      "WHERE fvs.LargeTotalLength < {0} ",
+		                    strMinLargeFwdTransectLengthTotal);
+		                return strFwdSqlStmts;
+		            }
 
-                        strDamageCodeUpdates[5] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage2=32, Severity2=mist_cl_cd WHERE Species=\'073\' AND " +
-                            strDamage2_Filter;
+		            public static string CalculateDuffLitterBiomassTonsPerAcre(string strDwmDuffLitterTable, string strCondTable)
+		            {
+		                return String.Format(
+		                    "SELECT dl.biosum_cond_id, " +
+		                    "SUM(IIF(duffdep IS NOT NULL, 1, 0)) as DuffPitCount, " +
+		                    "SUM(IIF(littdep IS NOT NULL, 1, 0)) as LitterPitCount, " +
+		                    "(AVG(dl.duffdep)*first(rftg.duff_density)*1.815) as fvs_fuel_duff_tonsPerAcre, " +
+		                    "(AVG(dl.littdep)*first(rftg.litter_density)*1.815) as fvs_fuel_litter_tonsPerAcre " +
+		                    "INTO DWM_DuffLitter_Aggregates_WorkTable " +
+		                    "FROM ((({0} dl " +
+		                    "INNER JOIN {1} c ON dl.biosum_cond_id = c.biosum_cond_id) " +
+		                    "INNER JOIN REF_FOREST_TYPE rft ON c.fortypcd = rft.`VALUE`) " +
+		                    "INNER JOIN REF_FOREST_TYPE_GROUP rftg ON rft.TYPGRPCD = rftg.`VALUE`) " +
+		                    "INNER JOIN FVS_StandInit_WorkTable fvs on dl.biosum_cond_id=fvs.stand_ID " +
+		                    "GROUP BY dl.biosum_cond_id;", strDwmDuffLitterTable, strCondTable);
+		            }
 
-                        strDamageCodeUpdates[6] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=33, Severity1=mist_cl_cd WHERE Species=\'202\' AND " +
-                            strDamage1_Filter;
+		            public static string UpdateFvsStandInitDuffLitterColumns()
+		            {
+		                return "UPDATE Fvs_StandInit_WorkTable fvs " +
+		                       "INNER JOIN DWM_DuffLitter_Aggregates_WorkTable dl ON fvs.stand_id=dl.biosum_cond_id  " +
+		                       "SET fvs.fuel_duff = dl.fvs_fuel_duff_tonsPerAcre, " +
+		                       "fvs.fuel_litter = dl.fvs_fuel_litter_tonsPerAcre," +
+		                       "fvs.DuffPitCount = dl.DuffPitCount," +
+		                       "fvs.LitterPitCount = dl.LitterPitCount;";
+		            }
 
-                        strDamageCodeUpdates[7] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage2=33, Severity2=mist_cl_cd WHERE Species=\'202\' AND " +
-                            strDamage2_Filter;
+		            public static string RemoveDuffYears(string yearsFilter)
+		            {
+		                return "UPDATE Fvs_StandInit_WorkTable fvs " +
+		                       "SET fvs.fuel_duff = null," +
+		                       "fvs.DuffPitCount=null " +
+		                       "WHERE fvs.inv_year IN (" + yearsFilter + ")";
+		            }
 
-                        strDamageCodeUpdates[8] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=34, Severity1=mist_cl_cd WHERE Species=\'122\' AND " +
-                            strDamage1_Filter;
+		            public static string RemoveLitterYears(string yearsFilter)
+		            {
+		                return "UPDATE Fvs_StandInit_WorkTable fvs " +
+		                       "SET fvs.fuel_litter=null," +
+		                       "fvs.LitterPitCount=null " +
+		                       "WHERE fvs.inv_year IN (" + yearsFilter + ")";
+		            }
 
-                        strDamageCodeUpdates[9] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage2=34, Severity2=mist_cl_cd WHERE Species=\'122\' AND " +
-                            strDamage2_Filter;
+		            public static string CreateSiteIndexDataset(string strVariant,
+		                string strCondTableName, string strPlotTableName)
+		            {
+		                string strSQL = "SELECT p.biosum_plot_id, c.biosum_cond_id, p.statecd ," +
+		                                "p.countycd, p.plot, p.fvs_variant, p.measyear," +
+		                                "c.adforcd,p.elev,c.condid, c.habtypcd1," +
+		                                "c.stdage,c.slope,c.aspect,c.ground_land_class_pnw," +
+		                                "c.sisp,p.lat,p.lon,p.idb_plot_id,c.adforcd,c.habtypcd1, " +
+		                                "p.elev,c.landclcd,c.ba_ft2_ac,c.habtypcd1 " +
+		                                "FROM " + strCondTableName + " c," +
+		                                strPlotTableName + " p " +
+		                                "WHERE p.biosum_plot_id = c.biosum_plot_id AND " +
+		                                "c.landclcd=1 AND " +
+		                                "ucase(trim(p.fvs_variant)) = '" + strVariant.Trim().ToUpper() + "';";
+		                return strSQL;
+		            }
 
-                        //default mist_cl_cd damage code if fvs species don't match previous four cases
-                        strDamageCodeUpdates[10] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=30, Severity1=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
-                            strDamage1_Filter;
+		            public static string TranslateWorkTableToStandInitTable(string strSourceTable, string strDestTable)
+		            {
+		                string strInsertIntoStandInit =
+		                    "INSERT INTO " + strDestTable;
+		                string strBioSumWorkTableSelectStmt =
+		                    " SELECT Stand_ID, Variant, Inv_Year, " +
+		                    "Latitude, Longitude, Region, Forest, District, Compartment, " +
+		                    "Location, Ecoregion, PV_Code, PV_Ref_Code, Age, Aspect, Slope, " +
+		                    "Elevation, ElevFt, Basal_Area_Factor, Inv_Plot_Size, Brk_DBH, " +
+		                    "Num_Plots, NonStk_Plots, Sam_Wt, Stk_Pcnt, DG_Trans, DG_Measure, " +
+		                    "HTG_Trans, HTG_Measure, Mort_Measure, Max_BA, Max_SDI, " +
+		                    "Site_Species, Site_Index, Model_Type, Physio_Region, Forest_Type, " +
+		                    "State, County, Fuel_Model,[Fuel_0_25_H], [Fuel_25_1_H], [Fuel_1_3_H], " +
+		                    "[Fuel_3_6_H], [Fuel_6_12_H], [Fuel_12_20_H], Fuel_20_35_H, Fuel_35_50_H, " +
+		                    "Fuel_gt_50_H, Fuel_0_25_S, Fuel_25_1_S, Fuel_1_3_S, Fuel_3_6_S, " +
+		                    "Fuel_6_12_S, Fuel_12_20_S, Fuel_20_35_S, Fuel_35_50_S, Fuel_gt_50_S, " +
+		                    "Fuel_Litter, Fuel_Duff, SmallMediumTotalLength, " +
+		                    "LargeTotalLength, CWDTotalLength, DuffPitCount, LitterPitCount, " +
+		                    "Photo_Ref, Photo_code ";
+		                string strFromTableExpr = "FROM " + strSourceTable + ";";
+		                return strInsertIntoStandInit + strBioSumWorkTableSelectStmt + strFromTableExpr;
+		            }
 
-                        strDamageCodeUpdates[11] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage2=30, Severity2=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
-                            strDamage2_Filter;
+		            public static string InsertSiteIndexSpeciesRow(string strStandID, string strSiteSpecies,
+		                string strSiteIndex)
+		            {
+		                return String.Format(
+		                    "UPDATE FVS_StandInit_WorkTable SET Site_Species={1}, Site_Index={2} WHERE STAND_ID={0}; ",
+		                    strStandID, strSiteSpecies, strSiteIndex);
+		            }
 
-                        //broken top 96 added to least priority(?) damage column so fill it last
-                        strDamageCodeUpdates[12] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage1=96 WHERE History=1 AND hasBrokenTop AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
+		            public static string DeleteFvsStandInitWorkTable()
+		            {
+		                return "DROP TABLE FVS_StandInit_WorkTable;";
+		            }
 
-                        //0 means nothing was assigned. 96 means damage2 doesn't need to repeat damage1
-                        strDamageCodeUpdates[13] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage2=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 = 0 AND fvs_dmg_ag1 IS Null;";
 
-                        strDamageCodeUpdates[14] =
-                            "UPDATE " + strDestTable +
-                            " SET Damage3=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 not in (0,96) and Damage3=0 AND fvs_dmg_ag1 IS Null;";
-                        /*END DAMAGE CODES*/
-                        return strDamageCodeUpdates;
-                    }
+		            public static string[] DeleteDwmWorkTables()
+		            {
+		                string[] strSQL = new string[6];
+		                int idx = 0;
+		                strSQL[idx++] = "DROP TABLE CWDTotalLengthWorkTable;";
+		                strSQL[idx++] = "DROP TABLE CwdPieceWorkTable;";
+		                strSQL[idx++] = "DROP TABLE DWM_CWD_Aggregates_WorkTable;";
+		                strSQL[idx++] = "DROP TABLE DWM_FWD_Aggregates_WorkTable;";
+		                strSQL[idx++] = "DROP TABLE DWM_DuffLitter_Aggregates_WorkTable;";
+		                strSQL[idx++] = "DROP TABLE Dwm_Fwd_RsnCtCd_WorkTable;";
+		                return strSQL;
+		            }
+		        }
 
-                    public static string[] TreeValueClass(string strDestTable)
-                    {
-                        /*Value Classes: 
+		        //All the queries necessary to create the FVSIn.accdb FVS_TreeInit table using intermediate tables
+		        public class TreeInit
+		        {
+		            TreeInit()
+		            {
+		            }
+
+		            public static string BulkImportTreeDataFromBioSumMaster(string strVariant, string strDestTable,
+		                string strCondTableName, string strPlotTableName, string strTreeTableName)
+		            {
+		                string strInsertIntoTreeInit =
+		                    "INSERT INTO " + strDestTable +
+		                    " (Stand_ID, Tree_ID, Tree_Count, History, Species, " +
+		                    "DBH, DG, Htcd, Ht, HtTopK, CrRatio, " +
+		                    "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
+		                    "Prescription, Slope, Aspect, PV_Code, TreeValue, cullbf, mist_cl_cd, " +
+		                    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, TreeCN)  ";
+		                string strBioSumWorkTableSelectStmt =
+		                    "SELECT c.biosum_cond_id, VAL(t.fvs_tree_id) as Tree_ID, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
+		                    "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
+		                    "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
+		                    "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
+		                    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
+		                string strFromTableExpr = "FROM " +
+		                                          strCondTableName + " c, " + strPlotTableName + " p, " +
+		                                          strTreeTableName + " t ";
+		                string strFilters =
+		                    "WHERE t.biosum_cond_id=c.biosum_cond_id AND p.biosum_plot_id=c.biosum_plot_id " +
+		                    "AND t.dia > 0 AND c.landclcd=1 " +
+		                    "AND ucase(trim(p.fvs_variant)) = \'" + strVariant.Trim().ToUpper() + "\'";
+		                string strSQL = strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
+		                                strFilters;
+		                return strSQL;
+		            }
+
+		            public static string CreateSpcdConversionTable(string strCondTableName, string strPlotTableName,
+		                string strTreeTableName, string strTreeSpeciesTableName)
+		            {
+		                //Updating FIA Species Codes to FVS Species Codes
+		                //Build the temporary species code conversion table
+		                string strSelectIntoTempConversionTable =
+		                    "SELECT DISTINCT p.FVS_VARIANT AS PLOT_FVS_VARIANT, ts.FVS_VARIANT AS TREE_SPECIES_FVS_VARIANT, t.SPCD AS FIA_SPCD, ts.FVS_INPUT_SPCD INTO SPCD_CHANGE_WORK_TABLE ";
+		                string strSpcdSources =
+		                    "FROM ((" + strCondTableName + " AS c INNER JOIN " + strPlotTableName +
+		                    " AS p ON c.biosum_plot_id = p.biosum_plot_id) INNER JOIN " + strTreeTableName +
+		                    " AS t ON c.BIOSUM_COND_ID = t.biosum_cond_id) LEFT JOIN " + strTreeSpeciesTableName +
+		                    " AS ts ON t.SPCD = ts.SPCD ";
+		                string strSpcdConversionFilters =
+		                    "WHERE ts.FVS_VARIANT = p.FVS_VARIANT AND ts.FVS_INPUT_SPCD Is Not Null And ts.FVS_INPUT_SPCD <> t.SPCD;";
+		                string strSQL = strSelectIntoTempConversionTable + strSpcdSources + strSpcdConversionFilters;
+		                return strSQL;
+		            }
+
+
+		            public static string UpdateFVSSpeciesCodeColumn(string strVariant, string strFVSTreeInitWorkTable)
+		            {
+		                string strSQL = "UPDATE " + strFVSTreeInitWorkTable +
+		                                " AS fvstree INNER JOIN SPCD_CHANGE_WORK_TABLE AS spcdchange ON VAL(fvstree.SPECIES) = spcdchange.FIA_SPCD " +
+		                                "SET fvstree.SPECIES = CSTR(spcdchange.FVS_INPUT_SPCD) " +
+		                                "WHERE TRIM(spcdchange.PLOT_FVS_VARIANT)=\'" + strVariant.Trim().ToUpper() +
+		                                "\'; ";
+		                return strSQL;
+		            }
+
+		            public static string DeleteCrRatiosForDeadTrees(string strDestTable)
+		            {
+		                return "UPDATE " + strDestTable + " SET CrRatio=null WHERE History=9;";
+		            }
+
+		            public static string RoundCrRatioToSingleDigitCodes(string strDestTable)
+		            {
+		                /*This is a test to compare predispose and fvsin CrRatio when you round up*/
+		                string strSQL = "UPDATE " + strDestTable + " SET " +
+		                                "CrRatio=iif(crratio is null, null, iif(len(trim(cstr(crratio)))=0, 0, " +
+		                                "iif(0 <= crratio AND crratio <= 10, 1, " +
+		                                "iif(crratio <= 20, 2, " +
+		                                "iif(crratio <= 30, 3, " +
+		                                "iif(crratio <= 40, 4, " +
+		                                "iif(crratio <= 50, 5, " +
+		                                "iif(crratio <= 60, 6, " +
+		                                "iif(crratio <= 70, 7, " +
+		                                "iif(crratio <= 80, 8, " +
+		                                "iif(crratio <= 100, 9, null)))))))))));";
+		                return strSQL;
+		            }
+
+		            public static string DeleteHtAndHtTopKForNonMeasuredHeights(string strDestTable)
+		            {
+		                return "UPDATE " + strDestTable + " SET Ht=0, HtTopK=0 WHERE Htcd NOT IN (1,2,3);";
+		            }
+
+		            public static string SetBrokenTopFlag(string strDestTable)
+		            {
+		                return "UPDATE " + strDestTable +
+		                       " SET hasBrokenTop = -1 " + 
+		                       "WHERE HtTopK < Ht AND 0 < HtTopK;";
+		            }
+
+
+		            public static string SetHtTopKToZeroIfGteHt(string strDestTable)
+		            {
+		                return "UPDATE " + strDestTable + " SET HtTopK=0 WHERE Ht <= HtTopK";
+		            }
+
+
+		            public static string SetInferredSeedlingDbh(string strDestTable)
+		            {
+		                return "UPDATE " + strDestTable +
+		                       " SET Dbh=0.1 WHERE Tree_Count > 25 AND Dbh <= 0 AND History=1;";
+		            }
+
+		            public static string[] DamageCodes(string strDestTable)
+		            {
+		                string[] strDamageCodeUpdates = new string[15];
+
+		                //use precalculated damage codes if possible
+		                strDamageCodeUpdates[0] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=fvs_dmg_ag1, Damage2=fvs_dmg_ag2, Damage3=fvs_dmg_ag3, Severity1=fvs_dmg_sv1, Severity2=fvs_dmg_sv2, Severity3=fvs_dmg_sv3 WHERE History=1 AND fvs_dmg_ag1 is not null;";
+
+		                //Cull board feet
+		                strDamageCodeUpdates[1] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=25, Severity1=IIF(cullbf>=100, 99, cullbf) WHERE History=1 AND cullbf>0;";
+
+		                //FVS Mistletoe damage codes
+		                string strDamage1_Filter =
+		                    "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
+		                string strDamage2_Filter =
+		                    "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 NOT IN (0, 30, 31, 32, 33, 34) AND fvs_dmg_ag1 is null;";
+		                strDamageCodeUpdates[2] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=31, Severity1=mist_cl_cd WHERE Species=\'108\' AND " +
+		                    strDamage1_Filter;
+
+		                strDamageCodeUpdates[3] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage2=31, Severity2=mist_cl_cd WHERE Species=\'108\' AND " +
+		                    strDamage2_Filter;
+
+		                strDamageCodeUpdates[4] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=32, Severity1=mist_cl_cd WHERE Species=\'073\' AND " +
+		                    strDamage1_Filter;
+
+		                strDamageCodeUpdates[5] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage2=32, Severity2=mist_cl_cd WHERE Species=\'073\' AND " +
+		                    strDamage2_Filter;
+
+		                strDamageCodeUpdates[6] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=33, Severity1=mist_cl_cd WHERE Species=\'202\' AND " +
+		                    strDamage1_Filter;
+
+		                strDamageCodeUpdates[7] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage2=33, Severity2=mist_cl_cd WHERE Species=\'202\' AND " +
+		                    strDamage2_Filter;
+
+		                strDamageCodeUpdates[8] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=34, Severity1=mist_cl_cd WHERE Species=\'122\' AND " +
+		                    strDamage1_Filter;
+
+		                strDamageCodeUpdates[9] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage2=34, Severity2=mist_cl_cd WHERE Species=\'122\' AND " +
+		                    strDamage2_Filter;
+
+		                //default mist_cl_cd damage code if fvs species don't match previous four cases
+		                strDamageCodeUpdates[10] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=30, Severity1=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
+		                    strDamage1_Filter;
+
+		                strDamageCodeUpdates[11] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage2=30, Severity2=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
+		                    strDamage2_Filter;
+
+		                //broken top 96 added to least priority(?) damage column so fill it last
+		                strDamageCodeUpdates[12] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage1=96 WHERE History=1 AND hasBrokenTop AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
+
+		                //0 means nothing was assigned. 96 means damage2 doesn't need to repeat damage1
+		                strDamageCodeUpdates[13] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage2=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 = 0 AND fvs_dmg_ag1 IS Null;";
+
+		                strDamageCodeUpdates[14] =
+		                    "UPDATE " + strDestTable +
+		                    " SET Damage3=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 not in (0,96) and Damage3=0 AND fvs_dmg_ag1 IS Null;";
+		                /*END DAMAGE CODES*/
+		                return strDamageCodeUpdates;
+		            }
+
+		            public static string[] TreeValueClass(string strDestTable)
+		            {
+		                /*Value Classes: 
                           * All trees (live and dead) initialized to 3. 
                           * If Damage1=25, TreeValue=3 again (redundant). 
                           * Else if Severity > 0, TreeValue=2. 
                           * Else TreeValue=1*/
-                        string[] strTreeValueUpdates = new string[2];
-                        strTreeValueUpdates[0] = "UPDATE " + strDestTable +
-                                                 " SET TreeValue=2 WHERE History=1 AND Damage1<>25 AND Severity1>0;";
-                        strTreeValueUpdates[1] = "UPDATE " + strDestTable +
-                                                 " SET TreeValue=1 WHERE History=1 AND Damage1<>25 AND Severity1<=0;";
-                        return strTreeValueUpdates;
-                    }
+		                string[] strTreeValueUpdates = new string[2];
+		                strTreeValueUpdates[0] = "UPDATE " + strDestTable +
+		                                         " SET TreeValue=2 WHERE History=1 AND Damage1<>25 AND Severity1>0;";
+		                strTreeValueUpdates[1] = "UPDATE " + strDestTable +
+		                                         " SET TreeValue=1 WHERE History=1 AND Damage1<>25 AND Severity1<=0;";
+		                return strTreeValueUpdates;
+		            }
 
 
-                    public static string PadSpeciesWithZero(string strDestTable)
-                    {
-                        //This addresses a problem with FVSOut having incorrect Species Codes being translated into "2TD"
-                        //Update the Species column to Trim and "PadLeft" with 0s by Creating a "000" and concatenating with Trim(Species) and taking the rightmost 3 digits
-                        //Example: Right("000" & "17      ", 3) => "017". Species=="17      "  because the Species column is width 8 in FVSIn.accdb
-                        return "UPDATE " + strDestTable + " SET Species = Right(String(3, \'0\') & Trim(Species), 3);";
-                    }
+		            public static string PadSpeciesWithZero(string strDestTable)
+		            {
+		                //This addresses a problem with FVSOut having incorrect Species Codes being translated into "2TD"
+		                //Update the Species column to Trim and "PadLeft" with 0s by Creating a "000" and concatenating with Trim(Species) and taking the rightmost 3 digits
+		                //Example: Right("000" & "17      ", 3) => "017". Species=="17      "  because the Species column is width 8 in FVSIn.accdb
+		                return "UPDATE " + strDestTable + " SET Species = Right(String(3, \'0\') & Trim(Species), 3);";
+		            }
 
-                    public static string TranslateWorkTableToTreeInitTable(string strSourceTable, string strDestTable)
-                    {
-                        string strInsertIntoTreeInit =
-                            "INSERT INTO " + strDestTable +
-                            " (Stand_ID, StandPlot_ID, Tree_ID, Tree_Count, History, Species, " +
-                            "DBH, DG, Ht, HTG, HtTopK, CrRatio,  " +
-                            "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
-                            "TreeValue, Prescription, Age, Slope, Aspect, PV_Code, TopoCode, SitePrep) ";
-                        string strBioSumWorkTableSelectStmt =
-                            "SELECT Stand_ID, StandPlot_ID, Tree_ID, Tree_Count, History, Species, " +
-                            "DBH, DG, Ht, HTG, HtTopK, CrRatio,  " +
-                            "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
-                            "TreeValue, Prescription, Age, Slope, Aspect, PV_Code, TopoCode, SitePrep ";
-                        string strFromTableExpr = "FROM " + strSourceTable + ";";
-                        return strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr;
-                    }
+		            public static string TranslateWorkTableToTreeInitTable(string strSourceTable, string strDestTable)
+		            {
+		                string strInsertIntoTreeInit =
+		                    "INSERT INTO " + strDestTable;
+		                string strBioSumWorkTableSelectStmt =
+		                    " SELECT Stand_ID, StandPlot_ID, Tree_ID, Tree_Count, History, Species, " +
+		                    "DBH, DG, Ht, HTG, HtTopK, CrRatio,  " +
+		                    "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
+		                    "TreeValue, Prescription, Age, Slope, Aspect, PV_Code, TopoCode, SitePrep ";
+		                string strFromTableExpr = "FROM " + strSourceTable + ";";
+		                return strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr;
+		            }
 
-                    public static string RoundSingleDigitPercentageCrRatiosUpTo10(string strDestTable)
-                    {
-                        return "UPDATE " + strDestTable + " SET CrRatio=10 WHERE CrRatio<10;";
-                    }
+		            public static string RoundSingleDigitPercentageCrRatiosUpTo10(string strDestTable)
+		            {
+		                return "UPDATE " + strDestTable + " SET CrRatio=10 WHERE CrRatio<10;";
+		            }
 
-                    public static string RoundSingleDigitPercentageCrRatiosDownTo1(string strDestTable)
-                    {
-                        return "UPDATE " + strDestTable + " SET CrRatio=1 WHERE CrRatio<10;";
-                    }
+		            public static string RoundSingleDigitPercentageCrRatiosDownTo1(string strDestTable)
+		            {
+		                return "UPDATE " + strDestTable + " SET CrRatio=1 WHERE CrRatio<10;";
+		            }
 
-                    public static string DeleteWorkTable()
-                    {
-                        return "DROP TABLE FVS_TreeInit_WorkTable;";
-                    }
+		            public static string DeleteWorkTable()
+		            {
+		                return "DROP TABLE FVS_TreeInit_WorkTable;";
+		            }
 
-                    public static string DeleteSpcdChangeWorkTable()
-                    {
-                        return "DROP TABLE SPCD_CHANGE_WORK_TABLE;";
-                    }
-                }
+		            public static string DeleteSpcdChangeWorkTable()
+		            {
+		                return "DROP TABLE SPCD_CHANGE_WORK_TABLE;";
+		            }
+		        }
 
-                //This updates the FVSIn.GroupAddFilesAndKeywords table so that they FVS keywords have the correct DSNIn value
-                public class GroupAddFilesAndKeywords
-                {
-                    public static string UpdateAllPlots(string strFVSInFileName)
-                    {
-                        return
-                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
-                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
-                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-                            "\"FROM FVS_PlotInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Plots\");";
-                    }
+		        //This updates the FVSIn.GroupAddFilesAndKeywords table so that they FVS keywords have the correct DSNIn value
+		        public class GroupAddFilesAndKeywords
+		        {
+		            public static string UpdateAllPlots(string strFVSInFileName)
+		            {
+		                return
+		                    "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+		                    "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+		                    "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+		                    "\"FROM FVS_PlotInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+		                    "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Plots\");";
+		            }
 
-                    public static string UpdateAllStands(string strFVSInFileName)
-                    {
-                        return
-                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
-                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
-                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-                            "\"FROM FVS_StandInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Stands\");";
-                    }
-                }
-            }
+		            public static string UpdateAllStands(string strFVSInFileName)
+		            {
+		                return
+		                    "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+		                    "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+		                    "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+		                    "\"FROM FVS_StandInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+		                    "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Stands\");";
+		            }
+		        }
+		    }
 
 		}
 		public class TravelTime

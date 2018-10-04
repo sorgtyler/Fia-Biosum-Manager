@@ -65,6 +65,7 @@ namespace FIA_Biosum_Manager
         private Help m_oHelp;
         private string m_xpsFile = Help.DefaultProcessorXPSFile;
         private string m_helpChapter = "PROCESSOR_DESCRIPTION";
+        private Queries m_oQueries = new Queries();
         
         public string m_strError = "";
 		
@@ -810,6 +811,12 @@ namespace FIA_Biosum_Manager
 		}
 		public void LoadRuleDefinitions()
 		{
+            // Initialize Queries object for use by child forms
+            m_oQueries.m_oFvs.LoadDatasource = true;
+            m_oQueries.m_oReference.LoadDatasource = true;
+            string ScenarioId = this.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+            m_oQueries.LoadDatasources(true, "processor", ScenarioId);
+            
             this.m_oProcessorScenarioItem.ScenarioId = uc_scenario1.txtScenarioId.Text.Trim();
  			this.uc_processor_scenario_harvest_method1.ReferenceProcessorScenarioForm=this;
             frmMain.g_sbpInfo.Text = "Loading Scenario Harvest Method Rule Definitions...Stand By";
@@ -1156,6 +1163,13 @@ namespace FIA_Biosum_Manager
         public uc_processor_scenario_additional_harvest_cost_column_collection ReferenceUserControlAdditionalHarvestCostColumnsCollection
         {
             get { return uc_processor_scenario_additional_harvest_cost_columns1.ReferenceUserControlAdditionalHarvestCostColumnsCollection; }
+        }
+        //
+        //HANDLE TO QUERIES OBJECT SO IT CAN BE RE-USED BY CHILD FORMS WHEN LOADONG
+        //
+        public Queries LoadedQueries
+        {
+            get { return m_oQueries; }
         }
 
         private void frmProcessorScenario_FormClosing(object sender, FormClosingEventArgs e)
@@ -2119,7 +2133,7 @@ namespace FIA_Biosum_Manager
                     this.LoadHarvestMethod(oAdo, oAdo.m_OleDbConnection, oItem);
                     this.LoadMoveInCosts(p_oQueries.m_strTempDbFile, oItem);
                     this.LoadSpeciesAndDiameterGroupDollarValues(
-                        oAdo, oAdo.m_OleDbConnection, p_oQueries, oItem);
+                        oAdo, oAdo.m_OleDbConnection, oItem);
                     this.LoadHarvestCostComponents(oAdo,
                         oAdo.m_OleDbConnection, oItem);
                     this.LoadEscalators(oAdo, oAdo.m_OleDbConnection,p_oQueries, oItem);
@@ -2428,7 +2442,6 @@ namespace FIA_Biosum_Manager
         }
         public void LoadSpeciesAndDiameterGroupDollarValues(ado_data_access p_oAdo,
                                                             System.Data.OleDb.OleDbConnection p_oConn,
-                                                            Queries p_oQueries,
                                                             ProcessorScenarioItem p_oProcessorScenarioItem)
         {
             int x;

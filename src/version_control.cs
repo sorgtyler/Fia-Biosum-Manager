@@ -475,7 +475,7 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
-                    //5.8.5 modifications for DWM
+                    //5.8.5 modifications for DWM; Updated configurations for tree_species and OpCost
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
                             Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 5) &&
@@ -2554,7 +2554,6 @@ namespace FIA_Biosum_Manager
                         oDao = new dao_data_access();
                         //
                         //CREATE THE MDB IF NOT EXIST
-                        //
                         //This table no longer lives in ref_master.mdb; In shared appdata directory
                         //
                         //if (oDs.m_strDataSource[x, Datasource.FILESTATUS] == "NF") //NF=table not found
@@ -5325,7 +5324,7 @@ namespace FIA_Biosum_Manager
             int intTreeSpeciesTable = oDs.getValidTableNameRow("Tree Species");
             string strDirectoryPath = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
             string strFileName = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(?F? = FILE FOUND, ?NF? = NOT FOUND)
+            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
             string strFileStatus = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
             string strTargetTable = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
             string strTableStatus = oDs.m_strDataSource[intTreeSpeciesTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
@@ -5381,7 +5380,7 @@ namespace FIA_Biosum_Manager
             int intCondTable = oDs.getValidTableNameRow("Condition");
             strDirectoryPath = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
             strFileName = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(?F? = FILE FOUND, ?NF? = NOT FOUND)
+            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
             strFileStatus = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
             strTargetTable = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
             strTableStatus = oDs.m_strDataSource[intCondTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
@@ -5404,11 +5403,11 @@ namespace FIA_Biosum_Manager
             oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
             if (!oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName))
             {
-                frmMain.g_oTables.m_oFIAPlot.CreateDWMCoarseWoodyDebrisTable(oAdo, oAdo.m_OleDbConnection,
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMCoarseWoodyDebrisTable(oAdo, oAdo.m_OleDbConnection, 
                     frmMain.g_oTables.m_oFIAPlot.DefaultDWMCoarseWoodyDebrisName);
                 frmMain.g_oTables.m_oFIAPlot.CreateDWMDuffLitterFuelTable(oAdo, oAdo.m_OleDbConnection,
                     frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName);
-                frmMain.g_oTables.m_oFIAPlot.CreateDWMFineWoodyDebrisTable(oAdo, oAdo.m_OleDbConnection,
+                frmMain.g_oTables.m_oFIAPlot.CreateDWMFineWoodyDebrisTable(oAdo, oAdo.m_OleDbConnection, 
                     frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName);
                 frmMain.g_oTables.m_oFIAPlot.CreateDWMTransectSegmentTable(oAdo, oAdo.m_OleDbConnection,
                     frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName);
@@ -5436,6 +5435,24 @@ namespace FIA_Biosum_Manager
                             "WHERE TABLE_TYPE = '" + Datasource.TableTypes.FVSVariant + "'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             oAdo.m_OleDbConnection.Close();
+
+            frmMain.g_sbpInfo.Text = "Version Update: Adding fvsloccode to Plot table ...Stand by";
+            int intPlotTable = oDs.getValidTableNameRow("Plot");
+            strDirectoryPath = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strFileName = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            strFileStatus = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            strTargetTable = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            strTableStatus = oDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                string strLocCodeFieldName = "fvsloccode";
+                oAdo.OpenConnection(oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", ""));
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strTargetTable, strLocCodeFieldName))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, strTargetTable, strLocCodeFieldName, "INTEGER", "");
+                }
+                oAdo.m_OleDbConnection.Close();
+            }
 
             frmMain.g_sbpInfo.Text = "Version Update: Updating OPCOST configuration database ...Stand by";
             strSourceFile = frmMain.g_oEnv.strAppDir + "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;

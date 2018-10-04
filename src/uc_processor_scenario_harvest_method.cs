@@ -36,7 +36,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox txtMinDiaSmallLogs;
 		private System.Windows.Forms.TextBox txtMinDiaLargeLogs;
-		private Queries m_oQueries = new Queries();
+		//private Queries m_oQueries = new Queries();
 		private RxTools m_oRxTools = new RxTools();
 		private ado_data_access m_oAdo = new ado_data_access();
 		private string _strScenarioId="";
@@ -722,19 +722,15 @@ namespace FIA_Biosum_Manager
 		}
 		public void loadvalues()
 		{
-            
-			ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+            this.ScenarioId = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 
-			this.txtDesc.Text="";
+            this.txtDesc.Text="";
 			this.txtSteepSlopeDesc.Text="";
-			m_oQueries.m_oFvs.LoadDatasource=true;
-			m_oQueries.m_oReference.LoadDatasource=true;
-			m_oQueries.LoadDatasources(true,"processor",ScenarioId);
 			m_oAdo = new ado_data_access();
-			m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_oQueries.m_strTempDbFile,"",""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(this.ReferenceProcessorScenarioForm.LoadedQueries.m_strTempDbFile, "", ""));
 			if (m_oAdo.m_intError==0)
 			{
-				this.m_oRxTools.LoadRxHarvestMethods(m_oAdo,m_oAdo.m_OleDbConnection,m_oQueries,cmbMethod,cmbSteepSlopeMethod);
+                this.m_oRxTools.LoadRxHarvestMethods(m_oAdo, m_oAdo.m_OleDbConnection, this.ReferenceProcessorScenarioForm.LoadedQueries, cmbMethod, cmbSteepSlopeMethod);
      		}
 			this.cmbSteepSlopePercent.Items.Clear();
 			for (int x=90;x>=10;x=x-5)
@@ -1022,7 +1018,7 @@ namespace FIA_Biosum_Manager
 		{
 			if (m_oAdo.m_OleDbDataReader.IsClosed==false) return;
 
-			m_oAdo.m_strSQL = Queries.GenericSelectSQL(m_oQueries.m_oReference.m_strRefHarvestMethodTable,"description","TRIM(method)='" + cmbMethod.Text.Trim() + "' AND steep_yn = 'N'");
+            m_oAdo.m_strSQL = Queries.GenericSelectSQL(this.ReferenceProcessorScenarioForm.LoadedQueries.m_oReference.m_strRefHarvestMethodTable, "description", "TRIM(method)='" + cmbMethod.Text.Trim() + "' AND steep_yn = 'N'");
 			this.txtDesc.Text = m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL,"temp");
 		}
 
@@ -1035,7 +1031,7 @@ namespace FIA_Biosum_Manager
 		{
 			if (m_oAdo.m_OleDbDataReader.IsClosed==false) return;
 
-			m_oAdo.m_strSQL = Queries.GenericSelectSQL(m_oQueries.m_oReference.m_strRefHarvestMethodTable,"description","TRIM(method)='" + this.cmbSteepSlopeMethod.Text.Trim() + "' AND steep_yn = 'Y'");
+            m_oAdo.m_strSQL = Queries.GenericSelectSQL(this.ReferenceProcessorScenarioForm.LoadedQueries.m_oReference.m_strRefHarvestMethodTable, "description", "TRIM(method)='" + this.cmbSteepSlopeMethod.Text.Trim() + "' AND steep_yn = 'Y'");
 			this.txtSteepSlopeDesc.Text = m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL,"temp");
 		}
 

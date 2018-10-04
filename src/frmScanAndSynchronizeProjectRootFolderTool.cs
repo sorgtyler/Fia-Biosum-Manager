@@ -82,44 +82,48 @@ namespace FIA_Biosum_Manager
             {
                 while (oAdo.m_OleDbDataReader.Read())
                 {
-                    System.Windows.Forms.ListViewItem entryListItem =
-                            this.lvDatasources.Items.Add(" ");
-                    entryListItem.UseItemStyleForSubItems = false;
-                    this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["DataSource"].ToString());
-                    this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["Scenario"].ToString());
-                    this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["TableType"].ToString());
-                    this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["Path"].ToString());
-                    if (System.IO.Directory.Exists(oAdo.m_OleDbDataReader["Path"].ToString().Trim()))
+                    // Don't add appData data sources to the grid
+                    if (oAdo.m_OleDbDataReader["Path"].ToString().IndexOf("@@appdata@@") == -1) 
                     {
-                        ListViewItem.ListViewSubItem FileStatusSubItem =
-                               entryListItem.SubItems.Add("Yes");
-                        FileStatusSubItem.ForeColor = System.Drawing.Color.White;
-                        FileStatusSubItem.BackColor = System.Drawing.Color.Green;
+                        System.Windows.Forms.ListViewItem entryListItem =
+                                this.lvDatasources.Items.Add(" ");
+                        entryListItem.UseItemStyleForSubItems = false;
+                        this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["DataSource"].ToString());
+                        this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["Scenario"].ToString());
+                        this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["TableType"].ToString());
+                        this.lvDatasources.Items[x].SubItems.Add(oAdo.m_OleDbDataReader["Path"].ToString());
+                        if (System.IO.Directory.Exists(oAdo.m_OleDbDataReader["Path"].ToString().Trim()))
+                        {
+                            ListViewItem.ListViewSubItem FileStatusSubItem =
+                                   entryListItem.SubItems.Add("Yes");
+                            FileStatusSubItem.ForeColor = System.Drawing.Color.White;
+                            FileStatusSubItem.BackColor = System.Drawing.Color.Green;
+                        }
+                        else
+                        {
+                            ListViewItem.ListViewSubItem FileStatusSubItem =
+                                    entryListItem.SubItems.Add("No");
+                            FileStatusSubItem.ForeColor = System.Drawing.Color.White;
+                            FileStatusSubItem.BackColor = System.Drawing.Color.Red;
+                            intPathNF++;
+                        }
+                        if (oAdo.m_OleDbDataReader["Path"].ToString().ToUpper().Contains(lblCurrentProjectRootFolder.Text.Trim().ToUpper()))
+                        {
+                            ListViewItem.ListViewSubItem SyncStatusSubItem =
+                                  entryListItem.SubItems.Add("Yes");
+                            SyncStatusSubItem.ForeColor = System.Drawing.Color.White;
+                            SyncStatusSubItem.BackColor = System.Drawing.Color.Green;
+                        }
+                        else
+                        {
+                            ListViewItem.ListViewSubItem SyncStatusSubItem =
+                                  entryListItem.SubItems.Add("No");
+                            SyncStatusSubItem.ForeColor = System.Drawing.Color.White;
+                            SyncStatusSubItem.BackColor = System.Drawing.Color.Red;
+                            intRootNF++;
+                        }
+                        x++;
                     }
-                    else
-                    {
-                        ListViewItem.ListViewSubItem FileStatusSubItem =
-                                entryListItem.SubItems.Add("No");
-                        FileStatusSubItem.ForeColor = System.Drawing.Color.White;
-                        FileStatusSubItem.BackColor = System.Drawing.Color.Red;
-                        intPathNF++;
-                    }
-                    if (oAdo.m_OleDbDataReader["Path"].ToString().ToUpper().Contains(lblCurrentProjectRootFolder.Text.Trim().ToUpper()))
-                    {
-                        ListViewItem.ListViewSubItem SyncStatusSubItem =
-                              entryListItem.SubItems.Add("Yes");
-                        SyncStatusSubItem.ForeColor = System.Drawing.Color.White;
-                        SyncStatusSubItem.BackColor = System.Drawing.Color.Green;
-                    }
-                    else
-                    {
-                        ListViewItem.ListViewSubItem SyncStatusSubItem =
-                              entryListItem.SubItems.Add("No");
-                        SyncStatusSubItem.ForeColor = System.Drawing.Color.White;
-                        SyncStatusSubItem.BackColor = System.Drawing.Color.Red;
-                        intRootNF++;
-                    }
-                    x++;
                 }
                 lblFolderPaths.Text = intPathNF.ToString().Trim();
                 lblProjectRootFolderNotFound.Text = intRootNF.ToString().Trim();
@@ -342,7 +346,7 @@ namespace FIA_Biosum_Manager
                     string strPath = lvDatasources.Items[x].SubItems[COLUMN_PATH].Text.Trim().ToUpper();
                     if (strDatasource == "Project")
                     {
-                        intIndex = strPath.IndexOf(@"\DB\", 0);
+                        intIndex = strPath.IndexOf(@"\DB", 0);
                         if (intIndex > 0)
                         {
                             strProjectRootFolder = strPath.Substring(0, intIndex + 1);
@@ -350,6 +354,7 @@ namespace FIA_Biosum_Manager
                     }
                     else if (strDatasource == "CoreAnalysis")
                     {
+                        // THIS CONDITION WILL BE MET BY THE 'NA' ROWS THAT ARE LISTED FOR EACH SCENARIO GENERATED FROM THE CORE scenario_core_rule_definitions.mdb\scenario table
                         intIndex = strPath.IndexOf(@"\CORE\", 0);
                         if (intIndex > 0)
                         {
@@ -358,6 +363,7 @@ namespace FIA_Biosum_Manager
                     }
                     else if (strDatasource == "Processor")
                     {
+                        // THIS CONDITION WILL BE MET BY THE 'NA' ROWS THAT ARE LISTED FOR EACH SCENARIO GENERATED FROM THE PROCESSOR scenario_core_rule_definitions.mdb\scenario table
                         intIndex = strPath.IndexOf(@"\PROCESSOR\", 0);
                         if (intIndex > 0)
                         {

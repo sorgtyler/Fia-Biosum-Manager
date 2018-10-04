@@ -674,6 +674,7 @@ namespace FIA_Biosum_Manager
                             nextInput.SmLogWtGtPa = nextInput.SmLogWtGtPa + nextTree.TotalWtGtPa;
                             if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
                                 nextInput.SmLogHwdVolCfPa = nextInput.SmLogHwdVolCfPa + nextTree.TotalVolCfPa;
+                            nextInput.TotalSmLogQmdPa = nextInput.TotalSmLogQmdPa + nextTree.QmdPa;
                         }
 
                         // Metrics for large log trees
@@ -694,6 +695,7 @@ namespace FIA_Biosum_Manager
                             nextInput.LgLogWtGtPa = nextInput.LgLogWtGtPa + nextTree.TotalWtGtPa;
                             if (Convert.ToInt32(nextTree.SpCd) > intHwdSpeciesCodeThreshold)
                                 nextInput.LgLogHwdVolCfPa = nextInput.LgLogHwdVolCfPa + nextTree.TotalVolCfPa;
+                            nextInput.TotalLgLogQmdPa = nextInput.TotalLgLogQmdPa + nextTree.QmdPa;
                         }
                     }
                 //System.Windows.MessageBox.Show(dictOpcostInput.Keys.Count + " lines in file");
@@ -846,7 +848,7 @@ namespace FIA_Biosum_Manager
                         "Harvest_Area_Assumed_Acres, [Unadjusted One-way Yarding distance], " +
                         "[Unadjusted Small log trees per acre], [Unadjusted Small log trees average volume (ft3)], " +
                         "[Unadjusted Large log trees per acre], [Unadjusted Large log trees average vol(ft3)], " +
-                        "ba_frac_cut )" +
+                        "ba_frac_cut, QMD_SL, QMD_LL )" +
                         "VALUES ('" + nextStand.OpCostStand + "', " + nextStand.PercentSlope + ", " + nextStand.YardingDistance + ", '" + nextStand.RxYear + "', " +
                         nextStand.Elev + ", '" + nextStand.HarvestMethod.Method + "', " + nextStand.TotalChipTpa + ", " +
                         dblCtMerchPctTotal + ", " + dblCtAvgVolume + ", " + dblCtAvgDensity + ", " + dblCtHwdPct + ", " +
@@ -859,7 +861,8 @@ namespace FIA_Biosum_Manager
                         nextStand.Rx + "', '" + nextStand.RxCycle + "', " + nextStand.MoveInHours + ", " + 
                         nextStand.HarvestAreaAssumedAc + ", " + nextStand.YardingDistanceUnadj + ", " +
                         nextStand.TotalSmLogTpaUnadj + ", " + dblSmLogAvgVolumeAdj + ", " +
-                        nextStand.TotalLgLogTpaUnadj + ", " + dblLgLogAvgVolumeAdj + ", " + nextStand.BaFracCut +
+                        nextStand.TotalLgLogTpaUnadj + ", " + dblLgLogAvgVolumeAdj + ", " + nextStand.BaFracCut + ", " +
+                        nextStand.QMD_SL + ", " + nextStand.QMD_LL +
                         " )";
 
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
@@ -1625,7 +1628,6 @@ namespace FIA_Biosum_Manager
             double _dblTravelTime;
             harvestMethod _objHarvestMethod;
             harvestMethod _objLowestCostHarvestMethod;
-            double _dblBaFracCutNumerator;
 
             string _strDebugFile = "";
 
@@ -1895,6 +1897,12 @@ namespace FIA_Biosum_Manager
             {
                 //tpa * pi * ( dbh/24)^2 
                 get { return _dblTpa * Math.PI * Math.Pow((_dblDbh / 24), 2); }
+            }
+
+            public double QmdPa
+            {
+                //tpa * dbh ^ 2
+                get { return _dblTpa * Math.Pow(_dblDbh, 2);  }
             }
 
             public string DebugFile
@@ -2175,6 +2183,8 @@ namespace FIA_Biosum_Manager
             double _dblTotalLgLogTpaUnadj;
             double _dblTotalBaFracCutNumerator;
             double _dblBaFracCut = -1;
+            double _dblSmLogQmdPa;
+            double _dblLgLogQmdPa;
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
                                string rxYear, double yardingDistance, int elev, harvestMethod harvestMethod, double moveInHours,
@@ -2397,6 +2407,57 @@ namespace FIA_Biosum_Manager
                 set { _dblBaFracCut = value; }
                 get { return _dblBaFracCut; }
             }
+            public double TotalSmLogQmdPa
+            {
+                set { _dblSmLogQmdPa = value; }
+                get { return _dblSmLogQmdPa; }
+            }
+            public double TotalLgLogQmdPa
+            {
+                set { _dblLgLogQmdPa = value; }
+                get { return _dblLgLogQmdPa; }
+            }
+            public double QMD_SL
+            {
+                get 
+                {
+                    // We may have overwritten the actual tpa value with the adjusted tpa value so we have to
+                    // check before using it
+                    double dblTotalTpa = _dblTotalSmLogTpa;
+                    if (_dblTotalSmLogTpaUnadj > 0)
+                    {
+                        dblTotalTpa = _dblTotalSmLogTpaUnadj;
+                    }
+                    if (_dblSmLogQmdPa == 0 || dblTotalTpa == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return Math.Sqrt(_dblSmLogQmdPa / dblTotalTpa);
+                    }
+                }
+            }
+            public double QMD_LL
+            {
+                get
+                {
+                    double dblTotalTpa = _dblTotalLgLogTpa;
+                    if (_dblTotalLgLogTpaUnadj > 0)
+                    {
+                        dblTotalTpa = _dblTotalLgLogTpaUnadj;
+                    }
+                    if (_dblLgLogQmdPa == 0 || dblTotalTpa == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return Math.Sqrt(_dblLgLogQmdPa / dblTotalTpa);
+                    }
+                }
+            }
+
         }
 
         /// <summary>
