@@ -43,9 +43,6 @@ namespace FIA_Biosum_Manager
 			public string DefaultProjectUserConfigTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectUserConfigTableName {get {return "user_config";}}
 			public string DefaultProjectCoreScenarioDatasourceTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectCoreScenarioDatasourceTableName {get {return "core_scenario_datasource";}}
-			public string DefaultProjectCoreScenarioTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectCoreScenarioTableName {get {return "core_scenario";}}
 			public string DefaultProjectProcessorScenarioDatasourceTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectProcessorScenarioDatasourceTableName {get {return "processor_scenario_datasource";}}
 			public string DefaultProjectProcessorScenarioTableDbFile {get {return @"db\project.mdb";}}
@@ -273,7 +270,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsPSiteRxPackageCostRevenueVolumesTableName { get { return "psite_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
             static public string DefaultScenarioResultsOwnerRxCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rx"; } }
             static public string DefaultScenarioResultsOwnerRxPackageCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
-            static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"core\db\prepost_fvs_weighted.accdb"; } }
+            static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
 
 
 			
@@ -1378,39 +1375,39 @@ namespace FIA_Biosum_Manager
 		}
 		public class CoreScenarioRuleDefinitions
 		{
-			static public string DefaultScenarioFvsVariablesTieBreakerTableDbFile {get {return @"core\db\scenario_core_rule_definitions.mdb";}}
+            static public string DefaultScenarioFvsVariablesTieBreakerTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
 			static public string DefaultScenarioFvsVariablesTieBreakerTableName {get {return "scenario_fvs_variables_tiebreaker";}}
-			static public string DefaultScenarioFvsVariablesOptimizationTableDbFile {get {return @"core\db\scenario_core_rule_definitions.mdb";}}
+            static public string DefaultScenarioFvsVariablesOptimizationTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesOptimizationTableName { get { return "scenario_fvs_variables_optimization"; } }
-            static public string DefaultScenarioFvsVariablesOverallEffectiveTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioFvsVariablesOverallEffectiveTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesOverallEffectiveTableName { get { return "scenario_fvs_variables_overall_effective"; } }
-            static public string DefaultScenarioFvsVariablesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioFvsVariablesTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesTableName { get { return "scenario_fvs_variables"; } }
-            static public string DefaultScenarioLastTieBreakRankTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioLastTieBreakRankTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioLastTieBreakRankTableName { get { return "scenario_last_tiebreak_rank"; } }
-            static public string DefaultScenarioPSitesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioPSitesTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioPSitesTableName { get { return "scenario_psites"; } }
-            static public string DefaultScenarioPlotFilterMiscTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioPlotFilterMiscTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioPlotFilterMiscTableName { get { return "scenario_plot_filter_misc"; } }
-            static public string DefaultScenarioPlotFilterTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioPlotFilterTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioPlotFilterTableName { get { return "scenario_plot_filter"; } }
-            static public string DefaultScenarioMergeTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioMergeTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioMergeTableName { get { return "scenario_merge"; } }
-            static public string DefaultScenarioLandOwnerGroupsTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioLandOwnerGroupsTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioLandOwnerGroupsTableName { get { return "scenario_land_owner_groups"; } }
-            static public string DefaultScenarioHarvestCostColumnsTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioHarvestCostColumnsTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioHarvestCostColumnsTableName { get { return "scenario_harvest_cost_columns"; } }
-            static public string DefaultScenarioDatasourceTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioDatasourceTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioDatasourceTableName { get { return @"scenario_datasource"; } }
-            static public string DefaultScenarioCostsTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioCostsTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioCostsTableName { get { return "scenario_costs"; } }
-            static public string DefaultScenarioTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioTableName { get { return "scenario"; } }
-            static public string DefaultScenarioCondFilterMiscTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioCondFilterMiscTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioCondFilterMiscTableName { get { return "scenario_cond_filter_misc"; } }
-            static public string DefaultScenarioCondFilterTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioCondFilterTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioCondFilterTableName { get { return "scenario_cond_filter"; } }
-            static public string DefaultScenarioProcessorScenarioSelectTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioProcessorScenarioSelectTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioProcessorScenarioSelectTableName { get { return "scenario_processor_scenario_select"; } }
 
 			
@@ -1705,8 +1702,8 @@ namespace FIA_Biosum_Manager
 
         public class CoreDefinitions
         {
-            static public string DefaultDbFile { get { return @"core\db\core_definitions.accdb"; } }
-            static public string DefaultCalculatedCoreVariablesTableName { get { return "calculated_core_variables"; } }
+            static public string DefaultDbFile { get { return @"optimizer\db\optimizer_definitions.accdb"; } }
+            static public string DefaultCalculatedCoreVariablesTableName { get { return "calculated_optimizer_variables"; } }
             static public string DefaultCalculatedEconVariablesTableName { get { return "calculated_econ_variables_definition"; } }
             static public string DefaultCalculatedFVSVariablesTableName { get { return "calculated_fvs_variables_definition"; } }
 

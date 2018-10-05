@@ -269,8 +269,8 @@ namespace FIA_Biosum_Manager
             ado_data_access p_ado = new ado_data_access();
 			string strScenarioId = ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			this.m_OleDbConnectionScenario = new System.Data.OleDb.OleDbConnection();
 			strConn = p_ado.getMDBConnString(strScenarioMDB,"admin","");

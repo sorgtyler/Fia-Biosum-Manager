@@ -41,7 +41,7 @@ namespace FIA_Biosum_Manager
 		public string m_strError="";
 		private FIA_Biosum_Manager.frmCoreScenario _frmCoreAnalysisScenario;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario;
-		private string _strScenarioType="core";
+		private string _strScenarioType="optimizer";
 		
 		// public FIA_Biosum_Manager.frmScenario frmscenario1;
 		/// <summary> 
@@ -358,7 +358,7 @@ namespace FIA_Biosum_Manager
 
 		public void SaveScenarioProperties()
 		{
-			bool bCore;
+			bool bOptimizer;
 			string strDesc="";
 			string strSQL="";
 			System.Text.StringBuilder strFullPath;
@@ -497,14 +497,14 @@ namespace FIA_Biosum_Manager
 							
 						while (oAdo.m_OleDbDataReader.Read())
 						{
-							bCore=false;
+							bOptimizer=false;
 							switch (oAdo.m_OleDbDataReader["table_type"].ToString().Trim().ToUpper())
 							{
 								case "PLOT":
-									bCore=true;
+									bOptimizer=true;
 									break;
 								case "CONDITION":
-									bCore = true;
+									bOptimizer = true;
 									break;
 								//case "FIRE AND FUEL EFFECTS":
 								//	bCore = true;
@@ -513,55 +513,55 @@ namespace FIA_Biosum_Manager
 								//	bCore = true;
 								//	break;
                                 case "ADDITIONAL HARVEST COSTS":
-                                    bCore = true;
+                                    bOptimizer = true;
                                     break;
 								case "TREATMENT PRESCRIPTIONS":
-									bCore = true;
+									bOptimizer = true;
 									break;
 								//case "TREE VOLUMES AND VALUES BY SPECIES AND DIAMETER GROUPS":
 								//	bCore = true;
 								//	break;
 								case "TRAVEL TIMES":
-									bCore = true;
+									bOptimizer = true;
 									break;
 								case "PROCESSING SITES":
-									bCore = true;
+									bOptimizer = true;
 									break;
 								//case "TREE SPECIES AND DIAMETER GROUPS DOLLAR VALUES":
 								//	bCore = true;
 								//	break;
 								case "PLOT AND CONDITION RECORD AUDIT":
-                                    if (ScenarioType == "core") bCore = true;
+                                    if (ScenarioType == "optimizer") bOptimizer = true;
 									break;
 								case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-                                    if (ScenarioType == "core") bCore = true;
+                                    if (ScenarioType == "optimizer") bOptimizer = true;
 									break;
 								case "TREE":
-									if (ScenarioType=="processor")	bCore = true;
+									if (ScenarioType=="processor")	bOptimizer = true;
 									break;
 								case "HARVEST METHODS":
-									if (ScenarioType=="processor") bCore=true;
+									if (ScenarioType=="processor") bOptimizer=true;
 									break;
 								case "TREATMENT PACKAGES":
-									bCore=true;
+									bOptimizer=true;
 									break;
 								//case "FVS TREE LIST FOR PROCESSOR":
 								//	if (ScenarioType=="processor") bCore=true;
 								//	break;
 								case "TREE SPECIES":
-									if (ScenarioType=="processor") bCore=true;
+									if (ScenarioType=="processor") bOptimizer=true;
 									break;
                                 case "TREATMENT PRESCRIPTIONS HARVEST COST COLUMNS":
-                                    if (ScenarioType=="processor") bCore = true;
+                                    if (ScenarioType=="processor") bOptimizer = true;
                                     break;
                                 case "FIA TREE SPECIES REFERENCE":
-                                    if (ScenarioType=="processor") bCore = true;
+                                    if (ScenarioType=="processor") bOptimizer = true;
                                     break;
 
 								default:
 									break;
 							}
-							if (bCore == true)
+							if (bOptimizer == true)
 							{
 								strSQL = "INSERT INTO scenario_datasource (scenario_id,table_type,Path,file,table_name) VALUES " + "('" + this.txtScenarioId.Text.Trim() + "'," + 
 									"'" + oAdo.m_OleDbDataReader["table_type"].ToString().Trim() + "'," + 
@@ -585,7 +585,7 @@ namespace FIA_Biosum_Manager
 					p_OleDbProjConn.Close();
 					p_OleDbProjConn = null;
 				}
-				if (ScenarioType.Trim().ToUpper()=="CORE")
+				if (ScenarioType.Trim().ToUpper()=="OPTIMIZER")
 				{
 					string strTemp=oAdo.FixString("SELECT @@PlotTable@@.* FROM @@PlotTable@@ WHERE @@PlotTable@@.plot_accessible_yn='Y'","'","''");
 					strSQL = "INSERT INTO scenario_plot_filter (scenario_id,sql_command,current_yn) VALUES " + "('" + this.txtScenarioId.Text.Trim() + "'," + 
@@ -645,7 +645,7 @@ namespace FIA_Biosum_Manager
 		}
 		private void btnCancel_Click(object sender, System.EventArgs e)
 		{
-			if (this.ScenarioType.Trim().ToUpper()=="CORE")
+			if (this.ScenarioType.Trim().ToUpper()=="OPTIMIZER")
 			{
 				if (((frmCoreScenario)this.ParentForm).m_bScenarioOpen == false) 
 				{
@@ -751,7 +751,7 @@ namespace FIA_Biosum_Manager
 		}
 		private void txtDescription_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-            if (this.ScenarioType.Trim().ToUpper() == "CORE")
+            if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
             {
             }
             else
@@ -762,7 +762,7 @@ namespace FIA_Biosum_Manager
 
 		private void uc_scenario_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			if (this.ScenarioType.Trim().ToUpper()=="CORE")
+            if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 				((frmCoreScenario)this.ParentForm).m_bPopup = false;
 			else
 				this.ReferenceProcessorScenarioForm.m_bPopup=false;
@@ -771,7 +771,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
-			if (this.ScenarioType.Trim().ToUpper()=="CORE")
+            if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 				((frmCoreScenario)this.ParentForm).Close();
 			else
 				this.ReferenceProcessorScenarioForm.Close();
@@ -796,7 +796,7 @@ namespace FIA_Biosum_Manager
 			{
 				utils p_oUtils = new utils();
 				p_oUtils.m_intLevel=1;
-				if (ScenarioType.Trim().ToUpper() == "CORE")
+                if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 				{
 					if (p_oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Core Analysis: Optimization Scenario (" + this.txtScenarioId.Text.Trim() + ")","*",true,false) > 0)
 					{
@@ -817,7 +817,7 @@ namespace FIA_Biosum_Manager
 				if (this.m_intError==0)
 				{
 					this.btnOpen.DialogResult=DialogResult.OK;
-					if (ScenarioType.Trim().ToUpper() == "CORE")
+                    if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 					{
 					
 						((frmCoreScenario)this.ParentForm).DialogResult=DialogResult.OK;

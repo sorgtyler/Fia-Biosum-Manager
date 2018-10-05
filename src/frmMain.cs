@@ -53,7 +53,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnDB;
 		private System.Windows.Forms.Button btnProcessor;
 		private System.Windows.Forms.Button btnFVS;
-		private System.Windows.Forms.Button btnCoreAnalysis;
+		private System.Windows.Forms.Button btnOptimizer;
 		private System.ComponentModel.IContainer components;
 		static int intGrpBoxLeftTopPosition = 0;
 		static int intListHtPosition = 0;
@@ -280,7 +280,7 @@ namespace FIA_Biosum_Manager
 			
             this.btnSave.Enabled=false;
 			this.btnContacts.Enabled=false;
-			this.btnCoreAnalysis.Enabled = false;
+			this.btnOptimizer.Enabled = false;
 			this.btnDB.Enabled=false;
 			
 			this.btnFVS.Enabled=false;
@@ -382,13 +382,13 @@ namespace FIA_Biosum_Manager
 			this.btnFVS.Paint += new System.Windows.Forms.PaintEventHandler(this.ProcessButton_Paint);
 			this.btnProcessor.EnabledChanged += new System.EventHandler(this.ProcessButton_EnabledChanged);
 			this.btnProcessor.Paint += new System.Windows.Forms.PaintEventHandler(this.ProcessButton_Paint);
-			this.btnCoreAnalysis.EnabledChanged += new System.EventHandler(this.ProcessButton_EnabledChanged);
-			this.btnCoreAnalysis.Paint += new System.Windows.Forms.PaintEventHandler(this.ProcessButton_Paint);
+			this.btnOptimizer.EnabledChanged += new System.EventHandler(this.ProcessButton_EnabledChanged);
+			this.btnOptimizer.Paint += new System.Windows.Forms.PaintEventHandler(this.ProcessButton_Paint);
 
 			btnDB.ForeColor = System.Drawing.SystemColors.GrayText;
 			btnFVS.ForeColor = System.Drawing.SystemColors.GrayText;
 			btnProcessor.ForeColor = System.Drawing.SystemColors.GrayText;
-			btnCoreAnalysis.ForeColor = System.Drawing.SystemColors.GrayText;
+			btnOptimizer.ForeColor = System.Drawing.SystemColors.GrayText;
 
 			Datasource.InititializeMacroVariables();
 
@@ -491,7 +491,7 @@ namespace FIA_Biosum_Manager
             this.imgList1 = new System.Windows.Forms.ImageList(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.grpboxLeft = new System.Windows.Forms.GroupBox();
-            this.btnCoreAnalysis = new System.Windows.Forms.Button();
+            this.btnOptimizer = new System.Windows.Forms.Button();
             this.btnFVS = new System.Windows.Forms.Button();
             this.btnProcessor = new System.Windows.Forms.Button();
             this.btnDB = new System.Windows.Forms.Button();
@@ -776,7 +776,7 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxLeft
             // 
-            this.grpboxLeft.Controls.Add(this.btnCoreAnalysis);
+            this.grpboxLeft.Controls.Add(this.btnOptimizer);
             this.grpboxLeft.Controls.Add(this.btnFVS);
             this.grpboxLeft.Controls.Add(this.btnProcessor);
             this.grpboxLeft.Controls.Add(this.btnDB);
@@ -789,16 +789,16 @@ namespace FIA_Biosum_Manager
             this.grpboxLeft.TabStop = false;
             this.grpboxLeft.Resize += new System.EventHandler(this.grpboxLeft_Resize);
             // 
-            // btnCoreAnalysis
+            // btnOptimizer
             // 
-            this.btnCoreAnalysis.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnCoreAnalysis.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCoreAnalysis.Location = new System.Drawing.Point(3, 300);
-            this.btnCoreAnalysis.Name = "btnCoreAnalysis";
-            this.btnCoreAnalysis.Size = new System.Drawing.Size(114, 24);
-            this.btnCoreAnalysis.TabIndex = 5;
-            this.btnCoreAnalysis.Text = "Core Analysis";
-            this.btnCoreAnalysis.Click += new System.EventHandler(this.btnCoreAnalysis_Click);
+            this.btnOptimizer.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnOptimizer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOptimizer.Location = new System.Drawing.Point(3, 300);
+            this.btnOptimizer.Name = "btnOptimizer";
+            this.btnOptimizer.Size = new System.Drawing.Size(114, 24);
+            this.btnOptimizer.TabIndex = 5;
+            this.btnOptimizer.Text = "Optimizer";
+            this.btnOptimizer.Click += new System.EventHandler(this.btnCoreAnalysis_Click);
             // 
             // btnFVS
             // 
@@ -1154,11 +1154,11 @@ namespace FIA_Biosum_Manager
 
 		private void btnCoreAnalysis_Click(object sender, System.EventArgs e)
 		{
-			if (this.btnCoreAnalysis.Enabled == true) 
+			if (this.btnOptimizer.Enabled == true) 
 			{
 
-				this.btnCoreAnalysis.Dock = DockStyle.Top;
-				this.btnCoreAnalysis.Enabled=false;
+				this.btnOptimizer.Dock = DockStyle.Top;
+				this.btnOptimizer.Enabled=false;
 				this.btnDB.Dock = DockStyle.Bottom;
 				this.btnDB.Enabled = true;
 				this.btnFVS.Dock = DockStyle.Bottom;
@@ -1171,7 +1171,7 @@ namespace FIA_Biosum_Manager
 				this.m_pnlCurrent = this.m_pnlCore;
 				this.m_pnlCurrent.Visible=true;
 				this.m_pnlCurrent.Refresh();
-				this.ChildWindowVisible("Core Analysis:");
+				this.ChildWindowVisible("Treatment Optimizer:");
 			}			
 
 		}
@@ -1179,8 +1179,8 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.btnFVS.Enabled == true) 
 			{
-				this.btnCoreAnalysis.Dock = DockStyle.Bottom;
-				this.btnCoreAnalysis.Enabled = true;
+				this.btnOptimizer.Dock = DockStyle.Bottom;
+				this.btnOptimizer.Enabled = true;
 				this.btnDB.Dock = DockStyle.Bottom;
 				this.btnDB.Enabled = true;
 				this.btnFVS.Dock = DockStyle.Top;
@@ -1205,8 +1205,8 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.btnProcessor.Enabled == true) 
 			{
-				this.btnCoreAnalysis.Dock = DockStyle.Bottom;
-				this.btnCoreAnalysis.Enabled = true;
+				this.btnOptimizer.Dock = DockStyle.Bottom;
+				this.btnOptimizer.Enabled = true;
 				this.btnDB.Dock = DockStyle.Bottom;
 				this.btnDB.Enabled = true;
 				this.btnFVS.Dock = DockStyle.Bottom;
@@ -1228,8 +1228,8 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.btnDB.Enabled == true) 
 			{
-				this.btnCoreAnalysis.Dock = DockStyle.Bottom;
-				this.btnCoreAnalysis.Enabled = true;
+				this.btnOptimizer.Dock = DockStyle.Bottom;
+				this.btnOptimizer.Enabled = true;
 				this.btnDB.Dock = DockStyle.Top;
 				this.btnDB.Enabled = false;
 				this.btnFVS.Dock = DockStyle.Bottom;
@@ -1303,10 +1303,10 @@ namespace FIA_Biosum_Manager
 				if (result == DialogResult.OK)
 				{
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
-                    oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
+                    oFrmScenario.Text = "Treatment Optimizer: Optimization Scenario (" + oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
                     oFrmScenario.HelpChapter = "EDIT_SCENARIO";
-					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
+                    oFrmScenario.uc_datasource1.strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
                     oFrmScenario.uc_datasource1.strScenarioId = oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim();
 					oFrmScenario.uc_datasource1.strProjectDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
@@ -1331,7 +1331,7 @@ namespace FIA_Biosum_Manager
 				if (result == DialogResult.OK)
 				{
 					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
-                    oFrmScenario.Text = "Core Analysis: Optimization Scenario (" + oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
+                    oFrmScenario.Text = "Treatment Optimizer: Optimization Scenario (" + oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
                     oFrmScenario.HelpChapter = "EDIT_SCENARIO";
 					oFrmScenario.uc_datasource1.strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
@@ -1625,19 +1625,19 @@ namespace FIA_Biosum_Manager
 		public void button_click(string strText)
 		{
 
-			if (this.btnCoreAnalysis.Enabled == false) 
+			if (this.btnOptimizer.Enabled == false) 
 			{
                 if (strText.Trim().ToUpper() == "DEFINE CALCULATED VARIABLES")
                 {
                     //check to see if the form has already been loaded
-                    if (this.IsChildWindowVisible("Core Analysis: Define Calculated Variables") == false)
+                    if (this.IsChildWindowVisible("Treatment Optimizer: Define Calculated Variables") == false)
                     {
 
                         this.m_frmCoreUserVariables = new frmDialog(this);
                         this.m_frmCoreUserVariables.MaximizeBox = false;
                         this.m_frmCoreUserVariables.MinimizeBox = false;
                         this.m_frmCoreUserVariables.BackColor = System.Drawing.SystemColors.Control;
-                        this.m_frmCoreUserVariables.Text = "Core Analysis: Define Calculated Variables";
+                        this.m_frmCoreUserVariables.Text = "Treatment Optimizer: Define Calculated Variables";
                         this.m_frmCoreUserVariables.MdiParent = this;
                         this.m_frmCoreUserVariables.Initialize_Core_User_Variables_User_Control();
 
@@ -1671,11 +1671,9 @@ namespace FIA_Biosum_Manager
 	          
 					System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
 					string strProjDir = getProjectDirectory();
-					string strScenarioDir = strProjDir + "\\core\\db";
-					string strFile = "scenario_core_rule_definitions.mdb"; 
-					strFullPath = new System.Text.StringBuilder(strScenarioDir);
+					strFullPath = new System.Text.StringBuilder(strProjDir);
 					strFullPath.Append("\\");
-					strFullPath.Append(strFile);
+                    strFullPath.Append(Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile);
 					ado_data_access oAdo = new ado_data_access();
 					string strConn=oAdo.getMDBConnString(strFullPath.ToString(),"admin","");
 					int intCount = Convert.ToInt32(oAdo.getRecordCount(strConn,"select count(*) from scenario","scenario"));
@@ -1697,13 +1695,13 @@ namespace FIA_Biosum_Manager
 				else if (strText.Trim().ToUpper() == "JOIN DATA FROM MULTIPLE SCENARIOS")
 				{
 					//check to see if the form has already been loaded
-					if (this.IsChildWindowVisible("Core Analysis: Join Data From Multiple Scenarios") == false) 
+                    if (this.IsChildWindowVisible("Treatment Optimizer: Join Data From Multiple Scenarios") == false) 
 					{
 						
 						this.m_frmCoreMerge = new frmDialog(this);
 						this.m_frmCoreMerge.MaximizeBox = false;
 						this.m_frmCoreMerge.BackColor = System.Drawing.SystemColors.Control;
-						this.m_frmCoreMerge.Text = "Core Analysis: Join Data From Multiple Scenarios";
+                        this.m_frmCoreMerge.Text = "Treatment Optimizer: Join Data From Multiple Scenarios";
 						this.m_frmCoreMerge.MdiParent = this;
 						this.m_frmCoreMerge.Initialize_Join_Scenario_User_Control();
 						this.m_frmCoreMerge.uc_merge_tables1.Top = 0;
@@ -2956,7 +2954,7 @@ namespace FIA_Biosum_Manager
 
 				btnDB.ForeColor = Color.Red;
 				this.btnContacts.Enabled=true;
-				this.btnCoreAnalysis.Enabled = true;
+				this.btnOptimizer.Enabled = true;
 				this.btnDB.Enabled=false;
 				this.btnFVS.Enabled=true;
 				this.btnProcessor.Enabled=true;
@@ -3027,7 +3025,7 @@ namespace FIA_Biosum_Manager
               
 				btnDB.ForeColor = Color.Red;
 				frmTemp.btnContacts.Enabled=true;
-				frmTemp.btnCoreAnalysis.Enabled = true;
+				frmTemp.btnOptimizer.Enabled = true;
 				frmTemp.btnDB.Enabled=false;
 			
 				frmTemp.btnFVS.Enabled=true;
@@ -3473,7 +3471,7 @@ namespace FIA_Biosum_Manager
 				foreach (Form child in this.MdiChildren)
 
 				{
-					if (child.Text.IndexOf("Core Analysis: Optimization") >= 0) 
+                    if (child.Text.IndexOf("Treatment Optimizer: Optimization") >= 0) 
 					{
 						/*************************************************************
 						 **cast the child form to get a reference to its controls,
@@ -3570,7 +3568,7 @@ namespace FIA_Biosum_Manager
                     }
                     }
 
-                    else if (child.Text.IndexOf("Core Analysis: Edit Harvest Costs") >= 0)
+                    else if (child.Text.IndexOf("Treatment Optimizer: Edit Harvest Costs") >= 0)
                     {
                         FIA_Biosum_Manager.frmGridView temp = ((FIA_Biosum_Manager.frmGridView)child);
                         if (bPromptMsg == false && p_bPrompt)
@@ -4137,7 +4135,7 @@ namespace FIA_Biosum_Manager
 		{
             try
             {
-                this.m_pnlCurrent.Height = this.grpboxLeft.Height - this.m_pnlCurrent.Top - (this.btnCoreAnalysis.Height * 3) - 10;
+                this.m_pnlCurrent.Height = this.grpboxLeft.Height - this.m_pnlCurrent.Top - (this.btnOptimizer.Height * 3) - 10;
             }
             catch 
             {

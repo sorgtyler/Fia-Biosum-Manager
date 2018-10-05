@@ -1664,8 +1664,8 @@ namespace FIA_Biosum_Manager
 
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
             oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
@@ -1835,8 +1835,8 @@ namespace FIA_Biosum_Manager
 			ado_data_access oAdo = new ado_data_access();
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
@@ -3967,8 +3967,8 @@ namespace FIA_Biosum_Manager
             
 			string strScenarioId =  ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" +
+                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			frmDialog frmPrevExp = new frmDialog();
 				

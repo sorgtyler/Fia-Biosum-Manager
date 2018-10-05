@@ -186,7 +186,7 @@ namespace FIA_Biosum_Manager
 		/// <param name="strScenarioId">Value is used to query core analysis scenario datasource infornation.</param>
 		public Datasource(string strProjDir, string strScenarioId)
 		{
-			this.m_strDataSourceMDBFile = strProjDir + "\\core\\db\\scenario_core_rule_definitions.mdb";
+            this.m_strDataSourceMDBFile = strProjDir + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			this.m_strDataSourceTableName = "scenario_datasource";
 			this.m_strScenarioId = strScenarioId;
 			this.populate_datasource_array();

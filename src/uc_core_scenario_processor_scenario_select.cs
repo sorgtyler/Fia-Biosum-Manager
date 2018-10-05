@@ -129,8 +129,8 @@ namespace FIA_Biosum_Manager
             if (p_bScenarioCopy == false)
             {
                 string strScenarioMDB =
-                    frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                    "\\core\\db\\scenario_core_rule_definitions.mdb";
+                    frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 
                 string strConn = oAdo.getMDBConnString(strScenarioMDB, "", "");
@@ -205,8 +205,8 @@ namespace FIA_Biosum_Manager
             ado_data_access oAdo = new ado_data_access();
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
             oAdo.m_strSQL = "DELETE FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
                                 "WHERE TRIM(UCASE(scenario_id)) = '" +

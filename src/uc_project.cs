@@ -924,12 +924,6 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oProject.CreateLinksDepositoryTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectLinksDepositoryTableName);
 				//project table
 				frmMain.g_oTables.m_oProject.CreateProjectTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectTableName);
-				//core scenario table
-				frmMain.g_oTables.m_oScenario.CreateScenarioTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectCoreScenarioTableName);
-				//core scenario datasource table
-				frmMain.g_oTables.m_oScenario.CreateScenarioDatasourceTable(
-					p_ado,p_ado.m_OleDbConnection,
-					frmMain.g_oTables.m_oProject.DefaultProjectCoreScenarioDatasourceTableName);
 				//processor scenario table
 				frmMain.g_oTables.m_oScenario.CreateScenarioTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectProcessorScenarioTableName);
 				//processor scenario datasource table

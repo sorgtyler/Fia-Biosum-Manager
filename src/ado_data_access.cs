@@ -1476,8 +1476,8 @@ namespace FIA_Biosum_Manager
 			string strProjDir)
 		{
 			string strProvider="Microsoft.Ace.OLEDB.12.0";
-			strScenarioMDB = 
-				strProjDir.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
+			strScenarioMDB =
+                strProjDir.Trim() + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			strConn = "Provider=" + strProvider + ";Data Source=" + strScenarioMDB + ";User Id=admin;Password=;";
 		}
 		public void getScenarioDataSourceConnStringAndTable(ref string strMDBFile,

@@ -141,7 +141,7 @@ namespace FIA_Biosum_Manager
 				uc_scenario1.lblTitle.Text = "Scenario";
 				uc_scenario1.Dock = System.Windows.Forms.DockStyle.Fill;
 				uc_scenario1.ReferenceCoreAnalysisScenarioForm=this;
-				uc_scenario1.ScenarioType="core";
+				uc_scenario1.ScenarioType="optimizer";
 				//
 				//scenario datasource
 				//
@@ -149,7 +149,7 @@ namespace FIA_Biosum_Manager
 				this.tbDataSources.Controls.Add(uc_datasource1);
 				uc_datasource1.Dock = System.Windows.Forms.DockStyle.Fill;
 				uc_datasource1.ReferenceCoreScenarioForm=this;
-				uc_datasource1.ScenarioType="core";
+                uc_datasource1.ScenarioType = "optimizer";
 				//
 				//scenario notes
 				//
@@ -157,7 +157,7 @@ namespace FIA_Biosum_Manager
 				this.tbNotes.Controls.Add(uc_scenario_notes1);
 				uc_scenario_notes1.Dock = System.Windows.Forms.DockStyle.Fill;
 				uc_scenario_notes1.ReferenceCoreScenarioForm=this;
-				uc_scenario_notes1.ScenarioType="core";
+				uc_scenario_notes1.ScenarioType="optimizer";
 				//
 				//rule definitions owner groups
 				//
@@ -833,7 +833,7 @@ namespace FIA_Biosum_Manager
 
 			this.uc_scenario1.ReferenceCoreAnalysisScenarioForm=this;
 
-			this.uc_scenario1.ScenarioType="core";
+			this.uc_scenario1.ScenarioType="optimizer";
 
            
 
@@ -1015,8 +1015,8 @@ namespace FIA_Biosum_Manager
             this.m_oCoreAnalysisScenarioItem.ScenarioId = this.uc_scenario1.txtScenarioId.Text.Trim();
 
             this.m_oCoreAnalysisScenarioTools.LoadAll(
-                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                "\\core\\db\\scenario_core_rule_definitions.mdb",
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + 
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile,
                 oQueries, m_oCoreAnalysisScenarioItem.ScenarioId,
                 m_oCoreAnalysisScenarioItem_Collection);
             //find the current scenario

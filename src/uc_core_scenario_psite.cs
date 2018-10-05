@@ -182,7 +182,8 @@ namespace FIA_Biosum_Manager
 			FIA_Biosum_Manager.dao_data_access p_dao = new dao_data_access();
 			p_dao.CreateTableLink(this.m_strTempMDBFile,
 								  "scenario_psites",
-								frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb","scenario_psites");
+								frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile, "scenario_psites");
 			p_dao=null;
 
 			/**************************************************************
@@ -475,8 +476,8 @@ namespace FIA_Biosum_Manager
 			ado_data_access p_ado = new ado_data_access();
 			strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			string strConn = p_ado.getMDBConnString(strScenarioMDB,"admin","");
 			//string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strScenarioMDB + ";User Id=admin;Password=;";

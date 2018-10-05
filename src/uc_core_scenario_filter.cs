@@ -391,8 +391,8 @@ namespace FIA_Biosum_Manager
 			ado_data_access p_ado = new ado_data_access();
             string strScenarioId = this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.ScenarioId.Trim();
 			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			this.m_OleDbConnectionScenario = new System.Data.OleDb.OleDbConnection();
 			strConn = p_ado.getMDBConnString(strScenarioMDB,"admin","");
@@ -1070,8 +1070,8 @@ namespace FIA_Biosum_Manager
 		{
 			ado_data_access oAdo = new ado_data_access();
 			FIA_Biosum_Manager.Datasource oDs = new Datasource();
-			oDs.m_strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+			oDs.m_strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oDs.m_strDataSourceTableName = "scenario_datasource";
 			oDs.m_strScenarioId=this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text;;
 			oDs.LoadTableColumnNamesAndDataTypes=false;
@@ -1148,8 +1148,8 @@ namespace FIA_Biosum_Manager
 		{
 			ado_data_access oAdo = new ado_data_access();
 			FIA_Biosum_Manager.Datasource oDs = new Datasource();
-			oDs.m_strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+			oDs.m_strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oDs.m_strDataSourceTableName = "scenario_datasource";
 			oDs.m_strScenarioId=this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text;;
 			oDs.LoadTableColumnNamesAndDataTypes=false;

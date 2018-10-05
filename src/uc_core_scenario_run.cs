@@ -2626,7 +2626,8 @@ namespace FIA_Biosum_Manager
 			dao_data_access p_dao = new dao_data_access();
 			string strConn="";
 			
-			string strMDBPathAndFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
+			string strMDBPathAndFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			//if (strMDBPathAndFile.Substring(strMDBPathAndFile.Trim().Length - 6,6).ToUpper()==".ACCDB")
 			strConn = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source=" + 
