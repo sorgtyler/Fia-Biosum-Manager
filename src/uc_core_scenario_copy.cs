@@ -58,8 +58,8 @@ namespace FIA_Biosum_Manager
             //
             //scenario mdb connection
             string strCoreAnalysisScenarioMDB =
-              frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-              "\\core\\db\\scenario_core_rule_definitions.mdb";
+              frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+              Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
             //
             //get a list of all the scenarios
             //
@@ -230,12 +230,12 @@ namespace FIA_Biosum_Manager
         {
             if (this.lvCoreAnalysisScenario.Items.Count == 0)
             {
-                MessageBox.Show("Run Scenario Failed: No Core Analysis Scenarios exist. At least one Core Analysis Scenario must exist to run a Core Analysis Scenario", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MessageBox.Show("Run Scenario Failed: No Treatment Optimizer Scenarios exist. At least one Treatment Optimizer Scenario must exist to run a Treatment Optimizer Scenario", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return -1;
             }
             if (this.lvCoreAnalysisScenario.CheckedItems.Count == 0)
             {
-                MessageBox.Show("Run Scenario Failed: Select at least one Core Analysis Scenario in <Cost and Revenue><Core Analysis Scenario>", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MessageBox.Show("Run Scenario Failed: Select at least one Treatment Optimizer Scenario in <Cost and Revenue><Treatment Optimizer Scenario>", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return -1;
             }
             this.m_oCoreAnalysisScenarioItem = this.m_oCoreAnalysisScenarioItem_Collection.Item(lvCoreAnalysisScenario.CheckedItems[0].Index);
@@ -286,7 +286,7 @@ namespace FIA_Biosum_Manager
             if (x > m_oCoreAnalysisScenarioItem_Collection.Count - 1)
             {
 
-                lblMsg.Text = "Loading Core Analysis Scenario " + p_strScenarioId.Trim() + "...Stand By";
+                lblMsg.Text = "Loading Treatment Optimizer Scenario " + p_strScenarioId.Trim() + "...Stand By";
                 lblMsg.Show();
                 lblMsg.Refresh();
                 //load the scenario into the collection

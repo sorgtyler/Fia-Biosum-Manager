@@ -5483,7 +5483,7 @@ namespace FIA_Biosum_Manager
 
             string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
             frmMain.g_sbpInfo.Text = "Version Update: Creating new Core Analysis databases ...Stand by";
-            string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\core_definitions.accdb";
+            string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\optimizer_definitions.accdb";
             string strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
             if (!System.IO.File.Exists(strDestFile))
             {
@@ -5495,11 +5495,17 @@ namespace FIA_Biosum_Manager
                 oDao.CreateMDB(strDestFile);
             }
 
-            frmMain.g_sbpInfo.Text = "Version Update: Updating CORE scenario configuration tables ...Stand by";
+            frmMain.g_sbpInfo.Text = "Version Update: Updating file structure for OPTIMIZER name change ...Stand by";
+            System.IO.Directory.Move(ReferenceProjectDirectory.Trim() + "\\core", ReferenceProjectDirectory.Trim() + "\\optimizer");
+            System.IO.File.Move(ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\scenario_core_rule_definitions.mdb",
+                ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\scenario_optimizer_rule_definitions.mdb");
+
+
+            frmMain.g_sbpInfo.Text = "Version Update: Updating OPTIMIZER scenario configuration tables ...Stand by";
 
             strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
                             "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile;
-            //open the scenario_core_rule_definitions.mdb file
+            //open the scenario_optimizer_rule_definitions.mdb file
             oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
             //add new revenue_attribute field if it is missing
             if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,

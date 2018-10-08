@@ -168,7 +168,7 @@
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(798, 32);
             this.lblTitle.TabIndex = 27;
-            this.lblTitle.Text = "Copy Core Analysis Scenario";
+            this.lblTitle.Text = "Copy Treatment Optimizer Scenario";
             // 
             // uc_core_scenario_copy
             // 

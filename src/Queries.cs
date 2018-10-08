@@ -251,14 +251,14 @@ namespace FIA_Biosum_Manager
 					ReferenceQueries.m_intError=-1;
 					return;
 				}
-				if (this.m_strRxHarvestCostColumnsTable.Trim().Length == 0 && ReferenceQueries._strScenarioType!="core")
+				if (this.m_strRxHarvestCostColumnsTable.Trim().Length == 0 && ReferenceQueries._strScenarioType!="optimizer")
 				{
 					MessageBox.Show("!!Could Not Locate Rx Harvest Cost Columns Table!!","FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
 					ReferenceQueries.m_intError=-1;
 					return;
 				}
 
-                if (this.m_strTreeSpcTable.Trim().Length == 0 && ReferenceQueries._strScenarioType != "core")
+                if (this.m_strTreeSpcTable.Trim().Length == 0 && ReferenceQueries._strScenarioType != "optimizer")
 				{
 					MessageBox.Show("!!Could Not Locate Tree Species Table!!","FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
 					ReferenceQueries.m_intError=-1;
@@ -3882,7 +3882,7 @@ namespace FIA_Biosum_Manager
 					ReferenceQueries.m_intError=-1;
 					return;
 				}
-				if (this.m_strTreeTable.Trim().Length == 0 && this._oQueries._strScenarioType!="core")
+				if (this.m_strTreeTable.Trim().Length == 0 && this._oQueries._strScenarioType!="optimizer")
 				{
 					MessageBox.Show("!!Could Not Locate Tree Table!!","FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
 					ReferenceQueries.m_intError=-1;
@@ -5463,7 +5463,7 @@ namespace FIA_Biosum_Manager
 				m_strRefHarvestMethodTable = ReferenceQueries.m_oDataSource.getValidDataSourceTableName("HARVEST METHODS");
 				
 			
-				if (m_strRefHarvestMethodTable.Trim().Length == 0 && this._oQueries._strScenarioType!="core") 
+				if (m_strRefHarvestMethodTable.Trim().Length == 0 && this._oQueries._strScenarioType!="optimizer") 
 				{
 					
 					MessageBox.Show("!!Could Not Locate Harvest Methods Reference Table!!","FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);

@@ -833,7 +833,7 @@ namespace FIA_Biosum_Manager
 					System.IO.Directory.CreateDirectory(strFullPath);
 
 				    
-				strFullPath = this.txtRootDirectory.Text.Trim() + "\\core\\db";
+				strFullPath = this.txtRootDirectory.Text.Trim() + "\\optimizer\\db";
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
 
@@ -1077,10 +1077,10 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
                 //
-                //prepopulated weighted variable core_definitions.accdb file
+                //prepopulated weighted variable optimizer_definitions.accdb file
                 //
                 //copy default core_definitions.accdb to the new project directory
-                strSourceFile = this.m_oEnv.strAppDir + "\\db\\core_definitions.accdb";
+                strSourceFile = this.m_oEnv.strAppDir + "\\db\\optimizer_definitions.accdb";
                 strDestFile = this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
                 p_frmTherm.Increment(7);
                 p_frmTherm.lblMsg.Text = strDestFile;
@@ -1090,9 +1090,9 @@ namespace FIA_Biosum_Manager
                 //core scenario rule definitions
                 //
 				p_frmTherm.Increment(9);
-                p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb";
+                p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 				p_frmTherm.lblMsg.Refresh();
-                CreateCoreScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb");
+                CreateCoreScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile);
 				//
 				//processor scenario rule definitions
 				//
@@ -2577,7 +2577,7 @@ namespace FIA_Biosum_Manager
             //
             //CORE ANALYSIS SCENARIO DATA SOURCE
             //
-            strFullPath = strProjDir + "\\core\\db\\scenario_core_rule_definitions.mdb";
+            strFullPath = strProjDir + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
             if (System.IO.File.Exists(strFullPath))
             {
                 strConn = oAdo.getMDBConnString(strFullPath, "", "");
