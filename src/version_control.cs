@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 
 namespace FIA_Biosum_Manager
 {
@@ -5483,6 +5484,8 @@ namespace FIA_Biosum_Manager
 
             string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
             frmMain.g_sbpInfo.Text = "Version Update: Creating new Core Analysis databases ...Stand by";
+            // Rename core folder to optimizer
+            System.IO.Directory.Move(ReferenceProjectDirectory.Trim() + "\\core", ReferenceProjectDirectory.Trim() + "\\optimizer");
             string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\optimizer_definitions.accdb";
             string strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
             if (!System.IO.File.Exists(strDestFile))
@@ -5496,10 +5499,32 @@ namespace FIA_Biosum_Manager
             }
 
             frmMain.g_sbpInfo.Text = "Version Update: Updating file structure for OPTIMIZER name change ...Stand by";
-            System.IO.Directory.Move(ReferenceProjectDirectory.Trim() + "\\core", ReferenceProjectDirectory.Trim() + "\\optimizer");
+            string strRuleDefinitionsMdb = ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\scenario_optimizer_rule_definitions.mdb";
             System.IO.File.Move(ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\scenario_core_rule_definitions.mdb",
-                ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\scenario_optimizer_rule_definitions.mdb");
-
+                strRuleDefinitionsMdb);
+            string strRenameConn = m_oAdo.getMDBConnString(strRuleDefinitionsMdb, "", "");
+            using (var oRenameConn = new OleDbConnection(strRenameConn))
+            {
+                oRenameConn.Open();
+                oAdo.m_strSQL = "SELECT SCENARIO_ID FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName;
+                oAdo.SqlQueryReader(oRenameConn, oAdo.m_strSQL);
+                if (oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strScenario = "";
+                        if (oAdo.m_OleDbDataReader["scenario_id"] != System.DBNull.Value)
+                        {
+                            strScenario = oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim();
+                            string strUpdate = "UPDATE " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableName +
+                                " SET PATH = '" + ReferenceProjectDirectory.Trim() + "\\optimizer\\" + strScenario +
+                                "', FILE = 'scenario_optimizer_rule_definitions.mdb'" +
+                                " WHERE SCENARIO_ID = '" + strScenario + "'";
+                            oAdo.SqlNonQuery(oRenameConn, strUpdate);
+                        }
+                    }
+                }
+            }
 
             frmMain.g_sbpInfo.Text = "Version Update: Updating OPTIMIZER scenario configuration tables ...Stand by";
 

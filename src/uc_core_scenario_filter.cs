@@ -884,8 +884,8 @@ namespace FIA_Biosum_Manager
             
 			string strScenarioId =  ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.ScenarioId.Trim();
 			string strScenarioMDB = 
-				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			frmDialog frmPrevExp = new frmDialog();
 				
@@ -923,8 +923,8 @@ namespace FIA_Biosum_Manager
 			macrosubst oMacroSubst = new macrosubst();
 			oMacroSubst.ReferenceSQLMacroSubstitutionVariableCollection = frmMain.g_oSQLMacroSubstitutionVariable_Collection;
 			FIA_Biosum_Manager.Datasource oDs = new Datasource();
-			oDs.m_strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+			oDs.m_strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oDs.m_strDataSourceTableName = "scenario_datasource";
 			oDs.m_strScenarioId=this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text;;
 			oDs.LoadTableColumnNamesAndDataTypes=false;
