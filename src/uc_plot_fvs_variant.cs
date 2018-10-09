@@ -1873,6 +1873,7 @@ namespace FIA_Biosum_Manager
 			int intPlotCount=0;
 			int intPlotCountWithVariant=0;
 			int intJoinCount=0;
+		    int intPlotsNotInVariantTableButHaveFvsVariantValues=0;
 			this.lstAudit.Clear();
 			string strMsg="";
 			//first get unique tree species
@@ -1904,6 +1905,20 @@ namespace FIA_Biosum_Manager
                                         "v.plot=p.plot";
 
 			intJoinCount = (int)m_ado.getSingleDoubleValueFromSQLQuery(m_ado.m_OleDbConnection,m_ado.m_OleDbTransaction, m_ado.m_strSQL, "join");
+
+
+            //It's possible for the plot table to have more plots than are in the FIADB_FVS_Variant table,
+            //potentially with populated fvs_variant values. This count is taken from the sum reported in the audit.
+		    this.m_ado.m_strSQL = "SELECT COUNT(*) as cntPlotsWithVariantsNotInVariantTable " +
+				"FROM " + this.m_strPlotTable + " p LEFT JOIN " + this.m_strVariantTable + " v " +
+                "ON p.statecd=v.statecd AND p.countycd=v.countycd AND p.plot=v.plot " + 
+				"WHERE LEN(TRIM(p.biosum_plot_id)) > 0 AND mid(p.biosum_plot_id,1,1)='1' and " + 
+				"(trim(ucase(v.fvs_variant)) <> trim(ucase(p.fvs_variant)) or " + 
+				"len(trim(p.fvs_variant)) > 0 and (v.fvs_variant is null OR len(trim(v.fvs_variant))=0));";
+		    intPlotsNotInVariantTableButHaveFvsVariantValues =
+		        (int) m_ado.getSingleDoubleValueFromSQLQuery(m_ado.m_OleDbConnection, m_ado.m_OleDbTransaction,
+		            m_ado.m_strSQL, "join");
+
             
 			this.m_ado.m_strSQL = "select p.biosum_plot_id,p.statecd,p.countycd,p.plot,v.fvs_variant, v.fvsloccode " + 
 				"from " + this.m_strVariantTable + " v," + 
@@ -1966,7 +1981,7 @@ namespace FIA_Biosum_Manager
 				{
 					strMsg+="\r\n\r\n" + "Additional Information" + "\r\n";
 					strMsg+="------------------------------\r\n";
-					strMsg+=Convert.ToString(intPlotCount - intJoinCount) + " StateCd + CountyCd + Plot + Variant Combination(s) were NOT FOUND in the " + this.m_strVariantTable + " table.\r\n\r\n";
+                    strMsg += Convert.ToString(intPlotCount - intJoinCount - intPlotsNotInVariantTableButHaveFvsVariantValues) + " StateCd + CountyCd + Plot + Variant Combination(s) were NOT FOUND in the " + this.m_strVariantTable + " table.\r\n\r\n";
                     strMsg += "You may want to ask your Biosum administrator to update the " + this.m_strVariantTable + " table with plot/variant assignments. By using the " + this.m_strVariantTable + " table,\r\n";
 					strMsg+="FIA Biosum will automatically populate your project plots with the appropriate plot/variant/location code assignments.";
 				}
