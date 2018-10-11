@@ -30,7 +30,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.utils m_oUtils; 
 		public System.Windows.Forms.Label lblTitle;
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
         string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_optimizer_calculated_variables_debug.txt";
         private env m_oEnv;
         private Help m_oHelp;
@@ -67,7 +67,7 @@ namespace FIA_Biosum_Manager
                                                             "Net Revenue","Treatment And Haul Costs", "OnSite Treatment Costs"};
 
 
-        private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
+        private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
 		public bool m_bFirstTime=true;
 		private bool _bDisplayAuditMsg=true;
         private bool m_bIgnoreListViewItemCheck = false;
@@ -1818,12 +1818,12 @@ namespace FIA_Biosum_Manager
             get { return _frmScenario; }
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
 		{
 			get {return this._oCurVar;}
 			set {_oCurVar=value;}
 		}
-		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
 		{
 			get {return _uc_tiebreaker;}
 			set {_uc_tiebreaker=value;}

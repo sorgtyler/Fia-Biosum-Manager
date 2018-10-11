@@ -8,9 +8,9 @@ using System.Windows.Forms;
 namespace FIA_Biosum_Manager
 {
 	/// <summary>
-	/// Summary description for uc_scenario_treatment_intensity.
+    /// Summary description for uc_optimizer_scenario_last_tiebreak_rank.
 	/// </summary>
-	public class uc_core_scenario_treatment_intensity : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_last_tiebreak_rank : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.DataGrid dataGrid1;
 		private System.Windows.Forms.GroupBox groupBox1;
@@ -35,7 +35,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		
 
-		public uc_core_scenario_treatment_intensity()
+		public uc_optimizer_scenario_last_tiebreak_rank()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -66,7 +66,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_core_scenario_treatment_intensity));
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_optimizer_scenario_last_tiebreak_rank));
 			this.dataGrid1 = new System.Windows.Forms.DataGrid();
 			this.imgSize = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -109,7 +109,7 @@ namespace FIA_Biosum_Manager
 			this.Controls.Add(this.groupBox1);
 			this.Name = "uc_scenario_treatment_intensity";
 			this.Size = new System.Drawing.Size(744, 280);
-			this.Resize += new System.EventHandler(this.uc_scenario_treatment_intensity_Resize);
+			this.Resize += new System.EventHandler(this.uc_scenario_last_tiebreak_rank_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -117,7 +117,7 @@ namespace FIA_Biosum_Manager
 		}
 		#endregion
 
-		private void uc_scenario_treatment_intensity_Resize(object sender, System.EventArgs e)
+		private void uc_scenario_last_tiebreak_rank_Resize(object sender, System.EventArgs e)
 		{
 			try
 			{
@@ -170,7 +170,7 @@ namespace FIA_Biosum_Manager
 			}
 			catch (Exception caught)
 			{
-				MessageBox.Show("Function: uc_scenario_treatment_intensity.savevalues ErrMsg:" + caught.Message + " Failed updating scenario_last_tiebreak_rank table with last tiebreak rank ratings");
+                MessageBox.Show("Function: uc_optimizer_scenario_last_tiebreak_rank.savevalues ErrMsg:" + caught.Message + " Failed updating scenario_last_tiebreak_rank table with last tiebreak rank ratings");
 			}
 			x=p_ado.m_intError;
 			p_ado=null;
@@ -191,7 +191,7 @@ namespace FIA_Biosum_Manager
 
 			ado_data_access p_ado = new ado_data_access();
 
-			this.strScenarioId = ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			this.strScenarioId = ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 
 			/***************************************************
 			 **scenario mdb connection
@@ -360,14 +360,14 @@ namespace FIA_Biosum_Manager
                 this.m_OleDbDataAdapter.Fill(this.m_DataSet, "scenario_last_tiebreak_rank");
 
 				/*****************************************************************************
-				 **add the description column to the scenario rx intensity dataset
+				 **add the description column to the scenario last tiebreak rank dataset
 				 *****************************************************************************/
                 this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Columns.Add("Description");
                 
               /********************************************************************************
-			   **add the treatment description value to the scenrario rx intensity data set.
+			   **add the treatment description value to the scenrario rx last tiebreak rank data set.
 			   **the description is only in the master rx table and is added to the
-			   **scenario rx intensity data set for information purposes.
+			   **scenario last tiebreak rank data set for information purposes.
 			   ********************************************************************************/
 
                 /***********************************************************************************
@@ -390,7 +390,7 @@ namespace FIA_Biosum_Manager
                         dr1 = this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Select(strSQL);
 						
 						/***************************************************************************************
-						 **check to see if it found the master rx treatment in the sceanrio rx intensity dataset
+						 **check to see if it found the master rx treatment in the sceanrio last tiebreak rank dataset
 						 ***************************************************************************************/
 						if (dr1.Length != 0)
 						{
@@ -432,7 +432,7 @@ namespace FIA_Biosum_Manager
 				DataGridTableStyle tableStyle = new DataGridTableStyle();
 
 				/***********************************************************************
-				 **map the data grid table style to the scenario rx intensity dataset
+				 **map the data grid table style to the last tiebreak rank dataset
 				 ***********************************************************************/
                 tableStyle.MappingName = "scenario_last_tiebreak_rank";   
 				tableStyle.AlternatingBackColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
@@ -486,9 +486,9 @@ namespace FIA_Biosum_Manager
                 // If this is a copied scenario, we will have a reference form to get the values
                 if (p_bScenarioCopy == true)
                 {
-                    if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection != null)
+                    if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection != null)
                     {
-                        OptimizerScenarioItem.LastTieBreakRankItem_Collection oLastTieBreakRankItem_Collection = ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection;
+                        OptimizerScenarioItem.LastTieBreakRankItem_Collection oLastTieBreakRankItem_Collection = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection;
                         for (int i = 0; i < firstView.Count - 1; ++i)
                         {
                             for (x = 0; x <= oLastTieBreakRankItem_Collection.Count - 1; x++)
@@ -523,7 +523,7 @@ namespace FIA_Biosum_Manager
 		{
 
 		}
-		public int Val_Intensity(bool p_bDisplayMessage)
+		public int Val_Last_Tiebreak_Rank(bool p_bDisplayMessage)
 		{
 			int x;
 			int y;
@@ -560,18 +560,8 @@ namespace FIA_Biosum_Manager
 			return 0;
 
 		}
-
-		private void grpboxRxIntensity_Enter(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void lblTitle_Click(object sender, System.EventArgs e)
-		{
-		
-		}
 	
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

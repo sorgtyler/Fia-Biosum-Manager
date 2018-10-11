@@ -7,9 +7,9 @@ using System.Windows.Forms;
 namespace FIA_Biosum_Manager
 {
 	/// <summary>
-	/// allows user to run the core analysis scenario and view results
+	/// allows user to run the treatment optimizer scenario and view results
 	/// </summary>
-	public class frmRunCoreScenario : System.Windows.Forms.Form
+	public class frmRunOptimizerScenario : System.Windows.Forms.Form
 	{
 		public System.Windows.Forms.Label lblMsg;
 		public System.Windows.Forms.Button btnCancel;
@@ -61,7 +61,7 @@ namespace FIA_Biosum_Manager
 
 	    
 
-		public frmRunCoreScenario(FIA_Biosum_Manager.frmOptimizerScenario p_frmScenario)
+		public frmRunOptimizerScenario(FIA_Biosum_Manager.frmOptimizerScenario p_frmScenario)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -99,410 +99,411 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(frmRunCoreScenario));
-			this.lblMsg = new System.Windows.Forms.Label();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.btnViewLog = new System.Windows.Forms.Button();
-			this.btnAccess = new System.Windows.Forms.Button();
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.chkAuditTables = new System.Windows.Forms.CheckBox();
-			this.lblProcBestRxOwner = new System.Windows.Forms.Label();
-			this.lblProcBestRxPSite = new System.Windows.Forms.Label();
-			this.lblProcBestRxPlot = new System.Windows.Forms.Label();
-			this.lblProcBestRx = new System.Windows.Forms.Label();
-			this.lblSumWoodProducts = new System.Windows.Forms.Label();
-			this.lblProcEffective = new System.Windows.Forms.Label();
-			this.lblProcValidCombos = new System.Windows.Forms.Label();
-			this.label10 = new System.Windows.Forms.Label();
-			this.label9 = new System.Windows.Forms.Label();
-			this.label8 = new System.Windows.Forms.Label();
-			this.label7 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.btnViewScenarioTables = new System.Windows.Forms.Button();
-			this.btnViewAuditTables = new System.Windows.Forms.Button();
-			this.btnHelp = new System.Windows.Forms.Button();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.btnClear = new System.Windows.Forms.Button();
-			this.btnSelectAll = new System.Windows.Forms.Button();
-			this.lblProcSumTree = new System.Windows.Forms.Label();
-			this.lblProcTravelTimes = new System.Windows.Forms.Label();
-			this.lblProcAccessible = new System.Windows.Forms.Label();
-			this.chkProcSumTree = new System.Windows.Forms.CheckBox();
-			this.chkProcTravelTimes = new System.Windows.Forms.CheckBox();
-			this.groupBox1.SuspendLayout();
-			this.groupBox3.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// lblMsg
-			// 
-			this.lblMsg.Enabled = false;
-			this.lblMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblMsg.Location = new System.Drawing.Point(8, 370);
-			this.lblMsg.Name = "lblMsg";
-			this.lblMsg.Size = new System.Drawing.Size(650, 16);
-			this.lblMsg.TabIndex = 5;
-			this.lblMsg.Text = "lblMsg";
-			this.lblMsg.Visible = false;
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Location = new System.Drawing.Point(304, 424);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(72, 24);
-			this.btnCancel.TabIndex = 4;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// progressBar1
-			// 
-			this.progressBar1.Enabled = false;
-			this.progressBar1.Location = new System.Drawing.Point(8, 393);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(656, 24);
-			this.progressBar1.TabIndex = 3;
-			this.progressBar1.Visible = false;
-			this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
-			// 
-			// imageList1
-			// 
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.btnViewLog);
-			this.groupBox1.Controls.Add(this.btnAccess);
-			this.groupBox1.Controls.Add(this.groupBox3);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Controls.Add(this.btnViewScenarioTables);
-			this.groupBox1.Controls.Add(this.btnViewAuditTables);
-			this.groupBox1.Controls.Add(this.btnHelp);
-			this.groupBox1.Controls.Add(this.groupBox2);
-			this.groupBox1.Controls.Add(this.progressBar1);
-			this.groupBox1.Controls.Add(this.lblMsg);
-			this.groupBox1.Controls.Add(this.btnCancel);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(672, 470);
-			this.groupBox1.TabIndex = 8;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Resize += new System.EventHandler(this.groupBox1_Resize);
-			// 
-			// btnViewLog
-			// 
-			this.btnViewLog.Location = new System.Drawing.Point(543, 37);
-			this.btnViewLog.Name = "btnViewLog";
-			this.btnViewLog.Size = new System.Drawing.Size(120, 20);
-			this.btnViewLog.TabIndex = 30;
-			this.btnViewLog.Text = "View Log File";
-			this.btnViewLog.Click += new System.EventHandler(this.btnViewLog_Click);
-			// 
-			// btnAccess
-			// 
-			this.btnAccess.Enabled = false;
-			this.btnAccess.Location = new System.Drawing.Point(423, 16);
-			this.btnAccess.Name = "btnAccess";
-			this.btnAccess.Size = new System.Drawing.Size(120, 20);
-			this.btnAccess.TabIndex = 29;
-			this.btnAccess.Text = "Microsoft Access";
-			this.btnAccess.Click += new System.EventHandler(this.btnAccess_Click);
-			// 
-			// groupBox3
-			// 
-			this.groupBox3.Controls.Add(this.chkAuditTables);
-			this.groupBox3.Controls.Add(this.lblProcBestRxOwner);
-			this.groupBox3.Controls.Add(this.lblProcBestRxPSite);
-			this.groupBox3.Controls.Add(this.lblProcBestRxPlot);
-			this.groupBox3.Controls.Add(this.lblProcBestRx);
-			this.groupBox3.Controls.Add(this.lblSumWoodProducts);
-			this.groupBox3.Controls.Add(this.lblProcEffective);
-			this.groupBox3.Controls.Add(this.lblProcValidCombos);
-			this.groupBox3.Controls.Add(this.label10);
-			this.groupBox3.Controls.Add(this.label9);
-			this.groupBox3.Controls.Add(this.label8);
-			this.groupBox3.Controls.Add(this.label7);
-			this.groupBox3.Controls.Add(this.label6);
-			this.groupBox3.Controls.Add(this.label5);
-			this.groupBox3.Controls.Add(this.label4);
-			this.groupBox3.Location = new System.Drawing.Point(8, 167);
-			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(656, 193);
-			this.groupBox3.TabIndex = 27;
-			this.groupBox3.TabStop = false;
-			// 
-			// chkAuditTables
-			// 
-			this.chkAuditTables.Checked = true;
-			this.chkAuditTables.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkAuditTables.Location = new System.Drawing.Point(416, 16);
-			this.chkAuditTables.Name = "chkAuditTables";
-			this.chkAuditTables.Size = new System.Drawing.Size(224, 16);
-			this.chkAuditTables.TabIndex = 14;
-			this.chkAuditTables.Text = "Populate Valid Combination Audit Data";
-			// 
-			// lblProcBestRxOwner
-			// 
-			this.lblProcBestRxOwner.Location = new System.Drawing.Point(9, 160);
-			this.lblProcBestRxOwner.Name = "lblProcBestRxOwner";
-			this.lblProcBestRxOwner.Size = new System.Drawing.Size(79, 16);
-			this.lblProcBestRxOwner.TabIndex = 13;
-			this.lblProcBestRxOwner.Text = "Not Done";
-			// 
-			// lblProcBestRxPSite
-			// 
-			this.lblProcBestRxPSite.Location = new System.Drawing.Point(9, 136);
-			this.lblProcBestRxPSite.Name = "lblProcBestRxPSite";
-			this.lblProcBestRxPSite.Size = new System.Drawing.Size(79, 16);
-			this.lblProcBestRxPSite.TabIndex = 12;
-			this.lblProcBestRxPSite.Text = "Not Done";
-			// 
-			// lblProcBestRxPlot
-			// 
-			this.lblProcBestRxPlot.Location = new System.Drawing.Point(9, 112);
-			this.lblProcBestRxPlot.Name = "lblProcBestRxPlot";
-			this.lblProcBestRxPlot.Size = new System.Drawing.Size(79, 16);
-			this.lblProcBestRxPlot.TabIndex = 11;
-			this.lblProcBestRxPlot.Text = "Not Done";
-			// 
-			// lblProcBestRx
-			// 
-			this.lblProcBestRx.Location = new System.Drawing.Point(9, 85);
-			this.lblProcBestRx.Name = "lblProcBestRx";
-			this.lblProcBestRx.Size = new System.Drawing.Size(79, 16);
-			this.lblProcBestRx.TabIndex = 10;
-			this.lblProcBestRx.Text = "Not Done";
-			// 
-			// lblSumWoodProducts
-			// 
-			this.lblSumWoodProducts.Location = new System.Drawing.Point(9, 59);
-			this.lblSumWoodProducts.Name = "lblSumWoodProducts";
-			this.lblSumWoodProducts.Size = new System.Drawing.Size(79, 16);
-			this.lblSumWoodProducts.TabIndex = 9;
-			this.lblSumWoodProducts.Text = "Not Done";
-			// 
-			// lblProcEffective
-			// 
-			this.lblProcEffective.Location = new System.Drawing.Point(9, 37);
-			this.lblProcEffective.Name = "lblProcEffective";
-			this.lblProcEffective.Size = new System.Drawing.Size(79, 16);
-			this.lblProcEffective.TabIndex = 8;
-			this.lblProcEffective.Text = "Not Done";
-			// 
-			// lblProcValidCombos
-			// 
-			this.lblProcValidCombos.Location = new System.Drawing.Point(9, 16);
-			this.lblProcValidCombos.Name = "lblProcValidCombos";
-			this.lblProcValidCombos.Size = new System.Drawing.Size(79, 16);
-			this.lblProcValidCombos.TabIndex = 7;
-			this.lblProcValidCombos.Text = "Not Done";
-			// 
-			// label10
-			// 
-			this.label10.Location = new System.Drawing.Point(95, 160);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(545, 24);
-			this.label10.TabIndex = 6;
-			this.label10.Text = "Summarize Most Effective Treatment Yields, Revenue, Costs, And Acres By Land Owne" +
-				"rship Groups";
-			// 
-			// label9
-			// 
-			this.label9.Location = new System.Drawing.Point(95, 136);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(552, 16);
-			this.label9.TabIndex = 5;
-			this.label9.Text = "Summarize Most Effective Treatment Yields, Revenue, Costs, And Acres By Wood Proc" +
-				"essing Facility";
-			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(95, 112);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(545, 16);
-			this.label8.TabIndex = 4;
-			this.label8.Text = "Summarize Most Effective Treatment Yields, Revenue, Costs, And Acres By Stand";
-			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(95, 78);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(553, 24);
-			this.label7.TabIndex = 3;
-			this.label7.Text = "Find Most Effective Treatment For Torch And Crown Index Improvement, Maximum  Rev" +
-				"enue, And Minimum Merchantable Wood Removal";
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(95, 57);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(529, 16);
-			this.label6.TabIndex = 2;
-			this.label6.Text = "Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Trea" +
-				"tment";
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(95, 36);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(336, 16);
-			this.label5.TabIndex = 1;
-			this.label5.Text = "Identify Fuel And Fire Effective Treatments ";
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(95, 15);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(305, 16);
-			this.label4.TabIndex = 0;
-			this.label4.Text = "Apply User Defined Filters And Get Valid Plot Combinations";
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(8, 16);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.Size = new System.Drawing.Size(216, 24);
-			this.lblTitle.TabIndex = 26;
-			this.lblTitle.Text = "Run Scenario";
-			// 
-			// btnViewScenarioTables
-			// 
-			this.btnViewScenarioTables.Location = new System.Drawing.Point(423, 37);
-			this.btnViewScenarioTables.Name = "btnViewScenarioTables";
-			this.btnViewScenarioTables.Size = new System.Drawing.Size(120, 20);
-			this.btnViewScenarioTables.TabIndex = 11;
-			this.btnViewScenarioTables.Text = "View Results Tables";
-			this.btnViewScenarioTables.Click += new System.EventHandler(this.btnViewScenarioTables_Click);
-			// 
-			// btnViewAuditTables
-			// 
-			this.btnViewAuditTables.Location = new System.Drawing.Point(543, 16);
-			this.btnViewAuditTables.Name = "btnViewAuditTables";
-			this.btnViewAuditTables.Size = new System.Drawing.Size(120, 20);
-			this.btnViewAuditTables.TabIndex = 10;
-			this.btnViewAuditTables.Text = "View Audit Data";
-			this.btnViewAuditTables.Click += new System.EventHandler(this.btnViewAuditTables_Click);
-			// 
-			// btnHelp
-			// 
-			this.btnHelp.Location = new System.Drawing.Point(8, 440);
-			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.Size = new System.Drawing.Size(80, 24);
-			this.btnHelp.TabIndex = 9;
-			this.btnHelp.Text = "Help";
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Controls.Add(this.label1);
-			this.groupBox2.Controls.Add(this.btnClear);
-			this.groupBox2.Controls.Add(this.btnSelectAll);
-			this.groupBox2.Controls.Add(this.lblProcSumTree);
-			this.groupBox2.Controls.Add(this.lblProcTravelTimes);
-			this.groupBox2.Controls.Add(this.lblProcAccessible);
-			this.groupBox2.Controls.Add(this.chkProcSumTree);
-			this.groupBox2.Controls.Add(this.chkProcTravelTimes);
-			this.groupBox2.Location = new System.Drawing.Point(8, 62);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(656, 96);
-			this.groupBox2.TabIndex = 8;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Optional:  Checked Boxes Will Execute";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(94, 24);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(394, 16);
-			this.label1.TabIndex = 8;
-			this.label1.Text = "Determine If Plot And Conditions Are Accessible For Treatment And Harvest";
-			// 
-			// btnClear
-			// 
-			this.btnClear.Location = new System.Drawing.Point(544, 56);
-			this.btnClear.Name = "btnClear";
-			this.btnClear.Size = new System.Drawing.Size(64, 24);
-			this.btnClear.TabIndex = 7;
-			this.btnClear.Text = "Clear";
-			this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-			// 
-			// btnSelectAll
-			// 
-			this.btnSelectAll.Location = new System.Drawing.Point(544, 24);
-			this.btnSelectAll.Name = "btnSelectAll";
-			this.btnSelectAll.Size = new System.Drawing.Size(64, 24);
-			this.btnSelectAll.TabIndex = 6;
-			this.btnSelectAll.Text = "Select All";
-			this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
-			// 
-			// lblProcSumTree
-			// 
-			this.lblProcSumTree.Location = new System.Drawing.Point(9, 63);
-			this.lblProcSumTree.Name = "lblProcSumTree";
-			this.lblProcSumTree.Size = new System.Drawing.Size(79, 16);
-			this.lblProcSumTree.TabIndex = 5;
-			this.lblProcSumTree.Text = "Not Done";
-			// 
-			// lblProcTravelTimes
-			// 
-			this.lblProcTravelTimes.Location = new System.Drawing.Point(8, 44);
-			this.lblProcTravelTimes.Name = "lblProcTravelTimes";
-			this.lblProcTravelTimes.Size = new System.Drawing.Size(80, 16);
-			this.lblProcTravelTimes.TabIndex = 4;
-			this.lblProcTravelTimes.Text = "Not Done";
-			// 
-			// lblProcAccessible
-			// 
-			this.lblProcAccessible.Location = new System.Drawing.Point(8, 24);
-			this.lblProcAccessible.Name = "lblProcAccessible";
-			this.lblProcAccessible.Size = new System.Drawing.Size(72, 16);
-			this.lblProcAccessible.TabIndex = 3;
-			this.lblProcAccessible.Text = "Not Done";
-			// 
-			// chkProcSumTree
-			// 
-			this.chkProcSumTree.Checked = true;
-			this.chkProcSumTree.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkProcSumTree.Location = new System.Drawing.Point(95, 65);
-			this.chkProcSumTree.Name = "chkProcSumTree";
-			this.chkProcSumTree.Size = new System.Drawing.Size(217, 16);
-			this.chkProcSumTree.TabIndex = 2;
-			this.chkProcSumTree.Text = "Sum Tree Yields, Volume, And Value";
-			// 
-			// chkProcTravelTimes
-			// 
-			this.chkProcTravelTimes.Checked = true;
-			this.chkProcTravelTimes.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkProcTravelTimes.Location = new System.Drawing.Point(95, 44);
-			this.chkProcTravelTimes.Name = "chkProcTravelTimes";
-			this.chkProcTravelTimes.Size = new System.Drawing.Size(377, 16);
-			this.chkProcTravelTimes.TabIndex = 1;
-			this.chkProcTravelTimes.Text = "Get Least Expensive Route From Plot To Wood Processing Facility";
-			// 
-			// frmRunCoreScenario
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(672, 470);
-			this.Controls.Add(this.groupBox1);
-			this.MaximizeBox = false;
-			this.Name = "frmRunCoreScenario";
-			this.Text = "Core Analysis: Run Scenario";
-			this.Resize += new System.EventHandler(this.frmRunCoreScenario_Resize);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox3.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmRunOptimizerScenario));
+            this.lblMsg = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnViewLog = new System.Windows.Forms.Button();
+            this.btnAccess = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkAuditTables = new System.Windows.Forms.CheckBox();
+            this.lblProcBestRxOwner = new System.Windows.Forms.Label();
+            this.lblProcBestRxPSite = new System.Windows.Forms.Label();
+            this.lblProcBestRxPlot = new System.Windows.Forms.Label();
+            this.lblProcBestRx = new System.Windows.Forms.Label();
+            this.lblSumWoodProducts = new System.Windows.Forms.Label();
+            this.lblProcEffective = new System.Windows.Forms.Label();
+            this.lblProcValidCombos = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.btnViewScenarioTables = new System.Windows.Forms.Button();
+            this.btnViewAuditTables = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnSelectAll = new System.Windows.Forms.Button();
+            this.lblProcSumTree = new System.Windows.Forms.Label();
+            this.lblProcTravelTimes = new System.Windows.Forms.Label();
+            this.lblProcAccessible = new System.Windows.Forms.Label();
+            this.chkProcSumTree = new System.Windows.Forms.CheckBox();
+            this.chkProcTravelTimes = new System.Windows.Forms.CheckBox();
+            this.groupBox1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // lblMsg
+            // 
+            this.lblMsg.Enabled = false;
+            this.lblMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMsg.Location = new System.Drawing.Point(8, 370);
+            this.lblMsg.Name = "lblMsg";
+            this.lblMsg.Size = new System.Drawing.Size(650, 16);
+            this.lblMsg.TabIndex = 5;
+            this.lblMsg.Text = "lblMsg";
+            this.lblMsg.Visible = false;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(304, 424);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(72, 24);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Enabled = false;
+            this.progressBar1.Location = new System.Drawing.Point(8, 393);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(656, 24);
+            this.progressBar1.TabIndex = 3;
+            this.progressBar1.Visible = false;
+            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "");
+            this.imageList1.Images.SetKeyName(1, "");
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnViewLog);
+            this.groupBox1.Controls.Add(this.btnAccess);
+            this.groupBox1.Controls.Add(this.groupBox3);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Controls.Add(this.btnViewScenarioTables);
+            this.groupBox1.Controls.Add(this.btnViewAuditTables);
+            this.groupBox1.Controls.Add(this.btnHelp);
+            this.groupBox1.Controls.Add(this.groupBox2);
+            this.groupBox1.Controls.Add(this.progressBar1);
+            this.groupBox1.Controls.Add(this.lblMsg);
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(672, 470);
+            this.groupBox1.TabIndex = 8;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Resize += new System.EventHandler(this.groupBox1_Resize);
+            // 
+            // btnViewLog
+            // 
+            this.btnViewLog.Location = new System.Drawing.Point(543, 37);
+            this.btnViewLog.Name = "btnViewLog";
+            this.btnViewLog.Size = new System.Drawing.Size(120, 20);
+            this.btnViewLog.TabIndex = 30;
+            this.btnViewLog.Text = "View Log File";
+            this.btnViewLog.Click += new System.EventHandler(this.btnViewLog_Click);
+            // 
+            // btnAccess
+            // 
+            this.btnAccess.Enabled = false;
+            this.btnAccess.Location = new System.Drawing.Point(423, 16);
+            this.btnAccess.Name = "btnAccess";
+            this.btnAccess.Size = new System.Drawing.Size(120, 20);
+            this.btnAccess.TabIndex = 29;
+            this.btnAccess.Text = "Microsoft Access";
+            this.btnAccess.Click += new System.EventHandler(this.btnAccess_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.chkAuditTables);
+            this.groupBox3.Controls.Add(this.lblProcBestRxOwner);
+            this.groupBox3.Controls.Add(this.lblProcBestRxPSite);
+            this.groupBox3.Controls.Add(this.lblProcBestRxPlot);
+            this.groupBox3.Controls.Add(this.lblProcBestRx);
+            this.groupBox3.Controls.Add(this.lblSumWoodProducts);
+            this.groupBox3.Controls.Add(this.lblProcEffective);
+            this.groupBox3.Controls.Add(this.lblProcValidCombos);
+            this.groupBox3.Controls.Add(this.label10);
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Controls.Add(this.label7);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Location = new System.Drawing.Point(8, 167);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(656, 193);
+            this.groupBox3.TabIndex = 27;
+            this.groupBox3.TabStop = false;
+            // 
+            // chkAuditTables
+            // 
+            this.chkAuditTables.Checked = true;
+            this.chkAuditTables.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAuditTables.Location = new System.Drawing.Point(416, 16);
+            this.chkAuditTables.Name = "chkAuditTables";
+            this.chkAuditTables.Size = new System.Drawing.Size(224, 16);
+            this.chkAuditTables.TabIndex = 14;
+            this.chkAuditTables.Text = "Populate Valid Combination Audit Data";
+            // 
+            // lblProcBestRxOwner
+            // 
+            this.lblProcBestRxOwner.Location = new System.Drawing.Point(9, 160);
+            this.lblProcBestRxOwner.Name = "lblProcBestRxOwner";
+            this.lblProcBestRxOwner.Size = new System.Drawing.Size(79, 16);
+            this.lblProcBestRxOwner.TabIndex = 13;
+            this.lblProcBestRxOwner.Text = "Not Done";
+            // 
+            // lblProcBestRxPSite
+            // 
+            this.lblProcBestRxPSite.Location = new System.Drawing.Point(9, 136);
+            this.lblProcBestRxPSite.Name = "lblProcBestRxPSite";
+            this.lblProcBestRxPSite.Size = new System.Drawing.Size(79, 16);
+            this.lblProcBestRxPSite.TabIndex = 12;
+            this.lblProcBestRxPSite.Text = "Not Done";
+            // 
+            // lblProcBestRxPlot
+            // 
+            this.lblProcBestRxPlot.Location = new System.Drawing.Point(9, 112);
+            this.lblProcBestRxPlot.Name = "lblProcBestRxPlot";
+            this.lblProcBestRxPlot.Size = new System.Drawing.Size(79, 16);
+            this.lblProcBestRxPlot.TabIndex = 11;
+            this.lblProcBestRxPlot.Text = "Not Done";
+            // 
+            // lblProcBestRx
+            // 
+            this.lblProcBestRx.Location = new System.Drawing.Point(9, 85);
+            this.lblProcBestRx.Name = "lblProcBestRx";
+            this.lblProcBestRx.Size = new System.Drawing.Size(79, 16);
+            this.lblProcBestRx.TabIndex = 10;
+            this.lblProcBestRx.Text = "Not Done";
+            // 
+            // lblSumWoodProducts
+            // 
+            this.lblSumWoodProducts.Location = new System.Drawing.Point(9, 59);
+            this.lblSumWoodProducts.Name = "lblSumWoodProducts";
+            this.lblSumWoodProducts.Size = new System.Drawing.Size(79, 16);
+            this.lblSumWoodProducts.TabIndex = 9;
+            this.lblSumWoodProducts.Text = "Not Done";
+            // 
+            // lblProcEffective
+            // 
+            this.lblProcEffective.Location = new System.Drawing.Point(9, 37);
+            this.lblProcEffective.Name = "lblProcEffective";
+            this.lblProcEffective.Size = new System.Drawing.Size(79, 16);
+            this.lblProcEffective.TabIndex = 8;
+            this.lblProcEffective.Text = "Not Done";
+            // 
+            // lblProcValidCombos
+            // 
+            this.lblProcValidCombos.Location = new System.Drawing.Point(9, 16);
+            this.lblProcValidCombos.Name = "lblProcValidCombos";
+            this.lblProcValidCombos.Size = new System.Drawing.Size(79, 16);
+            this.lblProcValidCombos.TabIndex = 7;
+            this.lblProcValidCombos.Text = "Not Done";
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(95, 160);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(545, 24);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "Summarize Most Effective Treatment Yields, Revenue, Costs, And Acres By Land Owne" +
+    "rship Groups";
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(95, 136);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(552, 16);
+            this.label9.TabIndex = 5;
+            this.label9.Text = "Summarize Most Effective Treatment Yields, Revenue, Costs, And Acres By Wood Proc" +
+    "essing Facility";
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(95, 112);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(545, 16);
+            this.label8.TabIndex = 4;
+            this.label8.Text = "Summarize Most Effective Treatment Yields, Revenue, Costs, And Acres By Stand";
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(95, 78);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(553, 24);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "Find Most Effective Treatment For Torch And Crown Index Improvement, Maximum  Rev" +
+    "enue, And Minimum Merchantable Wood Removal";
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(95, 57);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(529, 16);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Trea" +
+    "tment";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(95, 36);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(336, 16);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "Identify Fuel And Fire Effective Treatments ";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(95, 15);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(305, 16);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Apply User Defined Filters And Get Valid Plot Combinations";
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(8, 16);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(216, 24);
+            this.lblTitle.TabIndex = 26;
+            this.lblTitle.Text = "Run Scenario";
+            // 
+            // btnViewScenarioTables
+            // 
+            this.btnViewScenarioTables.Location = new System.Drawing.Point(423, 37);
+            this.btnViewScenarioTables.Name = "btnViewScenarioTables";
+            this.btnViewScenarioTables.Size = new System.Drawing.Size(120, 20);
+            this.btnViewScenarioTables.TabIndex = 11;
+            this.btnViewScenarioTables.Text = "View Results Tables";
+            this.btnViewScenarioTables.Click += new System.EventHandler(this.btnViewScenarioTables_Click);
+            // 
+            // btnViewAuditTables
+            // 
+            this.btnViewAuditTables.Location = new System.Drawing.Point(543, 16);
+            this.btnViewAuditTables.Name = "btnViewAuditTables";
+            this.btnViewAuditTables.Size = new System.Drawing.Size(120, 20);
+            this.btnViewAuditTables.TabIndex = 10;
+            this.btnViewAuditTables.Text = "View Audit Data";
+            this.btnViewAuditTables.Click += new System.EventHandler(this.btnViewAuditTables_Click);
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.Location = new System.Drawing.Point(8, 440);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(80, 24);
+            this.btnHelp.TabIndex = 9;
+            this.btnHelp.Text = "Help";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.btnClear);
+            this.groupBox2.Controls.Add(this.btnSelectAll);
+            this.groupBox2.Controls.Add(this.lblProcSumTree);
+            this.groupBox2.Controls.Add(this.lblProcTravelTimes);
+            this.groupBox2.Controls.Add(this.lblProcAccessible);
+            this.groupBox2.Controls.Add(this.chkProcSumTree);
+            this.groupBox2.Controls.Add(this.chkProcTravelTimes);
+            this.groupBox2.Location = new System.Drawing.Point(8, 62);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(656, 96);
+            this.groupBox2.TabIndex = 8;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Optional:  Checked Boxes Will Execute";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(94, 24);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(394, 16);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Determine If Plot And Conditions Are Accessible For Treatment And Harvest";
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(544, 56);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(64, 24);
+            this.btnClear.TabIndex = 7;
+            this.btnClear.Text = "Clear";
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnSelectAll
+            // 
+            this.btnSelectAll.Location = new System.Drawing.Point(544, 24);
+            this.btnSelectAll.Name = "btnSelectAll";
+            this.btnSelectAll.Size = new System.Drawing.Size(64, 24);
+            this.btnSelectAll.TabIndex = 6;
+            this.btnSelectAll.Text = "Select All";
+            this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
+            // 
+            // lblProcSumTree
+            // 
+            this.lblProcSumTree.Location = new System.Drawing.Point(9, 63);
+            this.lblProcSumTree.Name = "lblProcSumTree";
+            this.lblProcSumTree.Size = new System.Drawing.Size(79, 16);
+            this.lblProcSumTree.TabIndex = 5;
+            this.lblProcSumTree.Text = "Not Done";
+            // 
+            // lblProcTravelTimes
+            // 
+            this.lblProcTravelTimes.Location = new System.Drawing.Point(8, 44);
+            this.lblProcTravelTimes.Name = "lblProcTravelTimes";
+            this.lblProcTravelTimes.Size = new System.Drawing.Size(80, 16);
+            this.lblProcTravelTimes.TabIndex = 4;
+            this.lblProcTravelTimes.Text = "Not Done";
+            // 
+            // lblProcAccessible
+            // 
+            this.lblProcAccessible.Location = new System.Drawing.Point(8, 24);
+            this.lblProcAccessible.Name = "lblProcAccessible";
+            this.lblProcAccessible.Size = new System.Drawing.Size(72, 16);
+            this.lblProcAccessible.TabIndex = 3;
+            this.lblProcAccessible.Text = "Not Done";
+            // 
+            // chkProcSumTree
+            // 
+            this.chkProcSumTree.Checked = true;
+            this.chkProcSumTree.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkProcSumTree.Location = new System.Drawing.Point(95, 65);
+            this.chkProcSumTree.Name = "chkProcSumTree";
+            this.chkProcSumTree.Size = new System.Drawing.Size(217, 16);
+            this.chkProcSumTree.TabIndex = 2;
+            this.chkProcSumTree.Text = "Sum Tree Yields, Volume, And Value";
+            // 
+            // chkProcTravelTimes
+            // 
+            this.chkProcTravelTimes.Checked = true;
+            this.chkProcTravelTimes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkProcTravelTimes.Location = new System.Drawing.Point(95, 44);
+            this.chkProcTravelTimes.Name = "chkProcTravelTimes";
+            this.chkProcTravelTimes.Size = new System.Drawing.Size(377, 16);
+            this.chkProcTravelTimes.TabIndex = 1;
+            this.chkProcTravelTimes.Text = "Get Least Expensive Route From Plot To Wood Processing Facility";
+            // 
+            // frmRunOptimizerScenario
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(672, 470);
+            this.Controls.Add(this.groupBox1);
+            this.MaximizeBox = false;
+            this.Name = "frmRunOptimizerScenario";
+            this.Text = "Treatment Optimizer Run Scenario";
+            this.Resize += new System.EventHandler(this.frmRunCoreScenario_Resize);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -1039,7 +1040,7 @@ namespace FIA_Biosum_Manager
 	/// </summary>
 	public class RunCoreOld
 	{
-		FIA_Biosum_Manager.frmRunCoreScenario m_frmRunCoreScenario;
+		FIA_Biosum_Manager.frmRunOptimizerScenario m_frmRunCoreScenario;
 		private int m_intError;
 		private string m_strSQL;
 		private string m_strConn;
@@ -1063,7 +1064,7 @@ namespace FIA_Biosum_Manager
 		
 		
 
-		public RunCoreOld(FIA_Biosum_Manager.frmRunCoreScenario p_form)
+		public RunCoreOld(FIA_Biosum_Manager.frmRunOptimizerScenario p_form)
 		{
 			
 			this.m_intError=0;
@@ -1384,7 +1385,7 @@ namespace FIA_Biosum_Manager
 			this.m_txtFileStream=null;
 			this.m_txtStreamWriter=null;
 		}
-		public FIA_Biosum_Manager.frmRunCoreScenario ReferenceRunCoreScenarioForm 
+		public FIA_Biosum_Manager.frmRunOptimizerScenario ReferenceRunCoreScenarioForm 
 		{
 			set {this.m_frmRunCoreScenario=value;}
 			get {return m_frmRunCoreScenario;}

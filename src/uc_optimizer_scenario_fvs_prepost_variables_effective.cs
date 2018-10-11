@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_core_scenario_fvs_prepost_variables_effective : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_fvs_prepost_variables_effective : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -58,8 +58,8 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnFVSVariablesPrePostVariableValue;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostExpression;
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization _uc_optimization;
-		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_optimization _uc_optimization;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 		
 		private System.Windows.Forms.Label lblFVSVariablesPrePostExpression;
 		private System.Windows.Forms.TextBox txtExpression;
@@ -147,7 +147,7 @@ namespace FIA_Biosum_Manager
         private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private ListBox lstFVSTablesList;
         private ListBox lstFVSFieldsList;
-        private FIA_Biosum_Manager.OptimizerScenarioTools m_oCoreAnalysisScenarioTools = new OptimizerScenarioTools();
+        private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
         private string m_strHelpChapter = "EFFECTIVE_SETTINGS";
         
@@ -296,7 +296,7 @@ namespace FIA_Biosum_Manager
 	
 		
 
-		public uc_core_scenario_fvs_prepost_variables_effective()
+		public uc_optimizer_scenario_fvs_prepost_variables_effective()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -1591,21 +1591,21 @@ namespace FIA_Biosum_Manager
             //
             //effective variables
             //
-            if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Count > 0 &&
-                ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Count > 0 &&
+                ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
             {
                 for (x = 0; x <= NUMBER_OF_VARIABLES - 1; x++)
                 {
                     m_oOldVar.m_strPreVarArray[x] =
-                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPreVarArray[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPreVarArray[x].Trim();
                     m_oOldVar.m_strPostVarArray[x] =
-                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPostVarArray[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPostVarArray[x].Trim();
                     m_oOldVar.m_strBetterExpr[x] =
-                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strBetterExpr[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strBetterExpr[x].Trim();
                     m_oOldVar.m_strWorseExpr[x] =
-                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strWorseExpr[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strWorseExpr[x].Trim();
                     m_oOldVar.m_strEffectiveExpr[x] =
-                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strEffectiveExpr[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strEffectiveExpr[x].Trim();
                     this.UpdateListViewVariableItem(x, x + 1, m_oOldVar);
 
                 }
@@ -1613,7 +1613,7 @@ namespace FIA_Biosum_Manager
                 //overall effective
                 //
                 m_oOldVar.m_strOverallEffectiveExpr =
-                          ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveExpr;
+                          ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveExpr;
 
             }
 
@@ -1646,7 +1646,7 @@ namespace FIA_Biosum_Manager
             ado_data_access oAdo = new ado_data_access();
 
             this.lstFVSTablesList.Items.Clear();
-            m_dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(oAdo);
+            m_dictFVSTables = m_oOptimizerScenarioTools.LoadFvsTablesAndVariables(oAdo);
             foreach (string strKey in m_dictFVSTables.Keys)
             {
                 lstFVSTablesList.Items.Add(strKey);
@@ -1662,7 +1662,7 @@ namespace FIA_Biosum_Manager
 			for (x=0;x<=NUMBER_OF_VARIABLES-1;x++)
 				this.RemoveVariable(x);
 
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
@@ -1833,7 +1833,7 @@ namespace FIA_Biosum_Manager
 
 
 			ado_data_access oAdo = new ado_data_access();
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
@@ -2169,16 +2169,12 @@ namespace FIA_Biosum_Manager
 
 			ado_data_access p_ado = new ado_data_access();
 
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
             
 			//scenario mdb connection
-			//string strScenarioMDB = 
-			//	((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + 
-			//	"\\core\\db\\scenario.mdb";
-
 			string strScenarioResultsMDB = 
 				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory +
-                "\\core\\" + strScenarioId + "\\db\\scenario_results.mdb";
+                "\\optimizer\\" + strScenarioId + "\\db\\scenario_results.mdb";
 
 			this.m_OleDbConnectionScenario = new System.Data.OleDb.OleDbConnection();
 			strConn=p_ado.getMDBConnString(strScenarioResultsMDB,"admin","");
@@ -2934,7 +2930,7 @@ namespace FIA_Biosum_Manager
 
             // Query the optimization uc for the selected revenue attribute so we can pass it to the table
             OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableCollection =
-                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+                this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
             string strColumnFilterName = "";
             for (int x = 0; x <= oOptimizationVariableCollection.Count - 1; x++)
             {
@@ -2988,9 +2984,9 @@ namespace FIA_Biosum_Manager
 
 			this.grpboxFVSVariablesPrePostVariable.Hide();
 			
-			ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-		    ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+		    ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			this.EnableTabs(true);
 		    this.m_intCurVar=-1;
 			this.grpboxFVSVariablesPrePost.Show();
@@ -2998,14 +2994,14 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostVariableDone_Click(object sender, System.EventArgs e)
 		{
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
 			SaveToCurrentVariables();
 			
 			this.grpboxFVSVariablesPrePostVariable.Hide();
 			
-			ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-			ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+			ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			m_intCurVar=-1;
 			EnableTabs(true);
 			this.grpboxFVSVariablesPrePost.Show();
@@ -3030,7 +3026,7 @@ namespace FIA_Biosum_Manager
 			}
     		EnableOverallExpr();
 		}
-		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_core_scenario_fvs_prepost_variables_effective.Variables p_oVar)
+		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_optimizer_scenario_fvs_prepost_variables_effective.Variables p_oVar)
 		{
 			this.lvFVSVariablesPrePostValues.Items[p_intListViewItem].SubItems[COLUMN_PREVAR].Text = p_oVar.m_strPreVarArray[p_intVarArrayItem-1];
 			this.lvFVSVariablesPrePostValues.Items[p_intListViewItem].SubItems[COLUMN_POSTVAR].Text = p_oVar.m_strPostVarArray[p_intVarArrayItem-1];
@@ -3108,17 +3104,17 @@ namespace FIA_Biosum_Manager
 			if (this.lblFVSVariablesPrePostVariablePreSelected.Text.Trim().ToUpper() != "NOT DEFINED")
 			{
 				//save variables
-				if (this.m_intCurVariableDefinitionStepCount==uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER)
+				if (this.m_intCurVariableDefinitionStepCount==uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER)
 				{
 					m_oCurVar.m_strBetterExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 					//load worse expression
-					this.loadvalues_variable(m_intCurVar-1,uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE);
+					this.loadvalues_variable(m_intCurVar-1,uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE);
 				}
-				else if (this.m_intCurVariableDefinitionStepCount==uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE)
+				else if (this.m_intCurVariableDefinitionStepCount==uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE)
 				{
 					m_oCurVar.m_strWorseExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 					//load effective expression
-					this.loadvalues_variable(m_intCurVar-1,uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE);
+					this.loadvalues_variable(m_intCurVar-1,uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE);
 				}
 				
 				this.txtExpression.Focus();
@@ -3128,7 +3124,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostExpressionDone_Click(object sender, System.EventArgs e)
 		{
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
 			if (this.m_intCurVariableDefinitionStepCount==WIZARD_STEP_VARIABLE_BETTER)
 				m_oCurVar.m_strBetterExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 			else if (this.m_intCurVariableDefinitionStepCount==WIZARD_STEP_VARIABLE_WORSE)
@@ -3146,9 +3142,9 @@ namespace FIA_Biosum_Manager
 			
 			this.grpboxFVSVariablesPrePostExpression.Hide();
 			
-			this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-			ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+			ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			this.m_intCurVar=-1;
 			EnableTabs(true);
 			this.grpboxFVSVariablesPrePost.Show();
@@ -3223,9 +3219,9 @@ namespace FIA_Biosum_Manager
 		{
 			this.grpboxFVSVariablesPrePostExpression.Hide();
 			
-			this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-			ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+			ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			this.m_intCurVar=-1;
 			EnableTabs(true);
 			this.grpboxFVSVariablesPrePost.Show();
@@ -3276,15 +3272,15 @@ namespace FIA_Biosum_Manager
 			string str="";
 			switch (this.m_intCurVariableDefinitionStepCount)
 			{
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 					this.txtExpression.Text = "post_variable" + this.m_intCurVar.ToString().Trim() + "_value > pre_variable" + this.m_intCurVar.ToString().Trim() + "_value + 10 AND " + 
 						                      "post_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1 AND pre_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1";
 					break;
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 					this.txtExpression.Text = "post_variable" + this.m_intCurVar.ToString().Trim() + "_value < pre_variable" + this.m_intCurVar.ToString().Trim() + "_value - 10 AND " + 
 											  "post_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1 AND pre_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1";;
 					break;
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 					if (this.m_oCurVar.m_strBetterExpr[m_intCurVar-1].Trim().Length > 0 &&
 						this.m_oCurVar.m_strWorseExpr[m_intCurVar-1].Trim().Length > 0)
 					{
@@ -3300,7 +3296,7 @@ namespace FIA_Biosum_Manager
 						this.txtExpression.Text = "variable" + this.m_intCurVar.ToString().Trim() + "_worse_yn='N'";
 					}
 					break;
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 					if (this.m_oCurVar.m_strEffectiveExpr[0].Trim().Length > 0)
 						str="variable1_effective_yn='Y' AND ";
 					if (this.m_oCurVar.m_strEffectiveExpr[1].Trim().Length > 0)
@@ -3344,7 +3340,7 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			else if (this.m_intCurVariableDefinitionStepCount == uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
+			else if (this.m_intCurVariableDefinitionStepCount == uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
 			{
 				if (Modified())
 				{
@@ -3580,23 +3576,23 @@ namespace FIA_Biosum_Manager
 					this.m_oCurVar.m_strPreVarArray[m_intCurVar-1] = lblFVSVariablesPrePostVariablePreSelected.Text.Trim();
 					switch (this.m_intCurVariableDefinitionStepCount)
 					{
-						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 							this.m_oCurVar.m_strBetterExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 							this.m_oCurVar.m_strWorseExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 							this.m_oCurVar.m_strEffectiveExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 							this.m_oCurVar.m_strOverallEffectiveExpr = this.txtExpression.Text;
 							break;
 					
 					}
 				
 				}
-				else if (this.m_intCurVariableDefinitionStepCount==uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
+				else if (this.m_intCurVariableDefinitionStepCount==uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
 				{
 					this.m_oCurVar.m_strOverallEffectiveExpr = this.txtExpression.Text;
 				}
@@ -3628,10 +3624,10 @@ namespace FIA_Biosum_Manager
 			
 			this.grpboxFVSVariablesPrePost.Hide();
 
-			this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=false;
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="Effective";
-			this.ReferenceCoreScenarioForm.m_intEditTabPageIndex=0;
+			this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=false;
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="Effective";
+			this.ReferenceOptimizerScenarioForm.m_intEditTabPageIndex=0;
 			EnableTabs(false);
 			grpboxFVSVariablesPrePostVariable.Show();
 		}
@@ -3704,11 +3700,11 @@ namespace FIA_Biosum_Manager
 		{
 
 			   
-			    this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=false;
-			    this.ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
-			    this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="Effective";
+			    this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=false;
+			    this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
+			    this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="Effective";
 
-			    this.ReferenceCoreScenarioForm.m_intEditTabPageIndex=0;
+			    this.ReferenceOptimizerScenarioForm.m_intEditTabPageIndex=0;
 			    EnableTabs(false);
 				loadvalues_overall();
 		}
@@ -3974,7 +3970,7 @@ namespace FIA_Biosum_Manager
 				
 			frmPrevExp.Width = frmPrevExp.uc_previous_expressions1.m_intFullWd;
 			frmPrevExp.Height = frmPrevExp.uc_previous_expressions1.m_intFullHt;
-			frmPrevExp.Text = "Core Analysis: Previous FVS Variables SQL Expressions";
+			frmPrevExp.Text = "Treatment Optimizer: Previous FVS Variables SQL Expressions";
 					
 			frmPrevExp.uc_previous_expressions1.Visible=true;
 
@@ -3982,19 +3978,19 @@ namespace FIA_Biosum_Manager
 
 			switch (this.m_intCurVariableDefinitionStepCount)
 			{
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 					strSQL = "SELECT scenario_id,pre_fvs_variable,better_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"BETTER_EXPRESSION","BETTER_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 					strSQL = "SELECT scenario_id,pre_fvs_variable,worse_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"WORSE_EXPRESSION","WORSE_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 					strSQL = "SELECT scenario_id,fvs_variables_list,pre_fvs_variable,effective_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"EFFECTIVE_EXPRESSION","EFFECTIVE_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_core_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 					strSQL = "SELECT scenario_id,fvs_variables_list,overall_effective_expression,current_yn FROM scenario_fvs_variables_overall_effective";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"OVERALL_EFFECTIVE_EXPRESSION","OVERALL_EFFECTIVE_EXPRESSION", "scenario_fvs_variables_overall_effective");
 					break;
@@ -4022,13 +4018,13 @@ namespace FIA_Biosum_Manager
 			if (grpboxFVSVariablesPrePost.Visible==false) 
 			{
 
-				ReferenceCoreScenarioForm.m_strAllowLeaveTabPageMsg="Cannot edit Optimization until finished editing FVS Variable";
+				ReferenceOptimizerScenarioForm.m_strAllowLeaveTabPageMsg="Cannot edit Optimization until finished editing FVS Variable";
 
 			}
 			else 
 			{
 				
-				ReferenceCoreScenarioForm.m_strAllowLeaveTabPageMsg="";
+				ReferenceOptimizerScenarioForm.m_strAllowLeaveTabPageMsg="";
 
 			}
 		}
@@ -4039,13 +4035,13 @@ namespace FIA_Biosum_Manager
 		{
 
             int x;
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlFVSVariables,"tboptimization,tbtiebreaker",p_bEnable);
-            ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlCosts, "tbcosts", p_bEnable);
-            for (x = 0; x <= ReferenceCoreScenarioForm.tlbScenario.Buttons.Count - 1; x++)
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlFVSVariables,"tboptimization,tbtiebreaker",p_bEnable);
+            ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlCosts, "tbcosts", p_bEnable);
+            for (x = 0; x <= ReferenceOptimizerScenarioForm.tlbScenario.Buttons.Count - 1; x++)
             {
-                ReferenceCoreScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
+                ReferenceOptimizerScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
             }
             frmMain.g_oFrmMain.grpboxLeft.Enabled = p_bEnable;
             frmMain.g_oFrmMain.tlbMain.Enabled = p_bEnable;
@@ -4089,17 +4085,17 @@ namespace FIA_Biosum_Manager
 			set {_bDisplayAuditMsg=value;}
 		}
 		
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
 		{
 			get {return _uc_optimization;}
 			set {_uc_optimization=value;}
 		}
-		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreakerUserControl
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreakerUserControl
 		{
 			get {return _uc_tiebreaker;}
 			set {_uc_tiebreaker=value;}
@@ -4145,7 +4141,7 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesPrePostVariableValue.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
                     {
                         if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
                         {

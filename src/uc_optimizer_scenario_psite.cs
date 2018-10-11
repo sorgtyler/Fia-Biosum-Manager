@@ -11,7 +11,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_psite.
 	/// </summary>
-	public class uc_core_scenario_psite : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_psite : System.Windows.Forms.UserControl
 	{
 		private ListViewEmbeddedControls.ListViewEx lstPSites;
 		private System.Windows.Forms.ImageList imgSize;
@@ -43,7 +43,7 @@ namespace FIA_Biosum_Manager
 		const int COLUMN_PSITEBIOPROCESSTYPE=5;
 
 
-		public uc_core_scenario_psite()
+		public uc_optimizer_scenario_psite()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -105,24 +105,24 @@ namespace FIA_Biosum_Manager
 			{
 				strPSiteId=Convert.ToString(lstPSites.Items[x].SubItems[COLUMN_PSITEID].Text.Trim());
 
-                for (y = 0; y <= ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Count - 1; y++)
+                for (y = 0; y <= ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Count - 1; y++)
                 {
                     
                    
                     if (strPSiteId ==
-                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).ProcessingSiteId.Trim())
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).ProcessingSiteId.Trim())
                     {
                         //
                         //ITEM CHECKED
                         //
-                        lstPSites.Items[x].Checked = ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).Selected;
+                        lstPSites.Items[x].Checked = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).Selected;
                         //
                         //TRANSPORTATION CODE
                         //
                         strTranDef = 
-                             ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).m_strTranCdDescArray[
-                                Convert.ToInt32(ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).TransportationCode) - 1, 1];
-                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).TransportationCode == "1")
+                             ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).m_strTranCdDescArray[
+                                Convert.ToInt32(ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).TransportationCode) - 1, 1];
+                        if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).TransportationCode == "1")
                         {
                             lstPSites.Items[x].SubItems[COLUMN_PSITEROADRAIL].Text = "Processing Site - Road Access Only";
                         }
@@ -135,8 +135,8 @@ namespace FIA_Biosum_Manager
                         //BIOMASS TYPE CODE
                         //
                         strBioDef =  
-                            ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).m_strBioCdDescArray[
-                                Convert.ToInt32( ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).BiomassCode) - 1, 1];
+                            ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).m_strBioCdDescArray[
+                                Convert.ToInt32( ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).BiomassCode) - 1, 1];
                          m_Combo=(System.Windows.Forms.ComboBox)this.lstPSites.GetEmbeddedControl(COLUMN_PSITEBIOPROCESSTYPE,x);
 						m_Combo.Text = strBioDef;
 
@@ -176,7 +176,7 @@ namespace FIA_Biosum_Manager
 			 **create a temporary MDB File that will contain table links
 			 **to the psite,traveltime, and scenario_psite tables
 			 **************************************************************/
-			this.m_strTempMDBFile = this.ReferenceCoreScenarioForm.uc_datasource1.CreateMDBAndScenarioTableDataSourceLinks(m_oEnv.strTempDir);
+			this.m_strTempMDBFile = this.ReferenceOptimizerScenarioForm.uc_datasource1.CreateMDBAndScenarioTableDataSourceLinks(m_oEnv.strTempDir);
 
 			//create the scenario_psite table link
 			FIA_Biosum_Manager.dao_data_access p_dao = new dao_data_access();
@@ -189,7 +189,7 @@ namespace FIA_Biosum_Manager
 			/**************************************************************
 			 **get the scenario travel time table name
 			 **************************************************************/
-			this.m_strTravelTimeTable = this.ReferenceCoreScenarioForm.uc_datasource1.getDataSourceTableName("TRAVEL TIMES");
+			this.m_strTravelTimeTable = this.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("TRAVEL TIMES");
 
 			if (this.m_strTravelTimeTable.Trim().Length == 0) 
 			{
@@ -200,7 +200,7 @@ namespace FIA_Biosum_Manager
 			/************************************************************
 			 **get the scenario processing site table name
 			 ************************************************************/
-			this.m_strPSiteTable = this.ReferenceCoreScenarioForm.uc_datasource1.getDataSourceTableName("PROCESSING SITES");
+			this.m_strPSiteTable = this.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("PROCESSING SITES");
 			if (this.m_strPSiteTable.Trim().Length == 0)
 			{
 				MessageBox.Show("!!Could Not Locate Scenario Processing Site Table!!","FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
@@ -381,7 +381,7 @@ namespace FIA_Biosum_Manager
 			 **update listview with the previous scenario settings
 			 ***************************************************/
 			p_ado.m_strSQL = "SELECT * FROM scenario_psites " + 
-							 "WHERE TRIM(scenario_id) = '" + this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim() + "';";
+							 "WHERE TRIM(scenario_id) = '" + this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim() + "';";
 														                  
 			p_ado.SqlQueryReader(strConn,p_ado.m_strSQL);
 			if (p_ado.m_OleDbDataReader.HasRows==true)
@@ -474,7 +474,7 @@ namespace FIA_Biosum_Manager
             int x;
 
 			ado_data_access p_ado = new ado_data_access();
-			strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
@@ -513,7 +513,7 @@ namespace FIA_Biosum_Manager
 			    p_ado.m_strSQL="INSERT INTO scenario_psites (scenario_id,psite_id,name,trancd,biocd,selected_yn)" + 
 					           " VALUES ";
 				
-				strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim();
+				strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim();
 				strPSiteId = lstPSites.Items[x].SubItems[COLUMN_PSITEID].Text.Trim();
 				strName = lstPSites.Items[x].SubItems[COLUMN_PSITENAME].Text.Trim();
                 strName = p_ado.FixString(strName.Trim(), "'", "''");
@@ -595,7 +595,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_core_scenario_psite));
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_optimizer_scenario_psite));
 			this.imgSize = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.lblTitle = new System.Windows.Forms.Label();
@@ -1045,7 +1045,7 @@ namespace FIA_Biosum_Manager
 			string strScenarioId;
 			string strScenarioSQL="";
 
-			strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim();
+			strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim();
 
 			ado_data_access p_ado = new ado_data_access();
 			string strConn = p_ado.getMDBConnString(this.m_strTempMDBFile,"","");
@@ -1159,7 +1159,7 @@ namespace FIA_Biosum_Manager
 			lstPSites.Height = this.ClientSize.Height - lstPSites.Top - (int)(this.btnScenarioPSiteDefault.Height * 1.5) - 3;
 		}
 	
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

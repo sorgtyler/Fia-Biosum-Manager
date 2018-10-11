@@ -177,7 +177,7 @@ namespace FIA_Biosum_Manager
 			oAdo.OpenConnection(strScenarioConn);
 			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER")
 			{
-				oAdo.m_strSQL = "SELECT notes FROM scenario WHERE TRIM(scenario_id)='" + this.ReferenceCoreScenarioForm.uc_scenario1.strScenarioId.Trim() + "'";
+				oAdo.m_strSQL = "SELECT notes FROM scenario WHERE TRIM(scenario_id)='" + this.ReferenceOptimizerScenarioForm.uc_scenario1.strScenarioId.Trim() + "'";
 			}
 			else
 			{
@@ -198,7 +198,7 @@ namespace FIA_Biosum_Manager
         {
             if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
             {
-                FIA_Biosum_Manager.OptimizerScenarioItem oItem = ReferenceCoreScenarioForm.m_oOptimizerScenarioItem;
+                FIA_Biosum_Manager.OptimizerScenarioItem oItem = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem;
                 this.txtNotes.Text = oItem.Notes.Trim();
             }
             else
@@ -216,10 +216,10 @@ namespace FIA_Biosum_Manager
 
 		private void txtNotes_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER") ReferenceCoreScenarioForm.m_bSave=true;
+			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER") ReferenceOptimizerScenarioForm.m_bSave=true;
 			else ReferenceProcessorScenarioForm.m_bSave=true;
 		}
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

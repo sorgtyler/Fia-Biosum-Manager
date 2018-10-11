@@ -1079,7 +1079,7 @@ namespace FIA_Biosum_Manager
                 //
                 //prepopulated weighted variable optimizer_definitions.accdb file
                 //
-                //copy default core_definitions.accdb to the new project directory
+                //copy default optimizer_definitions.accdb to the new project directory
                 strSourceFile = this.m_oEnv.strAppDir + "\\db\\optimizer_definitions.accdb";
                 strDestFile = this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
                 p_frmTherm.Increment(7);
@@ -1087,12 +1087,12 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.lblMsg.Refresh();
                 System.IO.File.Copy(strSourceFile, strDestFile, true);
                 //
-                //core scenario rule definitions
+                //optimizer scenario rule definitions
                 //
 				p_frmTherm.Increment(9);
                 p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 				p_frmTherm.lblMsg.Refresh();
-                CreateCoreScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile);
+                CreateOptimizerScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile);
 				//
 				//processor scenario rule definitions
 				//
@@ -1646,7 +1646,7 @@ namespace FIA_Biosum_Manager
 				}
 			}
 		}
-		public void CreateCoreScenarioRuleDefinitionDbAndTables(string p_strPathAndFile)
+		public void CreateOptimizerScenarioRuleDefinitionDbAndTables(string p_strPathAndFile)
 		{
 			dao_data_access oDao = new dao_data_access();
 			ado_data_access oAdo = new ado_data_access();
@@ -2575,14 +2575,14 @@ namespace FIA_Biosum_Manager
 
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
             //
-            //CORE ANALYSIS SCENARIO DATA SOURCE
+            //TREATMENT OPTIMIZER SCENARIO DATA SOURCE
             //
             strFullPath = strProjDir + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
             if (System.IO.File.Exists(strFullPath))
             {
                 strConn = oAdo.getMDBConnString(strFullPath, "", "");
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Open Connection to Core Analysis Scenario Dbfile " + strConn + ")\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Open Connection to Treatment Optimizer Scenario Dbfile " + strConn + ")\r\n");
 
                 oAdo.OpenConnection(strConn);
                 strSQL = "UPDATE scenario_datasource " +

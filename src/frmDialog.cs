@@ -61,7 +61,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_filter_rows_text_datatype uc_filter_rows_text_datatype1;
 		public FIA_Biosum_Manager.uc_filter_rows_numeric_datatype uc_filter_rows_numeric_datatype1;
 		public FIA_Biosum_Manager.uc_gridview uc_gridview1;
-        public FIA_Biosum_Manager.uc_optimizer_scenario_copy uc_scenario_core_scenario_copy1;
+        public FIA_Biosum_Manager.uc_optimizer_scenario_copy uc_scenario_optimizer_scenario_copy1;
         public FIA_Biosum_Manager.uc_processor_scenario_copy uc_processor_scenario_copy1;
         public FIA_Biosum_Manager.uc_fvs_output_prepost_seqnum uc_fvs_output_prepost_seqnum1=null;
         public FIA_Biosum_Manager.uc_processor_opcost_settings uc_processor_opcost_settings1 = null;
@@ -478,15 +478,15 @@ namespace FIA_Biosum_Manager
 			this.uc_filter_rows_numeric_datatype1.Visible=true;
             
 		}
-        public void Initialize_Scenario_Core_Scenario_Copy()
+        public void Initialize_Scenario_Optimizer_Scenario_Copy()
         {
-            this.uc_scenario_core_scenario_copy1 = new uc_optimizer_scenario_copy();
-            this.Controls.Add(this.uc_scenario_core_scenario_copy1);
-            uc_scenario_core_scenario_copy1.Dock = DockStyle.Fill;
-            this.Width = this.uc_scenario_core_scenario_copy1.Width + 10;
-            this.Height = this.uc_scenario_core_scenario_copy1.Height + 200;
-            uc_scenario_core_scenario_copy1.ReferenceDialogForm = this;
-            uc_scenario_core_scenario_copy1.Visible = true;
+            this.uc_scenario_optimizer_scenario_copy1 = new uc_optimizer_scenario_copy();
+            this.Controls.Add(this.uc_scenario_optimizer_scenario_copy1);
+            uc_scenario_optimizer_scenario_copy1.Dock = DockStyle.Fill;
+            this.Width = this.uc_scenario_optimizer_scenario_copy1.Width + 10;
+            this.Height = this.uc_scenario_optimizer_scenario_copy1.Height + 200;
+            uc_scenario_optimizer_scenario_copy1.ReferenceDialogForm = this;
+            uc_scenario_optimizer_scenario_copy1.Visible = true;
 
         }
         public void Initialize_Processor_Scenario_Copy()
@@ -748,10 +748,10 @@ namespace FIA_Biosum_Manager
                 uc_fvs_output1.uc_fvs_output_Resize();
 
             }
-            else if (uc_scenario_core_scenario_copy1 != null)
+            else if (uc_scenario_optimizer_scenario_copy1 != null)
             {
 
-                uc_scenario_core_scenario_copy1.panel1_Resize();
+                uc_scenario_optimizer_scenario_copy1.panel1_Resize();
             }
         }
 

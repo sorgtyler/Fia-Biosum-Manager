@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_owner_groups.
 	/// </summary>
-	public class uc_core_scenario_owner_groups : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_owner_groups : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.ImageList imgSize;
 		private System.ComponentModel.IContainer components;
@@ -27,7 +27,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 
 
-		public uc_core_scenario_owner_groups()
+		public uc_optimizer_scenario_owner_groups()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -58,7 +58,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_core_scenario_owner_groups));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_optimizer_scenario_owner_groups));
             this.imgSize = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkOwnGrp10 = new System.Windows.Forms.CheckBox();
@@ -210,7 +210,7 @@ namespace FIA_Biosum_Manager
 					
 			int x=0;
 			
-            string[] strArray = frmMain.g_oUtils.ConvertListToArray(ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.OwnerGroupCodeList,",");
+            string[] strArray = frmMain.g_oUtils.ConvertListToArray(ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.OwnerGroupCodeList,",");
 			this.chkOwnGrp10.Checked=false;
 			this.chkOwnGrp20.Checked=false;
 			this.chkOwnGrp30.Checked=false;
@@ -376,7 +376,7 @@ namespace FIA_Biosum_Manager
 			this.groupBox1.Top = (int)(this.ClientSize.Height * .5) - (int)(this.groupBox1.Height * .5);
 		}
 	
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

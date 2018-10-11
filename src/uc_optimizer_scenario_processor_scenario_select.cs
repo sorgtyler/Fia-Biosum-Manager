@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace FIA_Biosum_Manager
 {
-    public partial class uc_core_scenario_processor_scenario_select : UserControl
+    public partial class uc_optimizer_scenario_processor_scenario_select : UserControl
     {
         private ProcessorScenarioItem_Collection m_oProcessorScenarioItem_Collection = new ProcessorScenarioItem_Collection();
         public ProcessorScenarioItem m_oProcessorScenarioItem;
@@ -23,11 +23,11 @@ namespace FIA_Biosum_Manager
         private bool m_bSuppressCheckEvents = false;
         
         FIA_Biosum_Manager.frmOptimizerScenario _frmScenario = null;
-        public uc_core_scenario_processor_scenario_select()
+        public uc_optimizer_scenario_processor_scenario_select()
         {
             InitializeComponent();
         }
-        public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+        public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
         {
             get { return _frmScenario; }
             set { _frmScenario = value; }
@@ -99,7 +99,7 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                foreach (ProcessorScenarioItem psItem in ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessorScenarioItem_Collection)
+                foreach (ProcessorScenarioItem psItem in ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessorScenarioItem_Collection)
                 {
                     m_oProcessorScenarioItem_Collection.Add(psItem);
                     if (psItem.Selected == true)
@@ -140,7 +140,7 @@ namespace FIA_Biosum_Manager
                 {
                     oAdo.m_strSQL = "SELECT * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
                                     "WHERE TRIM(UCASE(scenario_id)) = '" +
-                                        ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
+                                        ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
                     oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
                     if (oAdo.m_OleDbDataReader.HasRows)
@@ -176,16 +176,16 @@ namespace FIA_Biosum_Manager
                             strProcessorScenario.ToUpper())
                         {
                             lvProcessorScenario.Items[x].Checked = true;
-                            for (int y = 0; y <= ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Count - 1; y++)
+                            for (int y = 0; y <= ReferenceOptimizerScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Count - 1; y++)
                             {
                                 if (lvProcessorScenario.Items[x].SubItems[COL_SCENARIOID].Text.Trim().ToUpper() ==
-                                    ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).ScenarioId.Trim().ToUpper())
+                                    ReferenceOptimizerScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).ScenarioId.Trim().ToUpper())
                                 {
-                                    ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strLowSlope =
-                                        ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.SteepSlopePercent;
+                                    ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strLowSlope =
+                                        ReferenceOptimizerScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.SteepSlopePercent;
 
-                                    ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strSteepSlope =
-                                        ReferenceCoreScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.SteepSlopePercent;                                    
+                                    ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strSteepSlope =
+                                        ReferenceOptimizerScenarioForm.uc_scenario_processor_scenario_select1.m_oProcessorScenarioItem_Collection.Item(y).m_oHarvestMethod.SteepSlopePercent;                                    
                                 }
                             }
                             break;
@@ -203,20 +203,20 @@ namespace FIA_Biosum_Manager
         {
             
             ado_data_access oAdo = new ado_data_access();
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
             oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
                                 "WHERE TRIM(UCASE(scenario_id)) = '" +
-                                       ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
+                                       ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             if (lvProcessorScenario.CheckedItems.Count > 0)
             {
                 string strColumnsList = "scenario_id,processor_scenario_id,FullDetailsYN";
                 string strValuesList = "";
-                strValuesList = "'" + ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim() + "',";
+                strValuesList = "'" + ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim() + "',";
                 strValuesList = strValuesList + "'" + lvProcessorScenario.CheckedItems[0].SubItems[COL_SCENARIOID].Text.Trim() + "',";
                 if (this.chkFullDetails.Checked)
                     strValuesList = strValuesList + "'Y'";
@@ -291,10 +291,10 @@ namespace FIA_Biosum_Manager
                 {
                     if (e.NewValue == System.Windows.Forms.CheckState.Checked)
                     {
-                        ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strLowSlope =
+                        ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strLowSlope =
                             m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.SelectedItems[0].Index).m_oHarvestMethod.SteepSlopePercent;
 
-                        ReferenceCoreScenarioForm.uc_scenario_cond_filter1.strSteepSlope =
+                        ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strSteepSlope =
                             m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.SelectedItems[0].Index).m_oHarvestMethod.SteepSlopePercent;
 
                     }
@@ -331,7 +331,7 @@ namespace FIA_Biosum_Manager
         {
             if (this.lvProcessorScenario.Items.Count == 0)
             {
-                MessageBox.Show("Run Scenario Failed: No Processor Scenarios exist. At least one Processor Scenario must exist to run a Core Analysis Scenario", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MessageBox.Show("Run Scenario Failed: No Processor Scenarios exist. At least one Processor Scenario must exist to run a Treatment Optimizer Scenario", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return -1;
             }
             if (this.lvProcessorScenario.CheckedItems.Count == 0)

@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_core_scenario_fvs_prepost_variables_tiebreaker: System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_fvs_prepost_variables_tiebreaker: System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -29,7 +29,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnPrev;
 		public System.Windows.Forms.Label lblTitle;
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization _uc_optimization;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_optimization _uc_optimization;
 
 
 				
@@ -76,7 +76,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox grpMaxMin;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerLastTieBreakRank;
 		private System.Windows.Forms.Panel panel2;
-		public FIA_Biosum_Manager.uc_core_scenario_treatment_intensity uc_scenario_treatment_intensity1;
+		public FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank uc_scenario_treatment_intensity1;
 		private System.Windows.Forms.Panel pnlTieBreaker;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerValues;
 		private System.Windows.Forms.ListView lvFVSVariablesTieBreakerValues;
@@ -149,7 +149,7 @@ namespace FIA_Biosum_Manager
 				//
 			}
 
-			public void Add(FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem m_oTieBreaker)
+			public void Add(FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem m_oTieBreaker)
 			{
 				// vérify if object is not already in
 				if (this.List.Contains(m_oTieBreaker))
@@ -175,12 +175,12 @@ namespace FIA_Biosum_Manager
 					List.RemoveAt(index); 
 				}
 			}
-			public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem Item(int Index)
+			public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem Item(int Index)
 			{
 				// The appropriate item is retrieved from the List object and
 				// explicitly cast to the Widget type, then returned to the 
 				// caller.
-				return (FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem) List[Index];
+				return (FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem) List[Index];
 			}
 			public void Copy(TieBreaker_Collection p_oSource,ref TieBreaker_Collection p_oDest,bool p_bInitializeDest)
 			{
@@ -198,7 +198,7 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		public uc_core_scenario_fvs_prepost_variables_tiebreaker()
+		public uc_optimizer_scenario_fvs_prepost_variables_tiebreaker()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -270,7 +270,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_core_scenario_treatment_intensity();
+            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank();
             this.btnFVSVariablesTieBreakerTreatmentIntensityPrev = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
@@ -386,7 +386,7 @@ namespace FIA_Biosum_Manager
             this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
             this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
             this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
-            this.uc_scenario_treatment_intensity1.ReferenceCoreScenarioForm = null;
+            this.uc_scenario_treatment_intensity1.ReferenceOptimizerScenarioForm = null;
             this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
             this.uc_scenario_treatment_intensity1.TabIndex = 13;
             this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
@@ -918,35 +918,35 @@ namespace FIA_Biosum_Manager
 
 
 
-            if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0) != null)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0) != null)
             {
-                for (x = 0; x <= ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Count - 1; x++)
+                for (x = 0; x <= ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Count - 1; x++)
                 {
 
-                    if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().IndexOf("ATTRIBUTE") > -1)
+                    if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().IndexOf("ATTRIBUTE") > -1)
                     {
                         //idxAttribute = 0 for FVS Variables and 1 for Economic Variables; Most fields are similar
                         int idxAttribute = 0;
-                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().Equals("ECONOMIC ATTRIBUTE"))
+                        if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().Equals("ECONOMIC ATTRIBUTE"))
                         {
                             idxAttribute = 1;
                         }
                         
                         //attribute name
-                        string strAttrib = ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
+                        string strAttrib = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
                         this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName =
-                            ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
+                            ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
                         lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_FVSVARIABLE].Text =
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName;
 
                         //fvs value source (POST or POST/PRE change)
                         this.m_oOldTieBreakerCollection.Item(idxAttribute).strValueSource =
-                            ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strValueSource.Trim();
+                            ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strValueSource.Trim();
                         lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_VALUESOURCE].Text =
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strValueSource;
 
                         //MAX or MIN	
-                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMaxYN == "Y")
+                        if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMaxYN == "Y")
                         {
                             lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_MAXMIN].Text = "MAX";
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strMaxYN = "Y";
@@ -960,7 +960,7 @@ namespace FIA_Biosum_Manager
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strMaxYN = "N";
                             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Checked = true;
                         }
-                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
+                        if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
                         {
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).bSelected = true;
 
@@ -978,9 +978,9 @@ namespace FIA_Biosum_Manager
                             lvFVSVariablesTieBreakerValues.Select();
                         }
                     }
-                    else if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "LAST TIE-BREAK RANK")
+                    else if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "LAST TIE-BREAK RANK")
                     {
-                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
+                        if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
                         {
                             this.m_oOldTieBreakerCollection.Item(2).bSelected = true;
 
@@ -1014,7 +1014,7 @@ namespace FIA_Biosum_Manager
             }
 
             lstEconVariablesList.Items.Clear();
-            foreach (uc_optimizer_scenario_calculated_variables.VariableItem vItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+            foreach (uc_optimizer_scenario_calculated_variables.VariableItem vItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
             {
                 if (vItem.strVariableType.Equals("ECON"))
                 {
@@ -1030,7 +1030,7 @@ namespace FIA_Biosum_Manager
             this.m_oOldTieBreakerCollection.Clear();
 
 			// Stand Attribute
-            uc_core_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem = new TieBreakerItem();
+            uc_optimizer_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem = new TieBreakerItem();
 			oItem.intListViewIndex=0;
 			oItem.strFVSVariableName=this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim();
 			oItem.strMethod = this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_METHOD].Text.Trim();
@@ -1081,7 +1081,7 @@ namespace FIA_Biosum_Manager
 			
 			ado_data_access oAdo = new ado_data_access();
 
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
@@ -1196,7 +1196,7 @@ namespace FIA_Biosum_Manager
 			string strColumns="";
 			string strValues="";
 			ado_data_access oAdo = new ado_data_access();
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
@@ -1525,7 +1525,7 @@ namespace FIA_Biosum_Manager
 			
 			
 		}
-		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_core_scenario_fvs_prepost_variables_effective.Variables p_oVar)
+		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_optimizer_scenario_fvs_prepost_variables_effective.Variables p_oVar)
 		{
 			
 		}
@@ -1720,7 +1720,7 @@ namespace FIA_Biosum_Manager
             {
                 if (itemRow.SubItems[COLUMN_METHOD].Text.Trim().Equals("Last Tie-Break Rank"))
                 {
-                    x=this.uc_scenario_treatment_intensity1.Val_Intensity(false);
+                    x=this.uc_scenario_treatment_intensity1.Val_Last_Tiebreak_Rank(false);
                 }
             }
 
@@ -1760,11 +1760,11 @@ namespace FIA_Biosum_Manager
 				else
 				{
 					//cannot be equal to the optimization variable
-                    for (x = 0; x <= this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
+                    for (x = 0; x <= this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
 					{
-                        if (this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).bSelected)
+                        if (this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).bSelected)
 						{
-                            if (this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).strFVSVariableName.Trim().ToUpper() == 
+                            if (this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).strFVSVariableName.Trim().ToUpper() == 
 								lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim().ToUpper())
 							{
 								p_intError=-1;
@@ -1807,12 +1807,12 @@ namespace FIA_Biosum_Manager
 		private void EnableTabs(bool p_bEnable)
 		{
             int x;
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlFVSVariables,"tboptimization,tbeffective",p_bEnable);
-            for (x = 0; x <= ReferenceCoreScenarioForm.tlbScenario.Buttons.Count - 1; x++)
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlFVSVariables,"tboptimization,tbeffective",p_bEnable);
+            for (x = 0; x <= ReferenceOptimizerScenarioForm.tlbScenario.Buttons.Count - 1; x++)
             {
-                ReferenceCoreScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
+                ReferenceOptimizerScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
             }
             frmMain.g_oFrmMain.grpboxLeft.Enabled = p_bEnable;
             frmMain.g_oFrmMain.tlbMain.Enabled = p_bEnable;
@@ -1970,7 +1970,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerVariableDone_Click(object sender, System.EventArgs e)
 		{
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
 			UpdateFVSVariableListView();
 
 			this.grpboxStandAttributeTieBreakerVariable.Hide();
@@ -2021,7 +2021,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerTreatmentIntensityDone_Click(object sender, System.EventArgs e)
 		{
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
 			this.uc_scenario_treatment_intensity1.m_DataSet.AcceptChanges();
 			this.UpdateFVSVariableListView();
 
@@ -2043,7 +2043,7 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                this.ReferenceCoreScenarioForm.m_bSave = true;
+                this.ReferenceOptimizerScenarioForm.m_bSave = true;
             }
 		}
 
@@ -2115,12 +2115,12 @@ namespace FIA_Biosum_Manager
 			set {_bDisplayAuditMsg=value;}
 		}
 		
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
 		{
 			get {return _uc_optimization;}
 			set {_uc_optimization=value;}
@@ -2163,7 +2163,7 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesTieBreakerVariableValues.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
                     {
                         if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
                         {
@@ -2187,7 +2187,7 @@ namespace FIA_Biosum_Manager
             if (this.lstEconVariablesList.SelectedIndex > -1)
             {
                 this.btnFVSVariablesTieBreakerVariableValues.Enabled = true;
-                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.lstEconVariablesList.SelectedItem)))
                     {

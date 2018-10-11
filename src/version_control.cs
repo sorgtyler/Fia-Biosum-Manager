@@ -630,7 +630,7 @@ namespace FIA_Biosum_Manager
 			string strFile2=this.ReferenceProjectDirectory.Trim() + "\\core\\db\\scenario.mdb";
 			if (System.IO.File.Exists(strFile1)==false) 
 			{
-				this.ReferenceMainForm.frmProject.uc_project1.CreateCoreScenarioRuleDefinitionDbAndTables(strFile1);
+				this.ReferenceMainForm.frmProject.uc_project1.CreateOptimizerScenarioRuleDefinitionDbAndTables(strFile1);
 				if (System.IO.File.Exists(strFile2)==true)
 				{
 					string[] strTablesToLink = null;

@@ -39,7 +39,7 @@ namespace FIA_Biosum_Manager
 		public int m_intFullWd=632;
 		public int m_intError=0;
 		public string m_strError="";
-		private FIA_Biosum_Manager.frmOptimizerScenario _frmCoreAnalysisScenario;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmOptimizerScenario;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario;
 		private string _strScenarioType="optimizer";
 		
@@ -798,7 +798,7 @@ namespace FIA_Biosum_Manager
 				p_oUtils.m_intLevel=1;
                 if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 				{
-					if (p_oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Core Analysis: Optimization Scenario (" + this.txtScenarioId.Text.Trim() + ")","*",true,false) > 0)
+					if (p_oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Treatment Optimizer: Optimization Scenario (" + this.txtScenarioId.Text.Trim() + ")","*",true,false) > 0)
 					{
 						MessageBox.Show("!!Scenario Already Open!!","Scenario Open",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;
@@ -846,10 +846,10 @@ namespace FIA_Biosum_Manager
 			get {return _frmProcessorScenario;}
 			set {_frmProcessorScenario=value;}
 		}
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreAnalysisScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
-			get {return _frmCoreAnalysisScenario;}
-			set {_frmCoreAnalysisScenario=value;}
+			get {return _frmOptimizerScenario;}
+			set {_frmOptimizerScenario=value;}
 		}
 		public string ScenarioType
 		{

@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_core_scenario_fvs_prepost_optimization : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_fvs_prepost_optimization : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -30,7 +30,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.utils m_oUtils; 
 		public System.Windows.Forms.Label lblTitle;
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 
 		
 		private int m_intCurVar=-1;
@@ -71,7 +71,7 @@ namespace FIA_Biosum_Manager
 
         private System.Windows.Forms.GroupBox grpMaxMin;
 		private System.Windows.Forms.CheckBox chkEnableFilter;
-		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
 		private System.Windows.Forms.ColumnHeader lvColUseFilter;
 		private System.Windows.Forms.ColumnHeader lvColFilterOperator;
 		private System.Windows.Forms.ColumnHeader lvColFilterValue;
@@ -128,7 +128,7 @@ namespace FIA_Biosum_Manager
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
         private string m_strHelpChapter = "OPTIMIZATION_SETTINGS";
 
-		public uc_core_scenario_fvs_prepost_optimization()
+		public uc_optimizer_scenario_fvs_prepost_optimization()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -1055,22 +1055,22 @@ namespace FIA_Biosum_Manager
         public void loadvalues_FromProperties()
         {
             int x;
-            if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0) != null)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0) != null)
             {
-                for (x = 0; x <= ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
+                for (x = 0; x <= ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
                 {
                     OptimizerScenarioItem.OptimizationVariableItem oItem =
-                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x);
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x);
 
                     if (oItem.bSelected)
                     {
                         if (oItem.strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
                         {
-                            ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strFVSVariableName);
+                            ReferenceOptimizerScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strFVSVariableName);
                         }
                         else
                         {
-                            ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strOptimizedVariable);
+                            ReferenceOptimizerScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strOptimizedVariable);
                         }
 
                     }
@@ -1103,47 +1103,47 @@ namespace FIA_Biosum_Manager
 			CreateListViewOptimizationRow();
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count-1,lvOptimizationListValues.Columns.Count);
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Revenue";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Revenue";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
 			CreateListViewOptimizationRow();
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count-1,lvOptimizationListValues.Columns.Count);
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Merchantable Volume";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Merchantable Volume";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
 			CreateListViewOptimizationRow();
 			this.m_oLvRowColors.AddRow();
 			this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count-1,lvOptimizationListValues.Columns.Count);
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Stand Attribute";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Stand Attribute";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+			this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count-1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
             // New row for economic weighted variables
             CreateListViewOptimizationRow();
             this.m_oLvRowColors.AddRow();
             this.m_oLvRowColors.AddColumns(lvOptimizationListValues.Items.Count - 1, lvOptimizationListValues.Columns.Count);
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Attribute";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
-            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text = "Economic Attribute";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FVS_VARIABLE].Text = "NA";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_VALUESOURCE].Text = "NA";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[lvOptimizationListValues.Items.Count - 1].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_VALUE].Text = "Not Defined";
 
 
 			//
@@ -1152,14 +1152,14 @@ namespace FIA_Biosum_Manager
 			if (this.m_bFirstTime)
 			{
 				ado_data_access oAdo = new ado_data_access();
-				string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+				string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 				string strScenarioMDB = 
 					frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                     Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 				oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 				if (oAdo.m_intError==0)
 				{
-                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Clear();
+                    this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Clear();
                     int intVarNum=0;
 
 					oAdo.m_strSQL = "SELECT * " + 
@@ -1249,11 +1249,11 @@ namespace FIA_Biosum_Manager
                                         oItem.bSelected = true;
                                         if (oItem.strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
                                         {
-                                            ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strFVSVariableName);
+                                            ReferenceOptimizerScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strFVSVariableName);
                                         }
                                         else
                                         {
-                                            ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strOptimizedVariable);
+                                            ReferenceOptimizerScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oItem.strOptimizedVariable);
                                         }
                                     }
                                     else
@@ -1268,7 +1268,7 @@ namespace FIA_Biosum_Manager
                                 {
                                     oItem.strRevenueAttribute = Convert.ToString(oAdo.m_OleDbDataReader["revenue_attribute"]).Trim();
                                 }
-                                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
+                                this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
 							}
 						}
 					}
@@ -1300,7 +1300,7 @@ namespace FIA_Biosum_Manager
             lstEconVariables.Items.Clear();
             cmbNetRevOptimzFilter.Items.Clear();
             cmbNetRevEconOptimzFilter.Items.Clear();
-            foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+            foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
             {
                 if (oItem.strVariableType.Equals("ECON"))
                 {
@@ -1318,17 +1318,17 @@ namespace FIA_Biosum_Manager
 			//
 				bool bFound;
                 OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+                    this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
 				for (y=0;y<=this.lvOptimizationListValues.Items.Count-1;y++)
 				{
 					bFound=false;
-                    string strOptimizeVariable = lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper();
+                    string strOptimizeVariable = lvOptimizationListValues.Items[y].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper();
                     // It is the Revenue or Merchantable Volume line
                     if (strOptimizeVariable.IndexOf("ATTRIBUTE") < 0)
 					{
                         for (x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
 						{
-							if (lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() ==
+							if (lvOptimizationListValues.Items[y].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() ==
                                 oOptimizationVariableItemCollection.Item(x).strOptimizedVariable.Trim().ToUpper())
 							{
 								bFound=true;
@@ -1368,20 +1368,20 @@ namespace FIA_Biosum_Manager
 						else
 							oItem.bUseFilter=false;
 						
-						if (this.lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MAX")
+						if (this.lvOptimizationListValues.Items[y].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MAX")
 						{
 							oItem.strMaxYN="Y";
 						}
 						else
 							oItem.strMaxYN="N";
 
-						if (this.lvOptimizationListValues.Items[y].SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MIN")
+						if (this.lvOptimizationListValues.Items[y].SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text.Trim() == "MIN")
 						{
 							oItem.strMinYN="Y";
 						}
 						else
 							oItem.strMinYN="N";
-                        this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
+                        this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
 
 					}
 				}
@@ -1400,13 +1400,13 @@ namespace FIA_Biosum_Manager
 			p_oVariableItem.intListViewIndex=p_lvItem.Index;
 			p_lvItem.Checked=p_oVariableItem.bSelected;
 
-            if (p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
+            if (p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
             {
                 p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text = p_oVariableItem.strFVSVariableName;
                 p_oVariableItem.strOptimizedVariable = p_lvItem.SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
                 p_lvItem.SubItems[COLUMN_VALUESOURCE].Text = p_oVariableItem.strValueSource;
             }
-            else if (p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
+            else if (p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
             {
                 p_lvItem.SubItems[COLUMN_FVS_VARIABLE].Text = p_oVariableItem.strFVSVariableName;
                 p_oVariableItem.strOptimizedVariable = p_lvItem.SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
@@ -1415,20 +1415,20 @@ namespace FIA_Biosum_Manager
 
 
 			if (p_oVariableItem.bUseFilter)
-				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "Yes";
+				p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "Yes";
 			else
-				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
+				p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_USEFILTER].Text = "No";
 
 			if (p_oVariableItem.strMaxYN=="Y")
-				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MAX";
+				p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MAX";
 			else if (p_oVariableItem.strMinYN=="Y")
-				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MIN";
+				p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "MIN";
 			else
-				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
+				p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_MAXMIN].Text = "Not Defined";
 
 			if (p_oVariableItem.strFilterOperator.Trim().Length > 0)
 			{
-				p_lvItem.SubItems[uc_core_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = 
+				p_lvItem.SubItems[uc_optimizer_scenario_fvs_prepost_optimization.COLUMN_FILTER_OPERATOR].Text = 
 					p_oVariableItem.strFilterOperator;
 			}
             m_oValidate.ValidateDecimal(Convert.ToString(p_oVariableItem.dblFilterValue).Trim());
@@ -1441,7 +1441,7 @@ namespace FIA_Biosum_Manager
 			string strColumns="";
 			string strWhere="";
 			ado_data_access oAdo = new ado_data_access();
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
@@ -1467,7 +1467,7 @@ namespace FIA_Biosum_Manager
 				strColumns = "scenario_id,rxcycle,optimization_variable,fvs_variable_name,value_source,max_yn,min_yn,filter_enabled_yn,filter_operator,filter_value,checked_yn,current_yn,revenue_attribute";
 
                 OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+                    this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
                 for (x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
 				{
 					strValues = "'" + strScenarioId.Trim() + "','1'";
@@ -1765,7 +1765,7 @@ namespace FIA_Biosum_Manager
 		}
 		private void WizardSave()
 		{
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
 			this.EnableTabs(true);
 			this.grpboxOptimizationSettings.Hide();
 			this.grpboxOptimizationFVSVariable.Hide();
@@ -1773,7 +1773,7 @@ namespace FIA_Biosum_Manager
 			this.grpboxOptimization.Show();
 
             OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+                this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
             for (int x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
 			{
 				// We only update the selected listview item
@@ -1859,10 +1859,10 @@ namespace FIA_Biosum_Manager
 			int x,y;
             int intSelectedIndex = -1;
 			
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
             if (!m_bIgnoreListViewItemCheck) this.lvOptimizationListValues.Items[e.Index].Selected = true;
             OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-               this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+               this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
 			if (e.CurrentValue==CheckState.Checked) 
 			{
                 for (x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
@@ -1897,11 +1897,11 @@ namespace FIA_Biosum_Manager
 						}
 						else
 						{
-                            for (y = 0; y <= this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; y++)
+                            for (y = 0; y <= this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; y++)
 							{
-                                if (this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).intListViewIndex == x)
+                                if (this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).intListViewIndex == x)
 								{
-                                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).bSelected = true;
+                                    this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).bSelected = true;
                                     intSelectedIndex = y;
 								}
 							}
@@ -1914,14 +1914,14 @@ namespace FIA_Biosum_Manager
             {
                 if (intSelectedIndex == -1)
                 {
-                    this.ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText("None Selected");
+                    this.ReferenceOptimizerScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText("None Selected");
                 }
                 else
                 {
                     if (oOptimizationVariableItemCollection.Item(intSelectedIndex).strOptimizedVariable.Trim().ToUpper() == "STAND ATTRIBUTE")
-                        this.ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oOptimizationVariableItemCollection.Item(intSelectedIndex).strFVSVariableName);
+                        this.ReferenceOptimizerScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oOptimizationVariableItemCollection.Item(intSelectedIndex).strFVSVariableName);
                     else
-                        this.ReferenceCoreScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oOptimizationVariableItemCollection.Item(intSelectedIndex).strOptimizedVariable);
+                        this.ReferenceOptimizerScenarioForm.uc_scenario_run1.UpdateOptimizationVariableGroupboxText(oOptimizationVariableItemCollection.Item(intSelectedIndex).strOptimizedVariable);
                 }
             }
 		}
@@ -1937,7 +1937,7 @@ namespace FIA_Biosum_Manager
 
             // Get item out of memory so we can access the revenue attribute
             OptimizerScenarioItem.OptimizationVariableItem oSelectedItem = null;
-            foreach (OptimizerScenarioItem.OptimizationVariableItem oItem in this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection)
+            foreach (OptimizerScenarioItem.OptimizationVariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection)
             {
                 if (oItem.strOptimizedVariable.Equals(
                     this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim()))
@@ -2095,12 +2095,12 @@ namespace FIA_Biosum_Manager
 		private void EnableTabs(bool p_bEnable)
 		{
             int x;
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlFVSVariables,"tbeffective,tbtiebreaker",p_bEnable);
-            for (x = 0; x <= ReferenceCoreScenarioForm.tlbScenario.Buttons.Count - 1; x++)
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlFVSVariables,"tbeffective,tbtiebreaker",p_bEnable);
+            for (x = 0; x <= ReferenceOptimizerScenarioForm.tlbScenario.Buttons.Count - 1; x++)
             {
-                ReferenceCoreScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
+                ReferenceOptimizerScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
             }
             frmMain.g_oFrmMain.grpboxLeft.Enabled = p_bEnable;
             frmMain.g_oFrmMain.tlbMain.Enabled = p_bEnable;
@@ -2129,7 +2129,7 @@ namespace FIA_Biosum_Manager
 			}
 
             OptimizerScenarioItem.OptimizationVariableItem_Collection oOptVariableItemCollection =
-                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+                this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
             for (x = 0; x <= oOptVariableItemCollection.Count - 1; x++)
 			{
                 if (oOptVariableItemCollection.Item(x).bSelected) break;
@@ -2351,17 +2351,17 @@ namespace FIA_Biosum_Manager
 			get {return _bDisplayAuditMsg;}
 			set {_bDisplayAuditMsg=value;}
 		}
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
 		{
 			get {return this._oCurVar;}
 			set {_oCurVar=value;}
 		}
-		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
 		{
 			get {return _uc_tiebreaker;}
 			set {_uc_tiebreaker=value;}
@@ -2434,7 +2434,7 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
                     {
                         if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
                         {
@@ -2479,7 +2479,7 @@ namespace FIA_Biosum_Manager
             if (this.lstEconVariables.SelectedIndex > -1)
             {
                 this.btnEconSelect.Enabled = true;
-                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.lstEconVariables.SelectedItem)))
                     {
@@ -2523,7 +2523,7 @@ namespace FIA_Biosum_Manager
             this.txtEconRevenueDescr.Text = "";
             if (this.cmbNetRevEconOptimzFilter.SelectedIndex > -1)
             {
-                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.cmbNetRevEconOptimzFilter.SelectedItem)))
                     {
@@ -2542,7 +2542,7 @@ namespace FIA_Biosum_Manager
             this.txtRevenueDescr.Text = "";
             if (this.cmbNetRevOptimzFilter.SelectedIndex > -1)
             {
-                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.cmbNetRevOptimzFilter.SelectedItem)))
                     {
