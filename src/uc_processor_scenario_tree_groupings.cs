@@ -129,7 +129,7 @@ namespace FIA_Biosum_Manager
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
 			this.Visible=false;
-			if (this.ScenarioType.Trim().ToUpper() == "CORE") ((frmCoreScenario)this.ParentForm).Height = 0 ; //((frmScenario)this.ParentForm).grpboxMenu.Height * 2;
+			if (this.ScenarioType.Trim().ToUpper() == "CORE") ((frmOptimizerScenario)this.ParentForm).Height = 0 ; //((frmScenario)this.ParentForm).grpboxMenu.Height * 2;
 			else this.ReferenceProcessorScenarioForm.Height=0;
 		}
 

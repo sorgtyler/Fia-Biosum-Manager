@@ -21,12 +21,12 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_sql_builder uc_sql_builder1;
 		public FIA_Biosum_Manager.uc_sql_builder_new uc_sql_builder2;
 		public FIA_Biosum_Manager.frmDialog m_frmDialogCallingForm;
-		public FIA_Biosum_Manager.frmCoreScenario m_frmScenarioCallingForm;
+		public FIA_Biosum_Manager.frmOptimizerScenario m_frmScenarioCallingForm;
         public FIA_Biosum_Manager.frmProcessorScenario m_frmProcessorScenarioCallingForm;
 		public FIA_Biosum_Manager.frmMain m_frmMain;
 		public FIA_Biosum_Manager.uc_previous_expressions uc_previous_expressions1;
 		public FIA_Biosum_Manager.uc_scenario_merge_tables uc_merge_tables1;
-        public FIA_Biosum_Manager.uc_core_scenario_weighted_average uc_core_scenario_weighted_average1;
+        public FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables uc_core_scenario_weighted_average1;
 		public FIA_Biosum_Manager.txtDollarsAndCents m_txtMoney;
 		public FIA_Biosum_Manager.txtNumeric m_txtNumeric;
 		private System.Windows.Forms.TextBox _txtBox;
@@ -61,7 +61,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_filter_rows_text_datatype uc_filter_rows_text_datatype1;
 		public FIA_Biosum_Manager.uc_filter_rows_numeric_datatype uc_filter_rows_numeric_datatype1;
 		public FIA_Biosum_Manager.uc_gridview uc_gridview1;
-        public FIA_Biosum_Manager.uc_core_scenario_copy uc_scenario_core_scenario_copy1;
+        public FIA_Biosum_Manager.uc_optimizer_scenario_copy uc_scenario_core_scenario_copy1;
         public FIA_Biosum_Manager.uc_processor_scenario_copy uc_processor_scenario_copy1;
         public FIA_Biosum_Manager.uc_fvs_output_prepost_seqnum uc_fvs_output_prepost_seqnum1=null;
         public FIA_Biosum_Manager.uc_processor_opcost_settings uc_processor_opcost_settings1 = null;
@@ -101,7 +101,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add any constructor code after InitializeComponent call
 			//
 		}
-		public frmDialog(FIA_Biosum_Manager.frmCoreScenario p_frmScenarioCallingForm, FIA_Biosum_Manager.frmMain p_frmMain)
+		public frmDialog(FIA_Biosum_Manager.frmOptimizerScenario p_frmScenarioCallingForm, FIA_Biosum_Manager.frmMain p_frmMain)
 		{
 			strCallingFormType = "CS";   //core scenario
 			InitializeComponent();
@@ -392,7 +392,7 @@ namespace FIA_Biosum_Manager
         public void Initialize_Core_User_Variables_User_Control()
         {
 
-            this.uc_core_scenario_weighted_average1 = new uc_core_scenario_weighted_average(this.m_frmMain);
+            this.uc_core_scenario_weighted_average1 = new uc_optimizer_scenario_calculated_variables(this.m_frmMain);
             this.Controls.Add(this.uc_core_scenario_weighted_average1);
             this.uc_core_scenario_weighted_average1.Visible = true;
 
@@ -480,7 +480,7 @@ namespace FIA_Biosum_Manager
 		}
         public void Initialize_Scenario_Core_Scenario_Copy()
         {
-            this.uc_scenario_core_scenario_copy1 = new uc_core_scenario_copy();
+            this.uc_scenario_core_scenario_copy1 = new uc_optimizer_scenario_copy();
             this.Controls.Add(this.uc_scenario_core_scenario_copy1);
             uc_scenario_core_scenario_copy1.Dock = DockStyle.Fill;
             this.Width = this.uc_scenario_core_scenario_copy1.Width + 10;

@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_costs.
 	/// </summary>
-	public class uc_core_scenario_costs : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_costs : System.Windows.Forms.UserControl
 	{
         private System.Windows.Forms.ImageList imgSize;
 		private System.Windows.Forms.GroupBox groupBox1;
@@ -25,7 +25,7 @@ namespace FIA_Biosum_Manager
 		//ldp public FIA_Biosum_Manager.txtDollarsAndCents txtHaulCost_subclass;
 
         public System.Data.OleDb.OleDbConnection m_OleDbConnectionScenario;
-		public FIA_Biosum_Manager.frmCoreScenario m_frmScenario;
+		public FIA_Biosum_Manager.frmOptimizerScenario m_frmScenario;
 		private FIA_Biosum_Manager.frmGridView m_frmHarvestCosts;
 		public string[] m_strColumnsToEdit;
 		public int m_intColumnsToEditCount=0;
@@ -43,7 +43,7 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblRequired;
         private System.Windows.Forms.Panel panel1;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 
         private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private string m_strTextHaulCostSave="";
@@ -62,7 +62,7 @@ namespace FIA_Biosum_Manager
 		//private int intCentCurLen=0;
 		//private string strLastKey = "";
 
-		public uc_core_scenario_costs()
+		public uc_optimizer_scenario_costs()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -102,7 +102,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_core_scenario_costs));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_optimizer_scenario_costs));
             this.imgSize = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -317,25 +317,25 @@ namespace FIA_Biosum_Manager
 		
 		public void loadvalues()
 		{
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RoadHaulCostPerGreenTonPerHour.Trim().Length > 0)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RoadHaulCostPerGreenTonPerHour.Trim().Length > 0)
             {
-                txtHaulCost.Text = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RoadHaulCostPerGreenTonPerHour;
+                txtHaulCost.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RoadHaulCostPerGreenTonPerHour;
                 txtHaulCost_Leave(null, null);
             }
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile.Trim().Length > 0)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile.Trim().Length > 0)
             {
-                txtRailHaulCost.Text = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile;
+                txtRailHaulCost.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile;
                 txtRailHaulCost_Leave(null, null);
             }
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour.Trim().Length > 0)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour.Trim().Length > 0)
             {
-                this.txtRailChipTransfer.Text = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour;
+                this.txtRailChipTransfer.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour;
                 txtRailChipTransfer_Leave(null, null);
                     
             }
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour.Trim().Length > 0)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour.Trim().Length > 0)
             {
-                txtRailMerchTransfer.Text = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour;
+                txtRailMerchTransfer.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour;
                 txtRailMerchTransfer_Leave(null, null);
             }
 
@@ -389,10 +389,10 @@ namespace FIA_Biosum_Manager
 			
 
 			ado_data_access p_ado = new ado_data_access();
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			this.m_OleDbConnectionScenario = new System.Data.OleDb.OleDbConnection();
 			strConn = p_ado.getMDBConnString(strScenarioMDB,"admin","");
@@ -530,14 +530,14 @@ namespace FIA_Biosum_Manager
 			string strScenarioConn="";
 			int x,y;
 
-			strScenarioId =  this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			strScenarioId =  this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 
 			/*****************************************************************
 			 **lets see if this harvest costs edit form is already open
 			 *****************************************************************/
 			utils p_oUtils = new utils();
 			p_oUtils.m_intLevel=1;
-			if (p_oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Core Analysis: Edit Harvest Costs " + " (" + strScenarioId + ")","*",true,false) > 0)
+            if (p_oUtils.FindWindowLike(frmMain.g_oFrmMain.Handle, "Treatment Optimizer: Edit Harvest Costs " + " (" + strScenarioId + ")", "*", true, false) > 0)
 			{
 				MessageBox.Show("!!Harvest Costs Edit Form Is  Already Open!!","Harvest Costs Edit Form",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				if (this.m_frmHarvestCosts.WindowState == System.Windows.Forms.FormWindowState.Minimized)
@@ -553,25 +553,25 @@ namespace FIA_Biosum_Manager
 			ado_data_access p_ado = new ado_data_access();
 
 			strRandomPathAndFile= 
-				this.ReferenceCoreScenarioForm.uc_datasource1.CreateMDBAndScenarioTableDataSourceLinks(this.m_oEnv.strTempDir);
+				this.ReferenceOptimizerScenarioForm.uc_datasource1.CreateMDBAndScenarioTableDataSourceLinks(this.m_oEnv.strTempDir);
 			if (strRandomPathAndFile.Trim().Length > 0)
 			{
 				strConn = p_ado.getMDBConnString(strRandomPathAndFile,"admin","");
 			
 					strHvstCostsTableName = 
-						this.ReferenceCoreScenarioForm.uc_datasource1.getDataSourceTableName("Harvest Costs");
+						this.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("Harvest Costs");
 					if (strHvstCostsTableName.Trim().Length > 0)
 					{
 						strCondTableName = 
-							this.ReferenceCoreScenarioForm.uc_datasource1.getDataSourceTableName("Condition");
+							this.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("Condition");
 						if (strCondTableName.Trim().Length > 0)
 						{
 							strColumnsToEditArray = new string[1];
 							strColumnsToEditList="";
 
 							string strScenarioMDB = 
-								frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text + 
-								"\\core\\db\\scenario_core_rule_definitions.mdb";
+								frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text + "\\" +
+								Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 							strScenarioConn = p_ado.getMDBConnString(strScenarioMDB,"admin","");
 							
@@ -640,13 +640,13 @@ namespace FIA_Biosum_Manager
 
 							this.m_frmHarvestCosts = new frmGridView();
 							this.m_frmHarvestCosts.HarvestCostColumns=true;
-							this.m_frmHarvestCosts.ReferenceCoreScenarioForm=this.ReferenceCoreScenarioForm;
+							this.m_frmHarvestCosts.ReferenceOptimizerScenarioForm=this.ReferenceOptimizerScenarioForm;
 							this.m_frmHarvestCosts.LoadDataSetToEdit(strConn,strSQL, strHvstCostsTableName,this.m_strColumnsToEdit,this.m_intColumnsToEditCount,strRecordKeyField); 
 							if (this.m_frmHarvestCosts.Visible==false)
 							{
 
 								this.m_frmHarvestCosts.MdiParent = this.ParentForm.ParentForm;
-								this.m_frmHarvestCosts.Text = "Core Analysis: Edit Harvest Costs " + " (" + strScenarioId + ")";
+                                this.m_frmHarvestCosts.Text = "Treatment Optimizer Analysis: Edit Harvest Costs " + " (" + strScenarioId + ")";
 								this.m_frmHarvestCosts.Show();
 							}
 							this.m_frmHarvestCosts.Focus();
@@ -758,7 +758,7 @@ namespace FIA_Biosum_Manager
 
 		}
 	
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

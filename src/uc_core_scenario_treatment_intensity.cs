@@ -32,7 +32,7 @@ namespace FIA_Biosum_Manager
 		public string strRxConn;
 		public string strRxMDBFile;
 		public string strScenarioId;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		
 
 		public uc_core_scenario_treatment_intensity()
@@ -486,9 +486,9 @@ namespace FIA_Biosum_Manager
                 // If this is a copied scenario, we will have a reference form to get the values
                 if (p_bScenarioCopy == true)
                 {
-                    if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection != null)
+                    if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection != null)
                     {
-                        CoreAnalysisScenarioItem.LastTieBreakRankItem_Collection oLastTieBreakRankItem_Collection = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection;
+                        OptimizerScenarioItem.LastTieBreakRankItem_Collection oLastTieBreakRankItem_Collection = ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection;
                         for (int i = 0; i < firstView.Count - 1; ++i)
                         {
                             for (x = 0; x <= oLastTieBreakRankItem_Collection.Count - 1; x++)
@@ -571,7 +571,7 @@ namespace FIA_Biosum_Manager
 		
 		}
 	
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

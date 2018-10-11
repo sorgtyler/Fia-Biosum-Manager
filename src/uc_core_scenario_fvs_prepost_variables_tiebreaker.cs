@@ -28,7 +28,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnNext;
 		private System.Windows.Forms.Button btnPrev;
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization _uc_optimization;
 
 
@@ -874,14 +874,14 @@ namespace FIA_Biosum_Manager
 				// Digits are OK
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else if (e.KeyChar == '\b') 
 			{
 				//back space is okay
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else
 			{
@@ -914,39 +914,39 @@ namespace FIA_Biosum_Manager
             this.m_strError = "";
 
             int x, y;
-            
 
-           
 
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0) != null)
+
+
+            if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0) != null)
             {
-                for (x = 0; x <= ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Count - 1; x++)
+                for (x = 0; x <= ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Count - 1; x++)
                 {
 
-                    if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().IndexOf("ATTRIBUTE") > -1)
+                    if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().IndexOf("ATTRIBUTE") > -1)
                     {
                         //idxAttribute = 0 for FVS Variables and 1 for Economic Variables; Most fields are similar
                         int idxAttribute = 0;
-                        if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().Equals("ECONOMIC ATTRIBUTE"))
+                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper().Equals("ECONOMIC ATTRIBUTE"))
                         {
                             idxAttribute = 1;
                         }
                         
                         //attribute name
-                        string strAttrib = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
+                        string strAttrib = ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
                         this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName =
-                            ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
+                            ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strFVSVariableName.Trim();
                         lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_FVSVARIABLE].Text =
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strFVSVariableName;
 
                         //fvs value source (POST or POST/PRE change)
                         this.m_oOldTieBreakerCollection.Item(idxAttribute).strValueSource =
-                            ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strValueSource.Trim();
+                            ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strValueSource.Trim();
                         lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_VALUESOURCE].Text =
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strValueSource;
 
                         //MAX or MIN	
-                        if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMaxYN == "Y")
+                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMaxYN == "Y")
                         {
                             lvFVSVariablesTieBreakerValues.Items[idxAttribute].SubItems[COLUMN_MAXMIN].Text = "MAX";
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strMaxYN = "Y";
@@ -960,7 +960,7 @@ namespace FIA_Biosum_Manager
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).strMaxYN = "N";
                             this.rdoFVSVariablesTieBreakerVariableValuesSelectedMin.Checked = true;
                         }
-                        if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
+                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
                         {
                             this.m_oOldTieBreakerCollection.Item(idxAttribute).bSelected = true;
 
@@ -978,9 +978,9 @@ namespace FIA_Biosum_Manager
                             lvFVSVariablesTieBreakerValues.Select();
                         }
                     }
-                    else if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "LAST TIE-BREAK RANK")
+                    else if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).strMethod.Trim().ToUpper() == "LAST TIE-BREAK RANK")
                     {
-                        if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
+                        if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oTieBreaker_Collection.Item(x).bSelected)
                         {
                             this.m_oOldTieBreakerCollection.Item(2).bSelected = true;
 
@@ -1014,7 +1014,7 @@ namespace FIA_Biosum_Manager
             }
 
             lstEconVariablesList.Items.Clear();
-            foreach (uc_core_scenario_weighted_average.VariableItem vItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+            foreach (uc_optimizer_scenario_calculated_variables.VariableItem vItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
             {
                 if (vItem.strVariableType.Equals("ECON"))
                 {
@@ -1084,18 +1084,18 @@ namespace FIA_Biosum_Manager
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
 				int intVarNum=0;
 
-				if (!oAdo.TableExist(oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName))
-					 frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oAdo.m_OleDbConnection,
-						 Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName);
+				if (!oAdo.TableExist(oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName))
+					 frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oAdo.m_OleDbConnection,
+						 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName);
 
 				oAdo.m_strSQL = "SELECT * FROM " + 
-					            Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " +
+					            Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " +
 					            "WHERE TRIM(scenario_id)='" + strScenarioId.Trim() + "'";
 
 
@@ -1199,12 +1199,12 @@ namespace FIA_Biosum_Manager
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
 				//delete all records from the scenario fvs variables table
-				oAdo.m_strSQL = "DELETE FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " + 
+				oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " + 
 					            "WHERE LCASE(TRIM(scenario_id)) = '" + strScenarioId + "';";
 
 				oAdo.SqlNonQuery(oAdo.m_OleDbConnection,oAdo.m_strSQL);
@@ -1255,7 +1255,7 @@ namespace FIA_Biosum_Manager
 					this.m_oSavTieBreakerCollection.Item(0).bSelected=false;
 				}
 
-				oAdo.m_strSQL = "INSERT INTO " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " + 
+				oAdo.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " + 
 					            "(" + strColumns + ") VALUES " + 
 					            "(" + strValues + ")";
 
@@ -1300,7 +1300,7 @@ namespace FIA_Biosum_Manager
                     this.m_oSavTieBreakerCollection.Item(1).bSelected = false;
                 }
 
-                oAdo.m_strSQL = "INSERT INTO " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " +
+                oAdo.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " +
                                 "(" + strColumns + ") VALUES " +
                                 "(" + strValues + ")";
 
@@ -1336,7 +1336,7 @@ namespace FIA_Biosum_Manager
 					this.m_oSavTieBreakerCollection.Item(2).bSelected=false;
 				}
 
-				oAdo.m_strSQL = "INSERT INTO " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " + 
+				oAdo.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " + 
 					"(" + strColumns + ") VALUES " + 
 					"(" + strValues + ")";
 
@@ -1380,63 +1380,63 @@ namespace FIA_Biosum_Manager
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide2_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardWindSpeedClass_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		
@@ -1760,11 +1760,11 @@ namespace FIA_Biosum_Manager
 				else
 				{
 					//cannot be equal to the optimization variable
-                    for (x = 0; x <= this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
+                    for (x = 0; x <= this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
 					{
-                        if (this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).bSelected)
+                        if (this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).bSelected)
 						{
-                            if (this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).strFVSVariableName.Trim().ToUpper() == 
+                            if (this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).strFVSVariableName.Trim().ToUpper() == 
 								lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim().ToUpper())
 							{
 								p_intError=-1;
@@ -2115,7 +2115,7 @@ namespace FIA_Biosum_Manager
 			set {_bDisplayAuditMsg=value;}
 		}
 		
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
@@ -2163,7 +2163,7 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesTieBreakerVariableValues.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                     {
                         if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
                         {
@@ -2187,7 +2187,7 @@ namespace FIA_Biosum_Manager
             if (this.lstEconVariablesList.SelectedIndex > -1)
             {
                 this.btnFVSVariablesTieBreakerVariableValues.Enabled = true;
-                foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.lstEconVariablesList.SelectedItem)))
                     {

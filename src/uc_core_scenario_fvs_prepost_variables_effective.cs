@@ -57,7 +57,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnFFEEqual;
 		private System.Windows.Forms.Button btnFVSVariablesPrePostVariableValue;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostExpression;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization _uc_optimization;
 		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 		
@@ -147,7 +147,7 @@ namespace FIA_Biosum_Manager
         private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private ListBox lstFVSTablesList;
         private ListBox lstFVSFieldsList;
-        private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
+        private FIA_Biosum_Manager.OptimizerScenarioTools m_oCoreAnalysisScenarioTools = new OptimizerScenarioTools();
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
         private string m_strHelpChapter = "EFFECTIVE_SETTINGS";
         
@@ -1544,14 +1544,14 @@ namespace FIA_Biosum_Manager
 				// Digits are OK
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else if (e.KeyChar == '\b') 
 			{
 				//back space is okay
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else
 			{
@@ -1591,21 +1591,21 @@ namespace FIA_Biosum_Manager
             //
             //effective variables
             //
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Count > 0 &&
-                ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
+            if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Count > 0 &&
+                ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
             {
                 for (x = 0; x <= NUMBER_OF_VARIABLES - 1; x++)
                 {
                     m_oOldVar.m_strPreVarArray[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPreVarArray[x].Trim();
+                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPreVarArray[x].Trim();
                     m_oOldVar.m_strPostVarArray[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPostVarArray[x].Trim();
+                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPostVarArray[x].Trim();
                     m_oOldVar.m_strBetterExpr[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strBetterExpr[x].Trim();
+                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strBetterExpr[x].Trim();
                     m_oOldVar.m_strWorseExpr[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strWorseExpr[x].Trim();
+                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strWorseExpr[x].Trim();
                     m_oOldVar.m_strEffectiveExpr[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strEffectiveExpr[x].Trim();
+                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strEffectiveExpr[x].Trim();
                     this.UpdateListViewVariableItem(x, x + 1, m_oOldVar);
 
                 }
@@ -1613,7 +1613,7 @@ namespace FIA_Biosum_Manager
                 //overall effective
                 //
                 m_oOldVar.m_strOverallEffectiveExpr =
-                          ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveExpr;
+                          ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveExpr;
 
             }
 
@@ -1665,7 +1665,7 @@ namespace FIA_Biosum_Manager
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
             oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
@@ -1836,7 +1836,7 @@ namespace FIA_Biosum_Manager
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
@@ -1973,7 +1973,7 @@ namespace FIA_Biosum_Manager
 				this.txtExpression.AppendText(this.getDefaultExpression("overall"));
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 				this.m_strOverallEffectiveExpression=this.txtExpression.Text.Trim();
 			}
 			else 
@@ -2265,61 +2265,61 @@ namespace FIA_Biosum_Manager
 		private void cmbFFECIBackslide2_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 		
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide2_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardWindSpeedClass_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIHazardWindSpeedClass_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void txtExpression_Leave(object sender, System.EventArgs e)
@@ -2933,8 +2933,8 @@ namespace FIA_Biosum_Manager
 			oAdo.OpenConnection(oAdo.getMDBConnString(strTempFile,"",""));
 
             // Query the optimization uc for the selected revenue attribute so we can pass it to the table
-            CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableCollection = 
-                this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+            OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableCollection =
+                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
             string strColumnFilterName = "";
             for (int x = 0; x <= oOptimizationVariableCollection.Count - 1; x++)
             {
@@ -2945,10 +2945,10 @@ namespace FIA_Biosum_Manager
                     break;
                 }
             }
-            frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection, 
-                Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName, strColumnFilterName);
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection, 
+                Tables.OptimizerScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName, strColumnFilterName);
 
-			strSQL = "SELECT * FROM " + Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName + " WHERE " +
+			strSQL = "SELECT * FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName + " WHERE " +
 				strSQL + ";";
 			oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
 
@@ -3965,10 +3965,10 @@ namespace FIA_Biosum_Manager
 
 			DialogResult result;
             
-			string strScenarioId =  ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId =  ((frmOptimizerScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" +
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			frmDialog frmPrevExp = new frmDialog();
 				
@@ -4010,7 +4010,7 @@ namespace FIA_Biosum_Manager
 				if (result == DialogResult.Yes)
 				{
 					this.txtExpression.Text = frmPrevExp.uc_previous_expressions1.listView1.SelectedItems[0].SubItems[frmPrevExp.uc_previous_expressions1.m_intSelectColumn + 1].Text;
-					((frmCoreScenario)this.ParentForm).m_bSave=true;
+					((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 				}
 			}
 			frmPrevExp.Close();
@@ -4089,7 +4089,7 @@ namespace FIA_Biosum_Manager
 			set {_bDisplayAuditMsg=value;}
 		}
 		
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
@@ -4145,7 +4145,7 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesPrePostVariableValue.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                     {
                         if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
                         {

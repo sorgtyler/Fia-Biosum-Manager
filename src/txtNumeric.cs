@@ -18,7 +18,7 @@ namespace FIA_Biosum_Manager
 		private int intDecimalCurLen=0;
 		private string strLastKey = "";
 		private FIA_Biosum_Manager.frmDialog  m_frmDialog;
-		private FIA_Biosum_Manager.frmCoreScenario m_frmScenario;
+		private FIA_Biosum_Manager.frmOptimizerScenario m_frmScenario;
 
 		public txtNumeric(int intWholeMaxLength, int intDecimalMaxLength)
 		{
@@ -37,7 +37,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add constructor logic here
 			//
 		}
-		public txtNumeric(int intWholeMaxLength, int intDecimalMaxLength,ref FIA_Biosum_Manager.uc_core_scenario_costs p_uc)
+		public txtNumeric(int intWholeMaxLength, int intDecimalMaxLength,ref FIA_Biosum_Manager.uc_optimizer_scenario_costs p_uc)
 			
 		{
 		    
@@ -56,7 +56,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add constructor logic here
 			//
 		}
-		public FIA_Biosum_Manager.frmCoreScenario p_frmScenario
+		public FIA_Biosum_Manager.frmOptimizerScenario p_frmScenario
 		{
 			set 
 			{

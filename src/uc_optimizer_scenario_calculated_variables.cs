@@ -11,7 +11,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_core_scenario_weighted_average : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_calculated_variables : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -29,9 +29,9 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnPrev;
 		private FIA_Biosum_Manager.utils m_oUtils; 
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
-        string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_core_weighted_average_debug.txt";
+        string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_optimizer_calculated_variables_debug.txt";
         private env m_oEnv;
         private Help m_oHelp;
         private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
@@ -139,9 +139,9 @@ namespace FIA_Biosum_Manager
         private ColumnHeader vVariableSource;
         private Button BtnDeleteEconVariable;
         private Button BtnHelpCalculatedMenu;
-        private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
+        private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
 
-        public uc_core_scenario_weighted_average(FIA_Biosum_Manager.frmMain p_frmMain)
+        public uc_optimizer_scenario_calculated_variables(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -881,7 +881,7 @@ namespace FIA_Biosum_Manager
             if (System.IO.File.Exists(m_strDebugFile)) System.IO.File.Delete(m_strDebugFile);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
             {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "START: Core Weighted Variables Log " 
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "START: Optimizer Calculated Variables Log " 
                     + System.DateTime.Now.ToString() + "\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Form name: " + this.Name + "\r\n\r\n");
             }
@@ -901,7 +901,7 @@ namespace FIA_Biosum_Manager
                 lstEconVariablesList.Items.Add(strName);
             }
 
-            m_dictFVSTables = m_oCoreAnalysisScenarioTools.LoadFvsTablesAndVariables(m_oAdo);
+            m_dictFVSTables = m_oOptimizerScenarioTools.LoadFvsTablesAndVariables(m_oAdo);
             foreach (string strKey in m_dictFVSTables.Keys)
             {
                 // 
@@ -997,7 +997,7 @@ namespace FIA_Biosum_Manager
             {
                 //Create temporary table to populate datagrid
                 string strViewTableName = "view_weights";
-                frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFvsVariableWeightsReferenceTable(m_oAdoFvs,
+                frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFvsVariableWeightsReferenceTable(m_oAdoFvs,
                     m_oAdoFvs.m_OleDbConnection, strViewTableName);
                 string[] sqlWhereArray = new string[8];
                 sqlWhereArray[0] = " WHERE CYCLE1_PRE_YN = 'Y'";
@@ -1233,14 +1233,14 @@ namespace FIA_Biosum_Manager
         {
             //Loading the first (main) groupbox
             string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
             //Only instantiate the m_oAdo if it is null so we don't wipe everything out in subsequent refreshes
             if (m_oAdo == null)
             {
                 m_oAdo = new ado_data_access();
             }
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
-            m_oAdo.m_strSQL = "SELECT * FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+            m_oAdo.m_strSQL = "SELECT * FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
                 " ORDER BY VARIABLE_NAME";
             m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             lstVariables.Items.Clear();
@@ -1287,7 +1287,7 @@ namespace FIA_Biosum_Manager
             ado_data_access m_oAdo = new ado_data_access();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\" + Tables.CoreDefinitions.DefaultDbFile;
+				"\\" + Tables.OptimizerDefinitions.DefaultDbFile;
 			m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (m_oAdo.m_intError==0)
 			{
@@ -1297,13 +1297,13 @@ namespace FIA_Biosum_Manager
                 // DELETE EXISTING RECORD ON SHARED DEFINITIONS TABLE
                 if (m_intCurVar > 0)
                 {
-                    m_oAdo.m_strSQL = "DELETE FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+                    m_oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
                                     " WHERE ID = " + m_intCurVar;
                     m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                    string strTableName = Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName;
+                    string strTableName = Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName;
                     if (strVariableType.Equals("ECON"))
                     {
-                        strTableName = Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName;
+                        strTableName = Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName;
                     }
                     m_oAdo.m_strSQL = "DELETE FROM " + strTableName +
                         " WHERE calculated_variables_id = " + m_intCurVar;
@@ -1331,7 +1331,7 @@ namespace FIA_Biosum_Manager
                     }
                 }
                 // SHARED BEGINNING OF INSERT STATEMENT
-                strSql = "INSERT INTO " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+                strSql = "INSERT INTO " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
                     " (ID, VARIABLE_NAME, VARIABLE_DESCRIPTION, VARIABLE_TYPE, BASELINE_RXPACKAGE, VARIABLE_SOURCE)" +
                     " VALUES ( " + intId + ", '";
 
@@ -1375,7 +1375,7 @@ namespace FIA_Biosum_Manager
                             }
                         }
                         
-                        strSql = "INSERT INTO " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
+                        strSql = "INSERT INTO " + Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName +
                             " (calculated_variables_id, weight_1_pre, weight_1_post, weight_2_pre, weight_2_post, " +
                             "weight_3_pre, weight_3_post, weight_4_pre, weight_4_post)" +
                             " VALUES ( " + intId + ", " + arrPrePercents[0] + ", " + arrPostPercents[0] +
@@ -1440,11 +1440,11 @@ namespace FIA_Biosum_Manager
         protected void loadEconVariablesGrid()
         {
             string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
             m_oAdo.m_DataSet = new DataSet("econ_variable");
             m_oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-            m_oAdo.m_strSQL = "SELECT rxcycle, 0.001 as weight FROM " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
+            m_oAdo.m_strSQL = "SELECT rxcycle, 0.001 as weight FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
                 " WHERE CALCULATED_VARIABLES_ID = 1";
             this.m_dtTableSchema = m_oAdo.getTableSchema(m_oAdo.m_OleDbConnection,
                                                        m_oAdo.m_OleDbTransaction,
@@ -1765,12 +1765,12 @@ namespace FIA_Biosum_Manager
 		private void EnableTabs(bool p_bEnable)
 		{
             int x;
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlFVSVariables,"tbeffective,tbtiebreaker",p_bEnable);
-            for (x = 0; x <= ReferenceCoreScenarioForm.tlbScenario.Buttons.Count - 1; x++)
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlFVSVariables,"tbeffective,tbtiebreaker",p_bEnable);
+            for (x = 0; x <= ReferenceOptimizerScenarioForm.tlbScenario.Buttons.Count - 1; x++)
             {
-                ReferenceCoreScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
+                ReferenceOptimizerScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
             }
             frmMain.g_oFrmMain.grpboxLeft.Enabled = p_bEnable;
             frmMain.g_oFrmMain.tlbMain.Enabled = p_bEnable;
@@ -1813,9 +1813,9 @@ namespace FIA_Biosum_Manager
 			get {return _bDisplayAuditMsg;}
 			set {_bDisplayAuditMsg=value;}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
-			get {return _frmScenario;}
+            get { return _frmScenario; }
 			set {_frmScenario=value;}
 		}
 		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
@@ -2031,7 +2031,7 @@ namespace FIA_Biosum_Manager
             string strVariableSource = lstVariables.SelectedItems[0].SubItems[5].Text.Trim();
             string strVariableName = lstVariables.SelectedItems[0].Text.Trim();
             string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
             ado_data_access oAdo = new ado_data_access();
             string strPropertiesConn = m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", "");
             using (var oPropertiesConn = new OleDbConnection(strPropertiesConn))
@@ -2056,7 +2056,7 @@ namespace FIA_Biosum_Manager
                         }
                     }
                     lstEconVariablesList.SelectedIndex = idxType;
-                    oAdo.m_strSQL = "select * from " + Tables.CoreDefinitions.DefaultCalculatedEconVariablesTableName +
+                    oAdo.m_strSQL = "select * from " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
                         " where calculated_variables_id = " + m_intCurVar;
                     oAdo.SqlQueryReader(oPropertiesConn, oAdo.m_strSQL);
                     if (oAdo.m_OleDbDataReader.HasRows)
@@ -2091,7 +2091,7 @@ namespace FIA_Biosum_Manager
                 }
                 else
                 {
-                    oAdo.m_strSQL = "select * from " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
+                    oAdo.m_strSQL = "select * from " + Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName +
                         " where calculated_variables_id = " + m_intCurVar;
                     oAdo.SqlQueryReader(oPropertiesConn, oAdo.m_strSQL);
                     if (oAdo.m_OleDbDataReader.HasRows)
@@ -2319,7 +2319,7 @@ namespace FIA_Biosum_Manager
 
                     frmMain.g_sbpInfo.Text = "Calculating and saving PRE/POST values...Stand by";
                     string strPrePostWeightedDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                        "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+                        "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
                     string strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                         "\\fvs\\db\\" + strSourceDatabaseName;
 
@@ -2631,7 +2631,7 @@ namespace FIA_Biosum_Manager
                 //
             }
 
-            public void Add(FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem m_oVariable)
+            public void Add(FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.VariableItem m_oVariable)
             {
                 // vérify if object is not already in
                 if (this.List.Contains(m_oVariable))
@@ -2654,12 +2654,12 @@ namespace FIA_Biosum_Manager
                     List.RemoveAt(index);
                 }
             }
-            public FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem Item(int Index)
+            public FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.VariableItem Item(int Index)
             {
                 // The appropriate item is retrieved from the List object and
                 // explicitly cast to the Widget type, then returned to the 
                 // caller.
-                return (FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem)List[Index];
+                return (FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.VariableItem)List[Index];
             }
         }
 
@@ -2667,7 +2667,7 @@ namespace FIA_Biosum_Manager
         {
             ado_data_access oAdo = new ado_data_access();
             string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
-            string strScenarioConn = oAdo.getMDBConnString(strScenarioDir + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile, "", "");
+            string strScenarioConn = oAdo.getMDBConnString(strScenarioDir + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile, "", "");
             string[] strPieces = LblSelectedVariable.Text.Split('.');
             using (var oRenameConn = new OleDbConnection(strScenarioConn))
             {
@@ -2683,7 +2683,7 @@ namespace FIA_Biosum_Manager
                 {
                     return;
                 }
-                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName +
+                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName +
                     " WHERE (((UCase(Trim([PRE_FVS_VARIABLE]))) = UCase(Trim('" + strWeightedVariableSource + "'))))" +
                     " AND CURRENT_YN = 'Y'";
                 if ((int)oAdo.getRecordCount(oRenameConn, oAdo.m_strSQL, "TEMP") > 0)
@@ -2695,7 +2695,7 @@ namespace FIA_Biosum_Manager
                 }
                 // Check for usage as Optimization variable
                 strWeightedVariableSource = strPieces[0] + "_WEIGHTED." + lblFvsVariableName.Text;
-                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName +
+                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName +
                     " WHERE (((UCase(Trim([fvs_variable_name]))) = UCase(Trim('" + strWeightedVariableSource + "'))))" +
                     " AND CURRENT_YN = 'Y'";
                 if ((int)oAdo.getRecordCount(oRenameConn, oAdo.m_strSQL, "TEMP") > 0)
@@ -2706,7 +2706,7 @@ namespace FIA_Biosum_Manager
                     return;
                 }
                 // Check for usage as Tie-Breaker variable
-                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName +
+                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName +
                     " WHERE (((UCase(Trim([fvs_variable_name]))) = UCase(Trim('" + strWeightedVariableSource + "'))))";
                 if ((int)oAdo.getRecordCount(oRenameConn, oAdo.m_strSQL, "TEMP") > 0)
                 {
@@ -2725,19 +2725,19 @@ namespace FIA_Biosum_Manager
                 // Delete data entries from FVS pre/post tables
                 string[] strFieldsArr = { lblFvsVariableName.Text };
                 dao_data_access oDao = new dao_data_access();
-                oDao.DeleteField(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
+                oDao.DeleteField(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
                     "PRE_" + strPieces[0] + "_WEIGHTED", strFieldsArr);
-                oDao.DeleteField(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
+                oDao.DeleteField(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
                     "POST_" + strPieces[0] + "_WEIGHTED", strFieldsArr);
 
                 // Delete entries from configuration database
                 string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                    "\\" + Tables.CoreDefinitions.DefaultDbFile;
+                    "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
                 m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
-                m_oAdo.m_strSQL = "DELETE FROM " + Tables.CoreDefinitions.DefaultCalculatedFVSVariablesTableName +
+                m_oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName +
                                   " WHERE calculated_variables_id = " + m_intCurVar;
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
-                m_oAdo.m_strSQL = "DELETE FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName +
+                m_oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
                                   " WHERE ID = " + m_intCurVar;
                 m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                 m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
@@ -2791,17 +2791,17 @@ namespace FIA_Biosum_Manager
     public class WeightedAverage_DataGridColoredTextBoxColumn : DataGridTextBoxColumn
     {
         bool m_bEdit = false;
-        FIA_Biosum_Manager.uc_core_scenario_weighted_average uc_core_scenario_weighted_average1;
+        FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables uc_optimizer_scenario_calculated_variables_1;
         string m_strLastKey = "";
         bool m_bNumericOnly = false;
 
 
         public WeightedAverage_DataGridColoredTextBoxColumn(bool bEdit, bool bNumericOnly, 
-            FIA_Biosum_Manager.uc_core_scenario_weighted_average p_uc)
+            FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables p_uc)
         {
             this.m_bEdit = bEdit;
             this.m_bNumericOnly = bNumericOnly;
-            this.uc_core_scenario_weighted_average1 = p_uc;
+            this.uc_optimizer_scenario_calculated_variables_1 = p_uc;
             this.TextBox.KeyDown += new KeyEventHandler(TextBox_KeyDown);
             this.TextBox.Leave += new EventHandler(TextBox_Leave);
             this.TextBox.Enter += new EventHandler(TextBox_Enter);
@@ -2851,14 +2851,14 @@ namespace FIA_Biosum_Manager
                     if (Char.IsDigit((char)e.KeyValue) || (e.KeyCode == Keys.OemPeriod && this.Format.IndexOf(".", 0) >= 0 && this.TextBox.Text.IndexOf(".", 0) < 0))
                     {
                         this.m_strLastKey = Convert.ToString(e.KeyValue);
-                        if (this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled == false) this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled = true;
+                        if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
                     }
                     else
                     {
                         if (e.KeyCode == Keys.Back)
                         {
                             this.m_strLastKey = Convert.ToString(e.KeyValue);
-                            if (this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled == false) this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled = true;
+                            if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
                         }
                         else
                         {
@@ -2871,7 +2871,7 @@ namespace FIA_Biosum_Manager
                 else
                 {
                     this.m_strLastKey = Convert.ToString(e.KeyValue);
-                    if (this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled == false) this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled = true;
+                    if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
                 }
 
 
@@ -2890,7 +2890,7 @@ namespace FIA_Biosum_Manager
             {
                 if (this.m_strLastKey.Trim().Length > 0)
                 {
-                    if (this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled == false) this.uc_core_scenario_weighted_average1.btnFvsCalculate.Enabled = true;
+                    if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
                 }
             }
         }

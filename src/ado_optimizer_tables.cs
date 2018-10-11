@@ -5,14 +5,14 @@ using System.Windows.Forms;
 namespace FIA_Biosum_Manager
 {
 	/// <summary>
-	/// Summary description for ado_core_tables.
+	/// Summary description for ado_optimizer_tables.
 	/// </summary>
-	public class ado_core_tables
+	public class ado_optimizer_tables
 	{
-		public System.Data.DataSet m_dsCoreTables;
-		public int m_intNumberOfCoreTablesLoaded;
-		public string[] m_strCoreTables;
-		public System.Data.OleDb.OleDbDataAdapter m_OleDbDataAdapter;
+		public System.Data.DataSet m_dsOptimizerTables;
+		public int m_intNumberOfOptimizerTablesLoaded;
+		public string[] m_strOptimizerTables;
+        public System.Data.OleDb.OleDbDataAdapter m_OleDbDataAdapter;
 
 		public System.Data.OleDb.OleDbDataAdapter m_daPlot;
         public System.Data.OleDb.OleDbDataAdapter m_daCond;
@@ -39,18 +39,18 @@ namespace FIA_Biosum_Manager
 		public System.Data.DataTable m_DataTable;
 		public string m_strError;
 		public int m_intError;
-        public const int NUMBER_OF_CORE_TABLES =  11;
+        public const int NUMBER_OF_OPTIMIZER_TABLES =  11;
 		public string m_strRandomFileName="";
-		public int m_intNumberOfCoreTables;
+		public int m_intNumberOfOptimizerTables;
 
-		public ado_core_tables()
+		public ado_optimizer_tables()
 		{
-			this.m_strCoreTables = new string[50];
-			for (int x=0; x <= NUMBER_OF_CORE_TABLES - 1; x++)
+			this.m_strOptimizerTables = new string[50];
+			for (int x=0; x <= NUMBER_OF_OPTIMIZER_TABLES - 1; x++)
 			{
-				this.m_strCoreTables[x] = "";
+				this.m_strOptimizerTables[x] = "";
 			}
-			this.m_intNumberOfCoreTablesLoaded = 0;
+			this.m_intNumberOfOptimizerTablesLoaded = 0;
 
 			this.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
 			this.m_daPlot = new System.Data.OleDb.OleDbDataAdapter();
@@ -69,8 +69,8 @@ namespace FIA_Biosum_Manager
 			this.m_connCond = new System.Data.OleDb.OleDbConnection();
 			
 
-			this.m_dsCoreTables = new DataSet();
-			this.m_dsCoreTables.Clear();
+			this.m_dsOptimizerTables = new DataSet();
+			this.m_dsOptimizerTables.Clear();
 			
 			//
 			// TODO: Add constructor logic here
@@ -106,9 +106,9 @@ namespace FIA_Biosum_Manager
 			if (p_ado.m_intError == 0)
 			{
 				this.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-				this.m_dsCoreTables = new DataSet();
+				this.m_dsOptimizerTables = new DataSet();
                 this.m_OleDbCommand = new System.Data.OleDb.OleDbCommand();
-				this.m_dsCoreTables.DataSetName = "LoadAllRecordsFromScenarioDataSource";
+				this.m_dsOptimizerTables.DataSetName = "LoadAllRecordsFromScenarioDataSource";
 		        while (p_ado.m_OleDbDataReader.Read())
 				 {
 					if (p_ado.m_OleDbDataReader["table_name"] != System.DBNull.Value)
@@ -129,7 +129,7 @@ namespace FIA_Biosum_Manager
 									{
 								        this.m_OleDbDataAdapter.SelectCommand.CommandText = "select * from " + 
 											p_ado.m_OleDbDataReader["table_name"].ToString().Trim();
-                                        this.m_OleDbDataAdapter.Fill(this.m_dsCoreTables,p_ado.m_OleDbDataReader["table_name"].ToString().Trim());
+                                        this.m_OleDbDataAdapter.Fill(this.m_dsOptimizerTables,p_ado.m_OleDbDataReader["table_name"].ToString().Trim());
 
 									}
 									else 
@@ -140,8 +140,8 @@ namespace FIA_Biosum_Manager
 										p_ado.m_OleDbCommand = null;
 										p_ado.m_OleDbDataReader = null;
 										p_ado = null;
-										this.m_dsCoreTables.Clear();
-										this.m_dsCoreTables = null;
+										this.m_dsOptimizerTables.Clear();
+										this.m_dsOptimizerTables = null;
 										this.m_OleDbDataAdapter.Dispose();
 										this.m_OleDbDataAdapter=null;
 										return;
@@ -158,8 +158,8 @@ namespace FIA_Biosum_Manager
 									p_ado.m_OleDbDataReader = null;
 									p_ado = null;
 
-									this.m_dsCoreTables.Clear();
-									this.m_dsCoreTables = null;
+									this.m_dsOptimizerTables.Clear();
+									this.m_dsOptimizerTables = null;
 									this.m_OleDbDataAdapter.Dispose();
 									this.m_OleDbDataAdapter = null;
 									return;
@@ -194,8 +194,8 @@ namespace FIA_Biosum_Manager
 			bool lLoaded=false;
 			
 			this.m_intError=0;
-              
-            this.m_intNumberOfCoreTables = this.getNumberOfCoreTables(strScenarioMDB,strScenarioId);
+
+            this.m_intNumberOfOptimizerTables = this.getNumberOfOptimizerTables(strScenarioMDB, strScenarioId);
 		
 			//ado specific routines class
 			ado_data_access p_ado = new ado_data_access();
@@ -222,14 +222,14 @@ namespace FIA_Biosum_Manager
 			{
 				lLoaded=false;
 				//see if the listbox item is already loaded into a dataset table and the linked mdb table
-				if (this.m_intNumberOfCoreTablesLoaded != 0)
+				if (this.m_intNumberOfOptimizerTablesLoaded != 0)
 				{   
-					for (x=0;x<=this.m_intNumberOfCoreTables - 1;x++)
+					for (x=0;x<=this.m_intNumberOfOptimizerTables - 1;x++)
 					{
-						if (this.m_strCoreTables[x].Trim().Length > 0)
+						if (this.m_strOptimizerTables[x].Trim().Length > 0)
 						{
 							if (listBox1.Items[y].ToString().Trim().ToLower() == 
-								this.m_strCoreTables[x].Trim().ToLower())
+								this.m_strOptimizerTables[x].Trim().ToLower())
 							{
                                 lLoaded=true;
 								break;
@@ -239,9 +239,9 @@ namespace FIA_Biosum_Manager
 			}
             if (lLoaded==false)
             {
-			  
-			 
-     		  //query the MDB datasource table for core table names
+
+
+                //query the MDB datasource table for Optimizer table names
 			  strSQL = "SELECT path, file,table_name FROM scenario_datasource WHERE " + 
 	        	    	" scenario_id = '" + strScenarioId + "' AND " + 
 					    " table_name = '" + listBox1.Items[y] + "';";
@@ -278,15 +278,15 @@ namespace FIA_Biosum_Manager
 								try 
 								{
 
-     								this.m_OleDbDataAdapter.Fill(this.m_dsCoreTables,p_ado.m_OleDbDataReader["table_name"].ToString().Trim());
+     								this.m_OleDbDataAdapter.Fill(this.m_dsOptimizerTables,p_ado.m_OleDbDataReader["table_name"].ToString().Trim());
 	    						}
 		    					catch (Exception e)
 			    				{
 				    				MessageBox.Show(e.Message,"Table",MessageBoxButtons.OK,MessageBoxIcon.Error);
 					    			this.m_intError=-1;
 						    	}
-								this.m_strCoreTables[this.m_intNumberOfCoreTablesLoaded] = p_ado.m_OleDbDataReader["table_name"].ToString().Trim();
-								this.m_intNumberOfCoreTablesLoaded++;
+								this.m_strOptimizerTables[this.m_intNumberOfOptimizerTablesLoaded] = p_ado.m_OleDbDataReader["table_name"].ToString().Trim();
+								this.m_intNumberOfOptimizerTablesLoaded++;
 
 								this.m_connMasterLink.Close();
                                 this.m_connMasterLink = null;
@@ -302,8 +302,8 @@ namespace FIA_Biosum_Manager
 								p_ado.m_OleDbCommand = null;
 								p_ado.m_OleDbDataReader = null;
 								p_ado = null;
-								this.m_dsCoreTables.Clear();
-								this.m_dsCoreTables = null;
+								this.m_dsOptimizerTables.Clear();
+								this.m_dsOptimizerTables = null;
 								this.m_OleDbDataAdapter.Dispose();
 								this.m_OleDbDataAdapter = null;
 								return;
@@ -326,7 +326,7 @@ namespace FIA_Biosum_Manager
 			
 
 		}
-		public int getNumberOfCoreTables(string strScenarioMDB, string strScenarioId)
+        public int getNumberOfOptimizerTables(string strScenarioMDB, string strScenarioId)
 		{
 
 			int intCount=0;
@@ -366,7 +366,7 @@ namespace FIA_Biosum_Manager
             p_ado = null;
 			return intCount;
 		}
-		public void CreateMDBAndCreateCoreTableDataSourceLinks(string strScenarioMDB, string strScenarioId,string strDestinationLinkDir)
+		public void CreateMDBAndCreateOptimizerTableDataSourceLinks(string strScenarioMDB, string strScenarioId,string strDestinationLinkDir)
 		{
 			string strSQL="";
 			string strFullPathMDB="";
@@ -400,11 +400,11 @@ namespace FIA_Biosum_Manager
 			dao_data_access p_dao = new dao_data_access();
 
 			//create a temporary mdb that will contain all 
-			//the links to the core tables
+            //the links to the Optimizer tables
 			p_dao.CreateMDB(this.m_strRandomFileName);
 
-			
-			//query the MDB datasource table for core table names and location of the table
+
+            //query the MDB datasource table for Optimizer table names and location of the table
 			
 			strSQL = "SELECT path, file,table_name FROM scenario_datasource WHERE " + 
 				" scenario_id = '" + strScenarioId + "';";

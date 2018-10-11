@@ -22,12 +22,12 @@ namespace FIA_Biosum_Manager
         const int COL_DESC = 2;
         private bool m_bSuppressCheckEvents = false;
         
-        FIA_Biosum_Manager.frmCoreScenario _frmScenario = null;
+        FIA_Biosum_Manager.frmOptimizerScenario _frmScenario = null;
         public uc_core_scenario_processor_scenario_select()
         {
             InitializeComponent();
         }
-        public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+        public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
         {
             get { return _frmScenario; }
             set { _frmScenario = value; }
@@ -99,7 +99,7 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                foreach (ProcessorScenarioItem psItem in ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oProcessorScenarioItem_Collection)
+                foreach (ProcessorScenarioItem psItem in ReferenceCoreScenarioForm.m_oOptimizerScenarioItem.m_oProcessorScenarioItem_Collection)
                 {
                     m_oProcessorScenarioItem_Collection.Add(psItem);
                     if (psItem.Selected == true)
@@ -130,15 +130,15 @@ namespace FIA_Biosum_Manager
             {
                 string strScenarioMDB =
                     frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 
                 string strConn = oAdo.getMDBConnString(strScenarioMDB, "", "");
                 oAdo.OpenConnection(strConn);
 
-                if (oAdo.TableExist(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName))
+                if (oAdo.TableExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName))
                 {
-                    oAdo.m_strSQL = "SELECT * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
+                    oAdo.m_strSQL = "SELECT * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
                                     "WHERE TRIM(UCASE(scenario_id)) = '" +
                                         ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
                     oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
@@ -164,7 +164,7 @@ namespace FIA_Biosum_Manager
                 }
                 else
                 {
-                    frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
+                    frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
                 }
 
             }
@@ -206,9 +206,9 @@ namespace FIA_Biosum_Manager
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
-            oAdo.m_strSQL = "DELETE FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
+            oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
                                 "WHERE TRIM(UCASE(scenario_id)) = '" +
                                        ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
@@ -223,7 +223,7 @@ namespace FIA_Biosum_Manager
                 else
                     strValuesList = strValuesList + "'N'";
 
-                oAdo.m_strSQL = "INSERT INTO " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
+                oAdo.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
                                 "(" + strColumnsList + ") " +
                                 "VALUES " +
                                 "(" + strValuesList + ")";

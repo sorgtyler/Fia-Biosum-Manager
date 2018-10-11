@@ -9,13 +9,13 @@ using System.Windows.Forms;
 
 namespace FIA_Biosum_Manager
 {
-    public partial class uc_core_scenario_copy : UserControl
+    public partial class uc_optimizer_scenario_copy : UserControl
     {
-        private FIA_Biosum_Manager.CoreAnalysisScenarioItem_Collection m_oCoreAnalysisScenarioItem_Collection = new CoreAnalysisScenarioItem_Collection();
-        private FIA_Biosum_Manager.CoreAnalysisScenarioItem m_oCoreAnalysisScenarioItem;
+        private FIA_Biosum_Manager.OptimizerScenarioItem_Collection m_oOptimizerScenarioItem_Collection = new OptimizerScenarioItem_Collection();
+        private FIA_Biosum_Manager.OptimizerScenarioItem m_oOptimizerScenarioItem;
         private Queries m_oQueries = new Queries();
-        private FIA_Biosum_Manager.CoreAnalysisScenarioItem _oCoreAnalysisScenarioItem;
-        private FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
+        private FIA_Biosum_Manager.OptimizerScenarioItem _oOptimizerScenarioItem;
+        private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
         private ListViewAlternateBackgroundColors m_oLvAlternateColors = new ListViewAlternateBackgroundColors();
 
         const int COL_CHECKBOX = 0;
@@ -24,7 +24,7 @@ namespace FIA_Biosum_Manager
         private bool m_bSuppressCheckEvents = false;
         
         FIA_Biosum_Manager.frmDialog _frmDialog = null;
-        public uc_core_scenario_copy()
+        public uc_optimizer_scenario_copy()
         {
             InitializeComponent();
         }
@@ -33,16 +33,16 @@ namespace FIA_Biosum_Manager
             get { return _frmDialog; }
             set { _frmDialog = value; }
         }
-        public FIA_Biosum_Manager.CoreAnalysisScenarioItem ReferenceCurrentScenarioItem
+        public FIA_Biosum_Manager.OptimizerScenarioItem ReferenceCurrentScenarioItem
         {
-            get { return this._oCoreAnalysisScenarioItem; }
-            set { this._oCoreAnalysisScenarioItem = value; }
+            get { return this._oOptimizerScenarioItem; }
+            set { this._oOptimizerScenarioItem = value; }
         }
         public void loadvalues()
         {
             int x;
             
-            lvCoreAnalysisScenario.Items.Clear();
+            lvOptimizerScenario.Items.Clear();
             System.Windows.Forms.ListViewItem entryListItem = null;
             this.m_oLvAlternateColors.InitializeRowCollection();
             this.m_oLvAlternateColors.ReferenceAlternateBackgroundColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
@@ -50,21 +50,21 @@ namespace FIA_Biosum_Manager
             this.m_oLvAlternateColors.ReferenceBackgroundColor = frmMain.g_oGridViewRowBackgroundColor;
             this.m_oLvAlternateColors.ReferenceForegroundColor = frmMain.g_oGridViewRowForegroundColor;
             this.m_oLvAlternateColors.ReferenceSelectedRowBackgroundColor = frmMain.g_oGridViewSelectedRowBackgroundColor;
-            this.m_oLvAlternateColors.ReferenceListView = this.lvCoreAnalysisScenario;
+            this.m_oLvAlternateColors.ReferenceListView = this.lvOptimizerScenario;
             this.m_oLvAlternateColors.CustomFullRowSelect = true;
-            if (frmMain.g_oGridViewFont != null) this.lvCoreAnalysisScenario.Font = frmMain.g_oGridViewFont;
+            if (frmMain.g_oGridViewFont != null) this.lvOptimizerScenario.Font = frmMain.g_oGridViewFont;
             //
-            //OPEN CONNECTION TO DB FILE CONTAINING Core Analysis Scenario TABLE
+            //OPEN CONNECTION TO DB FILE CONTAINING Optimizer Analysis Scenario TABLE
             //
             //scenario mdb connection
-            string strCoreAnalysisScenarioMDB =
+            string strOptimizerScenarioMDB =
               frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-              Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+              Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
             //
             //get a list of all the scenarios
             //
             ado_data_access oAdo = new ado_data_access();
-            oAdo.OpenConnection(oAdo.getMDBConnString(strCoreAnalysisScenarioMDB,"",""));
+            oAdo.OpenConnection(oAdo.getMDBConnString(strOptimizerScenarioMDB,"",""));
             oAdo.SqlQueryReader(oAdo.m_OleDbConnection,
                        "SELECT scenario_id,description " +
                        "FROM scenario " +
@@ -81,11 +81,11 @@ namespace FIA_Biosum_Manager
                         ReferenceCurrentScenarioItem.ScenarioId.Trim().ToUpper() !=
                         oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim().ToUpper())
                     {
-                        entryListItem = lvCoreAnalysisScenario.Items.Add(" ");
+                        entryListItem = lvOptimizerScenario.Items.Add(" ");
 
                         entryListItem.UseItemStyleForSubItems = false;
                         this.m_oLvAlternateColors.AddRow();
-                        this.m_oLvAlternateColors.AddColumns(x, lvCoreAnalysisScenario.Columns.Count);
+                        this.m_oLvAlternateColors.AddColumns(x, lvOptimizerScenario.Columns.Count);
 
 
                         entryListItem.SubItems.Add(oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim());
@@ -121,16 +121,16 @@ namespace FIA_Biosum_Manager
 
         private void lvCoreAnalysisScenario_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lvCoreAnalysisScenario.SelectedItems.Count > 0)
+            if (lvOptimizerScenario.SelectedItems.Count > 0)
             {
-                m_oLvAlternateColors.DelegateListViewItem(lvCoreAnalysisScenario.SelectedItems[0]);
+                m_oLvAlternateColors.DelegateListViewItem(lvOptimizerScenario.SelectedItems[0]);
                 if (chkFullDetails.Checked)
                 {
                     FullDetails();
                 }
                 else
                 {
-                    txtDetails.Text = lvCoreAnalysisScenario.SelectedItems[0].SubItems[COL_DESC].Text;
+                    txtDetails.Text = lvOptimizerScenario.SelectedItems[0].SubItems[COL_DESC].Text;
                 }
             }
         }
@@ -142,10 +142,10 @@ namespace FIA_Biosum_Manager
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    int intRowHt = lvCoreAnalysisScenario.Items[0].Bounds.Height;
+                    int intRowHt = lvOptimizerScenario.Items[0].Bounds.Height;
                     double dblRow = (double)(e.Y / intRowHt);
-                    lvCoreAnalysisScenario.Items[lvCoreAnalysisScenario.TopItem.Index + (int)dblRow - 1].Selected = true;
-                    this.m_oLvAlternateColors.DelegateListViewItem(lvCoreAnalysisScenario.Items[lvCoreAnalysisScenario.TopItem.Index + (int)dblRow - 1]);
+                    lvOptimizerScenario.Items[lvOptimizerScenario.TopItem.Index + (int)dblRow - 1].Selected = true;
+                    this.m_oLvAlternateColors.DelegateListViewItem(lvOptimizerScenario.Items[lvOptimizerScenario.TopItem.Index + (int)dblRow - 1]);
 
 
                 }
@@ -163,14 +163,14 @@ namespace FIA_Biosum_Manager
         private void lvCoreAnalysisScenario_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (m_bSuppressCheckEvents == true) return;
-            if (this.lvCoreAnalysisScenario.SelectedItems.Count == 0) return;
+            if (this.lvOptimizerScenario.SelectedItems.Count == 0) return;
             m_bSuppressCheckEvents = true;
-            for (int x = 0; x <= this.lvCoreAnalysisScenario.Items.Count - 1; x++)
+            for (int x = 0; x <= this.lvOptimizerScenario.Items.Count - 1; x++)
             {
-                if (this.lvCoreAnalysisScenario.Items[x].Index !=
-                    this.lvCoreAnalysisScenario.SelectedItems[0].Index)
+                if (this.lvOptimizerScenario.Items[x].Index !=
+                    this.lvOptimizerScenario.SelectedItems[0].Index)
                 {
-                    lvCoreAnalysisScenario.Items[x].Checked = false;
+                    lvOptimizerScenario.Items[x].Checked = false;
                 }
                 else
                 {
@@ -198,7 +198,7 @@ namespace FIA_Biosum_Manager
             this.txtDetails.Width = this.panel1.Width - (int)(txtDetails.Left * 2);
             lblMsg.Width = this.txtDetails.Width;
             lblMsg.Left = txtDetails.Left;
-            this.lvCoreAnalysisScenario.Width = txtDetails.Width;
+            this.lvOptimizerScenario.Width = txtDetails.Width;
             this.btnCopy.Top = this.panel1.ClientSize.Height - btnCopy.Height - 5;
             this.btnCancel.Top = btnCopy.Top;
             this.lblMsg.Top = btnCopy.Top - lblMsg.Height - 2;
@@ -206,12 +206,12 @@ namespace FIA_Biosum_Manager
             btnCancel.Left = (int)(txtDetails.Width * .5) + 10;
             this.txtDetails.Top = lblMsg.Top - txtDetails.Height - 2;
             this.chkFullDetails.Top = txtDetails.Top - chkFullDetails.Height - 2;
-            this.lvCoreAnalysisScenario.Height = chkFullDetails.Top - lvCoreAnalysisScenario.Top;
+            this.lvOptimizerScenario.Height = chkFullDetails.Top - lvOptimizerScenario.Top;
         }
 
         private void chkFullDetails_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkFullDetails.Checked && lvCoreAnalysisScenario.SelectedItems.Count > 0)
+            if (chkFullDetails.Checked && lvOptimizerScenario.SelectedItems.Count > 0)
                    FullDetails();
         }
         private void FullDetails()
@@ -220,25 +220,25 @@ namespace FIA_Biosum_Manager
 
             this.txtDetails.Text  = "";
 
-            CheckIfScenarioLoaded(lvCoreAnalysisScenario.SelectedItems[0].SubItems[1].Text.Trim(),out x);
+            CheckIfScenarioLoaded(lvOptimizerScenario.SelectedItems[0].SubItems[1].Text.Trim(),out x);
             
-            this.m_oCoreAnalysisScenarioItem = m_oCoreAnalysisScenarioItem_Collection.Item(x);
+            this.m_oOptimizerScenarioItem = m_oOptimizerScenarioItem_Collection.Item(x);
 
-            this.txtDetails.Text = m_oCoreAnalysisScenarioTools.ScenarioProperties(m_oCoreAnalysisScenarioItem);
+            this.txtDetails.Text = m_oOptimizerScenarioTools.ScenarioProperties(m_oOptimizerScenarioItem);
         }
         public int val_corescenario()
         {
-            if (this.lvCoreAnalysisScenario.Items.Count == 0)
+            if (this.lvOptimizerScenario.Items.Count == 0)
             {
                 MessageBox.Show("Run Scenario Failed: No Treatment Optimizer Scenarios exist. At least one Treatment Optimizer Scenario must exist to run a Treatment Optimizer Scenario", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return -1;
             }
-            if (this.lvCoreAnalysisScenario.CheckedItems.Count == 0)
+            if (this.lvOptimizerScenario.CheckedItems.Count == 0)
             {
                 MessageBox.Show("Run Scenario Failed: Select at least one Treatment Optimizer Scenario in <Cost and Revenue><Treatment Optimizer Scenario>", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return -1;
             }
-            this.m_oCoreAnalysisScenarioItem = this.m_oCoreAnalysisScenarioItem_Collection.Item(lvCoreAnalysisScenario.CheckedItems[0].Index);
+            this.m_oOptimizerScenarioItem = this.m_oOptimizerScenarioItem_Collection.Item(lvOptimizerScenario.CheckedItems[0].Index);
 
             return 0;
 
@@ -246,28 +246,28 @@ namespace FIA_Biosum_Manager
 
         private void btnCopy_Click(object sender, EventArgs e)
         {
-            if (lvCoreAnalysisScenario.SelectedItems.Count == 0) return;
+            if (lvOptimizerScenario.SelectedItems.Count == 0) return;
             int x = 0;
-            string strMsg = "Copy scenario properties\r\n\r\nFROM\r\n-------\r\n" + lvCoreAnalysisScenario.SelectedItems[0].SubItems[1].Text.Trim() + "\r\n\r\nTO\r\n-------\r\n" + ReferenceCurrentScenarioItem.ScenarioId;
+            string strMsg = "Copy scenario properties\r\n\r\nFROM\r\n-------\r\n" + lvOptimizerScenario.SelectedItems[0].SubItems[1].Text.Trim() + "\r\n\r\nTO\r\n-------\r\n" + ReferenceCurrentScenarioItem.ScenarioId;
             DialogResult result = MessageBox.Show(strMsg, "FIA Biosum", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                CheckIfScenarioLoaded(lvCoreAnalysisScenario.SelectedItems[0].SubItems[1].Text.Trim(), out x);
+                CheckIfScenarioLoaded(lvOptimizerScenario.SelectedItems[0].SubItems[1].Text.Trim(), out x);
 
-                this.m_oCoreAnalysisScenarioItem = m_oCoreAnalysisScenarioItem_Collection.Item(x);
+                this.m_oOptimizerScenarioItem = m_oOptimizerScenarioItem_Collection.Item(x);
 
-                ReferenceCurrentScenarioItem.Description = m_oCoreAnalysisScenarioItem.Description;
-                ReferenceCurrentScenarioItem.Notes = m_oCoreAnalysisScenarioItem.Notes;
-                ReferenceCurrentScenarioItem.m_oCondTableSQLFilter = m_oCoreAnalysisScenarioItem.m_oCondTableSQLFilter;
-                ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection, ref ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection, true);
-                ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oOptimizationVariableItem_Collection, ref ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection, true);
-                ReferenceCurrentScenarioItem.m_oProcessingSiteItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oProcessingSiteItem_Collection, ref ReferenceCurrentScenarioItem.m_oProcessingSiteItem_Collection, true);
-                ReferenceCurrentScenarioItem.m_oLastTieBreakRankItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oLastTieBreakRankItem_Collection, ref ReferenceCurrentScenarioItem.m_oLastTieBreakRankItem_Collection, true);
-                ReferenceCurrentScenarioItem.m_oTieBreaker_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oTieBreaker_Collection, ref ReferenceCurrentScenarioItem.m_oTieBreaker_Collection, true);
-                ReferenceCurrentScenarioItem.m_oTranCosts.Copy(m_oCoreAnalysisScenarioItem.m_oTranCosts, ReferenceCurrentScenarioItem.m_oTranCosts);
-                ReferenceCurrentScenarioItem.m_oProcessorScenarioItem_Collection.Copy(m_oCoreAnalysisScenarioItem.m_oProcessorScenarioItem_Collection, ref ReferenceCurrentScenarioItem.m_oProcessorScenarioItem_Collection, true);
-                ReferenceCurrentScenarioItem.OwnerGroupCodeList = m_oCoreAnalysisScenarioItem.OwnerGroupCodeList;
-                ReferenceCurrentScenarioItem.PlotTableSQLFilter = m_oCoreAnalysisScenarioItem.PlotTableSQLFilter;
+                ReferenceCurrentScenarioItem.Description = m_oOptimizerScenarioItem.Description;
+                ReferenceCurrentScenarioItem.Notes = m_oOptimizerScenarioItem.Notes;
+                ReferenceCurrentScenarioItem.m_oCondTableSQLFilter = m_oOptimizerScenarioItem.m_oCondTableSQLFilter;
+                ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection.Copy(m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection, ref ReferenceCurrentScenarioItem.m_oEffectiveVariablesItem_Collection, true);
+                ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection.Copy(m_oOptimizerScenarioItem.m_oOptimizationVariableItem_Collection, ref ReferenceCurrentScenarioItem.m_oOptimizationVariableItem_Collection, true);
+                ReferenceCurrentScenarioItem.m_oProcessingSiteItem_Collection.Copy(m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection, ref ReferenceCurrentScenarioItem.m_oProcessingSiteItem_Collection, true);
+                ReferenceCurrentScenarioItem.m_oLastTieBreakRankItem_Collection.Copy(m_oOptimizerScenarioItem.m_oLastTieBreakRankItem_Collection, ref ReferenceCurrentScenarioItem.m_oLastTieBreakRankItem_Collection, true);
+                ReferenceCurrentScenarioItem.m_oTieBreaker_Collection.Copy(m_oOptimizerScenarioItem.m_oTieBreaker_Collection, ref ReferenceCurrentScenarioItem.m_oTieBreaker_Collection, true);
+                ReferenceCurrentScenarioItem.m_oTranCosts.Copy(m_oOptimizerScenarioItem.m_oTranCosts, ReferenceCurrentScenarioItem.m_oTranCosts);
+                ReferenceCurrentScenarioItem.m_oProcessorScenarioItem_Collection.Copy(m_oOptimizerScenarioItem.m_oProcessorScenarioItem_Collection, ref ReferenceCurrentScenarioItem.m_oProcessorScenarioItem_Collection, true);
+                ReferenceCurrentScenarioItem.OwnerGroupCodeList = m_oOptimizerScenarioItem.OwnerGroupCodeList;
+                ReferenceCurrentScenarioItem.PlotTableSQLFilter = m_oOptimizerScenarioItem.PlotTableSQLFilter;
                
                 _frmDialog.DialogResult = DialogResult.OK;
                 _frmDialog.Close();
@@ -278,22 +278,22 @@ namespace FIA_Biosum_Manager
         {
             
             //search to see if this scenario was loaded into the collection
-            for (x = 0; x <= m_oCoreAnalysisScenarioItem_Collection.Count - 1; x++)
+            for (x = 0; x <= m_oOptimizerScenarioItem_Collection.Count - 1; x++)
             {
-                if (m_oCoreAnalysisScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
+                if (m_oOptimizerScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
                     p_strScenarioId.Trim().ToUpper()) break;
             }
-            if (x > m_oCoreAnalysisScenarioItem_Collection.Count - 1)
+            if (x > m_oOptimizerScenarioItem_Collection.Count - 1)
             {
 
                 lblMsg.Text = "Loading Treatment Optimizer Scenario " + p_strScenarioId.Trim() + "...Stand By";
                 lblMsg.Show();
                 lblMsg.Refresh();
                 //load the scenario into the collection
-                m_oCoreAnalysisScenarioTools.LoadScenario(
+                m_oOptimizerScenarioTools.LoadScenario(
                     p_strScenarioId.Trim(),
                     m_oQueries,
-                    m_oCoreAnalysisScenarioItem_Collection);
+                    m_oOptimizerScenarioItem_Collection);
                 lblMsg.Hide();
             }
         }

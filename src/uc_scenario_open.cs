@@ -39,7 +39,7 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.TextBox txtScenarioId;
 		public int m_intFullHt=500;
 		public int m_intFullWd=650;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario;
 		private string _strScenarioType="optimizer";
 		
@@ -403,7 +403,7 @@ namespace FIA_Biosum_Manager
 						MessageBox.Show("!!Scenario Already Open!!","Scenario Open",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						return;
 					}
-					((frmCoreScenario)this.ParentForm).DialogResult=DialogResult.OK;
+					((frmOptimizerScenario)this.ParentForm).DialogResult=DialogResult.OK;
 				}
 				else
 				{
@@ -623,10 +623,10 @@ namespace FIA_Biosum_Manager
 						{
 							if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 							{
-								((frmCoreScenario)ParentForm).uc_datasource1.strScenarioId = this.txtScenarioId.Text.Trim();
-								((frmCoreScenario)ParentForm).uc_datasource1.strDataSourceMDBFile = ((frmMain)ParentForm.ParentForm).frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + ScenarioType + "\\db\\scenario_" + ScenarioType + "_rule_definitions.mdb";
-								((frmCoreScenario)ParentForm).uc_datasource1.strDataSourceTable = "scenario_datasource";
-								((frmCoreScenario)ParentForm).uc_datasource1.strProjectDirectory = ((frmMain)ParentForm.ParentForm).frmProject.uc_project1.txtRootDirectory.Text.Trim();
+								((frmOptimizerScenario)ParentForm).uc_datasource1.strScenarioId = this.txtScenarioId.Text.Trim();
+								((frmOptimizerScenario)ParentForm).uc_datasource1.strDataSourceMDBFile = ((frmMain)ParentForm.ParentForm).frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + ScenarioType + "\\db\\scenario_" + ScenarioType + "_rule_definitions.mdb";
+								((frmOptimizerScenario)ParentForm).uc_datasource1.strDataSourceTable = "scenario_datasource";
+								((frmOptimizerScenario)ParentForm).uc_datasource1.strProjectDirectory = ((frmMain)ParentForm.ParentForm).frmProject.uc_project1.txtRootDirectory.Text.Trim();
 							}
 							else
 							{
@@ -683,10 +683,10 @@ namespace FIA_Biosum_Manager
 				string strFile = "scenario_" + ScenarioType + "_rule_definitions.mdb"; 
 				if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 				{
-					((frmCoreScenario)ParentForm).uc_datasource1.strScenarioId = this.txtScenarioId.Text.Trim();
-					((frmCoreScenario)ParentForm).uc_datasource1.strDataSourceMDBFile = strScenarioDir + "\\scenario_" + ScenarioType + "_rule_definitions.mdb";
-					((frmCoreScenario)ParentForm).uc_datasource1.strDataSourceTable = "scenario_datasource";
-					((frmCoreScenario)ParentForm).uc_datasource1.strProjectDirectory =  strProjDir;
+					((frmOptimizerScenario)ParentForm).uc_datasource1.strScenarioId = this.txtScenarioId.Text.Trim();
+					((frmOptimizerScenario)ParentForm).uc_datasource1.strDataSourceMDBFile = strScenarioDir + "\\scenario_" + ScenarioType + "_rule_definitions.mdb";
+					((frmOptimizerScenario)ParentForm).uc_datasource1.strDataSourceTable = "scenario_datasource";
+					((frmOptimizerScenario)ParentForm).uc_datasource1.strProjectDirectory =  strProjDir;
 				}
 				else
 				{
@@ -711,11 +711,11 @@ namespace FIA_Biosum_Manager
 			}
 			if (ScenarioType.Trim().ToUpper() =="OPTIMIZER")
 			{
-				if (((frmCoreScenario)this.ParentForm).m_bScenarioOpen == false) 
+				if (((frmOptimizerScenario)this.ParentForm).m_bScenarioOpen == false) 
 				{
-					((frmCoreScenario)this.ParentForm).Text = "Core Analysis: Optimization Scenario (" + this.txtScenarioId.Text.Trim() + ")";
-					((frmCoreScenario)this.ParentForm).SetMenu("scenario");
-					((frmCoreScenario)this.ParentForm).m_bScenarioOpen = true;
+					((frmOptimizerScenario)this.ParentForm).Text = "Core Analysis: Optimization Scenario (" + this.txtScenarioId.Text.Trim() + ")";
+					((frmOptimizerScenario)this.ParentForm).SetMenu("scenario");
+					((frmOptimizerScenario)this.ParentForm).m_bScenarioOpen = true;
 					this.lblTitle.Text = "";
 					this.Visible=false;
 				}
@@ -739,15 +739,15 @@ namespace FIA_Biosum_Manager
 			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER")
 			{
 			
-				if (((frmCoreScenario)this.ParentForm).m_bScenarioOpen == false) 
+				if (((frmOptimizerScenario)this.ParentForm).m_bScenarioOpen == false) 
 				{
-					((frmCoreScenario)this.ParentForm).Close();
+					((frmOptimizerScenario)this.ParentForm).Close();
 				}
 				else 
 				{
 					this.lblTitle.Text = "";
 					//((frmScenario)this.ParentForm).lblTitle.Text = "";
-					((frmCoreScenario)this.ParentForm).SetMenu("scenario");
+					((frmOptimizerScenario)this.ParentForm).SetMenu("scenario");
 					this.Visible =false;
 					//v309((frmScenario)this.ParentForm).Height = ((frmScenario)this.ParentForm).grpboxMenu.Height*2;
 				}
@@ -917,7 +917,7 @@ namespace FIA_Biosum_Manager
 		{
 			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER")
 			{
-				((frmCoreScenario)this.ParentForm).m_bPopup = false;
+				((frmOptimizerScenario)this.ParentForm).m_bPopup = false;
 			}
 			else
 			{
@@ -928,7 +928,7 @@ namespace FIA_Biosum_Manager
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
             if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
-				((frmCoreScenario)this.ParentForm).Close();
+				((frmOptimizerScenario)this.ParentForm).Close();
 			else
 				this.ReferenceProcessorScenarioForm.Close();
 
@@ -950,7 +950,7 @@ namespace FIA_Biosum_Manager
 		{
 		
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

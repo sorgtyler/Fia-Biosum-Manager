@@ -46,7 +46,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label lblProgress;
 		private string m_strDataSourceTable;
 		private System.Windows.Forms.Panel panel1;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario=null;
 		private string _strScenarioType="core";
 
@@ -689,7 +689,7 @@ namespace FIA_Biosum_Manager
 			if (this.m_strScenarioId.Trim().Length > 0)
 			{
 				if (this.ScenarioType.Trim().ToUpper()=="CORE")
-					((frmCoreScenario)this.ParentForm).m_bPopup = false;
+					((frmOptimizerScenario)this.ParentForm).m_bPopup = false;
 				else
 					this.ReferenceProcessorScenarioForm.m_bPopup=false;
 			}
@@ -700,7 +700,7 @@ namespace FIA_Biosum_Manager
 			if (this.m_strScenarioId.Trim().Length > 0)
 			{
 				if (this.ScenarioType.Trim().ToUpper()=="CORE")
-				 ((frmCoreScenario)this.ParentForm).m_bPopup = false;
+				 ((frmOptimizerScenario)this.ParentForm).m_bPopup = false;
 				else
 				  this.ReferenceProcessorScenarioForm.m_bPopup=false;
 			}
@@ -991,7 +991,7 @@ namespace FIA_Biosum_Manager
 			{
 				this.Visible=false;
 			     if (this.ScenarioType.Trim().ToUpper() =="CORE")
-					((frmCoreScenario)this.ParentForm).Height = 0 ; 
+					((frmOptimizerScenario)this.ParentForm).Height = 0 ; 
 				 else this.ReferenceProcessorScenarioForm.Height=0;
 				
 			}
@@ -1006,7 +1006,7 @@ namespace FIA_Biosum_Manager
 			{
 				this.Visible=false;
 			
-				((frmCoreScenario)this.ParentForm).Height = 0 ; 
+				((frmOptimizerScenario)this.ParentForm).Height = 0 ; 
 				
 			}
 			else
@@ -1065,7 +1065,7 @@ namespace FIA_Biosum_Manager
 				this.lblProgress.Visible=true;
 				
 				if (this.ScenarioType.Trim().ToUpper()=="CORE")
-					strCopyToDir = ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioPath.Text.Trim() + "\\db";
+					strCopyToDir = ((frmOptimizerScenario)this.ParentForm).uc_scenario1.txtScenarioPath.Text.Trim() + "\\db";
 				else 
 					strCopyToDir = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db";
 			    for (x=0; x <= this.lstRequiredTables.Items.Count-1; x++)
@@ -1658,7 +1658,7 @@ namespace FIA_Biosum_Manager
 				return this.m_strProjectDirectory;
 			}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

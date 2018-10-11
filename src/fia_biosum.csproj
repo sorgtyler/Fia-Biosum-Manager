@@ -171,7 +171,7 @@
     <Compile Include="uc_delete_conditions.Designer.cs">
       <DependentUpon>uc_delete_conditions.cs</DependentUpon>
     </Compile>
-    <Compile Include="uc_core_scenario_calculated_variables.cs">
+    <Compile Include="uc_optimizer_scenario_calculated_variables.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_textboxWithButtons.cs">
@@ -241,7 +241,7 @@
     <Compile Include="frmRxPackageItem.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmCoreScenario.cs">
+    <Compile Include="frmOptimizerScenario.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmScanAndSynchronizeProjectRootFolderTool.cs">
@@ -491,11 +491,11 @@
     <Compile Include="uc_scenario.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_core_scenario_copy.cs">
+    <Compile Include="uc_optimizer_scenario_copy.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_core_scenario_copy.designer.cs">
-      <DependentUpon>uc_core_scenario_copy.cs</DependentUpon>
+    <Compile Include="uc_optimizer_scenario_copy.designer.cs">
+      <DependentUpon>uc_optimizer_scenario_copy.cs</DependentUpon>
     </Compile>
     <Compile Include="uc_core_scenario_costs.cs">
       <SubType>UserControl</SubType>
@@ -533,7 +533,7 @@
     <Compile Include="uc_core_scenario_psite.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="uc_core_scenario_run.cs">
+    <Compile Include="uc_optimizer_scenario_run.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="uc_core_scenario_treatment_intensity.cs">
@@ -595,8 +595,8 @@
     <EmbeddedResource Include="uc_delete_conditions.resx">
       <DependentUpon>uc_delete_conditions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_core_scenario_calculated_variables.resx">
-      <DependentUpon>uc_core_scenario_calculated_variables.cs</DependentUpon>
+    <EmbeddedResource Include="uc_optimizer_scenario_calculated_variables.resx">
+      <DependentUpon>uc_optimizer_scenario_calculated_variables.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_textboxWithButtons.resx">
       <DependentUpon>uc_textboxWithButtons.cs</DependentUpon>
@@ -647,8 +647,8 @@
     <EmbeddedResource Include="frmRxPackageItem.resx">
       <DependentUpon>frmRxPackageItem.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmCoreScenario.resx">
-      <DependentUpon>frmCoreScenario.cs</DependentUpon>
+    <EmbeddedResource Include="frmOptimizerScenario.resx">
+      <DependentUpon>frmOptimizerScenario.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmScanAndSynchronizeProjectRootFolderTool.resx">
       <DependentUpon>frmScanAndSynchronizeProjectRootFolderTool.cs</DependentUpon>
@@ -829,8 +829,8 @@
     <EmbeddedResource Include="uc_scenario.resx">
       <DependentUpon>uc_scenario.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_core_scenario_copy.resx">
-      <DependentUpon>uc_core_scenario_copy.cs</DependentUpon>
+    <EmbeddedResource Include="uc_optimizer_scenario_copy.resx">
+      <DependentUpon>uc_optimizer_scenario_copy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_core_scenario_costs.resx">
       <DependentUpon>uc_core_scenario_costs.cs</DependentUpon>
@@ -877,8 +877,8 @@
     <EmbeddedResource Include="uc_core_scenario_psite.resx">
       <DependentUpon>uc_core_scenario_psite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="uc_core_scenario_run.resx">
-      <DependentUpon>uc_core_scenario_run.cs</DependentUpon>
+    <EmbeddedResource Include="uc_optimizer_scenario_run.resx">
+      <DependentUpon>uc_optimizer_scenario_run.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_core_scenario_treatment_intensity.resx">
       <DependentUpon>uc_core_scenario_treatment_intensity.cs</DependentUpon>

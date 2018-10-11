@@ -40,7 +40,7 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.CheckBox chkProcSumTree;
 		public System.Windows.Forms.CheckBox chkProcTravelTimes;
 		public System.Windows.Forms.Button btnViewScenarioTables;
-		public FIA_Biosum_Manager.frmCoreScenario m_frmScenario;
+		public FIA_Biosum_Manager.frmOptimizerScenario m_frmScenario;
 		private FIA_Biosum_Manager.frmGridView m_frmGridView;
 		public System.Windows.Forms.Button btnViewAuditTables;
 		private int m_intError=0;
@@ -61,7 +61,7 @@ namespace FIA_Biosum_Manager
 
 	    
 
-		public frmRunCoreScenario(FIA_Biosum_Manager.frmCoreScenario p_frmScenario)
+		public frmRunCoreScenario(FIA_Biosum_Manager.frmOptimizerScenario p_frmScenario)
 		{
 			//
 			// Required for Windows Form Designer support

@@ -156,7 +156,7 @@ namespace FIA_Biosum_Manager
             //
             strFullPath =
                 this.lblCurrentProjectRootFolder.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
              if (System.IO.File.Exists(strFullPath))
              {

@@ -9,7 +9,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for Form1.
 	/// </summary>
-	public class frmCoreScenario : System.Windows.Forms.Form
+	public class frmOptimizerScenario : System.Windows.Forms.Form
 	{
 		public System.Windows.Forms.TextBox txtDropDown;
 		private System.Data.DataView dataView1;
@@ -27,13 +27,13 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_effective uc_scenario_fvs_prepost_variables_effective1;
 		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_optimization uc_scenario_fvs_prepost_optimization1;
 		public FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker uc_scenario_fvs_prepost_variables_tiebreaker1;
-		public FIA_Biosum_Manager.uc_core_scenario_costs uc_scenario_costs1;
+		public FIA_Biosum_Manager.uc_optimizer_scenario_costs uc_scenario_costs1;
 		public FIA_Biosum_Manager.uc_select_list_item uc_select_list_item1;
-		public FIA_Biosum_Manager.uc_core_scenario_filter uc_scenario_filter1;
-		public FIA_Biosum_Manager.uc_core_scenario_filter uc_scenario_cond_filter1;
+		public FIA_Biosum_Manager.uc_optimizer_scenario_filter uc_scenario_filter1;
+		public FIA_Biosum_Manager.uc_optimizer_scenario_filter uc_scenario_cond_filter1;
 		public FIA_Biosum_Manager.uc_core_scenario_psite uc_scenario_psite1;
 		public FIA_Biosum_Manager.uc_scenario_open uc_scenario_open1;
-		public FIA_Biosum_Manager.uc_core_scenario_run uc_scenario_run1=null;
+		public FIA_Biosum_Manager.uc_optimizer_scenario_run uc_scenario_run1=null;
 		public FIA_Biosum_Manager.uc_scenario_notes uc_scenario_notes1;
         public FIA_Biosum_Manager.uc_core_scenario_processor_scenario_select uc_scenario_processor_scenario_select1;
 		public FIA_Biosum_Manager.uc_core_scenario_owner_groups uc_scenario_owner_groups1;
@@ -91,23 +91,23 @@ namespace FIA_Biosum_Manager
 		
 		public bool m_bPopup = false;
 
-        public FIA_Biosum_Manager.CoreAnalysisScenarioItem m_oCoreAnalysisScenarioItem = new CoreAnalysisScenarioItem();
-        public FIA_Biosum_Manager.CoreAnalysisScenarioItem_Collection m_oCoreAnalysisScenarioItem_Collection = new CoreAnalysisScenarioItem_Collection();
-        public FIA_Biosum_Manager.CoreAnalysisScenarioTools m_oCoreAnalysisScenarioTools = new CoreAnalysisScenarioTools();
+        public FIA_Biosum_Manager.OptimizerScenarioItem m_oOptimizerScenarioItem = new OptimizerScenarioItem();
+        public FIA_Biosum_Manager.OptimizerScenarioItem_Collection m_oOptimizerScenarioItem_Collection = new OptimizerScenarioItem_Collection();
+        public FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
         private ToolBarButton btnScenarioProperties;
         private ToolBarButton tlbSeparator;
         private ToolBarButton btnScenarioCopy;
-        public FIA_Biosum_Manager.CoreAnalysisScenarioItem m_oSavCoreAnalysisScenarioItem = new CoreAnalysisScenarioItem();
+        public FIA_Biosum_Manager.OptimizerScenarioItem m_oSavOptimizerScenarioItem = new OptimizerScenarioItem();
         private Button btnHelp;
         private env m_oEnv;
         private Help m_oHelp;
         private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
         private string m_helpChapter = "OPEN_SCENARIO";
-        public FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection m_oWeightedVariableCollection =
-            new FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection();
+        public FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection m_oWeightedVariableCollection =
+            new FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection();
 
 
-		public frmCoreScenario(FIA_Biosum_Manager.frmMain p_frmMain)
+		public frmOptimizerScenario(FIA_Biosum_Manager.frmMain p_frmMain)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -168,11 +168,11 @@ namespace FIA_Biosum_Manager
 				//
 				//rule definitions costs
 				//
-				this.uc_scenario_costs1 = new uc_core_scenario_costs();
+				this.uc_scenario_costs1 = new uc_optimizer_scenario_costs();
 				this.tbCosts.Controls.Add(uc_scenario_costs1);
               
 				this.uc_scenario_costs1.Dock = System.Windows.Forms.DockStyle.Fill;
-				this.uc_scenario_costs1.ReferenceCoreScenarioForm=this;
+				this.uc_scenario_costs1.ReferenceOptimizerScenarioForm=this;
 				//
 				//rule definitions processing sites
 				//
@@ -183,18 +183,18 @@ namespace FIA_Biosum_Manager
 				//
 				//rule custom plot filter
 				//
-				this.uc_scenario_filter1 = new uc_core_scenario_filter();
+				this.uc_scenario_filter1 = new uc_optimizer_scenario_filter();
 				this.tbFilterPlots.Controls.Add(uc_scenario_filter1);
 				this.uc_scenario_filter1.Dock = System.Windows.Forms.DockStyle.Fill;
-				this.uc_scenario_filter1.ReferenceCoreScenarioForm=this;
+				this.uc_scenario_filter1.ReferenceOptimizerScenarioForm=this;
 				this.uc_scenario_filter1.FilterType="PLOT";
 				//
 				//rule custom condition filter
 				//
-				this.uc_scenario_cond_filter1 = new uc_core_scenario_filter();
+				this.uc_scenario_cond_filter1 = new uc_optimizer_scenario_filter();
 				this.tbFilterCond.Controls.Add(uc_scenario_cond_filter1);
 				this.uc_scenario_cond_filter1.Dock = System.Windows.Forms.DockStyle.Fill;
-				this.uc_scenario_cond_filter1.ReferenceCoreScenarioForm=this;
+				this.uc_scenario_cond_filter1.ReferenceOptimizerScenarioForm=this;
 				this.uc_scenario_cond_filter1.lblTitle.Text = "Condition Filter";
 				this.uc_scenario_cond_filter1.FilterType="COND";
 				//
@@ -234,11 +234,11 @@ namespace FIA_Biosum_Manager
 
 
 				//rule execute run
-				this.uc_scenario_run1 = new uc_core_scenario_run();
+				this.uc_scenario_run1 = new uc_optimizer_scenario_run();
 				this.tbRun.Controls.Add(uc_scenario_run1);
 				this.uc_scenario_run1.Dock = System.Windows.Forms.DockStyle.Fill;
-				this.uc_scenario_run1.ReferenceCoreScenarioForm=this;
-                this.uc_scenario_run1.ReferenceCoreScenarioForm = this;
+				this.uc_scenario_run1.ReferenceOptimizerScenarioForm=this;
+                this.uc_scenario_run1.ReferenceOptimizerScenarioForm = this;
                 this.btnClose.Enabled=true;
                 this.resize_frmScenario();
 
@@ -246,7 +246,7 @@ namespace FIA_Biosum_Manager
 
                 //load weighted variable definitions
                 ado_data_access oAdo = new ado_data_access();
-                m_oCoreAnalysisScenarioTools.LoadWeightedVariables(oAdo, m_oWeightedVariableCollection);
+                m_oOptimizerScenarioTools.LoadWeightedVariables(oAdo, m_oWeightedVariableCollection);
                 oAdo.m_OleDbDataReader.Close();
                 oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
@@ -274,7 +274,7 @@ namespace FIA_Biosum_Manager
 			base.Dispose( disposing );
 		}
 
-		public frmCoreScenario()
+		public frmOptimizerScenario()
 		{
 			this.InitializeComponent();
 
@@ -288,7 +288,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCoreScenario));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmOptimizerScenario));
             this.tlbScenario = new System.Windows.Forms.ToolBar();
             this.btnScenarioNew = new System.Windows.Forms.ToolBarButton();
             this.btnScenarioOpen = new System.Windows.Forms.ToolBarButton();
@@ -683,7 +683,7 @@ namespace FIA_Biosum_Manager
             this.btnHelp.Text = "Help";
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
-            // frmCoreScenario
+            // frmOptimizerScenario
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.SystemColors.Control;
@@ -693,8 +693,8 @@ namespace FIA_Biosum_Manager
             this.Controls.Add(this.tabControlScenario);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.txtDropDown);
-            this.Name = "frmCoreScenario";
-            this.Text = "Optimization Scenario";
+            this.Name = "frmOptimizerScenario";
+            this.Text = "Optimizer Scenario";
             this.Activated += new System.EventHandler(this.frmCoreScenario_Activated);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.frmScenario_Closing);
             this.Load += new System.EventHandler(this.frmscenarioScenario_Load);
@@ -958,7 +958,7 @@ namespace FIA_Biosum_Manager
 			}
 			else 
 			{
-				frmCoreScenario frmTemp = new frmCoreScenario((frmMain)this.ParentForm);
+				frmOptimizerScenario frmTemp = new frmOptimizerScenario((frmMain)this.ParentForm);
 				frmTemp.m_vScrollBar.Visible=false;
 				frmTemp.m_hScrollBar.Visible=false;
 				frmTemp.BackColor = System.Drawing.SystemColors.Control;
@@ -1012,23 +1012,23 @@ namespace FIA_Biosum_Manager
 			p_frmTherm.progressBar1.Value=2;
             Queries oQueries = new Queries();
             
-            this.m_oCoreAnalysisScenarioItem.ScenarioId = this.uc_scenario1.txtScenarioId.Text.Trim();
+            this.m_oOptimizerScenarioItem.ScenarioId = this.uc_scenario1.txtScenarioId.Text.Trim();
 
-            this.m_oCoreAnalysisScenarioTools.LoadAll(
+            this.m_oOptimizerScenarioTools.LoadAll(
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + 
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile,
-                oQueries, m_oCoreAnalysisScenarioItem.ScenarioId,
-                m_oCoreAnalysisScenarioItem_Collection);
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile,
+                oQueries, m_oOptimizerScenarioItem.ScenarioId,
+                m_oOptimizerScenarioItem_Collection);
             //find the current scenario
-            for (x = 0; x <= m_oCoreAnalysisScenarioItem_Collection.Count - 1; x++)
+            for (x = 0; x <= m_oOptimizerScenarioItem_Collection.Count - 1; x++)
             {
-                if (m_oCoreAnalysisScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
-                    m_oCoreAnalysisScenarioItem.ScenarioId.Trim().ToUpper())
+                if (m_oOptimizerScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
+                    m_oOptimizerScenarioItem.ScenarioId.Trim().ToUpper())
                     break;
             }
 
-            this.m_oCoreAnalysisScenarioItem.Copy(m_oCoreAnalysisScenarioItem_Collection.Item(x), m_oSavCoreAnalysisScenarioItem);
-            this.m_oCoreAnalysisScenarioItem = m_oCoreAnalysisScenarioItem_Collection.Item(x);
+            this.m_oOptimizerScenarioItem.Copy(m_oOptimizerScenarioItem_Collection.Item(x), m_oSavOptimizerScenarioItem);
+            this.m_oOptimizerScenarioItem = m_oOptimizerScenarioItem_Collection.Item(x);
 
 			p_frmTherm.progressBar1.Value=3;
 			p_frmTherm.lblMsg.Text = "Rule Definitions: FVS Variables Data";
@@ -1070,9 +1070,9 @@ namespace FIA_Biosum_Manager
             int x;
 
 			frmMain.g_sbpInfo.Text = "Saving scenario rule definitions...Stand by";
-            FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicMaximumSteps = 12;
-            FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicMinimumSteps = 1;
-            FIA_Biosum_Manager.RunCore.g_intCurrentProgressBarBasicCurrentStep = 1;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 12;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
             if (m_lrulesfirsttime == false)
             {
@@ -1084,30 +1084,30 @@ namespace FIA_Biosum_Manager
                     this.Top);
                 
                 savestatus = this.uc_scenario_fvs_prepost_variables_effective1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_fvs_prepost_optimization1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_fvs_prepost_variables_tiebreaker1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_owner_groups1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer .g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_costs1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_psite1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_filter1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 savestatus = this.uc_scenario_cond_filter1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
                 this.uc_scenario_processor_scenario_select1.savevalues();
-                if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+                if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
                 frmMain.g_oFrmMain.DeactivateStandByAnimation();
             }
 			this.uc_scenario_notes1.SaveScenarioNotes();
-            if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+            if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 			this.uc_scenario1.UpdateDescription();
-            if (FIA_Biosum_Manager.RunCore.g_bCoreRun) FIA_Biosum_Manager.uc_core_scenario_run.UpdateThermPercent();
+            if (FIA_Biosum_Manager.RunOptimizer.g_bOptimizerRun) FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
             
 			this.m_bSave=false;
 			frmMain.g_sbpInfo.Text = "Ready";
@@ -1394,7 +1394,7 @@ namespace FIA_Biosum_Manager
                     frmTemp.Controls.Add(uc_textbox1);
                     uc_textbox1.Dock = DockStyle.Fill;
                     uc_textbox1.lblTitle.Text = "Properties";
-                    uc_textbox1.TextValue = m_oCoreAnalysisScenarioTools.ScenarioProperties(m_oCoreAnalysisScenarioItem);
+                    uc_textbox1.TextValue = m_oOptimizerScenarioTools.ScenarioProperties(m_oOptimizerScenarioItem);
                     frmTemp.Show();
                     break;
                 case 5:
@@ -1407,9 +1407,9 @@ namespace FIA_Biosum_Manager
             frmDialog frmTemp = new frmDialog();
             frmTemp.Initialize_Scenario_Core_Scenario_Copy();
             frmTemp.Text = "FIA Biosum";
-            if (m_oCoreAnalysisScenarioItem.ScenarioId.Trim().Length == 0) LoadRuleDefinitions();
+            if (m_oOptimizerScenarioItem.ScenarioId.Trim().Length == 0) LoadRuleDefinitions();
 
-            frmTemp.uc_scenario_core_scenario_copy1.ReferenceCurrentScenarioItem = m_oCoreAnalysisScenarioItem;
+            frmTemp.uc_scenario_core_scenario_copy1.ReferenceCurrentScenarioItem = m_oOptimizerScenarioItem;
             frmTemp.uc_scenario_core_scenario_copy1.loadvalues();
             DialogResult result = frmTemp.ShowDialog(this);
             if (result == DialogResult.OK)
@@ -1419,7 +1419,7 @@ namespace FIA_Biosum_Manager
 
                 this.uc_scenario_fvs_prepost_variables_effective1.loadvalues_FromProperties();
 
-                this.uc_scenario1.txtDescription.Text = m_oCoreAnalysisScenarioItem.Description;
+                this.uc_scenario1.txtDescription.Text = m_oOptimizerScenarioItem.Description;
                 frmMain.g_sbpInfo.Text = "Loading Scenario Notes...Stand By";
                 this.uc_scenario_notes1.ReferenceCoreScenarioForm = this;
                 this.uc_scenario_notes1.loadvalues_FromProperties();
@@ -1788,7 +1788,7 @@ namespace FIA_Biosum_Manager
         }
 	
 	}
-    public class CoreAnalysisScenarioItem
+    public class OptimizerScenarioItem
     {
         
         public EffectiveVariablesItem_Collection m_oEffectiveVariablesItem_Collection = new EffectiveVariablesItem_Collection();
@@ -1800,7 +1800,7 @@ namespace FIA_Biosum_Manager
         public ProcessorScenarioItem_Collection m_oProcessorScenarioItem_Collection = new ProcessorScenarioItem_Collection();
         public ConditionTableSQLFilter m_oCondTableSQLFilter = new ConditionTableSQLFilter();
 
-        public CoreAnalysisScenarioItem()
+        public OptimizerScenarioItem()
         {
             
         }
@@ -1853,8 +1853,8 @@ namespace FIA_Biosum_Manager
             public string LowSlopeMaximumYardingDistanceFeet;
             public string SteepSlopeMaximumYardingDistanceFeet;
         }
-        public void Copy(CoreAnalysisScenarioItem p_oSource,
-                         CoreAnalysisScenarioItem p_oDest)
+        public void Copy(OptimizerScenarioItem p_oSource,
+                         OptimizerScenarioItem p_oDest)
         {
             p_oDest.DbFileName = p_oSource.DbFileName;
             p_oDest.DbPath = p_oSource.DbPath;
@@ -2537,23 +2537,23 @@ namespace FIA_Biosum_Manager
 
         }
     }
-    public class CoreAnalysisScenarioItem_Collection : System.Collections.CollectionBase
+    public class OptimizerScenarioItem_Collection : System.Collections.CollectionBase
     {
-        public CoreAnalysisScenarioItem_Collection()
+        public OptimizerScenarioItem_Collection()
         {
             //
             // TODO: Add constructor logic here
             //
         }
 
-        public void Add(FIA_Biosum_Manager.CoreAnalysisScenarioItem m_CoreAnalysisScenarioItem)
+        public void Add(FIA_Biosum_Manager.OptimizerScenarioItem m_OptimizerScenarioItem)
         {
             // vérify if object is not already in
-            if (this.List.Contains(m_CoreAnalysisScenarioItem))
+            if (this.List.Contains(m_OptimizerScenarioItem))
                 throw new InvalidOperationException();
 
             // adding it
-            this.List.Add(m_CoreAnalysisScenarioItem);
+            this.List.Add(m_OptimizerScenarioItem);
 
             // return collection
             //return this;
@@ -2572,12 +2572,12 @@ namespace FIA_Biosum_Manager
                 List.RemoveAt(index);
             }
         }
-        public FIA_Biosum_Manager.CoreAnalysisScenarioItem Item(int Index)
+        public FIA_Biosum_Manager.OptimizerScenarioItem Item(int Index)
         {
             // The appropriate item is retrieved from the List object and
             // explicitly cast to the Widget type, then returned to the 
             // caller.
-            return (FIA_Biosum_Manager.CoreAnalysisScenarioItem)List[Index];
+            return (FIA_Biosum_Manager.OptimizerScenarioItem)List[Index];
         }
 
     }
@@ -2585,14 +2585,14 @@ namespace FIA_Biosum_Manager
 
 
 
-    public class CoreAnalysisScenarioTools
+    public class OptimizerScenarioTools
     {
         public string m_strError = "";
         public int m_intError = 0;
-        public CoreAnalysisScenarioTools()
+        public OptimizerScenarioTools()
         {
         }
-        public void LoadScenario(string p_strScenarioId, Queries p_oQueries,CoreAnalysisScenarioItem_Collection p_oCoreAnalysisScenarioItem_Collection)
+        public void LoadScenario(string p_strScenarioId, Queries p_oQueries,OptimizerScenarioItem_Collection p_oCoreAnalysisScenarioItem_Collection)
         {
            
             //
@@ -2609,15 +2609,15 @@ namespace FIA_Biosum_Manager
                 "C");
             LoadAll(p_oQueries.m_strTempDbFile, p_oQueries, p_strScenarioId, p_oCoreAnalysisScenarioItem_Collection);
         }
-        public void LoadAll(string p_strDbFile, Queries p_oQueries, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem_Collection p_oCoreAnalysisScenarioItem_Collection)
+        public void LoadAll(string p_strDbFile, Queries p_oQueries, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem_Collection p_oOptimizerScenarioItem_Collection)
         {
             int x;
-            for (x = p_oCoreAnalysisScenarioItem_Collection.Count - 1; x >= 0; x--)
+            for (x = p_oOptimizerScenarioItem_Collection.Count - 1; x >= 0; x--)
             {
-                if (p_oCoreAnalysisScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
+                if (p_oOptimizerScenarioItem_Collection.Item(x).ScenarioId.Trim().ToUpper() ==
                     p_strScenarioId.Trim().ToUpper())
                 {
-                    p_oCoreAnalysisScenarioItem_Collection.Remove(x);
+                    p_oOptimizerScenarioItem_Collection.Remove(x);
                 }
             }
             ado_data_access oAdo = new ado_data_access();
@@ -2625,7 +2625,7 @@ namespace FIA_Biosum_Manager
             if (oAdo.m_intError == 0)
             {
 
-                CoreAnalysisScenarioItem oItem = new CoreAnalysisScenarioItem();
+                OptimizerScenarioItem oItem = new OptimizerScenarioItem();
                 this.LoadGeneral(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                 this.LoadEffectiveVariables(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                 this.LoadOptimizationVariable(oAdo, oAdo.m_OleDbConnection, p_strScenarioId,oItem);
@@ -2637,7 +2637,7 @@ namespace FIA_Biosum_Manager
                 this.LoadProcessingSites(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                 this.LoadLandOwnerGroupFilter(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
                 this.LoadTransportationCosts(oAdo, oAdo.m_OleDbConnection, p_strScenarioId, oItem);
-                p_oCoreAnalysisScenarioItem_Collection.Add(oItem);
+                p_oOptimizerScenarioItem_Collection.Add(oItem);
                 
 
 
@@ -2649,7 +2649,7 @@ namespace FIA_Biosum_Manager
             oAdo = null;
         }
 
-        public void LoadGeneral(string p_strDbFile, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadGeneral(string p_strDbFile, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             ado_data_access oAdo = new ado_data_access();
             oAdo.OpenConnection(oAdo.getMDBConnString(p_strDbFile, "", ""));
@@ -2661,7 +2661,7 @@ namespace FIA_Biosum_Manager
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
             oAdo = null;
         }
-        public void LoadGeneral(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadGeneral(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             p_oAdo.SqlQueryReader(p_oConn, "SELECT * FROM scenario " + " WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'");
 
@@ -2712,7 +2712,7 @@ namespace FIA_Biosum_Manager
                 }
             }
         }
-        public void LoadEffectiveVariables(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadEffectiveVariables(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             int x = 0, y = 0;
             string strRxCycle = "";
@@ -2748,7 +2748,7 @@ namespace FIA_Biosum_Manager
 
                     if (x > p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Count - 1)
                     {
-                        CoreAnalysisScenarioItem.EffectiveVariablesItem oEffItem = new CoreAnalysisScenarioItem.EffectiveVariablesItem();
+                        OptimizerScenarioItem.EffectiveVariablesItem oEffItem = new OptimizerScenarioItem.EffectiveVariablesItem();
                         oEffItem.RxCycle = strRxCycle;
                         p_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Add(oEffItem);
                     }
@@ -2818,7 +2818,7 @@ namespace FIA_Biosum_Manager
 
                
         }
-        public void LoadOptimizationVariable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadOptimizationVariable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             int x = 0, y = 0;
             int intVarNum = 0;
@@ -2846,7 +2846,7 @@ namespace FIA_Biosum_Manager
 
                     if (p_oAdo.m_OleDbDataReader["optimization_variable"] != System.DBNull.Value)
                     {
-                        CoreAnalysisScenarioItem.OptimizationVariableItem oItem = new CoreAnalysisScenarioItem.OptimizationVariableItem();
+                        OptimizerScenarioItem.OptimizationVariableItem oItem = new OptimizerScenarioItem.OptimizationVariableItem();
                         oItem.strOptimizedVariable = Convert.ToString(p_oAdo.m_OleDbDataReader["optimization_variable"]);
                         //optimization variable
                         if (p_oAdo.m_OleDbDataReader["fvs_variable_name"] != System.DBNull.Value)
@@ -2947,7 +2947,7 @@ namespace FIA_Biosum_Manager
             p_oAdo.m_OleDbDataReader.Close();
 
         }
-        public void LoadTieBreakerVariables(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadTieBreakerVariables(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             this.m_intError = 0;
             this.m_strError = "";
@@ -2962,7 +2962,7 @@ namespace FIA_Biosum_Manager
             //LOAD TIEBREAKER ITEMS
             //
             p_oAdo.m_strSQL = "SELECT * FROM " +
-                                Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " +
+                                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " " +
                                 "WHERE TRIM(scenario_id)='" + p_strScenarioId.Trim() + "'";
 
 
@@ -2975,7 +2975,7 @@ namespace FIA_Biosum_Manager
 
                     if (p_oAdo.m_OleDbDataReader["tiebreaker_method"] != System.DBNull.Value)
                     {
-                        CoreAnalysisScenarioItem.TieBreakerItem oItem = new CoreAnalysisScenarioItem.TieBreakerItem();
+                        OptimizerScenarioItem.TieBreakerItem oItem = new OptimizerScenarioItem.TieBreakerItem();
                         oItem.RxCycle = p_oAdo.m_OleDbDataReader["rxcycle"].ToString().Trim();
                         oItem.strMethod = p_oAdo.m_OleDbDataReader["tiebreaker_method"].ToString().Trim();
                         if (oItem.strMethod.ToUpper().IndexOf("ATTRIBUTE") > -1)
@@ -3032,7 +3032,7 @@ namespace FIA_Biosum_Manager
             
 
         }
-        public void LoadRxIntensity(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadRxIntensity(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             this.m_intError = 0;
             this.m_strError = "";
@@ -3073,7 +3073,7 @@ namespace FIA_Biosum_Manager
             //
             if (p_oAdo.TableExist(p_oConn, "rxtemp"))
                 p_oAdo.SqlNonQuery(p_oConn, "DROP TABLE rxtemp");
-            p_oAdo.SqlNonQuery(p_oConn, Tables.CoreScenarioRuleDefinitions.CreateScenarioLastTieBreakTableSQL("rxtemp"));
+            p_oAdo.SqlNonQuery(p_oConn, Tables.OptimizerScenarioRuleDefinitions.CreateScenarioLastTieBreakTableSQL("rxtemp"));
             for (x = 0; x <= strRxArray.Length - 1; x++)
             {
                 // SET THE DEFAULT TREATMENT INTENSITY TO BE THE SAME AS RXPACKAGE SO IT IS ALWAYS UNIQUE AND NEVER NULL
@@ -3096,7 +3096,7 @@ namespace FIA_Biosum_Manager
             //LOAD RXINTENSITY ITEMS
             //
             p_oAdo.m_strSQL = "SELECT * FROM " +
-                              Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName + " " +
+                              Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName + " " +
                               "WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
 
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
@@ -3108,7 +3108,7 @@ namespace FIA_Biosum_Manager
 
                     if (p_oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
                     {
-                        CoreAnalysisScenarioItem.LastTieBreakRankItem oItem = new CoreAnalysisScenarioItem.LastTieBreakRankItem();
+                        OptimizerScenarioItem.LastTieBreakRankItem oItem = new OptimizerScenarioItem.LastTieBreakRankItem();
                         oItem.RxPackage = p_oAdo.m_OleDbDataReader["rxpackage"].ToString().Trim();
                         if (p_oAdo.m_OleDbDataReader["last_tiebreak_rank"] != System.DBNull.Value)
                         {
@@ -3132,7 +3132,7 @@ namespace FIA_Biosum_Manager
         public void LoadProcessorScenarioItems(ado_data_access p_oAdo,
                                          System.Data.OleDb.OleDbConnection p_oConn,
                                          string p_strScenarioId,
-                                         CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+                                         OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             int x;
             Queries oQueries = new Queries();
@@ -3175,9 +3175,9 @@ namespace FIA_Biosum_Manager
                 oTools.LoadAll(oQueries.m_strTempDbFile, oQueries, strScenarioArray[x], p_oCoreAnalysisScenarioItem.m_oProcessorScenarioItem_Collection);
             }
 
-            if (p_oAdo.TableExist(p_oConn, Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName))
+            if (p_oAdo.TableExist(p_oConn, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName))
             {
-                p_oAdo.m_strSQL = "SELECT * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
+                p_oAdo.m_strSQL = "SELECT * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " " +
                                 "WHERE TRIM(UCASE(scenario_id)) = '" +
                                    p_strScenarioId.Trim().ToUpper() + "';";
                 p_oAdo.SqlQueryReader(p_oConn, p_oAdo.m_strSQL);
@@ -3222,14 +3222,14 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, p_oConn, Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
+                frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, p_oConn, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
             }
 
             
             
 
         }
-        public void LoadPlotFilter(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadPlotFilter(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
 
             p_oAdo.m_strSQL = "SELECT * FROM scenario_plot_filter  WHERE " +
@@ -3268,7 +3268,7 @@ namespace FIA_Biosum_Manager
 
 
         }
-        public void LoadCondFilter(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadCondFilter(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             p_oAdo.m_strSQL = "SELECT * FROM scenario_cond_filter  WHERE " +
                 " TRIM(UCASE(scenario_id)) = '" + p_strScenarioId.Trim().ToUpper() + "' AND current_yn = 'Y';";
@@ -3329,7 +3329,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        public void LoadProcessingSites(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+        public void LoadProcessingSites(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strScenarioId, FIA_Biosum_Manager.OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
 			
 
@@ -3373,7 +3373,7 @@ namespace FIA_Biosum_Manager
             //
             for (x=0;x<=strArray.Length-1;x++)
             {
-            	CoreAnalysisScenarioItem.ProcessingSiteItem oItem = new CoreAnalysisScenarioItem.ProcessingSiteItem();
+            	OptimizerScenarioItem.ProcessingSiteItem oItem = new OptimizerScenarioItem.ProcessingSiteItem();
             	oItem.ProcessingSiteId = strArray[x].Trim();
             	p_oCoreAnalysisScenarioItem.m_oProcessingSiteItem_Collection.Add(oItem);
             	
@@ -3497,7 +3497,7 @@ namespace FIA_Biosum_Manager
         public void LoadLandOwnerGroupFilter(ado_data_access p_oAdo, 
                                          System.Data.OleDb.OleDbConnection p_oConn,
                                          string p_strScenarioId, 
-                                         CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+                                         OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
              p_oCoreAnalysisScenarioItem.OwnerGroupCodeList="";
             string strSQL = "SELECT * FROM scenario_land_owner_groups WHERE " +
@@ -3529,7 +3529,7 @@ namespace FIA_Biosum_Manager
         public void LoadTransportationCosts(ado_data_access p_oAdo,
                                          System.Data.OleDb.OleDbConnection p_oConn,
                                          string p_strScenarioId,
-                                         CoreAnalysisScenarioItem p_oCoreAnalysisScenarioItem)
+                                         OptimizerScenarioItem p_oCoreAnalysisScenarioItem)
         {
             p_oCoreAnalysisScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour = "";
             p_oCoreAnalysisScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile = "";
@@ -3651,12 +3651,12 @@ namespace FIA_Biosum_Manager
             return _dictFVSTables;
         }
 
-        public void LoadWeightedVariables(ado_data_access p_oAdo, FIA_Biosum_Manager.uc_core_scenario_weighted_average.Variable_Collection p_oWeightedVariableCollection)
+        public void LoadWeightedVariables(ado_data_access p_oAdo, FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection p_oWeightedVariableCollection)
         {
             p_oWeightedVariableCollection.Clear();
-            p_oAdo.OpenConnection(p_oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile, "", ""));
+            p_oAdo.OpenConnection(p_oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerDefinitions.DefaultDbFile, "", ""));
             p_oAdo.m_strSQL = "SELECT * " +
-                              "FROM " + Tables.CoreDefinitions.DefaultCalculatedCoreVariablesTableName;
+                              "FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName;
             p_oAdo.SqlQueryReader(p_oAdo.m_OleDbConnection, p_oAdo.m_strSQL);
 
             if (p_oAdo.m_intError == 0)
@@ -3664,7 +3664,7 @@ namespace FIA_Biosum_Manager
                 //load step one with wind class speed definitions
                 while (p_oAdo.m_OleDbDataReader.Read())
                 {
-                    FIA_Biosum_Manager.uc_core_scenario_weighted_average.VariableItem oItem = new uc_core_scenario_weighted_average.VariableItem();
+                    FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.VariableItem oItem = new uc_optimizer_scenario_calculated_variables.VariableItem();
                     oItem.strVariableName = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_name"]).Trim();
                     oItem.strVariableType = Convert.ToString(p_oAdo.m_OleDbDataReader["VARIABLE_TYPE"]).Trim();
                     if (p_oAdo.m_OleDbDataReader["variable_description"] != System.DBNull.Value)
@@ -3684,7 +3684,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        public string ScenarioProperties(CoreAnalysisScenarioItem p_oScenarioItem)
+        public string ScenarioProperties(OptimizerScenarioItem p_oScenarioItem)
         {
             int x,y;
             bool bUseRxIntensity=false;
@@ -3709,7 +3709,7 @@ namespace FIA_Biosum_Manager
             {
                 if (p_oScenarioItem.m_oEffectiveVariablesItem_Collection.Item(x).RxCycle == "1")
                 {
-                    for (y = 0; y <= CoreAnalysisScenarioItem.EffectiveVariablesItem.NUMBER_OF_VARIABLES - 1; y++)
+                    for (y = 0; y <= OptimizerScenarioItem.EffectiveVariablesItem.NUMBER_OF_VARIABLES - 1; y++)
                     {
                         strLine = strLine + "-Stand Attribute " + Convert.ToString(y + 1) + "-\r\n";
                         strLine = strLine + "Pre-Treatment Variable: " +

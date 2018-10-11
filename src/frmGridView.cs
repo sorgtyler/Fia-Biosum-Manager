@@ -38,7 +38,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ToolBarButton btnBackground;
 		private System.Windows.Forms.ToolBarButton btnRowColor;
 		private System.Windows.Forms.ToolBarButton btnSelectedRowBackgroundColor;
-		FIA_Biosum_Manager.frmCoreScenario _frmCoreScenario=null;
+		FIA_Biosum_Manager.frmOptimizerScenario _frmCoreScenario=null;
         FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario = null;
 
         private Control _oParentControl = null;
@@ -1250,7 +1250,7 @@ namespace FIA_Biosum_Manager
 			get {return _bHarvestCostColumns;}
 			set {_bHarvestCostColumns = value;}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmCoreScenario;}
 			set {_frmCoreScenario=value;}

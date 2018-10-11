@@ -124,7 +124,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmDialog m_frmCoreMerge;      //core analysis merge scenarios form
         private FIA_Biosum_Manager.frmDialog m_frmCoreUserVariables;      //user pre/post variables form
 		private FIA_Biosum_Manager.frmDialog m_frmPlotData;       //plot data form
-		private FIA_Biosum_Manager.frmCoreScenario m_frmScenario;     //core analysis scenario form
+		private FIA_Biosum_Manager.frmOptimizerScenario m_frmScenario;     //core analysis scenario form
 		private FIA_Biosum_Manager.frmProcessorScenario m_frmProcessorScenario; //processor scenario form
 		private FIA_Biosum_Manager.frmDialog m_frmTreeDiam;       //processor tree diameter form
 		private FIA_Biosum_Manager.frmDialog m_frmSpcGrp;         //processor species group form
@@ -1285,9 +1285,9 @@ namespace FIA_Biosum_Manager
 			
 			return this.frmProject.uc_project1.m_strProjectDirectory;
 		}
-        public void OpenCoreScenario(string p_strType, frmCoreScenario p_frmCoreScenario)
+        public void OpenCoreScenario(string p_strType, frmOptimizerScenario p_frmCoreScenario)
 		{
-            FIA_Biosum_Manager.frmCoreScenario oFrmCoreScenario = new frmCoreScenario(this);
+            FIA_Biosum_Manager.frmOptimizerScenario oFrmCoreScenario = new frmOptimizerScenario(this);
 
 			DialogResult result;
 			if (p_strType=="Open")
@@ -1302,11 +1302,11 @@ namespace FIA_Biosum_Manager
                 result = oFrmCoreScenario.ShowDialog();
 				if (result == DialogResult.OK)
 				{
-					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
+					frmOptimizerScenario oFrmScenario = new frmOptimizerScenario(this);
                     oFrmScenario.Text = "Treatment Optimizer: Optimization Scenario (" + oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
                     oFrmScenario.HelpChapter = "EDIT_SCENARIO";
-                    oFrmScenario.uc_datasource1.strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                    oFrmScenario.uc_datasource1.strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
                     oFrmScenario.uc_datasource1.strScenarioId = oFrmCoreScenario.uc_scenario_open1.txtScenarioId.Text.Trim();
 					oFrmScenario.uc_datasource1.strProjectDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
@@ -1330,11 +1330,11 @@ namespace FIA_Biosum_Manager
                 result = oFrmCoreScenario.ShowDialog();
 				if (result == DialogResult.OK)
 				{
-					frmCoreScenario oFrmScenario = new frmCoreScenario(this);
+					frmOptimizerScenario oFrmScenario = new frmOptimizerScenario(this);
                     oFrmScenario.Text = "Treatment Optimizer: Optimization Scenario (" + oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim() + ")";
 					oFrmScenario.m_bScenarioOpen = true;
                     oFrmScenario.HelpChapter = "EDIT_SCENARIO";
-                    oFrmScenario.uc_datasource1.strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                    oFrmScenario.uc_datasource1.strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 					oFrmScenario.uc_datasource1.strDataSourceTable = "scenario_datasource";
                     oFrmScenario.uc_datasource1.strScenarioId = oFrmCoreScenario.uc_scenario1.txtScenarioId.Text.Trim();
 					oFrmScenario.uc_datasource1.strProjectDirectory = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
@@ -1456,67 +1456,67 @@ namespace FIA_Biosum_Manager
             {
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
                 if (p_ado.m_intError == 0)
                 {
-                    strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
+                    strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName + " WHERE scenario_id =  " + "'" + p_strScenarioId.Trim() + "'";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
                 }
             }
@@ -1673,7 +1673,7 @@ namespace FIA_Biosum_Manager
 					string strProjDir = getProjectDirectory();
 					strFullPath = new System.Text.StringBuilder(strProjDir);
 					strFullPath.Append("\\");
-                    strFullPath.Append(Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile);
+                    strFullPath.Append(Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile);
 					ado_data_access oAdo = new ado_data_access();
 					string strConn=oAdo.getMDBConnString(strFullPath.ToString(),"admin","");
 					int intCount = Convert.ToInt32(oAdo.getRecordCount(strConn,"select count(*) from scenario","scenario"));
@@ -3477,7 +3477,7 @@ namespace FIA_Biosum_Manager
 						 **cast the child form to get a reference to its controls,
 						 **properties and methods
 						 *************************************************************/
-						FIA_Biosum_Manager.frmCoreScenario  temp= ((FIA_Biosum_Manager.frmCoreScenario)child);
+						FIA_Biosum_Manager.frmOptimizerScenario  temp= ((FIA_Biosum_Manager.frmOptimizerScenario)child);
 						if (temp.m_bSave == true) 
 						{
 							if (bPromptMsg==false && p_bPrompt)

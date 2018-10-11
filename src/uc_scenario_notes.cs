@@ -16,7 +16,7 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.TextBox txtNotes;
 		private System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario=null;
 		private string _strScenarioType="optimizer";
 		/// <summary> 
@@ -125,7 +125,7 @@ namespace FIA_Biosum_Manager
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
 			this.Visible=false;
-			if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER") ((frmCoreScenario)this.ParentForm).Height = 0 ; //((frmScenario)this.ParentForm).grpboxMenu.Height * 2;
+			if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER") ((frmOptimizerScenario)this.ParentForm).Height = 0 ; //((frmScenario)this.ParentForm).grpboxMenu.Height * 2;
 			else this.ReferenceProcessorScenarioForm.Height=0;
 		}
 
@@ -152,7 +152,7 @@ namespace FIA_Biosum_Manager
 			{
 				strSQL = "UPDATE scenario SET notes = '" + 
 					strNotes + 
-					"' WHERE trim(lcase(scenario_id)) = '" + ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower() + "';";
+					"' WHERE trim(lcase(scenario_id)) = '" + ((frmOptimizerScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower() + "';";
 			}
 			else
 			{
@@ -198,7 +198,7 @@ namespace FIA_Biosum_Manager
         {
             if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
             {
-                FIA_Biosum_Manager.CoreAnalysisScenarioItem oItem = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem;
+                FIA_Biosum_Manager.OptimizerScenarioItem oItem = ReferenceCoreScenarioForm.m_oOptimizerScenarioItem;
                 this.txtNotes.Text = oItem.Notes.Trim();
             }
             else
@@ -219,7 +219,7 @@ namespace FIA_Biosum_Manager
 			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER") ReferenceCoreScenarioForm.m_bSave=true;
 			else ReferenceProcessorScenarioForm.m_bSave=true;
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

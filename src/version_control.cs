@@ -767,68 +767,68 @@ namespace FIA_Biosum_Manager
 						switch (m_strScenarioRuleDefinitionsTableArray[y])
 						{
 							case "SCENARIO":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableName;
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableName;
 								frmMain.g_oTables.m_oScenario.CreateScenarioTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_COSTS":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCostsTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCostsTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_DATASOURCE":
 								strTableName=Tables.Scenario.DefaultScenarioDatasourceTableName;
 								frmMain.g_oTables.m_oScenario.CreateScenarioDatasourceTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_HARVEST_COST_COLUMNS":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioHarvestCostColumnsTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioHarvestCostColumnsTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_LAND_OWNER_GROUPS":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLandOwnerGroupsTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLandOwnerGroupsTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_PLOT_FILTER":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPlotFilterTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPlotFilterTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_PLOT_FILTER_MISC":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPlotFilterMiscTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPlotFilterMiscTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_COND_FILTER":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_COND_FILTER_MISC":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterMiscTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCondFilterMiscTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_PSITES":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_RX_INTENSITY":
-                                strTableName = Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo,oConn,strTableName);
+                                strTableName = Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_FVS_VARIABLES_TIEBREAKER":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_FVS_VARIABLES_OPTIMIZATION":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesOptimizationTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesOptimizationTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_FVS_VARIABLES_OVERALL_EFFECTIVE":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesOverallEffectiveTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesOverallEffectiveTable(oAdo,oConn,strTableName);
 								break;
 							case "SCENARIO_FVS_VARIABLES":
-								strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesTable(oAdo,oConn,strTableName);
+								strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTable(oAdo,oConn,strTableName);
 								break;
                             case "SCENARIO_PROCESSOR_SCENARIO_SELECT":
-                                strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName;
-								frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo,oConn,strTableName);
+                                strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName;
+								frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo,oConn,strTableName);
 
                                 break;
 
@@ -901,68 +901,68 @@ namespace FIA_Biosum_Manager
 					switch (m_strScenarioRuleDefinitionsTableArray[y])
 					{
 						case "SCENARIO":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableName;
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableName;
 							frmMain.g_oTables.m_oScenario.CreateScenarioTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_COSTS":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCostsTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCostsTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_DATASOURCE":
 							strTableName=Tables.Scenario.DefaultScenarioTableName;
 							frmMain.g_oTables.m_oScenario.CreateScenarioDatasourceTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_HARVEST_COST_COLUMNS":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioHarvestCostColumnsTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioHarvestCostColumnsTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_LAND_OWNER_GROUPS":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLandOwnerGroupsTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLandOwnerGroupsTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_PLOT_FILTER":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPlotFilterTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPlotFilterTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_PLOT_FILTER_MISC":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPlotFilterMiscTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPlotFilterMiscTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_COND_FILTER":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_COND_FILTER_MISC":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterMiscTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCondFilterMiscTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_PSITES":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_RX_INTENSITY":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_FVS_VARIABLES_TIEBREAKER":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_FVS_VARIABLES_OPTIMIZATION":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesOptimizationTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesOptimizationTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_FVS_VARIABLES_OVERALL_EFFECTIVE":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesOverallEffectiveTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesOverallEffectiveTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
 						case "SCENARIO_FVS_VARIABLES":
-							strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesTable(oAdo,oAdo.m_OleDbConnection,strTableName);
+							strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTable(oAdo,oAdo.m_OleDbConnection,strTableName);
 							break;
                         case "SCENARIO_PROCESSOR_SCENARIO_SELECT":
-                            strTableName=Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName;
-							frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo,oConn,strTableName);
+                            strTableName=Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName;
+							frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo,oConn,strTableName);
                             break;
 					}
 				}
@@ -4964,9 +4964,9 @@ namespace FIA_Biosum_Manager
 
             frmMain.g_sbpInfo.Text = "Version Update: Update Core Analysis data sources table...Stand by";
             string strCoreMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioDatasourceTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioDatasourceTableDbFile;
             oAdo.OpenConnection(oAdo.getMDBConnString(strCoreMdb, "", ""));
-            oAdo.m_strSQL = "DELETE * FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioDatasourceTableName +
+            oAdo.m_strSQL = "DELETE * FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioDatasourceTableName +
                 " WHERE TRIM(UCASE(table_type)) = 'TREE DIAMETER GROUPS' OR" +
                 " TRIM(UCASE(table_type)) = 'TREE SPECIES GROUPS'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
@@ -5487,12 +5487,12 @@ namespace FIA_Biosum_Manager
             // Rename core folder to optimizer
             System.IO.Directory.Move(ReferenceProjectDirectory.Trim() + "\\core", ReferenceProjectDirectory.Trim() + "\\optimizer");
             string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\optimizer_definitions.accdb";
-            string strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreDefinitions.DefaultDbFile;
+            string strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
             if (!System.IO.File.Exists(strDestFile))
             {
                 System.IO.File.Copy(strSourceFile, strDestFile);
             }
-            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.CoreScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
             if (!System.IO.File.Exists(strDestFile))
             {
                 oDao.CreateMDB(strDestFile);
@@ -5506,7 +5506,7 @@ namespace FIA_Biosum_Manager
             using (var oRenameConn = new OleDbConnection(strRenameConn))
             {
                 oRenameConn.Open();
-                oAdo.m_strSQL = "SELECT SCENARIO_ID FROM " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName;
+                oAdo.m_strSQL = "SELECT SCENARIO_ID FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName;
                 oAdo.SqlQueryReader(oRenameConn, oAdo.m_strSQL);
                 if (oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -5516,7 +5516,7 @@ namespace FIA_Biosum_Manager
                         if (oAdo.m_OleDbDataReader["scenario_id"] != System.DBNull.Value)
                         {
                             strScenario = oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim();
-                            string strUpdate = "UPDATE " + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableName +
+                            string strUpdate = "UPDATE " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableName +
                                 " SET PATH = '" + ReferenceProjectDirectory.Trim() + "\\optimizer\\" + strScenario +
                                 "', FILE = 'scenario_optimizer_rule_definitions.mdb'" +
                                 " WHERE SCENARIO_ID = '" + strScenario + "'";
@@ -5529,22 +5529,22 @@ namespace FIA_Biosum_Manager
             frmMain.g_sbpInfo.Text = "Version Update: Updating OPTIMIZER scenario configuration tables ...Stand by";
 
             strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                            "\\" + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile;
+                            "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile;
             //open the scenario_optimizer_rule_definitions.mdb file
             oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
             //add new revenue_attribute field if it is missing
-            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
                 "revenue_attribute"))
             {
-                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
                     "revenue_attribute", "CHAR", "100");
             }
             //remove filter fields from scenario_fvs_variables_overall_effective
-            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
+            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
                 "nr_dpa_filter_enabled_yn"))
             {
                 string[] arrFieldsToDelete = new string[] { "nr_dpa_filter_enabled_yn", "nr_dpa_filter_operator", "nr_dpa_filter_value" };
-                oDao.DeleteField(strDestFile, Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
+                oDao.DeleteField(strDestFile, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
                     arrFieldsToDelete);
             }
             //replace scenario_rx_intensity with scenario_last_tiebreak_rank 
@@ -5552,8 +5552,8 @@ namespace FIA_Biosum_Manager
             {
                 oDao.RenameTable(strDestFile, "scenario_rx_intensity", "scenario_rx_intensity" + strTableSuffix, true, false);
             }
-            frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo, oAdo.m_OleDbConnection,
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo, oAdo.m_OleDbConnection,
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
             //populate scenario_last_tiebreak_rank with packages for each scenario            
             string strConn="";
             string strRxMDBFile = "";

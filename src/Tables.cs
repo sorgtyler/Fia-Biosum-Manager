@@ -8,9 +8,9 @@ namespace FIA_Biosum_Manager
 	public class Tables
 	{
 		public Project m_oProject = new Project();
-		public CoreScenarioResults m_oCoreScenarioResults = new CoreScenarioResults();
-		public CoreDefinitions m_oCoreDef = new CoreDefinitions();
-		public CoreScenarioRuleDefinitions m_oCoreScenarioRuleDef = new CoreScenarioRuleDefinitions();
+		public OptimizerScenarioResults m_oOptimizerScenarioResults = new OptimizerScenarioResults();
+		public OptimizerDefinitions m_oOptimizerDef = new OptimizerDefinitions();
+		public OptimizerScenarioRuleDefinitions m_oOptimizerScenarioRuleDef = new OptimizerScenarioRuleDefinitions();
 		public FIAPlot m_oFIAPlot = new FIAPlot();
 		public FVS m_oFvs = new FVS();
 		public TravelTime m_oTravelTime = new TravelTime();
@@ -42,7 +42,6 @@ namespace FIA_Biosum_Manager
 			public string DefaultProjectLinksCategoryTableName {get {return "links_category";}}
 			public string DefaultProjectUserConfigTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectUserConfigTableName {get {return "user_config";}}
-			public string DefaultProjectCoreScenarioDatasourceTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectProcessorScenarioDatasourceTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectProcessorScenarioDatasourceTableName {get {return "processor_scenario_datasource";}}
 			public string DefaultProjectProcessorScenarioTableDbFile {get {return @"db\project.mdb";}}
@@ -239,7 +238,7 @@ namespace FIA_Biosum_Manager
 
 
 		}
-		public class CoreScenarioResults
+		public class OptimizerScenarioResults
 		{
             //cycle1
 			static public string DefaultScenarioResultsCycle1BestRxSummaryTableDbFile {get {return @"db\scenario_results.mdb";}}
@@ -275,7 +274,7 @@ namespace FIA_Biosum_Manager
 
 			
 			private string strSQL = "";
-			public CoreScenarioResults()
+			public OptimizerScenarioResults()
 			{
 			}
 			//
@@ -1373,7 +1372,7 @@ namespace FIA_Biosum_Manager
 			
 		
 		}
-		public class CoreScenarioRuleDefinitions
+		public class OptimizerScenarioRuleDefinitions
 		{
             static public string DefaultScenarioFvsVariablesTieBreakerTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
 			static public string DefaultScenarioFvsVariablesTieBreakerTableName {get {return "scenario_fvs_variables_tiebreaker";}}
@@ -1412,7 +1411,7 @@ namespace FIA_Biosum_Manager
 
 			
 			
-			public CoreScenarioRuleDefinitions()
+			public OptimizerScenarioRuleDefinitions()
 			{
 			}
 			
@@ -1645,7 +1644,7 @@ namespace FIA_Biosum_Manager
 					"current_yn CHAR(1))";
 			}
 			//
-			//core scenario rule definitions fvs variables optimization selection
+			//scenario rule definitions fvs variables optimization selection
 			//
 			public void CreateScenarioFVSVariablesOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -1700,26 +1699,26 @@ namespace FIA_Biosum_Manager
 
 		}
 
-        public class CoreDefinitions
+        public class OptimizerDefinitions
         {
             static public string DefaultDbFile { get { return @"optimizer\db\optimizer_definitions.accdb"; } }
-            static public string DefaultCalculatedCoreVariablesTableName { get { return "calculated_optimizer_variables"; } }
+            static public string DefaultCalculatedOptimizerVariablesTableName { get { return "calculated_optimizer_variables"; } }
             static public string DefaultCalculatedEconVariablesTableName { get { return "calculated_econ_variables_definition"; } }
             static public string DefaultCalculatedFVSVariablesTableName { get { return "calculated_fvs_variables_definition"; } }
 
 
-            public void CreateCalculatedCoreVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateCalculatedOptimizerVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
-                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedCoreVariableTableSQL(p_strTableName));
-                CreateCalculatedCoreVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
+                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedOptimizerVariableTableSQL(p_strTableName));
+                CreateCalculatedOptimizerVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
 		}
-            public void CreateCalculatedCoreVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateCalculatedOptimizerVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.AddAutoNumber(p_oConn, p_strTableName, "ID");
                 p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "ID");
                 p_oAdo.AddUniqueIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "VARIABLE_NAME");
             }
-            static public string CreateCalculatedCoreVariableTableSQL(string p_strTableName)
+            static public string CreateCalculatedOptimizerVariableTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "ID INTEGER," +

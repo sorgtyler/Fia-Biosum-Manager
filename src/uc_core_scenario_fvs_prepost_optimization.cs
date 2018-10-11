@@ -29,7 +29,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnPrev;
 		private FIA_Biosum_Manager.utils m_oUtils; 
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.uc_core_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 
 		
@@ -1055,12 +1055,12 @@ namespace FIA_Biosum_Manager
         public void loadvalues_FromProperties()
         {
             int x;
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0) != null)
+            if (ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0) != null)
             {
-                for (x = 0; x <= ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
+                for (x = 0; x <= ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
                 {
-                    CoreAnalysisScenarioItem.OptimizationVariableItem oItem =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x);
+                    OptimizerScenarioItem.OptimizationVariableItem oItem =
+                        ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x);
 
                     if (oItem.bSelected)
                     {
@@ -1155,11 +1155,11 @@ namespace FIA_Biosum_Manager
 				string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 				string strScenarioMDB = 
 					frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 				oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 				if (oAdo.m_intError==0)
 				{
-					this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Clear();
+                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Clear();
                     int intVarNum=0;
 
 					oAdo.m_strSQL = "SELECT * " + 
@@ -1172,7 +1172,7 @@ namespace FIA_Biosum_Manager
 					{
 						while (oAdo.m_OleDbDataReader.Read())
 						{
-						    CoreAnalysisScenarioItem.OptimizationVariableItem oItem = new CoreAnalysisScenarioItem.OptimizationVariableItem();
+						    OptimizerScenarioItem.OptimizationVariableItem oItem = new OptimizerScenarioItem.OptimizationVariableItem();
 							if (oAdo.m_OleDbDataReader["optimization_variable"] != System.DBNull.Value)
 							{
 								oItem.strOptimizedVariable = Convert.ToString(oAdo.m_OleDbDataReader["optimization_variable"]);
@@ -1268,7 +1268,7 @@ namespace FIA_Biosum_Manager
                                 {
                                     oItem.strRevenueAttribute = Convert.ToString(oAdo.m_OleDbDataReader["revenue_attribute"]).Trim();
                                 }
-                                this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
+                                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
 							}
 						}
 					}
@@ -1300,7 +1300,7 @@ namespace FIA_Biosum_Manager
             lstEconVariables.Items.Clear();
             cmbNetRevOptimzFilter.Items.Clear();
             cmbNetRevEconOptimzFilter.Items.Clear();
-            foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+            foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
             {
                 if (oItem.strVariableType.Equals("ECON"))
                 {
@@ -1317,8 +1317,8 @@ namespace FIA_Biosum_Manager
 			//update list view items
 			//
 				bool bFound;
-                CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-                    this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+                OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
+                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
 				for (y=0;y<=this.lvOptimizationListValues.Items.Count-1;y++)
 				{
 					bFound=false;
@@ -1357,7 +1357,7 @@ namespace FIA_Biosum_Manager
 					}
 					else
 					{
-                        CoreAnalysisScenarioItem.OptimizationVariableItem oItem = new CoreAnalysisScenarioItem.OptimizationVariableItem();
+                        OptimizerScenarioItem.OptimizationVariableItem oItem = new OptimizerScenarioItem.OptimizationVariableItem();
 						oItem.intListViewIndex = y;
 						oItem.strOptimizedVariable = this.lvOptimizationListValues.Items[y].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
 						oItem.strFVSVariableName = this.lvOptimizationListValues.Items[y].SubItems[COLUMN_FVS_VARIABLE].Text.Trim();
@@ -1381,7 +1381,7 @@ namespace FIA_Biosum_Manager
 						}
 						else
 							oItem.strMinYN="N";
-                        this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
+                        this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
 
 					}
 				}
@@ -1395,7 +1395,7 @@ namespace FIA_Biosum_Manager
 			
 		}
 		private void UpdateListViewItem(System.Windows.Forms.ListViewItem p_lvItem,
-            CoreAnalysisScenarioItem.OptimizationVariableItem p_oVariableItem)
+            OptimizerScenarioItem.OptimizationVariableItem p_oVariableItem)
 		{
 			p_oVariableItem.intListViewIndex=p_lvItem.Index;
 			p_lvItem.Checked=p_oVariableItem.bSelected;
@@ -1444,7 +1444,7 @@ namespace FIA_Biosum_Manager
 			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
 				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
-                Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
@@ -1466,8 +1466,8 @@ namespace FIA_Biosum_Manager
 				}
 				strColumns = "scenario_id,rxcycle,optimization_variable,fvs_variable_name,value_source,max_yn,min_yn,filter_enabled_yn,filter_operator,filter_value,checked_yn,current_yn,revenue_attribute";
 
-                CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-                    this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+                OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
+                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
                 for (x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
 				{
 					strValues = "'" + strScenarioId.Trim() + "','1'";
@@ -1772,8 +1772,8 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationEconSettings.Hide();
 			this.grpboxOptimization.Show();
 
-            CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-                this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+            OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
+                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
             for (int x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
 			{
 				// We only update the selected listview item
@@ -1861,8 +1861,8 @@ namespace FIA_Biosum_Manager
 			
 			this.ReferenceCoreScenarioForm.m_bSave=true;
             if (!m_bIgnoreListViewItemCheck) this.lvOptimizationListValues.Items[e.Index].Selected = true;
-            CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
-               this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+            OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
+               this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
 			if (e.CurrentValue==CheckState.Checked) 
 			{
                 for (x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
@@ -1897,11 +1897,11 @@ namespace FIA_Biosum_Manager
 						}
 						else
 						{
-                            for (y = 0; y <= this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; y++)
+                            for (y = 0; y <= this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; y++)
 							{
-                                if (this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).intListViewIndex == x)
+                                if (this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).intListViewIndex == x)
 								{
-                                    this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).bSelected = true;
+                                    this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(y).bSelected = true;
                                     intSelectedIndex = y;
 								}
 							}
@@ -1936,8 +1936,8 @@ namespace FIA_Biosum_Manager
 			if (this.lvOptimizationListValues.SelectedItems.Count==0) return;
 
             // Get item out of memory so we can access the revenue attribute
-            CoreAnalysisScenarioItem.OptimizationVariableItem oSelectedItem = null;
-            foreach (CoreAnalysisScenarioItem.OptimizationVariableItem oItem in this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection)
+            OptimizerScenarioItem.OptimizationVariableItem oSelectedItem = null;
+            foreach (OptimizerScenarioItem.OptimizationVariableItem oItem in this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection)
             {
                 if (oItem.strOptimizedVariable.Equals(
                     this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim()))
@@ -2128,8 +2128,8 @@ namespace FIA_Biosum_Manager
 				this.m_strError=m_strError + "-------------\r\n\r\n";
 			}
 
-            CoreAnalysisScenarioItem.OptimizationVariableItem_Collection oOptVariableItemCollection =
-                this.ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+            OptimizerScenarioItem.OptimizationVariableItem_Collection oOptVariableItemCollection =
+                this.ReferenceCoreScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
             for (x = 0; x <= oOptVariableItemCollection.Count - 1; x++)
 			{
                 if (oOptVariableItemCollection.Item(x).bSelected) break;
@@ -2351,7 +2351,7 @@ namespace FIA_Biosum_Manager
 			get {return _bDisplayAuditMsg;}
 			set {_bDisplayAuditMsg=value;}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
@@ -2434,7 +2434,7 @@ namespace FIA_Biosum_Manager
                 this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
                 if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                     {
                         if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
                         {
@@ -2479,7 +2479,7 @@ namespace FIA_Biosum_Manager
             if (this.lstEconVariables.SelectedIndex > -1)
             {
                 this.btnEconSelect.Enabled = true;
-                foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.lstEconVariables.SelectedItem)))
                     {
@@ -2523,7 +2523,7 @@ namespace FIA_Biosum_Manager
             this.txtEconRevenueDescr.Text = "";
             if (this.cmbNetRevEconOptimzFilter.SelectedIndex > -1)
             {
-                foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.cmbNetRevEconOptimzFilter.SelectedItem)))
                     {
@@ -2542,7 +2542,7 @@ namespace FIA_Biosum_Manager
             this.txtRevenueDescr.Text = "";
             if (this.cmbNetRevOptimzFilter.SelectedIndex > -1)
             {
-                foreach (uc_core_scenario_weighted_average.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceCoreScenarioForm.m_oWeightedVariableCollection)
                 {
                     if (oItem.strVariableName.Equals(Convert.ToString(this.cmbNetRevOptimzFilter.SelectedItem)))
                     {

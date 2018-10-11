@@ -39,7 +39,7 @@ namespace FIA_Biosum_Manager
 		public int m_intFullWd=632;
 		public int m_intError=0;
 		public string m_strError="";
-		private FIA_Biosum_Manager.frmCoreScenario _frmCoreAnalysisScenario;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmCoreAnalysisScenario;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario;
 		private string _strScenarioType="optimizer";
 		
@@ -647,14 +647,14 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.ScenarioType.Trim().ToUpper()=="OPTIMIZER")
 			{
-				if (((frmCoreScenario)this.ParentForm).m_bScenarioOpen == false) 
+				if (((frmOptimizerScenario)this.ParentForm).m_bScenarioOpen == false) 
 				{
-					((frmCoreScenario)this.ParentForm).Close();
+					((frmOptimizerScenario)this.ParentForm).Close();
 				}
 				else 
 				{
 					this.lblTitle.Text = "";
-					((frmCoreScenario)this.ParentForm).SetMenu("scenario");
+					((frmOptimizerScenario)this.ParentForm).SetMenu("scenario");
 					this.Visible =false;
 				}
 			}
@@ -763,7 +763,7 @@ namespace FIA_Biosum_Manager
 		private void uc_scenario_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
             if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
-				((frmCoreScenario)this.ParentForm).m_bPopup = false;
+				((frmOptimizerScenario)this.ParentForm).m_bPopup = false;
 			else
 				this.ReferenceProcessorScenarioForm.m_bPopup=false;
 
@@ -772,7 +772,7 @@ namespace FIA_Biosum_Manager
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
             if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
-				((frmCoreScenario)this.ParentForm).Close();
+				((frmOptimizerScenario)this.ParentForm).Close();
 			else
 				this.ReferenceProcessorScenarioForm.Close();
 		}
@@ -820,8 +820,8 @@ namespace FIA_Biosum_Manager
                     if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 					{
 					
-						((frmCoreScenario)this.ParentForm).DialogResult=DialogResult.OK;
-						((frmCoreScenario)this.ParentForm).Close();
+						((frmOptimizerScenario)this.ParentForm).DialogResult=DialogResult.OK;
+						((frmOptimizerScenario)this.ParentForm).Close();
 					}
 					else
 					{
@@ -846,7 +846,7 @@ namespace FIA_Biosum_Manager
 			get {return _frmProcessorScenario;}
 			set {_frmProcessorScenario=value;}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreAnalysisScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreAnalysisScenarioForm
 		{
 			get {return _frmCoreAnalysisScenario;}
 			set {_frmCoreAnalysisScenario=value;}
