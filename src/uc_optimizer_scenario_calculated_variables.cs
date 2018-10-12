@@ -2112,7 +2112,7 @@ namespace FIA_Biosum_Manager
                             }
                             //Selected FVS table (lstFVSTablesList)
                             string[] strPieces = strVariableSource.Split('.');
-                            for (int i = 0; i < lstFVSTablesList.Items.Count - 1; i++)
+                            for (int i = 0; i < lstFVSTablesList.Items.Count; i++)
                             {
                                 string strTable = lstFVSTablesList.Items[i].ToString();
                                 if (strPieces[0].Equals(strTable))
@@ -2124,9 +2124,10 @@ namespace FIA_Biosum_Manager
                             //Selected FVS variable (lstFVSFieldsList)
                             if (lstFVSTablesList.SelectedIndex > -1)
                             {
-                                for (int i = 0; i < lstFVSFieldsList.Items.Count - 1; i++)
+                                for (int i = 0; i < lstFVSFieldsList.Items.Count; i++)
                                 {
                                     string strField = lstFVSFieldsList.Items[i].ToString();
+                                    Console.WriteLine("field: " + strField);
                                     if (strPieces[1].Equals(strField))
                                     {
                                         lstFVSFieldsList.SelectedIndex = i;
