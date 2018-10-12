@@ -524,7 +524,7 @@ namespace FIA_Biosum_Manager
                 oDs = null;
             }
             this.m_frmGridView = new frmGridView();
-            this.m_frmGridView.Text = "Optimizer: Audit";
+            this.m_frmGridView.Text = "Treatment Optimizer: Audit";
             lblMsg.Text = "";
             lblMsg.Show();
             for (x = 0; x <= m_strVariantArray.Length - 1; x++)
@@ -603,7 +603,7 @@ namespace FIA_Biosum_Manager
 							strMDBPathAndFile + ";User Id=admin;Password=;";
 					
 					this.m_frmGridView = new frmGridView();
-                    this.m_frmGridView.Text = "Optimizer: Run Scenario Results (" + this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim() + ")";
+                    this.m_frmGridView.Text = "Treatment Optimizer: Run Scenario Results (" + this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim() + ")";
 					for (int x=0; x <= intCount-1;x++)
 					{
 						this.lblMsg.Text = strTableNames[x];
@@ -4589,7 +4589,7 @@ namespace FIA_Biosum_Manager
                     if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL,"temp") > 0)
                     {
                         this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " AS a " +
-                                        "SET a.frcs_harvest_costs_yn = 'Y' " +
+                                        "SET a.harvest_costs_yn = 'Y' " +
                                         "WHERE a.biosum_cond_id " +
                                         "IN (SELECT biosum_cond_id FROM " + this.m_strHvstCostsTable + ");";
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -4604,10 +4604,10 @@ namespace FIA_Biosum_Manager
                     if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
                     this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " a " + 
-                                    "SET a.frcs_harvest_costs_yn = 'N' " +
-                                    "WHERE a.frcs_harvest_costs_yn IS NULL OR LEN(TRIM(a.frcs_harvest_costs_yn))=0;";
+                                    "SET a.harvest_costs_yn = 'N' " +
+                                    "WHERE a.harvest_costs_yn IS NULL OR LEN(TRIM(a.harvest_costs_yn))=0;";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet FRCS_harvest_costs_yn=N if column value is null\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet harvest_costs_yn=N if column value is null\r\n");
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
                     this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
@@ -4832,10 +4832,10 @@ namespace FIA_Biosum_Manager
 
 
                     /****************************************************************************
-                     **check to see if the plot + rx record exists in the frcs harves costs table
+                     **check to see if the plot + rx record exists in the harvest costs table
                      ****************************************************************************/
                     this.m_strSQL = "UPDATE plot_cond_rx_audit_" + m_strVariantArray[x].Trim() + " " + 
-                        "SET frcs_harvest_costs_yn = 'Y' " +
+                        "SET harvest_costs_yn = 'Y' " +
                         "WHERE EXISTS (SELECT biosum_cond_id,rxpackage,rx,rxcycle " +
                         "FROM " + this.m_strHvstCostsTable + " " +
                         "WHERE plot_cond_rx_audit_" + m_strVariantArray[x].Trim() + ".biosum_cond_id = " +
@@ -4844,7 +4844,7 @@ namespace FIA_Biosum_Manager
                         "plot_cond_rx_audit_" + m_strVariantArray[x].Trim() + ".rx = " + this.m_strHvstCostsTable.Trim() + ".rx AND " +
                         "plot_cond_rx_audit_" + m_strVariantArray[x].Trim() + ".rxcycle = " + this.m_strHvstCostsTable.Trim() + ".rxcycle);";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet FRCS_harvest_costs_yn=Y if plot + rx + rxpackage + rxcycle record exists in " + m_strHvstCostsTable + " table\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet harvest_costs_yn=Y if plot + rx + rxpackage + rxcycle record exists in " + m_strHvstCostsTable + " table\r\n");
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
                     this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
@@ -4854,10 +4854,10 @@ namespace FIA_Biosum_Manager
 
 
                     this.m_strSQL = "UPDATE plot_cond_rx_audit_" + m_strVariantArray[x].Trim() + " a " + 
-                        "SET a.frcs_harvest_costs_yn = 'N' " +
-                        "WHERE a.frcs_harvest_costs_yn IS NULL OR LEN(TRIM(a.frcs_harvest_costs_yn))=0 ;";
+                        "SET a.harvest_costs_yn = 'N' " +
+                        "WHERE a.harvest_costs_yn IS NULL OR LEN(TRIM(a.harvest_costs_yn))=0 ;";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet FRCS_harvest_costs_yn=N if column value is null\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet harvest_costs_yn=N if column value is null\r\n");
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
                     this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);

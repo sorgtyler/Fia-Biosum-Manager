@@ -825,13 +825,13 @@ namespace FIA_Biosum_Manager
 					{
 						this.progressBar1.Value = x+1;
 						strInsertSQL = "INSERT INTO plot_cond_rx_audit " +
-							"(biosum_cond_id,rx,fvs_ffe_yn,processor_tree_vol_val_yn, frcs_harvest_costs_yn) " + 
+							"(biosum_cond_id,rx,fvs_ffe_yn,processor_tree_vol_val_yn, harvest_costs_yn) " + 
 							" VALUES " + 
 							"('" + p_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "'" + 
 							",'" + p_dt.Rows[x]["rx"].ToString().Trim() + "'" + 
 							",'" + p_dt.Rows[x]["fvs_ffe_yn"].ToString().Trim() + "'" + 
 							",'" + p_dt.Rows[x]["processor_tree_vol_val_yn"].ToString().Trim() + "'" + 
-							",'" + p_dt.Rows[x]["frcs_harvest_costs_yn"].ToString().Trim() + "');";
+							",'" + p_dt.Rows[x]["harvest_costs_yn"].ToString().Trim() + "');";
 						if (strUpdateType.Trim()=="update")
 						{
 							this.m_strSQL = "SELECT COUNT(*) FROM plot_cond_rx_audit WHERE trim(biosum_cond_id)='" + p_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "'" + 
@@ -841,7 +841,7 @@ namespace FIA_Biosum_Manager
 								this.m_strSQL ="UPDATE plot_cond_rx_audit SET fvs_ffe_yn = " + 
 									"'" + p_dt.Rows[x]["fvs_ffe_yn"].ToString().Trim() + "'" + 
 									", processor_tree_vol_val_yn = '" + p_dt.Rows[x]["fvs_ffe_yn"].ToString().Trim() + "'" + 
-									", frcs_harvest_costs_yn = '" + p_dt.Rows[x]["frcs_harvest_costs_yn"].ToString().Trim() + "'" + 
+									", harvest_costs_yn = '" + p_dt.Rows[x]["harvest_costs_yn"].ToString().Trim() + "'" + 
 									" WHERE trim(biosum_cond_id) = '" + p_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "'" + 
 									"    AND rx = '" + p_dt.Rows[x]["rx"].ToString().Trim() + "';";
 							}
@@ -894,13 +894,13 @@ namespace FIA_Biosum_Manager
 					{
 						this.progressBar1.Value = x+1;
 						strInsertSQL = "INSERT INTO plot_cond_audit " +
-							"(biosum_cond_id,gis_travel_times_yn,fvs_ffe_yn,processor_tree_vol_val_yn, frcs_harvest_costs_yn) " + 
+							"(biosum_cond_id,gis_travel_times_yn,fvs_ffe_yn,processor_tree_vol_val_yn, harvest_costs_yn) " + 
 							" VALUES " + 
 							"('" + p_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "'" + 
 							",'" + p_dt.Rows[x]["gis_travel_times_yn"].ToString().Trim() + "'" + 
 							",'" + p_dt.Rows[x]["fvs_ffe_yn"].ToString().Trim() + "'" + 
 							",'" + p_dt.Rows[x]["processor_tree_vol_val_yn"].ToString().Trim() + "'" + 
-							",'" + p_dt.Rows[x]["frcs_harvest_costs_yn"].ToString().Trim() + "');";
+							",'" + p_dt.Rows[x]["harvest_costs_yn"].ToString().Trim() + "');";
 						if (strUpdateType.Trim()=="update")
 						{
 							this.m_strSQL = "SELECT COUNT(*) FROM plot_cond_audit WHERE trim(biosum_cond_id)='" + p_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "';";
@@ -910,7 +910,7 @@ namespace FIA_Biosum_Manager
 									"'" + p_dt.Rows[x]["fvs_ffe_yn"].ToString().Trim() + "'" + 
 									", gis_travel_times_yn = '" + p_dt.Rows[x]["gis_travel_times_yn"].ToString().Trim() + "'" +
 									", processor_tree_vol_val_yn = '" + p_dt.Rows[x]["fvs_ffe_yn"].ToString().Trim() + "'" + 
-									", frcs_harvest_costs_yn = '" + p_dt.Rows[x]["frcs_harvest_costs_yn"].ToString().Trim() + "'" + 
+									", harvest_costs_yn = '" + p_dt.Rows[x]["harvest_costs_yn"].ToString().Trim() + "'" + 
 									" WHERE trim(biosum_cond_id) = '" + p_dt.Rows[x]["biosum_cond_id"].ToString().Trim() + "';";
 							}
 							else
@@ -3507,15 +3507,15 @@ namespace FIA_Biosum_Manager
 				/************************************************************************
 				 **check to see if the plot record exists in the frcs harvest cost table
 				 ************************************************************************/
-				this.m_strSQL = "UPDATE plot_cond_audit SET frcs_harvest_costs_yn = 'Y' " + 
+				this.m_strSQL = "UPDATE plot_cond_audit SET harvest_costs_yn = 'Y' " + 
 					             "WHERE plot_cond_audit.biosum_cond_id " + 
 					             "IN (SELECT biosum_cond_id FROM " + this.m_strHvstCostsTable + ");";
 				this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
 				this.m_frmRunCoreScenario.progressBar1.Value=2;
 				if (this.UserCancel(this.m_frmRunCoreScenario.lblProcValidCombos)) return;
 
-				this.m_strSQL = "UPDATE plot_cond_audit SET frcs_harvest_costs_yn = 'N' " + 
-					"WHERE plot_cond_audit.frcs_harvest_costs_yn IS NULL ;" ;
+				this.m_strSQL = "UPDATE plot_cond_audit SET harvest_costs_yn = 'N' " + 
+					"WHERE plot_cond_audit.harvest_costs_yn IS NULL ;" ;
 				this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
                 this.m_frmRunCoreScenario.progressBar1.Value=3;
 				if (this.UserCancel(this.m_frmRunCoreScenario.lblProcValidCombos)) return;
@@ -3606,7 +3606,7 @@ namespace FIA_Biosum_Manager
 				/****************************************************************************
 				 **check to see if the plot + rx record exists in the frcs harves costs table
 				 ****************************************************************************/
-				this.m_strSQL="UPDATE plot_cond_rx_audit SET frcs_harvest_costs_yn = 'Y' " + 
+				this.m_strSQL="UPDATE plot_cond_rx_audit SET harvest_costs_yn = 'Y' " + 
 					"WHERE EXISTS (SELECT biosum_cond_id,rx " + 
 					"FROM "  + this.m_strHvstCostsTable + " " + 
 					"WHERE plot_cond_rx_audit.biosum_cond_id = " + 
@@ -3617,8 +3617,8 @@ namespace FIA_Biosum_Manager
 				this.m_frmRunCoreScenario.progressBar1.Value=13;
 				if (this.UserCancel(this.m_frmRunCoreScenario.lblProcValidCombos)) return;
 
-				this.m_strSQL = "UPDATE plot_cond_rx_audit SET frcs_harvest_costs_yn = 'N' " + 
-					"WHERE plot_cond_rx_audit.frcs_harvest_costs_yn IS NULL ;" ;
+				this.m_strSQL = "UPDATE plot_cond_rx_audit SET harvest_costs_yn = 'N' " + 
+					"WHERE plot_cond_rx_audit.harvest_costs_yn IS NULL ;" ;
 				this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
 				this.m_frmRunCoreScenario.progressBar1.Value=14;
 				if (this.UserCancel(this.m_frmRunCoreScenario.lblProcValidCombos)) return;

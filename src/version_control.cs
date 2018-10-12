@@ -5638,6 +5638,31 @@ namespace FIA_Biosum_Manager
                 }
             }
 
+            frmMain.g_sbpInfo.Text = "Version Update: Renaming frcs_harvest_costs_yn columns in audit tables ...Stand by";
+            string[] arrDatabases = System.IO.Directory.GetFiles(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db");
+            string strOldColumnName = "frcs_harvest_costs_yn";
+            string strNewColumnName = "harvest_costs_yn";
+            foreach (string strDatabase in arrDatabases)
+            {
+                string strDatabaseName = System.IO.Path.GetFileName(strDatabase);
+                if (strDatabaseName.StartsWith("audit"))
+                {
+                    strRenameConn = m_oAdo.getMDBConnString(strDatabase, "", "");
+                    using (var oRenameConn = new OleDbConnection(strRenameConn))
+                    {
+                        oRenameConn.Open();
+                        if (oAdo.ColumnExist(oRenameConn, frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName, strOldColumnName));
+                        {
+                            oDao.RenameField(strDatabase, frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName, strOldColumnName, strNewColumnName);
+                        }
+                        if (oAdo.ColumnExist(oRenameConn, frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName, strOldColumnName)) ;
+                        {
+                            oDao.RenameField(strDatabase, frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName, strOldColumnName, strNewColumnName);
+                        }
+                    }
+                }
+            }
+
 
             if (oDao != null)
             {

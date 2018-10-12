@@ -544,7 +544,7 @@ namespace FIA_Biosum_Manager
 			}
 
 				frmDialog frmTemp = new frmDialog();
-                frmTemp.Text = "Optimizer: Select Database Tables For SQL";
+                frmTemp.Text = "Treatment Optimizer: Select Database Tables For SQL";
                 frmTemp.uc_select_list_item1.lblMsg.Enabled=true;
 				frmTemp.uc_select_list_item1.lblMsg.Text= "Data Sources";
 				frmTemp.uc_select_list_item1.lblMsg.Visible = true;

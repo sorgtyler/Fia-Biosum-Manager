@@ -2928,7 +2928,7 @@ namespace FIA_Biosum_Manager
 					"fvs_prepost_variables_yn CHAR(1)," + 
 					"gis_travel_times_yn CHAR(1)," + 
 					"processor_tree_vol_val_yn CHAR(1), " + 
-					"frcs_harvest_costs_yn CHAR(1))";
+					"harvest_costs_yn CHAR(1))";
 			}
 			public void CreatePlotCondRxAuditTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -2949,7 +2949,7 @@ namespace FIA_Biosum_Manager
 					"rxcycle CHAR(1)," + 
 					"fvs_prepost_variables_yn CHAR(1)," + 
 					"processor_tree_vol_val_yn CHAR(1)," + 
-					"frcs_harvest_costs_yn CHAR(1))";
+					"harvest_costs_yn CHAR(1))";
 			}
 
 		}
