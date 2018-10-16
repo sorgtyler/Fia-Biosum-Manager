@@ -240,12 +240,11 @@ namespace FIA_Biosum_Manager
 		}
 		public class OptimizerScenarioResults
 		{
-            //cycle1
-			static public string DefaultScenarioResultsCycle1BestRxSummaryTableDbFile {get {return @"db\scenario_results.mdb";}}
-			static public string DefaultScenarioResultsCycle1BestRxSummaryTableName {get {return "cycle1_best_rx_summary";}}
-            static public string DefaultScenarioResultsCycle1OptimizationTableDbFile { get { return @"db\scenario_results.mdb"; } }
-            static public string DefaultScenarioResultsCycle1OptimizationTableName { get { return "cycle1_optimization"; } }
-            static public string DefaultScenarioResultsTieBreakerTableDbFile { get { return @"db\scenario_results.mdb"; } }
+
+            static public string DefaultScenarioResultsEffectiveTableSuffix { get { return "_effective"; } }
+            static public string DefaultScenarioResultsBestRxSummaryTableSuffix {get {return "_best_rx_summary";}}
+            static public string DefaultScenarioResultsBestRxSummaryBeforeTiebreaksTableSuffix { get { return "_best_rx_summary_before_tiebreaks"; } }
+            static public string DefaultScenarioResultsOptimizationTableSuffix { get { return "_optimization"; } }
             static public string DefaultScenarioResultsTieBreakerTableName { get { return "tiebreaker"; } }
 
             //other
@@ -257,8 +256,6 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsValidCombosFVSPostTableName { get { return "validcombos_fvspost"; } }
             static public string DefaultScenarioResultsValidCombosTableDbFile { get { return @"db\scenario_results.mdb"; } }
             static public string DefaultScenarioResultsValidCombosTableName { get { return "validcombos"; } }
-            static public string DefaultScenarioResultsCycle1EffectiveTableDbFile { get { return @"db\scenario_results.mdb"; } }
-            static public string DefaultScenarioResultsCycle1EffectiveTableName { get { return "cycle1_effective"; } }
             static public string DefaultScenarioResultsTreeVolValSumTableDbFile { get { return @"db\scenario_results.mdb"; } }
             static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx"; } }
             static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\scenario_results.mdb"; } }
@@ -281,10 +278,11 @@ namespace FIA_Biosum_Manager
 			//EFFECTIVE TABLE
 			//
 			public void CreateEffectiveTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,
-                string p_strTableName, string p_strFilterColumnName)
+                string p_strTablePrefix, string p_strFilterColumnName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateEffectiveTableSQL(p_strTableName, p_strFilterColumnName));
-				CreateEffectiveTableIndexes(p_oAdo,p_oConn,p_strTableName);
+                string strTableName = p_strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsEffectiveTableSuffix;
+                p_oAdo.SqlNonQuery(p_oConn,CreateEffectiveTableSQL(strTableName, p_strFilterColumnName));
+				CreateEffectiveTableIndexes(p_oAdo,p_oConn,strTableName);
 			}
 			public void CreateEffectiveTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{

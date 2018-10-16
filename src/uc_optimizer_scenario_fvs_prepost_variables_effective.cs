@@ -2941,10 +2941,27 @@ namespace FIA_Biosum_Manager
                     break;
                 }
             }
-            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection, 
-                Tables.OptimizerScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName, strColumnFilterName);
+ 
+            string strPrefix = "cycle1";
+            for(int i=0;i<lvFVSVariablesPrePostValues.Items.Count;i++){
+                string strPreVariable = Convert.ToString(lvFVSVariablesPrePostValues.Items[i].SubItems[COLUMN_PREVAR]).Trim();
+                string[] strPieces = strPreVariable.Split('.');
+                if (strPieces.Length == 2 && !String.IsNullOrEmpty(strPieces[0]))
+                {
+                    if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                    {
+                        strPrefix = "all_cycles";
+                        break;
+                    }
+                }
 
-			strSQL = "SELECT * FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName + " WHERE " +
+            }
+            this.ReferenceOptimizerScenarioForm.OutputTablePrefix = strPrefix;
+            string strEffectiveTableName = this.ReferenceOptimizerScenarioForm.OutputTablePrefix + "_effective";
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection,
+                this.ReferenceOptimizerScenarioForm.OutputTablePrefix, strColumnFilterName);
+
+			strSQL = "SELECT * FROM " + strEffectiveTableName + " WHERE " +
 				strSQL + ";";
 			oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
 

@@ -105,6 +105,7 @@ namespace FIA_Biosum_Manager
         private string m_helpChapter = "OPEN_SCENARIO";
         public FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection m_oWeightedVariableCollection =
             new FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection();
+        private string m_strOutputTablePrefix;
 
 
 		public frmOptimizerScenario(FIA_Biosum_Manager.frmMain p_frmMain)
@@ -714,6 +715,12 @@ namespace FIA_Biosum_Manager
 
 		}
 		#endregion
+
+   public string OutputTablePrefix
+   {
+       get { return m_strOutputTablePrefix; }
+       set { m_strOutputTablePrefix = value; }
+   }
 
 		private void frmscenarioScenario_Load(object sender, System.EventArgs e)
 		{

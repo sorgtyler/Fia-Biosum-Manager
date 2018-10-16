@@ -126,6 +126,7 @@ namespace FIA_Biosum_Manager
         private Label label4;
 
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
+        private TextBox TxtCycle1Only;
         private string m_strHelpChapter = "OPTIMIZATION_SETTINGS";
 
 		public uc_optimizer_scenario_fvs_prepost_optimization()
@@ -263,6 +264,7 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.TxtCycle1Only = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationEconSettings.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -819,6 +821,7 @@ namespace FIA_Biosum_Manager
             // pnlFVSVariablesPrePostVariable
             // 
             this.pnlFVSVariablesPrePostVariable.AutoScroll = true;
+            this.pnlFVSVariablesPrePostVariable.Controls.Add(this.TxtCycle1Only);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpBoxOptimizationNetRevenue);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.btnOptimiztionPrev);
             this.pnlFVSVariablesPrePostVariable.Controls.Add(this.grpboxOptimizationSettingsPostPre);
@@ -1019,10 +1022,22 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
             // 
-            // uc_core_scenario_fvs_prepost_optimization
+            // TxtCycle1Only
+            // 
+            this.TxtCycle1Only.BackColor = System.Drawing.SystemColors.Control;
+            this.TxtCycle1Only.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.TxtCycle1Only.Location = new System.Drawing.Point(81, 133);
+            this.TxtCycle1Only.Name = "TxtCycle1Only";
+            this.TxtCycle1Only.Size = new System.Drawing.Size(751, 15);
+            this.TxtCycle1Only.TabIndex = 26;
+            this.TxtCycle1Only.TabStop = false;
+            this.TxtCycle1Only.Text = "The Revenue Optimization variable includes revenue for cycle 1 only";
+            this.TxtCycle1Only.Visible = false;
+            // 
+            // uc_optimizer_scenario_fvs_prepost_optimization
             // 
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_core_scenario_fvs_prepost_optimization";
+            this.Name = "uc_optimizer_scenario_fvs_prepost_optimization";
             this.Size = new System.Drawing.Size(872, 2000);
             this.groupBox1.ResumeLayout(false);
             this.grpboxOptimizationEconSettings.ResumeLayout(false);
@@ -1043,6 +1058,7 @@ namespace FIA_Biosum_Manager
             this.grpboxOptimizationAudit.ResumeLayout(false);
             this.grpboxOptimizationSettings.ResumeLayout(false);
             this.pnlFVSVariablesPrePostVariable.ResumeLayout(false);
+            this.pnlFVSVariablesPrePostVariable.PerformLayout();
             this.grpBoxOptimizationNetRevenue.ResumeLayout(false);
             this.grpBoxOptimizationNetRevenue.PerformLayout();
             this.grpboxOptimizationSettingsPostPre.ResumeLayout(false);
@@ -1969,6 +1985,13 @@ namespace FIA_Biosum_Manager
                     this.chkEnableFilter.Checked = false;
                 }
                 this.grpMaxMin.Location = grpboxOptimizationSettingsPostPre.Location;
+                // Manage the warning label
+                TxtCycle1Only.BringToFront();
+                TxtCycle1Only.Visible = true;
+                TxtCycle1Only.Location = new Point(81,110);
+                string strVariableType = this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim();
+                TxtCycle1Only.Text = "The " + strVariableType + 
+                    " Optimization variable includes " + strVariableType.ToLower() + " for cycle 1 only";
                 // Hide the second (FVS) layer so the third is visible
                 this.grpboxOptimizationSettingsPostPre.Hide();
                 // Hide the fourth (Economic) layer
@@ -2069,6 +2092,9 @@ namespace FIA_Biosum_Manager
                 {
                     this.chkEnableFilter.Checked = false;
                 }
+                //Manage the revenue warning
+                TxtCycle1Only.Visible = false;
+                TxtCycle1Only.SendToBack();
 			}
 
 			// These fields are common to FVS variable, Merchantable Volume, and Revenue options. Not breaking these out for now.
