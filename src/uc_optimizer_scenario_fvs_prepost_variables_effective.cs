@@ -2956,10 +2956,9 @@ namespace FIA_Biosum_Manager
                 }
 
             }
-            this.ReferenceOptimizerScenarioForm.OutputTablePrefix = strPrefix;
-            string strEffectiveTableName = this.ReferenceOptimizerScenarioForm.OutputTablePrefix + "_effective";
+            string strEffectiveTableName = strPrefix + "_effective";
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection,
-                this.ReferenceOptimizerScenarioForm.OutputTablePrefix, strColumnFilterName);
+                strPrefix, strColumnFilterName);
 
 			strSQL = "SELECT * FROM " + strEffectiveTableName + " WHERE " +
 				strSQL + ";";

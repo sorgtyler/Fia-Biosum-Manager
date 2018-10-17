@@ -821,7 +821,7 @@ namespace FIA_Biosum_Manager
 		private void StartScenarioRunProcess()
 		{
 			frmMain.g_oDelegate.CurrentThreadProcessStarted=true;
-            this.m_oRunOptimizer = new RunOptimizer(this);
+             this.m_oRunOptimizer = new RunOptimizer(this);
 			if (!this.m_bAbortThread)
 			{
 				
@@ -1472,7 +1472,7 @@ namespace FIA_Biosum_Manager
                             this.m_strOptimizationTableName = this.m_strOptimizationTableName + "N" + Convert.ToString(this.m_oOptimizationVariable.dblFilterValue*-1).Trim();
 					}
 
-                    this.ReferenceOptimizerScenarioForm.OutputTablePrefix = "cycle2";
+                    this.ReferenceOptimizerScenarioForm.OutputTablePrefix = this.getFileNamePrefix();
                     m_strOptimizationTableName = ReferenceOptimizerScenarioForm.OutputTablePrefix + "_" + m_strOptimizationTableName;
 
                     getVariants();
@@ -1809,7 +1809,7 @@ namespace FIA_Biosum_Manager
 						 ***************************************************************************/
 						if (this.m_intError==0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
-							this.Cycle1Effective();
+							this.Effective();
 
 						}
 						/**************************************************************************
@@ -1817,7 +1817,7 @@ namespace FIA_Biosum_Manager
 						 **************************************************************************/
 						if (this.m_intError==0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
-							this.Cycle1Optimization();
+							this.Optimization();
 						}
 						/**************************************************************************
 						 **tie breakers
@@ -1833,21 +1833,21 @@ namespace FIA_Biosum_Manager
 						 *********************************************************************/ 
 						if (this.m_intError==0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
-							this.Cycle1_best_rx_summary();
+							this.Best_rx_summary();
 						}
 						/*******************************************************************************
 						 **expand acreage for best treatments by plot 
 						 *******************************************************************************/
 						if (this.m_intError==0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
-							this.Cycle1BestTreatmentsByPlot();
+							this.BestTreatmentsByPlot();
 						}
 						/**********************************************************************
 						 **sum up the values by processing site
 						 **********************************************************************/
 						if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
-							this.Cycle1SumPSite();
+							this.SumPSite();
 
 						}
 
@@ -1856,7 +1856,7 @@ namespace FIA_Biosum_Manager
 						 **********************************************************************/
 						if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
-							this.Cycle1SumOwnership();
+							this.SumOwnership();
 
 						}
                         
@@ -4952,12 +4952,12 @@ namespace FIA_Biosum_Manager
 		/// by loading the effective table with 
 		/// results from user defined expressions 
 		/// </summary>
-		private void Cycle1Effective()
+		private void Effective()
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Cycle1Effective\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Effective\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 			int x,y;
@@ -5331,12 +5331,12 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void Cycle1Optimization()
+		private void Optimization()
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Cycle1Optimization\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Optimization\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 			
@@ -6940,12 +6940,12 @@ namespace FIA_Biosum_Manager
 		/// maximum net revenue; merchantable wood removal;
 		/// and optimization variable
 		/// </summary>
-		private void Cycle1_best_rx_summary()
+		private void Best_rx_summary()
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Cycle1_best_rx_summary\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Best_rx_summary\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 			string strTable="";
@@ -7116,20 +7116,20 @@ namespace FIA_Biosum_Manager
 
 			if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "REVENUE")
 			{
-				Cycle1_best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,false);
+				Best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,false);
 
 			}
 			else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "MERCHANTABLE VOLUME")
 			{
-				Cycle1_best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,false);
+				Best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,false);
 			}
             else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
             {
-                Cycle1_best_rx_summary(oTieBreakerCollection, strTieBreakerAggregate, false);
+                Best_rx_summary(oTieBreakerCollection, strTieBreakerAggregate, false);
             }
 			else
 			{
-				Cycle1_best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,true);
+				Best_rx_summary(oTieBreakerCollection,strTieBreakerAggregate,true);
 			}
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
@@ -7201,7 +7201,7 @@ namespace FIA_Biosum_Manager
 		
 		}
 
-		private void Cycle1_best_rx_summary(
+		private void Best_rx_summary(
 			FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection, 
 			string strTieBreakerAggregate,
 			bool bFVSVariable)
@@ -7599,12 +7599,12 @@ namespace FIA_Biosum_Manager
 		/// best treatments and data found in the best_rx_summary
 		/// product_yields_net_rev_costs_summary_by_rx, and effective tables
 		/// </summary>
-        private void Cycle1BestTreatmentsByPlot()
+        private void BestTreatmentsByPlot()
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Cycle1BestTreatmentsByPlot\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//BestTreatmentsByPlot\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n\r\n");
             }
             frmMain.g_oDelegate.SetControlPropertyValue((Control)ReferenceUserControlScenarioRun.lblMsg,"Text", "Best Treatment Acreage Expansion By Plot");
@@ -7642,7 +7642,7 @@ namespace FIA_Biosum_Manager
 
 			
 			string strWhereExpr="";
-			this.Cycle1BestRxAcreageExpansionTableInsert(m_strOptimizationTableName + "_stands","biosum_cond_id","rx",strWhereExpr);
+			this.BestRxAcreageExpansionTableInsert(m_strOptimizationTableName + "_stands","biosum_cond_id","rx",strWhereExpr);
             if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
 			
 
@@ -8506,11 +8506,10 @@ namespace FIA_Biosum_Manager
 
 		}
 		
-		private void Cycle1BestRxAcreageExpansionTableInsert(string strTable,string strTypeField, string strRxField, string strWhereExpression)
+		private void BestRxAcreageExpansionTableInsert(string strTable,string strTypeField, string strRxField, string strWhereExpression)
 		{
 			string p = this.m_strPlotTable.Trim();
 			string c = this.m_strCondTable.Trim();
-            string e = "cycle1_effective_product_yields_net_rev_costs_summary_by_rx";
 
            
             //create work table to eliminate duplicates
@@ -8734,12 +8733,12 @@ namespace FIA_Biosum_Manager
 		/// <summary>
 		/// sum wood volume, values, and costs by processing sites
 		/// </summary>
-		private void Cycle1SumPSite()
+		private void SumPSite()
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "// Cycle1SumPSite\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "// SumPSite\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n\r\n");
             }
             frmMain.g_oDelegate.SetControlPropertyValue((Control)ReferenceUserControlScenarioRun.lblMsg, "Text", this.m_strOptimizationTableName + " by Processing Site");
@@ -8990,12 +8989,12 @@ namespace FIA_Biosum_Manager
 		/// <summary>
 		/// sum wood volumes, values, and costs by land ownership
 		/// </summary>
-		private void Cycle1SumOwnership()
+		private void SumOwnership()
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "// Cycle1SumOwnership\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "// SumOwnership\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n\r\n");
             }
 
@@ -9372,6 +9371,76 @@ namespace FIA_Biosum_Manager
 			get {return _uc_scenario_run;}
 			set {_uc_scenario_run=value;}
 		}
+
+        private string getFileNamePrefix()
+        {
+            string strPrefix = "cycle_1";
+            // Check the effective variables for a weighted variable
+            foreach (string strPreVariable in ReferenceOptimizerScenarioForm.uc_scenario_fvs_prepost_variables_effective1.m_oSavVar.m_strPreVarArray)
+            {
+                string[] strPieces = strPreVariable.Split('.');
+                if (strPieces.Length == 2 && !String.IsNullOrEmpty(strPieces[0]))
+                {
+                    if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                    {
+                        strPrefix = "all_cycles";
+                        break;
+                    }
+                }
+            }
+            // Check the optimization variable
+            if (strPrefix == "cycle_1")
+            {
+                if (this.m_oOptimizationVariable.strOptimizedVariable == "Economic Attribute")
+                {
+                    // economic attributes are always weighted
+                    strPrefix = "all_cycles";
+                }
+                else if (this.m_oOptimizationVariable.strOptimizedVariable == "Stand Attribute")
+                {
+                    string[] strPieces = this.m_oOptimizationVariable.strFVSVariableName.Split('.');
+                    if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                    {
+                        strPrefix = "all_cycles";
+                    }
+                }
+            }
+            // Check for a revenue filter (they are always weighted)
+            if (strPrefix == "cycle_1")
+            {
+                if (this.m_oOptimizationVariable.bUseFilter == true)
+                { strPrefix = "all_cycles"; }
+            }
+            // Check the tiebreaker filter
+            if (strPrefix == "cycle_1")
+            {
+                FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker.TieBreaker_Collection oTieBreakerCollection =
+                    ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection;
+                foreach (FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker.TieBreakerItem oItem in
+                    oTieBreakerCollection)
+                {
+                    if (oItem.bSelected == true)
+                    {
+                        if (oItem.strMethod == "Economic Attribute")
+                        {
+                            // economic attributes are always weighted
+                            strPrefix = "all_cycles";
+                            break;
+                        }
+                        else if (oItem.strMethod == "Stand Attribute")
+                        {
+                            string[] strPieces = oItem.strFVSVariableName.Split('.');
+                            if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                            {
+                                strPrefix = "all_cycles";
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return strPrefix;
+        }
 		
 		
 	}
