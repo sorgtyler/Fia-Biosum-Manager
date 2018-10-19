@@ -353,6 +353,7 @@ namespace FIA_Biosum_Manager
             this.m_dgEcon.Size = new System.Drawing.Size(327, 177);
             this.m_dgEcon.TabIndex = 95;
             this.m_dgEcon.CurrentCellChanged += new System.EventHandler(this.m_dgEcon_CurCellChange);
+            this.m_dgEcon.Leave += new System.EventHandler(this.m_dgEcon_Leave);    // recalculates sum when leaving grid
             // 
             // lblEconVariableName
             // 
@@ -676,6 +677,7 @@ namespace FIA_Biosum_Manager
             this.m_dg.Size = new System.Drawing.Size(403, 177);
             this.m_dg.TabIndex = 91;
             this.m_dg.CurrentCellChanged += new System.EventHandler(this.m_dg_CurCellChange);
+            this.m_dg.Leave += new System.EventHandler(this.m_dg_Leave);    // recalculates sum when leaving grid
             // 
             // btnDeleteFvsVariable
             // 
@@ -1961,6 +1963,16 @@ namespace FIA_Biosum_Manager
             if (m_intPrevColumnIdx.Equals(1))
                 this.SumWeights(true);
             m_intPrevColumnIdx = m_dgEcon.CurrentCell.ColumnNumber;
+        }
+
+        private void m_dg_Leave(object sender, EventArgs e)
+        {
+            this.SumWeights(false);
+        }
+
+        private void m_dgEcon_Leave(object sender, EventArgs e)
+        {
+            this.SumWeights(true);
         }
 
         private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)

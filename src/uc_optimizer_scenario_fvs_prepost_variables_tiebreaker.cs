@@ -1759,7 +1759,7 @@ namespace FIA_Biosum_Manager
 				}
 				else
 				{
-					//cannot be equal to the optimization variable
+					//cannot be equal to the stand attribute optimization variable
                     for (x = 0; x <= this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Count - 1; x++)
 					{
                         if (this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(x).bSelected)
@@ -1774,9 +1774,22 @@ namespace FIA_Biosum_Manager
 						}
 					}
 
-
 				}
 			}
+            //cannot be equal to the economic optimization variable
+            if (this.lvFVSVariablesTieBreakerValues.Items[1].Checked)
+            {
+                //cannot be equal to the economic optimization variable
+                if (this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(3).bSelected == true)
+                {
+                    if (this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Item(3).strFVSVariableName.Trim().ToUpper() ==
+                        lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text.Trim().ToUpper())
+                    {
+                        p_intError = -1;
+                        p_strError = p_strError + lvFVSVariablesTieBreakerValues.Items[1].SubItems[COLUMN_FVSVARIABLE].Text + " cannot be both optimization variable and tie breaker variable\r\n";
+                    }
+                }
+            }
 		}
 		
 		private void lvFVSVariablesPrePostValues_DoubleClick(object sender, System.EventArgs e)

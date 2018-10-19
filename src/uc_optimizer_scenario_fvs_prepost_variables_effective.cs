@@ -3623,6 +3623,12 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostValuesButtonsEdit_Click(object sender, System.EventArgs e)
 		{
+            if (this.lvFVSVariablesPrePostValues.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("!! No variable selected to edit!", "FIA Biosum", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
             this.loadFVSTableAndField();
             this.lblFVSVariablesPrePostVariablePreSelected.Text = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim();
             this.lblFVSVariablesPrePostVariablePostSelected.Text = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_POSTVAR].Text.Trim();
@@ -3656,7 +3662,12 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostValuesButtonsClear_Click(object sender, System.EventArgs e)
 		{
-			if (this.lvFVSVariablesPrePostValues.SelectedItems.Count == 0) return;
+            if (this.lvFVSVariablesPrePostValues.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("!! No variable selected to clear!", "FIA Biosum", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
 			if (this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim()=="Not Defined") return;
 
 			DialogResult result = MessageBox.Show("Are you sure you wish to delete variable " + this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_VARID].Text + "? (YN)","FIA Biosum",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Question);

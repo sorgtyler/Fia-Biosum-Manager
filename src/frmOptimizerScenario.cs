@@ -241,7 +241,7 @@ namespace FIA_Biosum_Manager
 				this.uc_scenario_run1.ReferenceOptimizerScenarioForm=this;
                 this.uc_scenario_run1.ReferenceOptimizerScenarioForm = this;
                 this.btnClose.Enabled=true;
-                this.resize_frmScenario();
+                this.resize_frmOptimizerScenario();
 
                 this.m_oEnv = new env();
 
@@ -697,11 +697,11 @@ namespace FIA_Biosum_Manager
             this.Name = "frmOptimizerScenario";
             this.Text = "Optimizer Scenario";
             this.Activated += new System.EventHandler(this.frmOptimizerScenario_Activated);
-            this.Closing += new System.ComponentModel.CancelEventHandler(this.frmScenario_Closing);
-            this.Load += new System.EventHandler(this.frmscenarioScenario_Load);
-            this.Click += new System.EventHandler(this.frmScenario_Click);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmScenario_MouseDown);
-            this.Resize += new System.EventHandler(this.frmScenario_Resize);
+            this.Closing += new System.ComponentModel.CancelEventHandler(this.frmOptimizerScenario_Closing);
+            this.Load += new System.EventHandler(this.frmOptimizerScenario_Load);
+            this.Click += new System.EventHandler(this.frmOptimizerScenario_Click);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmOptimizerScenario_MouseDown);
+            this.Resize += new System.EventHandler(this.frmOptimizerScenario_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.dataView1)).EndInit();
             this.tabControlScenario.ResumeLayout(false);
             this.tbRules.ResumeLayout(false);
@@ -722,9 +722,9 @@ namespace FIA_Biosum_Manager
        set { m_strOutputTablePrefix = value; }
    }
 
-		private void frmscenarioScenario_Load(object sender, System.EventArgs e)
+		private void frmOptimizerScenario_Load(object sender, System.EventArgs e)
 		{
-			this.resize_frmScenario();
+			this.resize_frmOptimizerScenario();
 		}
 
 		private void btnCurrentscenario_Click(object sender, System.EventArgs e)
@@ -746,22 +746,22 @@ namespace FIA_Biosum_Manager
 		{
 		}
 
-		private void frmScenario_Click(object sender, System.EventArgs e)
+		private void frmOptimizerScenario_Click(object sender, System.EventArgs e)
 		{
 			this.Focus();
 		}
 
-		private void frmScenario_Resize(object sender, System.EventArgs e)
+		private void frmOptimizerScenario_Resize(object sender, System.EventArgs e)
 		{
 			try
 			{
-				this.resize_frmScenario();
+				this.resize_frmOptimizerScenario();
 			}
 			catch
 			{
 			}
 		}
-		public void resize_frmScenario()
+		public void resize_frmOptimizerScenario()
 		{
 			try
 			{
@@ -994,7 +994,7 @@ namespace FIA_Biosum_Manager
 			m_bPopup=true;
 		}
 
-		private void frmScenario_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		private void frmOptimizerScenario_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			if (m_bPopup == true) m_bPopup =false;
 		}
@@ -1123,24 +1123,15 @@ namespace FIA_Biosum_Manager
 
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
-			DialogResult result = CheckToSave();
-            switch (result)
-            {
-                case (DialogResult.Cancel):
-                    break;
-                default:
-                    this.Close();
-                    break;
-                    
-            }
-			
+            // CheckToSave() method is called from frmScenario_Closing event
+            this.Close();
 		}
 		private DialogResult CheckToSave()
 		{
             DialogResult result=DialogResult.No;
 			if (m_bSave)
 			{
-				result = MessageBox.Show("Save Changes Y/N","Scenario",System.Windows.Forms.MessageBoxButtons.YesNoCancel,System.Windows.Forms.MessageBoxIcon.Question);
+				result = MessageBox.Show("Save Scenario Changes Y/N","FIA Biosum",System.Windows.Forms.MessageBoxButtons.YesNoCancel,System.Windows.Forms.MessageBoxIcon.Question);
                 if (result == System.Windows.Forms.DialogResult.Yes)
                 {
                     this.SaveRuleDefinitions();
@@ -1706,7 +1697,7 @@ namespace FIA_Biosum_Manager
 			}
 		}
 
-		private void frmScenario_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private void frmOptimizerScenario_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (frmMain.g_oDelegate.CurrentThreadProcessIdle==false)
 			{
@@ -3607,7 +3598,17 @@ namespace FIA_Biosum_Manager
                 {
                     if (strTableNamesArray[x].ToUpper().IndexOf("PRE_", 0) == 0)
                     {
-                        string[] strColumnNamesArray = p_oAdo.getFieldNamesArray(p_oAdo.m_OleDbConnection, "SELECT * FROM " + strTableNamesArray[x]);
+                        string strColumnNamesList = "";
+                        string strDataTypesList = "";
+                        p_oAdo.getFieldNamesAndDataTypes(p_oAdo.m_OleDbConnection, "SELECT * FROM " + strTableNamesArray[x], 
+                            ref strColumnNamesList, ref strDataTypesList);
+                        string[] strColumnNamesArray = new string[0];
+                        string[] strDataTypesArray = new string[0];
+                        if (!String.IsNullOrEmpty(strColumnNamesList))
+                        {
+                            strColumnNamesArray = strColumnNamesList.Split(",".ToCharArray());
+                            strDataTypesArray = strDataTypesList.Split(",".ToCharArray());
+                        }
                         System.Collections.Generic.IList<string> lstFVSFields = new System.Collections.Generic.List<string>();
                         for (y = 0; y <= strColumnNamesArray.Length - 1; y++)
                         {
@@ -3632,11 +3633,15 @@ namespace FIA_Biosum_Manager
                                 case "YEAR":
                                     break;
                                 default:
-                                    if (p_oAdo.ColumnExist(p_oAdo.m_OleDbConnection,
-                                        "POST_" + strTableNamesArray[x].Substring(4, strTableNamesArray[x].Length - 4),
-                                        strColumnNamesArray[y]))
+                                    // Text data types can't be have a weight applied
+                                    if (!strDataTypesArray[y].Trim().ToUpper().Equals("SYSTEM.STRING"))
                                     {
-                                        lstFVSFields.Add(strColumnNamesArray[y]);
+                                        if (p_oAdo.ColumnExist(p_oAdo.m_OleDbConnection,
+                                            "POST_" + strTableNamesArray[x].Substring(4, strTableNamesArray[x].Length - 4),
+                                            strColumnNamesArray[y]))
+                                        {
+                                            lstFVSFields.Add(strColumnNamesArray[y]);
+                                        }
                                     }
                                     break;
                             }
