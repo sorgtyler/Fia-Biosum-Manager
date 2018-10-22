@@ -248,6 +248,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_optimizer_scenario_fvs_prepost_variables_tiebreaker));
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "Stand Attribute",
@@ -353,8 +354,8 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.TabStop = false;
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Text = "Last Tie-Break Rank";
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Visible = false;
-            this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreakerTreatmentIntensity_Resize);
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.VisibleChanged += new System.EventHandler(this.grpboxFVSVariablesTieBreakerLastTieBreakRank_VisibleChanged);
+            this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Resize += new System.EventHandler(this.grpboxFVSVariablesTieBreakerTreatmentIntensity_Resize);
             // 
             // panel2
             // 
@@ -675,10 +676,9 @@ namespace FIA_Biosum_Manager
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(15, 154);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(714, 16);
+            this.label2.Size = new System.Drawing.Size(825, 35);
             this.label2.TabIndex = 70;
-            this.label2.Text = "Select a method to edit, then click the <Edit> button. To enable the method, ensu" +
-    "re its box is checked.";
+            this.label2.Text = resources.GetString("label2.Text");
             // 
             // grpboxFVSVariablesTieBreakerValues
             // 
@@ -689,7 +689,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerValues.TabIndex = 67;
             this.grpboxFVSVariablesTieBreakerValues.TabStop = false;
             this.grpboxFVSVariablesTieBreakerValues.Text = "Step 1: Rules for choosing best silvicultural sequence when more than one are opt" +
-    "imal by the optimization rule";
+    "imal according to the optimization rule";
             // 
             // lvFVSVariablesTieBreakerValues
             // 
@@ -773,7 +773,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerEdit.BackColor = System.Drawing.SystemColors.Control;
             this.btnFVSVariablesTieBreakerEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFVSVariablesTieBreakerEdit.ForeColor = System.Drawing.Color.Black;
-            this.btnFVSVariablesTieBreakerEdit.Location = new System.Drawing.Point(376, 176);
+            this.btnFVSVariablesTieBreakerEdit.Location = new System.Drawing.Point(376, 201);
             this.btnFVSVariablesTieBreakerEdit.Name = "btnFVSVariablesTieBreakerEdit";
             this.btnFVSVariablesTieBreakerEdit.Size = new System.Drawing.Size(128, 40);
             this.btnFVSVariablesTieBreakerEdit.TabIndex = 36;
@@ -792,10 +792,10 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
             // 
-            // uc_core_scenario_fvs_prepost_variables_tiebreaker
+            // uc_optimizer_scenario_fvs_prepost_variables_tiebreaker
             // 
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_core_scenario_fvs_prepost_variables_tiebreaker";
+            this.Name = "uc_optimizer_scenario_fvs_prepost_variables_tiebreaker";
             this.Size = new System.Drawing.Size(900, 2000);
             this.groupBox1.ResumeLayout(false);
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.ResumeLayout(false);
@@ -2052,10 +2052,38 @@ namespace FIA_Biosum_Manager
             {
                 e.NewValue = e.CurrentValue;
                 MessageBox.Show("Last Tie-Break Rank is a required Tie Breaker. It cannot be unselected.", 
-                    "BIOSUM");
+                    "FIA Biosum");
             }
             else
             {
+                bool bStandChecked = false;
+                bool bEconomicChecked = false;
+                if (this.lvFVSVariablesTieBreakerValues.Items[0] != null)
+                {
+                    bStandChecked = this.lvFVSVariablesTieBreakerValues.Items[0].Checked;
+                }
+                if (this.lvFVSVariablesTieBreakerValues.Items[1] != null)
+                {
+                    bEconomicChecked = this.lvFVSVariablesTieBreakerValues.Items[1].Checked;
+                }
+                if (strMethod.Equals("Stand Attribute") && e.NewValue == CheckState.Checked)
+                {
+                    if (bEconomicChecked == true)
+                    {
+                        e.NewValue = e.CurrentValue;
+                        MessageBox.Show("!! Stand Attribute and Economic Attribute cannot both be selected as tiebreakers. Uncheck " +
+                        "Economic Attribute before checking Stand Attribute! ", "FIA Biosum");
+                    }
+                }
+                else if (strMethod.Equals("Economic Attribute") && e.NewValue == CheckState.Checked)
+                {
+                    if (bStandChecked == true)
+                    {
+                        e.NewValue = e.CurrentValue;
+                        MessageBox.Show("!! Stand Attribute and Economic Attribute cannot both be selected as tiebreakers. Uncheck " +
+                            "Stand Attribute before checking Economic Attribute! ", "FIA Biosum");
+                    }
+                }
                 this.ReferenceOptimizerScenarioForm.m_bSave = true;
             }
 		}
