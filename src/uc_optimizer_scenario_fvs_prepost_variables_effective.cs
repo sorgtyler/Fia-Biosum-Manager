@@ -3845,8 +3845,20 @@ namespace FIA_Biosum_Manager
 					{
 						this.AuditSearch("VARIABLE" + Convert.ToString(x+1).Trim() + "_EFFECTIVE_YN");
 					}
-					
-				}
+
+                    string[] strPieces = m_oSavVar.m_strPreVarArray[x].Trim().ToUpper().Split('.');
+                    if (strPieces.Length == 2)
+                    {
+                        if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                        {
+                            string strWeightedError = this.m_oOptimizerScenarioTools.AuditWeightedFvsVariables(strPieces[0], out m_intError);
+                            if (m_intError != 0)
+                            {
+                                m_strError = m_strError + strWeightedError;
+                            }
+                        }
+                    }
+                 }
 			}
 			
 			if (m_oSavVar.m_strOverallEffectiveExpr.Trim().Length == 0)

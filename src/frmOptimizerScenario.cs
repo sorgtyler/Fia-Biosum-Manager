@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Data.OleDb;
 
 namespace FIA_Biosum_Manager
 {
@@ -3933,6 +3934,46 @@ namespace FIA_Biosum_Manager
 
             return strLine;
 
+        }
+
+        public string AuditWeightedFvsVariables (string strTableName, out int intError)
+        {
+            intError = 0;
+            string strErrorMessage = "";
+            ado_data_access oAdo = new ado_data_access();
+            int intFvsPreTableCount = -1;
+            int intWeightedPreTableCount = -1;
+            char[] preArray = "PRE_".ToCharArray();
+            string strNamePart1 = strTableName.TrimStart(preArray);
+            string strName = strNamePart1.Substring(0,(strNamePart1.Length - "_WEIGHTED".Length));
+            string strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                "\\fvs\\db\\PREPOST_" + strName + ".ACCDB";
+            string strCalcConn = oAdo.getMDBConnString(strFvsPrePostDb, "", "");
+            string strSql = "select count(*) from PRE_" + strName;
+            using (var oCalcConn = new OleDbConnection(strCalcConn))
+            {
+                oCalcConn.Open();
+                intFvsPreTableCount = oAdo.getRecordCount(oCalcConn, strSql, "PRE_" + strName);
+            }
+            strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            strSql = "select count(*) from " + strTableName;
+            strCalcConn = oAdo.getMDBConnString(strFvsPrePostDb, "", "");
+            using (var oCalcConn = new OleDbConnection(strCalcConn))
+            {
+                oCalcConn.Open();
+                intWeightedPreTableCount = oAdo.getRecordCount(oCalcConn, strSql, strTableName);
+            }
+
+            if (intFvsPreTableCount != intWeightedPreTableCount)
+            {
+                intError = -1;
+                strErrorMessage = "PRE_" + strName + " table has a different number of records (" + intFvsPreTableCount +
+                    ") than " + strTableName + " (" + intWeightedPreTableCount + "). This weighted variable " +
+                    " cannot be used! \r\n";
+            }
+
+            return strErrorMessage;
         }
     }
 }

@@ -2490,8 +2490,7 @@ namespace FIA_Biosum_Manager
                             m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                   lblFvsVariableName.Text + " " +
                                   "INTO " + strTargetPreTable +
-                                  " FROM " + strSourcePreTable +
-                                  " WHERE rxcycle = '1'";
+                                  " FROM " + strSourcePreTable;
                             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                             {
                                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
@@ -2502,8 +2501,7 @@ namespace FIA_Biosum_Manager
                             m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                               lblFvsVariableName.Text + " " +
                                               "INTO " + strTargetPostTable +
-                                              " FROM " + strSourcePostTable +
-                                              " WHERE rxcycle = '1'";
+                                              " FROM " + strSourcePostTable;
                             m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
                             bNewTables = true;
 
