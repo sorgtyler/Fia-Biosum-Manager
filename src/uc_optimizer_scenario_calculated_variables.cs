@@ -2487,10 +2487,13 @@ namespace FIA_Biosum_Manager
                         string strConn = m_oAdo.getMDBConnString(strPrePostWeightedDb, "", "");
                         using (var conn = new System.Data.OleDb.OleDbConnection(strConn))
                         {
+                            // We get the list of conditions where rxcycle = 1; FVS creates a record for
+                            // each condition for each cycle regardless of whether there is activity
                             m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                   lblFvsVariableName.Text + " " +
                                   "INTO " + strTargetPreTable +
-                                  " FROM " + strSourcePreTable;
+                                  " FROM " + strSourcePreTable +
+                                  " WHERE rxcycle = '1'";
                             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                             {
                                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
@@ -2501,7 +2504,8 @@ namespace FIA_Biosum_Manager
                             m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                               lblFvsVariableName.Text + " " +
                                               "INTO " + strTargetPostTable +
-                                              " FROM " + strSourcePostTable;
+                                              " FROM " + strSourcePostTable +
+                                              " WHERE rxcycle = '1'";
                             m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
                             bNewTables = true;
 

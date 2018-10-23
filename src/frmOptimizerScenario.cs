@@ -3949,7 +3949,9 @@ namespace FIA_Biosum_Manager
             string strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                 "\\fvs\\db\\PREPOST_" + strName + ".ACCDB";
             string strCalcConn = oAdo.getMDBConnString(strFvsPrePostDb, "", "");
-            string strSql = "select count(*) from PRE_" + strName;
+            string strSql = "SELECT Count(*) AS N FROM (" +
+                            "SELECT DISTINCT biosum_cond_id, rxpackage, rx, fvs_variant" +
+                            " from PRE_" + strName + ")";
             using (var oCalcConn = new OleDbConnection(strCalcConn))
             {
                 oCalcConn.Open();
@@ -3957,7 +3959,9 @@ namespace FIA_Biosum_Manager
             }
             strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                 "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
-            strSql = "select count(*) from " + strTableName;
+            strSql = "SELECT Count(*) AS N FROM (" +
+                "SELECT DISTINCT biosum_cond_id, rxpackage, rx, fvs_variant" + 
+                " from " + strTableName + ")";
             strCalcConn = oAdo.getMDBConnString(strFvsPrePostDb, "", "");
             using (var oCalcConn = new OleDbConnection(strCalcConn))
             {
