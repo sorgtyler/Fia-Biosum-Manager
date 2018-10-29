@@ -9444,4 +9444,39 @@ namespace FIA_Biosum_Manager
 		
 		
 	}
+
+    public class ProductYields
+    {
+        string _strCondId = "";
+        string _strRxPackage = "";
+        double _dblChipYieldCfCycle1 = 0;
+        double _dblMerchYieldCfCycle1 = 0;
+        double _dblMaxNrDpaCycle1 = 0;
+        double _dblHarvestOnsiteCpaCycle1 = 0;
+        double _dblHaulMerchCpaCycle1 = 0;
+        double _dblMerchChipNrDpaCycle1 = 0;
+        double _dblChipYieldCfCycle2 = 0;
+        double _dblMerchYieldCfCycle2 = 0;
+        double _dblMaxNrDpaCycle2 = 0;
+        double _dblHarvestOnsiteCpaCycle2 = 0;
+        double _dblHaulMerchCpaCycle2 = 0;
+        double _dblMerchChipNrDpaCycle2 = 0;
+        double _dblChipYieldCfCycle3 = 0;
+        double _dblMerchYieldCfCycle3 = 0;
+        double _dblMaxNrDpaCycle3 = 0;
+        double _dblHarvestOnsiteCpaCycle3 = 0;
+        double _dblHaulMerchCpaCycle3 = 0;
+        double _dblMerchChipNrDpaCycle3 = 0;
+        double _dblChipYieldCfCycle4 = 0;
+        double _dblMerchYieldCfCycle4 = 0;
+        double _dblMaxNrDpaCycle4 = 0;
+        double _dblHarvestOnsiteCpaCycle4 = 0;
+        double _dblHaulMerchCpaCycle4 = 0;
+        double _dblMerchChipNrDpaCycle4 = 0;
+
+
+
+
+    }
+
 }
