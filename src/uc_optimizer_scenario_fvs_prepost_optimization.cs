@@ -2234,7 +2234,19 @@ namespace FIA_Biosum_Manager
 							m_intError=-1;
 							m_strError = m_strError + "Db file biosum_fvsout_prepost_rx.mdb does not exist\r\n";
 						}
-
+                        string[] strPieces = oOptVariableItemCollection.Item(x).strFVSVariableName.Trim().ToUpper().Split('.');
+                        FIA_Biosum_Manager.OptimizerScenarioTools oOptimizerScenarioTools = new OptimizerScenarioTools();
+                        if (strPieces.Length == 2)
+                        {
+                            if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                            {
+                                string strWeightedError = oOptimizerScenarioTools.AuditWeightedFvsVariables(strPieces[0], out m_intError);
+                                if (m_intError != 0)
+                                {
+                                    m_strError = m_strError + strWeightedError;
+                                }
+                            }
+                        }
 					}
 
                     if (oOptVariableItemCollection.Item(x).strMaxYN == "N" &&

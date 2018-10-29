@@ -3960,8 +3960,8 @@ namespace FIA_Biosum_Manager
             strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                 "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
             strSql = "SELECT Count(*) AS N FROM (" +
-                "SELECT DISTINCT biosum_cond_id, rxpackage, rx, fvs_variant" + 
-                " from " + strTableName + ")";
+                "SELECT DISTINCT biosum_cond_id, rxpackage, rx, fvs_variant" +
+                " from PRE_" + strTableName + ")";
             strCalcConn = oAdo.getMDBConnString(strFvsPrePostDb, "", "");
             using (var oCalcConn = new OleDbConnection(strCalcConn))
             {

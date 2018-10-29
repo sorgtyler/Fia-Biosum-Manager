@@ -1715,13 +1715,28 @@ namespace FIA_Biosum_Manager
 			this.m_strError="Audit Results \r\n";
 			this.m_strError=m_strError + "-------------\r\n\r\n";
 
-            // Only validate LAST TIE-BREAK RANK if it is checked
-            foreach (ListViewItem itemRow in this.lvFVSVariablesTieBreakerValues.CheckedItems)
+            // Validate STAND ATTRIBUTE if it is checked
+            if (this.lvFVSVariablesTieBreakerValues.Items[0].Checked)
             {
-                if (itemRow.SubItems[COLUMN_METHOD].Text.Trim().Equals("Last Tie-Break Rank"))
+                string[] strPieces = this.lvFVSVariablesTieBreakerValues.Items[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim().ToUpper().Split('.');
+                if (strPieces.Length == 2)
                 {
-                    x=this.uc_scenario_treatment_intensity1.Val_Last_Tiebreak_Rank(false);
+                    if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                    {
+                        FIA_Biosum_Manager.OptimizerScenarioTools oOptimizerScenarioTools = new OptimizerScenarioTools();
+                        string strWeightedError = oOptimizerScenarioTools.AuditWeightedFvsVariables(strPieces[0], out m_intError);
+                        if (m_intError != 0)
+                        {
+                            m_strError = m_strError + strWeightedError;
+                        }
+                    }
                 }
+            }
+
+            // Validate LAST TIE-BREAK RANK if it is checked
+            if (this.lvFVSVariablesTieBreakerValues.Items[2].Checked)
+            {
+                x = this.uc_scenario_treatment_intensity1.Val_Last_Tiebreak_Rank(false);
             }
 
             if (x<0)
