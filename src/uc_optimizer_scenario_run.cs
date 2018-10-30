@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using System.Text;
+using System.Data.OleDb;
 
 namespace FIA_Biosum_Manager
 {
@@ -1791,6 +1792,16 @@ namespace FIA_Biosum_Manager
 							this.product_yields_net_rev_costs_summary_by_rx();
 
 						}
+                        /**********************************************************************
+                         **Calculate custom economic variables if needed
+                         **********************************************************************/
+
+                        if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel == false)
+                        {
+                            this.calculate_weighted_econ_variables();
+
+                        }
+
                         /*******************************************************************************
 						 **wood product yields net revenue and costs summary by treatment package table 
 						 *******************************************************************************/
@@ -6001,6 +6012,113 @@ namespace FIA_Biosum_Manager
 
 		}
 
+        private void calculate_weighted_econ_variables()
+        {
+            System.Collections.Generic.IList<string> lstFieldNames =
+                new System.Collections.Generic.List<string>();
+            lstFieldNames.Add("chip_volume_2");
+            lstFieldNames.Add("merchantable_volume_2");
+
+            // Create post_economic_weighted table to receive the data
+            string strSql = "CREATE TABLE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName + " ( " +
+                            "biosum_cond_id CHAR(25), rxpackage CHAR(3), ";
+            foreach (string strFieldName in lstFieldNames)
+            {
+                strSql = strSql + strFieldName + " DOUBLE,";
+            }
+            strSql = strSql.TrimEnd(strSql[strSql.Length - 1]); //trim trailing comma
+            strSql = strSql + " )";
+            string strEconConn = m_ado.getMDBConnString(m_strSystemResultsDbPathAndFile, "", "");
+            using (var econConn = new OleDbConnection(strEconConn))
+            {
+                econConn.Open();
+                this.m_ado.SqlNonQuery(econConn, strSql);
+
+                System.Collections.Generic.IDictionary<string, ProductYields> dictProductYields =
+                new System.Collections.Generic.Dictionary<string, ProductYields>();
+                strSql = "select * from product_yields_net_rev_costs_summary_by_rx";
+
+                this.m_ado.SqlQueryReader(econConn, strSql);
+                ProductYields oProductYields = null;
+                while (this.m_ado.m_OleDbDataReader.Read())
+                {
+                    string strCondId = this.m_ado.m_OleDbDataReader["biosum_cond_id"].ToString().Trim();
+                    string strRxPackage = this.m_ado.m_OleDbDataReader["rxpackage"].ToString().Trim();
+                    string strKey = strCondId + "_" + strRxPackage;
+                    if (dictProductYields.ContainsKey(strKey))
+                    {
+                        oProductYields = dictProductYields[strKey];
+                    }
+                    else
+                    {
+                        oProductYields = new ProductYields(strCondId, strRxPackage);
+                    }
+                    string strRxCycle = this.m_ado.m_OleDbDataReader["rxcycle"].ToString().Trim();
+                    double dblChipYieldCf = Convert.ToDouble(this.m_ado.m_OleDbDataReader["chip_yield_cf"]);
+                    double dblMerchYieldCf = Convert.ToDouble(this.m_ado.m_OleDbDataReader["merch_yield_cf"]);
+                    switch (strRxCycle)
+                    {
+                        case "1":
+                            oProductYields.UpdateCycle1Yields(dblChipYieldCf, dblMerchYieldCf);
+                            break;
+                        case "2":
+                            oProductYields.UpdateCycle2Yields(dblChipYieldCf, dblMerchYieldCf);
+                            break;
+                        case "3":
+                            break;
+                        case "4":
+                            break;
+                    }
+                    dictProductYields[strKey] = oProductYields;
+                }
+
+                if (dictProductYields.Keys.Count > 0)
+                {
+                    string strSqlPrefix = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName +
+                                " (biosum_cond_id, rxpackage, ";
+                    foreach (string strFieldName in lstFieldNames)
+                    {
+                        strSqlPrefix = strSqlPrefix + strFieldName + " ,";
+                    }
+                    strSqlPrefix = strSqlPrefix.TrimEnd(strSqlPrefix[strSqlPrefix.Length - 1]); //trim trailing comma
+                    strSqlPrefix = strSqlPrefix + " ) VALUES ( '";
+
+                    foreach (string strKey in dictProductYields.Keys)
+                    {
+                        ProductYields oSavedProductYields = dictProductYields[strKey];
+                        strSql = strSqlPrefix + oSavedProductYields.CondId() + "', '" +
+                            oSavedProductYields.RxPackage() + "',";
+
+                        System.Collections.Generic.IList<double> lstFieldValues = new System.Collections.Generic.List<double>();
+                        foreach (string strFieldName in lstFieldNames)
+                        {
+                            string strFieldType = uc_optimizer_scenario_calculated_variables.getEconVariableType(strFieldName);
+                            switch (strFieldType)
+                            {
+                                case uc_optimizer_scenario_calculated_variables.PREFIX_MERCH_VOLUME:
+                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle1() + oSavedProductYields.MerchYieldCfCycle2());
+                                    break;
+                                case uc_optimizer_scenario_calculated_variables.PREFIX_CHIP_VOLUME:
+                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle1() + oSavedProductYields.ChipYieldCfCycle2());
+                                    break;
+                                default:
+                                    lstFieldValues.Add(-1.0);
+                                    break;
+                            }
+                        }
+
+                        foreach (double dblFieldValue in lstFieldValues)
+                        {
+                            strSql = strSql + dblFieldValue + " ,";
+                        }
+                        strSql = strSql.TrimEnd(strSql[strSql.Length - 1]); //trim trailing comma
+                        strSql = strSql + " ) ";
+                        this.m_ado.SqlNonQuery(econConn, strSql);
+                    }
+                }
+            }
+        }
+        
         /// <summary>
         /// get the wood product yields,
         /// revenue, and costs of an applied
@@ -9474,8 +9592,49 @@ namespace FIA_Biosum_Manager
         double _dblHaulMerchCpaCycle4 = 0;
         double _dblMerchChipNrDpaCycle4 = 0;
 
+        public ProductYields(string strCondId, string strRxPackage)
+        {
+            _strCondId = strCondId;
+            _strRxPackage = strRxPackage;
+        }
 
+        public void UpdateCycle1Yields(double dblChipYieldCf, double dblMerchYieldCf)
+        {
+            _dblChipYieldCfCycle1 = dblChipYieldCf;
+            _dblMerchYieldCfCycle1 = dblMerchYieldCf;
+        }
 
+        public void UpdateCycle2Yields(double dblChipYieldCf, double dblMerchYieldCf)
+        {
+            _dblChipYieldCfCycle2 = dblChipYieldCf;
+            _dblMerchYieldCfCycle2 = dblMerchYieldCf;
+        }
+
+        public string CondId()
+        {
+            return _strCondId;
+        }
+        public string RxPackage()
+        {
+            return _strRxPackage;
+        }
+        public double ChipYieldCfCycle1()
+        {
+            return _dblChipYieldCfCycle1;
+        }
+        public double ChipYieldCfCycle2()
+        {
+            return _dblChipYieldCfCycle2;
+        }
+
+        public double MerchYieldCfCycle1()
+        {
+            return _dblMerchYieldCfCycle1;
+        }
+        public double MerchYieldCfCycle2()
+        {
+            return _dblMerchYieldCfCycle2;
+        }
 
     }
 

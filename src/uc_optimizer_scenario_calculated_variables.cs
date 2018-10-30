@@ -54,12 +54,12 @@ namespace FIA_Biosum_Manager
         const int COLUMN_FILTER_VALUE = 7;
         const string VARIABLE_ECON = "ECON";
         const string VARIABLE_FVS = "FVS";
-        const string PREFIX_CHIP_VOLUME = "chip_volume";
-        const string PREFIX_MERCH_VOLUME = "merchantable_volume";
-        const string PREFIX_TOTAL_VOLUME = "total_volume";
-        const string PREFIX_NET_REVENUE = "net_revenue";
-        const string PREFIX_TREATMENT_HAUL_COSTS = "treatment_haul_costs";
-        const string PREFIX_ONSITE_TREATMENT_COSTS = "onsite_treatment_costs";
+        public const string PREFIX_CHIP_VOLUME = "chip_volume";
+        public const string PREFIX_MERCH_VOLUME = "merchantable_volume";
+        public const string PREFIX_TOTAL_VOLUME = "total_volume";
+        public const string PREFIX_NET_REVENUE = "net_revenue";
+        public const string PREFIX_TREATMENT_HAUL_COSTS = "treatment_haul_costs";
+        public const string PREFIX_ONSITE_TREATMENT_COSTS = "onsite_treatment_costs";
         //These parallel arrays must remain in the same order
         static readonly string[] PREFIX_ECON_VALUE_ARRAY = { PREFIX_TOTAL_VOLUME, PREFIX_MERCH_VOLUME, PREFIX_CHIP_VOLUME,  
                                                              PREFIX_NET_REVENUE, PREFIX_TREATMENT_HAUL_COSTS, PREFIX_ONSITE_TREATMENT_COSTS };
@@ -2220,7 +2220,7 @@ namespace FIA_Biosum_Manager
                 this.lstEconVariablesList.SelectedItems[0].ToString();
         }
 
-        private string getEconVariableType(string strName)
+        public static string getEconVariableType(string strName)
         {
             if (strName.Contains(PREFIX_CHIP_VOLUME))
             {
