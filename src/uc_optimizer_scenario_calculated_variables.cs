@@ -2630,11 +2630,13 @@ namespace FIA_Biosum_Manager
 
         public class VariableItem
         {
+            public int intId = 0;
             public string strVariableName = "";
             public string strVariableDescr = "";
             public string strVariableType = "";
             public string strRxPackage = "";
             public string strVariableSource = "";
+            public System.Collections.Generic.IList<double> lstWeights;
         }
 
         public class Variable_Collection : System.Collections.CollectionBase

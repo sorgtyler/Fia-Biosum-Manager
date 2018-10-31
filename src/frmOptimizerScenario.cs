@@ -3681,6 +3681,7 @@ namespace FIA_Biosum_Manager
                 while (p_oAdo.m_OleDbDataReader.Read())
                 {
                     FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.VariableItem oItem = new uc_optimizer_scenario_calculated_variables.VariableItem();
+                    oItem.intId = Convert.ToInt32(p_oAdo.m_OleDbDataReader["id"]);
                     oItem.strVariableName = Convert.ToString(p_oAdo.m_OleDbDataReader["variable_name"]).Trim();
                     oItem.strVariableType = Convert.ToString(p_oAdo.m_OleDbDataReader["VARIABLE_TYPE"]).Trim();
                     if (p_oAdo.m_OleDbDataReader["variable_description"] != System.DBNull.Value)
@@ -3696,6 +3697,32 @@ namespace FIA_Biosum_Manager
                         oItem.strVariableSource = Convert.ToString(p_oAdo.m_OleDbDataReader["VARIABLE_SOURCE"]).Trim();
                     }
                     p_oWeightedVariableCollection.Add(oItem);
+                }
+            }
+        }
+
+        public void loadEconomicVariableWeights(FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.VariableItem p_oWeightedVariable)
+        {
+            if (p_oWeightedVariable != null)
+            {
+                ado_data_access oAdo = new ado_data_access();
+                string strEconConn = oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerDefinitions.DefaultDbFile, "", "");
+                using (var econConn = new OleDbConnection(strEconConn))
+                {
+                    econConn.Open();
+                    string strSql = "SELECT * FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
+                                    " WHERE calculated_variables_id = " + p_oWeightedVariable.intId +
+                                    " ORDER BY rxcycle";
+                    oAdo.SqlQueryReader(econConn, strSql);
+                    if (oAdo.m_intError == 0)
+                    {
+                        System.Collections.Generic.IList<double> lstEconWeights = new System.Collections.Generic.List<double>();
+                        while (oAdo.m_OleDbDataReader.Read())
+                        {
+                            lstEconWeights.Add(Convert.ToDouble(oAdo.m_OleDbDataReader["weight"]));
+                        }
+                        p_oWeightedVariable.lstWeights = lstEconWeights;
+                    }
                 }
             }
         }

@@ -6018,6 +6018,26 @@ namespace FIA_Biosum_Manager
                 new System.Collections.Generic.List<string>();
             lstFieldNames.Add("chip_volume_2");
             lstFieldNames.Add("merchantable_volume_2");
+            System.Collections.Generic.IList<uc_optimizer_scenario_calculated_variables.VariableItem> lstVariableItems =
+                new System.Collections.Generic.List<uc_optimizer_scenario_calculated_variables.VariableItem>();  //Parallel list to lstFieldNames; Holds variable definitions
+
+            // Populate economic variable information from configuration database
+            FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection oWeightedVariableCollection =
+                new FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection();
+            FIA_Biosum_Manager.OptimizerScenarioTools oOptimizerScenarioTools = new OptimizerScenarioTools();
+            oOptimizerScenarioTools.LoadWeightedVariables(this.m_ado, oWeightedVariableCollection);
+            foreach (string strVariableName in lstFieldNames)
+            {
+                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oVariableItem in oWeightedVariableCollection)
+                {
+                    if (oVariableItem.strVariableType.Equals("ECON") && oVariableItem.strVariableName.Equals(strVariableName))
+                    {
+                        oOptimizerScenarioTools.loadEconomicVariableWeights(oVariableItem);
+                        lstVariableItems.Add(oVariableItem);
+                        break;
+                    }
+                }
+            }
 
             // Create post_economic_weighted table to receive the data
             string strSql = "CREATE TABLE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName + " ( " +
@@ -6090,21 +6110,27 @@ namespace FIA_Biosum_Manager
                             oSavedProductYields.RxPackage() + "',";
 
                         System.Collections.Generic.IList<double> lstFieldValues = new System.Collections.Generic.List<double>();
+                        int i = 0;
                         foreach (string strFieldName in lstFieldNames)
                         {
                             string strFieldType = uc_optimizer_scenario_calculated_variables.getEconVariableType(strFieldName);
+                            uc_optimizer_scenario_calculated_variables.VariableItem oVariableItem = lstVariableItems[i];
+                            System.Collections.Generic.IList<double> lstWeights = oVariableItem.lstWeights;
                             switch (strFieldType)
                             {
                                 case uc_optimizer_scenario_calculated_variables.PREFIX_MERCH_VOLUME:
-                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle1() + oSavedProductYields.MerchYieldCfCycle2());
+                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle1() * lstWeights[0] + 
+                                                       oSavedProductYields.MerchYieldCfCycle2() * lstWeights[1]);
                                     break;
                                 case uc_optimizer_scenario_calculated_variables.PREFIX_CHIP_VOLUME:
-                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle1() + oSavedProductYields.ChipYieldCfCycle2());
+                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle1() * lstWeights[0] + 
+                                                       oSavedProductYields.ChipYieldCfCycle2() * lstWeights[1]);
                                     break;
                                 default:
                                     lstFieldValues.Add(-1.0);
                                     break;
                             }
+                            i++;
                         }
 
                         foreach (double dblFieldValue in lstFieldValues)
