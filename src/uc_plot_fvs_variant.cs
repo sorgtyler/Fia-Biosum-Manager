@@ -1868,115 +1868,133 @@ namespace FIA_Biosum_Manager
 
 		private void btnAuditPlotFVSVariants_Click(object sender, System.EventArgs e)
 		{
-			frmMain.g_sbpInfo.Text = "Running Audit...Stand By";
-			int intPlotMissingVariantFoundInMasterVariantTableCount=0;
-			int intPlotCount=0;
-			int intPlotCountWithVariant=0;
-			int intJoinCount=0;
-			this.lstAudit.Clear();
-			string strMsg="";
-			//first get unique tree species
+		    frmMain.g_sbpInfo.Text = "Running Audit...Stand By";
+		    string strMsg = "";
+		    string strPluralGrammar = "";
+		    int intPlotsNeedingAssignments = 0;
+		    int intPlotsThatCanBeAssignedValuesFromVariantTable = 0;
+		    int intPlotsThatCannotBeAssignedValuesFromVariantTable = 0;
 
-			
-			this.lstAudit.Columns.Add("biosum_plot_id", 125, HorizontalAlignment.Left);
-			this.lstAudit.Columns.Add("statecd", 80, HorizontalAlignment.Left);
-			this.lstAudit.Columns.Add("countycd", 80, HorizontalAlignment.Left);
-			this.lstAudit.Columns.Add("plot", 80, HorizontalAlignment.Left);
-			this.lstAudit.Columns.Add("fvs_variant", 80, HorizontalAlignment.Left);
-			this.lstAudit.Columns.Add("fvsloccode", 80, HorizontalAlignment.Left);
+		    lstAudit.Clear();
+		    lstAudit.Columns.Add("biosum_plot_id", 125, HorizontalAlignment.Left);
+		    lstAudit.Columns.Add("statecd", 80, HorizontalAlignment.Left);
+		    lstAudit.Columns.Add("countycd", 80, HorizontalAlignment.Left);
+		    lstAudit.Columns.Add("plot", 80, HorizontalAlignment.Left);
+		    lstAudit.Columns.Add("fvs_variant", 80, HorizontalAlignment.Left);
+		    lstAudit.Columns.Add("fvsloccode", 80, HorizontalAlignment.Left);
 
-			//get the total plot record count
-			this.m_ado.m_strSQL = "select count(*) from " + this.m_strPlotTable + " p where len(trim(p.biosum_plot_id)) > 0 AND mid(p.biosum_plot_id,1,1)='1'";
-			intPlotCount=Convert.ToInt32(m_ado.getRecordCount(this.m_ado.m_OleDbConnection,this.m_ado.m_OleDbTransaction,m_ado.m_strSQL,this.m_strPlotTable));
+		    //Get the count of plots without variants and locations
+		    m_ado.m_strSQL = "SELECT COUNT(*) FROM " + m_strPlotTable + " p " +
+		                     "WHERE LEN(trim(p.biosum_plot_id)) > 0 AND MID(p.biosum_plot_id,1,1)='1' " +
+		                     "AND (p.fvs_variant IS NULL OR LEN(TRIM(p.fvs_variant))=0 OR p.fvsloccode IS NULL)";
+		    intPlotsNeedingAssignments = Convert.ToInt32(m_ado.getRecordCount(m_ado.m_OleDbConnection,
+		        m_ado.m_OleDbTransaction, m_ado.m_strSQL, m_strPlotTable));
 
-			//get the total plot record count
-			this.m_ado.m_strSQL = "select count(*) from " + this.m_strPlotTable + " p where len(trim(p.biosum_plot_id)) > 0 AND mid(p.biosum_plot_id,1,1)='1' AND p.fvs_variant IS NOT NULL AND  LEN(TRIM(p.fvs_variant))>0";
-			intPlotCountWithVariant=Convert.ToInt32(m_ado.getRecordCount(this.m_ado.m_OleDbConnection,this.m_ado.m_OleDbTransaction,m_ado.m_strSQL,this.m_strPlotTable));
-			
-            //join plot and fiadb_fvs_variant table. ensure no duplicates by using DISTINCT 
-            this.m_ado.m_strSQL = "SELECT COUNT(*) AS reccount " +
-                                  "FROM " + this.m_strPlotTable + " p," + 
-                                  "(SELECT DISTINCT statecd,countycd,plot FROM " + m_strVariantTable + ") v " +
-                                  "WHERE len(trim(p.biosum_plot_id)) > 0 AND " +
-                                        "mid(p.biosum_plot_id,1,1)='1' AND " +
-                                        "v.statecd=p.statecd AND " +
-                                        "v.countycd=p.countycd AND " +
-                                        "v.plot=p.plot";
+            //Get the number of plots that can't be assigned variants and locations from the fiadb_fvs_variant table
+		    m_ado.m_strSQL = "SELECT COUNT(*) AS reccount FROM " + m_strPlotTable + " p " +
+		                     "LEFT JOIN (SELECT DISTINCT statecd, countycd, plot FROM " + m_strVariantTable + ") v " +
+		                     "ON v.statecd=p.statecd AND " +
+		                     "v.countycd=p.countycd AND " +
+		                     "v.plot=p.plot " +
+		                     "WHERE LEN(trim(p.biosum_plot_id)) > 0 AND " +
+		                     "MID(p.biosum_plot_id,1,1)='1' AND " +
+		                     "v.statecd IS NULL AND " +
+		                     "v.countycd IS NULL AND " +
+		                     "v.plot IS NULL AND " +
+		                     "(p.fvs_variant IS NULL OR LEN(trim(p.fvs_variant))=0 OR " +
+		                     "(p.fvsloccode IS NULL))";
+		    intPlotsThatCannotBeAssignedValuesFromVariantTable =
+		        (int) m_ado.getSingleDoubleValueFromSQLQuery(m_ado.m_OleDbConnection, m_ado.m_OleDbTransaction,
+		            m_ado.m_strSQL, "join");
 
-			intJoinCount = (int)m_ado.getSingleDoubleValueFromSQLQuery(m_ado.m_OleDbConnection,m_ado.m_OleDbTransaction, m_ado.m_strSQL, "join");
-            
-			this.m_ado.m_strSQL = "select p.biosum_plot_id,p.statecd,p.countycd,p.plot,v.fvs_variant, v.fvsloccode " + 
-				"from " + this.m_strVariantTable + " v," + 
-				this.m_strPlotTable + " p " + 
-				"where LEN(TRIM(p.biosum_plot_id)) > 0 AND mid(p.biosum_plot_id,1,1)='1' and " + 
-				"v.statecd=p.statecd and " + 
-				"v.countycd=p.countycd and " + 
-				"v.plot=p.plot and " + 
-				"(trim(ucase(v.fvs_variant)) <> trim(ucase(p.fvs_variant)) or " + 
-				"len(trim(v.fvs_variant)) > 0 and (p.fvs_variant is null OR len(trim(p.fvs_variant))=0));";
+            //Populate the Audit Results grid with plots that can be assigned values using the variant table
+		    m_ado.m_strSQL = "SELECT p.biosum_plot_id, p.statecd, p.countycd, p.plot, v.fvs_variant, v.fvsloccode " +
+		                     "FROM " + m_strVariantTable + " v," +
+		                     m_strPlotTable + " p " +
+		                     "WHERE LEN(TRIM(p.biosum_plot_id)) > 0 AND MID(p.biosum_plot_id,1,1)='1' AND " +
+		                     "v.statecd=p.statecd AND " +
+		                     "v.countycd=p.countycd AND " +
+		                     "v.plot=p.plot AND " +
+		                     "(((v.fvs_variant IS NOT NULL OR LEN(trim(v.fvs_variant))>0) " +
+		                     "AND (p.fvs_variant IS NULL OR LEN(trim(p.fvs_variant))=0)) " +
+		                     "OR (v.fvsloccode IS NOT NULL AND p.fvsloccode IS NULL));";
+		    m_ado.SqlQueryReader(m_ado.m_OleDbConnection, m_ado.m_OleDbTransaction, m_ado.m_strSQL);
 
+		    if (m_ado.m_intError == 0)
+		    {
+		        if (m_ado.m_OleDbDataReader.HasRows)
+		        {
+		            while (m_ado.m_OleDbDataReader.Read())
+		            {
+		                if (m_ado.m_OleDbDataReader["statecd"] != System.DBNull.Value &&
+		                    m_ado.m_OleDbDataReader["countycd"] != System.DBNull.Value &&
+		                    m_ado.m_OleDbDataReader["plot"] != System.DBNull.Value &&
+		                    m_ado.m_OleDbDataReader["fvs_variant"] != System.DBNull.Value)
+		                {
+		                    lstAudit.Items.Add(m_ado.m_OleDbDataReader["biosum_plot_id"].ToString().Trim());
+		                    lstAudit.Items[lstAudit.Items.Count - 1].SubItems
+		                        .Add(m_ado.m_OleDbDataReader["statecd"].ToString().Trim());
+		                    lstAudit.Items[lstAudit.Items.Count - 1].SubItems
+		                        .Add(m_ado.m_OleDbDataReader["countycd"].ToString().Trim());
+		                    lstAudit.Items[lstAudit.Items.Count - 1].SubItems
+		                        .Add(m_ado.m_OleDbDataReader["plot"].ToString().Trim());
+		                    lstAudit.Items[lstAudit.Items.Count - 1].SubItems
+		                        .Add(m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim());
+		                    lstAudit.Items[lstAudit.Items.Count - 1].SubItems
+		                        .Add(m_ado.m_OleDbDataReader["fvsloccode"].ToString().Trim());
+		                    intPlotsThatCanBeAssignedValuesFromVariantTable++;
+		                }
+		            }
+		        }
+		        else
+		        {
+		            intPlotsThatCanBeAssignedValuesFromVariantTable = 0;
+		        }
 
-			this.m_ado.SqlQueryReader(this.m_ado.m_OleDbConnection,this.m_ado.m_OleDbTransaction,this.m_ado.m_strSQL);
-			if (this.m_ado.m_intError==0)
-			{
-				if (this.m_ado.m_OleDbDataReader.HasRows)
-				{
-					while (this.m_ado.m_OleDbDataReader.Read())
-					{
-					    if (this.m_ado.m_OleDbDataReader["statecd"] != System.DBNull.Value &&
-					        this.m_ado.m_OleDbDataReader["countycd"] != System.DBNull.Value &&
-					        this.m_ado.m_OleDbDataReader["plot"] != System.DBNull.Value &&
-					        this.m_ado.m_OleDbDataReader["fvs_variant"] != System.DBNull.Value)
-						{
-							this.lstAudit.Items.Add(this.m_ado.m_OleDbDataReader["biosum_plot_id"].ToString().Trim());
-							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["statecd"].ToString().Trim());
-							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["countycd"].ToString().Trim());
-							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["plot"].ToString().Trim());              
-							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["fvs_variant"].ToString().Trim());
-							this.lstAudit.Items[this.lstAudit.Items.Count-1].SubItems.Add(this.m_ado.m_OleDbDataReader["fvsloccode"].ToString().Trim());
-							intPlotMissingVariantFoundInMasterVariantTableCount++;
-						}
-					}
-				}
-				else
-				{
-					intPlotMissingVariantFoundInMasterVariantTableCount=0;
-				}
-				this.m_ado.m_OleDbDataReader.Close();
-				frmMain.g_sbpInfo.Text = "Ready";
-				if (intPlotCount == intPlotCountWithVariant)
-				{
-					strMsg="Audit Passed. \r\n\r\n Every plot has an FVS variant assignment.";
-				}
-				else
-				{
-					if (intPlotCount-intPlotCountWithVariant > 1)
-					   strMsg="Audit Failed.\r\n\r\n" + Convert.ToString(intPlotCount-intPlotCountWithVariant).Trim() + " plots do not have FVS variant and/or location code assignments.";
-					else
-					   strMsg="Audit Failed.\r\n\r\n" + Convert.ToString(intPlotCount-intPlotCountWithVariant).Trim() + " plot does not have an FVS variant and/or location code assignment.";
-				}
-				if (intPlotMissingVariantFoundInMasterVariantTableCount > 0)
-				{
-					strMsg+="\r\n\r\n" + Convert.ToString(intPlotMissingVariantFoundInMasterVariantTableCount).Trim() + " of the project plots were found in the master plot variant table " + this.m_strVariantTable + ". \r\n" ;
-				    strMsg+="The plot/variant/location code assignments are listed at the top of the form.\r\n"; 
-					strMsg+="To update the plots in the project with these plot/variant/location code combinations\r\n";
-					strMsg+="select the <Update Plot Records With FIADB FVS Variant Table> button.";
-				}
-				if (intPlotCount != intJoinCount)
-				{
-					strMsg+="\r\n\r\n" + "Additional Information" + "\r\n";
-					strMsg+="------------------------------\r\n";
-					strMsg+=Convert.ToString(intPlotCount - intJoinCount) + " StateCd + CountyCd + Plot + Variant Combination(s) were NOT FOUND in the " + this.m_strVariantTable + " table.\r\n\r\n";
-                    strMsg += "You may want to ask your Biosum administrator to update the " + this.m_strVariantTable + " table with plot/variant assignments. By using the " + this.m_strVariantTable + " table,\r\n";
-					strMsg+="FIA Biosum will automatically populate your project plots with the appropriate plot/variant/location code assignments.";
-				}
-				MessageBox.Show(strMsg,
-					"FIA Biosum", 
-					System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Information);
+		        m_ado.m_OleDbDataReader.Close();
+		        frmMain.g_sbpInfo.Text = "Ready";
 
-			}
+		        if (intPlotsNeedingAssignments == 0)
+		        {
+		            strMsg = "Audit Passed.\r\n\r\nEvery plot has an FVS variant and location assignment.";
+		        }
+		        else
+		        {
+		            strPluralGrammar = intPlotsNeedingAssignments > 1
+		                ? "plots do not have FVS variant and/or location code assignments."
+		                : "plot does not have an FVS variant and/or location code assignment.";
+		            strMsg = String.Format("Audit identified issues!\r\n\r\n{0} {1}",
+		                intPlotsNeedingAssignments, strPluralGrammar);
+		        }
 
+		        if (intPlotsThatCanBeAssignedValuesFromVariantTable > 0)
+		        {
+		            strPluralGrammar = intPlotsThatCanBeAssignedValuesFromVariantTable > 1 ? "plots" : "plot";
+		            strMsg += String.Format("\r\n\r\n{0} {1} can be assigned an fvs variant and location from the {2} reference table. " +
+		                                    "The Audit Results display area shows these plots and the variant and locations that can be assigned. " +
+		                                    "To proceed with assignment, check boxes for plots to be assigned variants and location codes, " +
+		                                    "then choose the <Update Plot Records with FIADB FVS Variant Table> button.",
+		                intPlotsThatCanBeAssignedValuesFromVariantTable, strPluralGrammar, m_strVariantTable);
+		        }
+
+		        if (intPlotsThatCannotBeAssignedValuesFromVariantTable > 0)
+		        {
+		            strPluralGrammar = intPlotsThatCannotBeAssignedValuesFromVariantTable > 1 ? "plots are" : "plot is";
+		            strMsg += String.Format("\r\n\r\nAdditional Information" +
+		                                    "\r\n------------------------------\r\n" +
+		                                    "{0} {1} absent from the {2} table. " +
+		                                    "After completing any needed updates via the Audit Results display area, " +
+		                                    "these can be identified and updated manually in the Plot Table display area " +
+		                                    "by clicking on fvs_variant or fvsloccode to bring null values to the top of the list, " +
+		                                    "before editing nulls to contain the correct values.",
+		                intPlotsThatCannotBeAssignedValuesFromVariantTable, strPluralGrammar, m_strVariantTable);
+		        }
+
+		        MessageBox.Show(strMsg,
+		            "FIA Biosum",
+		            System.Windows.Forms.MessageBoxButtons.OK,
+		            System.Windows.Forms.MessageBoxIcon.Information);
+		    }
 		}
 		/// <summary>
 		/// find the table field in the grid by matching the field name with the column header
