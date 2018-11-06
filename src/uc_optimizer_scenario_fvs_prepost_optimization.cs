@@ -246,6 +246,7 @@ namespace FIA_Biosum_Manager
             this.btnOptimizationAudit = new System.Windows.Forms.Button();
             this.grpboxOptimizationSettings = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostVariable = new System.Windows.Forms.Panel();
+            this.TxtCycle1Only = new System.Windows.Forms.TextBox();
             this.grpBoxOptimizationNetRevenue = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -264,7 +265,6 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.TxtCycle1Only = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationEconSettings.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -362,6 +362,7 @@ namespace FIA_Biosum_Manager
             this.lstEconVariables.Location = new System.Drawing.Point(20, 46);
             this.lstEconVariables.Name = "lstEconVariables";
             this.lstEconVariables.Size = new System.Drawing.Size(177, 132);
+            this.lstEconVariables.Sorted = true;
             this.lstEconVariables.TabIndex = 24;
             this.lstEconVariables.SelectedIndexChanged += new System.EventHandler(this.lstEconVariables_SelectedIndexChanged);
             // 
@@ -406,6 +407,7 @@ namespace FIA_Biosum_Manager
             this.cmbNetRevEconOptimzFilter.Location = new System.Drawing.Point(46, 49);
             this.cmbNetRevEconOptimzFilter.Name = "cmbNetRevEconOptimzFilter";
             this.cmbNetRevEconOptimzFilter.Size = new System.Drawing.Size(160, 24);
+            this.cmbNetRevEconOptimzFilter.Sorted = true;
             this.cmbNetRevEconOptimzFilter.TabIndex = 88;
             this.cmbNetRevEconOptimzFilter.SelectedIndexChanged += new System.EventHandler(this.cmbNetRevEconOptimzFilter_SelectedIndexChanged);
             // 
@@ -836,6 +838,18 @@ namespace FIA_Biosum_Manager
             this.pnlFVSVariablesPrePostVariable.TabIndex = 12;
             this.pnlFVSVariablesPrePostVariable.Resize += new System.EventHandler(this.pnlFVSVariablesPrePostVariable_Resize);
             // 
+            // TxtCycle1Only
+            // 
+            this.TxtCycle1Only.BackColor = System.Drawing.SystemColors.Control;
+            this.TxtCycle1Only.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.TxtCycle1Only.Location = new System.Drawing.Point(81, 133);
+            this.TxtCycle1Only.Name = "TxtCycle1Only";
+            this.TxtCycle1Only.Size = new System.Drawing.Size(751, 15);
+            this.TxtCycle1Only.TabIndex = 26;
+            this.TxtCycle1Only.TabStop = false;
+            this.TxtCycle1Only.Text = "The Revenue Optimization variable includes revenue for cycle 1 only";
+            this.TxtCycle1Only.Visible = false;
+            // 
             // grpBoxOptimizationNetRevenue
             // 
             this.grpBoxOptimizationNetRevenue.Controls.Add(this.label4);
@@ -897,6 +911,7 @@ namespace FIA_Biosum_Manager
             this.cmbNetRevOptimzFilter.Location = new System.Drawing.Point(46, 49);
             this.cmbNetRevOptimzFilter.Name = "cmbNetRevOptimzFilter";
             this.cmbNetRevOptimzFilter.Size = new System.Drawing.Size(160, 24);
+            this.cmbNetRevOptimzFilter.Sorted = true;
             this.cmbNetRevOptimzFilter.TabIndex = 20;
             this.cmbNetRevOptimzFilter.SelectedIndexChanged += new System.EventHandler(this.cmbNetRevOptimzFilter_SelectedIndexChanged);
             // 
@@ -1021,18 +1036,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(866, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
-            // 
-            // TxtCycle1Only
-            // 
-            this.TxtCycle1Only.BackColor = System.Drawing.SystemColors.Control;
-            this.TxtCycle1Only.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.TxtCycle1Only.Location = new System.Drawing.Point(81, 133);
-            this.TxtCycle1Only.Name = "TxtCycle1Only";
-            this.TxtCycle1Only.Size = new System.Drawing.Size(751, 15);
-            this.TxtCycle1Only.TabIndex = 26;
-            this.TxtCycle1Only.TabStop = false;
-            this.TxtCycle1Only.Text = "The Revenue Optimization variable includes revenue for cycle 1 only";
-            this.TxtCycle1Only.Visible = false;
             // 
             // uc_optimizer_scenario_fvs_prepost_optimization
             // 

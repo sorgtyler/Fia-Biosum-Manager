@@ -134,6 +134,10 @@ namespace FIA_Biosum_Manager
             //
             //
             //
+            this.AddListViewRowItem("Calculate Weighted Economic Variables For Each Stand And Treatment Package", false);
+            //
+            //
+            //
             this.AddListViewRowItem("Identify Effective Treatments For Each Stand", false);
             //
             //
@@ -1794,15 +1798,6 @@ namespace FIA_Biosum_Manager
 							this.product_yields_net_rev_costs_summary_by_rx();
 
 						}
-                        /**********************************************************************
-                         **Calculate custom economic variables if needed
-                         **********************************************************************/
-
-                        if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel == false)
-                        {
-                            this.calculate_weighted_econ_variables();
-
-                        }
 
                         /*******************************************************************************
 						 **wood product yields net revenue and costs summary by treatment package table 
@@ -1817,6 +1812,17 @@ namespace FIA_Biosum_Manager
 						{
                             CompactMDB(m_strSystemResultsDbPathAndFile,m_TempMDBFileConn);
                         }
+
+                        /**********************************************************************
+                         **Calculate custom economic variables if needed
+                         **********************************************************************/
+
+                        if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel == false)
+                        {
+                            this.calculate_weighted_econ_variables();
+
+                        }
+
 						/***************************************************************************
 						 **effective treatments
 						 ***************************************************************************/
@@ -6028,177 +6034,304 @@ namespace FIA_Biosum_Manager
 
         private void calculate_weighted_econ_variables()
         {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//calculate_weighted_econ_variables\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+
+            intListViewIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(
+                   ReferenceUserControlScenarioRun.listViewEx1, "Calculate Weighted Economic Variables For Each Stand And Treatment Package");
+
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 5;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
+            FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.EnsureListViewExItemVisible(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "Selected", true);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "focused", true);
+
+            
+            // Query optimization and tiebreaker settings to see if there are weighted variables to calculate
             System.Collections.Generic.IList<string> lstFieldNames =
                 new System.Collections.Generic.List<string>();
-            lstFieldNames.Add("chip_volume_2");
-            lstFieldNames.Add("merchantable_volume_2");
-            lstFieldNames.Add("onsite_treatment_costs_2");
+            // Optimization variable
+            if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "ECONOMIC ATTRIBUTE")
+            {
+                string[] strCol = frmMain.g_oUtils.ConvertListToArray(this.m_oOptimizationVariable.strFVSVariableName, "_");
+                if (strCol.Length > 1)
+                {
+                    // This is not a default economic variable; They always end in _1
+                    if (strCol[strCol.Length - 1] != "1")
+                    {
+                        lstFieldNames.Add(this.m_oOptimizationVariable.strFVSVariableName);
+                    }
+                }
+            }
+            // Dollars per acre filter
+            if (this.m_oOptimizationVariable.bUseFilter == true)
+            {
+                string[] strCol = frmMain.g_oUtils.ConvertListToArray(this.m_oOptimizationVariable.strRevenueAttribute, "_");
+                if (strCol.Length > 1)
+                {
+                    // This is not a default economic variable; They always end in _1
+                    if (strCol[strCol.Length - 1] != "1")
+                    {
+                        if (!lstFieldNames.Contains(this.m_oOptimizationVariable.strRevenueAttribute))
+                        {
+                            lstFieldNames.Add(this.m_oOptimizationVariable.strRevenueAttribute);
+                        }
+                    }
+                }
+            }
+
             System.Collections.Generic.IList<uc_optimizer_scenario_calculated_variables.VariableItem> lstVariableItems =
                 new System.Collections.Generic.List<uc_optimizer_scenario_calculated_variables.VariableItem>();  //Parallel list to lstFieldNames; Holds variable definitions
 
-            // Populate economic variable information from configuration database
-            FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection oWeightedVariableCollection =
-                new FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection();
-            FIA_Biosum_Manager.OptimizerScenarioTools oOptimizerScenarioTools = new OptimizerScenarioTools();
-            oOptimizerScenarioTools.LoadWeightedVariables(this.m_ado, oWeightedVariableCollection);
-            foreach (string strVariableName in lstFieldNames)
+            if (lstFieldNames.Count > 0)
             {
-                foreach (uc_optimizer_scenario_calculated_variables.VariableItem oVariableItem in oWeightedVariableCollection)
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    if (oVariableItem.strVariableType.Equals("ECON") && oVariableItem.strVariableName.Equals(strVariableName))
-                    {
-                        oOptimizerScenarioTools.loadEconomicVariableWeights(oVariableItem);
-                        lstVariableItems.Add(oVariableItem);
-                        break;
-                    }
-                }
-            }
-
-            // Create post_economic_weighted table to receive the data
-            string strSql = "CREATE TABLE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName + " ( " +
-                            "biosum_cond_id CHAR(25), rxpackage CHAR(3), ";
-            foreach (string strFieldName in lstFieldNames)
-            {
-                strSql = strSql + "c1_" + strFieldName + " DOUBLE," +
-                    "c2_" + strFieldName + " DOUBLE," +
-                    "c3_" + strFieldName + " DOUBLE," +
-                    "c4_" + strFieldName + " DOUBLE," +
-                    strFieldName + " DOUBLE,";
-            }
-            strSql = strSql.TrimEnd(strSql[strSql.Length - 1]); //trim trailing comma
-            strSql = strSql + " )";
-            string strEconConn = m_ado.getMDBConnString(m_strSystemResultsDbPathAndFile, "", "");
-            using (var econConn = new OleDbConnection(strEconConn))
-            {
-                econConn.Open();
-                this.m_ado.SqlNonQuery(econConn, strSql);
-
-                // create link to table in temp database so it can be used in calculations
-                if (this.m_intError == 0)
-                {
-                    m_oDao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName, 
-                        this.m_strSystemResultsDbPathAndFile, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName, true);
-                }
-
-                System.Collections.Generic.IDictionary<string, ProductYields> dictProductYields =
-                new System.Collections.Generic.Dictionary<string, ProductYields>();
-                strSql = "select * from product_yields_net_rev_costs_summary_by_rx";
-
-                this.m_ado.SqlQueryReader(econConn, strSql);
-                ProductYields oProductYields = null;
-                while (this.m_ado.m_OleDbDataReader.Read())
-                {
-                    string strCondId = this.m_ado.m_OleDbDataReader["biosum_cond_id"].ToString().Trim();
-                    string strRxPackage = this.m_ado.m_OleDbDataReader["rxpackage"].ToString().Trim();
-                    string strKey = strCondId + "_" + strRxPackage;
-                    if (dictProductYields.ContainsKey(strKey))
-                    {
-                        oProductYields = dictProductYields[strKey];
-                    }
-                    else
-                    {
-                        oProductYields = new ProductYields(strCondId, strRxPackage);
-                    }
-                    string strRxCycle = this.m_ado.m_OleDbDataReader["rxcycle"].ToString().Trim();
-                    double dblChipYieldCf = Convert.ToDouble(this.m_ado.m_OleDbDataReader["chip_yield_cf"]);
-                    double dblMerchYieldCf = Convert.ToDouble(this.m_ado.m_OleDbDataReader["merch_yield_cf"]);
-                    double dblHarvestOnsiteCpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["harvest_onsite_cpa"]);
-                    switch (strRxCycle)
-                    {
-                        case "1":
-                            oProductYields.UpdateCycle1Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa);
-                            break;
-                        case "2":
-                            oProductYields.UpdateCycle2Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa);
-                            break;
-                        case "3":
-                            oProductYields.UpdateCycle3Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa);
-                            break;
-                        case "4":
-                            oProductYields.UpdateCycle4Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa);
-                            break;
-                    }
-                    dictProductYields[strKey] = oProductYields;
-                }
-
-                if (dictProductYields.Keys.Count > 0)
-                {
-                    string strSqlPrefix = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName +
-                                " (biosum_cond_id, rxpackage, ";
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n\r\nCalculating these weighted economic variables\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "---------------------------\r\n");
                     foreach (string strFieldName in lstFieldNames)
                     {
-                        strSqlPrefix = strSqlPrefix + "c1_" + strFieldName + " , c2_" +
-                                       strFieldName + ", c3_" + strFieldName + ", c4_" +
-                                       strFieldName + ", " + strFieldName + ",";
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, strFieldName + "\r\n");
                     }
-                    strSqlPrefix = strSqlPrefix.TrimEnd(strSqlPrefix[strSqlPrefix.Length - 1]); //trim trailing comma
-                    strSqlPrefix = strSqlPrefix + " ) VALUES ( '";
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "---------------------------\r\n");
+                }
 
-                    foreach (string strKey in dictProductYields.Keys)
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                
+                // Populate economic variable information from configuration database
+                FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection oWeightedVariableCollection =
+                    new FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection();
+                FIA_Biosum_Manager.OptimizerScenarioTools oOptimizerScenarioTools = new OptimizerScenarioTools();
+                oOptimizerScenarioTools.LoadWeightedVariables(this.m_ado, oWeightedVariableCollection);
+                foreach (string strVariableName in lstFieldNames)
+                {
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oVariableItem in oWeightedVariableCollection)
                     {
-                        ProductYields oSavedProductYields = dictProductYields[strKey];
-                        strSql = strSqlPrefix + oSavedProductYields.CondId() + "', '" +
-                            oSavedProductYields.RxPackage() + "',";
-
-                        System.Collections.Generic.IList<double> lstFieldValues = new System.Collections.Generic.List<double>();
-                        int i = 0;
-                        foreach (string strFieldName in lstFieldNames)
+                        if (oVariableItem.strVariableType.Equals("ECON") && oVariableItem.strVariableName.Equals(strVariableName))
                         {
-                            string strFieldType = uc_optimizer_scenario_calculated_variables.getEconVariableType(strFieldName);
-                            uc_optimizer_scenario_calculated_variables.VariableItem oVariableItem = lstVariableItems[i];
-                            System.Collections.Generic.IList<double> lstWeights = oVariableItem.lstWeights;
-                            switch (strFieldType)
-                            {
-                                case uc_optimizer_scenario_calculated_variables.PREFIX_MERCH_VOLUME:
-                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle1() * lstWeights[0]);
-                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle2() * lstWeights[1]);
-                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle3() * lstWeights[2]);
-                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle4() * lstWeights[3]);
-                                    lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle1() * lstWeights[0] +
-                                                       oSavedProductYields.MerchYieldCfCycle2() * lstWeights[1] +
-                                                       oSavedProductYields.MerchYieldCfCycle3() * lstWeights[2] +
-                                                       oSavedProductYields.MerchYieldCfCycle4() * lstWeights[3]);
-                                    break;
-                                case uc_optimizer_scenario_calculated_variables.PREFIX_CHIP_VOLUME:
-                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle1() * lstWeights[0]);
-                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle2() * lstWeights[1]);
-                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle3() * lstWeights[2]);
-                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle4() * lstWeights[3]);
-                                    lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle1() * lstWeights[0] +
-                                                       oSavedProductYields.ChipYieldCfCycle2() * lstWeights[1] +
-                                                       oSavedProductYields.ChipYieldCfCycle3() * lstWeights[2] +
-                                                       oSavedProductYields.ChipYieldCfCycle4() * lstWeights[3]);
-                                    break;
-                                case uc_optimizer_scenario_calculated_variables.PREFIX_ONSITE_TREATMENT_COSTS:
-                                    lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle1() * lstWeights[0]);
-                                    lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle2() * lstWeights[1]);
-                                    lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle3() * lstWeights[2]);
-                                    lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle4() * lstWeights[3]);
-                                    lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle1() * lstWeights[0] +
-                                                       oSavedProductYields.HarvestOnsiteCpaCycle2() * lstWeights[1] +
-                                                       oSavedProductYields.HarvestOnsiteCpaCycle3() * lstWeights[2] +
-                                                       oSavedProductYields.HarvestOnsiteCpaCycle4() * lstWeights[3]);
-                                    break;
-                                default:
-                                    lstFieldValues.Add(-1.0);
-                                    lstFieldValues.Add(-1.0);
-                                    lstFieldValues.Add(-1.0);
-                                    lstFieldValues.Add(-1.0);
-                                    lstFieldValues.Add(-1.0);
-                                    break;
-                            }
-                            i++;
+                            oOptimizerScenarioTools.loadEconomicVariableWeights(oVariableItem);
+                            lstVariableItems.Add(oVariableItem);
+                            break;
                         }
-
-                        foreach (double dblFieldValue in lstFieldValues)
-                        {
-                            strSql = strSql + dblFieldValue + " ,";
-                        }
-                        strSql = strSql.TrimEnd(strSql[strSql.Length - 1]); //trim trailing comma
-                        strSql = strSql + " ) ";
-                        this.m_ado.SqlNonQuery(econConn, strSql);
                     }
                 }
+
+                // Create post_economic_weighted table to receive the data
+                string strSql = "CREATE TABLE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName + " ( " +
+                                "biosum_cond_id CHAR(25), rxpackage CHAR(3), ";
+                foreach (string strFieldName in lstFieldNames)
+                {
+                    strSql = strSql + "c1_" + strFieldName + " DOUBLE," +
+                        "c2_" + strFieldName + " DOUBLE," +
+                        "c3_" + strFieldName + " DOUBLE," +
+                        "c4_" + strFieldName + " DOUBLE," +
+                        strFieldName + " DOUBLE,";
+                }
+                strSql = strSql.TrimEnd(strSql[strSql.Length - 1]); //trim trailing comma
+                strSql = strSql + " )";
+                string strEconConn = m_ado.getMDBConnString(m_strSystemResultsDbPathAndFile, "", "");
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + strSql + "\r\n");
+
+                using (var econConn = new OleDbConnection(strEconConn))
+                {
+                    econConn.Open();
+                    this.m_ado.SqlNonQuery(econConn, strSql);
+
+                    // create link to table in temp database so it can be used in calculations
+                    if (this.m_intError == 0)
+                    {
+                        m_oDao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName,
+                            this.m_strSystemResultsDbPathAndFile, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName, true);
+                    }
+
+                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+                    System.Collections.Generic.IDictionary<string, ProductYields> dictProductYields =
+                    new System.Collections.Generic.Dictionary<string, ProductYields>();
+                    strSql = "select * from product_yields_net_rev_costs_summary_by_rx";
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + strSql + "\r\n");
+                    this.m_ado.SqlQueryReader(econConn, strSql);
+                    ProductYields oProductYields = null;
+                    while (this.m_ado.m_OleDbDataReader.Read())
+                    {
+                        string strCondId = this.m_ado.m_OleDbDataReader["biosum_cond_id"].ToString().Trim();
+                        string strRxPackage = this.m_ado.m_OleDbDataReader["rxpackage"].ToString().Trim();
+                        string strKey = strCondId + "_" + strRxPackage;
+                        if (dictProductYields.ContainsKey(strKey))
+                        {
+                            oProductYields = dictProductYields[strKey];
+                        }
+                        else
+                        {
+                            oProductYields = new ProductYields(strCondId, strRxPackage);
+                        }
+                        string strRxCycle = this.m_ado.m_OleDbDataReader["rxcycle"].ToString().Trim();
+                        double dblChipYieldCf = Convert.ToDouble(this.m_ado.m_OleDbDataReader["chip_yield_cf"]);
+                        double dblMerchYieldCf = Convert.ToDouble(this.m_ado.m_OleDbDataReader["merch_yield_cf"]);
+                        double dblHarvestOnsiteCpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["harvest_onsite_cpa"]);
+                        double dblMaxNrDpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["max_nr_dpa"]);
+                        switch (strRxCycle)
+                        {
+                            case "1":
+                                oProductYields.UpdateCycle1Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
+                                    dblMaxNrDpa);
+                                break;
+                            case "2":
+                                oProductYields.UpdateCycle2Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
+                                    dblMaxNrDpa);
+                                break;
+                            case "3":
+                                oProductYields.UpdateCycle3Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
+                                    dblMaxNrDpa);
+                                break;
+                            case "4":
+                                oProductYields.UpdateCycle4Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
+                                    dblMaxNrDpa);
+                                break;
+                        }
+                        dictProductYields[strKey] = oProductYields;
+                    }
+
+                    if (dictProductYields.Keys.Count > 0)
+                    {
+                        FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                        string strSqlPrefix = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName +
+                                    " (biosum_cond_id, rxpackage, ";
+                        foreach (string strFieldName in lstFieldNames)
+                        {
+                            strSqlPrefix = strSqlPrefix + "c1_" + strFieldName + " , c2_" +
+                                           strFieldName + ", c3_" + strFieldName + ", c4_" +
+                                           strFieldName + ", " + strFieldName + ",";
+                        }
+                        strSqlPrefix = strSqlPrefix.TrimEnd(strSqlPrefix[strSqlPrefix.Length - 1]); //trim trailing comma
+                        strSqlPrefix = strSqlPrefix + " ) VALUES ( '";
+
+                        foreach (string strKey in dictProductYields.Keys)
+                        {
+                            ProductYields oSavedProductYields = dictProductYields[strKey];
+                            strSql = strSqlPrefix + oSavedProductYields.CondId() + "', '" +
+                                oSavedProductYields.RxPackage() + "',";
+
+                            System.Collections.Generic.IList<double> lstFieldValues = new System.Collections.Generic.List<double>();
+                            int i = 0;
+                            foreach (string strFieldName in lstFieldNames)
+                            {
+                                string strFieldType = uc_optimizer_scenario_calculated_variables.getEconVariableType(strFieldName);
+                                uc_optimizer_scenario_calculated_variables.VariableItem oVariableItem = lstVariableItems[i];
+                                System.Collections.Generic.IList<double> lstWeights = oVariableItem.lstWeights;
+                                switch (strFieldType)
+                                {
+                                    case uc_optimizer_scenario_calculated_variables.PREFIX_MERCH_VOLUME:
+                                        lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle1() * lstWeights[0]);
+                                        lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle2() * lstWeights[1]);
+                                        lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle3() * lstWeights[2]);
+                                        lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle4() * lstWeights[3]);
+                                        lstFieldValues.Add(oSavedProductYields.MerchYieldCfCycle1() * lstWeights[0] +
+                                                           oSavedProductYields.MerchYieldCfCycle2() * lstWeights[1] +
+                                                           oSavedProductYields.MerchYieldCfCycle3() * lstWeights[2] +
+                                                           oSavedProductYields.MerchYieldCfCycle4() * lstWeights[3]);
+                                        break;
+                                    case uc_optimizer_scenario_calculated_variables.PREFIX_CHIP_VOLUME:
+                                        lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle1() * lstWeights[0]);
+                                        lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle2() * lstWeights[1]);
+                                        lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle3() * lstWeights[2]);
+                                        lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle4() * lstWeights[3]);
+                                        lstFieldValues.Add(oSavedProductYields.ChipYieldCfCycle1() * lstWeights[0] +
+                                                           oSavedProductYields.ChipYieldCfCycle2() * lstWeights[1] +
+                                                           oSavedProductYields.ChipYieldCfCycle3() * lstWeights[2] +
+                                                           oSavedProductYields.ChipYieldCfCycle4() * lstWeights[3]);
+                                        break;
+                                    case uc_optimizer_scenario_calculated_variables.PREFIX_TOTAL_VOLUME:
+                                        lstFieldValues.Add(oSavedProductYields.TotalYieldCfCycle1() * lstWeights[0]);
+                                        lstFieldValues.Add(oSavedProductYields.TotalYieldCfCycle2() * lstWeights[1]);
+                                        lstFieldValues.Add(oSavedProductYields.TotalYieldCfCycle3() * lstWeights[2]);
+                                        lstFieldValues.Add(oSavedProductYields.TotalYieldCfCycle4() * lstWeights[3]);
+                                        lstFieldValues.Add(oSavedProductYields.TotalYieldCfCycle1() * lstWeights[0] +
+                                                           oSavedProductYields.TotalYieldCfCycle2() * lstWeights[1] +
+                                                           oSavedProductYields.TotalYieldCfCycle3() * lstWeights[2] +
+                                                           oSavedProductYields.TotalYieldCfCycle4() * lstWeights[3]);
+                                        break;
+                                    case uc_optimizer_scenario_calculated_variables.PREFIX_NET_REVENUE:
+                                        lstFieldValues.Add(oSavedProductYields.MaxNrDpaCycle1() * lstWeights[0]);
+                                        lstFieldValues.Add(oSavedProductYields.MaxNrDpaCycle2() * lstWeights[1]);
+                                        lstFieldValues.Add(oSavedProductYields.MaxNrDpaCycle3() * lstWeights[2]);
+                                        lstFieldValues.Add(oSavedProductYields.MaxNrDpaCycle4() * lstWeights[3]);
+                                        lstFieldValues.Add(oSavedProductYields.MaxNrDpaCycle1() * lstWeights[0] +
+                                                           oSavedProductYields.MaxNrDpaCycle2() * lstWeights[1] +
+                                                           oSavedProductYields.MaxNrDpaCycle3() * lstWeights[2] +
+                                                           oSavedProductYields.MaxNrDpaCycle4() * lstWeights[3]);
+                                        break;
+                                    case uc_optimizer_scenario_calculated_variables.PREFIX_ONSITE_TREATMENT_COSTS:
+                                        lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle1() * lstWeights[0]);
+                                        lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle2() * lstWeights[1]);
+                                        lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle3() * lstWeights[2]);
+                                        lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle4() * lstWeights[3]);
+                                        lstFieldValues.Add(oSavedProductYields.HarvestOnsiteCpaCycle1() * lstWeights[0] +
+                                                           oSavedProductYields.HarvestOnsiteCpaCycle2() * lstWeights[1] +
+                                                           oSavedProductYields.HarvestOnsiteCpaCycle3() * lstWeights[2] +
+                                                           oSavedProductYields.HarvestOnsiteCpaCycle4() * lstWeights[3]);
+                                        break;
+                                    default:
+                                        lstFieldValues.Add(-1.0);
+                                        lstFieldValues.Add(-1.0);
+                                        lstFieldValues.Add(-1.0);
+                                        lstFieldValues.Add(-1.0);
+                                        lstFieldValues.Add(-1.0);
+                                        break;
+                                }
+                                i++;
+                            }
+
+                            foreach (double dblFieldValue in lstFieldValues)
+                            {
+                                strSql = strSql + dblFieldValue + " ,";
+                            }
+                            strSql = strSql.TrimEnd(strSql[strSql.Length - 1]); //trim trailing comma
+                            strSql = strSql + " ) ";
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + strSql + "\r\n");
+
+                            this.m_ado.SqlNonQuery(econConn, strSql);
+                        }
+                    }
+                }
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+                if (this.m_ado.m_intError != 0)
+                {
+                    if (frmMain.g_bDebug) frmMain.g_oUtils.WriteText(m_strDebugFile, "!!!Error Executing SQL!!!\r\n");
+                    this.m_intError = this.m_ado.m_intError;
+                    FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                    return;
+                }
+            }
+            else
+            {
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n\r\nWeighted economic variables are not used in this scenario\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "---------------------------\r\n");
+                }
+                FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 2;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+            }
+            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
+
+            if (this.m_intError == 0)
+            {
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "Done");
             }
         }
         
@@ -9681,32 +9814,40 @@ namespace FIA_Biosum_Manager
             _strRxPackage = strRxPackage;
         }
 
-        public void UpdateCycle1Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa)
+        public void UpdateCycle1Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
+            double dblMaxNrDpaCycle1)
         {
             _dblChipYieldCfCycle1 = dblChipYieldCf;
             _dblMerchYieldCfCycle1 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle1 = dblHarvestOnsiteCpa;
+            _dblMaxNrDpaCycle1 = dblMaxNrDpaCycle1;
         }
 
-        public void UpdateCycle2Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa)
+        public void UpdateCycle2Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
+            double dblMaxNrDpaCycle2)
         {
             _dblChipYieldCfCycle2 = dblChipYieldCf;
             _dblMerchYieldCfCycle2 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle2 = dblHarvestOnsiteCpa;
+            _dblMaxNrDpaCycle2 = dblMaxNrDpaCycle2;
         }
 
-        public void UpdateCycle3Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa )
+        public void UpdateCycle3Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
+            double dblMaxNrDpaCycle3)
         {
             _dblChipYieldCfCycle3 = dblChipYieldCf;
             _dblMerchYieldCfCycle3 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle3 = dblHarvestOnsiteCpa;
+            _dblMaxNrDpaCycle3 = dblMaxNrDpaCycle3;
         }
 
-        public void UpdateCycle4Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa)
+        public void UpdateCycle4Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
+            double dblMaxNrDpaCycle4)
         {
             _dblChipYieldCfCycle4 = dblChipYieldCf;
             _dblMerchYieldCfCycle4 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle4 = dblHarvestOnsiteCpa;
+            _dblMerchYieldCfCycle4 = dblMaxNrDpaCycle4;
         }
 
         public string CondId()
@@ -9751,6 +9892,23 @@ namespace FIA_Biosum_Manager
             return _dblMerchYieldCfCycle4;
         }
 
+        public double TotalYieldCfCycle1()
+        {
+            return _dblChipYieldCfCycle1 + _dblMerchYieldCfCycle1;
+        }
+        public double TotalYieldCfCycle2()
+        {
+            return _dblChipYieldCfCycle2 + _dblMerchYieldCfCycle2;
+        }
+        public double TotalYieldCfCycle3()
+        {
+            return _dblChipYieldCfCycle3 + _dblMerchYieldCfCycle3;
+        }
+        public double TotalYieldCfCycle4()
+        {
+            return _dblChipYieldCfCycle4 + _dblMerchYieldCfCycle4;
+        }
+
         public double HarvestOnsiteCpaCycle1()
         {
             return _dblHarvestOnsiteCpaCycle1;
@@ -9766,6 +9924,23 @@ namespace FIA_Biosum_Manager
         public double HarvestOnsiteCpaCycle4()
         {
             return _dblHarvestOnsiteCpaCycle4;
+        }
+
+        public double MaxNrDpaCycle1()
+        {
+            return _dblMaxNrDpaCycle1;
+        }
+        public double MaxNrDpaCycle2()
+        {
+            return _dblMaxNrDpaCycle2;
+        }
+        public double MaxNrDpaCycle3()
+        {
+            return _dblMaxNrDpaCycle3;
+        }
+        public double MaxNrDpaCycle4()
+        {
+            return _dblMaxNrDpaCycle4;
         }
 
     }
