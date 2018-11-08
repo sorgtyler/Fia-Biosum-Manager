@@ -5743,8 +5743,6 @@ namespace FIA_Biosum_Manager
                                      "e.pre_variable1_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
                                      "e.post_variable1_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
                                      "e.variable1_change = 0";
-
-
                         }
                         // We specify a calculation for the total volume
                         else if (oItem.strFVSVariableName.Equals("total_volume_1"))
@@ -5773,10 +5771,19 @@ namespace FIA_Biosum_Manager
                         }
                     }
                     // This is a custom-weighted economic variable
-                    // @ToDo
+                    // This is the same SQL used for built-in economic variables where the table/field are stored in database (see above)
                     else
                     {
-
+                        string[] strDatabase = frmMain.g_oUtils.ConvertListToArray(oWeightItem.strVariableSource, ".");
+                        m_strSQL = "UPDATE tiebreaker e " +
+                                 "INNER JOIN " + strDatabase[0] + " p " +
+                                 "ON e.biosum_cond_id=p.biosum_cond_id AND " +
+                                 "e.rxpackage=p.rxpackage " +
+                                 "SET e.pre_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                                 "e.post_variable1_name = '" + oItem.strFVSVariableName + "'," +
+                                 "e.pre_variable1_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
+                                 "e.post_variable1_value = IIF(p." + strDatabase[1] + " IS NOT NULL,p." + strDatabase[1] + ",0)," +
+                                 "e.variable1_change = 0";
                     }
 
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -6086,6 +6093,28 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
+            // Tiebreaker
+            if (this.ReferenceOptimizerScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection.Item(1).bSelected == true)
+            {
+                string strFieldName = this.ReferenceOptimizerScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection.Item(1).strFVSVariableName;
+                string[] strCol = frmMain.g_oUtils.ConvertListToArray(strFieldName, "_");
+                if (strCol.Length > 1)
+                {
+                    // This is not a default economic variable; They always end in _1
+                    if (strCol[strCol.Length - 1] != "1")
+                    {
+                        string strFieldType = uc_optimizer_scenario_calculated_variables.getEconVariableType(strFieldName);
+                        if (!String.IsNullOrEmpty(strFieldType))
+                        {
+                            // This is a valid economic variable type
+                            if (!lstFieldNames.Contains(strFieldName))
+                            {
+                                lstFieldNames.Add(strFieldName);
+                            }
+                        }
+                    }
+                }
+            }
 
             System.Collections.Generic.IList<uc_optimizer_scenario_calculated_variables.VariableItem> lstVariableItems =
                 new System.Collections.Generic.List<uc_optimizer_scenario_calculated_variables.VariableItem>();  //Parallel list to lstFieldNames; Holds variable definitions
@@ -6181,23 +6210,27 @@ namespace FIA_Biosum_Manager
                         double dblMerchYieldCf = Convert.ToDouble(this.m_ado.m_OleDbDataReader["merch_yield_cf"]);
                         double dblHarvestOnsiteCpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["harvest_onsite_cpa"]);
                         double dblMaxNrDpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["max_nr_dpa"]);
+                        double dblHaulMerchCpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["haul_merch_cpa"]);
+                        double dblMerchChipNrDpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["merch_chip_nr_dpa"]);
+                        double dblHaulChipCpa = Convert.ToDouble(this.m_ado.m_OleDbDataReader["haul_chip_cpa"]);
+
                         switch (strRxCycle)
                         {
                             case "1":
                                 oProductYields.UpdateCycle1Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
-                                    dblMaxNrDpa);
+                                    dblMaxNrDpa, dblHaulMerchCpa, dblMerchChipNrDpa, dblHaulChipCpa);
                                 break;
                             case "2":
                                 oProductYields.UpdateCycle2Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
-                                    dblMaxNrDpa);
+                                    dblMaxNrDpa, dblHaulMerchCpa, dblMerchChipNrDpa, dblHaulChipCpa);
                                 break;
                             case "3":
                                 oProductYields.UpdateCycle3Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
-                                    dblMaxNrDpa);
+                                    dblMaxNrDpa, dblHaulMerchCpa, dblMerchChipNrDpa, dblHaulChipCpa);
                                 break;
                             case "4":
                                 oProductYields.UpdateCycle4Yields(dblChipYieldCf, dblMerchYieldCf, dblHarvestOnsiteCpa,
-                                    dblMaxNrDpa);
+                                    dblMaxNrDpa, dblHaulMerchCpa, dblMerchChipNrDpa, dblHaulChipCpa);
                                 break;
                         }
                         dictProductYields[strKey] = oProductYields;
@@ -6281,6 +6314,16 @@ namespace FIA_Biosum_Manager
                                                            oSavedProductYields.HarvestOnsiteCpaCycle2() * lstWeights[1] +
                                                            oSavedProductYields.HarvestOnsiteCpaCycle3() * lstWeights[2] +
                                                            oSavedProductYields.HarvestOnsiteCpaCycle4() * lstWeights[3]);
+                                        break;
+                                    case uc_optimizer_scenario_calculated_variables.PREFIX_TREATMENT_HAUL_COSTS:
+                                        lstFieldValues.Add(oSavedProductYields.TreatmentHaulCostsCycle1() * lstWeights[0]);
+                                        lstFieldValues.Add(oSavedProductYields.TreatmentHaulCostsCycle2() * lstWeights[1]);
+                                        lstFieldValues.Add(oSavedProductYields.TreatmentHaulCostsCycle3() * lstWeights[2]);
+                                        lstFieldValues.Add(oSavedProductYields.TreatmentHaulCostsCycle4() * lstWeights[3]);
+                                        lstFieldValues.Add(oSavedProductYields.TreatmentHaulCostsCycle1() * lstWeights[0] +
+                                                           oSavedProductYields.TreatmentHaulCostsCycle2() * lstWeights[1] +
+                                                           oSavedProductYields.TreatmentHaulCostsCycle3() * lstWeights[2] +
+                                                           oSavedProductYields.TreatmentHaulCostsCycle4() * lstWeights[3]);
                                         break;
                                     default:
                                         lstFieldValues.Add(-1.0);
@@ -9789,24 +9832,28 @@ namespace FIA_Biosum_Manager
         double _dblHarvestOnsiteCpaCycle1 = 0;
         double _dblHaulMerchCpaCycle1 = 0;
         double _dblMerchChipNrDpaCycle1 = 0;
+        double _dblHaulChipCpaCycle1 = 0;
         double _dblChipYieldCfCycle2 = 0;
         double _dblMerchYieldCfCycle2 = 0;
         double _dblMaxNrDpaCycle2 = 0;
         double _dblHarvestOnsiteCpaCycle2 = 0;
         double _dblHaulMerchCpaCycle2 = 0;
         double _dblMerchChipNrDpaCycle2 = 0;
+        double _dblHaulChipCpaCycle2 = 0;
         double _dblChipYieldCfCycle3 = 0;
         double _dblMerchYieldCfCycle3 = 0;
         double _dblMaxNrDpaCycle3 = 0;
         double _dblHarvestOnsiteCpaCycle3 = 0;
         double _dblHaulMerchCpaCycle3 = 0;
         double _dblMerchChipNrDpaCycle3 = 0;
+        double _dblHaulChipCpaCycle3 = 0;
         double _dblChipYieldCfCycle4 = 0;
         double _dblMerchYieldCfCycle4 = 0;
         double _dblMaxNrDpaCycle4 = 0;
         double _dblHarvestOnsiteCpaCycle4 = 0;
         double _dblHaulMerchCpaCycle4 = 0;
         double _dblMerchChipNrDpaCycle4 = 0;
+        double _dblHaulChipCpaCycle4 = 0;
 
         public ProductYields(string strCondId, string strRxPackage)
         {
@@ -9815,39 +9862,51 @@ namespace FIA_Biosum_Manager
         }
 
         public void UpdateCycle1Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
-            double dblMaxNrDpaCycle1)
+            double dblMaxNrDpaCycle, double dblHaulMerchCpa, double dblMerchChipNrDpa, double dblHaulChipCpa)
         {
             _dblChipYieldCfCycle1 = dblChipYieldCf;
             _dblMerchYieldCfCycle1 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle1 = dblHarvestOnsiteCpa;
-            _dblMaxNrDpaCycle1 = dblMaxNrDpaCycle1;
+            _dblMaxNrDpaCycle1 = dblMaxNrDpaCycle;
+            _dblHaulMerchCpaCycle1 = dblHaulMerchCpa;
+            _dblMerchChipNrDpaCycle1 = dblMerchChipNrDpa;
+            _dblHaulChipCpaCycle1 = dblHaulChipCpa;
         }
 
         public void UpdateCycle2Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
-            double dblMaxNrDpaCycle2)
+            double dblMaxNrDpaCycle, double dblHaulMerchCpa, double dblMerchChipNrDpa, double dblHaulChipCpa)
         {
             _dblChipYieldCfCycle2 = dblChipYieldCf;
             _dblMerchYieldCfCycle2 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle2 = dblHarvestOnsiteCpa;
-            _dblMaxNrDpaCycle2 = dblMaxNrDpaCycle2;
+            _dblMaxNrDpaCycle2 = dblMaxNrDpaCycle;
+            _dblHaulMerchCpaCycle2 = dblHaulMerchCpa;
+            _dblMerchChipNrDpaCycle2 = dblMerchChipNrDpa;
+            _dblHaulChipCpaCycle2 = dblHaulChipCpa;
         }
 
         public void UpdateCycle3Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
-            double dblMaxNrDpaCycle3)
+            double dblMaxNrDpaCycle, double dblHaulMerchCpa, double dblMerchChipNrDpa, double dblHaulChipCpa)
         {
             _dblChipYieldCfCycle3 = dblChipYieldCf;
             _dblMerchYieldCfCycle3 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle3 = dblHarvestOnsiteCpa;
-            _dblMaxNrDpaCycle3 = dblMaxNrDpaCycle3;
+            _dblMaxNrDpaCycle3 = dblMaxNrDpaCycle;
+            _dblHaulMerchCpaCycle3 = dblHaulMerchCpa;
+            _dblMerchChipNrDpaCycle3 = dblMerchChipNrDpa;
+            _dblHaulChipCpaCycle3 = dblHaulChipCpa;
         }
 
         public void UpdateCycle4Yields(double dblChipYieldCf, double dblMerchYieldCf, double dblHarvestOnsiteCpa,
-            double dblMaxNrDpaCycle4)
+            double dblMaxNrDpaCycle, double dblHaulMerchCpa, double dblMerchChipNrDpa, double dblHaulChipCpa)
         {
             _dblChipYieldCfCycle4 = dblChipYieldCf;
             _dblMerchYieldCfCycle4 = dblMerchYieldCf;
             _dblHarvestOnsiteCpaCycle4 = dblHarvestOnsiteCpa;
-            _dblMerchYieldCfCycle4 = dblMaxNrDpaCycle4;
+            _dblMerchYieldCfCycle4 = dblMaxNrDpaCycle;
+            _dblHaulMerchCpaCycle4 = dblHaulMerchCpa;
+            _dblMerchChipNrDpaCycle4 = dblMerchChipNrDpa;
+            _dblHaulChipCpaCycle4 = dblHaulChipCpa;
         }
 
         public string CondId()
@@ -9941,6 +10000,43 @@ namespace FIA_Biosum_Manager
         public double MaxNrDpaCycle4()
         {
             return _dblMaxNrDpaCycle4;
+        }
+
+        public double TreatmentHaulCostsCycle1()
+        {
+            double dblAddedChipCost = 0;
+            if (_dblMerchChipNrDpaCycle1 >= _dblMaxNrDpaCycle1)
+            {
+                dblAddedChipCost = _dblHaulChipCpaCycle1;
+            }
+            return _dblHarvestOnsiteCpaCycle1 + _dblHaulMerchCpaCycle1 + dblAddedChipCost;
+        }
+        public double TreatmentHaulCostsCycle2()
+        {
+            double dblAddedChipCost = 0;
+            if (_dblMerchChipNrDpaCycle2 >= _dblMaxNrDpaCycle2)
+            {
+                dblAddedChipCost = _dblHaulChipCpaCycle2;
+            }
+            return _dblHarvestOnsiteCpaCycle2 + _dblHaulMerchCpaCycle2 + dblAddedChipCost;
+        }
+        public double TreatmentHaulCostsCycle3()
+        {
+            double dblAddedChipCost = 0;
+            if (_dblMerchChipNrDpaCycle3 >= _dblMaxNrDpaCycle3)
+            {
+                dblAddedChipCost = _dblHaulChipCpaCycle3;
+            }
+            return _dblHarvestOnsiteCpaCycle3 + _dblHaulMerchCpaCycle3 + dblAddedChipCost;
+        }
+        public double TreatmentHaulCostsCycle4()
+        {
+            double dblAddedChipCost = 0;
+            if (_dblMerchChipNrDpaCycle4 >= _dblMaxNrDpaCycle4)
+            {
+                dblAddedChipCost = _dblHaulChipCpaCycle4;
+            }
+            return _dblHarvestOnsiteCpaCycle4 + _dblHaulMerchCpaCycle4 + dblAddedChipCost;
         }
 
     }

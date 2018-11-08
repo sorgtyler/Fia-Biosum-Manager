@@ -271,7 +271,6 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank();
             this.btnFVSVariablesTieBreakerTreatmentIntensityPrev = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityClear = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerTreatmentIntensityDone = new System.Windows.Forms.Button();
@@ -310,6 +309,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -381,16 +381,6 @@ namespace FIA_Biosum_Manager
             this.label1.TabIndex = 14;
             this.label1.Text = "Assign integer ranks for silvicultural sequences; lowest numbered sequence will b" +
     "e best when there is more than one optimal sequence";
-            // 
-            // uc_scenario_treatment_intensity1
-            // 
-            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
-            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
-            this.uc_scenario_treatment_intensity1.ReferenceOptimizerScenarioForm = null;
-            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
-            this.uc_scenario_treatment_intensity1.TabIndex = 13;
-            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // btnFVSVariablesTieBreakerTreatmentIntensityPrev
             // 
@@ -533,6 +523,7 @@ namespace FIA_Biosum_Manager
             this.lstEconVariablesList.Location = new System.Drawing.Point(134, 38);
             this.lstEconVariablesList.Name = "lstEconVariablesList";
             this.lstEconVariablesList.Size = new System.Drawing.Size(202, 180);
+            this.lstEconVariablesList.Sorted = true;
             this.lstEconVariablesList.TabIndex = 91;
             this.lstEconVariablesList.Visible = false;
             this.lstEconVariablesList.SelectedIndexChanged += new System.EventHandler(this.lstEconVariablesList_SelectedIndexChanged);
@@ -791,6 +782,16 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(894, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
+            // 
+            // uc_scenario_treatment_intensity1
+            // 
+            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
+            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
+            this.uc_scenario_treatment_intensity1.ReferenceOptimizerScenarioForm = null;
+            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
+            this.uc_scenario_treatment_intensity1.TabIndex = 13;
+            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // uc_optimizer_scenario_fvs_prepost_variables_tiebreaker
             // 
