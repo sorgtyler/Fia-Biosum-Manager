@@ -343,6 +343,7 @@ namespace FIA_Biosum_Manager
             this.BtnDeleteEconVariable.Size = new System.Drawing.Size(64, 24);
             this.BtnDeleteEconVariable.TabIndex = 96;
             this.BtnDeleteEconVariable.Text = "Delete";
+            this.BtnDeleteEconVariable.Click += new System.EventHandler(this.BtnDeleteEconVariable_Click);
             // 
             // m_dgEcon
             // 
@@ -353,7 +354,7 @@ namespace FIA_Biosum_Manager
             this.m_dgEcon.Size = new System.Drawing.Size(327, 177);
             this.m_dgEcon.TabIndex = 95;
             this.m_dgEcon.CurrentCellChanged += new System.EventHandler(this.m_dgEcon_CurCellChange);
-            this.m_dgEcon.Leave += new System.EventHandler(this.m_dgEcon_Leave);    // recalculates sum when leaving grid
+            this.m_dgEcon.Leave += new System.EventHandler(this.m_dgEcon_Leave);
             // 
             // lblEconVariableName
             // 
@@ -677,7 +678,7 @@ namespace FIA_Biosum_Manager
             this.m_dg.Size = new System.Drawing.Size(403, 177);
             this.m_dg.TabIndex = 91;
             this.m_dg.CurrentCellChanged += new System.EventHandler(this.m_dg_CurCellChange);
-            this.m_dg.Leave += new System.EventHandler(this.m_dg_Leave);    // recalculates sum when leaving grid
+            this.m_dg.Leave += new System.EventHandler(this.m_dg_Leave);
             // 
             // btnDeleteFvsVariable
             // 
@@ -850,10 +851,10 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Calculated Variables";
             // 
-            // uc_core_scenario_weighted_average
+            // uc_optimizer_scenario_calculated_variables
             // 
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_core_scenario_weighted_average";
+            this.Name = "uc_optimizer_scenario_calculated_variables";
             this.Size = new System.Drawing.Size(872, 2000);
             this.groupBox1.ResumeLayout(false);
             this.grpBoxEconomicVariable.ResumeLayout(false);
@@ -2799,6 +2800,74 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "TREATMENT_OPTIMIZER", "ECONOMIC_VARIABLE" });
+        }
+
+        private void BtnDeleteEconVariable_Click(object sender, EventArgs e)
+        {
+            ado_data_access oAdo = new ado_data_access();
+            string strScenarioDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
+            string strScenarioConn = oAdo.getMDBConnString(strScenarioDir + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile, "", "");
+            using (var oScenarioConn = new OleDbConnection(strScenarioConn))
+            {
+                oScenarioConn.Open();
+
+                // Check for usage as Optimization variable
+                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName +
+                    " WHERE (((UCase(Trim([fvs_variable_name]))) = UCase(Trim('" + lblEconVariableName.Text + "'))))" +
+                    " AND CURRENT_YN = 'Y'";
+                if ((int)oAdo.getRecordCount(oScenarioConn, oAdo.m_strSQL, "TEMP") > 0)
+                {
+                    MessageBox.Show("!!This Economic Variable Cannot Be Deleted Because It Is In Use As An Optimization Variable!!", "FIA Biosum",
+                      System.Windows.Forms.MessageBoxButtons.OK,
+                      System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                // Check for usage as filter
+                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName +
+                    " WHERE (((UCase(Trim([revenue_attribute]))) = UCase(Trim('" + lblEconVariableName.Text + "'))))" +
+                    " AND CURRENT_YN = 'Y'";
+                if ((int)oAdo.getRecordCount(oScenarioConn, oAdo.m_strSQL, "TEMP") > 0)
+                {
+                    MessageBox.Show("!!This Economic Variable Cannot Be Deleted Because It Is In Use As A Dollars Per Acre Filter!!", "FIA Biosum",
+                      System.Windows.Forms.MessageBoxButtons.OK,
+                      System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                // Check for usage as tiebreaker
+                oAdo.m_strSQL = "SELECT Count(*) FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName +
+                    " WHERE (((UCase(Trim([fvs_variable_name]))) = UCase(Trim('" + lblEconVariableName.Text + "'))))";
+                if ((int)oAdo.getRecordCount(oScenarioConn, oAdo.m_strSQL, "TEMP") > 0)
+                {
+                    MessageBox.Show("!!This Economic Variable Cannot Be Deleted Because It Is In Use As An Tie-Breaker Variable!!", "FIA Biosum",
+                      System.Windows.Forms.MessageBoxButtons.OK,
+                      System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+            }
+             DialogResult objResult = MessageBox.Show("!!You are about to delete an Economic weighted variable. This action cannot be undone. Do you wish to continue?", "FIA Biosum",
+                    System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+             if (objResult == DialogResult.Yes)
+             {
+                 strScenarioConn = oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                    "\\" + Tables.OptimizerDefinitions.DefaultDbFile, "", "");
+                 using (var oScenarioConn = new OleDbConnection(strScenarioConn))
+                 {
+                     // Delete entries from configuration database
+                     oScenarioConn.Open();
+                     oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
+                                       " WHERE calculated_variables_id = " + m_intCurVar;
+                     oAdo.SqlNonQuery(oScenarioConn, oAdo.m_strSQL);
+                     oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                                       " WHERE ID = " + m_intCurVar;
+                     oAdo.SqlNonQuery(oScenarioConn, oAdo.m_strSQL);
+                 }
+                 // Update UI
+                 this.loadLstVariables();
+
+                 this.btnEconDetailsCancel.PerformClick();
+             }
         }
     }
 
