@@ -37,7 +37,7 @@ namespace FIA_Biosum_Manager
         private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
 
         private int m_intCurVar = -1;
-        private System.Windows.Forms.GroupBox grpboxDetails;
+        public System.Windows.Forms.GroupBox grpboxDetails;
 
         public bool m_bSave = false;
         private ado_data_access m_oAdo;
@@ -107,13 +107,13 @@ namespace FIA_Biosum_Manager
         private const int COL_YEAR = 1;
         private const int COL_SEQNUM = 2;
         private Button btnNewEcon;
-        private GroupBox grpBoxEconomicVariable;
+        public GroupBox grpBoxEconomicVariable;
         public Panel panel1;
         private Button BtnHelpEconVariable;
         private TextBox txtEconVariableDescr;
         private Label label1;
         private Label label2;
-        private Button BtnSaveEcon;
+        public Button BtnSaveEcon;
         private Button btnEconDetailsCancel;
         private GroupBox groupBox8;
         private ListBox lstEconVariablesList;
@@ -1277,7 +1277,6 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        //@ToDo: Need to write code to save values
         public int savevalues(string strVariableType)
         {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -1320,19 +1319,18 @@ namespace FIA_Biosum_Manager
                 }
                 else
                 {
-                    // GENERATE NEW ID NUMBER; ADD ONE TO HIGHEST EXISTING ID
-                    foreach (ListViewItem oItem in this.lstVariables.Items)
+                    if (strVariableType.Equals("ECON"))
                     {
-                        int intTestId = Convert.ToInt32(oItem.SubItems[3].Text.Trim());
-                        if (intTestId > intId)
-                            intId = intTestId;
+                        // We already calculated the next id to add it to the grid
+                        DataRow oRow = this.m_econ_dv.Table.Rows[0];
+                        intId = Convert.ToInt32(oRow["calculated_variables_id"]);
                     }
-                    intId = intId + 1;
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    else
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Selected new variable id: " + intId + " \r\n\r\n");
+                        intId = GetNextId();
                     }
                 }
+
                 // SHARED BEGINNING OF INSERT STATEMENT
                 strSql = "INSERT INTO " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
                     " (ID, VARIABLE_NAME, VARIABLE_DESCRIPTION, VARIABLE_TYPE, BASELINE_RXPACKAGE, VARIABLE_SOURCE)" +
@@ -1465,6 +1463,7 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
             {
@@ -1537,8 +1536,8 @@ namespace FIA_Biosum_Manager
             m_oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
             this.InitializeOleDbTransactionCommands();
 
-            m_oAdo.m_strSQL = "SELECT calculated_variables_id, rxcycle, 0.001 as weight FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
-                " WHERE CALCULATED_VARIABLES_ID = 1";
+            m_oAdo.m_strSQL = "SELECT * FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
+                " WHERE CALCULATED_VARIABLES_ID = -1";
             this.m_dtTableSchema = m_oAdo.getTableSchema(m_oAdo.m_OleDbConnection,
                                                        m_oAdo.m_OleDbTransaction,
                                                        m_oAdo.m_strSQL);
@@ -1963,11 +1962,23 @@ namespace FIA_Biosum_Manager
             m_intCurVar = -1;
             lstEconVariablesList.ClearSelected();
             this.enableEconVariableUc(true);
+            BtnDeleteEconVariable.Enabled = false;
             lblSelectedEconType.Text = "Not Defined";
-            foreach (System.Data.DataRow p_row in m_oAdo.m_DataSet.Tables["econ_variable"].Rows)
+            int intNewId = GetNextId();
+
+            m_oAdo.m_DataSet.Clear();
+            this.m_econ_dv.AllowNew = true;
+            for (int i = 1; i < 5; i++)
             {
+                System.Data.DataRow p_row = this.m_oAdo.m_DataSet.Tables["econ_variable"].NewRow();
+                p_row["calculated_variables_id"] = intNewId;
+                p_row["rxcycle"] = Convert.ToString(i);
                 p_row["weight"] = 0;
+                this.m_oAdo.m_DataSet.Tables["econ_variable"].Rows.Add(p_row);
+                p_row = null;
             }
+
+            this.m_econ_dv.AllowNew = false;
             this.SumWeights(true);
 
             //Remove and re-add weight column so it is editable
@@ -2167,25 +2178,15 @@ namespace FIA_Biosum_Manager
                         }
                     }
                     lstEconVariablesList.SelectedIndex = idxType;
+                    m_oAdo.m_DataSet.Clear();
                     oAdo.m_strSQL = "select * from " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
                         " where calculated_variables_id = " + m_intCurVar;
-                    oAdo.SqlQueryReader(oPropertiesConn, oAdo.m_strSQL);
-                    if (oAdo.m_OleDbDataReader.HasRows)
-                    {
-                        while (oAdo.m_OleDbDataReader.Read())
-                        {
-                            foreach (System.Data.DataRow p_row in m_oAdo.m_DataSet.Tables["econ_variable"].Rows)
-                            {
-                                if (Convert.ToInt16(oAdo.m_OleDbDataReader["rxcycle"]) == Convert.ToInt16(p_row["rxcycle"]))
-                                {
-                                    p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["weight"]);
-                                    break;
-                                }
-
-                            }
-                        }
-                    }
-                    oAdo.m_OleDbDataReader.Close();
+                    oAdo.m_OleDbCommand = oPropertiesConn.CreateCommand();
+                    oAdo.m_OleDbCommand.CommandText = oAdo.m_strSQL;
+                    oAdo.m_OleDbDataAdapter = new OleDbDataAdapter();
+                    oAdo.m_OleDbDataAdapter.SelectCommand = oAdo.m_OleDbCommand;
+                    oAdo.m_OleDbDataAdapter.SelectCommand.Transaction = oAdo.m_OleDbTransaction;
+                    oAdo.m_OleDbDataAdapter.Fill(m_oAdo.m_DataSet, "econ_variable");
                     this.SumWeights(true);
                     this.updateWeightColumn(VARIABLE_ECON, false);
                     this.enableEconVariableUc(false);
@@ -2754,6 +2755,7 @@ namespace FIA_Biosum_Manager
             this.btnEconVariableType.Visible = bEnabled;
             this.txtEconVariableDescr.ReadOnly = !bEnabled;
             this.BtnSaveEcon.Enabled = bEnabled;
+            this.BtnDeleteEconVariable.Enabled = bEnabled;
         }
 
         public class VariableItem
@@ -3032,7 +3034,7 @@ namespace FIA_Biosum_Manager
                 }
 
                 this.enableEconVariableUc(false);
-                this.BtnDeleteEconVariable.Visible = false;
+                this.BtnDeleteEconVariable.Enabled = false;
                 this.BtnSaveEcon.Visible = true;
                 frmMain.g_oFrmMain.ActivateStandByAnimation(
                     frmMain.g_oFrmMain.WindowState,
@@ -3045,18 +3047,34 @@ namespace FIA_Biosum_Manager
                 frmMain.g_sbpInfo.Text = "Saving scenario rule definitions...Stand by";
                 savevalues("ECON");
 
-
-
-
                 //Reload the main grid
                 this.loadLstVariables();
 
+                
                 frmMain.g_sbpInfo.Text = "Ready";
                 frmMain.g_oFrmMain.DeactivateStandByAnimation();
 
                 MessageBox.Show("Economic variable properties saved! Click Cancel to return to the main Calculated Variables page", "FIA Biosum");
 
             }
+        }
+
+        private int GetNextId()
+        {
+            // GENERATE NEW ID NUMBER; ADD ONE TO HIGHEST EXISTING ID
+            int intId = -1;
+            foreach (ListViewItem oItem in this.lstVariables.Items)
+            {
+                int intTestId = Convert.ToInt32(oItem.SubItems[3].Text.Trim());
+                if (intTestId > intId)
+                    intId = intTestId;
+            }
+            intId = intId + 1;
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Selected new variable id: " + intId + " \r\n\r\n");
+            }
+            return intId;
         }
     }
 
@@ -3126,14 +3144,30 @@ namespace FIA_Biosum_Manager
                     if (Char.IsDigit((char)e.KeyValue) || (e.KeyCode == Keys.OemPeriod && this.Format.IndexOf(".", 0) >= 0 && this.TextBox.Text.IndexOf(".", 0) < 0))
                     {
                         this.m_strLastKey = Convert.ToString(e.KeyValue);
-                        if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
+                        if (this.uc_optimizer_scenario_calculated_variables_1.grpboxDetails.Visible == true)
+                        {
+                            if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
+                        }
+                        else
+                        {
+                            if (this.uc_optimizer_scenario_calculated_variables_1.BtnSaveEcon.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.BtnSaveEcon.Enabled = true;
+
+                        }
                     }
                     else
                     {
                         if (e.KeyCode == Keys.Back)
                         {
                             this.m_strLastKey = Convert.ToString(e.KeyValue);
-                            if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
+                            if (this.uc_optimizer_scenario_calculated_variables_1.grpboxDetails.Visible == true)
+                            {
+                                if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
+                            }
+                            else
+                            {
+                                if (this.uc_optimizer_scenario_calculated_variables_1.BtnSaveEcon.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.BtnSaveEcon.Enabled = true;
+      
+                            }
                         }
                         else
                         {
@@ -3146,7 +3180,16 @@ namespace FIA_Biosum_Manager
                 else
                 {
                     this.m_strLastKey = Convert.ToString(e.KeyValue);
-                    if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
+
+                    if (this.uc_optimizer_scenario_calculated_variables_1.grpboxDetails.Visible == true)
+                    {
+                        if (this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.btnFvsCalculate.Enabled = true;
+                    }
+                    else
+                    {
+                        if (this.uc_optimizer_scenario_calculated_variables_1.BtnSaveEcon.Enabled == false) this.uc_optimizer_scenario_calculated_variables_1.BtnSaveEcon.Enabled = true;
+
+                    }
                 }
 
 
