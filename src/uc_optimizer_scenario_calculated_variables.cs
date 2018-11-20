@@ -11,46 +11,46 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_optimizer_scenario_calculated_variables : System.Windows.Forms.UserControl
-	{
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.ComponentModel.IContainer components;
-		//private int m_intFullHt=400;
-		public System.Data.OleDb.OleDbDataAdapter m_OleDbDataAdapter;
-		public System.Data.DataSet m_DataSet;
-		public System.Data.OleDb.OleDbConnection m_OleDbConnectionMaster;
-		public System.Data.OleDb.OleDbConnection m_OleDbConnectionScenario;
-		public System.Data.OleDb.OleDbCommand m_OleDbCommand;
-		public System.Data.DataRelation m_DataRelation;
-		public System.Data.DataRow m_DataRow;
-		public int m_intError = 0;
-		public string m_strError = "";
-		private System.Windows.Forms.Button btnNext;
-		private System.Windows.Forms.Button btnPrev;
-		private FIA_Biosum_Manager.utils m_oUtils; 
-		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+    public class uc_optimizer_scenario_calculated_variables : System.Windows.Forms.UserControl
+    {
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.ComponentModel.IContainer components;
+        //private int m_intFullHt=400;
+        public System.Data.OleDb.OleDbDataAdapter m_OleDbDataAdapter;
+        public System.Data.DataSet m_DataSet;
+        public System.Data.OleDb.OleDbConnection m_OleDbConnectionMaster;
+        public System.Data.OleDb.OleDbConnection m_OleDbConnectionScenario;
+        public System.Data.OleDb.OleDbCommand m_OleDbCommand;
+        public System.Data.DataRelation m_DataRelation;
+        public System.Data.DataRow m_DataRow;
+        public int m_intError = 0;
+        public string m_strError = "";
+        private System.Windows.Forms.Button btnNext;
+        private System.Windows.Forms.Button btnPrev;
+        private FIA_Biosum_Manager.utils m_oUtils;
+        public System.Windows.Forms.Label lblTitle;
+        private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario = null;
+        private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
         string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_optimizer_calculated_variables_debug.txt";
         private env m_oEnv;
         private Help m_oHelp;
         private string m_xpsFile = Help.DefaultTreatmentOptimizerFile;
-		
-		private int m_intCurVar=-1;
+
+        private int m_intCurVar = -1;
         private System.Windows.Forms.GroupBox grpboxDetails;
 
-		public bool m_bSave=false;
+        public bool m_bSave = false;
         private ado_data_access m_oAdo;
         private ado_data_access m_oAdoFvs;
         private string m_strTempMDB;
 
-		const int COLUMN_CHECKBOX=0;
-		const int COLUMN_OPTIMIZE_VARIABLE=1;
-		const int COLUMN_FVS_VARIABLE=2;
-		const int COLUMN_VALUESOURCE=3;
-		const int COLUMN_MAXMIN=4;
-		const int COLUMN_USEFILTER=5;
-		const int COLUMN_FILTER_OPERATOR=6;
+        const int COLUMN_CHECKBOX = 0;
+        const int COLUMN_OPTIMIZE_VARIABLE = 1;
+        const int COLUMN_FVS_VARIABLE = 2;
+        const int COLUMN_VALUESOURCE = 3;
+        const int COLUMN_MAXMIN = 4;
+        const int COLUMN_USEFILTER = 5;
+        const int COLUMN_FILTER_OPERATOR = 6;
         const int COLUMN_FILTER_VALUE = 7;
         const string VARIABLE_ECON = "ECON";
         const string VARIABLE_FVS = "FVS";
@@ -68,13 +68,13 @@ namespace FIA_Biosum_Manager
 
 
         private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
-		public bool m_bFirstTime=true;
-		private bool _bDisplayAuditMsg=true;
+        public bool m_bFirstTime = true;
+        private bool _bDisplayAuditMsg = true;
         private bool m_bIgnoreListViewItemCheck = false;
         private int m_intPrevColumnIdx = -1;
         private System.Windows.Forms.GroupBox grpboxSummary;
-		private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors=new ListViewAlternateBackgroundColors();
-         private ValidateNumericValues m_oValidate = new ValidateNumericValues();
+        private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors = new ListViewAlternateBackgroundColors();
+        private ValidateNumericValues m_oValidate = new ValidateNumericValues();
         private string m_strLastValue = "";
         private FIA_Biosum_Manager.frmMain m_frmMain;
         public int m_DialogHt;
@@ -142,10 +142,10 @@ namespace FIA_Biosum_Manager
         private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
 
         public uc_optimizer_scenario_calculated_variables(FIA_Biosum_Manager.frmMain p_frmMain)
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
-			this.m_oUtils = new utils();
+        {
+            // This call is required by the Windows.Forms Form Designer.
+            InitializeComponent();
+            this.m_oUtils = new utils();
             this.m_frmMain = p_frmMain;
 
             this.grpboxDetails.Top = grpboxSummary.Top;
@@ -174,10 +174,10 @@ namespace FIA_Biosum_Manager
             this.m_oLvAlternateColors.CustomFullRowSelect = true;
             if (frmMain.g_oGridViewFont != null) lstVariables.Font = frmMain.g_oGridViewFont;
 
-			// TODO: Add any initialization after the InitializeComponent call
+            // TODO: Add any initialization after the InitializeComponent call
             this.m_DialogWd = this.Width + 25;
             this.m_DialogHt = this.pnlDetails.Height + 120;
-            this.Height = m_DialogHt -40;
+            this.Height = m_DialogHt - 40;
 
             this.m_oEnv = new env();
             frmMain.g_oFrmMain.ActivateStandByAnimation(
@@ -188,30 +188,30 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oFrmMain.Top);
             this.loadvalues();
             frmMain.g_oFrmMain.DeactivateStandByAnimation();
-		}
+        }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Component Designer generated code
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -437,6 +437,7 @@ namespace FIA_Biosum_Manager
             this.BtnSaveEcon.Size = new System.Drawing.Size(76, 24);
             this.BtnSaveEcon.TabIndex = 77;
             this.BtnSaveEcon.Text = "Save";
+            this.BtnSaveEcon.Click += new System.EventHandler(this.BtnSaveEcon_Click);
             // 
             // btnEconDetailsCancel
             // 
@@ -522,7 +523,6 @@ namespace FIA_Biosum_Manager
             // 
             // btnNewEcon
             // 
-            this.btnNewEcon.Enabled = false;
             this.btnNewEcon.Location = new System.Drawing.Point(151, 360);
             this.btnNewEcon.Name = "btnNewEcon";
             this.btnNewEcon.Size = new System.Drawing.Size(148, 32);
@@ -873,8 +873,8 @@ namespace FIA_Biosum_Manager
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
-		}
-		#endregion
+        }
+        #endregion
 
         protected void loadvalues()
         {
@@ -884,7 +884,7 @@ namespace FIA_Biosum_Manager
             if (System.IO.File.Exists(m_strDebugFile)) System.IO.File.Delete(m_strDebugFile);
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
             {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "START: Optimizer Calculated Variables Log " 
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "START: Optimizer Calculated Variables Log "
                     + System.DateTime.Now.ToString() + "\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Form name: " + this.Name + "\r\n\r\n");
             }
@@ -896,7 +896,7 @@ namespace FIA_Biosum_Manager
 
             //load datagrid for economic variables
             loadEconVariablesGrid();
-                    
+
             // load listbox for economic variables
             lstEconVariablesList.Items.Clear();
             foreach (string strName in PREFIX_ECON_NAME_ARRAY)
@@ -913,7 +913,7 @@ namespace FIA_Biosum_Manager
                     lstFVSTablesList.Items.Add(strKey);
                 }
             }
-            
+
             //Set Defaults
             if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
             {
@@ -921,12 +921,12 @@ namespace FIA_Biosum_Manager
                 cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
             }
 
-            
-            
-            
+
+
+
             if (m_oAdo != null)
                 m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-            
+
         }
 
         private void loadm_dg()
@@ -1277,44 +1277,44 @@ namespace FIA_Biosum_Manager
             }
         }
 
-		//@ToDo: Need to write code to save values
+        //@ToDo: Need to write code to save values
         public int savevalues(string strVariableType)
-		{
+        {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "savevalues BEGIN \r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "------------------------------------------------------------------------------------------------\r\n");
             }
-            
-            ado_data_access m_oAdo = new ado_data_access();
-			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\" + Tables.OptimizerDefinitions.DefaultDbFile;
-			m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strScenarioMDB,"",""));
-			if (m_oAdo.m_intError==0)
-			{
+
+            ado_data_access oAdo = new ado_data_access();
+            string strScenarioMDB =
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB, "", ""));
+            if (oAdo.m_intError == 0)
+            {
                 int intId = -1;
                 string strSql = "";
                 string strBaselinePackage = "";
                 // DELETE EXISTING RECORD ON SHARED DEFINITIONS TABLE
                 if (m_intCurVar > 0)
                 {
-                    m_oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                    oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
                                     " WHERE ID = " + m_intCurVar;
-                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
                     string strTableName = Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName;
                     if (strVariableType.Equals("ECON"))
                     {
                         strTableName = Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName;
                     }
-                    m_oAdo.m_strSQL = "DELETE FROM " + strTableName +
+                    oAdo.m_strSQL = "DELETE FROM " + strTableName +
                         " WHERE calculated_variables_id = " + m_intCurVar;
-                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
                     intId = m_intCurVar;
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Deleted existing records for variable id: " +  m_intCurVar + "\r\n\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Deleted existing records for variable id: " + m_intCurVar + "\r\n\r\n");
                     }
 
                 }
@@ -1354,9 +1354,9 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Add parent record for FVS weighted variable \r\n");
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "SQL: " + strSql + "\r\n\r\n");
                     }
-                    m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, strSql);
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                     // ADD CHILD PERCENTAGE RECORD
-                    if (m_oAdo.m_intError == 0)
+                    if (oAdo.m_intError == 0)
                     {
                         double[] arrPrePercents = new double[4];
                         double[] arrPostPercents = new double[4];
@@ -1377,7 +1377,7 @@ namespace FIA_Biosum_Manager
                                 arrPostPercents[intRxCycle - 1] = dblWeight;
                             }
                         }
-                        
+
                         strSql = "INSERT INTO " + Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName +
                             " (calculated_variables_id, weight_1_pre, weight_1_post, weight_2_pre, weight_2_post, " +
                             "weight_3_pre, weight_3_post, weight_4_pre, weight_4_post)" +
@@ -1389,14 +1389,82 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Add child weight values entry for FVS variable id: " + intId + " \r\n");
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "SQL: " + strSql + "\r\n\r\n");
                         }
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, strSql);
+                        oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
                     }
                 }
                 else
                 {
+                    string strDescription = "";
+                    if (!String.IsNullOrEmpty(txtEconVariableDescr.Text))
+                        strDescription = txtEconVariableDescr.Text.Trim();
+                    string strVariableSource = Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName +
+                        "." + lblEconVariableName.Text.Trim();
+                    strSql = strSql + lblEconVariableName.Text.Trim() + "','" + strDescription + "','" +
+                             strVariableType + "','" + strBaselinePackage + "','" + strVariableSource + "')";
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Add parent record for Economic weighted variable \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "SQL: " + strSql + "\r\n\r\n");
+                    }
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, strSql);
+                    // MODIFY CHILD PERCENTAGE RECORD
+                    if (oAdo.m_intError == 0 && this.m_oAdo.m_intError == 0)
+                    {
+                        this.m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strScenarioMDB, "", ""));
+                        int intCurrRow;
+                        this.m_intError = 0;
 
+                        /******************************************************
+                         **save the current row, move the current row to a
+                         **different row to enable getchanges() method, then
+                         **move back to current row
+                         ******************************************************/
+                        intCurrRow = this.m_dgEcon.CurrentRowIndex;
+                        if (intCurrRow == 0)
+                        {
+                            this.m_dgEcon.CurrentRowIndex++;
+                        }
+                        else
+                        {
+                            this.m_dgEcon.CurrentRowIndex = 0;
+                        }
+
+
+                        System.Data.DataTable p_dtChanges;
+
+                        try
+                        {
+
+                            p_dtChanges = this.m_oAdo.m_DataSet.Tables["econ_variable"].GetChanges();
+
+                            //check if any inserted rows
+                            if (p_dtChanges.HasErrors)
+                            {
+                                this.m_oAdo.m_DataSet.Tables["econ_variable"].RejectChanges();
+                                this.m_intError = -1;
+                            }
+                            else
+                            {
+                                this.m_oAdo.m_OleDbDataAdapter.Update(this.m_oAdo.m_DataSet.Tables["econ_variable"]);
+                                this.m_oAdo.m_OleDbTransaction.Commit();
+                                this.m_oAdo.m_DataSet.Tables["econ_variable"].AcceptChanges();
+                                this.InitializeOleDbTransactionCommands();
+                            }
+                        }
+                        catch (Exception caught)
+                        {
+                            this.m_intError = -1;
+                            MessageBox.Show(caught.Message);
+                            this.m_oAdo.m_DataSet.Tables["econ_variable"].RejectChanges();
+                            //rollback the transaction to the original records 
+                            this.m_oAdo.m_OleDbTransaction.Rollback();
+                        }
+
+                        p_dtChanges = null;
+                        this.m_dgEcon.CurrentRowIndex = intCurrRow;
+                    }
                 }
-			}
+            }
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
             {
@@ -1404,8 +1472,8 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "savevalues END \r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "------------------------------------------------------------------------------------------------\r\n");
             }
-            return m_oAdo.m_intError;
-		}
+            return oAdo.m_intError;
+        }
 
         private void val_data(string strVariableType)
         {
@@ -1413,7 +1481,7 @@ namespace FIA_Biosum_Manager
             if (strVariableType.Equals("FVS"))
             {
                 if (this.lblFvsVariableName.Text.Trim().Equals("Not Defined") ||
-                    this.LblSelectedVariable .Text.Trim().Equals("Not Defined"))
+                    this.LblSelectedVariable.Text.Trim().Equals("Not Defined"))
                 {
                     MessageBox.Show("!!Select An FVS Variable!!", "FIA Biosum",
                                      System.Windows.Forms.MessageBoxButtons.OK,
@@ -1429,14 +1497,34 @@ namespace FIA_Biosum_Manager
                     MessageBox.Show("!!Select Weights Totaling More Than 0!!", "FIA Biosum",
                                     System.Windows.Forms.MessageBoxButtons.OK,
                                     System.Windows.Forms.MessageBoxIcon.Exclamation);
-                        this.m_intError = -1;
-                        this.m_dg.Focus();
-                        return;
+                    this.m_intError = -1;
+                    this.m_dg.Focus();
+                    return;
                 }
             }
             else
             {
-
+                if (this.lblSelectedEconType.Text.Trim().Equals("Not Defined") ||
+                    this.lblEconVariableName.Text.Trim().Equals("Not Defined"))
+                {
+                    MessageBox.Show("!!Select An Economic Variable!!", "FIA Biosum",
+                                     System.Windows.Forms.MessageBoxButtons.OK,
+                                     System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    this.m_intError = -1;
+                    this.btnEconVariableType.Focus();
+                    return;
+                }
+                double dblTotalWeights = -1;
+                bool bIsNumber = Double.TryParse(txtEconVariableTotalWeight.Text, out dblTotalWeights);
+                if (dblTotalWeights <= 0)
+                {
+                    MessageBox.Show("!!Select Weights Totaling More Than 0!!", "FIA Biosum",
+                                    System.Windows.Forms.MessageBoxButtons.OK,
+                                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    this.m_intError = -1;
+                    this.m_dgEcon.Focus();
+                    return;
+                }
             }
         }
 
@@ -1447,7 +1535,9 @@ namespace FIA_Biosum_Manager
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
             m_oAdo.m_DataSet = new DataSet("econ_variable");
             m_oAdo.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
-            m_oAdo.m_strSQL = "SELECT rxcycle, 0.001 as weight FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
+            this.InitializeOleDbTransactionCommands();
+
+            m_oAdo.m_strSQL = "SELECT calculated_variables_id, rxcycle, 0.001 as weight FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
                 " WHERE CALCULATED_VARIABLES_ID = 1";
             this.m_dtTableSchema = m_oAdo.getTableSchema(m_oAdo.m_OleDbConnection,
                                                        m_oAdo.m_OleDbTransaction,
@@ -1504,7 +1594,7 @@ namespace FIA_Biosum_Manager
                     for (int i = 0; i < numCols; ++i)
                     {
                         strColumnName = m_oAdo.m_DataSet.Tables["econ_variable"].Columns[i].ColumnName;
-                        
+
                         /***********************************
                         **all columns are read-only except weight
                         ***********************************/
@@ -1538,6 +1628,13 @@ namespace FIA_Biosum_Manager
                          ********************************************************************/
                         tableStyle.GridColumnStyles.Add(aColumnTextColumn);
 
+                        /**********************************
+                         * Hide calculated_variables_id column
+                         * *******************************/
+                        if (strColumnName.Equals("calculated_variables_id"))
+                            tableStyle.GridColumnStyles.Remove(aColumnTextColumn);
+
+
                     }
                     /*********************************************************************
                      ** make the dataGrid use our new tablestyle and bind it to our table
@@ -1565,212 +1662,212 @@ namespace FIA_Biosum_Manager
             }
         }
 
-		protected void SendKeyStrokes(System.Windows.Forms.TextBox p_oTextBox, string strKeyStrokes)
-		{
-			try 
-			{
-				p_oTextBox.Focus();
-				System.Windows.Forms.SendKeys.Send(strKeyStrokes);
-				p_oTextBox.Refresh();
-			}
-			catch  (Exception caught)
-			{
-               MessageBox.Show("SendKeyStrokes Method Failed With This Message:" + caught.Message);
-			}
+        protected void SendKeyStrokes(System.Windows.Forms.TextBox p_oTextBox, string strKeyStrokes)
+        {
+            try
+            {
+                p_oTextBox.Focus();
+                System.Windows.Forms.SendKeys.Send(strKeyStrokes);
+                p_oTextBox.Refresh();
+            }
+            catch (Exception caught)
+            {
+                MessageBox.Show("SendKeyStrokes Method Failed With This Message:" + caught.Message);
+            }
 
-		}
-
-		
-		
-		
-			
-		
-
-		protected void NextButton(ref System.Windows.Forms.GroupBox p_oGb, ref System.Windows.Forms.Button p_oButton, string strButtonName)
-		{
-           p_oGb.Controls.Add(p_oButton);
-		   p_oButton.Left = p_oGb.Width - p_oButton.Width - 5;
-		   p_oButton.Top = p_oGb.Height - p_oButton.Height - 5;
-		   p_oButton.Name = strButtonName;	
-		}
-		protected void PrevButton(ref System.Windows.Forms.GroupBox p_oGb, ref System.Windows.Forms.Button p_oButton, string strButtonName)
-		{
-			p_oGb.Controls.Add(p_oButton);
-			p_oButton.Top = this.btnNext.Top;
-			p_oButton.Height = this.btnNext.Height;
-			p_oButton.Width = this.btnNext.Width;
-			p_oButton.Left = this.btnNext.Left - p_oButton.Width;
-			p_oButton.Name = strButtonName;	
-		}
-		
-		
-
-		
-		public void main_resize()
-		{
-			
-		}		
-
-		private void btnFVSVariablesPrePostVariableValue_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void btnFVSVariablesPrePostVariableClearAll_Click(object sender, System.EventArgs e)
-		{
-			
-		}
-
-		private void btnFVSVariablesPrePostVariableNext_Click(object sender, System.EventArgs e)
-		{
-			
-		}
-		private void RollBack()
-		{
-			RollBack_variable1();
-			RollBack_variable2();
-			RollBack_variable3();
-			RollBack_SqlBetter();
-			RollBack_SqlWorse();
-			RollBack_Overall();
-		}
-		private void RollBack_variable1()
-		{
-		}
-		private void RollBack_variable2()
-		{
-		}
-		private void RollBack_variable3()
-		{
-		}
-		private void RollBack_SqlBetter()
-		{
-		}
-		private void RollBack_SqlWorse()
-		{
-		}
-		private void RollBack_Overall()
-		{
-		}
-
-		private void grpboxFVSVariablesPrePostVariable_Resize(object sender, System.EventArgs e)
-		{
-			
-		}
-
-		private void grpboxFVSVariablesPrePostExpression_Resize(object sender, System.EventArgs e)
-		{
-		}
-
-		private void grpboxFVSVariablesPrePostVariableValues_Resize(object sender, System.EventArgs e)
-		{
-
-		}
-
-		private void btnFVSVariablesPrePostExpressionPrevious_Click(object sender, System.EventArgs e)
-		{
-			
-			
-			
-		}
-
-	
+        }
 
 
-		private void Go()
-		{
-
-		}
-		
-		
-		private void ShowGroupBox(string p_strName)
-		{
-			int x;
-			//System.Windows.Forms.Control oControl;
-			for (x=0;x<=groupBox1.Controls.Count-1;x++)
-			{
-				if (groupBox1.Controls[x].Name.Substring(0,3)=="grp")
-				{
-					if (p_strName.Trim().ToUpper() == 
-						groupBox1.Controls[x].Name.Trim().ToUpper())
-					{
-						groupBox1.Controls[x].Show();
-					}
-					else
-					{
-						groupBox1.Controls[x].Hide();
-					}
-				}
-			}
-		}
-
-		private void btnFVSVariablesPrePostValuesButtonsEdit_Click(object sender, System.EventArgs e)
-		{
-
-		}
 
 
-		private void btnFVSVariablesPrePost2Overall_Click(object sender, System.EventArgs e)
-		{
-		}
 
-		private void btnFVSVariablesPrePostValuesButtonsClear_Click(object sender, System.EventArgs e)
-		{
-		}
-		
 
-		
 
-		private void grpboxFVSVariablesPrePost_Resize(object sender, System.EventArgs e)
-		{
-			   
-		}
+        protected void NextButton(ref System.Windows.Forms.GroupBox p_oGb, ref System.Windows.Forms.Button p_oButton, string strButtonName)
+        {
+            p_oGb.Controls.Add(p_oButton);
+            p_oButton.Left = p_oGb.Width - p_oButton.Width - 5;
+            p_oButton.Top = p_oGb.Height - p_oButton.Height - 5;
+            p_oButton.Name = strButtonName;
+        }
+        protected void PrevButton(ref System.Windows.Forms.GroupBox p_oGb, ref System.Windows.Forms.Button p_oButton, string strButtonName)
+        {
+            p_oGb.Controls.Add(p_oButton);
+            p_oButton.Top = this.btnNext.Top;
+            p_oButton.Height = this.btnNext.Height;
+            p_oButton.Width = this.btnNext.Width;
+            p_oButton.Left = this.btnNext.Left - p_oButton.Width;
+            p_oButton.Name = strButtonName;
+        }
 
-		
 
-		private void lvFVSVariablesPrePostValues_DoubleClick(object sender, System.EventArgs e)
-		{
-		
-		}
 
-		private void pnlFVSVariablesPrePostExpression_Resize(object sender, System.EventArgs e)
-		{
-			
-			
-		}
 
-		private void pnlFVSVariablesPrePostVariable_Resize(object sender, System.EventArgs e)
-		{
-			
-			
-		}
+        public void main_resize()
+        {
 
-		private string ValidateNumeric(string p_strValue)
-		{
+        }
+
+        private void btnFVSVariablesPrePostVariableValue_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void btnFVSVariablesPrePostVariableClearAll_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void btnFVSVariablesPrePostVariableNext_Click(object sender, System.EventArgs e)
+        {
+
+        }
+        private void RollBack()
+        {
+            RollBack_variable1();
+            RollBack_variable2();
+            RollBack_variable3();
+            RollBack_SqlBetter();
+            RollBack_SqlWorse();
+            RollBack_Overall();
+        }
+        private void RollBack_variable1()
+        {
+        }
+        private void RollBack_variable2()
+        {
+        }
+        private void RollBack_variable3()
+        {
+        }
+        private void RollBack_SqlBetter()
+        {
+        }
+        private void RollBack_SqlWorse()
+        {
+        }
+        private void RollBack_Overall()
+        {
+        }
+
+        private void grpboxFVSVariablesPrePostVariable_Resize(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void grpboxFVSVariablesPrePostExpression_Resize(object sender, System.EventArgs e)
+        {
+        }
+
+        private void grpboxFVSVariablesPrePostVariableValues_Resize(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void btnFVSVariablesPrePostExpressionPrevious_Click(object sender, System.EventArgs e)
+        {
+
+
+
+        }
+
+
+
+
+        private void Go()
+        {
+
+        }
+
+
+        private void ShowGroupBox(string p_strName)
+        {
+            int x;
+            //System.Windows.Forms.Control oControl;
+            for (x = 0; x <= groupBox1.Controls.Count - 1; x++)
+            {
+                if (groupBox1.Controls[x].Name.Substring(0, 3) == "grp")
+                {
+                    if (p_strName.Trim().ToUpper() ==
+                        groupBox1.Controls[x].Name.Trim().ToUpper())
+                    {
+                        groupBox1.Controls[x].Show();
+                    }
+                    else
+                    {
+                        groupBox1.Controls[x].Hide();
+                    }
+                }
+            }
+        }
+
+        private void btnFVSVariablesPrePostValuesButtonsEdit_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+
+        private void btnFVSVariablesPrePost2Overall_Click(object sender, System.EventArgs e)
+        {
+        }
+
+        private void btnFVSVariablesPrePostValuesButtonsClear_Click(object sender, System.EventArgs e)
+        {
+        }
+
+
+
+
+        private void grpboxFVSVariablesPrePost_Resize(object sender, System.EventArgs e)
+        {
+
+        }
+
+
+
+        private void lvFVSVariablesPrePostValues_DoubleClick(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void pnlFVSVariablesPrePostExpression_Resize(object sender, System.EventArgs e)
+        {
+
+
+        }
+
+        private void pnlFVSVariablesPrePostVariable_Resize(object sender, System.EventArgs e)
+        {
+
+
+        }
+
+        private string ValidateNumeric(string p_strValue)
+        {
             string strValue = p_strValue.Replace("$", "");
             strValue = strValue.Replace(",", "");
-			try
-			{
-               double dbl = Convert.ToDouble(strValue);
-			}
-			catch 
-			{
-				return "0";
-			}
-			return strValue;
-		}
+            try
+            {
+                double dbl = Convert.ToDouble(strValue);
+            }
+            catch
+            {
+                return "0";
+            }
+            return strValue;
+        }
 
 
-		private void groupBox1_Leave(object sender, System.EventArgs e)
-		{
-			
-		}
-		private void EnableTabs(bool p_bEnable)
-		{
+        private void groupBox1_Leave(object sender, System.EventArgs e)
+        {
+
+        }
+        private void EnableTabs(bool p_bEnable)
+        {
             int x;
-			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
-			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
-			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlFVSVariables,"tbeffective,tbtiebreaker",p_bEnable);
+            ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlScenario, "tbdesc,tbnotes,tbdatasources", p_bEnable);
+            ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlRules, "tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun", p_bEnable);
+            ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlFVSVariables, "tbeffective,tbtiebreaker", p_bEnable);
             for (x = 0; x <= ReferenceOptimizerScenarioForm.tlbScenario.Buttons.Count - 1; x++)
             {
                 ReferenceOptimizerScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
@@ -1781,61 +1878,61 @@ namespace FIA_Biosum_Manager
             frmMain.g_oFrmMain.mnuMain.MenuItems[1].Enabled = p_bEnable;
             frmMain.g_oFrmMain.mnuMain.MenuItems[2].Enabled = p_bEnable;
 
-		}
+        }
 
-		private void btnOptimizationAudit_Click(object sender, System.EventArgs e)
-		{
-			this.DisplayAuditMessage=true;
-			Audit();
-		}
-		public void Audit()
-		{
-			
-			
-			int x;
-			this.m_intError=0;
-			m_strError="";
-			if (DisplayAuditMessage)
-			{
-				this.m_strError="Audit Results \r\n";
-				this.m_strError=m_strError + "-------------\r\n\r\n";
-			}
+        private void btnOptimizationAudit_Click(object sender, System.EventArgs e)
+        {
+            this.DisplayAuditMessage = true;
+            Audit();
+        }
+        public void Audit()
+        {
 
-			
-			if (DisplayAuditMessage)
-			{
-				if (m_intError==0) this.m_strError=m_strError + "Passed Audit";
-				else m_strError = m_strError + "\r\n\r\n" + "Failed Audit";
-				MessageBox.Show(m_strError,"FIA Biosum");
-			}
 
-		}
-		
-		public bool DisplayAuditMessage
-		{
-			get {return _bDisplayAuditMsg;}
-			set {_bDisplayAuditMsg=value;}
-		}
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
-		{
+            int x;
+            this.m_intError = 0;
+            m_strError = "";
+            if (DisplayAuditMessage)
+            {
+                this.m_strError = "Audit Results \r\n";
+                this.m_strError = m_strError + "-------------\r\n\r\n";
+            }
+
+
+            if (DisplayAuditMessage)
+            {
+                if (m_intError == 0) this.m_strError = m_strError + "Passed Audit";
+                else m_strError = m_strError + "\r\n\r\n" + "Failed Audit";
+                MessageBox.Show(m_strError, "FIA Biosum");
+            }
+
+        }
+
+        public bool DisplayAuditMessage
+        {
+            get { return _bDisplayAuditMsg; }
+            set { _bDisplayAuditMsg = value; }
+        }
+        public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
+        {
             get { return _frmScenario; }
-			set {_frmScenario=value;}
-		}
-		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
-		{
-			get {return this._oCurVar;}
-			set {_oCurVar=value;}
-		}
-		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
-		{
-			get {return _uc_tiebreaker;}
-			set {_uc_tiebreaker=value;}
-		}
+            set { _frmScenario = value; }
+        }
+        public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables ReferenceFVSVariables
+        {
+            get { return this._oCurVar; }
+            set { _oCurVar = value; }
+        }
+        public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreaker
+        {
+            get { return _uc_tiebreaker; }
+            set { _uc_tiebreaker = value; }
+        }
 
         private void btnCancelSummary_Click(object sender, EventArgs e)
         {
 
-			this.ParentForm.Close();
+            this.ParentForm.Close();
         }
 
         private void btnNewFvs_Click(object sender, EventArgs e)
@@ -1927,7 +2024,7 @@ namespace FIA_Biosum_Manager
             if (bIsEconVariable == true)
             {
                 objDataTable = this.m_econ_dv.Table;
-            } 
+            }
             else
             {
                 objDataTable = this.m_dv.Table;
@@ -2032,7 +2129,8 @@ namespace FIA_Biosum_Manager
                 }
                 if (bExists == false)
                     bFoundIt = true;
-            } while (bFoundIt == false);
+            } 
+            while (bFoundIt == false);
             lblFvsVariableName.Text = strVariableName;
         }
 
@@ -2156,58 +2254,58 @@ namespace FIA_Biosum_Manager
                                 switch (strRxCycle)
                                 {
                                     case "1":
-                                    if (strPrePost.Equals("PRE"))
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_1_PRE"]);
-                                    }
-                                    else
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_1_POST"]);
-                                    }
-                                    break;
+                                        if (strPrePost.Equals("PRE"))
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_1_PRE"]);
+                                        }
+                                        else
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_1_POST"]);
+                                        }
+                                        break;
                                     case "2":
-                                    if (strPrePost.Equals("PRE"))
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_2_PRE"]);
-                                    }
-                                    else
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_2_POST"]);
-                                    }
-                                    break;
+                                        if (strPrePost.Equals("PRE"))
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_2_PRE"]);
+                                        }
+                                        else
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_2_POST"]);
+                                        }
+                                        break;
                                     case "3":
-                                    if (strPrePost.Equals("PRE"))
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_3_PRE"]);
-                                    }
-                                    else
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_3_POST"]);
-                                    }
-                                    break;
+                                        if (strPrePost.Equals("PRE"))
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_3_PRE"]);
+                                        }
+                                        else
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_3_POST"]);
+                                        }
+                                        break;
                                     case "4":
-                                    if (strPrePost.Equals("PRE"))
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_4_PRE"]);
-                                    }
-                                    else
-                                    {
-                                        p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_4_POST"]);
-                                    }
-                                    break;
-                            }
+                                        if (strPrePost.Equals("PRE"))
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_4_PRE"]);
+                                        }
+                                        else
+                                        {
+                                            p_row["weight"] = Convert.ToDouble(oAdo.m_OleDbDataReader["WEIGHT_4_POST"]);
+                                        }
+                                        break;
+                                }
 
-                        }
+                            }
                             this.LblSelectedVariable.Text =
                                 this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
                             lblFvsVariableName.Text = strVariableName;
                             txtFVSVariableDescr.Text = lstVariables.SelectedItems[0].SubItems[1].Text.Trim();
                             this.enableFvsVariableUc(false);
+                        }
                     }
+                    oAdo.m_OleDbDataReader.Close();
+                    oAdo = null;
                 }
-                oAdo.m_OleDbDataReader.Close();
-                oAdo = null;
-            }
                 this.SumWeights(false);
                 this.updateWeightColumn(VARIABLE_FVS, false);
                 this.grpboxDetails.Show();
@@ -2219,6 +2317,35 @@ namespace FIA_Biosum_Manager
             if (this.lstEconVariablesList.SelectedItems.Count == 0 || this.lstEconVariablesList.SelectedItems.Count == 0) return;
             this.lblSelectedEconType.Text =
                 this.lstEconVariablesList.SelectedItems[0].ToString();
+            string strVariableName = "";
+            int i = 0;
+            foreach (string strName in PREFIX_ECON_NAME_ARRAY)
+            {
+                if (this.lblSelectedEconType.Text.Equals(strName))
+                    break;
+                i++;
+            }
+            bool bFoundIt = false;
+            bool bExists = false;
+            int intSuffix = 1;
+            do
+            {
+                strVariableName = PREFIX_ECON_VALUE_ARRAY[i] + "_" + intSuffix;
+                bExists = false;
+                foreach (ListViewItem oItem in this.lstVariables.Items)
+                {
+                    if (oItem.Text.Trim().Equals(strVariableName))
+                    {
+                        intSuffix = intSuffix + 1;
+                        bExists = true;
+                        break;
+                    }
+                }
+                if (bExists == false)
+                    bFoundIt = true;
+            }
+            while (bFoundIt == false);
+            lblEconVariableName.Text = strVariableName;
         }
 
         public static string getEconVariableType(string strName)
@@ -2254,7 +2381,7 @@ namespace FIA_Biosum_Manager
         }
 
         private void updateWeightColumn(string strWeightType, bool bEdit)
-        {           
+        {
             DataGridTableStyle objTableStyle = this.m_dgEcon.TableStyles[0];
             if (strWeightType.Equals(VARIABLE_FVS))
             {
@@ -2313,7 +2440,7 @@ namespace FIA_Biosum_Manager
                        frmMain.g_oFrmMain.Height,
                        frmMain.g_oFrmMain.Width,
                        frmMain.g_oFrmMain.Top);
-                    
+
                     //Save associated configuration records
                     frmMain.g_sbpInfo.Text = "Saving scenario rule definitions...Stand by";
                     savevalues("FVS");
@@ -2338,11 +2465,11 @@ namespace FIA_Biosum_Manager
                         "\\fvs\\db\\" + strSourceDatabaseName;
 
                     //Link to source FVS tables in temp .mdb if they don't exist from a previous run
-                    if (! oDao.TableExists(m_strTempMDB, strSourcePreTable))
+                    if (!oDao.TableExists(m_strTempMDB, strSourcePreTable))
                     {
                         oDao.CreateTableLink(m_strTempMDB, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
                     }
-                    if (! oDao.TableExists(m_strTempMDB, strSourcePostTable))
+                    if (!oDao.TableExists(m_strTempMDB, strSourcePostTable))
                     {
                         oDao.CreateTableLink(m_strTempMDB, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
                     }
@@ -2377,7 +2504,7 @@ namespace FIA_Biosum_Manager
                     //that is table for weights by rx and rxcycle
                     bool bNewTables = false;
                     string strCalculateConn = m_oAdo.getMDBConnString(m_strTempMDB, "", "");
-                    using (var calculateConn = new OleDbConnection(strCalculateConn)) 
+                    using (var calculateConn = new OleDbConnection(strCalculateConn))
                     {
                         calculateConn.Open();
 
@@ -2392,7 +2519,7 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Create temporary table for weights by rx and rxcycle\r\n");
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
                         }
-                    
+
                         m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                       lblFvsVariableName.Text + " " +
                                       "INTO " + strWeightsByRxCyclePostTable +
@@ -2479,43 +2606,43 @@ namespace FIA_Biosum_Manager
                                       "WHERE r.rxcycle = '1'";
                         m_oAdo.SqlNonQuery(calculateConn, m_oAdo.m_strSQL);
 
-                    if (!oDao.TableExists(strPrePostWeightedDb, strTargetPreTable))
-                    {
-                        //Link source tables to output database
-                        oDao.CreateTableLink(strPrePostWeightedDb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
-                        oDao.CreateTableLink(strPrePostWeightedDb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
-
-                        string strConn = m_oAdo.getMDBConnString(strPrePostWeightedDb, "", "");
-                        using (var conn = new System.Data.OleDb.OleDbConnection(strConn))
+                        if (!oDao.TableExists(strPrePostWeightedDb, strTargetPreTable))
                         {
-                            // We get the list of conditions where rxcycle = 1; FVS creates a record for
-                            // each condition for each cycle regardless of whether there is activity
-                            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                                  lblFvsVariableName.Text + " " +
-                                  "INTO " + strTargetPreTable +
-                                  " FROM " + strSourcePreTable +
-                                  " WHERE rxcycle = '1'";
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            //Link source tables to output database
+                            oDao.CreateTableLink(strPrePostWeightedDb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
+                            oDao.CreateTableLink(strPrePostWeightedDb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
+
+                            string strConn = m_oAdo.getMDBConnString(strPrePostWeightedDb, "", "");
+                            using (var conn = new System.Data.OleDb.OleDbConnection(strConn))
                             {
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                                // We get the list of conditions where rxcycle = 1; FVS creates a record for
+                                // each condition for each cycle regardless of whether there is activity
+                                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                      lblFvsVariableName.Text + " " +
+                                      "INTO " + strTargetPreTable +
+                                      " FROM " + strSourcePreTable +
+                                      " WHERE rxcycle = '1'";
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                {
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + m_oAdo.m_strSQL + "\r\n\r\n");
+                                }
+
+                                m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
+                                m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                                  lblFvsVariableName.Text + " " +
+                                                  "INTO " + strTargetPostTable +
+                                                  " FROM " + strSourcePostTable +
+                                                  " WHERE rxcycle = '1'";
+                                m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
+                                bNewTables = true;
+
+                                oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePreTable);
+                                oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePostTable);
                             }
-
-                            m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
-                            m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
-                                              lblFvsVariableName.Text + " " +
-                                              "INTO " + strTargetPostTable +
-                                              " FROM " + strSourcePostTable +
-                                              " WHERE rxcycle = '1'";
-                            m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
-                            bNewTables = true;
-
-                            oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePreTable);
-                            oDao.DeleteTableFromMDB(strPrePostWeightedDb, strSourcePostTable);
                         }
-                     }
 
-                   }
+                    }
                     //Switch connection to the final storage location and prepare the tables to receive the output
                     string strPrePostConn = m_oAdo.getMDBConnString(strPrePostWeightedDb, "", "");
                     using (var prePostConn = new OleDbConnection(strPrePostConn))
@@ -2846,32 +2973,94 @@ namespace FIA_Biosum_Manager
                     return;
                 }
             }
-             DialogResult objResult = MessageBox.Show("!!You are about to delete an Economic weighted variable. This action cannot be undone. Do you wish to continue?", "FIA Biosum",
-                    System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
-             if (objResult == DialogResult.Yes)
-             {
-                 strScenarioConn = oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                    "\\" + Tables.OptimizerDefinitions.DefaultDbFile, "", "");
-                 using (var oScenarioConn = new OleDbConnection(strScenarioConn))
-                 {
-                     // Delete entries from configuration database
-                     oScenarioConn.Open();
-                     oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
-                                       " WHERE calculated_variables_id = " + m_intCurVar;
-                     oAdo.SqlNonQuery(oScenarioConn, oAdo.m_strSQL);
-                     oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
-                                       " WHERE ID = " + m_intCurVar;
-                     oAdo.SqlNonQuery(oScenarioConn, oAdo.m_strSQL);
-                 }
-                 // Update UI
-                 this.loadLstVariables();
+            DialogResult objResult = MessageBox.Show("!!You are about to delete an Economic weighted variable. This action cannot be undone. Do you wish to continue?", "FIA Biosum",
+                   System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+            if (objResult == DialogResult.Yes)
+            {
+                strScenarioConn = oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                   "\\" + Tables.OptimizerDefinitions.DefaultDbFile, "", "");
+                using (var oScenarioConn = new OleDbConnection(strScenarioConn))
+                {
+                    // Delete entries from configuration database
+                    oScenarioConn.Open();
+                    oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
+                                      " WHERE calculated_variables_id = " + m_intCurVar;
+                    oAdo.SqlNonQuery(oScenarioConn, oAdo.m_strSQL);
+                    oAdo.m_strSQL = "DELETE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                                      " WHERE ID = " + m_intCurVar;
+                    oAdo.SqlNonQuery(oScenarioConn, oAdo.m_strSQL);
+                }
+                // Update UI
+                this.loadLstVariables();
 
-                 this.btnEconDetailsCancel.PerformClick();
-             }
+                this.btnEconDetailsCancel.PerformClick();
+            }
+        }
+
+        private void InitializeOleDbTransactionCommands()
+        {
+            this.m_oAdo.m_strSQL = "SELECT calculated_variables_id, rxcycle, weight" +
+                                   " FROM " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName +
+                                   " WHERE calculated_variables_id = " + m_intCurVar + " ;";
+            
+            //initialize the transaction object with the connection
+            this.m_oAdo.m_OleDbTransaction = this.m_oAdo.m_OleDbConnection.BeginTransaction();
+
+            this.m_oAdo.ConfigureDataAdapterInsertCommand(this.m_oAdo.m_OleDbConnection,
+                this.m_oAdo.m_OleDbDataAdapter,
+                this.m_oAdo.m_OleDbTransaction,
+                this.m_oAdo.m_strSQL,
+                Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName);
+
+            //Do I need to do this again? It's the same SQL as above
+            //this.m_oAdo.m_strSQL = "select fvs_variant, spcd,fvs_input_spcd,common_name,genus,species,comments from " + m_oQueries.m_oFvs.m_strTreeSpcTable + " order by fvs_variant, spcd;";
+            this.m_oAdo.ConfigureDataAdapterUpdateCommand(this.m_oAdo.m_OleDbConnection,
+                this.m_oAdo.m_OleDbDataAdapter,
+                this.m_oAdo.m_OleDbTransaction,
+                this.m_oAdo.m_strSQL, "select calculated_variables_id, rxcycle from " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName,
+                Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName);
+        }
+
+        private void BtnSaveEcon_Click(object sender, EventArgs e)
+        {
+            this.val_data("ECON");
+            if (this.m_intError == 0)
+            {
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "BtnSaveEcon_Click: Save weighted econ variable " + lblEconVariableName.Text + "\r\n");
+                }
+
+                this.enableEconVariableUc(false);
+                this.BtnDeleteEconVariable.Visible = false;
+                this.BtnSaveEcon.Visible = true;
+                frmMain.g_oFrmMain.ActivateStandByAnimation(
+                    frmMain.g_oFrmMain.WindowState,
+                    frmMain.g_oFrmMain.Left,
+                    frmMain.g_oFrmMain.Height,
+                    frmMain.g_oFrmMain.Width,
+                    frmMain.g_oFrmMain.Top);
+
+                //Save associated configuration records
+                frmMain.g_sbpInfo.Text = "Saving scenario rule definitions...Stand by";
+                savevalues("ECON");
+
+
+
+
+                //Reload the main grid
+                this.loadLstVariables();
+
+                frmMain.g_sbpInfo.Text = "Ready";
+                frmMain.g_oFrmMain.DeactivateStandByAnimation();
+
+                MessageBox.Show("Economic variable properties saved! Click Cancel to return to the main Calculated Variables page", "FIA Biosum");
+
+            }
         }
     }
 
- 
+
 
 
     public class WeightedAverage_DataGridColoredTextBoxColumn : DataGridTextBoxColumn
