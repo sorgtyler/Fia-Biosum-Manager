@@ -1103,7 +1103,7 @@ namespace FIA_Biosum_Manager
 		{
 			m_oValidate.RoundDecimalLength=2;
 			m_oValidate.MaxValue=300;
-			m_oValidate.MinValue=0;
+			m_oValidate.MinValue=10;
 			m_oValidate.TestForMaxMin=true;
 			m_oValidate.NullsAllowed=false;
 			m_oValidate.ValidateDecimal(txtMinDiaLargeLogs.Text.Trim());
