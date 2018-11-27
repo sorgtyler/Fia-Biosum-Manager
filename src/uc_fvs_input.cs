@@ -111,6 +111,8 @@ namespace FIA_Biosum_Manager
         private Label label6;
         private Label label5;
         private LinkLabel linkLabelFuelModel;
+        private GroupBox grpGRMOptions;
+        private CheckBox chkGRM;
 
         delegate string[] GetListBoxItemsDlg(CheckedListBox checkedListBox);
 
@@ -188,6 +190,8 @@ namespace FIA_Biosum_Manager
             this.lblTreeSpcVarCnt = new System.Windows.Forms.Label();
             this.btnTreeSpcVariants = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.grpGRMOptions = new System.Windows.Forms.GroupBox();
+            this.chkGRM = new System.Windows.Forms.CheckBox();
             this.grpDWMOptions = new System.Windows.Forms.GroupBox();
             this.linkLabelFuelModel = new System.Windows.Forms.LinkLabel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -213,6 +217,7 @@ namespace FIA_Biosum_Manager
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.grpGRMOptions.SuspendLayout();
             this.grpDWMOptions.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -443,6 +448,7 @@ namespace FIA_Biosum_Manager
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.grpGRMOptions);
             this.tabPage1.Controls.Add(this.grpDWMOptions);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -451,6 +457,26 @@ namespace FIA_Biosum_Manager
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Options";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // grpGRMOptions
+            // 
+            this.grpGRMOptions.Controls.Add(this.chkGRM);
+            this.grpGRMOptions.Location = new System.Drawing.Point(6, 390);
+            this.grpGRMOptions.Name = "grpGRMOptions";
+            this.grpGRMOptions.Size = new System.Drawing.Size(439, 56);
+            this.grpGRMOptions.TabIndex = 102;
+            this.grpGRMOptions.TabStop = false;
+            this.grpGRMOptions.Text = "Growth Removal Mortality";
+            // 
+            // chkGRM
+            // 
+            this.chkGRM.AutoSize = true;
+            this.chkGRM.Location = new System.Drawing.Point(6, 20);
+            this.chkGRM.Name = "chkGRM";
+            this.chkGRM.Size = new System.Drawing.Size(201, 17);
+            this.chkGRM.TabIndex = 2;
+            this.chkGRM.Text = "Use GRM calibration data if available";
+            this.chkGRM.UseVisualStyleBackColor = true;
             // 
             // grpDWMOptions
             // 
@@ -678,6 +704,8 @@ namespace FIA_Biosum_Manager
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage1.ResumeLayout(false);
+            this.grpGRMOptions.ResumeLayout(false);
+            this.grpGRMOptions.PerformLayout();
             this.grpDWMOptions.ResumeLayout(false);
             this.grpDWMOptions.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1552,6 +1580,7 @@ namespace FIA_Biosum_Manager
 
 	    private void ConfigureFvsInput(fvs_input p_fvs)
 	    {
+            //Down Woody Materials Section
 	        if (chkDwmFuelModel.Checked && chkDwmFuelBiomass.Checked)
 	        {
 	            p_fvs.intDWMOption = (int) fvs_input.m_enumDWMOption.USE_FUEL_MODEL_OR_DWM_DATA;
@@ -1601,6 +1630,9 @@ namespace FIA_Biosum_Manager
 	                p_fvs.strLitterExcludedYears += ", " + item;
 	            }
 	        }
+
+            //Growth Removal Mortality section
+            p_fvs.bUseGrmCalibrationData = (bool) frmMain.g_oDelegate.GetControlPropertyValue(chkGRM, "Checked", false);
 	    }
 
 		private void AppendRecords()

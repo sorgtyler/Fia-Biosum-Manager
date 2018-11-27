@@ -102,6 +102,9 @@ namespace FIA_Biosum_Manager
         private string m_strDwmFwdTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMFineWoodyDebrisName;
         private string m_strDwmDuffLitterTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMDuffLitterFuelName;
         private string m_strDwmTransectSegmentTable = frmMain.g_oTables.m_oFIAPlot.DefaultDWMTransectSegmentName;
+	    private string m_strGRMComponentTable;
+        private string m_strGrmStandTable = frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMStandName;
+	    private string m_strGrmTreeTable = frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMTreeName;
 
 		private string m_strSQL;
 
@@ -149,6 +152,8 @@ namespace FIA_Biosum_Manager
 	    private int m_intAddedDwmDuffLitterRows=0;
 	    private int m_intAddedDwmTransectSegmentRows=0;
         private int m_intAddedTreeRegionalBiomassRows = 0;
+        private int m_intAddedGrmStandRows = 0;
+        private int m_intAddedGrmTreeRows = 0;
 		private System.Windows.Forms.GroupBox grpboxFIADBInv;
 		private System.Windows.Forms.Button btnFIADBInvAppend;
 		private System.Windows.Forms.ListView lstFIADBInv;
@@ -200,6 +205,8 @@ namespace FIA_Biosum_Manager
         private Help m_oHelp;
         private string m_xpsFile = Help.DefaultDatabaseXPSFile;
         private CheckBox chkDwmImport;
+        private CheckBox chkGrmImport;
+        private ComboBox cmbGrmComponentTable;
 		
 
 		/// <summary> 
@@ -306,6 +313,7 @@ namespace FIA_Biosum_Manager
             this.btnFilterNext = new System.Windows.Forms.Button();
             this.btnFilterCancel = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.chkGrmImport = new System.Windows.Forms.CheckBox();
             this.chkDwmImport = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbCondPropPercent = new System.Windows.Forms.ComboBox();
@@ -343,6 +351,7 @@ namespace FIA_Biosum_Manager
             this.txtMDBPlotTable = new System.Windows.Forms.TextBox();
             this.btnMDBPlotBrowse = new System.Windows.Forms.Button();
             this.txtMDBPlot = new System.Windows.Forms.TextBox();
+            this.cmbGrmComponentTable = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.grpboxMDBFiadbInput.SuspendLayout();
             this.groupBox24.SuspendLayout();
@@ -948,6 +957,8 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.cmbGrmComponentTable);
+            this.groupBox7.Controls.Add(this.chkGrmImport);
             this.groupBox7.Controls.Add(this.chkDwmImport);
             this.groupBox7.Controls.Add(this.label2);
             this.groupBox7.Controls.Add(this.cmbCondPropPercent);
@@ -965,10 +976,21 @@ namespace FIA_Biosum_Manager
             this.groupBox7.TabIndex = 1;
             this.groupBox7.TabStop = false;
             // 
+            // chkGrmImport
+            // 
+            this.chkGrmImport.AutoSize = true;
+            this.chkGrmImport.Location = new System.Drawing.Point(61, 190);
+            this.chkGrmImport.Name = "chkGrmImport";
+            this.chkGrmImport.Size = new System.Drawing.Size(201, 17);
+            this.chkGrmImport.TabIndex = 11;
+            this.chkGrmImport.Text = "Use Growth, Removal, Mortality Data";
+            this.chkGrmImport.UseVisualStyleBackColor = true;
+            this.chkGrmImport.CheckedChanged += new System.EventHandler(this.chkGrmImport_CheckedChanged);
+            // 
             // chkDwmImport
             // 
             this.chkDwmImport.AutoSize = true;
-            this.chkDwmImport.Location = new System.Drawing.Point(61, 189);
+            this.chkDwmImport.Location = new System.Drawing.Point(61, 166);
             this.chkDwmImport.Name = "chkDwmImport";
             this.chkDwmImport.Size = new System.Drawing.Size(184, 17);
             this.chkDwmImport.TabIndex = 10;
@@ -978,7 +1000,7 @@ namespace FIA_Biosum_Manager
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(58, 247);
+            this.label2.Location = new System.Drawing.Point(58, 262);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(339, 13);
             this.label2.TabIndex = 9;
@@ -987,7 +1009,7 @@ namespace FIA_Biosum_Manager
             // cmbCondPropPercent
             // 
             this.cmbCondPropPercent.FormattingEnabled = true;
-            this.cmbCondPropPercent.Location = new System.Drawing.Point(376, 220);
+            this.cmbCondPropPercent.Location = new System.Drawing.Point(376, 235);
             this.cmbCondPropPercent.Name = "cmbCondPropPercent";
             this.cmbCondPropPercent.Size = new System.Drawing.Size(52, 21);
             this.cmbCondPropPercent.TabIndex = 8;
@@ -996,7 +1018,7 @@ namespace FIA_Biosum_Manager
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(58, 223);
+            this.label1.Location = new System.Drawing.Point(58, 238);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(302, 13);
             this.label1.TabIndex = 7;
@@ -1004,7 +1026,7 @@ namespace FIA_Biosum_Manager
             // 
             // chkNonForested
             // 
-            this.chkNonForested.Location = new System.Drawing.Point(133, 167);
+            this.chkNonForested.Location = new System.Drawing.Point(133, 144);
             this.chkNonForested.Name = "chkNonForested";
             this.chkNonForested.Size = new System.Drawing.Size(112, 16);
             this.chkNonForested.TabIndex = 6;
@@ -1014,7 +1036,7 @@ namespace FIA_Biosum_Manager
             // 
             this.chkForested.Checked = true;
             this.chkForested.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkForested.Location = new System.Drawing.Point(61, 167);
+            this.chkForested.Location = new System.Drawing.Point(61, 144);
             this.chkForested.Name = "chkForested";
             this.chkForested.Size = new System.Drawing.Size(72, 16);
             this.chkForested.TabIndex = 5;
@@ -1024,7 +1046,7 @@ namespace FIA_Biosum_Manager
             // 
             this.btnFilterByFileBrowse.Enabled = false;
             this.btnFilterByFileBrowse.Image = ((System.Drawing.Image)(resources.GetObject("btnFilterByFileBrowse.Image")));
-            this.btnFilterByFileBrowse.Location = new System.Drawing.Point(408, 127);
+            this.btnFilterByFileBrowse.Location = new System.Drawing.Point(408, 103);
             this.btnFilterByFileBrowse.Name = "btnFilterByFileBrowse";
             this.btnFilterByFileBrowse.Size = new System.Drawing.Size(32, 32);
             this.btnFilterByFileBrowse.TabIndex = 4;
@@ -1033,7 +1055,7 @@ namespace FIA_Biosum_Manager
             // txtFilterByFile
             // 
             this.txtFilterByFile.Enabled = false;
-            this.txtFilterByFile.Location = new System.Drawing.Point(61, 134);
+            this.txtFilterByFile.Location = new System.Drawing.Point(61, 110);
             this.txtFilterByFile.Name = "txtFilterByFile";
             this.txtFilterByFile.Size = new System.Drawing.Size(328, 20);
             this.txtFilterByFile.TabIndex = 3;
@@ -1041,7 +1063,7 @@ namespace FIA_Biosum_Manager
             // rdoFilterByFile
             // 
             this.rdoFilterByFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFilterByFile.Location = new System.Drawing.Point(40, 88);
+            this.rdoFilterByFile.Location = new System.Drawing.Point(40, 76);
             this.rdoFilterByFile.Name = "rdoFilterByFile";
             this.rdoFilterByFile.Size = new System.Drawing.Size(400, 32);
             this.rdoFilterByFile.TabIndex = 2;
@@ -1052,7 +1074,7 @@ namespace FIA_Biosum_Manager
             // rdoFilterByMenu
             // 
             this.rdoFilterByMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFilterByMenu.Location = new System.Drawing.Point(40, 59);
+            this.rdoFilterByMenu.Location = new System.Drawing.Point(40, 47);
             this.rdoFilterByMenu.Name = "rdoFilterByMenu";
             this.rdoFilterByMenu.Size = new System.Drawing.Size(400, 32);
             this.rdoFilterByMenu.TabIndex = 1;
@@ -1063,7 +1085,7 @@ namespace FIA_Biosum_Manager
             // 
             this.rdoFilterNone.Checked = true;
             this.rdoFilterNone.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdoFilterNone.Location = new System.Drawing.Point(40, 28);
+            this.rdoFilterNone.Location = new System.Drawing.Point(40, 16);
             this.rdoFilterNone.Name = "rdoFilterNone";
             this.rdoFilterNone.Size = new System.Drawing.Size(400, 32);
             this.rdoFilterNone.TabIndex = 0;
@@ -1326,6 +1348,15 @@ namespace FIA_Biosum_Manager
             this.txtMDBPlot.Name = "txtMDBPlot";
             this.txtMDBPlot.Size = new System.Drawing.Size(383, 26);
             this.txtMDBPlot.TabIndex = 0;
+            // 
+            // cmbGrmComponentTable
+            // 
+            this.cmbGrmComponentTable.Enabled = false;
+            this.cmbGrmComponentTable.FormattingEnabled = true;
+            this.cmbGrmComponentTable.Location = new System.Drawing.Point(61, 208);
+            this.cmbGrmComponentTable.Name = "cmbGrmComponentTable";
+            this.cmbGrmComponentTable.Size = new System.Drawing.Size(328, 21);
+            this.cmbGrmComponentTable.TabIndex = 12;
             // 
             // uc_plot_input
             // 
@@ -2737,6 +2768,7 @@ namespace FIA_Biosum_Manager
                     m_intError = UpdateColumns(m_ado);
                 }
 
+				//Down Woody Materials Section
                 if (m_intError == 0 && Checked(chkDwmImport) &&
                     !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
                 {
@@ -2746,138 +2778,123 @@ namespace FIA_Biosum_Manager
                     m_intError = ImportDownWoodyMaterials(m_ado);
                 }
 
-                //After importing plot data and optionally DWM and GRM data, the connection may need to be reopened.
-                if (m_connTempMDBFile == null || m_connTempMDBFile.State == System.Data.ConnectionState.Closed)
+				//Growth Removal Mortality Section
+                if (m_intError == 0 && Checked(chkGrmImport) &&
+                    !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
                 {
-                    m_connTempMDBFile = new OleDbConnection(m_strTempMDBFileConn);
+                    SetThermValue(m_frmTherm.progressBar1, "Value",
+                        GetThermValue(m_frmTherm.progressBar1, "Maximum"));
+                    SetThermValue(m_frmTherm.progressBar2, "Value", 90);
+                    m_intError = ImportGrowthRemovalMortality(m_ado);
+                }
+
+                //The connection should be closed if necessary and reopened
+                if (m_connTempMDBFile != null && m_connTempMDBFile.State == System.Data.ConnectionState.Open)
+                {
+                    m_connTempMDBFile.Dispose();
+                }
+
+                using (m_connTempMDBFile = new OleDbConnection(m_strTempMDBFileConn))
+                {
                     m_connTempMDBFile.Open();
-                }
 
-                if (this.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-                {
-                    //Record counts associated with imported plots for each table
-                    m_intAddedPlotRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                        "select count(*) from " + m_strPlotTable + " WHERE biosum_status_cd=9", m_strPlotTable);
-                    m_intAddedCondRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                        "select count(*) from " + m_strCondTable + " WHERE biosum_status_cd=9", m_strCondTable);
-                    m_intAddedTreeRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                        "select count(*) from " + m_strTreeTable + " WHERE biosum_status_cd=9", m_strTreeTable);
-                    if (m_strTreeRegionalBiomassTable.Trim().Length > 0 &&
-                        m_ado.TableExist(m_connTempMDBFile, m_strTreeRegionalBiomassTable))
+                    //If no ADO errors have occured,
+                    //count the number of records added to each table and
+                    //set their biosum_status_cd values to 1
+                    if (this.m_intError == 0 &&
+                        !GetBooleanValue((System.Windows.Forms.Control) m_frmTherm, "AbortProcess"))
                     {
-                        m_intAddedTreeRegionalBiomassRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                            "select count(*) from " + m_strTreeRegionalBiomassTable + " WHERE biosum_status_cd=9",
-                            m_strTreeRegionalBiomassTable);
-                    }
-                    else
-                    {
-                        m_intAddedTreeRegionalBiomassRows = 0;
-                    }
 
-                    m_intAddedSiteTreeRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                        "select count(*) from " + m_strSiteTreeTable + " WHERE biosum_status_cd=9", m_strSiteTreeTable);
+                        //Record counts associated with imported plots for each table
+                        m_intAddedPlotRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strPlotTable);
+                        m_intAddedCondRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strCondTable);
+                        m_intAddedTreeRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strTreeTable);
+                        m_intAddedTreeRegionalBiomassRows =
+                            GetNewRecordCount(m_ado, m_connTempMDBFile, m_strTreeRegionalBiomassTable);
+                        m_intAddedSiteTreeRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strSiteTreeTable);
 
-                    if(Checked(chkDwmImport)) 
-                    {
-                        m_intAddedDwmCwdRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                            "select count(*) from " + m_strDwmCwdTable + " WHERE biosum_status_cd=9", m_strDwmCwdTable);
-                        m_intAddedDwmFwdRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                            "select count(*) from " + m_strDwmFwdTable + " WHERE biosum_status_cd=9", m_strDwmFwdTable);
-                        m_intAddedDwmDuffLitterRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                            "select count(*) from " + m_strDwmDuffLitterTable + " WHERE biosum_status_cd=9",
-                            m_strDwmDuffLitterTable);
-                        m_intAddedDwmTransectSegmentRows = (int) m_ado.getRecordCount(m_connTempMDBFile,
-                            "select count(*) from " + m_strDwmTransectSegmentTable + " WHERE biosum_status_cd=9",
-                            m_strDwmTransectSegmentTable);
-                    }
-
-                    //Successfully imported and updated plot data. Set biosum_status_cd to 1
-                    foreach (string table in new string[]
-                    {
-                        m_strPlotTable, m_strCondTable, m_strTreeTable, m_strPopEvalTable, m_strPopStratumTable,
-                        m_strPpsaTable, m_strPopEstUnitTable, m_strSiteTreeTable, m_strBiosumPopStratumAdjustmentFactorsTable, m_strTreeRegionalBiomassTable
-                    })
-                    {
-                        if (m_ado.TableExist(m_connTempMDBFile, table))
+                        if (Checked(chkDwmImport))
                         {
-                            m_ado.m_strSQL = "UPDATE " + table +
-                                             " SET biosum_status_cd = 1 WHERE biosum_status_cd = 9;";
-                            m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,
-                                    m_ado.m_strSQL + "\r\n");
+                            m_intAddedDwmCwdRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strDwmCwdTable);
+                            m_intAddedDwmFwdRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strDwmFwdTable);
+                            m_intAddedDwmDuffLitterRows =
+                                GetNewRecordCount(m_ado, m_connTempMDBFile, m_strDwmDuffLitterTable);
+                            m_intAddedDwmTransectSegmentRows = GetNewRecordCount(m_ado, m_connTempMDBFile,
+                                m_strDwmTransectSegmentTable);
                         }
-                    }
 
-                    if (Checked(chkDwmImport))
-                    {
+                        if (Checked(chkGrmImport))
+                        {
+                            m_intAddedGrmStandRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strGrmStandTable);
+                            m_intAddedGrmTreeRows = GetNewRecordCount(m_ado, m_connTempMDBFile, m_strGrmTreeTable);
+                        }
+
+                        //Successfully imported and updated plot data. Set biosum_status_cd to 1
                         foreach (string table in new string[]
-                        {
-                            m_strDwmCwdTable, m_strDwmFwdTable, m_strDwmDuffLitterTable, m_strDwmTransectSegmentTable
-                        })
-                        {
-                            m_ado.m_strSQL = "UPDATE " + table +
-                                             " SET biosum_status_cd = 1 WHERE biosum_status_cd = 9;";
-                            m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,
-                                    m_ado.m_strSQL + "\r\n");
-                        }
-                    }
-
-                    SetThermValue(m_frmTherm.progressBar1, "Value", GetThermValue(m_frmTherm.progressBar1, "Maximum"));
-                    SetThermValue(m_frmTherm.progressBar2, "Value", GetThermValue(m_frmTherm.progressBar2, "Maximum"));
-                    frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Button)m_frmTherm.btnCancel, "Visible", false);
-
-                    string strMessage = "Successfully Appended\n" +
-                        m_intAddedPlotRows.ToString().Trim() + " Plots\n" +
-                        m_intAddedCondRows.ToString().Trim() + " Conditions \n" +
-                        m_intAddedTreeRows.ToString().Trim() + " Trees\n" +
-                        m_intAddedTreeRegionalBiomassRows.ToString().Trim() + " Tree Biomasses\n" +
-                        m_intAddedSiteTreeRows.ToString().Trim() + " Site Trees";
-
-                    if(Checked(chkDwmImport))
-                    {
-                        strMessage += "\r\n" +
-                            m_intAddedDwmTransectSegmentRows.ToString().Trim() + " Transect Segments\r\n" +
-                            m_intAddedDwmCwdRows.ToString().Trim() + " CWD Pieces\r\n" +
-                            m_intAddedDwmFwdRows.ToString().Trim() + " FWD Transects\r\n" +
-                            m_intAddedDwmDuffLitterRows.ToString().Trim() + " Duff and Litter Samples";
-                    }
-
-                    MessageBox.Show(strMessage, "Add Plot Data");
-
-                    this.m_strLoadedPopEstUnitInputTable =
-                        (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox)cmbFiadbPopEstUnitTable, "Text", false);
-                    this.m_strLoadedPopStratumInputTable =
-                        (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox)cmbFiadbPopStratumTable, "Text", false);
-                    this.m_strLoadedPpsaInputTable =
-                        (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox)cmbFiadbPpsaTable, "Text", false);
-                    this.m_strLoadedFIADBEvalId = this.m_strCurrFIADBEvalId;
-                    this.m_strLoadedFIADBRsCd = this.m_strCurrFIADBRsCd;
-                    this.m_strLoadedFiadbInputFile =
-                        (string)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.TextBox)txtMDBFiadbInputFile, "Text", false);
-                    System.Threading.Thread.Sleep(1000);
-                }
-
-                else
-                {
-                    //An ADO error occurred when updating columns so delete the records
-                    DeleteFromTablesWhereFilter(m_ado, m_connTempMDBFile, new string[]
                         {
                             m_strPlotTable, m_strCondTable, m_strTreeTable, m_strPopEvalTable, m_strPopStratumTable,
                             m_strPpsaTable, m_strPopEstUnitTable, m_strSiteTreeTable,
-                            m_strBiosumPopStratumAdjustmentFactorsTable, m_strTreeRegionalBiomassTable, 
-                            m_strDwmCwdTable, m_strDwmFwdTable, m_strDwmDuffLitterTable, m_strDwmTransectSegmentTable
-                        },
-                        " WHERE biosum_status_cd=9;");
-                    MessageBox.Show("!!Error Occured Adding Plot Records: 0 Records Added!!", "FIA Biosum",
-                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                            m_strBiosumPopStratumAdjustmentFactorsTable, m_strTreeRegionalBiomassTable,
+                            m_strDwmCwdTable, m_strDwmFwdTable, m_strDwmDuffLitterTable, m_strDwmTransectSegmentTable,
+                            m_strGrmStandTable, m_strGrmTreeTable
+                        })
+                        {
+                            if (m_ado.TableExist(m_connTempMDBFile, table))
+                            {
+                                m_ado.m_strSQL = "UPDATE " + table +
+                                                 " SET biosum_status_cd = 1 WHERE biosum_status_cd = 9;";
+                                m_ado.SqlNonQuery(m_connTempMDBFile, m_ado.m_strSQL);
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile,
+                                        m_ado.m_strSQL + "\r\n");
+                            }
+                        }
+
+
+                        SetThermValue(m_frmTherm.progressBar1, "Value",
+                            GetThermValue(m_frmTherm.progressBar1, "Maximum"));
+                        SetThermValue(m_frmTherm.progressBar2, "Value",
+                            GetThermValue(m_frmTherm.progressBar2, "Maximum"));
+                        frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Button) m_frmTherm.btnCancel,
+                            "Visible", false);
+
+                        MessageBox.Show(CreateRecordsAddedMessage(), "Add Plot Data");
+
+                        this.m_strLoadedPopEstUnitInputTable =
+                            (string) frmMain.g_oDelegate.GetControlPropertyValue(
+                                (System.Windows.Forms.ComboBox) cmbFiadbPopEstUnitTable, "Text", false);
+                        this.m_strLoadedPopStratumInputTable =
+                            (string) frmMain.g_oDelegate.GetControlPropertyValue(
+                                (System.Windows.Forms.ComboBox) cmbFiadbPopStratumTable, "Text", false);
+                        this.m_strLoadedPpsaInputTable =
+                            (string) frmMain.g_oDelegate.GetControlPropertyValue(
+                                (System.Windows.Forms.ComboBox) cmbFiadbPpsaTable, "Text", false);
+                        this.m_strLoadedFIADBEvalId = this.m_strCurrFIADBEvalId;
+                        this.m_strLoadedFIADBRsCd = this.m_strCurrFIADBRsCd;
+                        this.m_strLoadedFiadbInputFile =
+                            (string) frmMain.g_oDelegate.GetControlPropertyValue(
+                                (System.Windows.Forms.TextBox) txtMDBFiadbInputFile, "Text", false);
+                        System.Threading.Thread.Sleep(1000);
+                    }
+
+                    //An ADO error occurred, so delete all the incompletely processed new records
+                    else
+                    {
+                        DeleteFromTablesWhereFilter(m_ado, m_connTempMDBFile, new string[]
+                            {
+                                m_strPlotTable, m_strCondTable, m_strTreeTable, m_strPopEvalTable, m_strPopStratumTable,
+                                m_strPpsaTable, m_strPopEstUnitTable, m_strSiteTreeTable,
+                                m_strBiosumPopStratumAdjustmentFactorsTable, m_strTreeRegionalBiomassTable,
+                                m_strDwmCwdTable, m_strDwmFwdTable, m_strDwmDuffLitterTable,
+                                m_strDwmTransectSegmentTable,
+                                m_strGrmStandTable, m_strGrmTreeTable
+                            },
+                            " WHERE biosum_status_cd=9;");
+                        MessageBox.Show("!!Error Occured Adding Plot Records: 0 Records Added!!", "FIA Biosum",
+                            System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    }
                 }
 
-                this.m_connTempMDBFile.Close();
-                while (m_connTempMDBFile.State != System.Data.ConnectionState.Closed)
-                    System.Threading.Thread.Sleep(1000);
                 this.m_ado.m_DataSet.Clear();
                 this.m_ado.m_DataSet.Dispose();
                 this.m_ado = null;
@@ -2953,6 +2970,53 @@ namespace FIA_Biosum_Manager
             this.Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
 		}
 
+	    private string CreateRecordsAddedMessage()
+	    {
+	        string strMessage = "Successfully Appended\n" +
+	                            m_intAddedPlotRows.ToString().Trim() + " Plots\n" +
+	                            m_intAddedCondRows.ToString().Trim() + " Conditions \n" +
+	                            m_intAddedTreeRows.ToString().Trim() + " Trees\n" +
+	                            m_intAddedTreeRegionalBiomassRows.ToString().Trim() + " Tree Biomasses\n" +
+	                            m_intAddedSiteTreeRows.ToString().Trim() + " Site Trees";
+
+	        if (Checked(chkDwmImport))
+	        {
+	            strMessage += "\r\n" +
+	                          m_intAddedDwmTransectSegmentRows.ToString().Trim() + " Transect Segments\r\n" +
+	                          m_intAddedDwmCwdRows.ToString().Trim() + " CWD Pieces\r\n" +
+	                          m_intAddedDwmFwdRows.ToString().Trim() + " FWD Transects\r\n" +
+	                          m_intAddedDwmDuffLitterRows.ToString().Trim() + " Duff and Litter Samples";
+	        }
+
+	        if (Checked(chkGrmImport))
+	        {
+	            strMessage += "\r\n" +
+	                          m_intAddedGrmStandRows.ToString().Trim() + " GRM Stands\r\n" +
+	                          m_intAddedGrmTreeRows.ToString().Trim() + " GRM Trees";
+	        }
+
+	        return strMessage;
+	    }
+
+	    /// <summary>
+        /// Return the record count of the table if it exists 
+        /// </summary>
+        /// <param name="p_ado"></param>
+        /// <param name="p_conn"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+	    private int GetNewRecordCount(ado_data_access p_ado, OleDbConnection p_conn, string table)
+        {
+            if (p_ado.TableExist(p_conn, table))
+            {
+                return (int) p_ado.getRecordCount(p_conn,
+                    String.Concat("select count(*) from ", table, " where biosum_status_cd=9;"), table);
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
 	    /// <summary>
 	    /// Delete records from strTableNames in the database p_ado is currently connected to using the strDeleteFilter.
@@ -4464,6 +4528,137 @@ namespace FIA_Biosum_Manager
 	        return p_ado.m_intError;
 	    }
 
+	    private int ImportGrowthRemovalMortality(ado_data_access p_ado)
+	    {
+		    string strFIADBDbFile = "";
+		    strFIADBDbFile = (string) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.TextBox) txtMDBFiadbInputFile, "Text", false);
+		    strFIADBDbFile = strFIADBDbFile.Trim();
+	        string strMasterAuxDb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\master_aux.accdb";
+            m_strGRMComponentTable = (string) frmMain.g_oDelegate.GetControlPropertyValue(cmbGrmComponentTable, "Text", false);
+
+	        using (var conn = new OleDbConnection(p_ado.getMDBConnString(strFIADBDbFile, "","")))
+	        {
+	            conn.Open();
+	            if (!p_ado.TableExist(conn, m_strGRMComponentTable))
+	            {
+	                DialogResult dlgResult = MessageBox.Show(
+	                    "!!Error!!\nModule - uc_plot_input:ImportGrowthRemovalMortality\n" + "Err Msg - " +
+	                    m_strGRMComponentTable +
+	                    " was not found in FIADB Source!\r\nDo you wish to continue plot data input without GRM Calibration Data?",
+	                    "FIA Biosum", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation);
+
+	                //Disable functionality related to GRM option down the pipeline
+                    frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.CheckBox) chkGrmImport, "Checked", false); //unchecked value?
+	                if (dlgResult == DialogResult.No)
+	                {
+	                    return -1; //terminates plot input processing.
+	                }
+	                else if (dlgResult == DialogResult.Yes)
+	                {
+	                    //m_intError == 0 keeps performing plot input.
+	                    return 0;
+	                }
+	            }
+	        }
+
+	        using (var conn = new OleDbConnection(p_ado.getMDBConnString(strMasterAuxDb, "","")))
+	        {
+	            conn.Open();
+	            string message = "";
+	            bool bGrmStandTableNotFound = !p_ado.TableExist(conn, m_strGrmStandTable);
+	            bool bGrmTreeTableNotFound = !p_ado.TableExist(conn, m_strGrmTreeTable);
+	            if (bGrmStandTableNotFound)
+	            {
+	                message += m_strGrmStandTable + " could not be found in Master_Aux!\r\n";
+	            }
+	            if (bGrmTreeTableNotFound)
+	            {
+	                message += m_strGrmTreeTable + " could not be found in Master_Aux!\r\n";
+	            }
+	            if (bGrmStandTableNotFound || bGrmTreeTableNotFound)
+	            {
+	                DialogResult dlgResult = MessageBox.Show(
+	                    "!!Error!!\nModule - uc_plot_input:ImportGrowthRemovalMortality\n" + "Err Msg - " +
+	                    message + "\r\nDo you wish to continue plot data input without GRM Calibration Data?",
+	                    "FIA Biosum", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation);
+
+	                //Disable functionality related to GRM option down the pipeline
+	                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.CheckBox)chkGrmImport, "Checked", false);
+	                if (dlgResult == DialogResult.No)
+	                {
+	                    return -1; //terminates plot input processing.
+	                }
+	                else if (dlgResult == DialogResult.Yes)
+	                {
+	                    //m_intError == 0 keeps performing plot input.
+	                    return 0;
+	                }
+	            }
+	        }
+
+	        dao_data_access p_dao = new dao_data_access();
+	        //Link to FIADB source tables in temporary database
+	        p_dao.CreateTableLink(m_strTempMDBFile, m_strGRMComponentTable, strFIADBDbFile, m_strGRMComponentTable);
+	        p_dao.CreateTableLink(m_strTempMDBFile, "FIADB_PLOT_TABLE", strFIADBDbFile,
+	            (string) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox) cmbFiadbPlotTable,
+	                "Text", false));
+	        p_dao.CreateTableLink(m_strTempMDBFile, "FIADB_COND_TABLE", strFIADBDbFile,
+	            (string) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox) cmbFiadbCondTable,
+	                "Text", false));
+	        p_dao.CreateTableLink(m_strTempMDBFile, "FIADB_TREE_TABLE", strFIADBDbFile,
+	            (string) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.ComboBox) cmbFiadbTreeTable,
+	                "Text", false));
+	        //Link to Master_AUX.accdb GRM dest tables in temporary database
+	        p_dao.CreateTableLink(m_strTempMDBFile, m_strGrmStandTable, strMasterAuxDb, m_strGrmStandTable);
+	        p_dao.CreateTableLink(m_strTempMDBFile, m_strGrmTreeTable, strMasterAuxDb, m_strGrmTreeTable);
+
+	        m_intError = p_dao.m_intError;
+			if (p_dao.m_intError != 0) {
+				return p_dao.m_intError;
+			}
+	        p_dao.m_DaoWorkspace.Close();
+	        p_dao.m_DaoWorkspace = null;
+	        p_dao.m_DaoDbEngine = null;
+	        p_dao = null;
+
+	        using (var conn = new OleDbConnection(p_ado.getMDBConnString(m_strTempMDBFile, "", "")))
+	        {
+	            conn.Open();
+
+                //Check if any records with biosum_status_cd=9 exist in the GRM stand and tree tables and remove them
+	            p_ado.m_strSQL = "DELETE FROM " + m_strGrmStandTable + " WHERE biosum_status_cd=9;";
+	            p_ado.SqlNonQuery(conn, p_ado.m_strSQL);
+	            p_ado.m_strSQL = "DELETE FROM " + m_strGrmTreeTable + " WHERE biosum_status_cd=9;";
+	            p_ado.SqlNonQuery(conn, p_ado.m_strSQL);
+
+	            //Insert into GRM_Stand
+	            p_ado.m_strSQL = "INSERT INTO " + m_strGrmStandTable +
+	                             " (biosum_cond_id, biosum_plot_id, biosum_status_cd, plt_cn, prev_plt_cn, measurement_period) " +
+	                             "SELECT c.biosum_cond_id, tp.biosum_plot_id, 9 as biosum_status_cd, tp.cn, fp.cn, " +
+                                     "IIF(tp.remper IS NOT NULL, CInt(tp.remper), CInt(DateDiff('m', " +
+                                     "DateSerial(fp.measyear,fp.measmon,fp.measday), " +
+                                     "DateSerial(tp.measyear,tp.measmon,tp.measday))/12.0)) " +
+	                             "FROM (tempplot tp INNER JOIN fiadb_plot_table fp ON tp.prev_plt_cn = fp.cn) " +
+                                     "INNER JOIN tempcond c ON c.PLT_CN = tp.CN;";
+	            p_ado.SqlNonQuery(conn, p_ado.m_strSQL);
+
+	            //Insert into GRM_Tree
+	            p_ado.m_strSQL = "INSERT INTO " + m_strGrmTreeTable +
+                                 " (biosum_cond_id, biosum_status_cd, fvs_tree_id, tre_cn, prev_tre_cn, " +
+                                     "dia_begin, dia_end, ht_begin, ht_end, " +
+                                     "micr_component_al_forest, tre_statuscd, prev_tre_statuscd) " +
+	                             "SELECT tt.biosum_cond_id, 9 as biosum_status_cd, " +
+                                     "tt.SUBP*1000+tt.TREE, tt.CN, grm.PREV_TRE_CN, " +
+                                     "grm.DIA_BEGIN, grm.DIA_END, grm.HT_BEGIN, grm.HT_END, " +
+                                     "grm.MICR_COMPONENT_AL_FOREST, tt.STATUSCD, ft.STATUSCD " +
+	                             "FROM (" + m_strGRMComponentTable + " grm " +
+                                     "INNER JOIN temptree tt ON grm.TRE_CN = tt.CN) " +
+                                     "LEFT JOIN FIADB_TREE_TABLE ft ON grm.PREV_TRE_CN = ft.CN; ";
+	            p_ado.SqlNonQuery(conn, p_ado.m_strSQL);
+	        }
+
+	        return p_ado.m_intError;
+	    }
 	
 		private void ThermCancel(object sender, System.EventArgs e)
 		{
@@ -6783,7 +6978,6 @@ namespace FIA_Biosum_Manager
 				}
 				else
 				{
-
 					this.m_ado = null;
 					this.m_ado = new ado_data_access();
 				}
@@ -6803,40 +6997,14 @@ namespace FIA_Biosum_Manager
 					this.m_strCurrentProcess=="txtFileInput" ||
 					this.m_strCurrentProcess=="mdbIDBFileInput")
 				{
-					int intAddedPlotRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strPlotTable + " WHERE biosum_status_cd=9",this.m_strPlotTable);
-					if (intAddedPlotRows > 0)
-					{
-						//error occurred in the updatecolumns so delete the records
-						this.m_strSQL = "DELETE FROM " + this.m_strPlotTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-
-					}
-					int intAddedCondRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strCondTable + " WHERE biosum_status_cd=9",this.m_strCondTable);
-					if (intAddedCondRows > 0)
-					{
-						this.m_strSQL = "DELETE FROM " + this.m_strCondTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-
-					}
-
-					int intAddedTreeRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strTreeTable + " WHERE biosum_status_cd=9",this.m_strTreeTable);
-					if (intAddedTreeRows > 0)
-					{
-					
-						//delete added tree records since error occured
-						this.m_strSQL = "DELETE FROM " + this.m_strTreeTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-					
-
-					}
-					int intAddedSiteTreeRows= (int)this.m_ado.getRecordCount(this.m_ado.m_OleDbConnection,"select count(*) from " + this.m_strSiteTreeTable + " WHERE biosum_status_cd=9",this.m_strSiteTreeTable);
-					if (intAddedSiteTreeRows > 0)
-					{
-					
-						//delete added tree records since error occured
-						this.m_strSQL = "DELETE FROM " + this.m_strSiteTreeTable + " WHERE biosum_status_cd = 9;";
-						this.m_ado.SqlNonQuery(this.m_ado.m_OleDbConnection,this.m_strSQL);
-					}
+                    DeleteFromTablesWhereFilter(m_ado, m_ado.m_OleDbConnection,
+                        new string[]
+                        {
+                            m_strPlotTable, m_strCondTable, m_strTreeTable, m_strSiteTreeTable, m_strDwmCwdTable,
+                            m_strDwmFwdTable, m_strDwmDuffLitterTable, m_strDwmTransectSegmentTable, m_strGrmStandTable,
+                            m_strGrmTreeTable
+                        },
+                        " WHERE biosum_status_cd=9");
 				}
 
 				MessageBox.Show("!!User Canceled Adding Plot Records: 0 Records Added!!","Add Plot Data",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
@@ -7071,6 +7239,7 @@ namespace FIA_Biosum_Manager
 								this.cmbFiadbTreeRegionalBiomassTable.Items.Clear();
 								this.cmbFiadbTreeTable.Items.Clear();
 								this.cmbFiadbSiteTreeTable.Items.Clear();
+							    this.cmbGrmComponentTable.Items.Clear();
 
                                 cmbFiadbTreeRegionalBiomassTable.Items.Add("<Optional Table>");
                                 cmbFiadbTreeRegionalBiomassTable.Text = "<Optional Table>";
@@ -7090,6 +7259,12 @@ namespace FIA_Biosum_Manager
 										this.cmbFiadbTreeRegionalBiomassTable.Items.Add(tempDao.m_DaoDatabase.TableDefs[x].Name);
 										this.cmbFiadbTreeTable.Items.Add(tempDao.m_DaoDatabase.TableDefs[x].Name);
 										this.cmbFiadbSiteTreeTable.Items.Add(tempDao.m_DaoDatabase.TableDefs[x].Name);
+										this.cmbGrmComponentTable.Items.Add(tempDao.m_DaoDatabase.TableDefs[x].Name);
+									    if (tempDao.m_DaoDatabase.TableDefs[x].Name.ToString().Trim().ToUpper().Contains("GRM_COMPONENT"))
+									    {
+									        this.cmbGrmComponentTable.Text = tempDao.m_DaoDatabase.TableDefs[x].Name
+									            .ToString().Trim();
+									    }
 										switch (tempDao.m_DaoDatabase.TableDefs[x].Name.ToString().Trim().ToUpper())
 										{
 											case "COND":
@@ -7955,6 +8130,18 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "DATABASE", "FILTER_BY_PLOT" });
+        }
+
+        private void chkGrmImport_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Checked(chkGrmImport))
+            {
+                cmbGrmComponentTable.Enabled = true;
+            }
+            else
+            {
+                cmbGrmComponentTable.Enabled = false;
+            }
         }
 
         /*
