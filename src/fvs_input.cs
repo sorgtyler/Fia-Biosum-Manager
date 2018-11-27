@@ -614,6 +614,7 @@ namespace FIA_Biosum_Manager
 	        stringBuilder.AppendLine("Litter years excluded: " + m_strLitterExcludedYears);
 	        stringBuilder.AppendLine("Growth Removal Mortality Calibration data used: " +
 	            m_bUseGrmCalibrationData.ToString());
+            frmMain.g_oUtils.WriteText(logFile, stringBuilder.ToString());
 	    }
 
         /// <summary>
