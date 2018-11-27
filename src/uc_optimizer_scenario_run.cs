@@ -1312,9 +1312,18 @@ namespace FIA_Biosum_Manager
 
                 FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-				this.m_strTempMDBFile = 
-					ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1.CreateMDBAndScenarioTableDataSourceLinks(this.m_oEnv.strTempDir);
-
+                string[] arr1 = new string[] { this.m_oEnv.strTempDir };
+                object oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                    "CreateMDBAndScenarioTableDataSourceLinks", arr1, true);
+                if (oValue != null)
+                {
+                    string strValue = Convert.ToString(oValue);
+                    if (strValue != "false")
+                    {
+                        this.m_strTempMDBFile = strValue;
+                    }
+                }
+                
                 FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
 				this.m_strUserDefinedPlotSQL= 
@@ -2702,7 +2711,18 @@ namespace FIA_Biosum_Manager
 			/**************************************************************
 			 **get the plot table name
 			 **************************************************************/
-			this.m_strPlotTable=ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("PLOT");
+            string[] arr1 = new string[] { "PLOT" };
+            object oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strPlotTable = strValue;
+                }
+            }
+            
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Plot:" + this.m_strPlotTable + "\r\n");
 
@@ -2710,16 +2730,34 @@ namespace FIA_Biosum_Manager
 			/**************************************************************
 			 **get the treatment prescriptions table
 			 **************************************************************/
-			this.m_strRxTable = 
-				ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("TREATMENT PRESCRIPTIONS");
+            arr1 = new string[] { "TREATMENT PRESCRIPTIONS" };
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strRxTable = strValue;
+                }
+            }
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Treatment:" + this.m_strRxTable + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Treatment Prescriptions:" + this.m_strRxTable + "\r\n");
 
             /**************************************************************
 			 **get the treatment package table
 			 **************************************************************/
-            this.m_strRxPackageTable =
-                ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("TREATMENT PACKAGES");
+            arr1 = new string[] { "TREATMENT PACKAGES" };
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strRxPackageTable = strValue;
+                }
+            }
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Treatment Package:" + this.m_strRxPackageTable + "\r\n");
 
@@ -2727,8 +2765,17 @@ namespace FIA_Biosum_Manager
 			/**************************************************************
 			 **get the travel time table name
 			 **************************************************************/
-			this.m_strTravelTimeTable = 
-				ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("TRAVEL TIMES");
+            arr1 = new string[] { "TRAVEL TIMES" };
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strTravelTimeTable = strValue;
+                }
+            }
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Travel Time:" + m_strTravelTimeTable + "\r\n");
 
@@ -2736,7 +2783,18 @@ namespace FIA_Biosum_Manager
 			/**************************************************************
 			 **get the cond table name
 			 **************************************************************/
-			this.m_strCondTable=ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1.getDataSourceTableName("CONDITION");
+            arr1 = new string[] { "CONDITION" };
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strCondTable = strValue;
+                }
+            }
+
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Condition:" + m_strCondTable + "\r\n");
 

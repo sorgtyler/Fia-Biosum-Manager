@@ -27,7 +27,8 @@ namespace FIA_Biosum_Manager
         public delegate void AddControlCallback(Control oParentControl, Control oChildControl);
         public delegate void RemoveControlCallback(Control oParentControl, Control oChildControl);
         public delegate void ExecuteControlMethodWithParamCallback(Control oControl, string strMethodName, object[] oParam);
-        
+        public delegate object GetValueExecuteControlMethodWithParamCallback(Control oControl, string strMethodName, object[] oParam, bool bCallback);
+
         //
         //toolbar delegates
         //
@@ -942,6 +943,32 @@ namespace FIA_Biosum_Manager
                 }
             }
 
+        }
+
+        public object GetValueExecuteControlMethodWithParam(Control p_oControl, string p_strMethodName, object[] p_oParam, 
+            bool p_bCallback)
+        {
+            if (p_bCallback == false) m_oReturnValue = null;
+            if (p_oControl.InvokeRequired)
+            {
+                GetValueExecuteControlMethodWithParamCallback d = new GetValueExecuteControlMethodWithParamCallback(GetValueExecuteControlMethodWithParam);
+                p_oControl.Invoke(d, new object[] { p_oControl, p_strMethodName, p_oParam, true });
+            }
+            else
+            {
+                Type t = p_oControl.GetType();
+                System.Reflection.MethodInfo[] methods = t.GetMethods();
+                foreach (System.Reflection.MethodInfo m in methods)
+                {
+                    if (m.Name.Trim().ToUpper() == p_strMethodName.Trim().ToUpper())
+                    {
+                        m_oReturnValue = m.Invoke(p_oControl, p_oParam);
+                        break;
+                    }
+                }
+            }
+            if (m_oReturnValue == null && p_bCallback == false) m_oReturnValue = false;
+            return m_oReturnValue;
         }
 
         public void SetControlSize(Control p_oControl, int p_intHeight,int p_intWidth)
