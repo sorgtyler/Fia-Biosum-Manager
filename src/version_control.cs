@@ -5483,7 +5483,7 @@ namespace FIA_Biosum_Manager
             dao_data_access oDao = new dao_data_access();
 
             string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
-            frmMain.g_sbpInfo.Text = "Version Update: Creating new Core Analysis databases ...Stand by";
+            frmMain.g_sbpInfo.Text = "Version Update: Creating new Treatment Optimizer databases ...Stand by";
             // Rename core folder to optimizer
             System.IO.Directory.Move(ReferenceProjectDirectory.Trim() + "\\core", ReferenceProjectDirectory.Trim() + "\\optimizer");
             string strSourceFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\optimizer_definitions.accdb";
@@ -5661,6 +5661,70 @@ namespace FIA_Biosum_Manager
                         }
                     }
                 }
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Creating empty GRM tables ...Stand by";
+            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
+            if (!oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMStandName))
+            {
+                frmMain.g_oTables.m_oFIAPlot.CreateMasterAuxGRMStandTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMStandName);
+                frmMain.g_oTables.m_oFIAPlot.CreateMasterAuxGRMTreeTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMTreeName);
+            }
+
+            // Replace opcost_ref.accdb; In the future we want to back it up, but not used much yet
+            frmMain.g_sbpInfo.Text = "Version Update: Updating OPCOST configuration database ...Stand by";
+            strSourceFile = frmMain.g_oEnv.strAppDir + "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
+            strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                            "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
+            if (System.IO.File.Exists(strDestFile) == true)
+            {
+                System.IO.File.Delete(strDestFile);
+            }
+            System.IO.File.Copy(strSourceFile, strDestFile);
+
+            //Rename existing harvest_methods table
+            // Load project data sources table
+            FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oDs.m_strDataSourceTableName = "datasource";
+            oDs.m_strScenarioId = "";
+            oDs.LoadTableColumnNamesAndDataTypes = false;
+            oDs.LoadTableRecordCount = false;
+            oDs.populate_datasource_array();
+
+            int intHarvestMethodsTable = oDs.getValidTableNameRow(Datasource.TableTypes.HarvestMethods);
+            string strDirectoryPath = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            string strFileName = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+            string strFileStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            string strTargetTable = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            string strTableStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            }
+
+            // Copying the updated harvest_methods table into ref_master.accdb
+            string strHarvestWorkTableName = "harvestmethod_worktable";
+            string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\" + Tables.Reference.DefaultHarvestMethodsTableDbFile;
+            string strTargetDbFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.Reference.DefaultHarvestMethodsTableDbFile;
+            // Harvest Methods table
+            oDao.CreateTableLink(strTargetDbFile, strHarvestWorkTableName, strSourceDbFile, strTargetTable);
+
+            //copy contents of new harvest methods table into place
+            oAdo.OpenConnection(oAdo.getMDBConnString(strTargetDbFile, "", ""));
+            oAdo.m_strSQL = "SELECT * INTO " + strTargetTable + " FROM " + strHarvestWorkTableName;
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            //drop the harvest methods table link
+            if (oAdo.TableExist(oAdo.m_OleDbConnection, strHarvestWorkTableName))
+            {
+                oAdo.m_strSQL = "DROP TABLE " + strHarvestWorkTableName;
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             }
 
 
