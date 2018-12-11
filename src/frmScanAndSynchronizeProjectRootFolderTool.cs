@@ -59,14 +59,14 @@ namespace FIA_Biosum_Manager
             oAdo.m_strSQL =
             "SELECT 'Project' AS DataSource, 'NA' AS Scenario,table_type AS TableType,path FROM project_datasource ";
 
-            if (oAdo.TableExist(oAdo.m_OleDbConnection, "core_scenario"))
+            if (oAdo.TableExist(oAdo.m_OleDbConnection, "optimizer_scenario"))
                 oAdo.m_strSQL = oAdo.m_strSQL +
                     "UNION " +
-                    "SELECT 'CoreAnalysis' AS DataSource, Scenario_Id AS Scenario,'NA' AS TableType,path FROM core_scenario ";
-            if (oAdo.TableExist(oAdo.m_OleDbConnection, "core_scenario_datasource"))
+                    "SELECT 'TreatmentOptimizer' AS DataSource, Scenario_Id AS Scenario,'NA' AS TableType,path FROM optimizer_scenario ";
+            if (oAdo.TableExist(oAdo.m_OleDbConnection, "optimizer_scenario_datasource"))
                 oAdo.m_strSQL = oAdo.m_strSQL +
                     "UNION " +
-                    "SELECT 'CoreAnalysis' AS DataSource, Scenario_Id AS Scenario,table_type AS TableType, path FROM core_scenario_datasource ";
+                    "SELECT 'TreatmentOptimizer' AS DataSource, Scenario_Id AS Scenario,table_type AS TableType, path FROM optimizer_scenario_datasource ";
             if (oAdo.TableExist(oAdo.m_OleDbConnection, "processor_scenario"))
                 oAdo.m_strSQL = oAdo.m_strSQL +
                     "UNION " +
@@ -154,16 +154,16 @@ namespace FIA_Biosum_Manager
             //
             //CORE ANALSYS DATA SOURCE
             //
-             strFullPath = 
-                 this.lblCurrentProjectRootFolder.Text.Trim() + 
-                 "\\core\\db\\scenario_core_rule_definitions.mdb";
+            strFullPath =
+                this.lblCurrentProjectRootFolder.Text.Trim() + "\\" +
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
              if (System.IO.File.Exists(strFullPath))
              {
                  oDao.CreateTableLink(
-                     m_strRandomPathAndFile, "core_scenario", strFullPath, "scenario");
+                     m_strRandomPathAndFile, "optimizer_scenario", strFullPath, "scenario");
                  oDao.CreateTableLink(
-                    m_strRandomPathAndFile, "core_scenario_datasource", strFullPath, "scenario_datasource");
+                    m_strRandomPathAndFile, "optimizer_scenario_datasource", strFullPath, "scenario_datasource");
              }
              //
             //PROCESSOR SCENARIO DATA SOURCE
@@ -245,13 +245,13 @@ namespace FIA_Biosum_Manager
                 {
                     oAdo.m_strSQL = "UPDATE project_datasource SET path = '" + strPath + "' WHERE TRIM(Table_Type) = '" + strTableType + "'";
                 }
-                else if (strDatasource == "CoreAnalysis" && strTableType=="NA")
+                else if (strDatasource == "TreatmentOptimizer" && strTableType == "NA")
                 {
-                    oAdo.m_strSQL = "UPDATE core_scenario SET path = '" + strPath + "' WHERE TRIM(scenario_id) = '" + strScenario + "'";
+                    oAdo.m_strSQL = "UPDATE optimizer_scenario SET path = '" + strPath + "' WHERE TRIM(scenario_id) = '" + strScenario + "'";
                 }
-                else if (strDatasource == "CoreAnalysis")
+                else if (strDatasource == "TreatmentOptimizer")
                 {
-                    oAdo.m_strSQL = "UPDATE core_scenario_datasource SET path = '" + strPath + "' WHERE TRIM(scenario_id) = '" + strScenario + "' AND TRIM(Table_Type) = '" + strTableType + "'";
+                    oAdo.m_strSQL = "UPDATE optimizer_scenario_datasource SET path = '" + strPath + "' WHERE TRIM(scenario_id) = '" + strScenario + "' AND TRIM(Table_Type) = '" + strTableType + "'";
                 }
                 else if (strDatasource == "Processor" && strTableType=="NA")
                 {
@@ -352,10 +352,10 @@ namespace FIA_Biosum_Manager
                             strProjectRootFolder = strPath.Substring(0, intIndex + 1);
                         }
                     }
-                    else if (strDatasource == "CoreAnalysis")
+                    else if (strDatasource == "TreatmentOptimizer")
                     {
                         // THIS CONDITION WILL BE MET BY THE 'NA' ROWS THAT ARE LISTED FOR EACH SCENARIO GENERATED FROM THE CORE scenario_core_rule_definitions.mdb\scenario table
-                        intIndex = strPath.IndexOf(@"\CORE\", 0);
+                        intIndex = strPath.IndexOf(@"\OPTIMIZER\", 0);
                         if (intIndex > 0)
                         {
                             strProjectRootFolder = strPath.Substring(0, intIndex + 1);

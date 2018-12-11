@@ -17,7 +17,7 @@ namespace FIA_Biosum_Manager
 		private int intDollarCurLen=0;
 		private int intCentCurLen=0;
 		private string strLastKey = "";
-		private FIA_Biosum_Manager.frmCoreScenario _frmCoreScenario;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmCoreScenario;
 
 		public txtDollarsAndCents(int intDollarMaxLength, int intCentMaxLength)
 		{
@@ -36,7 +36,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add constructor logic here
 			//
 		}
-		public txtDollarsAndCents(int intDollarMaxLength, int intCentMaxLength,ref FIA_Biosum_Manager.uc_scenario_costs p_uc)
+		public txtDollarsAndCents(int intDollarMaxLength, int intCentMaxLength,ref FIA_Biosum_Manager.uc_optimizer_scenario_costs p_uc)
 			
 		{
 		    
@@ -55,7 +55,7 @@ namespace FIA_Biosum_Manager
 			// TODO: Add constructor logic here
 			//
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			set 
 			{

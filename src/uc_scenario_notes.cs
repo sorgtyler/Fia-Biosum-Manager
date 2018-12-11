@@ -16,9 +16,9 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.TextBox txtNotes;
 		private System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario=null;
-		private string _strScenarioType="core";
+		private string _strScenarioType="optimizer";
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -125,7 +125,7 @@ namespace FIA_Biosum_Manager
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
 			this.Visible=false;
-			if (this.ScenarioType.Trim().ToUpper() == "CORE") ((frmCoreScenario)this.ParentForm).Height = 0 ; //((frmScenario)this.ParentForm).grpboxMenu.Height * 2;
+			if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER") ((frmOptimizerScenario)this.ParentForm).Height = 0 ; //((frmScenario)this.ParentForm).grpboxMenu.Height * 2;
 			else this.ReferenceProcessorScenarioForm.Height=0;
 		}
 
@@ -148,11 +148,11 @@ namespace FIA_Biosum_Manager
 			strNotes=p_ado.FixString(strNotes,"'","''");
 			string strConn=p_ado.getMDBConnString(strFullPath.ToString(),"admin","");
 			//string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strFullPath.ToString() + ";User Id=admin;Password=;";
-			if (ScenarioType.Trim().ToUpper() == "CORE")
+			if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 			{
 				strSQL = "UPDATE scenario SET notes = '" + 
 					strNotes + 
-					"' WHERE trim(lcase(scenario_id)) = '" + ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower() + "';";
+					"' WHERE trim(lcase(scenario_id)) = '" + ((frmOptimizerScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower() + "';";
 			}
 			else
 			{
@@ -175,9 +175,9 @@ namespace FIA_Biosum_Manager
 			strScenarioFullPath.Append(strScenarioFile);
 			string strScenarioConn = oAdo.getMDBConnString(strScenarioFullPath.ToString(),"admin","");
 			oAdo.OpenConnection(strScenarioConn);
-			if (ScenarioType.Trim().ToUpper()=="CORE")
+			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER")
 			{
-				oAdo.m_strSQL = "SELECT notes FROM scenario WHERE TRIM(scenario_id)='" + this.ReferenceCoreScenarioForm.uc_scenario1.strScenarioId.Trim() + "'";
+				oAdo.m_strSQL = "SELECT notes FROM scenario WHERE TRIM(scenario_id)='" + this.ReferenceOptimizerScenarioForm.uc_scenario1.strScenarioId.Trim() + "'";
 			}
 			else
 			{
@@ -196,9 +196,9 @@ namespace FIA_Biosum_Manager
 
         public void loadvalues_FromProperties()
         {
-            if (ScenarioType.Trim().ToUpper() == "CORE")
+            if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
             {
-                FIA_Biosum_Manager.CoreAnalysisScenarioItem oItem = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem;
+                FIA_Biosum_Manager.OptimizerScenarioItem oItem = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem;
                 this.txtNotes.Text = oItem.Notes.Trim();
             }
             else
@@ -216,10 +216,10 @@ namespace FIA_Biosum_Manager
 
 		private void txtNotes_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-			if (ScenarioType.Trim().ToUpper()=="CORE") ReferenceCoreScenarioForm.m_bSave=true;
+			if (ScenarioType.Trim().ToUpper()=="OPTIMIZER") ReferenceOptimizerScenarioForm.m_bSave=true;
 			else ReferenceProcessorScenarioForm.m_bSave=true;
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

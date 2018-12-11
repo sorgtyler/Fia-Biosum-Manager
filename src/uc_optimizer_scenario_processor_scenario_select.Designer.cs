@@ -1,6 +1,6 @@
 ﻿namespace FIA_Biosum_Manager
 {
-    partial class uc_scenario_processor_scenario_select
+    partial class uc_optimizer_scenario_processor_scenario_select
     {
         /// <summary> 
         /// Required designer variable.

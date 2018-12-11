@@ -2929,6 +2929,8 @@ namespace FIA_Biosum_Manager
 		{
            
             string strFVSOutPrePostPathAndDbFile;
+            string strFVSWeightedPathAndDbFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+
             int x;
             dao_data_access oDao = new dao_data_access();
             if (!System.IO.File.Exists(p_strDestinationDbFile)) oDao.CreateMDB(p_strDestinationDbFile);
@@ -2963,9 +2965,42 @@ namespace FIA_Biosum_Manager
                             this.m_intError = oDao.m_intError;
                             break;
                         }
+
+                        // Check for weighted table if pre/post exists
+                        if (System.IO.File.Exists(strFVSWeightedPathAndDbFile))
+                        {
+                            if (oDao.TableExists(strFVSWeightedPathAndDbFile, "PRE_" + Tables.FVS.g_strFVSOutTablesArray[x].Trim() + "_WEIGHTED") &&
+                                oDao.TableExists(strFVSWeightedPathAndDbFile, "POST_" + Tables.FVS.g_strFVSOutTablesArray[x].Trim() + "_WEIGHTED"))
+                            {
+                                oDao.CreateTableLink(
+                                    p_strDestinationDbFile,
+                                    "PRE_" + Tables.FVS.g_strFVSOutTablesArray[x].Trim() + "_WEIGHTED",
+                                    strFVSWeightedPathAndDbFile,
+                                    "PRE_" + Tables.FVS.g_strFVSOutTablesArray[x].Trim() + "_WEIGHTED", true);
+                                if (oDao.m_intError != 0)
+                                {
+                                    m_strError = "!!Error Creating FVS PrePost Table Link!!!";
+                                    this.m_intError = oDao.m_intError;
+                                    break;
+                                }
+                                oDao.CreateTableLink(
+                                    p_strDestinationDbFile,
+                                    "POST_" + Tables.FVS.g_strFVSOutTablesArray[x].Trim() + "_WEIGHTED",
+                                    strFVSWeightedPathAndDbFile,
+                                    "POST_" + Tables.FVS.g_strFVSOutTablesArray[x].Trim() + "_WEIGHTED", true);
+                                if (oDao.m_intError != 0)
+                                {
+                                    m_strError = "!!Error Creating FVS PrePost Table Link!!!";
+                                    this.m_intError = oDao.m_intError;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
+
+
 
             oDao.m_DaoWorkspace.Close();
             oDao = null;

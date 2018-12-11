@@ -186,7 +186,7 @@ namespace FIA_Biosum_Manager
 		/// <param name="strScenarioId">Value is used to query core analysis scenario datasource infornation.</param>
 		public Datasource(string strProjDir, string strScenarioId)
 		{
-			this.m_strDataSourceMDBFile = strProjDir + "\\core\\db\\scenario_core_rule_definitions.mdb";
+            this.m_strDataSourceMDBFile = strProjDir + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			this.m_strDataSourceTableName = "scenario_datasource";
 			this.m_strScenarioId = strScenarioId;
 			this.populate_datasource_array();
@@ -556,87 +556,87 @@ namespace FIA_Biosum_Manager
                 strPath = strPath + "\\";
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableName,
-                    strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableDbFile,
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableName);
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableName,
+                    strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile,
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableName);
                 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
 
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableName);
 
               
                 p_oDao.CreateTableLink(p_DaoDatabase,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName,
-                   strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableDbFile,
-                   Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName);
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName,
+                   strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableDbFile,
+                   Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
 
                 p_oDao.CreateTableLink(
                     p_DaoDatabase,
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName,
-                    strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableDbFile,
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName);
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName,
+                    strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableDbFile,
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName);
 
                 p_oDao.CreateTableLink(
                     p_DaoDatabase,
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioDatasourceTableName,
-                    strPath + Tables.CoreScenarioRuleDefinitions.DefaultScenarioDatasourceTableDbFile,
-                    Tables.CoreScenarioRuleDefinitions.DefaultScenarioDatasourceTableName);
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioDatasourceTableName,
+                    strPath + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioDatasourceTableDbFile,
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioDatasourceTableName);
 
             }
         }

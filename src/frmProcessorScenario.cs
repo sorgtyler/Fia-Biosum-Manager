@@ -26,8 +26,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_scenario uc_scenario1;
 		public FIA_Biosum_Manager.uc_datasource uc_datasource1;
 		public FIA_Biosum_Manager.uc_scenario_notes uc_scenario_notes1;
-		public FIA_Biosum_Manager.uc_scenario_datasource uc_scenario_datasource1;
-        public FIA_Biosum_Manager.uc_scenario_tree_groupings uc_scenario_tree_groupings1;
+        public FIA_Biosum_Manager.uc_processor_scenario_tree_groupings uc_scenario_tree_groupings1;
 		public bool m_bSave=false;
 		public bool m_bScenarioOpen = false;
 		public bool m_bDataSourceFirstTime;
@@ -192,7 +191,7 @@ namespace FIA_Biosum_Manager
             this.tbNotes = new System.Windows.Forms.TabPage();
             this.tbDataSources = new System.Windows.Forms.TabPage();
             this.tbTreeGroupings = new System.Windows.Forms.TabPage();
-            this.uc_scenario_tree_groupings1 = new FIA_Biosum_Manager.uc_scenario_tree_groupings();
+            this.uc_scenario_tree_groupings1 = new FIA_Biosum_Manager.uc_processor_scenario_tree_groupings();
             this.tbRules = new System.Windows.Forms.TabPage();
             this.tabControlRules = new System.Windows.Forms.TabControl();
             this.tbHarvestMethod = new System.Windows.Forms.TabPage();

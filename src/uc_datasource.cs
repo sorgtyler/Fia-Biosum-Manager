@@ -46,9 +46,9 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Label lblProgress;
 		private string m_strDataSourceTable;
 		private System.Windows.Forms.Panel panel1;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario=null;
-		private string _strScenarioType="core";
+		private string _strScenarioType="optimizer";
 
 		private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors = new ListViewAlternateBackgroundColors();
 		private System.Windows.Forms.ToolBar toolBar1;
@@ -342,12 +342,6 @@ namespace FIA_Biosum_Manager
 			// to the ListView control.
 			lvwColumnSorter = new ListViewColumnSorter();
 			this.lstRequiredTables.ListViewItemSorter = lvwColumnSorter;
-
-            // Disable help button since core analysis help doesn't exist yet
-            if (this.ScenarioType.Trim().ToUpper() == "CORE")
-            {
-                this.tlbBtnHelp.Enabled = false;
-            }
 
 			System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
 			strConn = p_ado.getMDBConnString(this.m_strDataSourceMDBFile,"","");
@@ -688,8 +682,8 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.m_strScenarioId.Trim().Length > 0)
 			{
-				if (this.ScenarioType.Trim().ToUpper()=="CORE")
-					((frmCoreScenario)this.ParentForm).m_bPopup = false;
+				if (this.ScenarioType.Trim().ToUpper()=="OPTIMIZER")
+					((frmOptimizerScenario)this.ParentForm).m_bPopup = false;
 				else
 					this.ReferenceProcessorScenarioForm.m_bPopup=false;
 			}
@@ -699,8 +693,8 @@ namespace FIA_Biosum_Manager
 		{
 			if (this.m_strScenarioId.Trim().Length > 0)
 			{
-				if (this.ScenarioType.Trim().ToUpper()=="CORE")
-				 ((frmCoreScenario)this.ParentForm).m_bPopup = false;
+                if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
+				 ((frmOptimizerScenario)this.ParentForm).m_bPopup = false;
 				else
 				  this.ReferenceProcessorScenarioForm.m_bPopup=false;
 			}
@@ -759,8 +753,8 @@ namespace FIA_Biosum_Manager
 
 			if (this.m_strScenarioId.Trim().Length > 0)
 			{
-				if (ScenarioType.Trim().ToUpper()=="CORE")
-					frmTemp.Text = "Core Analysis: Edit " + this.lstRequiredTables.SelectedItems[0].SubItems[TABLETYPE].Text.Trim() + " Data Source";
+                if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
+					frmTemp.Text = "Treatment Optimizer: Edit " + this.lstRequiredTables.SelectedItems[0].SubItems[TABLETYPE].Text.Trim() + " Data Source";
 				else
 					frmTemp.Text = "Prcoessor: Edit " + this.lstRequiredTables.SelectedItems[0].SubItems[TABLETYPE].Text.Trim() + " Data Source";
 				p_uc = new uc_datasource_edit(this.m_strDataSourceMDBFile,this.m_strScenarioId);
@@ -881,8 +875,8 @@ namespace FIA_Biosum_Manager
 
 			if (this.m_strScenarioId.Trim().Length > 0)
 			{
-				if (ScenarioType.Trim().ToUpper()=="CORE")
-					frmTemp.Text = "Core Analysis: Edit " + this.lstRequiredTables.SelectedItems[0].SubItems[TABLETYPE].Text.Trim() + " Data Source";
+                if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
+					frmTemp.Text = "Treatment Optimizer: Edit " + this.lstRequiredTables.SelectedItems[0].SubItems[TABLETYPE].Text.Trim() + " Data Source";
 				else
 					frmTemp.Text = "Prcoessor: Edit " + this.lstRequiredTables.SelectedItems[0].SubItems[TABLETYPE].Text.Trim() + " Data Source";
 				p_uc = new uc_datasource_edit(this.m_strDataSourceMDBFile,this.m_strScenarioId);
@@ -990,8 +984,8 @@ namespace FIA_Biosum_Manager
 			if (this.m_strScenarioId.Trim().Length > 0)
 			{
 				this.Visible=false;
-			     if (this.ScenarioType.Trim().ToUpper() =="CORE")
-					((frmCoreScenario)this.ParentForm).Height = 0 ; 
+                if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
+					((frmOptimizerScenario)this.ParentForm).Height = 0 ; 
 				 else this.ReferenceProcessorScenarioForm.Height=0;
 				
 			}
@@ -1006,7 +1000,7 @@ namespace FIA_Biosum_Manager
 			{
 				this.Visible=false;
 			
-				((frmCoreScenario)this.ParentForm).Height = 0 ; 
+				((frmOptimizerScenario)this.ParentForm).Height = 0 ; 
 				
 			}
 			else
@@ -1063,9 +1057,9 @@ namespace FIA_Biosum_Manager
 				this.lblProgress.Text="";
 				this.progressBar1.Visible=true;
 				this.lblProgress.Visible=true;
-				
-				if (this.ScenarioType.Trim().ToUpper()=="CORE")
-					strCopyToDir = ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioPath.Text.Trim() + "\\db";
+
+                if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
+					strCopyToDir = ((frmOptimizerScenario)this.ParentForm).uc_scenario1.txtScenarioPath.Text.Trim() + "\\db";
 				else 
 					strCopyToDir = this.ReferenceProcessorScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db";
 			    for (x=0; x <= this.lstRequiredTables.Items.Count-1; x++)
@@ -1658,7 +1652,7 @@ namespace FIA_Biosum_Manager
 				return this.m_strProjectDirectory;
 			}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
@@ -1689,6 +1683,12 @@ namespace FIA_Biosum_Manager
                 m_xpsFile = Help.DefaultProcessorXPSFile;
                 strParent = "PROCESSOR";
                 strChild = "PROCESSOR_DATA_SOURCES";
+            }
+            else if (this.ScenarioType.Trim().ToUpper() == "OPTIMIZER")
+            {
+                m_xpsFile = Help.DefaultTreatmentOptimizerFile;
+                strParent = "TREATMENT_OPTIMIZER";
+                strChild = "DATA_SOURCES";
             }
             
             if (m_oHelp == null)

@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_owner_groups.
 	/// </summary>
-	public class uc_scenario_owner_groups : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_owner_groups : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.ImageList imgSize;
 		private System.ComponentModel.IContainer components;
@@ -24,10 +24,10 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox groupBox2;
 		public string strScenarioId;
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 
 
-		public uc_scenario_owner_groups()
+		public uc_optimizer_scenario_owner_groups()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -58,7 +58,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_scenario_owner_groups));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_optimizer_scenario_owner_groups));
             this.imgSize = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkOwnGrp10 = new System.Windows.Forms.CheckBox();
@@ -210,7 +210,7 @@ namespace FIA_Biosum_Manager
 					
 			int x=0;
 			
-            string[] strArray = frmMain.g_oUtils.ConvertListToArray(ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.OwnerGroupCodeList,",");
+            string[] strArray = frmMain.g_oUtils.ConvertListToArray(ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.OwnerGroupCodeList,",");
 			this.chkOwnGrp10.Checked=false;
 			this.chkOwnGrp20.Checked=false;
 			this.chkOwnGrp30.Checked=false;
@@ -237,7 +237,7 @@ namespace FIA_Biosum_Manager
 			
 			    }
             }
-			((frmCoreScenario)this.ParentForm).m_bSave=false;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=false;
 			if (this.chkOwnGrp10.Checked==false &&
 				this.chkOwnGrp20.Checked==false &&
 				this.chkOwnGrp30.Checked==false &&
@@ -267,10 +267,10 @@ namespace FIA_Biosum_Manager
 
 
             ado_data_access p_ado = new ado_data_access();
-			string strScenarioId = ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = ((frmOptimizerScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" +
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			this.m_OleDbConnectionScenario = new System.Data.OleDb.OleDbConnection();
 			strConn = p_ado.getMDBConnString(strScenarioMDB,"admin","");
@@ -345,21 +345,21 @@ namespace FIA_Biosum_Manager
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void chkOwnGrp20_Click(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void chkOwnGrp30_Click(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			
 		}
 
@@ -367,14 +367,7 @@ namespace FIA_Biosum_Manager
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
-		}
-
-		private void cmdOwnerGroups_Click(object sender, System.EventArgs e)
-		{
-			((frmCoreScenario)this.ParentForm).RulesRepositionControls();
-
-
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void uc_scenario_owner_groups_Resize(object sender, System.EventArgs e)
@@ -383,7 +376,7 @@ namespace FIA_Biosum_Manager
 			this.groupBox1.Top = (int)(this.ClientSize.Height * .5) - (int)(this.groupBox1.Height * .5);
 		}
 	
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

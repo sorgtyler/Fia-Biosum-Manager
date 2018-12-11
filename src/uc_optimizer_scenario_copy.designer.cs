@@ -1,6 +1,6 @@
 ﻿namespace FIA_Biosum_Manager
 {
-    partial class uc_scenario_core_scenario_copy
+    partial class uc_optimizer_scenario_copy
     {
         /// <summary> 
         /// Required designer variable.
@@ -35,7 +35,7 @@
             this.btnCopy = new System.Windows.Forms.Button();
             this.chkFullDetails = new System.Windows.Forms.CheckBox();
             this.txtDetails = new System.Windows.Forms.TextBox();
-            this.lvCoreAnalysisScenario = new System.Windows.Forms.ListView();
+            this.lvOptimizerScenario = new System.Windows.Forms.ListView();
             this.colCheckBox = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colScenarioId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colDesc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -63,7 +63,7 @@
             this.panel1.Controls.Add(this.btnCopy);
             this.panel1.Controls.Add(this.chkFullDetails);
             this.panel1.Controls.Add(this.txtDetails);
-            this.panel1.Controls.Add(this.lvCoreAnalysisScenario);
+            this.panel1.Controls.Add(this.lvOptimizerScenario);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 48);
             this.panel1.Name = "panel1";
@@ -124,25 +124,25 @@
             this.txtDetails.Size = new System.Drawing.Size(769, 174);
             this.txtDetails.TabIndex = 1;
             // 
-            // lvCoreAnalysisScenario
+            // lvOptimizerScenario
             // 
-            this.lvCoreAnalysisScenario.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvOptimizerScenario.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colCheckBox,
             this.colScenarioId,
             this.colDesc});
-            this.lvCoreAnalysisScenario.GridLines = true;
-            this.lvCoreAnalysisScenario.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvCoreAnalysisScenario.Location = new System.Drawing.Point(12, 18);
-            this.lvCoreAnalysisScenario.MultiSelect = false;
-            this.lvCoreAnalysisScenario.Name = "lvCoreAnalysisScenario";
-            this.lvCoreAnalysisScenario.Size = new System.Drawing.Size(769, 160);
-            this.lvCoreAnalysisScenario.TabIndex = 0;
-            this.lvCoreAnalysisScenario.UseCompatibleStateImageBehavior = false;
-            this.lvCoreAnalysisScenario.View = System.Windows.Forms.View.Details;
-            this.lvCoreAnalysisScenario.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvCoreAnalysisScenario_ItemCheck);
-            this.lvCoreAnalysisScenario.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvCoreAnalysisScenario_ItemChecked);
-            this.lvCoreAnalysisScenario.SelectedIndexChanged += new System.EventHandler(this.lvCoreAnalysisScenario_SelectedIndexChanged);
-            this.lvCoreAnalysisScenario.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvCoreAnalysisScenario_MouseUp);
+            this.lvOptimizerScenario.GridLines = true;
+            this.lvOptimizerScenario.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lvOptimizerScenario.Location = new System.Drawing.Point(12, 18);
+            this.lvOptimizerScenario.MultiSelect = false;
+            this.lvOptimizerScenario.Name = "lvOptimizerScenario";
+            this.lvOptimizerScenario.Size = new System.Drawing.Size(769, 160);
+            this.lvOptimizerScenario.TabIndex = 0;
+            this.lvOptimizerScenario.UseCompatibleStateImageBehavior = false;
+            this.lvOptimizerScenario.View = System.Windows.Forms.View.Details;
+            this.lvOptimizerScenario.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvCoreAnalysisScenario_ItemCheck);
+            this.lvOptimizerScenario.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvCoreAnalysisScenario_ItemChecked);
+            this.lvOptimizerScenario.SelectedIndexChanged += new System.EventHandler(this.lvCoreAnalysisScenario_SelectedIndexChanged);
+            this.lvOptimizerScenario.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvCoreAnalysisScenario_MouseUp);
             // 
             // colCheckBox
             // 
@@ -168,14 +168,14 @@
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(798, 32);
             this.lblTitle.TabIndex = 27;
-            this.lblTitle.Text = "Copy Core Analysis Scenario";
+            this.lblTitle.Text = "Copy Treatment Optimizer Scenario";
             // 
-            // uc_scenario_core_scenario_copy
+            // uc_optimizer_scenario_copy
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_scenario_core_scenario_copy";
+            this.Name = "uc_optimizer_scenario_copy";
             this.Size = new System.Drawing.Size(804, 497);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -190,7 +190,7 @@
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.TextBox txtDetails;
-        private System.Windows.Forms.ListView lvCoreAnalysisScenario;
+        private System.Windows.Forms.ListView lvOptimizerScenario;
         private System.Windows.Forms.CheckBox chkFullDetails;
         private System.Windows.Forms.ColumnHeader colScenarioId;
         private System.Windows.Forms.ColumnHeader colDesc;

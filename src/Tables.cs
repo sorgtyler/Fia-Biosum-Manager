@@ -8,8 +8,9 @@ namespace FIA_Biosum_Manager
 	public class Tables
 	{
 		public Project m_oProject = new Project();
-		public CoreScenarioResults m_oCoreScenarioResults = new CoreScenarioResults();
-		public CoreScenarioRuleDefinitions m_oCoreScenarioRuleDef = new CoreScenarioRuleDefinitions();
+		public OptimizerScenarioResults m_oOptimizerScenarioResults = new OptimizerScenarioResults();
+		public OptimizerDefinitions m_oOptimizerDef = new OptimizerDefinitions();
+		public OptimizerScenarioRuleDefinitions m_oOptimizerScenarioRuleDef = new OptimizerScenarioRuleDefinitions();
 		public FIAPlot m_oFIAPlot = new FIAPlot();
 		public FVS m_oFvs = new FVS();
 		public TravelTime m_oTravelTime = new TravelTime();
@@ -41,10 +42,6 @@ namespace FIA_Biosum_Manager
 			public string DefaultProjectLinksCategoryTableName {get {return "links_category";}}
 			public string DefaultProjectUserConfigTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectUserConfigTableName {get {return "user_config";}}
-			public string DefaultProjectCoreScenarioDatasourceTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectCoreScenarioDatasourceTableName {get {return "core_scenario_datasource";}}
-			public string DefaultProjectCoreScenarioTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectCoreScenarioTableName {get {return "core_scenario";}}
 			public string DefaultProjectProcessorScenarioDatasourceTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectProcessorScenarioDatasourceTableName {get {return "processor_scenario_datasource";}}
 			public string DefaultProjectProcessorScenarioTableDbFile {get {return @"db\project.mdb";}}
@@ -241,16 +238,13 @@ namespace FIA_Biosum_Manager
 
 
 		}
-		public class CoreScenarioResults
+		public class OptimizerScenarioResults
 		{
-            //cycle1
-			static public string DefaultScenarioResultsCycle1BestRxSummaryWithIntensityTableDbFile {get {return @"db\scenario_results.mdb";}}
-			static public string DefaultScenarioResultsCycle1BestRxSummaryWithIntensityTableName {get {return "cycle1_best_rx_summary_with_intensity";}}
-			static public string DefaultScenarioResultsCycle1BestRxSummaryTableDbFile {get {return @"db\scenario_results.mdb";}}
-			static public string DefaultScenarioResultsCycle1BestRxSummaryTableName {get {return "cycle1_best_rx_summary";}}
-            static public string DefaultScenarioResultsCycle1OptimizationTableDbFile { get { return @"db\scenario_results.mdb"; } }
-            static public string DefaultScenarioResultsCycle1OptimizationTableName { get { return "cycle1_optimization"; } }
-            static public string DefaultScenarioResultsTieBreakerTableDbFile { get { return @"db\scenario_results.mdb"; } }
+
+            static public string DefaultScenarioResultsEffectiveTableSuffix { get { return "_effective"; } }
+            static public string DefaultScenarioResultsBestRxSummaryTableSuffix {get {return "_best_rx_summary";}}
+            static public string DefaultScenarioResultsBestRxSummaryBeforeTiebreaksTableSuffix { get { return "_best_rx_summary_before_tiebreaks"; } }
+            static public string DefaultScenarioResultsOptimizationTableSuffix { get { return "_optimization"; } }
             static public string DefaultScenarioResultsTieBreakerTableName { get { return "tiebreaker"; } }
 
             //other
@@ -262,8 +256,6 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsValidCombosFVSPostTableName { get { return "validcombos_fvspost"; } }
             static public string DefaultScenarioResultsValidCombosTableDbFile { get { return @"db\scenario_results.mdb"; } }
             static public string DefaultScenarioResultsValidCombosTableName { get { return "validcombos"; } }
-            static public string DefaultScenarioResultsCycle1EffectiveTableDbFile { get { return @"db\scenario_results.mdb"; } }
-            static public string DefaultScenarioResultsCycle1EffectiveTableName { get { return "cycle1_effective"; } }
             static public string DefaultScenarioResultsTreeVolValSumTableDbFile { get { return @"db\scenario_results.mdb"; } }
             static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx"; } }
             static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\scenario_results.mdb"; } }
@@ -274,34 +266,40 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsPSiteRxPackageCostRevenueVolumesTableName { get { return "psite_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
             static public string DefaultScenarioResultsOwnerRxCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rx"; } }
             static public string DefaultScenarioResultsOwnerRxPackageCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
-            
+            static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
+            static public string DefaultScenarioResultsPostEconomicWeightedTableName { get { return @"post_economic_weighted"; } }
 
 
 			
 			private string strSQL = "";
-			public CoreScenarioResults()
+			public OptimizerScenarioResults()
 			{
 			}
 			//
 			//EFFECTIVE TABLE
 			//
-			public void CreateEffectiveTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateEffectiveTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,
+                string p_strTablePrefix, string p_strFilterColumnName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateEffectiveTableSQL(p_strTableName));
-				CreateEffectiveTableIndexes(p_oAdo,p_oConn,p_strTableName);
+                string strTableName = p_strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsEffectiveTableSuffix;
+                p_oAdo.SqlNonQuery(p_oConn,CreateEffectiveTableSQL(strTableName, p_strFilterColumnName));
+				CreateEffectiveTableIndexes(p_oAdo,p_oConn,strTableName);
 			}
 			public void CreateEffectiveTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id,rxpackage,rx,rxcycle");
 			}
-			static public string CreateEffectiveTableSQL(string p_strTableName)
+			static public string CreateEffectiveTableSQL(string p_strTableName, string p_strFilterColumnName)
 			{
-				return   "CREATE TABLE " + p_strTableName + " (" +
-			             "biosum_cond_id CHAR(25)," + 
+                string strSql = "CREATE TABLE " + p_strTableName + " (" +
+                         "biosum_cond_id CHAR(25)," +
                          "rxpackage CHAR(3)," +
-		                 "rx CHAR(3)," + 
-                         "rxcycle CHAR(1)," + 
-						 "nr_dpa DOUBLE," + 
+                         "rx CHAR(3)," +
+                         "rxcycle CHAR(1)," +
+                         "nr_dpa DOUBLE,";
+                if (!String.IsNullOrEmpty(p_strFilterColumnName))
+                    strSql = strSql + p_strFilterColumnName + " DOUBLE,";
+			    strSql = strSql + 
 			             "pre_variable1_name CHAR(100)," + 
 			             "post_variable1_name CHAR(100)," + 
   			             "pre_variable1_value DOUBLE," + 
@@ -335,6 +333,7 @@ namespace FIA_Biosum_Manager
 						 "variable4_worse_yn CHAR(1)," + 
 						 "variable4_effective_yn CHAR(1)," + 
 						 "overall_effective_yn CHAR(1))";
+                return strSql;
 			}
             //
             //NEW EFFECTIVE TABLE
@@ -514,7 +513,7 @@ namespace FIA_Biosum_Manager
                     "rxpackage CHAR(3)," + 
                     "rx CHAR(3)," + 
                     "rxcycle CHAR(1)," + 
-                    "rx_intensity INTEGER," + 
+                    "last_tiebreak_rank INTEGER," + 
 					"pre_variable1_name CHAR(100)," + 
 					"post_variable1_name CHAR(100)," + 
 					"pre_variable1_value DOUBLE," + 
@@ -618,13 +617,14 @@ namespace FIA_Biosum_Manager
 			static public string CreateBestRxSummaryCycle1TableSQL(string p_strTableName)
 			{
 				return   "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id text(25)," + 
+					"biosum_cond_id text(25)," +
+                    "rxpackage text(3)," +
                     "rx text(3)," + 
                     "acres double," + 
 					"owngrpcd INTEGER," + 
 					"optimization_value DOUBLE," + 
 					"tiebreaker_value DOUBLE," + 
-					"rx_intensity INTEGER)";
+					"last_tiebreak_rank INTEGER)";
 			}
 			public void CreateBestRxSummaryCycle1WithIntensityTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -642,7 +642,7 @@ namespace FIA_Biosum_Manager
                     "rx text(3)," + 
 					"acres double," + 
 					"owngrpcd INTEGER," + 
-					"rx_intensity INTEGER)";
+					"last_tiebreak_rank INTEGER)";
 			}
 			public void CreateBestRxSummaryCycle1TieBreakerTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -656,42 +656,50 @@ namespace FIA_Biosum_Manager
 			static public string CreateBestRxSummaryCycle1TieBreakerTableSQL(string p_strTableName)
 			{
 				return   "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id text(25)," + 
+					"biosum_cond_id text(25)," +
+                    "rxpackage text(3)," + 
                     "rx text(3)," + 
 					"acres double," + 
 					"owngrpcd INTEGER," + 
 					"optimization_value DOUBLE," + 
 					"tiebreaker_value DOUBLE," + 
-					"rx_intensity INTEGER)";
+					"last_tiebreak_rank INTEGER)";
 			}
             
            
 			//
 			//OPTIMIZATION VARIABLE
 			//
-			public void CreateOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+            public void CreateOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,
+                                                string p_strTableName, string p_strFilterColumnName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateOptimizationTableSQL(p_strTableName));
+				p_oAdo.SqlNonQuery(p_oConn,CreateOptimizationTableSQL(p_strTableName, p_strFilterColumnName));
 				CreateOptimizationTableIndexes(p_oAdo,p_oConn,p_strTableName);
 			}
 			public void CreateOptimizationTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id,rxpackage,rx,rxcycle");
 			}
-			static public string CreateOptimizationTableSQL(string p_strTableName)
-			{
-				return   "CREATE TABLE " + p_strTableName + " (" +
-					"biosum_cond_id CHAR(25)," + 
-                    "rxpackage CHAR(3)," + 
-                    "rx CHAR(3)," + 
-					"rxcycle CHAR(1)," + 
-					"pre_variable_name CHAR(100)," + 
-					"post_variable_name CHAR(100)," + 
-					"pre_variable_value DOUBLE," + 
-					"post_variable_value DOUBLE," + 
-					"change_value DOUBLE)";
-					
-			}
+            static public string CreateOptimizationTableSQL(string p_strTableName, string p_strFilterColumnName)
+            {
+                string strSQL = "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id CHAR(25)," +
+                    "rxpackage CHAR(3)," +
+                    "rx CHAR(3)," +
+                    "rxcycle CHAR(1)," +
+                    "pre_variable_name CHAR(100)," +
+                    "post_variable_name CHAR(100)," +
+                    "pre_variable_value DOUBLE," +
+                    "post_variable_value DOUBLE," +
+                    "change_value DOUBLE," +
+                    "affordable_YN CHAR(1)";
+                if (!String.IsNullOrEmpty(p_strFilterColumnName))
+                {
+                    strSQL = strSQL + "," + p_strFilterColumnName + " DOUBLE ";
+                }
+                strSQL = strSQL + ")";
+                return strSQL;
+            }
 			//
 			//OPTIMIZATION VARIABLE PLOT
 			//
@@ -1363,47 +1371,46 @@ namespace FIA_Biosum_Manager
 			
 		
 		}
-		public class CoreScenarioRuleDefinitions
+		public class OptimizerScenarioRuleDefinitions
 		{
-			private string strSQL = "";
-			static public string DefaultScenarioFvsVariablesTieBreakerTableDbFile {get {return @"core\db\scenario_core_rule_definitions.mdb";}}
+            static public string DefaultScenarioFvsVariablesTieBreakerTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
 			static public string DefaultScenarioFvsVariablesTieBreakerTableName {get {return "scenario_fvs_variables_tiebreaker";}}
-			static public string DefaultScenarioFvsVariablesOptimizationTableDbFile {get {return @"core\db\scenario_core_rule_definitions.mdb";}}
+            static public string DefaultScenarioFvsVariablesOptimizationTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesOptimizationTableName { get { return "scenario_fvs_variables_optimization"; } }
-            static public string DefaultScenarioFvsVariablesOverallEffectiveTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioFvsVariablesOverallEffectiveTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesOverallEffectiveTableName { get { return "scenario_fvs_variables_overall_effective"; } }
-            static public string DefaultScenarioFvsVariablesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioFvsVariablesTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioFvsVariablesTableName { get { return "scenario_fvs_variables"; } }
-            static public string DefaultScenarioRxIntensityTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
-            static public string DefaultScenarioRxIntensityTableName { get { return "scenario_rx_intensity"; } }
-            static public string DefaultScenarioPSitesTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioLastTieBreakRankTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
+            static public string DefaultScenarioLastTieBreakRankTableName { get { return "scenario_last_tiebreak_rank"; } }
+            static public string DefaultScenarioPSitesTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioPSitesTableName { get { return "scenario_psites"; } }
-            static public string DefaultScenarioPlotFilterMiscTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioPlotFilterMiscTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioPlotFilterMiscTableName { get { return "scenario_plot_filter_misc"; } }
-            static public string DefaultScenarioPlotFilterTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioPlotFilterTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioPlotFilterTableName { get { return "scenario_plot_filter"; } }
-            static public string DefaultScenarioMergeTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioMergeTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioMergeTableName { get { return "scenario_merge"; } }
-            static public string DefaultScenarioLandOwnerGroupsTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioLandOwnerGroupsTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioLandOwnerGroupsTableName { get { return "scenario_land_owner_groups"; } }
-            static public string DefaultScenarioHarvestCostColumnsTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioHarvestCostColumnsTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioHarvestCostColumnsTableName { get { return "scenario_harvest_cost_columns"; } }
-            static public string DefaultScenarioDatasourceTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioDatasourceTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioDatasourceTableName { get { return @"scenario_datasource"; } }
-            static public string DefaultScenarioCostsTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioCostsTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioCostsTableName { get { return "scenario_costs"; } }
-            static public string DefaultScenarioTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioTableName { get { return "scenario"; } }
-            static public string DefaultScenarioCondFilterMiscTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioCondFilterMiscTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioCondFilterMiscTableName { get { return "scenario_cond_filter_misc"; } }
-            static public string DefaultScenarioCondFilterTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioCondFilterTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioCondFilterTableName { get { return "scenario_cond_filter"; } }
-            static public string DefaultScenarioProcessorScenarioSelectTableDbFile { get { return @"core\db\scenario_core_rule_definitions.mdb"; } }
+            static public string DefaultScenarioProcessorScenarioSelectTableDbFile { get { return @"optimizer\db\scenario_optimizer_rule_definitions.mdb"; } }
             static public string DefaultScenarioProcessorScenarioSelectTableName { get { return "scenario_processor_scenario_select"; } }
 
 			
 			
-			public CoreScenarioRuleDefinitions()
+			public OptimizerScenarioRuleDefinitions()
 			{
 			}
 			
@@ -1584,21 +1591,21 @@ namespace FIA_Biosum_Manager
 					"biocd BYTE," + 
 					"selected_yn CHAR(1))";
 			}
-			public void CreateScenarioRxIntensityTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateScenarioLastTieBreakRankTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateScenarioRxIntensityTableSQL(p_strTableName));
-				CreateScenarioRxIntensityTableIndexes(p_oAdo,p_oConn,p_strTableName);
+				p_oAdo.SqlNonQuery(p_oConn,CreateScenarioLastTieBreakTableSQL(p_strTableName));
+				CreateScenarioLastTieBreakRankTableIndexes(p_oAdo,p_oConn,p_strTableName);
 			}
-			public void CreateScenarioRxIntensityTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateScenarioLastTieBreakRankTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","scenario_id");
 			}
-            static public string CreateScenarioRxIntensityTableSQL(string p_strTableName)
+            static public string CreateScenarioLastTieBreakTableSQL(string p_strTableName)
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
 					"scenario_id CHAR(20)," + 
-                   	"rx CHAR(3)," + 
-					"rx_intensity INTEGER)";
+                   	"rxpackage CHAR(3)," +
+                    "last_tiebreak_rank INTEGER)";
 			}
 
 			public void CreateScenarioFVSVariablesTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
@@ -1636,7 +1643,7 @@ namespace FIA_Biosum_Manager
 					"current_yn CHAR(1))";
 			}
 			//
-			//core scenario rule definitions fvs variables optimization selection
+			//scenario rule definitions fvs variables optimization selection
 			//
 			public void CreateScenarioFVSVariablesOptimizationTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -1656,7 +1663,8 @@ namespace FIA_Biosum_Manager
 					"filter_operator CHAR(2)," + 
 					"filter_value DOUBLE," + 
 					"checked_yn CHAR(1)," + 
-					"current_yn CHAR(1))";
+					"current_yn CHAR(1)," +
+                    "revenue_attribute CHAR(100))";
 			}
 			public void CreateScenarioFVSVariablesTieBreakerTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -1674,12 +1682,92 @@ namespace FIA_Biosum_Manager
 					"min_yn CHAR(1)," + 
 					"checked_yn CHAR(1))";
 			}
-
-
-
-
+            public void CreateScenarioFvsVariableWeightsReferenceTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateScenarioFvsVariableWeightsReferenceTableSQL(p_strTableName));
+            }
+            static public string CreateScenarioFvsVariableWeightsReferenceTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "pre_or_post CHAR(4)," +
+                    "rxcycle CHAR(1)," +
+                    "rxyear INTEGER," +
+                    "seqnum INTEGER," +
+                    "weight DOUBLE)";
+            }
 
 		}
+
+        public class OptimizerDefinitions
+        {
+            static public string DefaultDbFile { get { return @"optimizer\db\optimizer_definitions.accdb"; } }
+            static public string DefaultCalculatedOptimizerVariablesTableName { get { return "calculated_optimizer_variables"; } }
+            static public string DefaultCalculatedEconVariablesTableName { get { return "calculated_econ_variables_definition"; } }
+            static public string DefaultCalculatedFVSVariablesTableName { get { return "calculated_fvs_variables_definition"; } }
+
+
+            public void CreateCalculatedOptimizerVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedOptimizerVariableTableSQL(p_strTableName));
+                CreateCalculatedOptimizerVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
+		}
+            public void CreateCalculatedOptimizerVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddAutoNumber(p_oConn, p_strTableName, "ID");
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "ID");
+                p_oAdo.AddUniqueIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "VARIABLE_NAME");
+            }
+            static public string CreateCalculatedOptimizerVariableTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "ID INTEGER," +
+                    "VARIABLE_NAME CHAR(40)," +
+                    "VARIABLE_DESCRIPTION CHAR(255)," +
+                    "VARIABLE_TYPE CHAR(25)," +
+                    "BASELINE_RXPACKAGE CHAR(3)," +
+                    "VARIABLE_SOURCE CHAR(100))";
+            }
+            public void CreateCalculatedEconVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedEconVariableTableSQL(p_strTableName));
+                CreateCalculatedEconVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateCalculatedEconVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "CALCULATED_VARIABLES_ID");
+            }
+            static public string CreateCalculatedEconVariableTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "calculated_variables_id INTEGER," +
+                    "rxcycle CHAR(1)," +
+                    "weight DOUBLE)";
+            }
+            public void CreateCalculatedFVSVariableTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCalculatedEconVariableTableSQL(p_strTableName));
+                CreateCalculatedFVSVariableTableIndexes(p_oAdo, p_oConn, p_strTableName);
+            }
+            public void CreateCalculatedFVSVariableTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "CALCULATED_VARIABLES_ID");
+            }
+            static public string CreateCalculatedFVSVariableTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "calculated_variables_id INTEGER," +
+                    "weight_1_pre DOUBLE," +
+                    "weight_1_post DOUBLE," +
+                    "weight_2_pre DOUBLE," +
+                    "weight_2_post DOUBLE," +
+                    "weight_3_pre DOUBLE," +
+                    "weight_3_post DOUBLE," +
+                    "weight_4_pre DOUBLE," +
+                    "weight_4_post DOUBLE )";
+            }
+        }
+
+
 		public class FVS
 		{
             public static string[] g_strFVSOutTablesArray =  {"FVS_CASES",
@@ -2839,7 +2927,7 @@ namespace FIA_Biosum_Manager
 					"fvs_prepost_variables_yn CHAR(1)," + 
 					"gis_travel_times_yn CHAR(1)," + 
 					"processor_tree_vol_val_yn CHAR(1), " + 
-					"frcs_harvest_costs_yn CHAR(1))";
+					"harvest_costs_yn CHAR(1))";
 			}
 			public void CreatePlotCondRxAuditTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -2860,7 +2948,7 @@ namespace FIA_Biosum_Manager
 					"rxcycle CHAR(1)," + 
 					"fvs_prepost_variables_yn CHAR(1)," + 
 					"processor_tree_vol_val_yn CHAR(1)," + 
-					"frcs_harvest_costs_yn CHAR(1))";
+					"harvest_costs_yn CHAR(1))";
 			}
 
 		}

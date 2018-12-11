@@ -8,9 +8,9 @@ using System.Windows.Forms;
 namespace FIA_Biosum_Manager
 {
 	/// <summary>
-	/// Summary description for uc_scenario_treatment_intensity.
+    /// Summary description for uc_optimizer_scenario_last_tiebreak_rank.
 	/// </summary>
-	public class uc_scenario_treatment_intensity : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_last_tiebreak_rank : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.DataGrid dataGrid1;
 		private System.Windows.Forms.GroupBox groupBox1;
@@ -28,14 +28,14 @@ namespace FIA_Biosum_Manager
 		public System.Data.DataRelation m_DataRelation;
 		public System.Data.DataTable m_DataTable;
 		public System.Data.DataRow m_DataRow;
-		public string strRxTableName;
+		public string strRxPackageTableName;
 		public string strRxConn;
 		public string strRxMDBFile;
 		public string strScenarioId;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		
 
-		public uc_scenario_treatment_intensity()
+		public uc_optimizer_scenario_last_tiebreak_rank()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -66,7 +66,7 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_scenario_treatment_intensity));
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(uc_optimizer_scenario_last_tiebreak_rank));
 			this.dataGrid1 = new System.Windows.Forms.DataGrid();
 			this.imgSize = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -109,7 +109,7 @@ namespace FIA_Biosum_Manager
 			this.Controls.Add(this.groupBox1);
 			this.Name = "uc_scenario_treatment_intensity";
 			this.Size = new System.Drawing.Size(744, 280);
-			this.Resize += new System.EventHandler(this.uc_scenario_treatment_intensity_Resize);
+			this.Resize += new System.EventHandler(this.uc_scenario_last_tiebreak_rank_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -117,7 +117,7 @@ namespace FIA_Biosum_Manager
 		}
 		#endregion
 
-		private void uc_scenario_treatment_intensity_Resize(object sender, System.EventArgs e)
+		private void uc_scenario_last_tiebreak_rank_Resize(object sender, System.EventArgs e)
 		{
 			try
 			{
@@ -149,19 +149,19 @@ namespace FIA_Biosum_Manager
             p_ado.m_intError=0;
 			try
 			{
-				for (x=0 ; x <=this.m_DataSet.Tables["scenario_rx_intensity"].Rows.Count-1; x++)
+                for (x = 0; x <= this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows.Count - 1; x++)
 				{
-                    if (m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"] != System.DBNull.Value &&
-                        m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"].ToString().Trim().Length > 0)
+                    if (m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"] != System.DBNull.Value &&
+                        m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"].ToString().Trim().Length > 0)
                     {
-                        strSQL = "UPDATE scenario_rx_intensity SET rx_intensity = " +
-                            this.m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"] +
-                            " WHERE TRIM(rx) = '" + this.m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx"].ToString().Trim() + "';";
+                        strSQL = "UPDATE scenario_last_tiebreak_rank SET last_tiebreak_rank = " +
+                            this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"] +
+                            " WHERE TRIM(rxpackage) = '" + this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["rxpackage"].ToString().Trim() + "';";
                     }
                     else
                     {
-                        strSQL = "UPDATE scenario_rx_intensity SET rx_intensity = null " +
-                                 " WHERE TRIM(rx) = '" + this.m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx"].ToString().Trim() + "';";
+                        strSQL = "UPDATE scenario_last_tiebreak_rank SET last_tiebreak_rank = null " +
+                                 " WHERE TRIM(rxpackage) = '" + this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["rxpackage"].ToString().Trim() + "';";
                     }
 					p_ado.SqlNonQuery(this.m_OleDbConnectionScenario,strSQL);
 					if (p_ado.m_intError < 0) break;
@@ -170,7 +170,7 @@ namespace FIA_Biosum_Manager
 			}
 			catch (Exception caught)
 			{
-				MessageBox.Show("Function: uc_scenario_treatment_intensity.savevalues ErrMsg:" + caught.Message + " Failed updating scenario_rx_intensity table with intensity ratings");
+                MessageBox.Show("Function: uc_optimizer_scenario_last_tiebreak_rank.savevalues ErrMsg:" + caught.Message + " Failed updating scenario_last_tiebreak_rank table with last tiebreak rank ratings");
 			}
 			x=p_ado.m_intError;
 			p_ado=null;
@@ -191,7 +191,7 @@ namespace FIA_Biosum_Manager
 
 			ado_data_access p_ado = new ado_data_access();
 
-			this.strScenarioId = ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			this.strScenarioId = ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 
 			/***************************************************
 			 **scenario mdb connection
@@ -208,8 +208,8 @@ namespace FIA_Biosum_Manager
 			 **get the treatment prescription mdb file,table, and connection strings
 			 *************************************************************************/
 			p_ado.getScenarioDataSourceConnStringAndTable(ref this.strRxMDBFile,
-				                            ref this.strRxTableName,ref this.strRxConn,
-                                            "Treatment Prescriptions",  
+				                            ref this.strRxPackageTableName,ref this.strRxConn,
+                                            "Treatment Packages",  
 				                            this.strScenarioId,
 				                            this.m_OleDbConnectionScenario);
 
@@ -223,35 +223,35 @@ namespace FIA_Biosum_Manager
 				this.m_OleDbRxConn = null;
 				return;
 		  }
-            strSQL = "select * from " + this.strRxTableName;
+            strSQL = "select * from " + this.strRxPackageTableName;
 			p_ado.SqlQueryReader(this.m_OleDbRxConn, strSQL);
-			
-			/********************************************************************************
-			 **insert records into the scenario_rx_intensity table from the master rx table
-			 ********************************************************************************/
-			if (p_ado.m_intError == 0)
+
+            /********************************************************************************
+             **insert records into the scenario_last_tiebreak_rank table from the master rxpackage table
+             ********************************************************************************/
+            if (p_ado.m_intError == 0)
 			{
 				this.m_DataSet = new System.Data.DataSet();
 				this.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
 				while (p_ado.m_OleDbDataReader.Read())
 				{
-					strSQL = "select * from scenario_rx_intensity " + 
+                    strSQL = "select * from scenario_last_tiebreak_rank " + 
 						" where scenario_id = '" + this.strScenarioId + "' and " + 
-						"rx = '" + p_ado.m_OleDbDataReader["rx"].ToString()  + "';";
+						"rxpackage = '" + p_ado.m_OleDbDataReader["rxpackage"].ToString()  + "';";
 					this.m_OleDbCommand = this.m_OleDbConnectionScenario.CreateCommand();
 					this.m_OleDbCommand.CommandText = strSQL;
 					this.m_OleDbDataAdapter.SelectCommand = this.m_OleDbCommand;
-					this.m_OleDbDataAdapter.Fill(this.m_DataSet,"scenario_rx_intensity");
+					this.m_OleDbDataAdapter.Fill(this.m_DataSet,"scenario_last_tiebreak_rank");
 
 					/*******************************************************************************
 					 **if the master treatment record is not found in the scenario db than insert it
 					 *******************************************************************************/
-					if (this.m_DataSet.Tables["scenario_rx_intensity"].Rows.Count == 0)
+                    if (this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows.Count == 0)
 					{
-						strSQL = "INSERT INTO scenario_rx_intensity (scenario_id," +
-							"rx, rx_intensity) VALUES " + 
+                        strSQL = "INSERT INTO scenario_last_tiebreak_rank (scenario_id," +
+                            "rxpackage, last_tiebreak_rank) VALUES " + 
 							"('" + this.strScenarioId + "'," + 
-							"'" + p_ado.m_OleDbDataReader["rx"].ToString() + "'," + 
+							"'" + p_ado.m_OleDbDataReader["rxpackage"].ToString() + "'," + 
 							"0);";
 
 						p_ado.SqlNonQuery(this.m_OleDbConnectionScenario,strSQL);
@@ -268,7 +268,7 @@ namespace FIA_Biosum_Manager
 				/****************************************************************************************************
 				 **delete any prescriptions from the scenario db that do not exist in the master
 				 ****************************************************************************************************/
-				strSQL = "select * from scenario_rx_intensity where scenario_id = '" + this.strScenarioId + "';";
+                strSQL = "select * from scenario_last_tiebreak_rank where scenario_id = '" + this.strScenarioId + "';";
 				p_ado.SqlQueryReader(this.m_OleDbConnectionScenario, strSQL);
             
 				
@@ -282,17 +282,17 @@ namespace FIA_Biosum_Manager
 						 **query the scenario treatment in the master db. If it is not found
 						 **in the master db then delete the scenario treatment record
 						 ************************************************************************/
-						strSQL = "select * from " + this.strRxTableName + 
-							" where rx = '" + p_ado.m_OleDbDataReader["rx"].ToString()  + "';";
+						strSQL = "select * from " + this.strRxPackageTableName + 
+							" where rxpackage = '" + p_ado.m_OleDbDataReader["rxpackage"].ToString()  + "';";
 						this.m_OleDbCommand = this.m_OleDbRxConn.CreateCommand();
 						this.m_OleDbCommand.CommandText = strSQL;
 						this.m_OleDbDataAdapter.SelectCommand = this.m_OleDbCommand;
-						this.m_OleDbDataAdapter.Fill(this.m_DataSet, this.strRxTableName);
-						if (this.m_DataSet.Tables[this.strRxTableName].Rows.Count == 0)
+						this.m_OleDbDataAdapter.Fill(this.m_DataSet, this.strRxPackageTableName);
+						if (this.m_DataSet.Tables[this.strRxPackageTableName].Rows.Count == 0)
 						{
-							strDeleteSQL[intArrayCount] = "DELETE FROM scenario_rx_intensity " +
+                            strDeleteSQL[intArrayCount] = "DELETE FROM scenario_last_tiebreak_rank" +
 								" WHERE scenario_id = '" + this.strScenarioId + "'" + 
-								" AND rx = '" + p_ado.m_OleDbDataReader["rx"] + "';";
+								" AND rxpackage = '" + p_ado.m_OleDbDataReader["rxpackage"] + "';";
 							intArrayCount++;
 						}
 						this.m_DataSet.Tables.Clear();
@@ -321,17 +321,17 @@ namespace FIA_Biosum_Manager
 				this.m_DataSet = new System.Data.DataSet();
 				this.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter();
 				this.m_OleDbCommand = this.m_OleDbRxConn.CreateCommand();
-				this.m_OleDbCommand.CommandText = "select * from " + this.strRxTableName;
+				this.m_OleDbCommand.CommandText = "select * from " + this.strRxPackageTableName;
 				this.m_OleDbDataAdapter.SelectCommand = this.m_OleDbCommand;
-				this.m_OleDbDataAdapter.Fill(this.m_DataSet,this.strRxTableName);
+				this.m_OleDbDataAdapter.Fill(this.m_DataSet,this.strRxPackageTableName);
                      
 				this.m_OleDbCommand = this.m_OleDbConnectionScenario.CreateCommand();
 				strSQL="";
-				for (x=0 ; x <=this.m_DataSet.Tables[this.strRxTableName].Rows.Count-1; x++)
+				for (x=0 ; x <=this.m_DataSet.Tables[this.strRxPackageTableName].Rows.Count-1; x++)
 				{
-					if (this.m_DataSet.Tables[this.strRxTableName].Rows[x]["rx"].ToString().Length > 0)
+					if (this.m_DataSet.Tables[this.strRxPackageTableName].Rows[x]["rxpackage"].ToString().Length > 0)
 					{
-						strSQL = "select scenario_id,rx,rx_intensity from scenario_rx_intensity where scenario_id = '" + this.strScenarioId + "';";
+						strSQL = "select scenario_id,rxpackage,last_tiebreak_rank from scenario_last_tiebreak_rank where scenario_id = '" + this.strScenarioId + "';";
 						break;
 					}
 				}
@@ -355,42 +355,42 @@ namespace FIA_Biosum_Manager
 				 **create the data sets
 				 *******************************/
 				this.m_OleDbCommand = this.m_OleDbConnectionScenario.CreateCommand();
-				this.m_OleDbCommand.CommandText = "select scenario_id,rx,rx_intensity from scenario_rx_intensity where scenario_id = '" + this.strScenarioId + "';";
+                this.m_OleDbCommand.CommandText = "select scenario_id,rxpackage,last_tiebreak_rank from scenario_last_tiebreak_rank where scenario_id = '" + this.strScenarioId + "';";
 				this.m_OleDbDataAdapter.SelectCommand = this.m_OleDbCommand;
-				this.m_OleDbDataAdapter.Fill(this.m_DataSet,"scenario_rx_intensity");
+                this.m_OleDbDataAdapter.Fill(this.m_DataSet, "scenario_last_tiebreak_rank");
 
 				/*****************************************************************************
-				 **add the description column to the scenario rx intensity dataset
+				 **add the description column to the scenario last tiebreak rank dataset
 				 *****************************************************************************/
-				this.m_DataSet.Tables["scenario_rx_intensity"].Columns.Add("Description");
+                this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Columns.Add("Description");
                 
               /********************************************************************************
-			   **add the treatment description value to the scenrario rx intensity data set.
+			   **add the treatment description value to the scenrario rx last tiebreak rank data set.
 			   **the description is only in the master rx table and is added to the
-			   **scenario rx intensity data set for information purposes.
+			   **scenario last tiebreak rank data set for information purposes.
 			   ********************************************************************************/
 
-				/***********************************************************************************
-				 **for loop through the master db rx dataset adding the description field to the
-				 **scenenario db scenario_rx_intensity dataset
-				 ***********************************************************************************/
-				for (x=0 ; x <=this.m_DataSet.Tables[this.strRxTableName].Rows.Count-1; x++)
+                /***********************************************************************************
+                 **for loop through the master db rx dataset adding the description field to the
+                 **scenenario db scenario_last_tiebreak_rank dataset
+                 ***********************************************************************************/
+                for (x=0 ; x <=this.m_DataSet.Tables[this.strRxPackageTableName].Rows.Count-1; x++)
 				{
-					if (this.m_DataSet.Tables[this.strRxTableName].Rows[x]["rx"].ToString().Length > 0)
+					if (this.m_DataSet.Tables[this.strRxPackageTableName].Rows[x]["rxpackage"].ToString().Length > 0)
 					{
 						/***************************************************************************************
 						 **build the expression to filter only the scenario row that meets the expression
 						 ***************************************************************************************/
-						strSQL = "rx = '" + this.m_DataSet.Tables[this.strRxTableName].Rows[x]["rx"] + "'";
+						strSQL = "rxpackage = '" + this.m_DataSet.Tables[this.strRxPackageTableName].Rows[x]["rxpackage"] + "'";
 
 						/***************************************************************************************
 						 **create a datarow that will hold the results from the query expression
 						 ***************************************************************************************/
 						System.Data.DataRow[] dr1;
-						dr1 = this.m_DataSet.Tables["scenario_rx_intensity"].Select(strSQL);
+                        dr1 = this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Select(strSQL);
 						
 						/***************************************************************************************
-						 **check to see if it found the master rx treatment in the sceanrio rx intensity dataset
+						 **check to see if it found the master rx treatment in the sceanrio last tiebreak rank dataset
 						 ***************************************************************************************/
 						if (dr1.Length != 0)
 						{
@@ -398,20 +398,20 @@ namespace FIA_Biosum_Manager
 							 **it found it, loop through the dataset and find the row that matches the row 
 							 **returned from the search expression
 							 ***************************************************************************************/
-							for (int y = 0; y <= this.m_DataSet.Tables["scenario_rx_intensity"].Rows.Count -1  ; y++)
+                            for (int y = 0; y <= this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows.Count - 1; y++)
 							{
-								if (dr1[0]["rx"] == 
-									this.m_DataSet.Tables["scenario_rx_intensity"].Rows[y]["rx"])
+								if (dr1[0]["rxpackage"] ==
+                                    this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[y]["rxpackage"])
 								{
 									/**********************************************************************************
 									 **update the description row/column with the master db rx table description value
 									 **********************************************************************************/
-									this.m_DataSet.Tables["scenario_rx_intensity"].Rows[y]["description"] = 
-										this.m_DataSet.Tables[this.strRxTableName].Rows[x]["description"];
+                                    this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[y]["description"] = 
+										this.m_DataSet.Tables[this.strRxPackageTableName].Rows[x]["description"];
 									break;
 								}
 							}
-							this.m_DataSet.Tables["scenario_rx_intensity"].AcceptChanges();
+                            this.m_DataSet.Tables["scenario_last_tiebreak_rank"].AcceptChanges();
 
 						}
 					
@@ -422,7 +422,7 @@ namespace FIA_Biosum_Manager
         /**************************************************************************************************
          **place the dataset table into a view class so as to not allow new records to be appended
          **************************************************************************************************/
-				DataView firstView = new DataView(this.m_DataSet.Tables["scenario_rx_intensity"]);
+                DataView firstView = new DataView(this.m_DataSet.Tables["scenario_last_tiebreak_rank"]);
 				firstView.AllowNew = false;       //cannot append new records
 				firstView.AllowDelete = false;    //cannot delete records
 
@@ -432,9 +432,9 @@ namespace FIA_Biosum_Manager
 				DataGridTableStyle tableStyle = new DataGridTableStyle();
 
 				/***********************************************************************
-				 **map the data grid table style to the scenario rx intensity dataset
+				 **map the data grid table style to the last tiebreak rank dataset
 				 ***********************************************************************/
-				tableStyle.MappingName = "scenario_rx_intensity";   
+                tableStyle.MappingName = "scenario_last_tiebreak_rank";   
 				tableStyle.AlternatingBackColor = frmMain.g_oGridViewAlternateRowBackgroundColor;
 				tableStyle.BackColor = frmMain.g_oGridViewRowBackgroundColor;
 				tableStyle.ForeColor = frmMain.g_oGridViewRowForegroundColor;
@@ -444,8 +444,8 @@ namespace FIA_Biosum_Manager
 				 **since the dataset has things like field name and number of columns,
 				 **we will use those to create new columnstyles for the columns in our grid
 				 ******************************************************************************/
-				//get the number of columns from the scenario_rx_intensity data set
-				int numCols = this.m_DataSet.Tables["scenario_rx_intensity"].Columns.Count;
+                //get the number of columns from the scenario_last_tiebreak_rank data set
+                int numCols = this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Columns.Count;
                 
 				/***********************************************************************************
 				 **assign the aColumnTextColumn as type DataGridColoredTextBoxColumn object class
@@ -457,11 +457,11 @@ namespace FIA_Biosum_Manager
 				{
 					//create a new instance of the DataGridColoredTextBoxColumn class
 					aColumnTextColumn = new DataGridColoredTextBoxColumn();
-					aColumnTextColumn.HeaderText = this.m_DataSet.Tables["scenario_rx_intensity"].Columns[i].ColumnName;
-					//all columns are read-only except the rx_intensity column
-					if (aColumnTextColumn.HeaderText != "rx_intensity") aColumnTextColumn.ReadOnly=true;
+                    aColumnTextColumn.HeaderText = this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Columns[i].ColumnName;
+                    //all columns are read-only except the last_tiebreak_rank column
+                    if (aColumnTextColumn.HeaderText != "last_tiebreak_rank") aColumnTextColumn.ReadOnly = true;
 					//assign the mappingname property the data sets column name
-					aColumnTextColumn.MappingName = this.m_DataSet.Tables["scenario_rx_intensity"].Columns[i].ColumnName;
+                    aColumnTextColumn.MappingName = this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Columns[i].ColumnName;
 					//add the datagridcoloredtextboxcolumn object to the data grid table style object
 					tableStyle.GridColumnStyles.Add(aColumnTextColumn);
                     //set wider width for some columns
@@ -486,16 +486,16 @@ namespace FIA_Biosum_Manager
                 // If this is a copied scenario, we will have a reference form to get the values
                 if (p_bScenarioCopy == true)
                 {
-                    if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oRxIntensityItem_Collection != null)
+                    if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection != null)
                     {
-                        CoreAnalysisScenarioItem.RxIntensityItem_Collection oRxIntensityItem_Collection = ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem_Collection.Item(0).m_oRxIntensityItem_Collection;
+                        OptimizerScenarioItem.LastTieBreakRankItem_Collection oLastTieBreakRankItem_Collection = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oLastTieBreakRankItem_Collection;
                         for (int i = 0; i < firstView.Count - 1; ++i)
                         {
-                            for (x = 0; x <= oRxIntensityItem_Collection.Count - 1; x++)
+                            for (x = 0; x <= oLastTieBreakRankItem_Collection.Count - 1; x++)
                             {
-                                if (oRxIntensityItem_Collection.Item(x).Rx.Equals(firstView[i]["rx"]))
+                                if (oLastTieBreakRankItem_Collection.Item(x).RxPackage.Equals(firstView[i]["rxpackage"]))
                                 {
-                                    firstView[i]["rx_intensity"] = oRxIntensityItem_Collection.Item(x).RxIntensity;
+                                    firstView[i]["last_tiebreak_rank"] = oLastTieBreakRankItem_Collection.Item(x).LastTieBreakRank;
                                 }
                              }
                         }
@@ -523,24 +523,24 @@ namespace FIA_Biosum_Manager
 		{
 
 		}
-		public int Val_Intensity(bool p_bDisplayMessage)
+		public int Val_Last_Tiebreak_Rank(bool p_bDisplayMessage)
 		{
 			int x;
 			int y;
 			ado_data_access p_ado = new ado_data_access();
-			if (this.m_DataSet.Tables[this.strRxTableName].Rows.Count==0)
+			if (this.m_DataSet.Tables[this.strRxPackageTableName].Rows.Count==0)
 			{
 				if (p_bDisplayMessage) MessageBox.Show("Run Scenario Failed: No treatments defined");
 				return -1;
 			}
 			//if (((frmScenario)this.ParentForm).m_bSave)
 			 //   this.savevalues();
-             
-			for (x=this.m_DataSet.Tables["scenario_rx_intensity"].Rows.Count-1;
+
+            for (x = this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows.Count - 1;
 				x >= 0; x--)
 			{
                 //check for null value
-                if (m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"] == System.DBNull.Value)
+                if (m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"] == System.DBNull.Value)
                 {
                     if (p_bDisplayMessage) MessageBox.Show("Run Scenario Failed: Last Tie-Break Rankings cannot be null in value");
                     return -3;
@@ -548,8 +548,8 @@ namespace FIA_Biosum_Manager
 				//check for duplicates
 				for (y=x-1;y >= 0; y--)
 				{
-					if (this.m_DataSet.Tables["scenario_rx_intensity"].Rows[x]["rx_intensity"].ToString().Trim() ==
-						this.m_DataSet.Tables["scenario_rx_intensity"].Rows[y]["rx_intensity"].ToString().Trim())
+                    if (this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"].ToString().Trim() ==
+                        this.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[y]["last_tiebreak_rank"].ToString().Trim())
 					{
                         if (p_bDisplayMessage) MessageBox.Show("Run Scenario Failed: Last Tie-Break Rankings must be unique");
 						return -2;
@@ -560,23 +560,8 @@ namespace FIA_Biosum_Manager
 			return 0;
 
 		}
-
-		private void cmdRxIntensity_Click(object sender, System.EventArgs e)
-		{
-			((frmCoreScenario)this.ParentForm).RulesRepositionControls();
-		}
-
-		private void grpboxRxIntensity_Enter(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void lblTitle_Click(object sender, System.EventArgs e)
-		{
-		
-		}
 	
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
@@ -591,7 +576,7 @@ namespace FIA_Biosum_Manager
 			// color only the columns that can be edited by the user
 			try
 			{
-					if(this.HeaderText == "rx_intensity")
+                if (this.HeaderText == "last_tiebreak_rank")
 					{
 						// could be as simple as
 						// or something fnacier...

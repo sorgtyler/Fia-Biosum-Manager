@@ -833,7 +833,7 @@ namespace FIA_Biosum_Manager
 					System.IO.Directory.CreateDirectory(strFullPath);
 
 				    
-				strFullPath = this.txtRootDirectory.Text.Trim() + "\\core\\db";
+				strFullPath = this.txtRootDirectory.Text.Trim() + "\\optimizer\\db";
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
 
@@ -924,12 +924,6 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oProject.CreateLinksDepositoryTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectLinksDepositoryTableName);
 				//project table
 				frmMain.g_oTables.m_oProject.CreateProjectTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectTableName);
-				//core scenario table
-				frmMain.g_oTables.m_oScenario.CreateScenarioTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectCoreScenarioTableName);
-				//core scenario datasource table
-				frmMain.g_oTables.m_oScenario.CreateScenarioDatasourceTable(
-					p_ado,p_ado.m_OleDbConnection,
-					frmMain.g_oTables.m_oProject.DefaultProjectCoreScenarioDatasourceTableName);
 				//processor scenario table
 				frmMain.g_oTables.m_oScenario.CreateScenarioTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectProcessorScenarioTableName);
 				//processor scenario datasource table
@@ -1005,7 +999,7 @@ namespace FIA_Biosum_Manager
 
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
 
-                //
+				//
                 //master_aux file: Where additional input tables are stored
                 //
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\master_aux.accdb";
@@ -1083,21 +1077,24 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.Increment(7);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
-				System.IO.File.Copy(strSourceFile, strDestFile,true);	
-     			//
-				//core scenario rule definitions
-				//
-				p_frmTherm.Increment(8);
-				p_frmTherm.lblMsg.Text = strDestFile;
+				System.IO.File.Copy(strSourceFile, strDestFile,true);
+                //
+                //prepopulated weighted variable optimizer_definitions.accdb file
+                //
+                //copy default optimizer_definitions.accdb to the new project directory
+                strSourceFile = this.m_oEnv.strAppDir + "\\db\\optimizer_definitions.accdb";
+                strDestFile = this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
+                p_frmTherm.Increment(7);
+                p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
-				CreateCoreScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb");
-				//copy default scenario_results database to the new project directory
-				strSourceFile = this.m_oEnv.strAppDir + "\\db\\scenario_results.mdb";
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\core\\db\\scenario_results.mdb";
+                System.IO.File.Copy(strSourceFile, strDestFile, true);
+                //
+                //optimizer scenario rule definitions
+                //
 				p_frmTherm.Increment(9);
-				p_frmTherm.lblMsg.Text = strDestFile;
+                p_frmTherm.lblMsg.Text = this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 				p_frmTherm.lblMsg.Refresh();
-				System.IO.File.Copy(strSourceFile, strDestFile,true);		
+                CreateOptimizerScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile);
 				//
 				//processor scenario rule definitions
 				//
@@ -1248,11 +1245,6 @@ namespace FIA_Biosum_Manager
 				p_ado.OpenConnection(strConn);
 				if (p_ado.m_intError == 0)
 				{
-
-					frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(p_ado,p_ado.m_OleDbConnection,"effective");
-					frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboFVSPostTable(p_ado,p_ado.m_OleDbConnection,"validcombos_fvspost");
-					frmMain.g_oTables.m_oCoreScenarioResults.CreateValidComboFVSPreTable(p_ado,p_ado.m_OleDbConnection,"validcombos_fvspre");
-
 					if (this.txtDescription.Text.Trim().Length > 0)
 						strDesc = p_ado.FixString(this.txtDescription.Text.Trim(),"'","''");
 					strSQL = "INSERT INTO project (proj_id,created_by,created_date,company,description,shared_file,project_root_directory,application_version) VALUES " + "(" +  
@@ -1440,7 +1432,7 @@ namespace FIA_Biosum_Manager
                         "('" + Datasource.TableTypes.FVSVariant + "'," +
                         "'@@AppData@@" + frmMain.g_strBiosumDataDir + "'," +
                         "'" + Tables.Reference.DefaultBiosumReferenceDbFile + "'," +
-                        "'fiadb_fvs_variant');";
+						"'fiadb_fvs_variant');";
                     p_ado.SqlNonQuery(p_ado.m_OleDbConnection, strSQL);
 
 
@@ -1656,7 +1648,7 @@ namespace FIA_Biosum_Manager
 				}
 			}
 		}
-		public void CreateCoreScenarioRuleDefinitionDbAndTables(string p_strPathAndFile)
+		public void CreateOptimizerScenarioRuleDefinitionDbAndTables(string p_strPathAndFile)
 		{
 			dao_data_access oDao = new dao_data_access();
 			ado_data_access oAdo = new ado_data_access();
@@ -1665,24 +1657,23 @@ namespace FIA_Biosum_Manager
 			oDao.CreateMDB(strDestFile);
 			string strConn = oAdo.getMDBConnString(strDestFile,"admin","");
 			oAdo.OpenConnection(strConn);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCostsTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioCostsTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCostsTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName);
 			frmMain.g_oTables.m_oScenario.CreateScenarioDatasourceTable(oAdo,oAdo.m_OleDbConnection,Tables.Scenario.DefaultScenarioDatasourceTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioHarvestCostColumnsTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioLandOwnerGroupsTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioMergeTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioMergeTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPlotFilterMiscTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPlotFilterTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioPSitesTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioRxIntensityTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioRxIntensityTableName);
-			frmMain.g_oTables.m_oScenario.CreateScenarioTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesOverallEffectiveTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesOptimizationTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterMiscTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName);
-			frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oAdo.m_OleDbConnection,Tables.CoreScenarioRuleDefinitions.DefaultScenarioCondFilterTableName);
-            frmMain.g_oTables.m_oCoreScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, oAdo.m_OleDbConnection, Tables.CoreScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
-            
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioHarvestCostColumnsTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioHarvestCostColumnsTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLandOwnerGroupsTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLandOwnerGroupsTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioMergeTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioMergeTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPlotFilterMiscTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterMiscTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPlotFilterTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPlotFilterTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioPSitesTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
+			frmMain.g_oTables.m_oScenario.CreateScenarioTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesOverallEffectiveTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesOptimizationTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCondFilterMiscTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterMiscTableName);
+			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
 
 			oAdo.CloseConnection(oAdo.m_OleDbConnection);
 			oDao = null;
@@ -2586,14 +2577,14 @@ namespace FIA_Biosum_Manager
 
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
             //
-            //CORE ANALYSIS SCENARIO DATA SOURCE
+            //TREATMENT OPTIMIZER SCENARIO DATA SOURCE
             //
-            strFullPath = strProjDir + "\\core\\db\\scenario_core_rule_definitions.mdb";
+            strFullPath = strProjDir + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
             if (System.IO.File.Exists(strFullPath))
             {
                 strConn = oAdo.getMDBConnString(strFullPath, "", "");
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Open Connection to Core Analysis Scenario Dbfile " + strConn + ")\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "uc_project.SetProjectPathEnvironmentVariables: Open Connection to Treatment Optimizer Scenario Dbfile " + strConn + ")\r\n");
 
                 oAdo.OpenConnection(strConn);
                 strSQL = "UPDATE scenario_datasource " +

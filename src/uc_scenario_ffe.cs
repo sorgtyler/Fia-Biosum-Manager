@@ -149,7 +149,7 @@ namespace FIA_Biosum_Manager
 		private bool _bTorchIndex=true;
 		private bool _bCrownIndex=true;
 		public System.Windows.Forms.Label lblTitle;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		
 
 		public uc_scenario_ffe()
@@ -2033,7 +2033,7 @@ namespace FIA_Biosum_Manager
 			}
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void chkFFE_TI2_Click(object sender, System.EventArgs e)
@@ -2140,7 +2140,7 @@ namespace FIA_Biosum_Manager
 			this.txtFFE_CI5.Enabled=false;
 
 			//((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			
 
 
@@ -2163,14 +2163,14 @@ namespace FIA_Biosum_Manager
 				// Digits are OK
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else if (e.KeyChar == '\b') 
 			{
 				//back space is okay
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else
 			{
@@ -2580,7 +2580,7 @@ namespace FIA_Biosum_Manager
 			p_ado = null;
 			this.m_OleDbConnectionScenario.Close();
 			//((frmScenario)this.ParentForm).btnSave.Enabled=false;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 
 		}
 		public int savevalues()
@@ -3650,7 +3650,7 @@ namespace FIA_Biosum_Manager
 			this.listView1.SelectedItems[0].SubItems[2].Text = " ";
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void btnFFEExpressionBuilderDefault_Click(object sender, System.EventArgs e)
@@ -3661,7 +3661,7 @@ namespace FIA_Biosum_Manager
 				this.txtExpression.AppendText(this.getDefaultExpression("overall"));
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 				this.m_strOverallEffectiveExpression=this.txtExpression.Text.Trim();
 			}
 			else 
@@ -3906,7 +3906,7 @@ namespace FIA_Biosum_Manager
 		   this.grpboxFFE_TI_CI_Effective.Visible = true;
 		  // if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//   ((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		
@@ -4022,7 +4022,7 @@ namespace FIA_Biosum_Manager
 					this.listView1.SelectedItems[0].SubItems[2].Text = frmTemp.uc_select_list_item1.listBox1.Text;
 				}
 				
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 				
 				
 			}
@@ -4036,7 +4036,7 @@ namespace FIA_Biosum_Manager
 		{
 		   this.lblFFETIBackslide.Text = Convert.ToString(trbFFETIBackslide.Value * -1);
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		
@@ -4044,7 +4044,7 @@ namespace FIA_Biosum_Manager
 		{
 		 this.lblFFECIBackslide.Text = Convert.ToString(trbFFECIBackslide.Value * -1);
         
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void chkFFETIBackslide_Click(object sender, System.EventArgs e)
@@ -4281,42 +4281,42 @@ namespace FIA_Biosum_Manager
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide_TextChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide2_TextChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide2_TextChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide3_TextChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide3_TextChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 		public int val_ti_ci_effective_expression()
 		{
@@ -4777,70 +4777,70 @@ namespace FIA_Biosum_Manager
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide2_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardWindSpeedClass_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIHazardWindSpeedClass_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 			//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void txtExpression_Leave(object sender, System.EventArgs e)
@@ -4969,7 +4969,7 @@ namespace FIA_Biosum_Manager
 				
 			   //if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 				
 			}
 		}
@@ -5027,7 +5027,7 @@ namespace FIA_Biosum_Manager
 			set {_bCrownIndex=value;}
 			get {return _bCrownIndex;}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceCoreScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}

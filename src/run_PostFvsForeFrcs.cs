@@ -94,7 +94,7 @@ namespace FIA_Biosum_Manager
          DataTable dtFFE=new DataTable("FFE");
          DataTable dtCond=new DataTable("COND");
 
-         ado_core_tables adoCore=new ado_core_tables();
+         ado_optimizer_tables adoCore=new ado_optimizer_tables();
          adoCore.m_OleDbConnection.ConnectionString=string.Format(this.strDbConx, strProjDir);
          adoCore.m_OleDbConnection.Open();
          
@@ -129,13 +129,13 @@ namespace FIA_Biosum_Manager
          DataTable dtFvsPF=new DataTable("FVS_PF");         
          try
          {
-            ado_core_tables adoCore=new ado_core_tables();
+            ado_optimizer_tables adoCore=new ado_optimizer_tables();
             adoCore.m_OleDbConnection=new System.Data.OleDb.OleDbConnection(string.Format(this.strDbConx, this.strPathMasterDbFile));         
             adoCore.m_OleDbConnection.Open();
             adoCore.m_daCond=new System.Data.OleDb.OleDbDataAdapter(string.Format(strSqlCond, strCondIdMasterCondId), adoCore.m_OleDbConnection.ConnectionString);            
             adoCore.m_daCond.Fill(dtCond);
 
-            ado_core_tables adoFvs=new ado_core_tables();
+            ado_optimizer_tables adoFvs=new ado_optimizer_tables();
             adoFvs.m_OleDbConnection=new System.Data.OleDb.OleDbConnection(string.Format(this.strDbConx, strCurRxFilePath));
             adoFvs.m_OleDbConnection.Open();
             adoFvs.m_daCond=new System.Data.OleDb.OleDbDataAdapter(string.Format(strSqlFvsPotFire, strCondId_PotFireStandId), adoFvs.m_OleDbConnection.ConnectionString);

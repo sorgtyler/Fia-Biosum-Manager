@@ -128,7 +128,7 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.TextBox txtSQLCommand;
 		const int RECORDCOUNT = 7;
 		private string _strClientId="";
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario;
 
 
 
@@ -1516,9 +1516,9 @@ namespace FIA_Biosum_Manager
 
 				if (this.ClientId.Trim().ToUpper()=="CORE SCENARIO PLOT FILTER")
 				{
-					if (this.ReferenceCoreScenarioForm.uc_scenario_filter1.Val_PlotFilter(p_conn,this.txtSQLCommand.Text.Trim())!=0)
+					if (this.ReferenceOptimizerScenarioForm.uc_scenario_filter1.Val_PlotFilter(p_conn,this.txtSQLCommand.Text.Trim())!=0)
 					{
-						MessageBox.Show(ReferenceCoreScenarioForm.uc_scenario_filter1.m_strError,"FIA Biosum");
+						MessageBox.Show(ReferenceOptimizerScenarioForm.uc_scenario_filter1.m_strError,"FIA Biosum");
 					}
 					else
 					{
@@ -1528,9 +1528,9 @@ namespace FIA_Biosum_Manager
 				}
 				else if (this.ClientId.Trim().ToUpper()=="CORE SCENARIO COND FILTER")
 				{
-					if (this.ReferenceCoreScenarioForm.uc_scenario_cond_filter1.Val_CondFilter(p_conn,this.txtSQLCommand.Text.Trim())!=0)
+					if (this.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.Val_CondFilter(p_conn,this.txtSQLCommand.Text.Trim())!=0)
 					{
-						MessageBox.Show(ReferenceCoreScenarioForm.uc_scenario_cond_filter1.m_strError,"FIA Biosum");
+						MessageBox.Show(ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.m_strError,"FIA Biosum");
 					}
 					else
 					{
@@ -2326,7 +2326,7 @@ namespace FIA_Biosum_Manager
 			get {return _strClientId;}
 			set {_strClientId=value;}
 		}
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return this._frmScenario;}
 			set {_frmScenario=value;}

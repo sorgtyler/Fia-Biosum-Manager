@@ -10,7 +10,7 @@ namespace FIA_Biosum_Manager
 	/// <summary>
 	/// Summary description for uc_scenario_ffe.
 	/// </summary>
-	public class uc_scenario_fvs_prepost_variables_effective : System.Windows.Forms.UserControl
+	public class uc_optimizer_scenario_fvs_prepost_variables_effective : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components;
@@ -41,8 +41,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnFVSVariablesPrePostVariableClearAll;
 		private System.Windows.Forms.Button btnFVSVariablesPrePostVariableNext;
 		private System.Windows.Forms.Button btnFVSVariablesPrePostVariableCancel;
-		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostVariableValues;
-		private System.Windows.Forms.ListBox lstFVSVariablesPrePostVariableValue;
+        private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostVariableValues;
 		private System.Windows.Forms.Button btnN;
 		private System.Windows.Forms.Button btnY;
 		private System.Windows.Forms.Button btnFFENote;
@@ -58,9 +57,9 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnFFEEqual;
 		private System.Windows.Forms.Button btnFVSVariablesPrePostVariableValue;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostExpression;
-		private FIA_Biosum_Manager.frmCoreScenario _frmScenario=null;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization _uc_optimization;
-		private FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
+		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_optimization _uc_optimization;
+		private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker _uc_tiebreaker;
 		
 		private System.Windows.Forms.Label lblFVSVariablesPrePostExpression;
 		private System.Windows.Forms.TextBox txtExpression;
@@ -127,7 +126,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.ColumnHeader lvColPreVariableName;
 		private System.Windows.Forms.ColumnHeader lvColPostVariableName;
 		private System.Windows.Forms.ColumnHeader lvColVariableImprovement;
-		private System.Windows.Forms.ColumnHeader lvColVariableRegression;
+		private System.Windows.Forms.ColumnHeader lvColVariableDisimprovement;
 		private System.Windows.Forms.ColumnHeader lvColVariableEffective;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostAudit;
 		private System.Windows.Forms.Button btnFVSVariablesPrePostAudit;
@@ -141,18 +140,18 @@ namespace FIA_Biosum_Manager
 
 		public bool m_bSave=false;
 		private bool _bDisplayAuditMsg=true;
-		private System.Windows.Forms.ColumnHeader lvColVariableNull;
-		private System.Windows.Forms.CheckBox chkFVSVariablesPrePostExpressionNRFilterEnable;
-		private System.Windows.Forms.ComboBox cmbFVSVariablesPrePostExpressionNRFilterOperator;
-		private System.Windows.Forms.TextBox txtFVSVariablesPrePostExpressionNRFilterAmount;
-		private System.Windows.Forms.GroupBox grpboxFVSVariablesPrePostExpressionNRFilter;
-        private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors= new ListViewAlternateBackgroundColors();
-        private Label label2;
+        private System.Windows.Forms.ColumnHeader lvColVariableNull;
+        private FIA_Biosum_Manager.ListViewAlternateBackgroundColors m_oLvRowColors = new ListViewAlternateBackgroundColors();
+        private TextBox txtEffVarDescr;
+        private Label lblEffVarDescr;
         private FIA_Biosum_Manager.ValidateNumericValues m_oValidate = new ValidateNumericValues();
-
-        private System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;		
-
-		public class Variables
+        private ListBox lstFVSTablesList;
+        private ListBox lstFVSFieldsList;
+        private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
+        private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
+        private string m_strHelpChapter = "EFFECTIVE_SETTINGS";
+        
+        public class Variables
 		{
 			public string[] m_strPreVarArray = new string[NUMBER_OF_VARIABLES];
 			public string[] m_strPostVarArray = new string[NUMBER_OF_VARIABLES];
@@ -160,9 +159,6 @@ namespace FIA_Biosum_Manager
 			public string[] m_strWorseExpr = new string[NUMBER_OF_VARIABLES];
 			public string[] m_strEffectiveExpr = new string[NUMBER_OF_VARIABLES];
 			public string m_strOverallEffectiveExpr="";
-			public bool m_bOverallEffectiveNetRevEnabled = false;
-			public string m_strOverallEffectiveNetRevOperator=">";
-			public string m_strOverallEffectiveNetRevValue="0";
 
 			public Variables()
 			{
@@ -187,9 +183,6 @@ namespace FIA_Biosum_Manager
 
 				}
 				p_oDest.m_strOverallEffectiveExpr = p_oSource.m_strOverallEffectiveExpr;
-				p_oDest.m_bOverallEffectiveNetRevEnabled = p_oSource.m_bOverallEffectiveNetRevEnabled;
-				p_oDest.m_strOverallEffectiveNetRevOperator = p_oSource.m_strOverallEffectiveNetRevOperator;
-				p_oDest.m_strOverallEffectiveNetRevValue = p_oSource.m_strOverallEffectiveNetRevValue;
 			}
 			/// <summary>
 			/// return the table names found in the either m_strPreVarArray or m_strPostVarArray variables
@@ -276,10 +269,6 @@ namespace FIA_Biosum_Manager
 			public bool Modified(Variables p_oCompare)
 			{
 				if (m_strOverallEffectiveExpr.Trim().ToUpper() != p_oCompare.m_strOverallEffectiveExpr.Trim().ToUpper()) return true;
-				if (m_strOverallEffectiveNetRevValue.Trim() != p_oCompare.m_strOverallEffectiveNetRevValue.Trim()) return true;
-				if (m_bOverallEffectiveNetRevEnabled != p_oCompare.m_bOverallEffectiveNetRevEnabled) return true;
-				if (m_strOverallEffectiveNetRevOperator.Trim() != p_oCompare.m_strOverallEffectiveNetRevOperator) return true;
-
 
 				for (int x=0;x<=NUMBER_OF_VARIABLES-1;x++)
 				{
@@ -307,7 +296,7 @@ namespace FIA_Biosum_Manager
 	
 		
 
-		public uc_scenario_fvs_prepost_variables_effective()
+		public uc_optimizer_scenario_fvs_prepost_variables_effective()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -494,10 +483,6 @@ namespace FIA_Biosum_Manager
             m_oValidate.TestForMaxMin = false;
             m_oValidate.MinValue = -1000;
             m_oValidate.TestForMin = true;
-            
-
-
-			
 
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -525,7 +510,7 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "1",
             "Not Defined",
@@ -533,7 +518,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "2",
             "Not Defined",
@@ -541,7 +526,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "3",
             "Not Defined",
@@ -549,7 +534,7 @@ namespace FIA_Biosum_Manager
             "No",
             "No",
             "No"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "4",
             "Not Defined",
@@ -568,7 +553,7 @@ namespace FIA_Biosum_Manager
             this.lvColPreVariableName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvColPostVariableName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvColVariableImprovement = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lvColVariableRegression = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvColVariableDisimprovement = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvColVariableEffective = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxFVSVariablesPrePostValuesButtons = new System.Windows.Forms.GroupBox();
             this.btnFVSVariablesPrePostValuesButtonsClearAll = new System.Windows.Forms.Button();
@@ -580,10 +565,6 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesPrePostAudit = new System.Windows.Forms.Button();
             this.grpboxFVSVariablesPrePostExpression = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostExpression = new System.Windows.Forms.Panel();
-            this.grpboxFVSVariablesPrePostExpressionNRFilter = new System.Windows.Forms.GroupBox();
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable = new System.Windows.Forms.CheckBox();
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator = new System.Windows.Forms.ComboBox();
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount = new System.Windows.Forms.TextBox();
             this.grpboxFVSVariablesPrePostExpressionSelectedVariables = new System.Windows.Forms.GroupBox();
             this.lstFVSVariablesPrePostExpressionSelectedVariables = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -618,8 +599,11 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostVariable = new System.Windows.Forms.GroupBox();
             this.pnlFVSVariablesPrePostVariable = new System.Windows.Forms.Panel();
             this.grpboxFVSVariablesPrePostVariableValues = new System.Windows.Forms.GroupBox();
+            this.lstFVSFieldsList = new System.Windows.Forms.ListBox();
+            this.lstFVSTablesList = new System.Windows.Forms.ListBox();
+            this.txtEffVarDescr = new System.Windows.Forms.TextBox();
+            this.lblEffVarDescr = new System.Windows.Forms.Label();
             this.btnFVSVariablesPrePostVariableValue = new System.Windows.Forms.Button();
-            this.lstFVSVariablesPrePostVariableValue = new System.Windows.Forms.ListBox();
             this.grpboxFVSVariablesPrePostVariablePreSelected = new System.Windows.Forms.GroupBox();
             this.lblFVSVariablesPrePostVariablePreSelected = new System.Windows.Forms.Label();
             this.grpboxFVSVariablesPrePostVariablePostSelected = new System.Windows.Forms.GroupBox();
@@ -631,7 +615,6 @@ namespace FIA_Biosum_Manager
             this.lblTitle = new System.Windows.Forms.Label();
             this.cmbFVSVariablesPrePost = new System.Windows.Forms.ComboBox();
             this.btnFVSVariablesPrePostGo = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesPrePost.SuspendLayout();
             this.pnlFVSVariablesPrePost.SuspendLayout();
@@ -641,7 +624,6 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostAudit.SuspendLayout();
             this.grpboxFVSVariablesPrePostExpression.SuspendLayout();
             this.pnlFVSVariablesPrePostExpression.SuspendLayout();
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.SuspendLayout();
             this.grpboxFVSVariablesPrePostExpressionSelectedVariables.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.grpboxExpressionsBtns.SuspendLayout();
@@ -724,20 +706,20 @@ namespace FIA_Biosum_Manager
             this.lvColPreVariableName,
             this.lvColPostVariableName,
             this.lvColVariableImprovement,
-            this.lvColVariableRegression,
+            this.lvColVariableDisimprovement,
             this.lvColVariableEffective});
             this.lvFVSVariablesPrePostValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvFVSVariablesPrePostValues.GridLines = true;
             this.lvFVSVariablesPrePostValues.HideSelection = false;
-            listViewItem5.StateImageIndex = 0;
-            listViewItem6.StateImageIndex = 0;
-            listViewItem7.StateImageIndex = 0;
-            listViewItem8.StateImageIndex = 0;
+            listViewItem1.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 0;
+            listViewItem3.StateImageIndex = 0;
+            listViewItem4.StateImageIndex = 0;
             this.lvFVSVariablesPrePostValues.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4});
             this.lvFVSVariablesPrePostValues.Location = new System.Drawing.Point(8, 48);
             this.lvFVSVariablesPrePostValues.MultiSelect = false;
             this.lvFVSVariablesPrePostValues.Name = "lvFVSVariablesPrePostValues";
@@ -774,10 +756,10 @@ namespace FIA_Biosum_Manager
             this.lvColVariableImprovement.Text = "Improvement Expression Defined";
             this.lvColVariableImprovement.Width = 217;
             // 
-            // lvColVariableRegression
+            // lvColVariableDisimprovement
             // 
-            this.lvColVariableRegression.Text = "Regression Expression Defined";
-            this.lvColVariableRegression.Width = 112;
+            this.lvColVariableDisimprovement.Text = "Disimprovement Expression Defined";
+            this.lvColVariableDisimprovement.Width = 112;
             // 
             // lvColVariableEffective
             // 
@@ -884,11 +866,11 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostExpression.TabStop = false;
             this.grpboxFVSVariablesPrePostExpression.Text = "Expression Builder";
             this.grpboxFVSVariablesPrePostExpression.Resize += new System.EventHandler(this.grpboxFVSVariablesPrePostExpression_Resize);
+            this.grpboxFVSVariablesPrePostExpression.VisibleChanged += new System.EventHandler(this.grpboxFVSVariablesPrePostExpression_VisibleChanged);
             // 
             // pnlFVSVariablesPrePostExpression
             // 
             this.pnlFVSVariablesPrePostExpression.AutoScroll = true;
-            this.pnlFVSVariablesPrePostExpression.Controls.Add(this.grpboxFVSVariablesPrePostExpressionNRFilter);
             this.pnlFVSVariablesPrePostExpression.Controls.Add(this.grpboxFVSVariablesPrePostExpressionSelectedVariables);
             this.pnlFVSVariablesPrePostExpression.Controls.Add(this.groupBox2);
             this.pnlFVSVariablesPrePostExpression.Controls.Add(this.lblFVSVariablesPrePostExpressionVariable1);
@@ -908,57 +890,6 @@ namespace FIA_Biosum_Manager
             this.pnlFVSVariablesPrePostExpression.Size = new System.Drawing.Size(850, 427);
             this.pnlFVSVariablesPrePostExpression.TabIndex = 71;
             this.pnlFVSVariablesPrePostExpression.Resize += new System.EventHandler(this.pnlFVSVariablesPrePostExpression_Resize);
-            // 
-            // grpboxFVSVariablesPrePostExpressionNRFilter
-            // 
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Controls.Add(this.label2);
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Controls.Add(this.chkFVSVariablesPrePostExpressionNRFilterEnable);
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Controls.Add(this.cmbFVSVariablesPrePostExpressionNRFilterOperator);
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Controls.Add(this.txtFVSVariablesPrePostExpressionNRFilterAmount);
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.ForeColor = System.Drawing.Color.Black;
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Location = new System.Drawing.Point(467, 128);
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Name = "grpboxFVSVariablesPrePostExpressionNRFilter";
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Size = new System.Drawing.Size(373, 48);
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.TabIndex = 71;
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.TabStop = false;
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.Text = "Net Revenue Dollars Per Acre Filter Setting";
-            // 
-            // chkFVSVariablesPrePostExpressionNRFilterEnable
-            // 
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable.ForeColor = System.Drawing.Color.Black;
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable.Location = new System.Drawing.Point(8, 16);
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable.Name = "chkFVSVariablesPrePostExpressionNRFilterEnable";
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable.Size = new System.Drawing.Size(112, 24);
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable.TabIndex = 17;
-            this.chkFVSVariablesPrePostExpressionNRFilterEnable.Text = "Enable Filter";
-            // 
-            // cmbFVSVariablesPrePostExpressionNRFilterOperator
-            // 
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.ItemHeight = 13;
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Items.AddRange(new object[] {
-            ">",
-            "<",
-            ">=",
-            "<=",
-            "<>"});
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Location = new System.Drawing.Point(128, 16);
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Name = "cmbFVSVariablesPrePostExpressionNRFilterOperator";
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Size = new System.Drawing.Size(88, 21);
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.TabIndex = 16;
-            this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Text = ">";
-            // 
-            // txtFVSVariablesPrePostExpressionNRFilterAmount
-            // 
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount.Location = new System.Drawing.Point(249, 16);
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount.Name = "txtFVSVariablesPrePostExpressionNRFilterAmount";
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount.Size = new System.Drawing.Size(98, 20);
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount.TabIndex = 15;
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text = "0";
-            this.txtFVSVariablesPrePostExpressionNRFilterAmount.Leave += new System.EventHandler(this.txtFVSVariablesPrePostExpressionNRFilterAmount_Leave);
             // 
             // grpboxFVSVariablesPrePostExpressionSelectedVariables
             // 
@@ -1311,7 +1242,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostVariable.Size = new System.Drawing.Size(856, 448);
             this.grpboxFVSVariablesPrePostVariable.TabIndex = 30;
             this.grpboxFVSVariablesPrePostVariable.TabStop = false;
-            this.grpboxFVSVariablesPrePostVariable.Text = "Variable";
+            this.grpboxFVSVariablesPrePostVariable.Text = "Attribute";
             this.grpboxFVSVariablesPrePostVariable.Resize += new System.EventHandler(this.grpboxFVSVariablesPrePostVariable_Resize);
             // 
             // pnlFVSVariablesPrePostVariable
@@ -1333,34 +1264,69 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxFVSVariablesPrePostVariableValues
             // 
+            this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.lstFVSFieldsList);
+            this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.lstFVSTablesList);
+            this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.txtEffVarDescr);
+            this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.lblEffVarDescr);
             this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.btnFVSVariablesPrePostVariableValue);
-            this.grpboxFVSVariablesPrePostVariableValues.Controls.Add(this.lstFVSVariablesPrePostVariableValue);
             this.grpboxFVSVariablesPrePostVariableValues.Location = new System.Drawing.Point(8, 16);
             this.grpboxFVSVariablesPrePostVariableValues.Name = "grpboxFVSVariablesPrePostVariableValues";
             this.grpboxFVSVariablesPrePostVariableValues.Size = new System.Drawing.Size(816, 216);
             this.grpboxFVSVariablesPrePostVariableValues.TabIndex = 0;
             this.grpboxFVSVariablesPrePostVariableValues.TabStop = false;
-            this.grpboxFVSVariablesPrePostVariableValues.Text = "Treatment Variable";
+            this.grpboxFVSVariablesPrePostVariableValues.Text = "Stand Attribute";
             this.grpboxFVSVariablesPrePostVariableValues.Resize += new System.EventHandler(this.grpboxFVSVariablesPrePostVariableValues_Resize);
+            // 
+            // lstFVSFieldsList
+            // 
+            this.lstFVSFieldsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSFieldsList.ItemHeight = 16;
+            this.lstFVSFieldsList.Location = new System.Drawing.Point(252, 21);
+            this.lstFVSFieldsList.Name = "lstFVSFieldsList";
+            this.lstFVSFieldsList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSFieldsList.Sorted = true;
+            this.lstFVSFieldsList.TabIndex = 90;
+            this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
+            // 
+            // lstFVSTablesList
+            // 
+            this.lstFVSTablesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstFVSTablesList.ItemHeight = 16;
+            this.lstFVSTablesList.Location = new System.Drawing.Point(11, 21);
+            this.lstFVSTablesList.Name = "lstFVSTablesList";
+            this.lstFVSTablesList.Size = new System.Drawing.Size(202, 180);
+            this.lstFVSTablesList.TabIndex = 89;
+            this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
+            // 
+            // txtEffVarDescr
+            // 
+            this.txtEffVarDescr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEffVarDescr.Location = new System.Drawing.Point(552, 89);
+            this.txtEffVarDescr.Multiline = true;
+            this.txtEffVarDescr.Name = "txtEffVarDescr";
+            this.txtEffVarDescr.ReadOnly = true;
+            this.txtEffVarDescr.Size = new System.Drawing.Size(258, 75);
+            this.txtEffVarDescr.TabIndex = 88;
+            this.txtEffVarDescr.Visible = false;
+            // 
+            // lblEffVarDescr
+            // 
+            this.lblEffVarDescr.Location = new System.Drawing.Point(471, 92);
+            this.lblEffVarDescr.Name = "lblEffVarDescr";
+            this.lblEffVarDescr.Size = new System.Drawing.Size(80, 24);
+            this.lblEffVarDescr.TabIndex = 87;
+            this.lblEffVarDescr.Text = "Description:";
+            this.lblEffVarDescr.Visible = false;
             // 
             // btnFVSVariablesPrePostVariableValue
             // 
             this.btnFVSVariablesPrePostVariableValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFVSVariablesPrePostVariableValue.Location = new System.Drawing.Point(448, 32);
+            this.btnFVSVariablesPrePostVariableValue.Location = new System.Drawing.Point(476, 21);
             this.btnFVSVariablesPrePostVariableValue.Name = "btnFVSVariablesPrePostVariableValue";
-            this.btnFVSVariablesPrePostVariableValue.Size = new System.Drawing.Size(184, 144);
+            this.btnFVSVariablesPrePostVariableValue.Size = new System.Drawing.Size(143, 57);
             this.btnFVSVariablesPrePostVariableValue.TabIndex = 1;
             this.btnFVSVariablesPrePostVariableValue.Text = "Select";
             this.btnFVSVariablesPrePostVariableValue.Click += new System.EventHandler(this.btnFVSVariablesPrePostVariableValue_Click);
-            // 
-            // lstFVSVariablesPrePostVariableValue
-            // 
-            this.lstFVSVariablesPrePostVariableValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstFVSVariablesPrePostVariableValue.ItemHeight = 16;
-            this.lstFVSVariablesPrePostVariableValue.Location = new System.Drawing.Point(8, 16);
-            this.lstFVSVariablesPrePostVariableValue.Name = "lstFVSVariablesPrePostVariableValue";
-            this.lstFVSVariablesPrePostVariableValue.Size = new System.Drawing.Size(424, 180);
-            this.lstFVSVariablesPrePostVariableValue.TabIndex = 0;
             // 
             // grpboxFVSVariablesPrePostVariablePreSelected
             // 
@@ -1370,7 +1336,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostVariablePreSelected.Size = new System.Drawing.Size(664, 51);
             this.grpboxFVSVariablesPrePostVariablePreSelected.TabIndex = 3;
             this.grpboxFVSVariablesPrePostVariablePreSelected.TabStop = false;
-            this.grpboxFVSVariablesPrePostVariablePreSelected.Text = "Pre-Treatment Variable";
+            this.grpboxFVSVariablesPrePostVariablePreSelected.Text = "Pre-Treatment Stand Attribute";
             // 
             // lblFVSVariablesPrePostVariablePreSelected
             // 
@@ -1390,7 +1356,7 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostVariablePostSelected.Size = new System.Drawing.Size(664, 51);
             this.grpboxFVSVariablesPrePostVariablePostSelected.TabIndex = 4;
             this.grpboxFVSVariablesPrePostVariablePostSelected.TabStop = false;
-            this.grpboxFVSVariablesPrePostVariablePostSelected.Text = "Post-Treatment Variable";
+            this.grpboxFVSVariablesPrePostVariablePostSelected.Text = "Post-Treatment Stand Attribute";
             // 
             // lblFVSVariablesPrePostVariablePostSelected
             // 
@@ -1404,7 +1370,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnFVSVariablesPrePostVariableClearAll
             // 
-            this.btnFVSVariablesPrePostVariableClearAll.Location = new System.Drawing.Point(24, 376);
+            this.btnFVSVariablesPrePostVariableClearAll.Location = new System.Drawing.Point(99, 376);
             this.btnFVSVariablesPrePostVariableClearAll.Name = "btnFVSVariablesPrePostVariableClearAll";
             this.btnFVSVariablesPrePostVariableClearAll.Size = new System.Drawing.Size(72, 40);
             this.btnFVSVariablesPrePostVariableClearAll.TabIndex = 5;
@@ -1455,26 +1421,26 @@ namespace FIA_Biosum_Manager
             "Select Variable 1",
             "Define Expression For What Constitutes Variable 1 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 1 Post-Treatment Regression (Wors" +
-                "e)",
+            "Define Expression For What Constitutes Variable 1 Post-Treatment Disimprovement (" +
+                "Worse)",
             "Define Expression For What Constitutes Variable 1 Effective Treatment",
             "Select Variable 2",
             "Define Expression For What Constitutes Variable 2 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 2 Post-Treatment Regression (Wors" +
-                "e)",
+            "Define Expression For What Constitutes Variable 2 Post-Treatment Disimprovement (" +
+                "Worse)",
             "Define Expression For What Constitutes Variable 2 Effective Treatment",
             "Select Variable 3",
             "Define Expression For What Constitutes Variable 3 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 3 Post-Treatment Regression (Wors" +
-                "e)",
+            "Define Expression For What Constitutes Variable 3 Post-Treatment Disimprovement (" +
+                "Worse)",
             "Define Expression For What Constitutes Variable 3 Effective Treatment",
             "Select Variable 4",
             "Define Expression For What Constitutes Variable 4 Post-Treatment Improvement (Bet" +
                 "ter)",
-            "Define Expression For What Constitutes Variable 4 Post-Treatment Regression (Wors" +
-                "e)",
+            "Define Expression For What Constitutes Variable 4 Post-Treatment Disimprovement (" +
+                "Worse)",
             "Define Expression For What Constitutes Variable 4 Effective Treatment",
             "Define Expression For What Constitutes Overall Effectiveness"});
             this.cmbFVSVariablesPrePost.Location = new System.Drawing.Point(8, 50);
@@ -1492,20 +1458,10 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesPrePostGo.Text = "Go";
             this.btnFVSVariablesPrePostGo.Click += new System.EventHandler(this.btnFVSVariablesPrePostGo_Click);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(230, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(13, 13);
-            this.label2.TabIndex = 19;
-            this.label2.Text = "$";
-            // 
-            // uc_scenario_fvs_prepost_variables_effective
+            // uc_core_scenario_fvs_prepost_variables_effective
             // 
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_scenario_fvs_prepost_variables_effective";
+            this.Name = "uc_core_scenario_fvs_prepost_variables_effective";
             this.Size = new System.Drawing.Size(872, 2500);
             this.Resize += new System.EventHandler(this.uc_scenario_fvs_prepost_variables_Resize);
             this.groupBox1.ResumeLayout(false);
@@ -1518,14 +1474,13 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSVariablesPrePostExpression.ResumeLayout(false);
             this.pnlFVSVariablesPrePostExpression.ResumeLayout(false);
             this.pnlFVSVariablesPrePostExpression.PerformLayout();
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.ResumeLayout(false);
-            this.grpboxFVSVariablesPrePostExpressionNRFilter.PerformLayout();
             this.grpboxFVSVariablesPrePostExpressionSelectedVariables.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.grpboxExpressionsBtns.ResumeLayout(false);
             this.grpboxFVSVariablesPrePostVariable.ResumeLayout(false);
             this.pnlFVSVariablesPrePostVariable.ResumeLayout(false);
             this.grpboxFVSVariablesPrePostVariableValues.ResumeLayout(false);
+            this.grpboxFVSVariablesPrePostVariableValues.PerformLayout();
             this.grpboxFVSVariablesPrePostVariablePreSelected.ResumeLayout(false);
             this.grpboxFVSVariablesPrePostVariablePostSelected.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1589,14 +1544,14 @@ namespace FIA_Biosum_Manager
 				// Digits are OK
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else if (e.KeyChar == '\b') 
 			{
 				//back space is okay
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled == false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 			}
 			else
 			{
@@ -1636,21 +1591,21 @@ namespace FIA_Biosum_Manager
             //
             //effective variables
             //
-            if (ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Count > 0 &&
-                ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Count > 0 &&
+                ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0) != null)
             {
                 for (x = 0; x <= NUMBER_OF_VARIABLES - 1; x++)
                 {
                     m_oOldVar.m_strPreVarArray[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPreVarArray[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPreVarArray[x].Trim();
                     m_oOldVar.m_strPostVarArray[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPostVarArray[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strPostVarArray[x].Trim();
                     m_oOldVar.m_strBetterExpr[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strBetterExpr[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strBetterExpr[x].Trim();
                     m_oOldVar.m_strWorseExpr[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strWorseExpr[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strWorseExpr[x].Trim();
                     m_oOldVar.m_strEffectiveExpr[x] =
-                        ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strEffectiveExpr[x].Trim();
+                        ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strEffectiveExpr[x].Trim();
                     this.UpdateListViewVariableItem(x, x + 1, m_oOldVar);
 
                 }
@@ -1658,22 +1613,7 @@ namespace FIA_Biosum_Manager
                 //overall effective
                 //
                 m_oOldVar.m_strOverallEffectiveExpr =
-                          ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveExpr;
-
-                m_oOldVar.m_bOverallEffectiveNetRevEnabled =
-                    ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_bOverallEffectiveNetRevEnabled;
-
-                m_oOldVar.m_strOverallEffectiveNetRevOperator =
-                    ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveNetRevOperator;
-
-                cmbFVSVariablesPrePostExpressionNRFilterOperator.Text = m_oOldVar.m_strOverallEffectiveNetRevOperator;
-                m_oOldVar.m_strOverallEffectiveNetRevValue =
-                     ReferenceCoreScenarioForm.m_oCoreAnalysisScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveNetRevValue;
-
-                m_oValidate.ValidateDecimal(m_oOldVar.m_strOverallEffectiveNetRevValue);
-                this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text = m_oValidate.ReturnValue;
-
-               
+                          ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oEffectiveVariablesItem_Collection.Item(0).m_strOverallEffectiveExpr;
 
             }
 
@@ -1703,97 +1643,30 @@ namespace FIA_Biosum_Manager
 			this.m_intError=0;
 			this.m_strError="";
 
-			this.lstFVSVariablesPrePostVariableValue.Items.Clear();
-			int x,y;
             ado_data_access oAdo = new ado_data_access();
-            RxTools oRxTools = new RxTools();
 
-			//
-			//load list box with all the pre and post table columns
-			//
-            oRxTools.CreateTableLinksToFVSPrePostTables(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb");
-            oRxTools = null;
-			oAdo.OpenConnection(oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb","",""));
-            _dictFVSTables = new System.Collections.Generic.Dictionary<string, 
-                System.Collections.Generic.IList<string>>();
-            if (oAdo.m_intError==0)
-			{
+            this.lstFVSTablesList.Items.Clear();
+            m_dictFVSTables = m_oOptimizerScenarioTools.LoadFvsTablesAndVariables(oAdo);
+            foreach (string strKey in m_dictFVSTables.Keys)
+            {
+                lstFVSTablesList.Items.Add(strKey);
+            }
 
-				string[] strTableNamesArray = oAdo.getTableNames(oAdo.m_OleDbConnection);
-				for (x=0;x<=strTableNamesArray.Length-1;x++)
-				{
-					if (strTableNamesArray[x].ToUpper().IndexOf("PRE_",0)==0)
-					{
-						string[] strColumnNamesArray = oAdo.getFieldNamesArray(oAdo.m_OleDbConnection,"SELECT * FROM " + strTableNamesArray[x]);
-                        System.Collections.Generic.IList<string> lstFVSFields = new System.Collections.Generic.List<string>();
-                        for (y=0;y<=strColumnNamesArray.Length-1;y++)
-						{
-							switch (strColumnNamesArray[y].Trim().ToUpper())
-							{
-								case "BIOSUM_COND_ID":
-									break;
-                                case "RXPACKAGE":
-                                    break;
-								case "RX":
-									break;
-                                case "RXCYCLE":
-                                    break;
-								case "STANDID":
-									break;
-								case "ID":
-									break;
-								case "CASEID":
-									break;
-                                case "FVS_VARIANT":
-									break;
-								case "YEAR":
-									break;
-								default:
-									if (oAdo.ColumnExist(oAdo.m_OleDbConnection,
-										"POST_" + strTableNamesArray[x].Substring(4,strTableNamesArray[x].Length - 4),
-										strColumnNamesArray[y]))
-									{
-
-										this.lstFVSVariablesPrePostVariableValue.Items.Add(strTableNamesArray[x].Substring(4,strTableNamesArray[x].Length - 4) + "." +  strColumnNamesArray[y]);
-									    lstFVSFields.Add(strColumnNamesArray[y]);
-                                    }
-									break;
-							}
-
-						}
-                        if (lstFVSFields.Count > 0)
-                        {
-                            string strFvsTableName = strTableNamesArray[x].Substring(4, strTableNamesArray[x].Length - 4);
-                            if (!_dictFVSTables.ContainsKey(strFvsTableName))
-                            {
-                                _dictFVSTables.Add(strFvsTableName, lstFVSFields);
-                            }
-                            else
-                            {
-                                System.Collections.Generic.List<string> lstTemp = (System.Collections.Generic.List<string>)_dictFVSTables[strFvsTableName];
-                                lstTemp.AddRange(lstFVSFields);
-                            }
-                        }
-					}
-				}
-				oAdo.CloseConnection(oAdo.m_OleDbConnection);
-				oAdo.m_OleDbConnection.Dispose();
-			}
 			//
 			//load previous scenario values
 			//
 			m_oOldVar = new Variables();
 			m_oSavVar = new Variables();
 
-			
+            int x = 0;
 			for (x=0;x<=NUMBER_OF_VARIABLES-1;x++)
 				this.RemoveVariable(x);
 
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
-			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
+				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
 				int intVarNum=0;
@@ -1840,9 +1713,7 @@ namespace FIA_Biosum_Manager
 				oAdo.m_OleDbDataReader.Close();
 
                 //overall expression
-                oAdo.m_strSQL = "SELECT b.overall_effective_expression,b.current_yn," +
-                                       "b.nr_dpa_filter_enabled_yn,b.nr_dpa_filter_operator," +
-                                       "b.nr_dpa_filter_value " +
+                oAdo.m_strSQL = "SELECT b.overall_effective_expression,b.current_yn " +
                                 "FROM scenario_fvs_variables_overall_effective b " +
                                 "WHERE TRIM(b.scenario_id)='" + strScenarioId.Trim() + "' AND " +
                                 "b.current_yn='Y'";
@@ -1859,42 +1730,6 @@ namespace FIA_Biosum_Manager
                             m_oOldVar.m_strOverallEffectiveExpr.Trim().Length == 0)
                             m_oOldVar.m_strOverallEffectiveExpr =
                                  Convert.ToString(oAdo.m_OleDbDataReader["overall_effective_expression"]).Trim();
-
-                        //enable filter
-                        if (oAdo.m_OleDbDataReader["nr_dpa_filter_enabled_yn"] != System.DBNull.Value)
-                        {
-                            if (Convert.ToString(oAdo.m_OleDbDataReader["nr_dpa_filter_enabled_yn"]).Trim() == "Y")
-                                m_oOldVar.m_bOverallEffectiveNetRevEnabled = true;
-                            else
-                                m_oOldVar.m_bOverallEffectiveNetRevEnabled = false;
-                        }
-                        else
-                        {
-                            m_oOldVar.m_bOverallEffectiveNetRevEnabled = false;
-                        }
-                        this.chkFVSVariablesPrePostExpressionNRFilterEnable.Checked = m_oOldVar.m_bOverallEffectiveNetRevEnabled;
-                        //filter operator
-                        if (oAdo.m_OleDbDataReader["nr_dpa_filter_operator"] != System.DBNull.Value)
-                        {
-
-                            m_oOldVar.m_strOverallEffectiveNetRevOperator = Convert.ToString(oAdo.m_OleDbDataReader["nr_dpa_filter_operator"]).Trim();
-                        }
-                        else
-                        {
-                            m_oOldVar.m_strOverallEffectiveNetRevOperator = ">";
-                        }
-                        this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Text = m_oOldVar.m_strOverallEffectiveNetRevOperator;
-                        //filter value
-                        if (oAdo.m_OleDbDataReader["nr_dpa_filter_value"] != System.DBNull.Value)
-                        {
-                            m_oOldVar.m_strOverallEffectiveNetRevValue = Convert.ToString(oAdo.m_OleDbDataReader["nr_dpa_filter_value"]).Trim();
-                        }
-                        else m_oOldVar.m_strOverallEffectiveNetRevValue = "0";
-                        m_oValidate.ValidateDecimal(m_oOldVar.m_strOverallEffectiveNetRevValue);
-                        this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text = m_oValidate.ReturnValue;
-
-
-                        
 
                     }
                 }
@@ -1917,13 +1752,43 @@ namespace FIA_Biosum_Manager
 			m_oOldVar.Copy(m_oOldVar,ref m_oSavVar);
 
 
-            this.ReferenceOptimizationUserControl.loadvalues(_dictFVSTables);
-			this.ReferenceTieBreakerUserControl.loadvalues(_dictFVSTables);
+            this.ReferenceOptimizationUserControl.loadvalues(m_dictFVSTables);
+            this.ReferenceTieBreakerUserControl.loadvalues(m_dictFVSTables);
 			this.m_intError=oAdo.m_intError;
 			this.m_strError=oAdo.m_strError;
 			oAdo=null;
 			
 		}
+
+        private void loadFVSTableAndField()
+        {
+            lstFVSTablesList.ClearSelected();
+            string[] strPieces = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim().Split('.');
+            //set FVS table and variable
+            if (strPieces.Length == 2 && !String.IsNullOrEmpty(strPieces[0]))
+            {
+                string strTable = strPieces[0].TrimStart("PRE_".ToCharArray());
+                for (int index = 0; index < lstFVSTablesList.Items.Count + 1; index++)
+                {
+                    string item = lstFVSTablesList.Items[index].ToString();
+                    if (strTable == item)
+                    {
+                        lstFVSTablesList.SelectedIndex = index;
+                        break;
+                    }
+                }
+                for (int index = 0; index < lstFVSFieldsList.Items.Count + 1; index++)
+                {
+                    string item = lstFVSFieldsList.Items[index].ToString();
+                    if (strPieces[1] == item)
+                    {
+                        lstFVSFieldsList.SelectedIndex = index;
+                        break;
+                    }
+                }
+            }
+        }
+
 		public int savevalues()
 		{
 			int x;
@@ -1968,10 +1833,10 @@ namespace FIA_Biosum_Manager
 
 
 			ado_data_access oAdo = new ado_data_access();
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
@@ -2049,23 +1914,12 @@ namespace FIA_Biosum_Manager
 					}
 				}
 				if (m_oSavVar.m_strOverallEffectiveExpr.Trim().Length > 0)
-				{
-                    string strValue = this.m_oSavVar.m_strOverallEffectiveNetRevValue;
-                    strValue = strValue.Replace("$", "");
-                    
-					strColumns = "scenario_id,rxcycle,fvs_variables_list,overall_effective_expression,current_yn,nr_dpa_filter_enabled_yn,nr_dpa_filter_operator,nr_dpa_filter_value";
+				{                    
+					strColumns = "scenario_id,rxcycle,fvs_variables_list,overall_effective_expression,current_yn";
 					strValues = "'" + strScenarioId.Trim() + "','1'";
 					strValues = strValues + ",'" + strFVSVariableList + "'";
 					strValues = strValues + ",'" + oAdo.FixString(this.m_oSavVar.m_strOverallEffectiveExpr.Trim(),"'","''") + "'";
 					strValues = strValues + ",'Y'";
-					if (m_oSavVar.m_bOverallEffectiveNetRevEnabled)
-						strValues = strValues + ",'Y'";
-					else
-						strValues = strValues + ",'N'";
-					strValues = strValues + ",'" + this.m_oSavVar.m_strOverallEffectiveNetRevOperator.Trim() + "'";
-					if (m_oSavVar.m_strOverallEffectiveNetRevValue.Trim().Length == 0)
-						strValues = strValues + ",0";
-					else strValues = strValues + "," + strValue;
 					oAdo.m_strSQL = "INSERT INTO scenario_fvs_variables_overall_effective " + 
 						"(" + strColumns + ") VALUES " + 
 						"(" + strValues + ")";
@@ -2119,7 +1973,7 @@ namespace FIA_Biosum_Manager
 				this.txtExpression.AppendText(this.getDefaultExpression("overall"));
 				//if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
 				//	((frmScenario)this.ParentForm).btnSave.Enabled=true;
-				((frmCoreScenario)this.ParentForm).m_bSave=true;
+				((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 				this.m_strOverallEffectiveExpression=this.txtExpression.Text.Trim();
 			}
 			else 
@@ -2315,16 +2169,12 @@ namespace FIA_Biosum_Manager
 
 			ado_data_access p_ado = new ado_data_access();
 
-			string strScenarioId = this.ReferenceCoreScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToLower();
             
 			//scenario mdb connection
-			//string strScenarioMDB = 
-			//	((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + 
-			//	"\\core\\db\\scenario.mdb";
-
 			string strScenarioResultsMDB = 
 				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory +
-                "\\core\\" + strScenarioId + "\\db\\scenario_results.mdb";
+                "\\optimizer\\" + strScenarioId + "\\db\\scenario_results.mdb";
 
 			this.m_OleDbConnectionScenario = new System.Data.OleDb.OleDbConnection();
 			strConn=p_ado.getMDBConnString(strScenarioResultsMDB,"admin","");
@@ -2339,7 +2189,6 @@ namespace FIA_Biosum_Manager
 			p_ado.SqlQueryReader(this.m_OleDbConnectionScenario, strSQL);
 
 				  
-			//insert records into the scenario_rx_intensity table from the master rx table
 			if (p_ado.m_intError == 0)
 			{
 				
@@ -2412,61 +2261,61 @@ namespace FIA_Biosum_Manager
 		private void cmbFFECIBackslide2_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 		
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide3_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide2_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIBackslide_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFETIHazardWindSpeedClass_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIHazardOperator_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void cmbFFECIHazardWindSpeedClass_SelectedValueChanged(object sender, System.EventArgs e)
 		{
 			
-			((frmCoreScenario)this.ParentForm).m_bSave=true;
+			((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 		}
 
 		private void txtExpression_Leave(object sender, System.EventArgs e)
@@ -2650,16 +2499,19 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostVariableValue_Click(object sender, System.EventArgs e)
 		{
-			if (this.lstFVSVariablesPrePostVariableValue.SelectedItems.Count == 0) return;
+            if (this.lstFVSTablesList.SelectedItems.Count == 0 || this.lstFVSFieldsList.SelectedItems.Count == 0) return;
+            this.lblFVSVariablesPrePostVariablePreSelected.Text = "PRE_" +
+                this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
 
-			this.lblFVSVariablesPrePostVariablePreSelected.Text = "PRE_" + lstFVSVariablesPrePostVariableValue.SelectedItems[0];
-			this.lblFVSVariablesPrePostVariablePostSelected.Text = "POST_" + lstFVSVariablesPrePostVariableValue.SelectedItems[0];
+            this.lblFVSVariablesPrePostVariablePostSelected.Text = "POST_" +
+                this.lstFVSTablesList.SelectedItems[0].ToString() + "." + this.lstFVSFieldsList.SelectedItems[0].ToString();
 		}
 
 		private void btnFVSVariablesPrePostVariableClearAll_Click(object sender, System.EventArgs e)
 		{
 			this.lblFVSVariablesPrePostVariablePreSelected.Text = "Not Defined";
 			this.lblFVSVariablesPrePostVariablePostSelected.Text = "Not Defined";
+            this.lstFVSTablesList.ClearSelected();
 		}
 
 		private void btnFVSVariablesPrePostVariableNext_Click(object sender, System.EventArgs e)
@@ -3057,8 +2909,6 @@ namespace FIA_Biosum_Manager
 					this.loadvalues_variable(m_intCurVar-1,m_intCurVariableDefinitionStepCount-1);
 					break;
 			}
-			
-			
 		}
 
 	
@@ -3066,25 +2916,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostExpressionTest_Click(object sender, System.EventArgs e)
 		{
-			string strSQL="";
-			
-			string strConn="";
-			
-			strSQL = this.txtExpression.Text;
-			if (this.grpboxFVSVariablesPrePostExpressionNRFilter.Visible &&
-				this.chkFVSVariablesPrePostExpressionNRFilterEnable.Enabled)
-			{
-				if (this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text.Trim().Length == 0)
-				{
-					MessageBox.Show("Enter an revenue amount","FIA Bisoum");
-
-				}
-				else
-				{
-					strSQL = strSQL + " AND nr_dpa IS NOT NULL AND nr_dpa " + this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Text.Trim() + " " + this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text.Replace("$","");
-				}
-			}
-
+			string strSQL = this.txtExpression.Text;
 			dao_data_access oDao = new dao_data_access();
 			string strTempFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir,"accdb");
 			oDao.CreateMDB(strTempFile);
@@ -3096,14 +2928,42 @@ namespace FIA_Biosum_Manager
             ado_data_access oAdo = new ado_data_access();
 			oAdo.OpenConnection(oAdo.getMDBConnString(strTempFile,"",""));
 
-			frmMain.g_oTables.m_oCoreScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection, Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName);
+            // Query the optimization uc for the selected revenue attribute so we can pass it to the table
+            OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableCollection =
+                this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+            string strColumnFilterName = "";
+            for (int x = 0; x <= oOptimizationVariableCollection.Count - 1; x++)
+            {
+                if (oOptimizationVariableCollection.Item(x).bSelected)
+                {
+                    if (oOptimizationVariableCollection.Item(x).bUseFilter == true)
+                        strColumnFilterName = oOptimizationVariableCollection.Item(x).strRevenueAttribute;
+                    break;
+                }
+            }
+ 
+            string strPrefix = "cycle1";
+            for(int i=0;i<lvFVSVariablesPrePostValues.Items.Count;i++){
+                string strPreVariable = Convert.ToString(lvFVSVariablesPrePostValues.Items[i].SubItems[COLUMN_PREVAR]).Trim();
+                string[] strPieces = strPreVariable.Split('.');
+                if (strPieces.Length == 2 && !String.IsNullOrEmpty(strPieces[0]))
+                {
+                    if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                    {
+                        strPrefix = "all_cycles";
+                        break;
+                    }
+                }
 
-			strSQL = "SELECT * FROM " + Tables.CoreScenarioResults.DefaultScenarioResultsCycle1EffectiveTableName + " WHERE " +
+            }
+            string strEffectiveTableName = strPrefix + "_effective";
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEffectiveTable(oAdo,oAdo.m_OleDbConnection,
+                strPrefix, strColumnFilterName);
+
+			strSQL = "SELECT * FROM " + strEffectiveTableName + " WHERE " +
 				strSQL + ";";
 			oAdo.SqlQueryReader(oAdo.m_OleDbConnection, strSQL);
 
-				  
-			//insert records into the scenario_rx_intensity table from the master rx table
 			if (oAdo.m_intError == 0)
 			{
 				
@@ -3140,9 +3000,9 @@ namespace FIA_Biosum_Manager
 
 			this.grpboxFVSVariablesPrePostVariable.Hide();
 			
-			ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-		    ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+		    ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			this.EnableTabs(true);
 		    this.m_intCurVar=-1;
 			this.grpboxFVSVariablesPrePost.Show();
@@ -3150,14 +3010,14 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostVariableDone_Click(object sender, System.EventArgs e)
 		{
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
 			SaveToCurrentVariables();
 			
 			this.grpboxFVSVariablesPrePostVariable.Hide();
 			
-			ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-			ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+			ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			m_intCurVar=-1;
 			EnableTabs(true);
 			this.grpboxFVSVariablesPrePost.Show();
@@ -3182,7 +3042,7 @@ namespace FIA_Biosum_Manager
 			}
     		EnableOverallExpr();
 		}
-		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_scenario_fvs_prepost_variables_effective.Variables p_oVar)
+		private void UpdateListViewVariableItem(int p_intListViewItem,int p_intVarArrayItem,uc_optimizer_scenario_fvs_prepost_variables_effective.Variables p_oVar)
 		{
 			this.lvFVSVariablesPrePostValues.Items[p_intListViewItem].SubItems[COLUMN_PREVAR].Text = p_oVar.m_strPreVarArray[p_intVarArrayItem-1];
 			this.lvFVSVariablesPrePostValues.Items[p_intListViewItem].SubItems[COLUMN_POSTVAR].Text = p_oVar.m_strPostVarArray[p_intVarArrayItem-1];
@@ -3260,17 +3120,17 @@ namespace FIA_Biosum_Manager
 			if (this.lblFVSVariablesPrePostVariablePreSelected.Text.Trim().ToUpper() != "NOT DEFINED")
 			{
 				//save variables
-				if (this.m_intCurVariableDefinitionStepCount==uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER)
+				if (this.m_intCurVariableDefinitionStepCount==uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER)
 				{
 					m_oCurVar.m_strBetterExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 					//load worse expression
-					this.loadvalues_variable(m_intCurVar-1,uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE);
+					this.loadvalues_variable(m_intCurVar-1,uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE);
 				}
-				else if (this.m_intCurVariableDefinitionStepCount==uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE)
+				else if (this.m_intCurVariableDefinitionStepCount==uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE)
 				{
 					m_oCurVar.m_strWorseExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 					//load effective expression
-					this.loadvalues_variable(m_intCurVar-1,uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE);
+					this.loadvalues_variable(m_intCurVar-1,uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE);
 				}
 				
 				this.txtExpression.Focus();
@@ -3280,7 +3140,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostExpressionDone_Click(object sender, System.EventArgs e)
 		{
-			this.ReferenceCoreScenarioForm.m_bSave=true;
+			this.ReferenceOptimizerScenarioForm.m_bSave=true;
 			if (this.m_intCurVariableDefinitionStepCount==WIZARD_STEP_VARIABLE_BETTER)
 				m_oCurVar.m_strBetterExpr[this.m_intCurVar-1]=this.txtExpression.Text;
 			else if (this.m_intCurVariableDefinitionStepCount==WIZARD_STEP_VARIABLE_WORSE)
@@ -3290,9 +3150,6 @@ namespace FIA_Biosum_Manager
 			else if (this.m_intCurVariableDefinitionStepCount==WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
 			{
 				m_oCurVar.m_strOverallEffectiveExpr=this.txtExpression.Text;
-				m_oCurVar.m_bOverallEffectiveNetRevEnabled = this.chkFVSVariablesPrePostExpressionNRFilterEnable.Checked;
-				m_oCurVar.m_strOverallEffectiveNetRevOperator = this.cmbFVSVariablesPrePostExpressionNRFilterOperator.Text.Trim();
-				m_oCurVar.m_strOverallEffectiveNetRevValue = this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text.Trim();
 			}
 
 			
@@ -3301,9 +3158,9 @@ namespace FIA_Biosum_Manager
 			
 			this.grpboxFVSVariablesPrePostExpression.Hide();
 			
-			this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-			ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+			ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			this.m_intCurVar=-1;
 			EnableTabs(true);
 			this.grpboxFVSVariablesPrePost.Show();
@@ -3378,9 +3235,9 @@ namespace FIA_Biosum_Manager
 		{
 			this.grpboxFVSVariablesPrePostExpression.Hide();
 			
-			this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=true;
-			ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="";
+			this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=true;
+			ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="";
 			this.m_intCurVar=-1;
 			EnableTabs(true);
 			this.grpboxFVSVariablesPrePost.Show();
@@ -3431,15 +3288,15 @@ namespace FIA_Biosum_Manager
 			string str="";
 			switch (this.m_intCurVariableDefinitionStepCount)
 			{
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 					this.txtExpression.Text = "post_variable" + this.m_intCurVar.ToString().Trim() + "_value > pre_variable" + this.m_intCurVar.ToString().Trim() + "_value + 10 AND " + 
 						                      "post_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1 AND pre_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1";
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 					this.txtExpression.Text = "post_variable" + this.m_intCurVar.ToString().Trim() + "_value < pre_variable" + this.m_intCurVar.ToString().Trim() + "_value - 10 AND " + 
 											  "post_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1 AND pre_variable" + this.m_intCurVar.ToString().Trim() + "_value <> -1";;
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 					if (this.m_oCurVar.m_strBetterExpr[m_intCurVar-1].Trim().Length > 0 &&
 						this.m_oCurVar.m_strWorseExpr[m_intCurVar-1].Trim().Length > 0)
 					{
@@ -3455,7 +3312,7 @@ namespace FIA_Biosum_Manager
 						this.txtExpression.Text = "variable" + this.m_intCurVar.ToString().Trim() + "_worse_yn='N'";
 					}
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 					if (this.m_oCurVar.m_strEffectiveExpr[0].Trim().Length > 0)
 						str="variable1_effective_yn='Y' AND ";
 					if (this.m_oCurVar.m_strEffectiveExpr[1].Trim().Length > 0)
@@ -3499,7 +3356,7 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			else if (this.m_intCurVariableDefinitionStepCount == uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
+			else if (this.m_intCurVariableDefinitionStepCount == uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
 			{
 				if (Modified())
 				{
@@ -3539,7 +3396,7 @@ namespace FIA_Biosum_Manager
 					this.loadvalues_variable(0,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 1 POST-TREATMENT REGRESSION (WORSE)":
+				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 1 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=1)
 					{
 					}
@@ -3582,7 +3439,7 @@ namespace FIA_Biosum_Manager
 					this.loadvalues_variable(1,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 2 POST-TREATMENT REGRESSION (WORSE)":
+                case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 2 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=2)
 					{
 					}
@@ -3625,7 +3482,7 @@ namespace FIA_Biosum_Manager
 					this.loadvalues_variable(2,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 3 POST-TREATMENT REGRESSION (WORSE)":
+                case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 3 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=3)
 					{
 					}
@@ -3669,7 +3526,7 @@ namespace FIA_Biosum_Manager
      				this.loadvalues_variable(3,WIZARD_STEP_VARIABLE_BETTER);
 					ShowGroupBox(grpboxFVSVariablesPrePostExpression.Name);
 					break;
-				case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 4 POST-TREATMENT REGRESSION (WORSE)":
+                case "DEFINE EXPRESSION FOR WHAT CONSTITUTES VARIABLE 4 POST-TREATMENT DISIMPROVEMENT (WORSE)":
 					if (this.m_intCurVar!=4)
 					{
 					}
@@ -3735,23 +3592,23 @@ namespace FIA_Biosum_Manager
 					this.m_oCurVar.m_strPreVarArray[m_intCurVar-1] = lblFVSVariablesPrePostVariablePreSelected.Text.Trim();
 					switch (this.m_intCurVariableDefinitionStepCount)
 					{
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 							this.m_oCurVar.m_strBetterExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 							this.m_oCurVar.m_strWorseExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 							this.m_oCurVar.m_strEffectiveExpr[m_intCurVar-1] = this.txtExpression.Text;
 							break;
-						case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+						case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 							this.m_oCurVar.m_strOverallEffectiveExpr = this.txtExpression.Text;
 							break;
 					
 					}
 				
 				}
-				else if (this.m_intCurVariableDefinitionStepCount==uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
+				else if (this.m_intCurVariableDefinitionStepCount==uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE)
 				{
 					this.m_oCurVar.m_strOverallEffectiveExpr = this.txtExpression.Text;
 				}
@@ -3766,7 +3623,15 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostValuesButtonsEdit_Click(object sender, System.EventArgs e)
 		{
-			this.grpboxFVSVariablesPrePostExpressionNRFilter.Hide();
+            if (this.lvFVSVariablesPrePostValues.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("!! No variable selected to edit!", "FIA Biosum", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+            this.loadFVSTableAndField();
+            this.lblFVSVariablesPrePostVariablePreSelected.Text = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim();
+            this.lblFVSVariablesPrePostVariablePostSelected.Text = this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_POSTVAR].Text.Trim();
 			EditVariable();
 
 		}
@@ -3781,10 +3646,10 @@ namespace FIA_Biosum_Manager
 			
 			this.grpboxFVSVariablesPrePost.Hide();
 
-			this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=false;
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
-			this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="Effective";
-			this.ReferenceCoreScenarioForm.m_intEditTabPageIndex=0;
+			this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=false;
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
+			this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="Effective";
+			this.ReferenceOptimizerScenarioForm.m_intEditTabPageIndex=0;
 			EnableTabs(false);
 			grpboxFVSVariablesPrePostVariable.Show();
 		}
@@ -3797,7 +3662,12 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesPrePostValuesButtonsClear_Click(object sender, System.EventArgs e)
 		{
-			if (this.lvFVSVariablesPrePostValues.SelectedItems.Count == 0) return;
+            if (this.lvFVSVariablesPrePostValues.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("!! No variable selected to clear!", "FIA Biosum", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
 			if (this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_PREVAR].Text.Trim()=="Not Defined") return;
 
 			DialogResult result = MessageBox.Show("Are you sure you wish to delete variable " + this.lvFVSVariablesPrePostValues.SelectedItems[0].SubItems[COLUMN_VARID].Text + "? (YN)","FIA Biosum",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Question);
@@ -3857,14 +3727,11 @@ namespace FIA_Biosum_Manager
 		{
 
 			   
-			    this.ReferenceCoreScenarioForm.m_bEnableSelectedTabPage=false;
-			    this.ReferenceCoreScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
-			    this.ReferenceCoreScenarioForm.m_strCurrentEditTabPageText="Effective";
-			    this.grpboxFVSVariablesPrePostExpressionNRFilter.Show();
-                grpboxFVSVariablesPrePostExpressionNRFilter.Top = this.lblFVSVariablesPrePostExpressionVariable4.Top + this.lblFVSVariablesPrePostExpressionVariable4.Height + 5;
+			    this.ReferenceOptimizerScenarioForm.m_bEnableSelectedTabPage=false;
+			    this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabControlName="tabControlFVSVariables";
+			    this.ReferenceOptimizerScenarioForm.m_strCurrentEditTabPageText="Effective";
 
-
-			    this.ReferenceCoreScenarioForm.m_intEditTabPageIndex=0;
+			    this.ReferenceOptimizerScenarioForm.m_intEditTabPageIndex=0;
 			    EnableTabs(false);
 				loadvalues_overall();
 		}
@@ -3978,8 +3845,20 @@ namespace FIA_Biosum_Manager
 					{
 						this.AuditSearch("VARIABLE" + Convert.ToString(x+1).Trim() + "_EFFECTIVE_YN");
 					}
-					
-				}
+
+                    string[] strPieces = m_oSavVar.m_strPreVarArray[x].Trim().ToUpper().Split('.');
+                    if (strPieces.Length == 2)
+                    {
+                        if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
+                        {
+                            string strWeightedError = this.m_oOptimizerScenarioTools.AuditWeightedFvsVariables(strPieces[0], out m_intError);
+                            if (m_intError != 0)
+                            {
+                                m_strError = m_strError + strWeightedError;
+                            }
+                        }
+                    }
+                 }
 			}
 			
 			if (m_oSavVar.m_strOverallEffectiveExpr.Trim().Length == 0)
@@ -4121,16 +4000,16 @@ namespace FIA_Biosum_Manager
 
 			DialogResult result;
             
-			string strScenarioId =  ((frmCoreScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
+			string strScenarioId =  ((frmOptimizerScenario)this.ParentForm).uc_scenario1.txtScenarioId.Text.Trim().ToLower();
 			string strScenarioMDB = 
-				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + 
-				"\\core\\db\\scenario_core_rule_definitions.mdb";
+				((frmMain)this.ParentForm.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" +
+                    Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			frmDialog frmPrevExp = new frmDialog();
 				
 			frmPrevExp.Width = frmPrevExp.uc_previous_expressions1.m_intFullWd;
 			frmPrevExp.Height = frmPrevExp.uc_previous_expressions1.m_intFullHt;
-			frmPrevExp.Text = "Core Analysis: Previous FVS Variables SQL Expressions";
+			frmPrevExp.Text = "Treatment Optimizer: Previous FVS Variables SQL Expressions";
 					
 			frmPrevExp.uc_previous_expressions1.Visible=true;
 
@@ -4138,19 +4017,19 @@ namespace FIA_Biosum_Manager
 
 			switch (this.m_intCurVariableDefinitionStepCount)
 			{
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_BETTER:
 					strSQL = "SELECT scenario_id,pre_fvs_variable,better_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"BETTER_EXPRESSION","BETTER_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_WORSE:
 					strSQL = "SELECT scenario_id,pre_fvs_variable,worse_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"WORSE_EXPRESSION","WORSE_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLE_EFFECTIVE:
 					strSQL = "SELECT scenario_id,fvs_variables_list,pre_fvs_variable,effective_expression,current_yn FROM scenario_fvs_variables";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"EFFECTIVE_EXPRESSION","EFFECTIVE_EXPRESSION", "scenario_fvs_variables");
 					break;
-				case uc_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
+				case uc_optimizer_scenario_fvs_prepost_variables_effective.WIZARD_STEP_VARIABLES_OVERALL_EFFECTIVE:
 					strSQL = "SELECT scenario_id,fvs_variables_list,overall_effective_expression,current_yn FROM scenario_fvs_variables_overall_effective";
 					frmPrevExp.uc_previous_expressions1.loadvalues(strConn,strSQL,"OVERALL_EFFECTIVE_EXPRESSION","OVERALL_EFFECTIVE_EXPRESSION", "scenario_fvs_variables_overall_effective");
 					break;
@@ -4166,7 +4045,7 @@ namespace FIA_Biosum_Manager
 				if (result == DialogResult.Yes)
 				{
 					this.txtExpression.Text = frmPrevExp.uc_previous_expressions1.listView1.SelectedItems[0].SubItems[frmPrevExp.uc_previous_expressions1.m_intSelectColumn + 1].Text;
-					((frmCoreScenario)this.ParentForm).m_bSave=true;
+					((frmOptimizerScenario)this.ParentForm).m_bSave=true;
 				}
 			}
 			frmPrevExp.Close();
@@ -4178,13 +4057,13 @@ namespace FIA_Biosum_Manager
 			if (grpboxFVSVariablesPrePost.Visible==false) 
 			{
 
-				ReferenceCoreScenarioForm.m_strAllowLeaveTabPageMsg="Cannot edit Optimization until finished editing FVS Variable";
+				ReferenceOptimizerScenarioForm.m_strAllowLeaveTabPageMsg="Cannot edit Optimization until finished editing FVS Variable";
 
 			}
 			else 
 			{
 				
-				ReferenceCoreScenarioForm.m_strAllowLeaveTabPageMsg="";
+				ReferenceOptimizerScenarioForm.m_strAllowLeaveTabPageMsg="";
 
 			}
 		}
@@ -4195,13 +4074,13 @@ namespace FIA_Biosum_Manager
 		{
 
             int x;
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
-			ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlFVSVariables,"tboptimization,tbtiebreaker",p_bEnable);
-            ReferenceCoreScenarioForm.EnableTabPage(ReferenceCoreScenarioForm.tabControlCosts, "tbcosts", p_bEnable);
-            for (x = 0; x <= ReferenceCoreScenarioForm.tlbScenario.Buttons.Count - 1; x++)
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlScenario,"tbdesc,tbnotes,tbdatasources",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlRules,"tbpsites,tbowners,tbcost,tbtreatmentintensity,tbfilterplots,tbrun",p_bEnable);
+			ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlFVSVariables,"tboptimization,tbtiebreaker",p_bEnable);
+            ReferenceOptimizerScenarioForm.EnableTabPage(ReferenceOptimizerScenarioForm.tabControlCosts, "tbcosts", p_bEnable);
+            for (x = 0; x <= ReferenceOptimizerScenarioForm.tlbScenario.Buttons.Count - 1; x++)
             {
-                ReferenceCoreScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
+                ReferenceOptimizerScenarioForm.tlbScenario.Buttons[x].Enabled = p_bEnable;
             }
             frmMain.g_oFrmMain.grpboxLeft.Enabled = p_bEnable;
             frmMain.g_oFrmMain.tlbMain.Enabled = p_bEnable;
@@ -4245,39 +4124,96 @@ namespace FIA_Biosum_Manager
 			set {_bDisplayAuditMsg=value;}
 		}
 		
-		public FIA_Biosum_Manager.frmCoreScenario ReferenceCoreScenarioForm
+		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
 		{
 			get {return _frmScenario;}
 			set {_frmScenario=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_optimization ReferenceOptimizationUserControl
 		{
 			get {return _uc_optimization;}
 			set {_uc_optimization=value;}
 		}
-		public FIA_Biosum_Manager.uc_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreakerUserControl
+		public FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_tiebreaker ReferenceTieBreakerUserControl
 		{
 			get {return _uc_tiebreaker;}
 			set {_uc_tiebreaker=value;}
 		}
 
-        private void txtFVSVariablesPrePostExpressionNRFilterAmount_Leave(object sender, EventArgs e)
+        private void lstFVSTablesList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.m_oValidate.ValidateDecimal(this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text);
-            if (m_oValidate.m_intError == 0)
+            lstFVSFieldsList.Items.Clear();
+            txtEffVarDescr.Text = "";
+            this.lblFVSVariablesPrePostVariablePreSelected.Text = "Not Defined";
+            this.lblFVSVariablesPrePostVariablePostSelected.Text = "Not Defined";
+            if (this.lstFVSTablesList.SelectedIndex > -1)
             {
-                this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text = m_oValidate.ReturnValue;
-                this.m_oCurVar.m_strOverallEffectiveNetRevValue = m_oValidate.ReturnValue;
-
+                System.Collections.Generic.IList<string> lstFields =
+                    m_dictFVSTables[Convert.ToString(this.lstFVSTablesList.SelectedItem)];
+                if (lstFields != null)
+                {
+                    foreach (string strField in lstFields)
+                    {
+                        lstFVSFieldsList.Items.Add(strField);
+                    }
+                }
+                // Control visibility of the weighted variable description fields
+                bool bDisplayWeightedFields = this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED");
+                lblEffVarDescr.Visible = bDisplayWeightedFields;
+                txtEffVarDescr.Visible = bDisplayWeightedFields;
             }
             else
             {
-                if (m_oCurVar.m_strOverallEffectiveNetRevValue.IndexOf("$", 0) < 0)
+                lblEffVarDescr.Visible = false;
+                txtEffVarDescr.Visible = false;
+            }
+
+        }
+
+        private void lstFVSFieldsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.lblFVSVariablesPrePostVariablePreSelected.Text = "Not Defined";
+            this.lblFVSVariablesPrePostVariablePostSelected.Text = "Not Defined";
+            this.txtEffVarDescr.Text = "";
+            if (this.lstFVSFieldsList.SelectedIndex > -1)
+            {
+                this.btnFVSVariablesPrePostVariableValue.Enabled = true;
+                if (this.lstFVSTablesList.SelectedItems[0].ToString().ToUpper().Contains("_WEIGHTED") == true)
                 {
-                    m_oValidate.ValidateDecimal(m_oCurVar.m_strOverallEffectiveNetRevValue);
-                    txtFVSVariablesPrePostExpressionNRFilterAmount.Text = m_oValidate.ReturnValue;
-                }
-                else this.txtFVSVariablesPrePostExpressionNRFilterAmount.Text = m_oCurVar.m_strOverallEffectiveNetRevValue;
+                    foreach (uc_optimizer_scenario_calculated_variables.VariableItem oItem in this.ReferenceOptimizerScenarioForm.m_oWeightedVariableCollection)
+                    {
+                        if (oItem.strVariableName.Equals(Convert.ToString(this.lstFVSFieldsList.SelectedItem)))
+                        {
+                            if (!String.IsNullOrEmpty(oItem.strVariableDescr))
+                                txtEffVarDescr.Text = oItem.strVariableDescr;
+                            break;
+                        }
+                    }
+                }                
+            }
+            else
+            {
+                this.btnFVSVariablesPrePostVariableValue.Enabled = false;
+            }
+        }
+
+        private void grpboxFVSVariablesPrePostExpression_VisibleChanged(object sender, EventArgs e)
+        {
+            if (grpboxFVSVariablesPrePostExpression.Visible == false)
+            {
+                m_strHelpChapter = "EFFECTIVE_SETTINGS";
+            }
+            else
+            {
+                m_strHelpChapter = "EFFECTIVE_EXPRESSION_BUILDER";
+            }
+        }
+
+        public string HelpChapter
+        {
+            get
+            {
+                return m_strHelpChapter;
             }
         }
        
