@@ -3402,14 +3402,16 @@ namespace FIA_Biosum_Manager
              m_oAdo.m_strSQL = "DROP TABLE temp_year";
              m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
-             bool bOPCOSTWindow = RunScenario_CreateOPCOSTBatchFile();
-             RunScenario_ExecuteOPCOST(bOPCOSTWindow);
+             string strOPCOSTErrorFilePath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input\\" +
+                                             p_strVariant + "_" + p_strRxPackage + "_opcost_error_log.txt"; 
+            bool bOPCOSTWindow = RunScenario_CreateOPCOSTBatchFile(strOPCOSTErrorFilePath);
+            RunScenario_ExecuteOPCOST(bOPCOSTWindow, strOPCOSTErrorFilePath);
              
             
 
 
         }
-        private void RunScenario_ExecuteOPCOST(bool bOPCOSTWindow)
+        private void RunScenario_ExecuteOPCOST(bool bOPCOSTWindow, string strOPCOSTErrorFilePath)
         {
             //close the open connection
             string strConn = m_oAdo.m_OleDbConnection.ConnectionString;
@@ -3459,7 +3461,8 @@ namespace FIA_Biosum_Manager
             if (!m_oAdo.TableExist(m_oAdo.m_OleDbConnection,"OPCOST_OUTPUT"))
             {
                 m_intError=-1;
-                m_strError="!!OPCOST processing failed to produce table OPCOST_OUTPUT!!";
+                m_strError="!!OPCOST processing did not complete successfully. Check the error log at " +
+                            strOPCOSTErrorFilePath + " for details!!";
 
                 MessageBox.Show(m_strError,"FIA Biosum",MessageBoxButtons.OK,MessageBoxIcon.Error);
 
@@ -3468,7 +3471,7 @@ namespace FIA_Biosum_Manager
 
 
         }
-        private bool RunScenario_CreateOPCOSTBatchFile()
+        private bool RunScenario_CreateOPCOSTBatchFile(string strOPCOSTErrorFilePath)
         {
             
             //create a batch file containing the command
@@ -3487,7 +3490,7 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("SET OPCOSTRFILE=" + uc_processor_opcost_settings.g_strOPCOSTDirectory + "\r\n");
             oTextStreamWriter.Write("SET INPUTFILE=" + m_oQueries.m_strTempDbFile + "\r\n");
             oTextStreamWriter.Write("SET CONFIGFILE=" + m_strOPCOSTRefPath + "\r\n");
-            oTextStreamWriter.Write("SET ERRORFILE=" + frmMain.g_oEnv.strTempDir + "\\opcost_error_log.txt  \r\n");
+            oTextStreamWriter.Write("SET ERRORFILE=" + strOPCOSTErrorFilePath +  "\r\n");
             oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
             string strRedirect = " 2> " + "\"" + "%ERRORFILE%" + "\"";
             // Suppress OpCost window if debugging is turned off OR debug level < 3
@@ -4299,6 +4302,60 @@ namespace FIA_Biosum_Manager
             m_strError = m_oAdo.m_strError;
         }
 
+        private void RunScenario_CopyOPCOSTTables(string p_strVariant, string p_strRxPackage, string p_strRx1, string p_strRx2,
+            string p_strRx3, string p_strRx4)
+        {
+            string strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
+            string strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
+                           p_strVariant + "_P" + p_strRxPackage + "_" + p_strRx1 + "_" + p_strRx2 + "_" + p_strRx3 + "_" + p_strRx4 + "_" + m_strDateTimeCreated + ".accdb";
+            strInputFile = strInputFile.Replace(":", "_");
+            strInputFile = strInputFile.Replace(" ", "_");
+            System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
+            //I am cutting this in half from 5000 because it feels like a long time. Reset if this causes problems
+            System.Threading.Thread.Sleep(2500);
+            //delete the work tables and any links
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
+            //if (m_oAdo.m_intError == 0)
+            //{
+            string[] strTables = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
+            if (strTables != null)
+            {
+                for (int z = 0; z <= strTables.Length - 1; z++)
+                {
+                    if (strTables[z] != null)
+                    {
+                        switch (strTables[z].Trim().ToUpper())
+                        {
+                            case "OPCOST_ERRORS": break;
+                            //case "OPCOST_IDEAL_ERRORS": break;
+                            case "OPCOST_INPUT": break;
+                            case "OPCOST_OUTPUT": break;
+                            //case "OPCOST_IDEAL_OUTPUT": break;
+                            default:
+                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
+                                break;
+
+                        }
+                    }
+                }
+            }
+
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            System.Threading.Thread.Sleep(5000);
+            if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
+            {
+                dao_data_access oDao = new dao_data_access();
+                oDao.m_DaoDbEngine.Idle(1);
+                oDao.m_DaoDbEngine.Idle(8);
+                oDao.CompactMDB(strInputPath + "\\" + strInputFile);
+                m_intError = oDao.m_intError;
+                oDao.m_DaoWorkspace.Close();
+                oDao.m_DaoDbEngine = null;
+                oDao = null;
+                System.Threading.Thread.Sleep(5000);
+            }
+        }
+
         private void RunScenario_StartNew()
         {
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
@@ -4730,55 +4787,15 @@ namespace FIA_Biosum_Manager
                         {
                             MessageBox.Show("Failed to compact and repair file " + m_oQueries.m_strTempDbFile, "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         }
-                        string strInputFile = "";
 
-                        strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                        strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
-                                       strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
-                        strInputFile = strInputFile.Replace(":", "_");
-                        strInputFile = strInputFile.Replace(" ", "_");
-                        System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
-                        System.Threading.Thread.Sleep(5000);
-                        //delete the work tables and any links
-                        m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
-                        if (m_oAdo.m_intError == 0)
-                        {
-                           string[] strTables = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
-                           if (strTables != null)
-                           {
-                                for (z = 0; z <= strTables.Length - 1; z++)
-                                {
-                                    if (strTables[z] != null)
-                                    {
-                                        switch (strTables[z].Trim().ToUpper())
-                                        {
-                                            case "OPCOST_ERRORS": break;
-                                            //case "OPCOST_IDEAL_ERRORS": break;
-                                            case "OPCOST_INPUT": break;
-                                            case "OPCOST_OUTPUT": break;
-                                            //case "OPCOST_IDEAL_OUTPUT": break;
-                                            default:
-                                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
-                                                break;
+                        RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4);
 
-                                         }
-                                     }
-                                 }
-                            }
-
-                            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-                            System.Threading.Thread.Sleep(5000);
-                            if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
-                            {
-                                oDao.m_DaoDbEngine.Idle(1);
-                                oDao.m_DaoDbEngine.Idle(8);
-                                oDao.CompactMDB(strInputPath + "\\" + strInputFile);
-                                System.Threading.Thread.Sleep(5000);
-                            }
-
-                        }
-                        m_intError = oDao.m_intError;
                         m_oAdo.OpenConnection(strConn, 5);
+                    }
+                    else
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Saving tables to OPCOST directory...Stand By");
+                        RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4);
                     }
 
                     if (m_intError == 0)
