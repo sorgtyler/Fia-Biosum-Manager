@@ -7593,7 +7593,7 @@ namespace FIA_Biosum_Manager
                 **************************************************************************************/
 
                 this.m_strSQL = "INSERT INTO " + strBestRxSummaryTableName + "_air_dest " +
-                    "SELECT DISTINCT c.biosum_cond_id,c.acres,c.owngrpcd,e.optimization_value,e.tiebreaker_value,e.rx_intensity,e.rx " +
+                    "SELECT DISTINCT c.biosum_cond_id,c.acres,c.owngrpcd,e.optimization_value,e.tiebreaker_value,e.last_tiebreak_rank,e.rxpackage,e.rx " +
                     "FROM " + this.m_strCondTable.Trim() + " c, " +
                     this.m_strPlotTable.Trim() + " p, " +
                     strBestRxSummaryTableName + " e " +
@@ -8004,7 +8004,9 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + m_ado.m_strSQL + "\r\n");
 				m_ado.SqlNonQuery(m_TempMDBFileConn,m_ado.m_strSQL);
-				m_ado.m_strSQL="INSERT INTO cycle1_best_rx_summary SELECT * FROM cycle1_best_rx_summary_work_table";
+                m_ado.m_strSQL="INSERT INTO " + ReferenceOptimizerScenarioForm.OutputTablePrefix +
+                    Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix +
+                    " SELECT * FROM cycle1_best_rx_summary_work_table";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     frmMain.g_oUtils.WriteText(m_strDebugFile,"--insert the work table records into the best_rx_summary table--\r\n");
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
