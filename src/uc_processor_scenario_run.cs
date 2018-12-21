@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace FIA_Biosum_Manager
 {
@@ -17,9 +18,6 @@ namespace FIA_Biosum_Manager
         public string m_strError = "";
 
         private ado_data_access m_oAdo;
-        private string m_strConn = "";
-        private string m_strTempMDBFile = "";
-        private string m_strProjDir = "";
 
         //list view associated classes
         private ListViewEmbeddedControls.ListViewEx m_lvEx;
@@ -55,6 +53,9 @@ namespace FIA_Biosum_Manager
         private string _strScenarioId = "";
         private frmProcessorScenario _frmProcessorScenario = null;
         private ProgressBarEx.ProgressBarEx _oProgressBarEx = null;
+        private System.Collections.Generic.IList<string> _lstErrorVariants = null;
+        private System.Collections.Generic.IList<string> _lstErrorRxPkg = null;
+        private System.Collections.Generic.IList<int> _lstErrorCount = null;
        
         private const int COL_CHECKBOX = 0;
         private const int COL_VARIANT = 1;
@@ -3369,7 +3370,7 @@ namespace FIA_Biosum_Manager
             m_strError = m_oExcel.m_strError;
 
         }
-        private void RunScenario_ProcessOPCOST(string p_strVariant,string p_strRxPackage)
+        private void RunScenario_ProcessOPCOST(string p_strVariant, string p_strRxPackage)
         {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -3387,29 +3388,62 @@ namespace FIA_Biosum_Manager
 
             string strTable = "fvs_tree_IN_" + p_strVariant + "_P" + p_strRxPackage + "_TREE_CUTLIST";
             m_oAdo.m_strSQL = "DROP TABLE temp_year";
-            if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection,"temp_year"))
-                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
-            m_oAdo.m_strSQL = "SELECT DISTINCT biosum_cond_id+rxpackage+rx+rxcycle AS STAND,RXYEAR " + 
-                              "INTO temp_year " + 
+            if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "temp_year"))
+                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+            m_oAdo.m_strSQL = "SELECT DISTINCT biosum_cond_id+rxpackage+rx+rxcycle AS STAND,RXYEAR " +
+                              "INTO temp_year " +
                               "FROM " + strTable;
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
+            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
             m_oAdo.m_strSQL = "UPDATE opcost_input a INNER JOIN temp_year b ON a.STAND=b.STAND SET a.YearCostCalc=CINT(b.RXYEAR)";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
-             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection,m_oAdo.m_strSQL);
-             m_oAdo.m_strSQL = "DROP TABLE temp_year";
-             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+            m_oAdo.m_strSQL = "DROP TABLE temp_year";
+            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
-             bool bOPCOSTWindow = RunScenario_CreateOPCOSTBatchFile();
-             RunScenario_ExecuteOPCOST(bOPCOSTWindow);
-             
-            
+            string strOPCOSTErrorFilePath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input\\" +
+                                             p_strVariant + "_" + p_strRxPackage + "_opcost_error_log.txt";
+            bool bOPCOSTWindow = RunScenario_CreateOPCOSTBatchFile(strOPCOSTErrorFilePath);
+            RunScenario_ExecuteOPCOST(bOPCOSTWindow, strOPCOSTErrorFilePath);
 
+            ado_data_access oAdo = new ado_data_access();
+            using (var oConn = new System.Data.OleDb.OleDbConnection(m_oAdo.m_OleDbConnection.ConnectionString))
+            {
+                oConn.Open();
+                if (oAdo.TableExist(oConn.ConnectionString, Tables.Processor.DefaultOpcostErrorsTableName))
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Querying " + Tables.Processor.DefaultOpcostErrorsTableName + "table \r\n");
+                    int intCount = Convert.ToInt32(oAdo.getRecordCount(oConn.ConnectionString,
+                        "select count(*) from " + Tables.Processor.DefaultOpcostErrorsTableName, Tables.Processor.DefaultOpcostErrorsTableName));
 
+                    if (intCount > 0)
+                    {
+                        // This is the first error so we pop a message
+                        if (_lstErrorVariants.Count == 0)
+                        {
+                            string strMessage = "Costs could not be estimated for " + intCount +
+                                                " stands in Variant " + p_strVariant + " Sequence " + p_strRxPackage +
+                                                ". Do you wish to continue ? ";
+                            DialogResult res = MessageBox.Show(strMessage, "FIA Biosum", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            if (res != DialogResult.Yes)
+                            {
+                                m_intError = -1;
+                                return;
+                            }
+                        }
+                            _lstErrorVariants.Add(p_strVariant);
+                            _lstErrorRxPkg.Add(p_strRxPackage);
+                            _lstErrorCount.Add(intCount);
+                    }
+                 }
+                 oAdo = null;
+            }
         }
-        private void RunScenario_ExecuteOPCOST(bool bOPCOSTWindow)
+        
+        private void RunScenario_ExecuteOPCOST(bool bOPCOSTWindow, string strOPCOSTErrorFilePath)
         {
             //close the open connection
             string strConn = m_oAdo.m_OleDbConnection.ConnectionString;
@@ -3459,7 +3493,8 @@ namespace FIA_Biosum_Manager
             if (!m_oAdo.TableExist(m_oAdo.m_OleDbConnection,"OPCOST_OUTPUT"))
             {
                 m_intError=-1;
-                m_strError="!!OPCOST processing failed to produce table OPCOST_OUTPUT!!";
+                m_strError="!!OPCOST processing did not complete successfully. Check the error log at " +
+                            strOPCOSTErrorFilePath + " for details!!";
 
                 MessageBox.Show(m_strError,"FIA Biosum",MessageBoxButtons.OK,MessageBoxIcon.Error);
 
@@ -3468,7 +3503,7 @@ namespace FIA_Biosum_Manager
 
 
         }
-        private bool RunScenario_CreateOPCOSTBatchFile()
+        private bool RunScenario_CreateOPCOSTBatchFile(string strOPCOSTErrorFilePath)
         {
             
             //create a batch file containing the command
@@ -3487,7 +3522,7 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("SET OPCOSTRFILE=" + uc_processor_opcost_settings.g_strOPCOSTDirectory + "\r\n");
             oTextStreamWriter.Write("SET INPUTFILE=" + m_oQueries.m_strTempDbFile + "\r\n");
             oTextStreamWriter.Write("SET CONFIGFILE=" + m_strOPCOSTRefPath + "\r\n");
-            oTextStreamWriter.Write("SET ERRORFILE=" + frmMain.g_oEnv.strTempDir + "\\opcost_error_log.txt  \r\n");
+            oTextStreamWriter.Write("SET ERRORFILE=" + strOPCOSTErrorFilePath +  "\r\n");
             oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
             string strRedirect = " 2> " + "\"" + "%ERRORFILE%" + "\"";
             // Suppress OpCost window if debugging is turned off OR debug level < 3
@@ -4299,6 +4334,61 @@ namespace FIA_Biosum_Manager
             m_strError = m_oAdo.m_strError;
         }
 
+        private string RunScenario_CopyOPCOSTTables(string p_strVariant, string p_strRxPackage, string p_strRx1, string p_strRx2,
+            string p_strRx3, string p_strRx4)
+        {
+            string strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
+            string strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
+                           p_strVariant + "_P" + p_strRxPackage + "_" + p_strRx1 + "_" + p_strRx2 + "_" + p_strRx3 + "_" + p_strRx4 + "_" + m_strDateTimeCreated + ".accdb";
+            strInputFile = strInputFile.Replace(":", "_");
+            strInputFile = strInputFile.Replace(" ", "_");
+            System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
+            //I am cutting this in half from 5000 because it feels like a long time. Reset if this causes problems
+            System.Threading.Thread.Sleep(2500);
+            //delete the work tables and any links
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
+            //if (m_oAdo.m_intError == 0)
+            //{
+            string[] strTables = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
+            if (strTables != null)
+            {
+                for (int z = 0; z <= strTables.Length - 1; z++)
+                {
+                    if (strTables[z] != null)
+                    {
+                        switch (strTables[z].Trim().ToUpper())
+                        {
+                            case "OPCOST_ERRORS": break;
+                            //case "OPCOST_IDEAL_ERRORS": break;
+                            case "OPCOST_INPUT": break;
+                            case "OPCOST_OUTPUT": break;
+                            //case "OPCOST_IDEAL_OUTPUT": break;
+                            default:
+                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
+                                break;
+
+                        }
+                    }
+                }
+            }
+
+            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
+            System.Threading.Thread.Sleep(5000);
+            if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
+            {
+                dao_data_access oDao = new dao_data_access();
+                oDao.m_DaoDbEngine.Idle(1);
+                oDao.m_DaoDbEngine.Idle(8);
+                oDao.CompactMDB(strInputPath + "\\" + strInputFile);
+                m_intError = oDao.m_intError;
+                oDao.m_DaoWorkspace.Close();
+                oDao.m_DaoDbEngine = null;
+                oDao = null;
+                System.Threading.Thread.Sleep(5000);
+            }
+            return strInputPath + "\\" + strInputFile;
+        }
+
         private void RunScenario_StartNew()
         {
             ReferenceProcessorScenarioForm.tlbScenario.Enabled = false;
@@ -4352,6 +4442,9 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
 
+            _lstErrorVariants = new System.Collections.Generic.List<string>();
+            _lstErrorRxPkg = new System.Collections.Generic.List<string>();
+            _lstErrorCount = new System.Collections.Generic.List<int>();
             m_intLvCheckedCount = 0;
             m_intLvTotalCount = this.m_lvEx.Items.Count;
             for (x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
@@ -4376,7 +4469,7 @@ namespace FIA_Biosum_Manager
             }
             frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Prepare for processing...Stand By");
 
-
+            string strOpcostInputPath = "";
             for (x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
             {
                 if ((bool)frmMain.g_oDelegate.GetListViewExItemPropertyValue(this.m_lvEx, x, "Checked", false))
@@ -4730,55 +4823,15 @@ namespace FIA_Biosum_Manager
                         {
                             MessageBox.Show("Failed to compact and repair file " + m_oQueries.m_strTempDbFile, "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         }
-                        string strInputFile = "";
 
-                        strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                        strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
-                                       strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
-                        strInputFile = strInputFile.Replace(":", "_");
-                        strInputFile = strInputFile.Replace(" ", "_");
-                        System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
-                        System.Threading.Thread.Sleep(5000);
-                        //delete the work tables and any links
-                        m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
-                        if (m_oAdo.m_intError == 0)
-                        {
-                           string[] strTables = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
-                           if (strTables != null)
-                           {
-                                for (z = 0; z <= strTables.Length - 1; z++)
-                                {
-                                    if (strTables[z] != null)
-                                    {
-                                        switch (strTables[z].Trim().ToUpper())
-                                        {
-                                            case "OPCOST_ERRORS": break;
-                                            //case "OPCOST_IDEAL_ERRORS": break;
-                                            case "OPCOST_INPUT": break;
-                                            case "OPCOST_OUTPUT": break;
-                                            //case "OPCOST_IDEAL_OUTPUT": break;
-                                            default:
-                                                m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE " + strTables[z].Trim());
-                                                break;
+                        strOpcostInputPath = RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4);
 
-                                         }
-                                     }
-                                 }
-                            }
-
-                            m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
-                            System.Threading.Thread.Sleep(5000);
-                            if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
-                            {
-                                oDao.m_DaoDbEngine.Idle(1);
-                                oDao.m_DaoDbEngine.Idle(8);
-                                oDao.CompactMDB(strInputPath + "\\" + strInputFile);
-                                System.Threading.Thread.Sleep(5000);
-                            }
-
-                        }
-                        m_intError = oDao.m_intError;
                         m_oAdo.OpenConnection(strConn, 5);
+                    }
+                    else
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Saving tables to OPCOST directory...Stand By");
+                        strOpcostInputPath = RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4);
                     }
 
                     if (m_intError == 0)
@@ -4804,7 +4857,25 @@ namespace FIA_Biosum_Manager
             oDao.m_DaoDbEngine = null;
             oDao = null;
 
-            MessageBox.Show("Done", "FIA Biosum");
+            if (_lstErrorVariants.Count == 0)
+            {
+                MessageBox.Show("Done", "FIA Biosum");
+            }
+            else
+            {
+                string strVariantInfo = "";
+                int idx = 0;
+                foreach (string strNextVariant in _lstErrorVariants)
+                {
+                    strVariantInfo = strVariantInfo + strNextVariant + "     " + _lstErrorRxPkg[idx] + 
+                        String.Format("{0,8}", _lstErrorCount[idx]) + "\r\n";
+                    idx++;
+                }
+                string strMessage = "Done with warnings. Biosum could not estimate costs for the following Variant/Sequence " +
+                                    "combinations. Please review the opcost_errors tables in " + strOpcostInputPath + ".\r\n\r\n" +
+                                    strVariantInfo;
+                MessageBox.Show(strMessage, "FIA Biosum");
+            }
             if (frmMain.g_bDebug)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
 
@@ -4818,10 +4889,9 @@ namespace FIA_Biosum_Manager
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            //@ToDo: Take this out when we only have one run button
-            if (this.btnRun.Text.Trim().ToUpper() == "CANCEL" || this.btnRunOC7.Text.Trim().ToUpper() == "CANCEL")
+            if (this.btnRun.Text.Trim().ToUpper() == "CANCEL")
             {
-                bool bAbort = frmMain.g_oDelegate.AbortProcessing("QATools", "Cancel Running The Processor Scenario (Y/N)?");
+                bool bAbort = frmMain.g_oDelegate.AbortProcessing("FIA Biosum", "Cancel Running The Processor Scenario (Y/N)?");
                 if (bAbort)
                 {
                     if (frmMain.g_oDelegate.m_oThread.IsAlive)

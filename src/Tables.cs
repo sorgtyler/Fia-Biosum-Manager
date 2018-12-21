@@ -3622,6 +3622,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeVolValSpeciesDiamGroupsTableName { get { return "tree_vol_val_by_species_diam_groups"; } }
             static public string DefaultHarvestMethodTableDbFile { get { return @"db\master.mdb"; } }
             static public string DefaultHarvestMethodTableName { get { return @"harvest_method"; } }
+            static public string DefaultOpcostErrorsTableName { get { return @"opcost_errors"; } }
 
             public void CreateHarvestCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {

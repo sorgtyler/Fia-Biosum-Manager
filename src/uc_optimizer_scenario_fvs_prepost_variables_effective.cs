@@ -3851,7 +3851,11 @@ namespace FIA_Biosum_Manager
                     {
                         if (strPieces[0].ToUpper().Contains("_WEIGHTED"))
                         {
-                            string strWeightedError = this.m_oOptimizerScenarioTools.AuditWeightedFvsVariables(strPieces[0], out m_intError);
+                            // Strip PRE_ prefix from the table before sending it to the shared AuditWeightedFvsVariables
+                            // function so that it can be shared with optimizer and tie break
+                            char[] preArray = "PRE_".ToCharArray();
+                            string strTempTableName = strPieces[0].TrimStart(preArray);
+                            string strWeightedError = this.m_oOptimizerScenarioTools.AuditWeightedFvsVariables(strTempTableName, out m_intError);
                             if (m_intError != 0)
                             {
                                 m_strError = m_strError + strWeightedError;
