@@ -4536,7 +4536,7 @@ namespace FIA_Biosum_Manager
                                 //save the original spcd
                                 if ((int)oAdo.getRecordCount(oConn, "SELECT COUNT(*) AS ROWCOUNT FROM " + strFvsTreeTable + " WHERE TRIM(FVS_SPECIES) IN ('298','999')", strFvsTreeTable) > 0)
                                 {
-                                    oAdo.m_strSQL = "SELECT FVS_TREE_ID, FVS_SPECIES INTO cutlist_save_tree_species_work_table FROM " + strFvsTreeTable + " WHERE TRIM(FVS_SPECIES) IN ('298','999')";
+                                    oAdo.m_strSQL = "SELECT BIOSUM_COND_ID, FVS_TREE_ID, FVS_SPECIES INTO cutlist_save_tree_species_work_table FROM " + strFvsTreeTable + " WHERE TRIM(FVS_SPECIES) IN ('298','999')";
                                     if (m_bDebug && frmMain.g_intDebugLevel > 2)
                                         this.WriteText(m_strDebugFile, "START: " + System.DateTime.Now.ToString() + "\r\n" + oAdo.m_strSQL + "\r\n");
                                     oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
@@ -4942,7 +4942,8 @@ namespace FIA_Biosum_Manager
                                     if (oAdo.TableExist(oConn, "cutlist_save_tree_species_work_table"))
                                     {
                                         //update fvs_species
-                                        oAdo.m_strSQL = "UPDATE " + strFvsTreeTable + " fvs INNER JOIN cutlist_save_tree_species_work_table w ON fvs.FVS_TREE_ID = TRIM(w.FVS_TREE_ID) " +
+                                        oAdo.m_strSQL = "UPDATE " + strFvsTreeTable + " fvs INNER JOIN cutlist_save_tree_species_work_table w " +
+                                                        "ON fvs.FVS_TREE_ID = TRIM(w.FVS_TREE_ID) AND fvs.biosum_cond_id = w.biosum_cond_id " +
                                                         "SET fvs.FVS_SPECIES = TRIM(w.fvs_species) " +
                                                         "WHERE  w.fvs_species IS NOT NULL AND " +
                                                         "LEN(TRIM(w.fvs_species)) > 0 AND " +
@@ -8383,7 +8384,7 @@ namespace FIA_Biosum_Manager
                                                       "ON t.biosum_cond_id=c.biosum_cond_id) " +
                                                       "INNER JOIN " + m_oQueries.m_oFIAPlot.m_strPlotTable + " p " +
                                                       "ON p.biosum_plot_id=c.biosum_plot_id) " +
-                                      "ON i.fvs_tree_id=t.fvs_tree_id " +
+                                      "ON i.fvs_tree_id=t.fvs_tree_id AND i.biosum_cond_id=t.biosum_cond_id " +
                                       "SET i.FOUND_FvsTreeId_YN='Y'";
 
             if (m_bDebug && frmMain.g_intDebugLevel > 2)
