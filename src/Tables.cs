@@ -1799,7 +1799,8 @@ namespace FIA_Biosum_Manager
 															  "FVS_BM_TREE",
                                                               "FVS_BM_VOL",
                                                               "FVS_ECONSUMMARY",
-                                                              "FVS_ECONHARVESTVALUE"};
+                                                              "FVS_ECONHARVESTVALUE",
+                                                              "FVS_CUSTOM"};
 
 			static public string DefaultRxTableDbFile {get {return @"db\fvsmaster.mdb";}}
 			static public string DefaultRxTableName {get {return "rx";}}

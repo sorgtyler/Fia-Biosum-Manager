@@ -1037,8 +1037,17 @@ namespace FIA_Biosum_Manager
                     {
                         string strPrePost = "";
                         string strRxCycle = "";
-                        int intSeqNum = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinSeqNum1"]);
-                        int intYear = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinYear1"]);
+                        int intSeqNum = -99;
+                        int intYear = -99;
+                        if (m_oAdoFvs.m_OleDbDataReader["MinSeqNum1"] != System.DBNull.Value)
+                        {
+                            intSeqNum = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinSeqNum1"]);
+                        }
+                        if (m_oAdoFvs.m_OleDbDataReader["MinYear1"] != System.DBNull.Value)
+                        {
+                            intYear = Convert.ToInt16(m_oAdoFvs.m_OleDbDataReader["MinYear1"]);
+                        }
+
                         switch (i)
                         {
                             case 0:

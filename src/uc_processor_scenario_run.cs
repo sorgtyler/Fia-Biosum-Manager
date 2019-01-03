@@ -4624,7 +4624,7 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        m_intError = mainProcessor.createOpcostInput();
+                        m_intError = mainProcessor.createOpcostInput(strVariant);
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         {

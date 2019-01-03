@@ -586,7 +586,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        public int createOpcostInput()
+        public int createOpcostInput(string p_strVariant)
         {
             int intReturnVal = -1;
             int intHwdSpeciesCodeThreshold = 299; // Species codes greater than this are hardwoods
@@ -706,7 +706,7 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "createOpcostInput: Load Basal Area for all conditions from PRE_FVS_SUMMARY - " + System.DateTime.Now.ToString() + "\r\n");
 
-                System.Collections.Generic.IDictionary<string, double> dictFvsPreBasalArea = this.loadFvsPreBasalArea();
+                System.Collections.Generic.IDictionary<string, double> dictFvsPreBasalArea = this.loadFvsPreBasalArea(p_strVariant);
 
                 if (dictFvsPreBasalArea.Keys.Count == 0)
                 {
@@ -2816,14 +2816,15 @@ namespace FIA_Biosum_Manager
             return dictTravelTimes;
         }
 
-        private System.Collections.Generic.IDictionary<String, double> loadFvsPreBasalArea()
+        private System.Collections.Generic.IDictionary<String, double> loadFvsPreBasalArea(string p_strVariant)
         {
             System.Collections.Generic.IDictionary<String, double> dictPreBasalArea =
                 new System.Collections.Generic.Dictionary<String, double>();
             if (m_oAdo.m_intError == 0)
             {
                 string strSQL = "SELECT TRIM(biosum_cond_id) + TRIM(rxpackage)  + TRIM(rx) + TRIM(rxcycle) as [OpCostStandId], BA" +
-                                " FROM " + Tables.FVS.DefaultPreFVSSummaryTableName;
+                                " FROM " + Tables.FVS.DefaultPreFVSSummaryTableName + 
+                                " WHERE fvs_variant = '" + p_strVariant + "'";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
                 {
