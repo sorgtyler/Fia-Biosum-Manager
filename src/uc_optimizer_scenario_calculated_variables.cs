@@ -942,6 +942,12 @@ namespace FIA_Biosum_Manager
             dao_data_access oDao = new dao_data_access();
             oDao.CreateMDB(m_strTempMDB);
 
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "loadm_dg: Starting to load FVS calculated variable datagrid \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Temporary database path: " + m_strTempMDB + "\r\n\r\n");
+            }
+
             // Load project data sources table
             FIA_Biosum_Manager.Datasource oDs = new Datasource();
             oDs.m_strDataSourceMDBFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim()
@@ -982,6 +988,11 @@ namespace FIA_Biosum_Manager
                 string strPackage = m_oAdoFvs.m_OleDbDataReader["RxPackage"].ToString().Trim();
 
                 string strOutMDBFile = oRxTools.GetRxPackageFvsOutDbFileName(m_oAdoFvs.m_OleDbDataReader);
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "loadm_dg: Next RxPackageFvsOutDbFileName: " + strOutMDBFile + "\r\n\r\n");
+                }
                 string strACCDBFile = strOutMDBFile.Replace(".MDB", "_BIOSUM.ACCDB");
                 string strOutDirAndFile = strFvsDirectory + "\\" + strVariant + "\\" + strACCDBFile.Trim();
                 if (System.IO.File.Exists(strOutDirAndFile))
@@ -994,6 +1005,17 @@ namespace FIA_Biosum_Manager
 
                     if (!cboFvsVariableBaselinePkg.Items.Contains(strPackage))
                         cboFvsVariableBaselinePkg.Items.Add(strPackage);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "loadm_dg: Adding " + strLinkTableName + " to sequence number table list \r\n\r\n");
+                    }
+                }
+                else
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "loadm_dg: !!Unable to locate: " + strOutDirAndFile + "\r\n\r\n");
+                    }
                 }
             }
             if (lstSeqNumTables.Count > 0)
@@ -1015,13 +1037,14 @@ namespace FIA_Biosum_Manager
                 {
                     string strSql = "SELECT MIN(MinSeqNum) as MinSeqNum1, MIN(MinYear) as MinYear1 " +
                                     "FROM ( ";
-                    foreach (string strTableName in lstSeqNumTables)
-                    {
-                        strSql = strSql + "SELECT MIN(SEQNUM) as MinSeqNum, MIN(YEAR) as MinYear " +
-                                          "FROM " + strTableName +
-                                          sqlWhereArray[i] +
-                                          " UNION ALL ";
-                    }
+                    string strTableName = lstSeqNumTables[0];
+                    //foreach (string strTableName in lstSeqNumTables)
+                    //{
+                    strSql = strSql + "SELECT MIN(SEQNUM) as MinSeqNum, MIN(YEAR) as MinYear " +
+                        "FROM " + strTableName +
+                        sqlWhereArray[i] +
+                        " UNION ALL ";
+                    //}
                     //Trim off trailing union
                     strSql = strSql.Remove(strSql.LastIndexOf(" UNION ALL "));
                     strSql = strSql + ")";
@@ -1228,6 +1251,10 @@ namespace FIA_Biosum_Manager
             }
             else
             {
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "loadm_dg: !!Unable to locate any sequence number tables\r\n\r\n");
+                }
                 btnNewFvs.Enabled = false;
                 MessageBox.Show("!!FVS Pre/Post Tables Are Missing. FVS Weighted Variable Settings Disabled!!", "FIA Biosum",
                  System.Windows.Forms.MessageBoxButtons.OK,
