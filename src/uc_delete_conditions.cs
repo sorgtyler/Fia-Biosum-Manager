@@ -340,12 +340,18 @@ namespace FIA_Biosum_Manager
                 ConnectToDatabasesInPathAndExecuteDeletes(
                     Directory.GetFiles(m_strProjDir + "\\fvs\\db\\", "PREPOST*.accdb"),
                     strTableExceptions: new string[] {"FVS_TREE"});
+
+                //OPTIMIZER weighted variables
+                UpdateProgressBar2(90);
+                ConnectToDatabasesInPathAndExecuteDeletes(
+                    Directory.GetFiles(m_strProjDir + "\\optimizer\\db\\", "prepost*.accdb"));
                 UpdateProgressBar2(100);
+
 
                 //Results
                 if (Checked(chkCreateLog))
                 {
-                    CreateLogFile(frmMain.g_oEnv.strTempDir + "\\biosum_deleted_records" +
+                    CreateLogFile(frmMain.g_oFrmMain.getProjectDirectory() + "\\biosum_deleted_records" +
                                   String.Format("{0:yyyyMMdd}", DateTime.Now) + ".txt");
                 }
 

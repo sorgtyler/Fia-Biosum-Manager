@@ -2652,13 +2652,12 @@ namespace FIA_Biosum_Manager
                             string strConn = m_oAdo.getMDBConnString(strPrePostWeightedDb, "", "");
                             using (var conn = new System.Data.OleDb.OleDbConnection(strConn))
                             {
-                                // We get the list of conditions where rxcycle = 1; FVS creates a record for
+                                // FVS creates a record for
                                 // each condition for each cycle regardless of whether there is activity
                                 m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                       lblFvsVariableName.Text + " " +
                                       "INTO " + strTargetPreTable +
-                                      " FROM " + strSourcePreTable +
-                                      " WHERE rxcycle = '1'";
+                                      " FROM " + strSourcePreTable;
                                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                                 {
                                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
@@ -2669,8 +2668,7 @@ namespace FIA_Biosum_Manager
                                 m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                                   lblFvsVariableName.Text + " " +
                                                   "INTO " + strTargetPostTable +
-                                                  " FROM " + strSourcePostTable +
-                                                  " WHERE rxcycle = '1'";
+                                                  " FROM " + strSourcePostTable;
                                 m_oAdo.SqlNonQuery(strConn, m_oAdo.m_strSQL);
                                 bNewTables = true;
 
@@ -2727,7 +2725,8 @@ namespace FIA_Biosum_Manager
                                           "ON (pe.biosum_cond_id = f.biosum_cond_id) " +
                                           "SET " + lblFvsVariableName.Text + " = sum_pre + sum_post " +
                                           "WHERE pt.rxpackage = '" + cboFvsVariableBaselinePkg.SelectedItem.ToString() +
-                                          "' and pe.rxpackage = '" + cboFvsVariableBaselinePkg.SelectedItem.ToString() + "'";
+                                          "' and pe.rxpackage = '" + cboFvsVariableBaselinePkg.SelectedItem.ToString() + 
+                                          "' and f.rxcycle = '1'";
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         {
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated weighted PRE table with weighted totals from baseline scenario \r\n");
@@ -2738,7 +2737,8 @@ namespace FIA_Biosum_Manager
                                           "INNER JOIN " + strWeightsByRxPkgPreTable + " pe " +
                                           "ON (pt.rxpackage = pe.rxpackage) AND (pt.biosum_cond_id = pe.biosum_cond_id)) " +
                                           "INNER JOIN " + strTargetPostTable + " f ON (pe.rxpackage = f.rxpackage) AND (pe.biosum_cond_id = f.biosum_cond_id) " +
-                                          "SET " + lblFvsVariableName.Text + " = sum_pre + sum_post";
+                                          "SET " + lblFvsVariableName.Text + " = sum_pre + sum_post " +
+                                          "WHERE f.rxcycle = '1'";
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         {
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated weighted POST table with weighted totals from baseline scenario \r\n");

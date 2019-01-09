@@ -54,7 +54,6 @@ namespace FIA_Biosum_Manager
         private frmProcessorScenario _frmProcessorScenario = null;
         private ProgressBarEx.ProgressBarEx _oProgressBarEx = null;
         private System.Collections.Generic.IList<string> _lstErrorVariants = null;
-        private System.Collections.Generic.IList<string> _lstErrorRxPkg = null;
         private System.Collections.Generic.IList<int> _lstErrorCount = null;
        
         private const int COL_CHECKBOX = 0;
@@ -3434,8 +3433,7 @@ namespace FIA_Biosum_Manager
                                 return;
                             }
                         }
-                            _lstErrorVariants.Add(p_strVariant);
-                            _lstErrorRxPkg.Add(p_strRxPackage);
+                            _lstErrorVariants.Add(p_strVariant + "|" + p_strRxPackage);
                             _lstErrorCount.Add(intCount);
                     }
                  }
@@ -4335,7 +4333,7 @@ namespace FIA_Biosum_Manager
         }
 
         private string RunScenario_CopyOPCOSTTables(string p_strVariant, string p_strRxPackage, string p_strRx1, string p_strRx2,
-            string p_strRx3, string p_strRx4)
+            string p_strRx3, string p_strRx4, int p_intMinPercentOf2GB)
         {
             string strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
             string strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
@@ -4374,7 +4372,7 @@ namespace FIA_Biosum_Manager
 
             m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
             System.Threading.Thread.Sleep(5000);
-            if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > 70)
+            if (uc_filesize_monitor1.CurrentPercent(strInputPath + "\\" + strInputFile, 2000000000) > p_intMinPercentOf2GB)
             {
                 dao_data_access oDao = new dao_data_access();
                 oDao.m_DaoDbEngine.Idle(1);
@@ -4443,7 +4441,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
 
             _lstErrorVariants = new System.Collections.Generic.List<string>();
-            _lstErrorRxPkg = new System.Collections.Generic.List<string>();
             _lstErrorCount = new System.Collections.Generic.List<int>();
             m_intLvCheckedCount = 0;
             m_intLvTotalCount = this.m_lvEx.Items.Count;
@@ -4824,14 +4821,14 @@ namespace FIA_Biosum_Manager
                             MessageBox.Show("Failed to compact and repair file " + m_oQueries.m_strTempDbFile, "FIA Biosum", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         }
 
-                        strOpcostInputPath = RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4);
+                        strOpcostInputPath = RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4, 0);
 
                         m_oAdo.OpenConnection(strConn, 5);
                     }
                     else
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Saving tables to OPCOST directory...Stand By");
-                        strOpcostInputPath = RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4);
+                        strOpcostInputPath = RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4, 0);
                     }
 
                     if (m_intError == 0)
@@ -4864,16 +4861,16 @@ namespace FIA_Biosum_Manager
             else
             {
                 string strVariantInfo = "";
-                int idx = 0;
                 foreach (string strNextVariant in _lstErrorVariants)
                 {
-                    strVariantInfo = strVariantInfo + strNextVariant + "     " + _lstErrorRxPkg[idx] + 
-                        String.Format("{0,8}", _lstErrorCount[idx]) + "\r\n";
-                    idx++;
+                    string[] strPieces = strNextVariant.Split('|');
+                    if (strPieces.Length == 2)
+                        strVariantInfo = strVariantInfo + strPieces[0] + String.Format("{0,8}", strPieces[1]) + "\r\n";
                 }
-                string strMessage = "Done with warnings. Biosum could not estimate costs for the following Variant/Sequence " +
-                                    "combinations. Please review the opcost_errors tables in " + strOpcostInputPath + ".\r\n\r\n" +
-                                    strVariantInfo;
+                string strMessage = "Done with warnings. Biosum could not estimate costs for some Variant/Sequence combinations. " +
+                    "Please review the opcost_errors tables in the most recent OPCOST databases located in the " +
+                    frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input folder for these Variant/Sequence combinations: \r\n\r\n" +
+                    strVariantInfo;
                 MessageBox.Show(strMessage, "FIA Biosum");
             }
             if (frmMain.g_bDebug)
