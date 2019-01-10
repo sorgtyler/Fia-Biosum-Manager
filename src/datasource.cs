@@ -274,39 +274,41 @@ namespace FIA_Biosum_Manager
 						
 
 						//see if the table exists in the mdb database container
-						dao_data_access p_dao = new dao_data_access();
-						if (p_dao.TableExists(strPathAndFile,oDataReader["table_name"].ToString().Trim()) == true)
-						{
-							this.m_strDataSource[x,TABLESTATUS] = "F";
-							this.m_strDataSource[x,RECORDCOUNT]="0";
-							this.m_strDataSource[x,COLUMN_LIST]="";
-							this.m_strDataSource[x,DATATYPE_LIST]="";
-							
-							if (this.LoadTableRecordCount || this.LoadTableColumnNamesAndDataTypes)
-							{
-								strConn=p_ado.getMDBConnString(strPathAndFile,"admin","");
-								p_ado.OpenConnection(strConn);
-								if (p_ado.m_intError==0)
-								{
-									strSQL = "select count(*) from " + oDataReader["table_name"].ToString();
-									if (this.LoadTableRecordCount) this.m_strDataSource[x,RECORDCOUNT] = Convert.ToString(p_ado.getRecordCount(strConn,strSQL,oDataReader["table_name"].ToString()));
-									if (this.LoadTableColumnNamesAndDataTypes) p_ado.getFieldNamesAndDataTypes(strConn,"select * from " + oDataReader["table_name"].ToString(), ref this.m_strDataSource[x,COLUMN_LIST],ref this.m_strDataSource[x,DATATYPE_LIST]);
-									p_ado.CloseConnection(p_ado.m_OleDbConnection);
-								    while (p_ado.m_OleDbConnection.State != ConnectionState.Closed)
-								        System.Threading.Thread.Sleep(5000);
-								    p_ado.m_OleDbConnection.Dispose();
-								}
-							}
-						}
-						else 
-						{
-							this.m_strDataSource[x,TABLESTATUS] = "NF";
-							this.m_strDataSource[x,RECORDCOUNT] = "0";
-						}
-					    if (p_dao.m_DaoWorkspace != null)
-					    {
-					        p_dao.m_DaoWorkspace.Close();
-					    } p_dao = null;
+                        ado_data_access oExistsAdo = new ado_data_access();
+                        string strExistsConn = p_ado.getMDBConnString(strPathAndFile, "", "");
+                        using (var oExistsConn = new System.Data.OleDb.OleDbConnection(strExistsConn))
+                        {
+                            oExistsConn.Open();
+                            if (oExistsAdo.TableExist(oExistsConn, oDataReader["table_name"].ToString().Trim()) == true)
+                            {
+                                this.m_strDataSource[x, TABLESTATUS] = "F";
+                                this.m_strDataSource[x, RECORDCOUNT] = "0";
+                                this.m_strDataSource[x, COLUMN_LIST] = "";
+                                this.m_strDataSource[x, DATATYPE_LIST] = "";
+
+                                if (this.LoadTableRecordCount || this.LoadTableColumnNamesAndDataTypes)
+                                {
+                                    strConn = p_ado.getMDBConnString(strPathAndFile, "admin", "");
+                                    p_ado.OpenConnection(strConn);
+                                    if (p_ado.m_intError == 0)
+                                    {
+                                        strSQL = "select count(*) from " + oDataReader["table_name"].ToString();
+                                        if (this.LoadTableRecordCount) this.m_strDataSource[x, RECORDCOUNT] = Convert.ToString(p_ado.getRecordCount(strConn, strSQL, oDataReader["table_name"].ToString()));
+                                        if (this.LoadTableColumnNamesAndDataTypes) p_ado.getFieldNamesAndDataTypes(strConn, "select * from " + oDataReader["table_name"].ToString(), ref this.m_strDataSource[x, COLUMN_LIST], ref this.m_strDataSource[x, DATATYPE_LIST]);
+                                        p_ado.CloseConnection(p_ado.m_OleDbConnection);
+                                        while (p_ado.m_OleDbConnection.State != ConnectionState.Closed)
+                                            System.Threading.Thread.Sleep(5000);
+                                        p_ado.m_OleDbConnection.Dispose();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                this.m_strDataSource[x, TABLESTATUS] = "NF";
+                                this.m_strDataSource[x, RECORDCOUNT] = "0";
+                            }
+                        }
+                        oExistsAdo = null;
 					}
 					else 
 					{
