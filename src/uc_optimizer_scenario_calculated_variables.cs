@@ -65,6 +65,7 @@ namespace FIA_Biosum_Manager
                                                              PREFIX_NET_REVENUE, PREFIX_TREATMENT_HAUL_COSTS, PREFIX_ONSITE_TREATMENT_COSTS };
         static readonly string[] PREFIX_ECON_NAME_ARRAY = { "Total Volume", "Merchantable Volume", "Chip Volume",
                                                             "Net Revenue","Treatment And Haul Costs", "OnSite Treatment Costs"};
+        private bool b_FVSTableEnabled = false;
 
 
         private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
@@ -802,6 +803,8 @@ namespace FIA_Biosum_Manager
             this.lstFVSFieldsList.Sorted = true;
             this.lstFVSFieldsList.TabIndex = 70;
             this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
+            this.lstFVSFieldsList.GotFocus += new System.EventHandler(this.lstFVSTables_GotFocus);
+
             // 
             // groupBox2
             // 
@@ -822,7 +825,8 @@ namespace FIA_Biosum_Manager
             this.lstFVSTablesList.Size = new System.Drawing.Size(181, 100);
             this.lstFVSTablesList.TabIndex = 70;
             this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
-            // 
+            this.lstFVSTablesList.GotFocus += new System.EventHandler(this.lstFVSTables_GotFocus);
+            //.
             // LblSelectedVariable
             // 
             this.LblSelectedVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -913,16 +917,6 @@ namespace FIA_Biosum_Manager
                     lstFVSTablesList.Items.Add(strKey);
                 }
             }
-
-            //Set Defaults
-            if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
-            {
-                //Set to last package as that is usually the grow-only package
-                cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
-            }
-
-
-
 
             if (m_oAdo != null)
                 m_oAdo.CloseConnection(m_oAdo.m_OleDbConnection);
@@ -1536,6 +1530,16 @@ namespace FIA_Biosum_Manager
                     this.m_dg.Focus();
                     return;
                 }
+                if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
+                {
+                    MessageBox.Show("!!No Baseline RxPackage Selected!!", "FIA Biosum",
+                                   System.Windows.Forms.MessageBoxButtons.OK,
+                                   System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    this.m_intError = -1;
+                    this.cboFvsVariableBaselinePkg.Focus();
+                    return;
+                }
+
             }
             else
             {
@@ -1974,8 +1978,6 @@ namespace FIA_Biosum_Manager
         {
             m_intCurVar = -1;
             this.enableFvsVariableUc(true);
-            //Set to last package as that is usually the grow-only package
-            cboFvsVariableBaselinePkg.SelectedIndex = cboFvsVariableBaselinePkg.Items.Count - 1;
             lstFVSTablesList.ClearSelected();
 
             foreach (System.Data.DataRow p_row in m_oAdoFvs.m_DataSet.Tables["view_weights"].Rows)
@@ -2777,8 +2779,9 @@ namespace FIA_Biosum_Manager
         private void enableFvsVariableUc(bool bEnabled)
         {
             this.cboFvsVariableBaselinePkg.Enabled = bEnabled;
-            this.lstFVSTablesList.Enabled = bEnabled;
-            this.lstFVSFieldsList.Enabled = bEnabled;
+            //this.lstFVSTablesList.Enabled = bEnabled;
+            //this.lstFVSFieldsList.Enabled = bEnabled;
+            this.b_FVSTableEnabled = bEnabled;
             this.btnFVSVariableValue.Visible = bEnabled;
             this.txtFVSVariableDescr.ReadOnly = !bEnabled;
             this.btnFvsCalculate.Enabled = bEnabled;
@@ -3112,6 +3115,28 @@ namespace FIA_Biosum_Manager
             }
             return intId;
         }
+
+        private void lstFVSTables_GotFocus(Object sender, EventArgs e)
+        {
+
+            if (b_FVSTableEnabled == false)
+            {
+                // Put the focus elsewhere so the user can't change the selected index
+                label7.Focus();
+            }
+
+        }
+
+        private void lstFVSFields_GotFocus(Object sender, EventArgs e)
+        {
+
+            if (b_FVSTableEnabled == false)
+            {
+                // Put the focus elsewhere so the user can't change the selected index
+                label7.Focus();
+            }
+
+        }
     }
 
 
@@ -3250,4 +3275,5 @@ namespace FIA_Biosum_Manager
         }
 
     }
+
 }

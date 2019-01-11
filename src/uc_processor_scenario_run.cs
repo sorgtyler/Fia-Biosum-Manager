@@ -4341,8 +4341,8 @@ namespace FIA_Biosum_Manager
             strInputFile = strInputFile.Replace(":", "_");
             strInputFile = strInputFile.Replace(" ", "_");
             System.IO.File.Copy(m_oQueries.m_strTempDbFile, strInputPath + "\\" + strInputFile, true);
-            //I am cutting this in half from 5000 because it feels like a long time. Reset if this causes problems
-            System.Threading.Thread.Sleep(2500);
+            //I am setting this back to 5000 from 2500 to resolve an opcost file contention problem
+            System.Threading.Thread.Sleep(5000);
             //delete the work tables and any links
             m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strInputPath + "\\" + strInputFile, "", ""), 5);
             //if (m_oAdo.m_intError == 0)
