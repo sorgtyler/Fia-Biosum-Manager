@@ -4570,8 +4570,8 @@ namespace FIA_Biosum_Manager
                     if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_output") == true)
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_output");
 
-                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_err") == true)
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_err");
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_errors") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_errors");
 
 
 
