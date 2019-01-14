@@ -54,7 +54,6 @@ namespace FIA_Biosum_Manager
         private frmProcessorScenario _frmProcessorScenario = null;
         private ProgressBarEx.ProgressBarEx _oProgressBarEx = null;
         private System.Collections.Generic.IList<string> _lstErrorVariants = null;
-        private System.Collections.Generic.IList<int> _lstErrorCount = null;
        
         private const int COL_CHECKBOX = 0;
         private const int COL_VARIANT = 1;
@@ -3415,8 +3414,8 @@ namespace FIA_Biosum_Manager
                 {
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Querying " + Tables.Processor.DefaultOpcostErrorsTableName + "table \r\n");
-                    int intCount = Convert.ToInt32(oAdo.getRecordCount(oConn.ConnectionString,
-                        "select count(*) from " + Tables.Processor.DefaultOpcostErrorsTableName, Tables.Processor.DefaultOpcostErrorsTableName));
+                    int intCount = Convert.ToInt32(oAdo.getRecordCount(oConn, "select count(*) from " + Tables.Processor.DefaultOpcostErrorsTableName, 
+                        Tables.Processor.DefaultOpcostErrorsTableName));
 
                     if (intCount > 0)
                     {
@@ -3434,7 +3433,6 @@ namespace FIA_Biosum_Manager
                             }
                         }
                             _lstErrorVariants.Add(p_strVariant + "|" + p_strRxPackage);
-                            _lstErrorCount.Add(intCount);
                     }
                  }
                  oAdo = null;
@@ -4441,7 +4439,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
 
             _lstErrorVariants = new System.Collections.Generic.List<string>();
-            _lstErrorCount = new System.Collections.Generic.List<int>();
             m_intLvCheckedCount = 0;
             m_intLvTotalCount = this.m_lvEx.Items.Count;
             for (x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
