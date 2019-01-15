@@ -567,6 +567,7 @@ namespace FIA_Biosum_Manager
             this.vId,
             this.vBaselineRxPkg,
             this.vVariableSource});
+            this.lstVariables.FullRowSelect = true;
             this.lstVariables.GridLines = true;
             this.lstVariables.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstVariables.HideSelection = false;
@@ -804,7 +805,6 @@ namespace FIA_Biosum_Manager
             this.lstFVSFieldsList.TabIndex = 70;
             this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
             this.lstFVSFieldsList.GotFocus += new System.EventHandler(this.lstFVSTables_GotFocus);
-
             // 
             // groupBox2
             // 
@@ -826,7 +826,7 @@ namespace FIA_Biosum_Manager
             this.lstFVSTablesList.TabIndex = 70;
             this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
             this.lstFVSTablesList.GotFocus += new System.EventHandler(this.lstFVSTables_GotFocus);
-            //.
+            // 
             // LblSelectedVariable
             // 
             this.LblSelectedVariable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
