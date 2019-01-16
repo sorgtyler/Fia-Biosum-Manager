@@ -25,8 +25,7 @@ namespace FIA_Biosum_Manager
             
             if (g_strOPCOSTDirectory.Trim().Length == 0)
             {
-                if (System.IO.File.Exists(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\OPCOST\\OPCOST.R")==true)
-                    txtOpcost.Text = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\OPCOST\\OPCOST.R";
+                txtOpcost.Text = uc_processor_opcost_settings.GetDefaultOpcostPath();
             }
             else
             {
@@ -141,6 +140,27 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "PROCESSOR", "OPCOSTSETTINGS" });
+        }
+
+        public static string GetDefaultOpcostPath()
+        {
+            string strReturnPath = null;
+            string strDefaultOpcostDir = frmMain.g_oEnv.strAppDir.Trim() + "\\OPCOST";
+            if (System.IO.Directory.Exists(strDefaultOpcostDir))
+            {
+                string[] arrAllFiles = System.IO.Directory.GetFiles(strDefaultOpcostDir);
+                foreach (string strFullPath in arrAllFiles)
+                {
+                    string strExtension = System.IO.Path.GetExtension(strFullPath);
+                    if (strExtension != null && strExtension.ToUpper().Equals(".R"))
+                    {
+                        strReturnPath = strDefaultOpcostDir + "\\" + System.IO.Path.GetFileName(strFullPath);
+                        break;
+                    }
+                }
+
+            }
+            return strReturnPath;
         }
     }
 }

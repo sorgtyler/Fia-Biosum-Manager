@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
-using System.Collections.Generic;
 
 namespace FIA_Biosum_Manager
 {
@@ -4934,6 +4933,31 @@ namespace FIA_Biosum_Manager
                     string strMessage = "BioSum could not find the OPCOST reference database! ";
                     strMessage += "It should be located at " + m_strOPCOSTRefPath + ". Processing halted!";
                     MessageBox.Show(strMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                //Check to make sure OpCost path is set; If not, try to use the default
+                bool bOpcostFileExists = false;
+                if (uc_processor_opcost_settings.g_strOPCOSTDirectory.Trim().Length > 0)
+                {
+                    if (System.IO.File.Exists(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                    {
+                        bOpcostFileExists = true;
+                    }
+                }
+                else
+                {
+                    uc_processor_opcost_settings.g_strOPCOSTDirectory = uc_processor_opcost_settings.GetDefaultOpcostPath();
+                    if (!String.IsNullOrEmpty(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                    {
+                        bOpcostFileExists = true;
+                    }
+                }
+                if (bOpcostFileExists == false)
+                {
+                    MessageBox.Show("!!A valid OpCost .R file has not been configured!!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Exclamation);
                     return;
                 }
 
