@@ -790,7 +790,7 @@ namespace FIA_Biosum_Manager
         private void btnSelectFile_Click(object sender, EventArgs e)
         {
             var OpenFileDialog1 = new OpenFileDialog();
-            OpenFileDialog1.Title = "Text File With Tree Diameter Group data";
+            OpenFileDialog1.Title = "Text File With Maximum Diameter Group values";
             OpenFileDialog1.Filter = "Text File (*.TXT) |*.txt";
             var result = OpenFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
@@ -806,40 +806,77 @@ namespace FIA_Biosum_Manager
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            //@ToDo: Validation: is there a string in the textbox, Does that file exist
-            // are values are all numeric and in ascending order
-            //@ToDo: Add warning to user that their current selections will be overwritten
-            btnClear.PerformClick();
-            //Open the file in a stream reader.
-            string[] rows = null;
-            using (System.IO.StreamReader s = new System.IO.StreamReader(txtImportFile.Text))
+            if (!String.IsNullOrEmpty(txtImportFile.Text))
             {
-                //Read the rest of the data in the file.        
-                string AllData = s.ReadToEnd();
-
-                //Split off each row at the Carriage Return/Line Feed
-                rows = AllData.Split("\r\n".ToCharArray());
-            }
-            if (rows != null && rows.Length > 0)
-            {
-                this.lstTreeDiam.BeginUpdate();
-                int intGroup = 1;
-                double dblMinimum = 1.0;
-                double dblMaximum = -1.0;
-                foreach (string strRow in rows)
+                DialogResult result = MessageBox.Show("Importing tree diameter groups will overwrite your current groups. Do you wish to continue ?", 
+                    "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+                if (result != System.Windows.Forms.DialogResult.Yes)
                 {
-                    if (! String.IsNullOrEmpty(strRow))
+                    return;
+                }
+                //Open the file with a stream reader.
+                System.Collections.Generic.IList<String> lstRows = new System.Collections.Generic.List<String>();
+                using (System.IO.StreamReader s = new System.IO.StreamReader(txtImportFile.Text, System.Text.Encoding.Default))
+                {
+                    string strNextLine = null;
+                    double dblHighestValue = -99;
+                    while ((strNextLine = s.ReadLine()) != null)
                     {
-                        this.lstTreeDiam.Items.Add(Convert.ToString(intGroup));
-                        this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(Convert.ToString(dblMinimum));
-                        this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(strRow);
-                        this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(dblMinimum + " - " + strRow);
-                        dblMaximum = Convert.ToDouble(strRow);
-                        dblMinimum = dblMaximum + 0.1;
-                        intGroup++;
+                        double dblNextValue = -1;
+                        bool bIsNumeric = Double.TryParse(strNextLine, out dblNextValue);
+                        if (bIsNumeric == false)
+                        {
+                            MessageBox.Show("!! All group maximum diameter threshold values must be numeric !!", "FIA Biosum",
+                                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (dblNextValue <= dblHighestValue)
+                        {
+                            MessageBox.Show("!! Group maximum diameter threshold values must be unique and in ascending order !!", "FIA Biosum",
+                                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                            return;
+                        }
+                        lstRows.Add(strNextLine);
+                        dblHighestValue = dblNextValue;
                     }
                 }
-                this.lstTreeDiam.EndUpdate();
+                if (lstRows.Count > 0)
+                {
+                    btnClear.PerformClick();
+                    this.lstTreeDiam.BeginUpdate();
+                    int intGroup = 1;
+                    double dblMinimum = 1.0;
+                    double dblMaximum = -1.0;
+                    foreach (string strRow in lstRows)
+                    {
+                        if (!String.IsNullOrEmpty(strRow))
+                        {
+                            this.lstTreeDiam.Items.Add(Convert.ToString(intGroup));
+                            this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(Convert.ToString(dblMinimum));
+                            this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(strRow);
+                            this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(dblMinimum + " - " + strRow);
+                            dblMaximum = Convert.ToDouble(strRow);
+                            dblMinimum = dblMaximum + 0.1;
+                            intGroup++;
+                        }
+                    }
+                    this.lstTreeDiam.EndUpdate();
+                    txtImportFile.Text = "";
+                    BtnImport.Enabled = false;
+                    MessageBox.Show("!! Tree diameter group values have been imported. Click the save button to keep them !!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("!! The import file did not have any values to import !!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("!! A file must be selected to import groups !!", "FIA Biosum", 
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+
             }
         }
 	}
