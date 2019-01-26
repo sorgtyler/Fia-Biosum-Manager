@@ -836,7 +836,8 @@ namespace FIA_Biosum_Manager
                                 System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                             return;
                         }
-                        lstRows.Add(strNextLine);
+                        dblNextValue = Math.Round(dblNextValue, 1); //Round to the nearest tenth; We are precise only to that degree
+                        lstRows.Add(Convert.ToString(dblNextValue));
                         dblHighestValue = dblNextValue;
                     }
                 }
