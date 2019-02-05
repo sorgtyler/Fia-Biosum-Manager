@@ -37,6 +37,10 @@ namespace FIA_Biosum_Manager
         private env m_oEnv;
         private Help m_oHelp;
         private string m_xpsFile = Help.DefaultProcessorXPSFile;
+        private Button btnSelectFile;
+        private TextBox txtImportFile;
+        private TextBox textBox1;
+        private Button BtnImport;
 
 
 		/// <summary> 
@@ -155,7 +159,12 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_processor_scenario_tree_diam_groups_list));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.BtnImport = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.btnSelectFile = new System.Windows.Forms.Button();
+            this.txtImportFile = new System.Windows.Forms.TextBox();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnHelp = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
@@ -172,6 +181,10 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.BtnImport);
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.btnSelectFile);
+            this.groupBox1.Controls.Add(this.txtImportFile);
             this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Controls.Add(this.btnHelp);
             this.groupBox1.Controls.Add(this.btnClear);
@@ -186,9 +199,48 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(568, 304);
+            this.groupBox1.Size = new System.Drawing.Size(630, 346);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // BtnImport
+            // 
+            this.BtnImport.Enabled = false;
+            this.BtnImport.Location = new System.Drawing.Point(549, 258);
+            this.BtnImport.Name = "BtnImport";
+            this.BtnImport.Size = new System.Drawing.Size(64, 32);
+            this.BtnImport.TabIndex = 14;
+            this.BtnImport.Text = "Import";
+            this.BtnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.Menu;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(17, 267);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(155, 20);
+            this.textBox1.TabIndex = 13;
+            this.textBox1.Text = "Import groups from file";
+            // 
+            // btnSelectFile
+            // 
+            this.btnSelectFile.Image = ((System.Drawing.Image)(resources.GetObject("btnSelectFile.Image")));
+            this.btnSelectFile.Location = new System.Drawing.Point(511, 258);
+            this.btnSelectFile.Name = "btnSelectFile";
+            this.btnSelectFile.Size = new System.Drawing.Size(32, 32);
+            this.btnSelectFile.TabIndex = 12;
+            this.btnSelectFile.Click += new System.EventHandler(this.btnSelectFile_Click);
+            // 
+            // txtImportFile
+            // 
+            this.txtImportFile.Enabled = false;
+            this.txtImportFile.Location = new System.Drawing.Point(177, 265);
+            this.txtImportFile.Name = "txtImportFile";
+            this.txtImportFile.Size = new System.Drawing.Size(328, 20);
+            this.txtImportFile.TabIndex = 11;
             // 
             // btnDelete
             // 
@@ -203,7 +255,7 @@ namespace FIA_Biosum_Manager
             // btnHelp
             // 
             this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.btnHelp.Location = new System.Drawing.Point(8, 259);
+            this.btnHelp.Location = new System.Drawing.Point(8, 304);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(64, 32);
             this.btnHelp.TabIndex = 8;
@@ -267,7 +319,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(462, 259);
+            this.btnClose.Location = new System.Drawing.Point(517, 304);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(96, 32);
             this.btnClose.TabIndex = 9;
@@ -296,7 +348,7 @@ namespace FIA_Biosum_Manager
             this.lblTitle.ForeColor = System.Drawing.Color.Green;
             this.lblTitle.Location = new System.Drawing.Point(3, 16);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(562, 24);
+            this.lblTitle.Size = new System.Drawing.Size(624, 24);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "Tree Diameter Groups List";
             // 
@@ -304,8 +356,9 @@ namespace FIA_Biosum_Manager
             // 
             this.Controls.Add(this.groupBox1);
             this.Name = "uc_processor_scenario_tree_diam_groups_list";
-            this.Size = new System.Drawing.Size(568, 304);
+            this.Size = new System.Drawing.Size(630, 346);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -732,6 +785,100 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "PROCESSOR", "TREE_DIAMETER_GROUPS" });
+        }
+
+        private void btnSelectFile_Click(object sender, EventArgs e)
+        {
+            var OpenFileDialog1 = new OpenFileDialog();
+            OpenFileDialog1.Title = "Text File With Maximum Diameter Group values";
+            OpenFileDialog1.Filter = "Text File (*.TXT) |*.txt";
+            var result = OpenFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (OpenFileDialog1.FileName.Trim().Length > 0)
+                {
+                    txtImportFile.Text = OpenFileDialog1.FileName.Trim();
+                    BtnImport.Enabled = true;
+                }
+                OpenFileDialog1 = null;
+            }
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(txtImportFile.Text))
+            {
+                DialogResult result = MessageBox.Show("Importing tree diameter groups will overwrite your current groups. Do you wish to continue ?", 
+                    "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+                if (result != System.Windows.Forms.DialogResult.Yes)
+                {
+                    return;
+                }
+                //Open the file with a stream reader.
+                System.Collections.Generic.IList<String> lstRows = new System.Collections.Generic.List<String>();
+                using (System.IO.StreamReader s = new System.IO.StreamReader(txtImportFile.Text, System.Text.Encoding.Default))
+                {
+                    string strNextLine = null;
+                    double dblHighestValue = -99;
+                    while ((strNextLine = s.ReadLine()) != null)
+                    {
+                        double dblNextValue = -1;
+                        bool bIsNumeric = Double.TryParse(strNextLine, out dblNextValue);
+                        if (bIsNumeric == false)
+                        {
+                            MessageBox.Show("!! All group maximum diameter threshold values must be numeric !!", "FIA Biosum",
+                                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (dblNextValue <= dblHighestValue)
+                        {
+                            MessageBox.Show("!! Group maximum diameter threshold values must be unique and in ascending order !!", "FIA Biosum",
+                                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                            return;
+                        }
+                        dblNextValue = Math.Round(dblNextValue, 1); //Round to the nearest tenth; We are precise only to that degree
+                        lstRows.Add(Convert.ToString(dblNextValue));
+                        dblHighestValue = dblNextValue;
+                    }
+                }
+                if (lstRows.Count > 0)
+                {
+                    btnClear.PerformClick();
+                    this.lstTreeDiam.BeginUpdate();
+                    int intGroup = 1;
+                    double dblMinimum = 1.0;
+                    double dblMaximum = -1.0;
+                    foreach (string strRow in lstRows)
+                    {
+                        if (!String.IsNullOrEmpty(strRow))
+                        {
+                            this.lstTreeDiam.Items.Add(Convert.ToString(intGroup));
+                            this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(Convert.ToString(dblMinimum));
+                            this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(strRow);
+                            this.lstTreeDiam.Items[intGroup - 1].SubItems.Add(dblMinimum + " - " + strRow);
+                            dblMaximum = Convert.ToDouble(strRow);
+                            dblMinimum = dblMaximum + 0.1;
+                            intGroup++;
+                        }
+                    }
+                    this.lstTreeDiam.EndUpdate();
+                    txtImportFile.Text = "";
+                    BtnImport.Enabled = false;
+                    MessageBox.Show("!! Tree diameter group values have been imported. Click the save button to keep them !!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("!! The import file did not have any values to import !!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("!! A file must be selected to import groups !!", "FIA Biosum", 
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+
+            }
         }
 	}
 }
