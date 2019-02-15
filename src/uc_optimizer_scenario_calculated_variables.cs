@@ -1539,7 +1539,17 @@ namespace FIA_Biosum_Manager
                     this.cboFvsVariableBaselinePkg.Focus();
                     return;
                 }
-
+                string strOutputAccdb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory + "\\" + 
+                    Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+                if (!System.IO.File.Exists(strOutputAccdb))
+                {
+                    MessageBox.Show("!!FVS Weighted Variable output database missing. It should be here: " + 
+                        strOutputAccdb + "!!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    this.m_intError = -1;
+                    return;
+                }
             }
             else
             {
