@@ -1690,10 +1690,9 @@ namespace FIA_Biosum_Manager
             static public string CreateScenarioFvsVariableWeightsReferenceTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
-                    "pre_or_post CHAR(4)," +
                     "rxcycle CHAR(1)," +
+                    "pre_or_post CHAR(4)," +
                     "rxyear INTEGER," +
-                    "seqnum INTEGER," +
                     "weight DOUBLE)";
             }
 
