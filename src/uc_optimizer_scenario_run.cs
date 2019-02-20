@@ -1876,13 +1876,13 @@ namespace FIA_Biosum_Manager
 							strFileDate = strFileDate.Replace("/","_"); strFileDate=strFileDate.Replace(":","_");
 							this.CreateHtml();
 							this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, this.m_strSystemResultsDbPathAndFile);
-                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.mdb", this.m_strFVSPreValidComboDbPathAndFile);
-                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspost.mdb", this.m_strFVSPostValidComboDbPathAndFile);
+                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.accdb", this.m_strFVSPreValidComboDbPathAndFile);
+                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspost.accdb", this.m_strFVSPostValidComboDbPathAndFile);
                             this.m_strSystemResultsDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
                             this.m_strFVSPreValidComboDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.mdb";
                             
 							this.CopyScenarioResultsTable(
-								ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results_" + this.m_strOptimizationTableName + "_" + strFileDate.Trim() + ".mdb",
+								ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\optimizer_results_" + this.m_strOptimizationTableName + "_" + strFileDate.Trim() + ".accdb",
                                 ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile);
 
 
