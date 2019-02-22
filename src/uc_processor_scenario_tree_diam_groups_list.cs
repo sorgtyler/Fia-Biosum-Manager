@@ -864,6 +864,7 @@ namespace FIA_Biosum_Manager
                     this.lstTreeDiam.EndUpdate();
                     txtImportFile.Text = "";
                     BtnImport.Enabled = false;
+                    if (this.btnSave.Enabled == false) this.btnSave.Enabled = true;
                     MessageBox.Show("!! Tree diameter group values have been imported. Click the save button to keep them !!", "FIA Biosum",
                         System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                 }
