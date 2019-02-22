@@ -1364,11 +1364,19 @@ namespace FIA_Biosum_Manager
                     "harv_costs_sum DOUBLE," +
                     "haul_costs_sum DOUBLE)";
             }
-
-
-
-
-
+            //
+            //POST ECONOMIC WEIGHTED TABLE
+            //
+            public void CreatePostEconomicWeightedTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreatePostEconomicWeightedTableSQL(p_strTableName));
+            }
+            static public string CreatePostEconomicWeightedTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id CHAR(25), " +
+                       "rxpackage CHAR(3) )";
+            }
 			
 		
 		}

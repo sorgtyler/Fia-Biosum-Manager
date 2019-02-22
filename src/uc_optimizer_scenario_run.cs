@@ -2281,6 +2281,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsByRxPackageTable(oAdo, oAdo.m_OleDbConnection, "product_yields_net_rev_costs_summary_by_rxpackage");
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePlotRxCostsRevenuesVolumesTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPlotRxCostRevenueVolumesTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePlotRxPackageCostsRevenuesVolumesSumTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPlotRxPackageCostRevenueVolumesSumTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePostEconomicWeightedTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName);
 
 			oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
@@ -6138,41 +6139,35 @@ namespace FIA_Biosum_Manager
                     }
                 }
 
-                // Create post_economic_weighted table to receive the data
-                string strSql = "CREATE TABLE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName + " ( " +
-                                "biosum_cond_id CHAR(25), rxpackage CHAR(3), ";
-                foreach (string strFieldName in lstFieldNames)
-                {
-                    strSql = strSql + "c1_" + strFieldName + " DOUBLE," +
-                        "c2_" + strFieldName + " DOUBLE," +
-                        "c3_" + strFieldName + " DOUBLE," +
-                        "c4_" + strFieldName + " DOUBLE," +
-                        strFieldName + " DOUBLE,";
-                }
-                strSql = strSql.TrimEnd(strSql[strSql.Length - 1]); //trim trailing comma
-                strSql = strSql + " )";
                 string strEconConn = m_ado.getMDBConnString(m_strSystemResultsDbPathAndFile, "", "");
 
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + strSql + "\r\n");
 
                 using (var econConn = new OleDbConnection(strEconConn))
                 {
                     econConn.Open();
-                    this.m_ado.SqlNonQuery(econConn, strSql);
 
-                    // create link to table in temp database so it can be used in calculations
-                    if (this.m_intError == 0)
+                    //Add columns to post_economic_weighted table to receive the data
+                    foreach (string strFieldName in lstFieldNames)
                     {
-                        m_oDao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName,
-                            this.m_strSystemResultsDbPathAndFile, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName, true);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Adding columns for: " + strFieldName + "\r\n");
+                        m_ado.AddColumn(econConn, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName,
+                            "c1_" + strFieldName, "DOUBLE", "");
+                        m_ado.AddColumn(econConn, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName,
+                            "c2_" + strFieldName, "DOUBLE", "");
+                        m_ado.AddColumn(econConn, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName,
+                            "c3_" + strFieldName, "DOUBLE", "");
+                        m_ado.AddColumn(econConn, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName,
+                            "c4_" + strFieldName, "DOUBLE", "");
+                        m_ado.AddColumn(econConn, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName,
+                            strFieldName, "DOUBLE", "");
                     }
-
+                    
                     FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
                     System.Collections.Generic.IDictionary<string, ProductYields> dictProductYields =
                     new System.Collections.Generic.Dictionary<string, ProductYields>();
-                    strSql = "select * from product_yields_net_rev_costs_summary_by_rx";
+                    string strSql = "select * from product_yields_net_rev_costs_summary_by_rx";
 
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + strSql + "\r\n");
@@ -6335,6 +6330,7 @@ namespace FIA_Biosum_Manager
                         }
                     }
                 }
+
                 FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
                 if (this.m_ado.m_intError != 0)
