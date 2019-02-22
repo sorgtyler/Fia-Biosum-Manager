@@ -19,7 +19,7 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		public System.Windows.Forms.Button btnViewLog;
 		public System.Windows.Forms.Button btnAccess;
-		public System.Windows.Forms.Button btnViewScenarioTables;
+		public System.Windows.Forms.Button btnViewResultsTables;
         public System.Windows.Forms.Button btnViewAuditTables;
 		public System.Windows.Forms.Label lblMsg;
 		public System.Windows.Forms.Button btnCancel;
@@ -258,6 +258,7 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pnlFileSizeMonitor = new System.Windows.Forms.Panel();
+            this.uc_filesize_monitor4 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.uc_filesize_monitor3 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.uc_filesize_monitor2 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.uc_filesize_monitor1 = new FIA_Biosum_Manager.uc_filesize_monitor();
@@ -269,10 +270,9 @@ namespace FIA_Biosum_Manager
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.btnAccess = new System.Windows.Forms.Button();
-            this.btnViewScenarioTables = new System.Windows.Forms.Button();
+            this.btnViewResultsTables = new System.Windows.Forms.Button();
             this.btnViewAuditTables = new System.Windows.Forms.Button();
             this.btnViewLog = new System.Windows.Forms.Button();
-            this.uc_filesize_monitor4 = new FIA_Biosum_Manager.uc_filesize_monitor();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pnlFileSizeMonitor.SuspendLayout();
@@ -298,7 +298,7 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.btnCancel);
             this.panel1.Controls.Add(this.lblTitle);
             this.panel1.Controls.Add(this.btnAccess);
-            this.panel1.Controls.Add(this.btnViewScenarioTables);
+            this.panel1.Controls.Add(this.btnViewResultsTables);
             this.panel1.Controls.Add(this.btnViewAuditTables);
             this.panel1.Controls.Add(this.btnViewLog);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -318,6 +318,16 @@ namespace FIA_Biosum_Manager
             this.pnlFileSizeMonitor.Name = "pnlFileSizeMonitor";
             this.pnlFileSizeMonitor.Size = new System.Drawing.Size(829, 99);
             this.pnlFileSizeMonitor.TabIndex = 69;
+            // 
+            // uc_filesize_monitor4
+            // 
+            this.uc_filesize_monitor4.ForeColor = System.Drawing.Color.Black;
+            this.uc_filesize_monitor4.Information = "";
+            this.uc_filesize_monitor4.Location = new System.Drawing.Point(616, 10);
+            this.uc_filesize_monitor4.Name = "uc_filesize_monitor4";
+            this.uc_filesize_monitor4.Size = new System.Drawing.Size(181, 76);
+            this.uc_filesize_monitor4.TabIndex = 3;
+            this.uc_filesize_monitor4.Visible = false;
             // 
             // uc_filesize_monitor3
             // 
@@ -425,15 +435,15 @@ namespace FIA_Biosum_Manager
             this.btnAccess.Text = "Microsoft Access";
             this.btnAccess.Click += new System.EventHandler(this.btnAccess_Click);
             // 
-            // btnViewScenarioTables
+            // btnViewResultsTables
             // 
-            this.btnViewScenarioTables.ForeColor = System.Drawing.Color.Black;
-            this.btnViewScenarioTables.Location = new System.Drawing.Point(189, 7);
-            this.btnViewScenarioTables.Name = "btnViewScenarioTables";
-            this.btnViewScenarioTables.Size = new System.Drawing.Size(120, 20);
-            this.btnViewScenarioTables.TabIndex = 32;
-            this.btnViewScenarioTables.Text = "View Results Tables";
-            this.btnViewScenarioTables.Click += new System.EventHandler(this.btnViewScenarioTables_Click);
+            this.btnViewResultsTables.ForeColor = System.Drawing.Color.Black;
+            this.btnViewResultsTables.Location = new System.Drawing.Point(189, 7);
+            this.btnViewResultsTables.Name = "btnViewResultsTables";
+            this.btnViewResultsTables.Size = new System.Drawing.Size(120, 20);
+            this.btnViewResultsTables.TabIndex = 32;
+            this.btnViewResultsTables.Text = "View Results Tables";
+            this.btnViewResultsTables.Click += new System.EventHandler(this.btnViewScenarioTables_Click);
             // 
             // btnViewAuditTables
             // 
@@ -455,20 +465,10 @@ namespace FIA_Biosum_Manager
             this.btnViewLog.Text = "View Log File";
             this.btnViewLog.Click += new System.EventHandler(this.btnViewLog_Click);
             // 
-            // uc_filesize_monitor4
-            // 
-            this.uc_filesize_monitor4.ForeColor = System.Drawing.Color.Black;
-            this.uc_filesize_monitor4.Information = "";
-            this.uc_filesize_monitor4.Location = new System.Drawing.Point(616, 10);
-            this.uc_filesize_monitor4.Name = "uc_filesize_monitor4";
-            this.uc_filesize_monitor4.Size = new System.Drawing.Size(181, 76);
-            this.uc_filesize_monitor4.TabIndex = 3;
-            this.uc_filesize_monitor4.Visible = false;
-            // 
-            // uc_Optimizer_scenario_run
+            // uc_optimizer_scenario_run
             // 
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_core_scenario_run";
+            this.Name = "uc_optimizer_scenario_run";
             this.Size = new System.Drawing.Size(926, 508);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -493,7 +493,7 @@ namespace FIA_Biosum_Manager
 			proc.StartInfo.UseShellExecute = true;
 			try
 			{
-                proc.StartInfo.FileName = ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb";		
+                proc.StartInfo.FileName = ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;		
             }
 			catch
 			{
@@ -577,13 +577,13 @@ namespace FIA_Biosum_Manager
 
         private void btnViewScenarioTables_Click(object sender, System.EventArgs e)
 		{
-			this.viewScenarioTables();
+			this.viewResultsTables();
 		}
 
 		/// <summary>
-		/// every scenario_results.mdb table is viewed in a uc_gridview control
+		/// every optimizer_results.accdb table is viewed in a uc_gridview control
 		/// </summary>
-		private void viewScenarioTables()
+		private void viewResultsTables()
 		{
 			string strMDBPathAndFile="";
 			string strConn="";
@@ -591,9 +591,9 @@ namespace FIA_Biosum_Manager
 			string[] strTableNames;
 			strTableNames = new string[1];
 			dao_data_access p_dao = new dao_data_access();
-			
-			
-			strMDBPathAndFile = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb";
+
+
+            strMDBPathAndFile = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
 
 			int intCount = p_dao.getTableNames(strMDBPathAndFile,ref strTableNames);
 			if (p_dao.m_intError==0)
@@ -763,7 +763,7 @@ namespace FIA_Biosum_Manager
             this.btnCancel.Enabled = false;
             this.btnViewAuditTables.Enabled = false;
             this.btnViewLog.Enabled = false;
-            this.btnViewScenarioTables.Enabled = false;
+            this.btnViewResultsTables.Enabled = false;
             this.btnAccess.Enabled = false;
 
             for (x = 0; x <= listViewEx1.Items.Count - 1; x++)
@@ -794,7 +794,7 @@ namespace FIA_Biosum_Manager
 				this.btnCancel.Text = "Cancel";
 				this.btnCancel.Refresh();
 				this.btnViewAuditTables.Enabled=false;
-				this.btnViewScenarioTables.Enabled=false;
+				this.btnViewResultsTables.Enabled=false;
 				this.btnAccess.Enabled=false;
 				this.btnViewLog.Enabled=false;
 				this.m_bUserCancel=false;
@@ -814,7 +814,7 @@ namespace FIA_Biosum_Manager
                 this.btnCancel.Enabled = true;
                 this.btnViewAuditTables.Enabled = true;
                 this.btnViewLog.Enabled = true;
-                this.btnViewScenarioTables.Enabled = true;
+                this.btnViewResultsTables.Enabled = true;
                 this.btnAccess.Enabled = true;
 				if (this.ReferenceOptimizerScenarioForm.WindowState == System.Windows.Forms.FormWindowState.Minimized)
 					this.ReferenceOptimizerScenarioForm.WindowState = System.Windows.Forms.FormWindowState.Normal;
@@ -858,39 +858,6 @@ namespace FIA_Biosum_Manager
 			}                
 			
 		}
-		public void chkTreeSumTable()
-		{
-			string strMDBPathAndFile="";
-			string strConn="";
-			
-			ado_data_access p_ado = new ado_data_access();
-
-           
-            int intIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(listViewEx1, "Sum Tree Yields, Volume, And Value For A Stand And Treatment");
-            
-           
-			
-			strMDBPathAndFile = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb";
-			strConn=p_ado.getMDBConnString(strMDBPathAndFile,"admin","");
-			if (p_ado.TableExist(strConn,"tree_vol_val_sum_by_rx"))
-			{
-				if (p_ado.getRecordCount(strConn,"select COUNT(*) from tree_vol_val_sum_by_rx","tree_vol_val_sum_by_rx") == 0)
-				{
-                   
-				}
-				else
-				{
-                   
-                  
-				}
-			}
-			else
-			{
-                
-			}
-
-		}
-		
 
 		/// <summary>
 		/// Check to see if  fastest travel times 
@@ -1300,7 +1267,7 @@ namespace FIA_Biosum_Manager
 					frmMain.g_oSQLMacroSubstitutionVariable_Collection;
 
 				this.m_strSystemResultsDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir,"mdb");
-				this.CopyScenarioResultsTable(this.m_strSystemResultsDbPathAndFile,ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb");
+				this.CopyScenarioResultsTable(this.m_strSystemResultsDbPathAndFile,ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile);
 
 
                 this.m_strFVSPreValidComboDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir, "mdb");
@@ -1357,7 +1324,7 @@ namespace FIA_Biosum_Manager
                     }
 
                     m_oDao = new dao_data_access();
-                    //compact the scenario_results.mdb file
+                    //compact the optimizer_results.accdb file
 
                     CompactMDB(m_strSystemResultsDbPathAndFile, null);
 
@@ -1908,15 +1875,15 @@ namespace FIA_Biosum_Manager
 							string strFileDate = oDate.ToString(strDateFormat);
 							strFileDate = strFileDate.Replace("/","_"); strFileDate=strFileDate.Replace(":","_");
 							this.CreateHtml();
-							this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb",this.m_strSystemResultsDbPathAndFile);
-                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.mdb", this.m_strFVSPreValidComboDbPathAndFile);
-                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspost.mdb", this.m_strFVSPostValidComboDbPathAndFile);
-							this.m_strSystemResultsDbPathAndFile=ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb";
+							this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, this.m_strSystemResultsDbPathAndFile);
+                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.accdb", this.m_strFVSPreValidComboDbPathAndFile);
+                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspost.accdb", this.m_strFVSPostValidComboDbPathAndFile);
+                            this.m_strSystemResultsDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
                             this.m_strFVSPreValidComboDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.mdb";
                             
 							this.CopyScenarioResultsTable(
-								ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results_" + this.m_strOptimizationTableName + "_" + strFileDate.Trim() + ".mdb",
-								ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb");
+								ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\optimizer_results_" + this.m_strOptimizationTableName + "_" + strFileDate.Trim() + ".accdb",
+                                ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile);
 
 
 						}
@@ -1932,7 +1899,7 @@ namespace FIA_Biosum_Manager
 						
 						frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.lblMsg,"Visible",false);
 						frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.btnCancel,"Text","Start");
-						frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.btnViewScenarioTables,"Enabled",true);
+						frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.btnViewResultsTables,"Enabled",true);
 						if (this.m_intError == 0) frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.btnAccess,"Enabled",true);
 
                         
@@ -2075,7 +2042,7 @@ namespace FIA_Biosum_Manager
 			System.Data.DataTable p_dt = this.m_ado.getTableSchema(this.m_TempMDBFileConn,this.m_strSQL);
 
 			/*****************************************************************
-			 **create the table structure in the scenario_results.mdb file
+			 **create the table structure in the optimizer_results.accdb file
 			 **and give it the name of userdefinedplotfilter
 			 *****************************************************************/
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -2161,9 +2128,9 @@ namespace FIA_Biosum_Manager
 			
 			
 			/*******************************************************************
-			 ** get scenario_results.mdb path
+			 ** get optimizer_results.accdb path
 			 *******************************************************************/
-			string strMDBPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb";
+            string strMDBPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
 			/********************************************************
 			 **get the user defined PLOT filter sql
 			 ********************************************************/
@@ -2174,13 +2141,13 @@ namespace FIA_Biosum_Manager
 			System.Data.DataTable p_dt = this.m_ado.getTableSchema(this.m_TempMDBFileConn,this.m_strSQL);
 
 			/*****************************************************************
-			 **create the table structure in the scenario_results.mdb file
+			 **create the table structure in the optimizer_results.accdb file
 			 **and give it the name of userdefinedplotfilter
 			 *****************************************************************/
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Create userdefinedplotfilter Table Schema From User Defined Plot Filter SQL\r\n");
 			dao_data_access p_dao = new dao_data_access();
-			p_dao.CreateMDBTableFromDataSetTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb","userdefinedplotfilter",p_dt,true);
+            p_dao.CreateMDBTableFromDataSetTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, "userdefinedplotfilter", p_dt, true);
 			p_dt.Dispose();
 			this.m_ado.m_OleDbDataReader.Close();
 			if (p_dao.m_intError!=0)
@@ -2209,7 +2176,7 @@ namespace FIA_Biosum_Manager
              if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Delete table ruledefinitionsplotfilter\r\n");
 			//first delete the table if it exists already
-			p_dao.DeleteTableFromMDB(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb","ruledefinitionsplotfilter");
+             p_dao.DeleteTableFromMDB(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, "ruledefinitionsplotfilter");
 			if (p_dao.m_intError !=0)
 			{
                 if (frmMain.g_bDebug)
@@ -2220,7 +2187,8 @@ namespace FIA_Biosum_Manager
 			}
              if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Copy table structure userdefinedplotfilter to ruledefinitionsplotfilter\r\n");
-			p_dao.MoveTableToMDB(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb","ruledefinitionsplotfilter",ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb","userdefinedplotfilter",false);
+             p_dao.MoveTableToMDB(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, "ruledefinitionsplotfilter", 
+                 ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, "userdefinedplotfilter", false);
 			if (p_dao.m_intError != 0)
 			{
                  if (frmMain.g_bDebug)
@@ -2256,7 +2224,7 @@ namespace FIA_Biosum_Manager
         }
 		
 		/// <summary>
-		/// create links to the tables located in the scenario_results.mdb file
+		/// create links to the tables located in the optimizer_results.accdb file
 		/// </summary>
 		private void CreateScenarioResultTables()
 		{
@@ -2264,7 +2232,7 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//CreateScenarioResultTables\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//CreateOptimizerResultsTables\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 			string[] strTableNames;
@@ -2341,7 +2309,7 @@ namespace FIA_Biosum_Manager
 		}
 
 		/// <summary>
-		/// create links to the tables located in the scenario_results.mdb file
+		/// create links to the tables located in the optimizer_results.accdb file
 		/// </summary>
 		private void CreateScenarioResultTableLinks()
 		{
@@ -2440,7 +2408,7 @@ namespace FIA_Biosum_Manager
         }
 
         /// <summary>
-        /// create links to the tables located in the scenario_results.mdb file
+        /// create links to the tables located in the optimizer_results.accdb file
         /// </summary>
         private void CreateValidComboTableLinks()
         {
@@ -2539,47 +2507,7 @@ namespace FIA_Biosum_Manager
 
 
         }
-		/// <summary>
-		/// create links to the tables located in the scenario_results.mdb file
-		/// </summary>
-		private void CreateScenarioResultTableLinksOld()
-		{
-			
-
-			string[] strTableNames;
-			strTableNames = new string[1];
-			dao_data_access p_dao = new dao_data_access();
-
 		
-			string strMDBPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb";
-
-
-			int intCount = p_dao.getTableNames(strMDBPathAndFile,ref strTableNames);
-			if (p_dao.m_intError==0)
-			{
-				if (intCount > 0)
-				{
-					for (int x=0; x <= intCount-1;x++)
-					{
-
-
-						p_dao.CreateTableLink(this.m_strTempMDBFile,strTableNames[x],strMDBPathAndFile,strTableNames[x]);
-						if (p_dao.m_intError != 0)
-						{
-
-							this.m_intError = p_dao.m_intError;
-							break;
-						}
-					}
-
-				}
-			}
-			else
-			{
-				this.m_intError=p_dao.m_intError;
-			}
-			p_dao = null;
-		}
 
 		/// <summary>
 		/// create links to the audit tables
@@ -6131,7 +6059,7 @@ namespace FIA_Biosum_Manager
                     // This is not a default economic variable; They always end in _1
                     if (strCol[strCol.Length - 1] != "1")
                     {
-                        lstFieldNames.Add(this.m_oOptimizationVariable.strFVSVariableName);
+                        lstFieldNames.Add(this.m_oOptimizationVariable.strFVSVariableName.Trim());
                     }
                 }
             }
@@ -6144,9 +6072,9 @@ namespace FIA_Biosum_Manager
                     // This is not a default economic variable; They always end in _1
                     if (strCol[strCol.Length - 1] != "1")
                     {
-                        if (!lstFieldNames.Contains(this.m_oOptimizationVariable.strRevenueAttribute))
+                        if (!lstFieldNames.Contains(this.m_oOptimizationVariable.strRevenueAttribute.Trim()))
                         {
-                            lstFieldNames.Add(this.m_oOptimizationVariable.strRevenueAttribute);
+                            lstFieldNames.Add(this.m_oOptimizationVariable.strRevenueAttribute.Trim());
                         }
                     }
                 }
@@ -6154,7 +6082,7 @@ namespace FIA_Biosum_Manager
             // Tiebreaker
             if (this.ReferenceOptimizerScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection.Item(1).bSelected == true)
             {
-                string strFieldName = this.ReferenceOptimizerScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection.Item(1).strFVSVariableName;
+                string strFieldName = this.ReferenceOptimizerScenarioForm.uc_scenario_fvs_prepost_variables_tiebreaker1.m_oSavTieBreakerCollection.Item(1).strFVSVariableName.Trim();
                 string[] strCol = frmMain.g_oUtils.ConvertListToArray(strFieldName, "_");
                 if (strCol.Length > 1)
                 {
@@ -7093,7 +7021,7 @@ namespace FIA_Biosum_Manager
 				System.Data.DataTable p_dt = this.m_ado.getTableSchema(this.m_TempMDBFileConn,this.m_strSQL);
 
 				/*****************************************************************
-				 **create the table structure in the scenario_results.mdb file
+				 **create the table structure in the optimizer_results.accdb file
 				 **and give it the name of userdefinedplotfilter
 				 *****************************************************************/
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
