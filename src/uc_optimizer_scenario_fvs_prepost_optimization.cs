@@ -127,6 +127,7 @@ namespace FIA_Biosum_Manager
 
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> m_dictFVSTables;
         private TextBox TxtCycle1Only;
+        private Button btnOptimizationClear;
         private string m_strHelpChapter = "OPTIMIZATION_SETTINGS";
 
 		public uc_optimizer_scenario_fvs_prepost_optimization()
@@ -265,6 +266,7 @@ namespace FIA_Biosum_Manager
             this.btnOptimiztionDone = new System.Windows.Forms.Button();
             this.btnOptimiztionCancel = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.btnOptimizationClear = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.grpboxOptimizationEconSettings.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -766,20 +768,21 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxOptimizationEdit
             // 
+            this.grpboxOptimizationEdit.Controls.Add(this.btnOptimizationClear);
             this.grpboxOptimizationEdit.Controls.Add(this.btnOptimizationEdit);
             this.grpboxOptimizationEdit.Location = new System.Drawing.Point(8, 288);
             this.grpboxOptimizationEdit.Name = "grpboxOptimizationEdit";
             this.grpboxOptimizationEdit.Size = new System.Drawing.Size(832, 72);
             this.grpboxOptimizationEdit.TabIndex = 68;
             this.grpboxOptimizationEdit.TabStop = false;
-            this.grpboxOptimizationEdit.Text = "Step 2: Edit";
+            this.grpboxOptimizationEdit.Text = "Step 2: Edit Or Clear";
             // 
             // btnOptimizationEdit
             // 
             this.btnOptimizationEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnOptimizationEdit.Location = new System.Drawing.Point(65, 21);
             this.btnOptimizationEdit.Name = "btnOptimizationEdit";
-            this.btnOptimizationEdit.Size = new System.Drawing.Size(700, 32);
+            this.btnOptimizationEdit.Size = new System.Drawing.Size(320, 32);
             this.btnOptimizationEdit.TabIndex = 0;
             this.btnOptimizationEdit.Text = "Edit";
             this.btnOptimizationEdit.Click += new System.EventHandler(this.btnOptimizationEdit_Click);
@@ -1036,6 +1039,16 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(866, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Optimization Settings";
+            // 
+            // btnOptimizationClear
+            // 
+            this.btnOptimizationClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOptimizationClear.Location = new System.Drawing.Point(445, 21);
+            this.btnOptimizationClear.Name = "btnOptimizationClear";
+            this.btnOptimizationClear.Size = new System.Drawing.Size(320, 32);
+            this.btnOptimizationClear.TabIndex = 1;
+            this.btnOptimizationClear.Text = "Clear";
+            this.btnOptimizationClear.Click += new System.EventHandler(this.btnOptimizationClear_Click);
             // 
             // uc_optimizer_scenario_fvs_prepost_optimization
             // 
@@ -2617,6 +2630,71 @@ namespace FIA_Biosum_Manager
             {
                 m_strHelpChapter = "OPTIMIZATION_SETTINGS";
             }
+        }
+
+        private void ClearVariable(int p_intIndex)
+        {
+            OptimizerScenarioItem.OptimizationVariableItem_Collection oOptimizationVariableItemCollection =
+                this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection;
+            for (int x = 0; x <= oOptimizationVariableItemCollection.Count - 1; x++)
+            {
+                // We only update the selected listview item
+                if (oOptimizationVariableItemCollection.Item(x).intListViewIndex == this.lvOptimizationListValues.SelectedItems[0].Index)
+                {
+                    OptimizerScenarioItem.OptimizationVariableItem oClearItem = oOptimizationVariableItemCollection.Item(x);
+                    // FVS ATTRIBUTE
+                    if (oClearItem.strOptimizedVariable.Trim().ToUpper().Equals("STAND ATTRIBUTE"))
+                    {
+                        oClearItem.strFVSVariableName = "Not Defined";
+                        oClearItem.strValueSource = "Not Defined";
+                    }
+                    // Everything else
+                    else
+                    {
+                        oClearItem.strFVSVariableName = "NA";
+                        oClearItem.strValueSource = "NA";
+                    }
+                    oClearItem.strMaxYN = "N";
+                    oClearItem.strMinYN = "N";
+                    oClearItem.bUseFilter = false;
+                    oClearItem.strFilterOperator = "";
+                    oClearItem.dblFilterValue = 0;
+                    oClearItem.strRevenueAttribute = "";
+                }
+            }
+
+            if (this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_OPTIMIZE_VARIABLE].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
+            {
+                this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_FVS_VARIABLE].Text = "Not Defined";
+                this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_VALUESOURCE].Text = "Not Defined";
+            } 
+            else
+            {
+                this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_FVS_VARIABLE].Text = "NA";
+                this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_VALUESOURCE].Text = "NA";
+            }
+            this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_MAXMIN].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_USEFILTER].Text = "No";
+            this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_FILTER_OPERATOR].Text = "Not Defined";
+            this.lvOptimizationListValues.Items[p_intIndex].SubItems[COLUMN_FILTER_VALUE].Text = "0";
+            this.lvOptimizationListValues.Items[p_intIndex].Checked = false;
+        }
+
+        private void btnOptimizationClear_Click(object sender, EventArgs e)
+        {
+            if (this.lvOptimizationListValues.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("!! No variable selected to clear!", "FIA Biosum", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+            if (this.lvOptimizationListValues.SelectedItems[0].SubItems[COLUMN_FVS_VARIABLE].Text.Trim() == "Not Defined") return;
+
+            DialogResult result = MessageBox.Show("Are you sure you wish to delete this Optimization variable ? (YN)", "FIA Biosum", 
+                System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+            if (result == System.Windows.Forms.DialogResult.Yes)
+                ClearVariable(this.lvOptimizationListValues.SelectedItems[0].Index);
+
         }
 	
 	}
