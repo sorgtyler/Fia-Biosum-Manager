@@ -111,6 +111,7 @@ namespace FIA_Biosum_Manager
         private System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables;
         private Point _objGrpMaxMinLocation;
         private Point _objLblTieBreakVarDescrLocation;
+        private Button BtnTiebreakerClear;
         private Point _objtxtTieBreakVarDescrLocation;
 
 
@@ -309,6 +310,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerAudit = new System.Windows.Forms.Button();
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.BtnTiebreakerClear = new System.Windows.Forms.Button();
             this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
@@ -652,6 +654,7 @@ namespace FIA_Biosum_Manager
             // pnlTieBreaker
             // 
             this.pnlTieBreaker.AutoScroll = true;
+            this.pnlTieBreaker.Controls.Add(this.BtnTiebreakerClear);
             this.pnlTieBreaker.Controls.Add(this.label2);
             this.pnlTieBreaker.Controls.Add(this.grpboxFVSVariablesTieBreakerValues);
             this.pnlTieBreaker.Controls.Add(this.groupBox3);
@@ -764,7 +767,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerEdit.BackColor = System.Drawing.SystemColors.Control;
             this.btnFVSVariablesTieBreakerEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFVSVariablesTieBreakerEdit.ForeColor = System.Drawing.Color.Black;
-            this.btnFVSVariablesTieBreakerEdit.Location = new System.Drawing.Point(376, 201);
+            this.btnFVSVariablesTieBreakerEdit.Location = new System.Drawing.Point(299, 201);
             this.btnFVSVariablesTieBreakerEdit.Name = "btnFVSVariablesTieBreakerEdit";
             this.btnFVSVariablesTieBreakerEdit.Size = new System.Drawing.Size(128, 40);
             this.btnFVSVariablesTieBreakerEdit.TabIndex = 36;
@@ -782,6 +785,19 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Size = new System.Drawing.Size(894, 32);
             this.lblTitle.TabIndex = 27;
             this.lblTitle.Text = "Tie Breaker Settings";
+            // 
+            // BtnTiebreakerClear
+            // 
+            this.BtnTiebreakerClear.BackColor = System.Drawing.SystemColors.Control;
+            this.BtnTiebreakerClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnTiebreakerClear.ForeColor = System.Drawing.Color.Black;
+            this.BtnTiebreakerClear.Location = new System.Drawing.Point(451, 201);
+            this.BtnTiebreakerClear.Name = "BtnTiebreakerClear";
+            this.BtnTiebreakerClear.Size = new System.Drawing.Size(128, 40);
+            this.BtnTiebreakerClear.TabIndex = 71;
+            this.BtnTiebreakerClear.Text = "Clear";
+            this.BtnTiebreakerClear.UseVisualStyleBackColor = false;
+            this.BtnTiebreakerClear.Click += new System.EventHandler(this.BtnTiebreakerClear_Click);
             // 
             // uc_scenario_treatment_intensity1
             // 
@@ -2286,6 +2302,68 @@ namespace FIA_Biosum_Manager
             {
                 m_strHelpChapter = "EDIT_LAST_TIEBREAK_RANK";
             }
+        }
+
+        private void ClearVariable(int p_intIndex)
+        {
+            for (int x = 0; x <= this.m_oSavTieBreakerCollection.Count - 1; x++)
+            {
+                // We only update the selected listview item
+                if (this.m_oSavTieBreakerCollection.Item(x).intListViewIndex == this.lvFVSVariablesTieBreakerValues.SelectedItems[0].Index)
+                {
+                    TieBreakerItem oClearItem = this.m_oSavTieBreakerCollection.Item(x);
+                    // FVS ATTRIBUTE
+                    if (oClearItem.strMethod.Trim().ToUpper().Equals("STAND ATTRIBUTE"))
+                    {
+                        oClearItem.strValueSource = "Not Defined";
+                    }
+                    // ECONOMIC ATTRIBUTE
+                    else
+                    {
+                        oClearItem.strValueSource = "NA";
+                    }
+                    oClearItem.strFVSVariableName = "Not Defined";
+                    oClearItem.strMaxYN = "N";
+                    oClearItem.strMinYN = "N";
+                    oClearItem.bSelected = false;
+                }
+            }
+
+            if (this.lvFVSVariablesTieBreakerValues.Items[p_intIndex].SubItems[COLUMN_METHOD].Text.Trim().ToUpper() == "STAND ATTRIBUTE")
+            {
+                this.lvFVSVariablesTieBreakerValues.Items[p_intIndex].SubItems[COLUMN_VALUESOURCE].Text = "Not Defined";
+            }
+            else
+            {
+                this.lvFVSVariablesTieBreakerValues.Items[p_intIndex].SubItems[COLUMN_VALUESOURCE].Text = "NA";
+            }
+
+            this.lvFVSVariablesTieBreakerValues.Items[p_intIndex].SubItems[COLUMN_FVSVARIABLE].Text = "Not Defined";
+            this.lvFVSVariablesTieBreakerValues.Items[p_intIndex].SubItems[COLUMN_MAXMIN].Text = "Not Defined";
+            this.lvFVSVariablesTieBreakerValues.Items[p_intIndex].Checked = false;
+        }
+
+        private void BtnTiebreakerClear_Click(object sender, EventArgs e)
+        {
+            if (this.lvFVSVariablesTieBreakerValues.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("!! No variable selected to clear!", "FIA Biosum", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+            if (this.lvFVSVariablesTieBreakerValues.SelectedItems[0].SubItems[COLUMN_METHOD].Text.Trim().ToUpper() == "LAST TIE-BREAK RANK")
+            {
+                MessageBox.Show("!! Last Tie-Break Rank is required and cannot be cleared!", "FIA Biosum", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (this.lvFVSVariablesTieBreakerValues.SelectedItems[0].SubItems[COLUMN_FVSVARIABLE].Text.Trim() == "Not Defined") return;
+
+            DialogResult result = MessageBox.Show("Are you sure you wish to delete this Tie-Breaker variable ? (YN)", "FIA Biosum",
+                System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+            if (result == System.Windows.Forms.DialogResult.Yes)
+                ClearVariable(this.lvFVSVariablesTieBreakerValues.SelectedItems[0].Index);
         }
 	}
 }

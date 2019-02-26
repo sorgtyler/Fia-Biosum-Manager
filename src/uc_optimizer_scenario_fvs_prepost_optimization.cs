@@ -2660,6 +2660,7 @@ namespace FIA_Biosum_Manager
                     oClearItem.strFilterOperator = "";
                     oClearItem.dblFilterValue = 0;
                     oClearItem.strRevenueAttribute = "";
+                    oClearItem.bSelected = false;
                 }
             }
 
