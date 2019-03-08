@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandByAnimation", "..\..\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biosum_Manager_Test", "..\..\Biosum_Manager_Test\src\Biosum_Manager_Test.csproj", "{93387F0F-5633-433E-9D9C-7E596CBD2274}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODP", "..\..\ODP\src\ODP.csproj", "{498D58F0-D98C-4B18-AB46-90CDE59592DB}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = fia_biosum.vsmdi
@@ -88,6 +90,12 @@ Global
 		{93387F0F-5633-433E-9D9C-7E596CBD2274}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93387F0F-5633-433E-9D9C-7E596CBD2274}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93387F0F-5633-433E-9D9C-7E596CBD2274}.Release|x86.ActiveCfg = Release|Any CPU
+  	{498D58F0-D98C-4B18-AB46-90CDE59592DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{498D58F0-D98C-4B18-AB46-90CDE59592DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{498D58F0-D98C-4B18-AB46-90CDE59592DB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{498D58F0-D98C-4B18-AB46-90CDE59592DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{498D58F0-D98C-4B18-AB46-90CDE59592DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{498D58F0-D98C-4B18-AB46-90CDE59592DB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

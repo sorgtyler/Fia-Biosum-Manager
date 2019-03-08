@@ -891,9 +891,9 @@ namespace FIA_Biosum_Manager
         lblDRYBIOM.Text = "0"; lblDRYBIOT.Text = "0"; lblVOLCFGRS.Text = "0";
         lblVOLCFNET.Text = "0"; lblVOLCSGRS.Text = "0"; lblVOLTSGRS.Text = "0";
 
-      FIADB.Oracle.Services m_oOracleServices = new FIADB.Oracle.Services();
+      FIADBOracle.Services m_oOracleServices = new FIADBOracle.Services();
       m_oOracleServices.Start();
-      m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.InsertRowTrigger;
+      m_oOracleServices.m_oTree.GetVolumesMode = FIADBOracle.Services.Tree.GetVolumesModeValues.InsertRowTrigger;
       if( m_oOracleServices.m_intError == 0 )
       {
           try
@@ -1064,13 +1064,13 @@ namespace FIA_Biosum_Manager
             UpdateThermPercent(0, intRecordCount + 8, intThermValue);
             //step 4 - start oracle XE services
             frmMain.g_oDelegate.SetStatusBarPanelTextValue(frmMain.g_sbpInfo.Parent,1,"Starting Oracle Services...Stand By");
-            FIADB.Oracle.Services m_oOracleServices = new FIADB.Oracle.Services();
+            FIADBOracle.Services m_oOracleServices = new FIADBOracle.Services();
             m_oOracleServices.Start();
             intThermValue++;
             UpdateThermPercent(0, intRecordCount + 8, intThermValue);
 
             if (m_oOracleServices.m_oTree == null) MessageBox.Show("m_oTree==null");
-            m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
+            m_oOracleServices.m_oTree.GetVolumesMode = FIADBOracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
             if (m_strGridTableSource.Trim() != Tables.FVS.DefaultOracleInputVolumesTable)
             {
                 //step 5 - delete and create work tables
