@@ -126,7 +126,7 @@ namespace FIA_Biosum_Manager
 		string m_strRxCycleList="";
 		string[] m_strRxCycleArray=null;
 
-        FIADB.Oracle.Services m_oOracleServices = new FIADB.Oracle.Services();
+        FIADBOracle.Services m_oOracleServices = new FIADBOracle.Services();
         private Button btnViewPostLogFile;
         private Label lblMsg;
 
@@ -4732,7 +4732,7 @@ namespace FIA_Biosum_Manager
 
                                         if (m_oOracleServices.m_intError == 0)
                                         {
-                                            m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.InsertRowTrigger;
+                                            m_oOracleServices.m_oTree.GetVolumesMode = FIADBOracle.Services.Tree.GetVolumesModeValues.InsertRowTrigger;
                                             xx = 1;
                                             while (oAdo.m_OleDbDataReader.Read())
                                             {
@@ -4829,7 +4829,7 @@ namespace FIA_Biosum_Manager
                                     m_oOracleServices.Start();
 
                                     if (m_oOracleServices.m_oTree == null) MessageBox.Show("m_oTree==null");
-                                    m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
+                                    m_oOracleServices.m_oTree.GetVolumesMode = FIADBOracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
 
 
                                     frmMain.g_oTables.m_oFvs.CreateOracleInputFCSBiosumVolumesTable(oAdo, oConn, Tables.FVS.DefaultOracleInputFCSVolumesTable);

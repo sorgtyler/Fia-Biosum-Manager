@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Devart.Common;
 
 namespace FIA_Biosum_Manager
 {

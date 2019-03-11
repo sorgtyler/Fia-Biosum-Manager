@@ -131,7 +131,17 @@ namespace FIA_Biosum_Manager
 			this.InitializePopup();
 			this.m_dg.MouseWheel+=new MouseEventHandler(m_dg_MouseWheel);
 			this.m_conn = new System.Data.OleDb.OleDbConnection();
-			this.m_ds = new DataSet();
+
+            if (strDataSetName != null && strDataSetName.Trim().Length > 0)
+            {
+                this.m_ds = new DataSet(strDataSetName);
+            }
+            else
+            {
+                this.m_ds = new DataSet();
+            }
+            
+
 			this.m_da = new System.Data.OleDb.OleDbDataAdapter();
 
 			this.m_dg.Left = 5;

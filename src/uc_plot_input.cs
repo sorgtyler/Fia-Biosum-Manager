@@ -3333,12 +3333,12 @@ namespace FIA_Biosum_Manager
                    
                         SetLabelValue(m_frmTherm.lblMsg, "Text", "Start Oracle Services...Stand By");
                         frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Control)this.m_frmTherm, "Refresh");
-                        FIADB.Oracle.Services m_oOracleServices = new FIADB.Oracle.Services();
+                        FIADBOracle.Services m_oOracleServices = new FIADBOracle.Services();
                         m_oOracleServices.Start();
                         SetThermValue(m_frmTherm.progressBar1, "Value", 2);
 
                         if (m_oOracleServices.m_oTree == null) MessageBox.Show("m_oTree==null");
-                        m_oOracleServices.m_oTree.GetVolumesMode = FIADB.Oracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
+                        m_oOracleServices.m_oTree.GetVolumesMode = FIADBOracle.Services.Tree.GetVolumesModeValues.SQLUpdate;
                         //if (m_strGridTableSource.Trim() != Tables.FVS.DefaultOracleInputVolumesTable)
                         //step 5 - delete and create work tables
                         if (p_ado.TableExist(this.m_connTempMDBFile, Tables.FVS.DefaultOracleInputVolumesTable))
