@@ -76,7 +76,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox grpMaxMin;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerLastTieBreakRank;
 		private System.Windows.Forms.Panel panel2;
-		public FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank uc_scenario_treatment_intensity1;
+		public FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank uc_scenario_last_tiebreak_rank1;
 		private System.Windows.Forms.Panel pnlTieBreaker;
 		private System.Windows.Forms.GroupBox grpboxFVSVariablesTieBreakerValues;
 		private System.Windows.Forms.ListView lvFVSVariablesTieBreakerValues;
@@ -311,7 +311,7 @@ namespace FIA_Biosum_Manager
             this.btnFVSVariablesTieBreakerEdit = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.BtnTiebreakerClear = new System.Windows.Forms.Button();
-            this.uc_scenario_treatment_intensity1 = new FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank();
+            this.uc_scenario_last_tiebreak_rank1 = new FIA_Biosum_Manager.uc_optimizer_scenario_last_tiebreak_rank();
             this.groupBox1.SuspendLayout();
             this.grpboxFVSVariablesTieBreakerLastTieBreakRank.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -363,7 +363,7 @@ namespace FIA_Biosum_Manager
             // 
             this.panel2.AutoScroll = true;
             this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.uc_scenario_treatment_intensity1);
+            this.panel2.Controls.Add(this.uc_scenario_last_tiebreak_rank1);
             this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityPrev);
             this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityClear);
             this.panel2.Controls.Add(this.btnFVSVariablesTieBreakerTreatmentIntensityDone);
@@ -799,15 +799,15 @@ namespace FIA_Biosum_Manager
             this.BtnTiebreakerClear.UseVisualStyleBackColor = false;
             this.BtnTiebreakerClear.Click += new System.EventHandler(this.BtnTiebreakerClear_Click);
             // 
-            // uc_scenario_treatment_intensity1
+            // uc_scenario_last_tiebreak_rank1
             // 
-            this.uc_scenario_treatment_intensity1.BackColor = System.Drawing.SystemColors.Control;
-            this.uc_scenario_treatment_intensity1.Location = new System.Drawing.Point(8, 25);
-            this.uc_scenario_treatment_intensity1.Name = "uc_scenario_treatment_intensity1";
-            this.uc_scenario_treatment_intensity1.ReferenceOptimizerScenarioForm = null;
-            this.uc_scenario_treatment_intensity1.Size = new System.Drawing.Size(840, 320);
-            this.uc_scenario_treatment_intensity1.TabIndex = 13;
-            this.uc_scenario_treatment_intensity1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
+            this.uc_scenario_last_tiebreak_rank1.BackColor = System.Drawing.SystemColors.Control;
+            this.uc_scenario_last_tiebreak_rank1.Location = new System.Drawing.Point(8, 25);
+            this.uc_scenario_last_tiebreak_rank1.Name = "uc_scenario_treatment_intensity1";
+            this.uc_scenario_last_tiebreak_rank1.ReferenceOptimizerScenarioForm = null;
+            this.uc_scenario_last_tiebreak_rank1.Size = new System.Drawing.Size(840, 320);
+            this.uc_scenario_last_tiebreak_rank1.TabIndex = 13;
+            this.uc_scenario_last_tiebreak_rank1.Load += new System.EventHandler(this.uc_scenario_treatment_intensity1_Load);
             // 
             // uc_optimizer_scenario_fvs_prepost_variables_tiebreaker
             // 
@@ -1012,7 +1012,7 @@ namespace FIA_Biosum_Manager
                 }
                 this.m_oSavTieBreakerCollection.Copy(this.m_oOldTieBreakerCollection, ref this.m_oSavTieBreakerCollection, true);
             }
-            this.uc_scenario_treatment_intensity1.loadgrid(true);
+            this.uc_scenario_last_tiebreak_rank1.loadgrid(true);
 
         }
         public void loadvalues(System.Collections.Generic.IDictionary<string, System.Collections.Generic.IList<String>> p_dictFVSTables)
@@ -1203,8 +1203,8 @@ namespace FIA_Biosum_Manager
 			this.m_intError=oAdo.m_intError;
 			this.m_strError=oAdo.m_strError;
 			oAdo=null;
-			
-			this.uc_scenario_treatment_intensity1.loadgrid(false);
+
+            this.uc_scenario_last_tiebreak_rank1.loadgrid(false);
 			
 		}
 		public int savevalues()
@@ -1361,7 +1361,7 @@ namespace FIA_Biosum_Manager
 
 				oAdo.CloseConnection(oAdo.m_OleDbConnection);
 			}
-			this.uc_scenario_treatment_intensity1.savevalues();
+            this.uc_scenario_last_tiebreak_rank1.savevalues();
 			return 0;
 		}
 
@@ -1753,7 +1753,7 @@ namespace FIA_Biosum_Manager
             // Validate LAST TIE-BREAK RANK if it is checked
             if (this.lvFVSVariablesTieBreakerValues.Items[2].Checked)
             {
-                x = this.uc_scenario_treatment_intensity1.Val_Last_Tiebreak_Rank(false);
+                x = this.uc_scenario_last_tiebreak_rank1.Val_Last_Tiebreak_Rank(false);
             }
 
             if (x<0)
@@ -1959,8 +1959,8 @@ namespace FIA_Biosum_Manager
 
 		private void grpboxFVSVariablesTieBreakerTreatmentIntensity_Resize(object sender, System.EventArgs e)
 		{
-			this.uc_scenario_treatment_intensity1.Width = grpboxFVSVariablesTieBreakerLastTieBreakRank.ClientSize.Width - this.uc_scenario_treatment_intensity1.Left * 2;
-			this.uc_scenario_treatment_intensity1.Height =  this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Top - this.uc_scenario_treatment_intensity1.Top;
+            this.uc_scenario_last_tiebreak_rank1.Width = grpboxFVSVariablesTieBreakerLastTieBreakRank.ClientSize.Width - this.uc_scenario_last_tiebreak_rank1.Left * 2;
+            this.uc_scenario_last_tiebreak_rank1.Height = this.btnFVSVariablesTieBreakerTreatmentIntensityClear.Top - this.uc_scenario_last_tiebreak_rank1.Top;
 		}
 
 		private void btnFVSVariablesTieBreakerVariableClear_Click(object sender, System.EventArgs e)
@@ -1994,7 +1994,7 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerTreatmentIntensityCancel_Click(object sender, System.EventArgs e)
 		{
-			this.uc_scenario_treatment_intensity1.m_DataSet.RejectChanges();
+            this.uc_scenario_last_tiebreak_rank1.m_DataSet.RejectChanges();
 			this.grpboxFVSVariablesTieBreakerLastTieBreakRank.Hide();
 			this.EnableTabs(true);
 			grpboxFVSVariablesTieBreaker.Show();
@@ -2002,8 +2002,8 @@ namespace FIA_Biosum_Manager
 
 		private void btnFVSVariablesTieBreakerTreatmentIntensityClear_Click(object sender, System.EventArgs e)
 		{
-            for (int x = 0; x <= uc_scenario_treatment_intensity1.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows.Count - 1; x++)
-                this.uc_scenario_treatment_intensity1.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"] = System.DBNull.Value;
+            for (int x = 0; x <= uc_scenario_last_tiebreak_rank1.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows.Count - 1; x++)
+                this.uc_scenario_last_tiebreak_rank1.m_DataSet.Tables["scenario_last_tiebreak_rank"].Rows[x]["last_tiebreak_rank"] = System.DBNull.Value;
 		}
 
 		private void btnFVSVariablesTieBreakerVariableCancel_Click(object sender, System.EventArgs e)
@@ -2067,7 +2067,7 @@ namespace FIA_Biosum_Manager
 		private void btnFVSVariablesTieBreakerTreatmentIntensityDone_Click(object sender, System.EventArgs e)
 		{
 			this.ReferenceOptimizerScenarioForm.m_bSave=true;
-			this.uc_scenario_treatment_intensity1.m_DataSet.AcceptChanges();
+            this.uc_scenario_last_tiebreak_rank1.m_DataSet.AcceptChanges();
 			this.UpdateFVSVariableListView();
 
 			this.EnableTabs(true);
