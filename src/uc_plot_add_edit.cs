@@ -30,7 +30,12 @@ namespace FIA_Biosum_Manager
 		public const int RECORDCOUNT = 6;
 		private System.Windows.Forms.ImageList imageList1;
         private ToolBarButton tblbtnDeleteConds;
+        private ToolBarButton tlbbtnHelp;
 		private System.ComponentModel.IContainer components;
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultDatabaseXPSFile;
+
 
 		public uc_plot_add_edit()
 		{
@@ -39,7 +44,7 @@ namespace FIA_Biosum_Manager
 
 			
 			// TODO: Add any initialization after the InitializeComponent call
-
+            this.m_oEnv = new env();
 		}
 
 		/// <summary> 
@@ -70,12 +75,13 @@ namespace FIA_Biosum_Manager
             this.btnEdit = new System.Windows.Forms.Button();
             this.tlbPlotAddEdit = new System.Windows.Forms.ToolBar();
             this.tlbbtnAdd = new System.Windows.Forms.ToolBarButton();
+            this.tblbtnDeleteConds = new System.Windows.Forms.ToolBarButton();
             this.tlbbtnEdit = new System.Windows.Forms.ToolBarButton();
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.mnuEditDeleteAll = new System.Windows.Forms.MenuItem();
             this.mnuEditBrowse = new System.Windows.Forms.MenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.tblbtnDeleteConds = new System.Windows.Forms.ToolBarButton();
+            this.tlbbtnHelp = new System.Windows.Forms.ToolBarButton();
             this.SuspendLayout();
             // 
             // btnAdd
@@ -102,7 +108,8 @@ namespace FIA_Biosum_Manager
             this.tlbPlotAddEdit.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
             this.tlbbtnAdd,
             this.tblbtnDeleteConds,
-            this.tlbbtnEdit});
+            this.tlbbtnEdit,
+            this.tlbbtnHelp});
             this.tlbPlotAddEdit.ButtonSize = new System.Drawing.Size(150, 55);
             this.tlbPlotAddEdit.Divider = false;
             this.tlbPlotAddEdit.Dock = System.Windows.Forms.DockStyle.None;
@@ -111,7 +118,7 @@ namespace FIA_Biosum_Manager
             this.tlbPlotAddEdit.Location = new System.Drawing.Point(5, 5);
             this.tlbPlotAddEdit.Name = "tlbPlotAddEdit";
             this.tlbPlotAddEdit.ShowToolTips = true;
-            this.tlbPlotAddEdit.Size = new System.Drawing.Size(495, 62);
+            this.tlbPlotAddEdit.Size = new System.Drawing.Size(650, 62);
             this.tlbPlotAddEdit.TabIndex = 2;
             this.tlbPlotAddEdit.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.tlbPlotAddEdit_ButtonClick);
             // 
@@ -120,6 +127,12 @@ namespace FIA_Biosum_Manager
             this.tlbbtnAdd.ImageIndex = 0;
             this.tlbbtnAdd.Name = "tlbbtnAdd";
             this.tlbbtnAdd.Text = "Add Plot Data";
+            // 
+            // tblbtnDeleteConds
+            // 
+            this.tblbtnDeleteConds.ImageIndex = 1;
+            this.tblbtnDeleteConds.Name = "tblbtnDeleteConds";
+            this.tblbtnDeleteConds.Text = "Delete Conditions";
             // 
             // tlbbtnEdit
             // 
@@ -153,12 +166,13 @@ namespace FIA_Biosum_Manager
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "");
             this.imageList1.Images.SetKeyName(1, "");
+            this.imageList1.Images.SetKeyName(2, "HelpSystemBlue32.png");
             // 
-            // tblbtnDeleteConds
+            // tlbbtnHelp
             // 
-            this.tblbtnDeleteConds.ImageIndex = 1;
-            this.tblbtnDeleteConds.Name = "tblbtnDeleteConds";
-            this.tblbtnDeleteConds.Text = "Delete Conditions";
+            this.tlbbtnHelp.ImageIndex = 2;
+            this.tlbbtnHelp.Name = "tlbbtnHelp";
+            this.tlbbtnHelp.Text = "Help";
             // 
             // uc_plot_add_edit
             // 
@@ -166,7 +180,7 @@ namespace FIA_Biosum_Manager
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnAdd);
             this.Name = "uc_plot_add_edit";
-            this.Size = new System.Drawing.Size(505, 72);
+            this.Size = new System.Drawing.Size(660, 72);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -304,6 +318,13 @@ namespace FIA_Biosum_Manager
                 case "DELETE ALL PLOT RECORDS":
 					this.DeleteAllPlotRecords();
 					break;
+                case "HELP":
+                    if (m_oHelp == null)
+                    {
+                        m_oHelp = new Help(m_xpsFile, m_oEnv);
+                    }
+                    m_oHelp.ShowHelp(new string[] { "DATABASE", "PLOT_DATA_MENU" });
+                    break;
 			}
 		}
 		/// <summary>
