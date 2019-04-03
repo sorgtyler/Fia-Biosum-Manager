@@ -13,7 +13,6 @@ namespace FIA_Biosum_Manager
 	public class uc_optimizer_scenario_fvs_prepost_variables_tiebreaker: System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
-		private System.ComponentModel.IContainer components;
 		//private int m_intFullHt=400;
 		public System.Data.OleDb.OleDbDataAdapter m_OleDbDataAdapter;
 		public System.Data.DataSet m_DataSet;
@@ -234,10 +233,7 @@ namespace FIA_Biosum_Manager
 		{
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+
 			}
 			base.Dispose( disposing );
 		}
@@ -930,7 +926,7 @@ namespace FIA_Biosum_Manager
             this.m_intError = 0;
             this.m_strError = "";
 
-            int x, y;
+            int x;
 
 
 
@@ -1105,7 +1101,6 @@ namespace FIA_Biosum_Manager
 			oAdo.OpenConnection(oAdo.getMDBConnString(strScenarioMDB,"",""));
 			if (oAdo.m_intError==0)
 			{
-				int intVarNum=0;
 
 				if (!oAdo.TableExist(oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesTieBreakerTableName))
 					 frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioFVSVariablesTieBreakerTable(oAdo,oAdo.m_OleDbConnection,
