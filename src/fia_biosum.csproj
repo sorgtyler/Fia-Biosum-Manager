@@ -96,15 +96,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Devart.Data, Version=5.0.938.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL" />
-    <Reference Include="Devart.Data.Oracle, Version=8.3.146.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL" />
-    <Reference Include="Devart.Data.Oracle.Entity, Version=8.3.146.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Devart\dotConnect\Oracle\Entity\EF4\Devart.Data.Oracle.Entity.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -670,7 +661,6 @@
     <EmbeddedResource Include="frmTreeView.resx">
       <DependentUpon>frmTreeView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -952,7 +942,6 @@
     </None>
     <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
-    <None Include="Properties\licenses.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Fcs-Class-Library\src\FcsClassLibrary.csproj">
@@ -962,6 +951,10 @@
     <ProjectReference Include="..\..\FIADB-Oracle-Services\src\FIADBOracleServices.csproj">
       <Project>{2651779D-1307-4C18-9CEF-2F2E10432FF3}</Project>
       <Name>FIADBOracleServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ODP\src\ODP.csproj">
+      <Project>{498D58F0-D98C-4B18-AB46-90CDE59592DB}</Project>
+      <Name>ODP</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Progress-Bar-Basic\src\ProgressBarBasic.csproj">
       <Project>{FF455DC4-70F8-4158-A9B3-B5F406091E5B}</Project>

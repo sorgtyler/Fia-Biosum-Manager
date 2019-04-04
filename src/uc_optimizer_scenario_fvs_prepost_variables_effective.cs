@@ -1581,7 +1581,7 @@ namespace FIA_Biosum_Manager
         public void loadvalues_FromProperties()
         {
 
-            int x, y;
+            int x;
 
             for (x = 0; x <= NUMBER_OF_VARIABLES - 1; x++)
                 this.RemoveVariable(x);
@@ -2543,10 +2543,8 @@ namespace FIA_Biosum_Manager
 		private void loadvalues_variable(int p_intVariable,int p_intStep)
 		{
 			int intCurrentSet; //=p_intVariable+1;
-			int intTotalSets=NUMBER_OF_VARIABLES;             //number of pre and post variables
 			int intItemsWithinASet=5;		
 			int intCurrentItem=p_intStep;
-			string strTable="";
 			string strColumn1="";
 			string strColumn2="";
 			string strColumn3="";
@@ -4099,7 +4097,6 @@ namespace FIA_Biosum_Manager
 
 		private void lvFVSVariablesPrePostValues_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			int x;
 			try
 			{
 				if (e.Button == MouseButtons.Left)

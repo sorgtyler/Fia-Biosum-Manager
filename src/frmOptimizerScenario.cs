@@ -223,7 +223,7 @@ namespace FIA_Biosum_Manager
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.ReferenceOptimizerScenarioForm = this;
 				this.uc_scenario_fvs_prepost_variables_effective1.ReferenceTieBreakerUserControl=this.uc_scenario_fvs_prepost_variables_tiebreaker1;
-				this.uc_scenario_fvs_prepost_variables_tiebreaker1.uc_scenario_treatment_intensity1.ReferenceOptimizerScenarioForm=this;
+                this.uc_scenario_fvs_prepost_variables_tiebreaker1.uc_scenario_last_tiebreak_rank1.ReferenceOptimizerScenarioForm = this;
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.ReferenceOptimizationUserControl=this.uc_scenario_fvs_prepost_optimization1;
 				this.uc_scenario_fvs_prepost_optimization1.ReferenceTieBreaker=this.uc_scenario_fvs_prepost_variables_tiebreaker1;
                 //
