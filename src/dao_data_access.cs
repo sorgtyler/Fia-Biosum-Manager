@@ -2389,8 +2389,6 @@ namespace FIA_Biosum_Manager
         {
             Microsoft.Office.Interop.Access.Dao.Database p_DaoDatabaseSource;
 
-
-            int x = 0;
             this.m_intError = 0;
             this.m_strError = "";
 
@@ -2419,10 +2417,24 @@ namespace FIA_Biosum_Manager
                 try
                 {
                     // Retrieve queries from source database
+                    QueryDefs destQdfs = this.m_DaoDatabase.QueryDefs;
                     foreach (QueryDef qdfLoop in p_DaoDatabaseSource.QueryDefs)
                     {
-                        Console.WriteLine("SQL --> " + qdfLoop.SQL);
+                        // Check to see if the query already exists, if it does we don't try to overwrite it
+                        bool bQueryExists = false;
+                        foreach (QueryDef testDef in destQdfs)
+                        {
+                            if (testDef.Name.Trim().ToLower().Equals(qdfLoop.Name.Trim().ToLower()))
+                            {
+                                bQueryExists = true;
+                                break;
+                            }
 
+                        }
+                        if (bQueryExists == false)
+                        {
+                            QueryDef qdfNew = this.m_DaoDatabase.CreateQueryDef(qdfLoop.Name, qdfLoop.SQL);
+                        }
                     }
                 }         
                 catch (Exception Caught)
@@ -2433,38 +2445,16 @@ namespace FIA_Biosum_Manager
                     this.m_DaoDatabase.Close();
                     this.m_DaoDatabase = null;
                     this.m_DaoTableDef = null;
-                    p_DaoDatabaseSource = null;
-                    return;
-                }
-
-                //okay now lets move the contents from the source table to the destination table
-                try
-                {
- 
-                }
-
-                catch (Exception caught)
-                {
-                    this.m_intError = -1;
-                    this.m_strError = caught.Message;
-                    MessageBox.Show(this.m_strError);
-                    this.m_DaoDatabase.Close();
-                    this.m_DaoDatabase = null;
                     p_DaoDatabaseSource.Close();
                     p_DaoDatabaseSource = null;
-                    this.m_DaoTableDef = null;
                     return;
                 }
 
                 this.m_DaoTableDef = null;
-
-
                 this.m_DaoDatabase.Close();
                 this.m_DaoDatabase = null;
                 p_DaoDatabaseSource.Close();
                 p_DaoDatabaseSource = null;
-
-
             }
 
         }
