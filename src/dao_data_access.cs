@@ -2385,6 +2385,92 @@ namespace FIA_Biosum_Manager
             oTextFileStream.Close();
         }
 
+        public void CopyQueriesToDatabase(string strMDBFileSource, string strMDBFileDestination)
+        {
+            Microsoft.Office.Interop.Access.Dao.Database p_DaoDatabaseSource;
+
+
+            int x = 0;
+            this.m_intError = 0;
+            this.m_strError = "";
+
+
+            //open destination DB file that the queries will be copied to
+            this.OpenDb(strMDBFileDestination);
+            if (this.m_intError == 0)
+            {
+                //open the source db file and table
+                this.m_strError = "";
+                this.m_intError = 0;
+                try
+                {
+                    p_DaoDatabaseSource = this.m_DaoDbEngine.Workspaces[0].OpenDatabase(strMDBFileSource, false, false, string.Empty);
+                }
+                catch
+                {
+                    this.m_strError = "DAO Error Opening Database " + strMDBFileSource.ToString();
+                    this.m_intError = -1;
+                    MessageBox.Show(this.m_strError);
+                    this.m_DaoDatabase.Close();
+                    this.m_DaoDatabase = null;
+                    return;
+                }
+
+                try
+                {
+                    // Retrieve queries from source database
+                    foreach (QueryDef qdfLoop in p_DaoDatabaseSource.QueryDefs)
+                    {
+                        Console.WriteLine("SQL --> " + qdfLoop.SQL);
+
+                    }
+                }         
+                catch (Exception Caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = Caught.Message;
+                    MessageBox.Show(m_strError);
+                    this.m_DaoDatabase.Close();
+                    this.m_DaoDatabase = null;
+                    this.m_DaoTableDef = null;
+                    p_DaoDatabaseSource = null;
+                    return;
+                }
+
+                //okay now lets move the contents from the source table to the destination table
+                try
+                {
+ 
+                }
+
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = caught.Message;
+                    MessageBox.Show(this.m_strError);
+                    this.m_DaoDatabase.Close();
+                    this.m_DaoDatabase = null;
+                    p_DaoDatabaseSource.Close();
+                    p_DaoDatabaseSource = null;
+                    this.m_DaoTableDef = null;
+                    return;
+                }
+
+                this.m_DaoTableDef = null;
+
+
+                this.m_DaoDatabase.Close();
+                this.m_DaoDatabase = null;
+                p_DaoDatabaseSource.Close();
+                p_DaoDatabaseSource = null;
+
+
+            }
+
+        }
+
     }
+
+
 }
 
