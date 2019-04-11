@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using System.Data;
+using System.Data.OleDb;
 using System.IO;
 namespace FIA_Biosum_Manager
 {
@@ -157,69 +158,59 @@ namespace FIA_Biosum_Manager
         /// </summary>
         /// <param name="strConn"></param>
         /// <param name="strSQL"></param>
-		public void SqlNonQuery(string strConn, string strSQL)
-		{
-            System.Data.OleDb.OleDbConnection p_OleDbConnection = new System.Data.OleDb.OleDbConnection();
-		    this.OpenConnection(strConn, ref p_OleDbConnection);
-			if (this.m_intError == 0)
-			{
-                System.Data.OleDb.OleDbCommand p_OleDbCommand = new System.Data.OleDb.OleDbCommand();
-				p_OleDbCommand.Connection = p_OleDbConnection;
-				p_OleDbCommand.CommandText = strSQL;
-				try
-				{
-					p_OleDbCommand.ExecuteNonQuery();
-				}
-				catch (Exception caught)
-				{
-					this.m_strError = caught.Message + " The SQL command " + strSQL + " Failed";;
-					this.m_intError = -1;
+        public void SqlNonQuery(string strConn, string strSQL)
+        {
+            using (var p_OleDbConnection = new OleDbConnection(strConn))
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_OleDbConnection))
+            {
+                try
+                {
+                    p_OleDbCommand.Connection.Open();
+                    p_OleDbCommand.ExecuteNonQuery();
+                }
+                catch (Exception caught)
+                {
+                    this.m_strError = caught.Message + " The SQL command " + strSQL + " Failed";
+                    this.m_intError = -1;
                     if (_bDisplayErrors)
-					MessageBox.Show("!!Error!! \n" + 
-						"Module - ado_data_access:SqlNonQuery  \n" + 
-						"Err Msg - " + this.m_strError,
-						"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-						System.Windows.Forms.MessageBoxIcon.Exclamation);
-    			}
-				p_OleDbConnection.Close();
-				while (p_OleDbConnection.State == System.Data.ConnectionState.Open)
-					System.Threading.Thread.Sleep(1000);
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:SqlNonQuery  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                }
+            }
+        }
 
-				p_OleDbConnection = null;
-				p_OleDbCommand = null;
 
-			}
-		}
         /// <summary>
         /// Execute a SQL Query (Update, Insert, Delete, Into)
         /// </summary>
         /// <param name="p_OleDbConnection"></param>
         /// <param name="strSQL"></param>
-		public void SqlNonQuery(System.Data.OleDb.OleDbConnection p_OleDbConnection, string strSQL)
-		{
-				System.Data.OleDb.OleDbCommand p_OleDbCommand = new System.Data.OleDb.OleDbCommand();
-			    p_OleDbCommand.Connection = p_OleDbConnection;
-				p_OleDbCommand.CommandText = strSQL;
-			    
-				try
-				{
-					p_OleDbCommand.ExecuteNonQuery();
-				}
-				catch (Exception caught)
-				{
-					this.m_strError = caught.Message + " The SQL command " + strSQL + " Failed";;
-					this.m_intError = -1;
+        public void SqlNonQuery(System.Data.OleDb.OleDbConnection p_OleDbConnection, string strSQL)
+        {
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_OleDbConnection))
+            {
+                try
+                {
+                    p_OleDbCommand.ExecuteNonQuery();
+                }
+                catch (Exception caught)
+                {
+                    this.m_strError = caught.Message + " The SQL command " + strSQL + " Failed";
+                    this.m_intError = -1;
                     if (_bDisplayErrors)
-					MessageBox.Show("!!Error!! \n" + 
-						"Module - ado_data_access:SqlNonQuery  \n" + 
-						"Err Msg - " + this.m_strError,
-						"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-						System.Windows.Forms.MessageBoxIcon.Exclamation);
-				}
-				p_OleDbCommand = null;
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:SqlNonQuery  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                }
+            }
+        }
 
-			
-		}
+
         /// <summary>
         /// Execute a SQL Query (Update, Insert, Delete, Into) to a connection with an active transaction command
         /// </summary>
@@ -228,29 +219,24 @@ namespace FIA_Biosum_Manager
         /// <param name="strSQL"></param>
 		public void SqlNonQuery(System.Data.OleDb.OleDbConnection p_OleDbConnection,System.Data.OleDb.OleDbTransaction p_OleDbTransaction, string strSQL)
 		{
-			System.Data.OleDb.OleDbCommand p_OleDbCommand = new System.Data.OleDb.OleDbCommand();
-			p_OleDbCommand.Connection = p_OleDbConnection;
-			p_OleDbCommand.CommandText = strSQL;
-			this.m_OleDbCommand.Transaction = p_OleDbTransaction;
-			    
-			try
-			{
-				p_OleDbCommand.ExecuteNonQuery();
-			}
-			catch (Exception caught)
-			{
-				this.m_strError = caught.Message + " The SQL command " + strSQL + " Failed";;
-				this.m_intError = -1;
-                if (_bDisplayErrors)
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:SqlNonQuery  \n" + 
-					"Err Msg - " + this.m_strError,
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-			}
-			p_OleDbCommand = null;
-
-			
+		    using (var p_OleDbCommand = new OleDbCommand(strSQL, p_OleDbConnection, p_OleDbTransaction))
+		    {
+		        try
+		        {
+		            p_OleDbCommand.ExecuteNonQuery();
+		        }
+		        catch (Exception caught)
+		        {
+		            this.m_strError = caught.Message + " The SQL command " + strSQL + " Failed";
+		            this.m_intError = -1;
+		            if (_bDisplayErrors)
+		                MessageBox.Show("!!Error!! \n" +
+		                                "Module - ado_data_access:SqlNonQuery  \n" +
+		                                "Err Msg - " + this.m_strError,
+		                    "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+		                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+		        }
+		    }
 		}
         /// <summary>
         /// Load oledb data reader with records returned from SQL 
@@ -1220,117 +1206,70 @@ namespace FIA_Biosum_Manager
         /// <param name="strSQL"></param>
         /// <param name="strTableName"></param>
         /// <returns></returns>
-		public long getRecordCount(string strConn,
-			string strSQL,string strTableName)
+		public long getRecordCount(string strConn, string strSQL, string strTableName)
 		{
-			System.Data.OleDb.OleDbConnection p_OleDbConn;
-			System.Data.OleDb.OleDbCommand p_OleDbCommand;
-			long intRecTtl=0;
-			this.m_intError=0;
-			this.m_strError="";
-			p_OleDbConn = new System.Data.OleDb.OleDbConnection();
-			try
-			{
-				this.OpenConnection(strConn, ref p_OleDbConn);
-				if (this.m_intError == 0)
-				{
-					p_OleDbCommand = p_OleDbConn.CreateCommand();
-					p_OleDbCommand.CommandText = strSQL;
-					intRecTtl = Convert.ToInt32(p_OleDbCommand.ExecuteScalar());
-
-				}
-
-			}
-			catch (Exception caught)
-			{
-				this.m_intError = -1;
-				this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed" ;
-                if (_bDisplayErrors)
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:getRecordCount  \n" + 
-					"Err Msg - " + this.m_strError,
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				p_OleDbConn.Close();
-				MessageBox.Show(this.m_strError);
-			}
-			try
-			{
-				p_OleDbConn.Close();
-				while (p_OleDbConn.State != System.Data.ConnectionState.Closed)
-					System.Threading.Thread.Sleep(1000);
-			}
-			catch 
-			{
-				if (p_OleDbConn != null)
-				{
-					if (p_OleDbConn.State==System.Data.ConnectionState.Open)
-					{
-						p_OleDbConn.Close();
-						while (p_OleDbConn.State != System.Data.ConnectionState.Closed)
-							System.Threading.Thread.Sleep(1000);
-
-						p_OleDbConn = null;
-					}
-				}
-			}
-			finally
-			{
-				if (p_OleDbConn != null)
-				{
-					if (p_OleDbConn.State==System.Data.ConnectionState.Open)
-					{
-						p_OleDbConn.Close();
-						while (p_OleDbConn.State != System.Data.ConnectionState.Closed)
-							System.Threading.Thread.Sleep(1000);
-
-						p_OleDbConn = null;
-					}
-				}
-			}
-			p_OleDbConn = null;
-			p_OleDbCommand = null;
-			return intRecTtl;
-			
+            long intRecTtl = 0;
+            this.m_intError = 0;
+            this.m_strError = "";
+		    using (var p_OleDbConnection = new OleDbConnection(strConn))
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_OleDbConnection))
+            {
+                try
+                {
+                    p_OleDbCommand.Connection.Open();
+                    intRecTtl = Convert.ToInt32(p_OleDbCommand.ExecuteScalar());
+                }
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed";
+                    if (_bDisplayErrors)
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:getRecordCount  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MessageBox.Show(this.m_strError);
+                }
+            }
+            return intRecTtl;
 		}
-        /// <summary>
-        /// return number of rows
-        /// </summary>
-        /// <param name="p_conn"></param>
-        /// <param name="strSQL"></param>
-        /// <param name="strTableName"></param>
-        /// <returns></returns>
-		public int getRecordCount(System.Data.OleDb.OleDbConnection p_conn,
-			string strSQL,string strTableName)
-		{
-			System.Data.OleDb.OleDbCommand p_OleDbCommand;
-			int intRecTtl=0;
-			this.m_intError=0;
-			this.m_strError="";
-			try
-			{
-				
-					p_OleDbCommand = p_conn.CreateCommand();
-					p_OleDbCommand.CommandText = strSQL;
-					intRecTtl = Convert.ToInt32(p_OleDbCommand.ExecuteScalar());
-				
 
-			}
-			catch (Exception caught)
-			{
-				this.m_intError = -1;
-				this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed" ;
-                if (_bDisplayErrors)
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:getRecordCount  \n" + 
-					"Err Msg - " + this.m_strError,
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-			}
-			p_OleDbCommand = null;
-			return intRecTtl;
-			
-		}
+
+	    /// <summary>
+	    /// return number of rows
+	    /// </summary>
+	    /// <param name="p_conn"></param>
+	    /// <param name="strSQL"></param>
+	    /// <param name="strTableName"></param>
+	    /// <returns></returns>
+	    public int getRecordCount(System.Data.OleDb.OleDbConnection p_conn, string strSQL, string strTableName)
+	    {
+	        int intRecTtl = 0;
+	        this.m_intError = 0;
+	        this.m_strError = "";
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_conn))
+            {
+                try
+                {
+                    intRecTtl = Convert.ToInt32(p_OleDbCommand.ExecuteScalar());
+                }
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed";
+                    if (_bDisplayErrors)
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:getRecordCount  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                }
+            }
+	        return intRecTtl;
+	    }
+
+
         /// <summary>
         /// return number of rows
         /// </summary>
@@ -1339,40 +1278,32 @@ namespace FIA_Biosum_Manager
         /// <param name="strSQL"></param>
         /// <param name="strTableName"></param>
         /// <returns></returns>
-		public long getRecordCount(System.Data.OleDb.OleDbConnection p_conn, 
-			System.Data.OleDb.OleDbTransaction p_trans,
-			string strSQL,string strTableName)
-		{
-			System.Data.OleDb.OleDbCommand p_OleDbCommand;
-			long intRecTtl=0;
+		public long getRecordCount(System.Data.OleDb.OleDbConnection p_conn, System.Data.OleDb.OleDbTransaction p_trans, string strSQL, string strTableName)
+        {
+            int intRecTtl = 0;
 			this.m_intError=0;
 			this.m_strError="";
-			try
-			{
-				
-				p_OleDbCommand = p_conn.CreateCommand();
-				p_OleDbCommand.CommandText = strSQL;
-				p_OleDbCommand.Transaction = p_trans;
-				intRecTtl = Convert.ToInt32(p_OleDbCommand.ExecuteScalar());
-				
-
-			}
-			catch (Exception caught)
-			{
-				this.m_intError = -1;
-				this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed" ;
-                if (_bDisplayErrors)
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:getRecordCount  \n" + 
-					"Err Msg - " + this.m_strError,
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				
-			}
-			p_OleDbCommand = null;
-			return intRecTtl;
-			
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_conn, p_trans))
+            {
+                try
+                {
+                    intRecTtl = Convert.ToInt32(p_OleDbCommand.ExecuteScalar());
+                }
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed";
+                    if (_bDisplayErrors)
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:getRecordCount  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                }
+            }
+	        return intRecTtl;
 		}
+
 
         /// <summary>
         /// Return a ADO.NET datatable after converting from a dataview
@@ -1603,46 +1534,43 @@ namespace FIA_Biosum_Manager
 			
 			
 		}
-        /// <summary>
+        
+	    
+	    /// <summary>
         /// return a single string value resulting from SQL command 
         /// </summary>
         /// <param name="p_conn"></param>
         /// <param name="strSQL"></param>
         /// <param name="strTableName"></param>
         /// <returns></returns>
-		public string getSingleStringValueFromSQLQuery(System.Data.OleDb.OleDbConnection p_conn,
-			string strSQL,string strTableName)
+		public string getSingleStringValueFromSQLQuery(System.Data.OleDb.OleDbConnection p_conn, string strSQL, string strTableName)
 		{
-			System.Data.OleDb.OleDbCommand p_OleDbCommand;
 			string strValue="";
 			this.m_intError=0;
 			this.m_strError="";
-			try
-			{
-				
-				p_OleDbCommand = p_conn.CreateCommand();
-				p_OleDbCommand.CommandText = strSQL;
-				strValue = Convert.ToString(p_OleDbCommand.ExecuteScalar());
-				
-
-			}
-			catch (Exception caught)
-			{
-				this.m_intError = -1;
-				this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed" ;
-                if (_bDisplayErrors)
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:getSingleStringValueFromSQLQuery  \n" + 
-					"Err Msg - " + this.m_strError,
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				
-			}
-			p_OleDbCommand = null;
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_conn))
+            {
+                try
+                {
+                    strValue = Convert.ToString(p_OleDbCommand.ExecuteScalar());
+                }
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed";
+                    if (_bDisplayErrors)
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:getSingleStringValueFromSQLQuery  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                }
+            }
 			return strValue;
-
 		}
-        /// <summary>
+
+	    
+	    /// <summary>
         /// return a single string value resulting from SQL command 
         /// </summary>
         /// <param name="p_conn"></param>
@@ -1653,35 +1581,27 @@ namespace FIA_Biosum_Manager
 		public string getSingleStringValueFromSQLQuery(System.Data.OleDb.OleDbConnection p_conn,
 			System.Data.OleDb.OleDbTransaction p_trans, string strSQL,string strTableName)
 		{
-			System.Data.OleDb.OleDbCommand p_OleDbCommand;
 			string strValue="";
 			this.m_intError=0;
 			this.m_strError="";
-			try
-			{
-				
-				p_OleDbCommand = p_conn.CreateCommand();
-				p_OleDbCommand.CommandText = strSQL;
-				p_OleDbCommand.Transaction = p_trans;
-				strValue = Convert.ToString(p_OleDbCommand.ExecuteScalar());
-				
-
-			}
-			catch (Exception caught)
-			{
-				this.m_intError = -1;
-				this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed" ;
-                if (_bDisplayErrors)
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:getSingleStringValueFromSQLQuery  \n" + 
-					"Err Msg - " + this.m_strError,
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				
-				
-				
-			}
-			p_OleDbCommand = null;
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_conn, p_trans))
+            {
+                try
+                {
+                    strValue = Convert.ToString(p_OleDbCommand.ExecuteScalar());
+                }
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed";
+                    if (_bDisplayErrors)
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:getSingleStringValueFromSQLQuery  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                }
+            }
 			return strValue;
 
 		}
@@ -1692,37 +1612,29 @@ namespace FIA_Biosum_Manager
         /// <param name="strSQL"></param>
         /// <param name="strTableName"></param>
         /// <returns></returns>
-		public double getSingleDoubleValueFromSQLQuery(System.Data.OleDb.OleDbConnection p_conn,
-			string strSQL,string strTableName)
+		public double getSingleDoubleValueFromSQLQuery(System.Data.OleDb.OleDbConnection p_conn, string strSQL, string strTableName)
 		{
-			System.Data.OleDb.OleDbCommand p_OleDbCommand;
 			double dblValue=-1;
 			this.m_intError=0;
 			this.m_strError="";
-			try
-			{
-				
-				p_OleDbCommand = p_conn.CreateCommand();
-				p_OleDbCommand.CommandText = strSQL;
-				dblValue = Convert.ToDouble(p_OleDbCommand.ExecuteScalar());
-				
-
-			}
-			catch (Exception caught)
-			{
-				this.m_intError = -1;
-				this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed" ;
-                if (_bDisplayErrors)
-				MessageBox.Show("!!Error!! \n" + 
-					"Module - ado_data_access:getSingleStringValueFromSQLQuery  \n" + 
-					"Err Msg - " + this.m_strError,
-					"FIA Biosum",System.Windows.Forms.MessageBoxButtons.OK,
-					System.Windows.Forms.MessageBoxIcon.Exclamation);
-				
-				
-				
-			}
-			p_OleDbCommand = null;
+            using (var p_OleDbCommand = new OleDbCommand(strSQL, p_conn))
+            {
+                try
+                {
+                    dblValue = Convert.ToDouble(p_OleDbCommand.ExecuteScalar());
+                }
+                catch (Exception caught)
+                {
+                    this.m_intError = -1;
+                    this.m_strError = caught.Message + "  SQL query command: " + strSQL + " failed";
+                    if (_bDisplayErrors)
+                        MessageBox.Show("!!Error!! \n" +
+                                        "Module - ado_data_access:getSingleStringValueFromSQLQuery  \n" +
+                                        "Err Msg - " + this.m_strError,
+                            "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                }
+            }
 			return dblValue;
 
 		}
