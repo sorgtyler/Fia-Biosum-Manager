@@ -223,7 +223,7 @@ namespace FIA_Biosum_Manager
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.ReferenceOptimizerScenarioForm = this;
 				this.uc_scenario_fvs_prepost_variables_effective1.ReferenceTieBreakerUserControl=this.uc_scenario_fvs_prepost_variables_tiebreaker1;
-				this.uc_scenario_fvs_prepost_variables_tiebreaker1.uc_scenario_treatment_intensity1.ReferenceOptimizerScenarioForm=this;
+                this.uc_scenario_fvs_prepost_variables_tiebreaker1.uc_scenario_last_tiebreak_rank1.ReferenceOptimizerScenarioForm = this;
 				this.uc_scenario_fvs_prepost_variables_tiebreaker1.ReferenceOptimizationUserControl=this.uc_scenario_fvs_prepost_optimization1;
 				this.uc_scenario_fvs_prepost_optimization1.ReferenceTieBreaker=this.uc_scenario_fvs_prepost_variables_tiebreaker1;
                 //
@@ -1065,7 +1065,6 @@ namespace FIA_Biosum_Manager
 			p_frmTherm.lblMsg.Text = "Rule Definitions: Wood Processing Site Data";
 			p_frmTherm.lblMsg.Refresh();
 			p_frmTherm.progressBar1.Value=8;
-			this.uc_scenario_run1.chkTreeSumTable();             //make sure table has records
 			this.uc_scenario_run1.chkPlotTableForTravelTimes();  //make sure table has travel times
 			p_frmTherm.Close();
 			p_frmTherm = null;
@@ -1433,7 +1432,6 @@ namespace FIA_Biosum_Manager
                 this.uc_scenario_cond_filter1.loadvalues(true);
                 this.uc_scenario_psite1.loadvalues_FromProperties();
                 
-                this.uc_scenario_run1.chkTreeSumTable();             //make sure table has records
                 this.uc_scenario_run1.chkPlotTableForTravelTimes();  //make sure table has travel times
                 frmMain.g_sbpInfo.Text = "Ready";
                 m_bSave = true;

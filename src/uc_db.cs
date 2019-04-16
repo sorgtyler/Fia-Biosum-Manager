@@ -121,8 +121,8 @@ namespace FIA_Biosum_Manager
 									strNode.Trim().ToUpper() != "SCENARIO_CORE_RULE_DEFINITIONS.MDB" &&
 									strNode.Trim().ToUpper() != "SCENARIO.MDB" &&
 									strNode.Trim().ToUpper() != "FVSOUT.MDB" &&
-									strNode.Trim().ToUpper() != "FVSIN.MDB" && 
-									allFiles[y].Trim().ToUpper() != this.m_strProjDir.Trim().ToUpper() + "\\CORE\\DB\\SCENARIO_RESULTS.MDB")
+									strNode.Trim().ToUpper() != "FVSIN.MDB" &&
+                                    allFiles[y].Trim().ToUpper() != this.m_strProjDir.Trim().ToUpper() + "\\OPTIMIZER\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile)
 								{
 									node2 = new TreeNode(strNode);
 									node2.ImageIndex=0;

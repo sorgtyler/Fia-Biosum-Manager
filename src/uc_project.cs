@@ -1088,6 +1088,7 @@ namespace FIA_Biosum_Manager
                 p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
                 System.IO.File.Copy(strSourceFile, strDestFile, true);
+
                 //
                 //optimizer scenario rule definitions
                 //
@@ -1675,7 +1676,11 @@ namespace FIA_Biosum_Manager
 			frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioCondFilterTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCondFilterTableName);
             frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioProcessorScenarioSelectTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioProcessorScenarioSelectTableName);
 
-			oAdo.CloseConnection(oAdo.m_OleDbConnection);
+            //create empty prepost_fvs_weighted.accdb
+            strDestFile = this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            oDao.CreateMDB(strDestFile);
+            
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
 			oDao = null;
 		}
 

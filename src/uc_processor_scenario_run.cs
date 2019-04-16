@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
-using System.Collections.Generic;
 
 namespace FIA_Biosum_Manager
 {
@@ -54,7 +53,6 @@ namespace FIA_Biosum_Manager
         private frmProcessorScenario _frmProcessorScenario = null;
         private ProgressBarEx.ProgressBarEx _oProgressBarEx = null;
         private System.Collections.Generic.IList<string> _lstErrorVariants = null;
-        private System.Collections.Generic.IList<int> _lstErrorCount = null;
        
         private const int COL_CHECKBOX = 0;
         private const int COL_VARIANT = 1;
@@ -3415,8 +3413,8 @@ namespace FIA_Biosum_Manager
                 {
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Querying " + Tables.Processor.DefaultOpcostErrorsTableName + "table \r\n");
-                    int intCount = Convert.ToInt32(oAdo.getRecordCount(oConn.ConnectionString,
-                        "select count(*) from " + Tables.Processor.DefaultOpcostErrorsTableName, Tables.Processor.DefaultOpcostErrorsTableName));
+                    int intCount = Convert.ToInt32(oAdo.getRecordCount(oConn, "select count(*) from " + Tables.Processor.DefaultOpcostErrorsTableName, 
+                        Tables.Processor.DefaultOpcostErrorsTableName));
 
                     if (intCount > 0)
                     {
@@ -3434,7 +3432,6 @@ namespace FIA_Biosum_Manager
                             }
                         }
                             _lstErrorVariants.Add(p_strVariant + "|" + p_strRxPackage);
-                            _lstErrorCount.Add(intCount);
                     }
                  }
                  oAdo = null;
@@ -4441,7 +4438,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****START*****" + System.DateTime.Now.ToString() + "\r\n");
 
             _lstErrorVariants = new System.Collections.Generic.List<string>();
-            _lstErrorCount = new System.Collections.Generic.List<int>();
             m_intLvCheckedCount = 0;
             m_intLvTotalCount = this.m_lvEx.Items.Count;
             for (x = 0; x <= this.m_lvEx.Items.Count - 1; x++)
@@ -4573,8 +4569,8 @@ namespace FIA_Biosum_Manager
                     if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_output") == true)
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_output");
 
-                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_err") == true)
-                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_err");
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_errors") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_errors");
 
 
 
@@ -4937,6 +4933,31 @@ namespace FIA_Biosum_Manager
                     string strMessage = "BioSum could not find the OPCOST reference database! ";
                     strMessage += "It should be located at " + m_strOPCOSTRefPath + ". Processing halted!";
                     MessageBox.Show(strMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                //Check to make sure OpCost path is set; If not, try to use the default
+                bool bOpcostFileExists = false;
+                if (uc_processor_opcost_settings.g_strOPCOSTDirectory.Trim().Length > 0)
+                {
+                    if (System.IO.File.Exists(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                    {
+                        bOpcostFileExists = true;
+                    }
+                }
+                else
+                {
+                    uc_processor_opcost_settings.g_strOPCOSTDirectory = uc_processor_opcost_settings.GetDefaultOpcostPath();
+                    if (!String.IsNullOrEmpty(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                    {
+                        bOpcostFileExists = true;
+                    }
+                }
+                if (bOpcostFileExists == false)
+                {
+                    MessageBox.Show("!!A valid OpCost .R file has not been configured!!", "FIA Biosum",
+                        System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Exclamation);
                     return;
                 }
 

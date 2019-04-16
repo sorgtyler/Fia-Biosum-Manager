@@ -248,17 +248,17 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsTieBreakerTableName { get { return "tiebreaker"; } }
 
             //other
-            static public string DefaultScenarioResultsValidCombosFVSPrePostTableDbFile { get { return @"db\scenario_results.mdb"; } }
+            static public string DefaultScenarioResultsValidCombosFVSPrePostTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsValidCombosFVSPrePostTableName { get { return "validcombos_fvsprepost"; } }
-            static public string DefaultScenarioResultsValidCombosFVSPreTableDbFile { get { return @"db\scenario_results.mdb"; } }
+            static public string DefaultScenarioResultsValidCombosFVSPreTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsValidCombosFVSPreTableName { get { return "validcombos_fvspre"; } }
-            static public string DefaultScenarioResultsValidCombosFVSPostTableDbFile { get { return @"db\scenario_results.mdb"; } }
+            static public string DefaultScenarioResultsValidCombosFVSPostTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsValidCombosFVSPostTableName { get { return "validcombos_fvspost"; } }
-            static public string DefaultScenarioResultsValidCombosTableDbFile { get { return @"db\scenario_results.mdb"; } }
+            static public string DefaultScenarioResultsValidCombosTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsValidCombosTableName { get { return "validcombos"; } }
-            static public string DefaultScenarioResultsTreeVolValSumTableDbFile { get { return @"db\scenario_results.mdb"; } }
+            static public string DefaultScenarioResultsTreeVolValSumTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx"; } }
-            static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\scenario_results.mdb"; } }
+            static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableName { get { return "tree_vol_val_sum_by_rxpackage"; } }
             static public string DefaultScenarioResultsPlotRxCostRevenueVolumesTableName { get { return "stand_costs_revenue_volume_by_rx"; } }
             static public string DefaultScenarioResultsPlotRxPackageCostRevenueVolumesSumTableName { get { return  "stand_costs_revenue_volume_sum_by_rxpackage"; } }
@@ -268,6 +268,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsOwnerRxPackageCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
             static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
             static public string DefaultScenarioResultsPostEconomicWeightedTableName { get { return @"post_economic_weighted"; } }
+            static public string DefaultScenarioResultsDbFile { get { return @"db\optimizer_results.accdb"; } }
 
 
 			
@@ -1363,11 +1364,19 @@ namespace FIA_Biosum_Manager
                     "harv_costs_sum DOUBLE," +
                     "haul_costs_sum DOUBLE)";
             }
-
-
-
-
-
+            //
+            //POST ECONOMIC WEIGHTED TABLE
+            //
+            public void CreatePostEconomicWeightedTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreatePostEconomicWeightedTableSQL(p_strTableName));
+            }
+            static public string CreatePostEconomicWeightedTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                       "biosum_cond_id CHAR(25), " +
+                       "rxpackage CHAR(3) )";
+            }
 			
 		
 		}
@@ -1689,10 +1698,9 @@ namespace FIA_Biosum_Manager
             static public string CreateScenarioFvsVariableWeightsReferenceTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
-                    "pre_or_post CHAR(4)," +
                     "rxcycle CHAR(1)," +
+                    "pre_or_post CHAR(4)," +
                     "rxyear INTEGER," +
-                    "seqnum INTEGER," +
                     "weight DOUBLE)";
             }
 
@@ -4705,6 +4713,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeMacroPlotBreakPointDiaTableDbFile { get { return @"db\ref_master.mdb"; } }
             static public string DefaultTreeMacroPlotBreakPointDiaTableName { get { return "TreeMacroPlotBreakPointDia"; } }
             static public string DefaultBiosumReferenceDbFile { get { return "biosum_ref.accdb"; } }
+            static public string DefaultBiosumReferenceVersionTableName { get { return "REF_VERSION"; } }
             static public string DefaultOpCostReferenceDbFile { get { return @"db\opcost_ref.accdb"; } }
 
 

@@ -422,33 +422,31 @@ namespace FIA_Biosum_Manager
 				{
 					System.IO.Directory.CreateDirectory(this.txtScenarioPath.Text);
 					System.IO.Directory.CreateDirectory(this.txtScenarioPath.Text.ToString() + "\\db");
-                    dao_data_access oDao = new dao_data_access();
 
+					//copy default processor scenario_results database to the new project directory
+                    if (this.ScenarioType == "processor")
+                    {
+                        dao_data_access oDao = new dao_data_access();
+                        string strDestFile = this.txtScenarioPath.Text + "\\" + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableDbFile;
+                        oDao.CreateMDB(strDestFile);
+                        oDao.m_DaoWorkspace.Close();
+                        oDao = null;
+                        string strScenarioResultsConn = oAdo.getMDBConnString(strDestFile, "", "");
+                        System.Data.OleDb.OleDbConnection OleDbScenarioResultsConn = new System.Data.OleDb.OleDbConnection();
+                        oAdo.OpenConnection(strScenarioResultsConn, ref OleDbScenarioResultsConn);
+                        frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(
+                            oAdo,
+                            OleDbScenarioResultsConn,
+                            Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName);
 
-					//copy default scenario_results database to the new project directory
-					string strSourceFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + ScenarioType + "\\db\\scenario_results.mdb";
-					string strDestFile = this.txtScenarioPath.Text + "\\" + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableDbFile;
-                    oDao.CreateMDB(strDestFile);
-                    oDao.m_DaoWorkspace.Close();
-                    oDao = null;
-                    string strScenarioResultsConn = oAdo.getMDBConnString(strDestFile, "", "");
-                    System.Data.OleDb.OleDbConnection OleDbScenarioResultsConn = new System.Data.OleDb.OleDbConnection();
-                    oAdo.OpenConnection(strScenarioResultsConn, ref OleDbScenarioResultsConn);
-                    frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(
-                        oAdo,
-                        OleDbScenarioResultsConn,
-                        Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName);
+                        frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(
+                            oAdo,
+                            OleDbScenarioResultsConn,
+                            Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName);
 
-                    frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(
-                        oAdo,
-                        OleDbScenarioResultsConn,
-                        Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName);
-
-                    OleDbScenarioResultsConn.Close();
-                    OleDbScenarioResultsConn.Dispose();
-
-					//System.IO.File.Copy(strSourceFile, strDestFile,true);	
-							
+                        OleDbScenarioResultsConn.Close();
+                        OleDbScenarioResultsConn.Dispose();
+                    }		
 				}
 			}
 			catch 

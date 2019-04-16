@@ -258,27 +258,48 @@ namespace FIA_Biosum_Manager
 				System.Data.OleDb.OleDbDataReader oDataReader = oCommand.ExecuteReader();
 				int x = 0;
 				
-				while (oDataReader.Read())
-				{
-					this.m_intNumberOfTables++;
-					// Add a ListItem object to the ListView.
-					this.m_strDataSource[x,TABLETYPE] = oDataReader["table_type"].ToString().Trim();
-					this.m_strDataSource[x,PATH] = oDataReader["path"].ToString().Trim();
-					this.m_strDataSource[x,MDBFILE] = oDataReader["file"].ToString().Trim();
-                    strPathAndFile = oMacroSub.GeneralTranslateVariableSubstitution(oDataReader["path"].ToString().Trim()) + 
-                        "\\" + oDataReader["file"].ToString().Trim();
-					if (System.IO.File.Exists(strPathAndFile) == true) 
-					{
-						this.m_strDataSource[x,FILESTATUS] = "F";
-						this.m_strDataSource[x,TABLE] = oDataReader["table_name"].ToString().Trim();
-						
-
-						//see if the table exists in the mdb database container
-                        ado_data_access oExistsAdo = new ado_data_access();
-                        string strExistsConn = p_ado.getMDBConnString(strPathAndFile, "", "");
-                        using (var oExistsConn = new System.Data.OleDb.OleDbConnection(strExistsConn))
+				ado_data_access oExistsAdo = new ado_data_access();
+                using (var oExistsConn = new System.Data.OleDb.OleDbConnection())
+                {
+                    while (oDataReader.Read())
+                    {
+                        this.m_intNumberOfTables++;
+                        // Add a ListItem object to the ListView.
+                        this.m_strDataSource[x, TABLETYPE] = oDataReader["table_type"].ToString().Trim();
+                        this.m_strDataSource[x, PATH] = oDataReader["path"].ToString().Trim();
+                        this.m_strDataSource[x, MDBFILE] = oDataReader["file"].ToString().Trim();
+                        strPathAndFile = oMacroSub.GeneralTranslateVariableSubstitution(oDataReader["path"].ToString().Trim()) +
+                            "\\" + oDataReader["file"].ToString().Trim();
+                        if (System.IO.File.Exists(strPathAndFile) == true)
                         {
-                            oExistsConn.Open();
+                            this.m_strDataSource[x, FILESTATUS] = "F";
+                            this.m_strDataSource[x, TABLE] = oDataReader["table_name"].ToString().Trim();
+                            string strExistsConn = oExistsAdo.getMDBConnString(strPathAndFile, "", "");
+
+
+                            // this is the first time the connection is used -> not open yet
+                            if (String.IsNullOrEmpty(oExistsConn.ConnectionString))
+                            {
+                                oExistsConn.ConnectionString = strExistsConn;
+                                oExistsConn.Open();
+                            }
+                            else
+                            {
+                                // close and reopen the connection if the target database has changed
+                                // the connectionString returned by the connection doesn't include the "Password" key that is included
+                                // in strExistsConn
+                                if (oExistsConn.ConnectionString + "Password=;" != strExistsConn)
+                                {
+                                    if (oExistsConn.State != ConnectionState.Closed)
+                                    {
+                                        oExistsConn.Close();
+                                        oExistsConn.ConnectionString = strExistsConn;
+                                        oExistsConn.Open();
+                                    }
+                                }
+                            }
+                            
+                            //see if the table exists in the mdb database container
                             if (oExistsAdo.TableExist(oExistsConn, oDataReader["table_name"].ToString().Trim()) == true)
                             {
                                 this.m_strDataSource[x, TABLESTATUS] = "F";
@@ -308,19 +329,19 @@ namespace FIA_Biosum_Manager
                                 this.m_strDataSource[x, RECORDCOUNT] = "0";
                             }
                         }
-                        oExistsAdo = null;
-					}
-					else 
-					{
-						this.m_strDataSource[x,FILESTATUS] = "NF";
-						this.m_strDataSource[x,TABLE] = oDataReader["table_name"].ToString().Trim();
-						this.m_strDataSource[x,TABLESTATUS] = "NF";
-						this.m_strDataSource[x,RECORDCOUNT] = "0";
-					}
-					UpdateTableMacroVariable(this.m_strDataSource[x,TABLETYPE],this.m_strDataSource[x,TABLE]);
-					
-					x++;
+                        else
+                        {
+                            this.m_strDataSource[x, FILESTATUS] = "NF";
+                            this.m_strDataSource[x, TABLE] = oDataReader["table_name"].ToString().Trim();
+                            this.m_strDataSource[x, TABLESTATUS] = "NF";
+                            this.m_strDataSource[x, RECORDCOUNT] = "0";
+                        }
+                        UpdateTableMacroVariable(this.m_strDataSource[x, TABLETYPE], this.m_strDataSource[x, TABLE]);
+
+                        x++;
+                    }
 				}
+                oExistsAdo = null;
 				oDataReader.Close();
                 oDataReader.Dispose();
 			}

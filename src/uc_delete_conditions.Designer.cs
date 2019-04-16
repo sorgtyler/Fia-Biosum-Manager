@@ -106,7 +106,7 @@
             this.btnFilterHelp.Size = new System.Drawing.Size(64, 24);
             this.btnFilterHelp.TabIndex = 2;
             this.btnFilterHelp.Text = "Help";
-            this.btnFilterHelp.Visible = false;
+            this.btnFilterHelp.Click += new System.EventHandler(this.btnFilterHelp_Click);
             // 
             // btnFilterPrevious
             // 
