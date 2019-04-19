@@ -21,6 +21,7 @@ namespace FIA_Biosum_Manager
         private System.Collections.Generic.IDictionary<string, prescription> m_prescriptions;
         private System.Collections.Generic.IList<harvestMethod> m_harvestMethodList;
         private escalators m_escalators;
+        public System.Collections.Generic.List<string> m_standsWithNoYardingDistance;
 
         public processor(string strDebugFile, string strScenarioId, ado_data_access oAdo, Queries oQueries)
         {
@@ -159,6 +160,7 @@ namespace FIA_Biosum_Manager
             m_escalators = loadEscalators();
             //Load move-in costs into reference object
             m_scenarioMoveInCost = loadScenarioMoveInCost(m_strScenarioId);
+            m_standsWithNoYardingDistance = new System.Collections.Generic.List<string>();
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Diameter Variables in Use: " + m_scenarioHarvestMethod.ToString() + "\r\n");
@@ -288,15 +290,34 @@ namespace FIA_Biosum_Manager
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
                         if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
-                            newTree.YardingDistance = 0;
+                            newTree.YardingDistance = -1;
                         else
                             newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
 
-                        m_trees.Add(newTree);
+                        // only process the tree if it has a valid yarding distance
+                        if (newTree.YardingDistance > 0)
+                        { 
+                            m_trees.Add(newTree); 
+                        }
+                        else
+                        {
+                            // otherwise add it to the list of dropped stands
+                            if (!m_standsWithNoYardingDistance.Contains(newTree.CondId))
+                                m_standsWithNoYardingDistance.Add(newTree.CondId);
+                        }
+                        
                     }
                 }
             }
 
+            if (m_standsWithNoYardingDistance.Count > 0)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "// !! " + Convert.ToString(m_standsWithNoYardingDistance.Count) + " stands had no valid yarding distance and were excluded from processing \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "// Check the gis_yard_dist_ft on the plot table to find these stands !!  \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+            
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
@@ -622,15 +643,10 @@ namespace FIA_Biosum_Manager
                         string strStand = nextTree.CondId + nextTree.RxPackage + nextTree.Rx + nextTree.RxCycle;
                         bool blnFound = dictOpcostInput.TryGetValue(strStand, out nextInput);
                         if (!blnFound)
-                        {
-                            // Apply yarding distance threshold
-                            double dblYardingDistance = nextTree.YardingDistance;
-                            if (nextTree.YardingDistance < m_scenarioMoveInCost.YardDistThreshold)
-                                dblYardingDistance = m_scenarioMoveInCost.YardDistThreshold;
- 
+                        { 
                             nextInput = new opcostInput(nextTree.CondId, nextTree.Slope, nextTree.RxCycle, nextTree.RxPackage,
-                                                        nextTree.Rx, nextTree.RxYear, dblYardingDistance, nextTree.Elevation,
-                                                        nextTree.HarvestMethod, nextTree.TravelTime, m_scenarioMoveInCost.AssumedHarvestAreaAc);
+                                                        nextTree.Rx, nextTree.RxYear, nextTree.YardingDistance, nextTree.Elevation,
+                                                        nextTree.HarvestMethod, nextTree.TravelTime, m_scenarioMoveInCost);
                             dictOpcostInput.Add(strStand, nextInput);
                         }
 
@@ -2152,6 +2168,7 @@ namespace FIA_Biosum_Manager
             double _dblYardingDistance;
             int _intElev;
             harvestMethod _objHarvestMethod;
+            scenarioMoveInCost _objScenarioMoveInCost;
             double _dblTotalBcTpa;
             double _dblPerAcBcVolCf;
             double _dblTotalChipTpa;
@@ -2188,7 +2205,7 @@ namespace FIA_Biosum_Manager
 
             public opcostInput(string condId, int percentSlope, string rxCycle, string rxPackage, string rx,
                                string rxYear, double yardingDistance, int elev, harvestMethod harvestMethod, double moveInHours,
-                               double harvestAreaAssumed)
+                               scenarioMoveInCost scenarioMoveInCost)
             {
                 _strCondId = condId;
                 _intPercentSlope = percentSlope;
@@ -2200,8 +2217,15 @@ namespace FIA_Biosum_Manager
                 _intElev = elev;
                 _objHarvestMethod = harvestMethod;
                 _dblMoveInHours = moveInHours;
-                _dblHarvestAreaAssumedAc = harvestAreaAssumed;
+                _dblHarvestAreaAssumedAc = scenarioMoveInCost.AssumedHarvestAreaAc;
+                _objScenarioMoveInCost = scenarioMoveInCost;
 
+                // Apply move-in costs yarding threshold; Note that this implementation doesn't record the
+                // original yarding distance when adjusting to move-in yarding threshold
+                if (_dblYardingDistance < _objScenarioMoveInCost.YardDistThreshold)
+                    _dblYardingDistance = _objScenarioMoveInCost.YardDistThreshold;
+
+                
                 //Apply yarding distance minimum
                 if (_dblYardingDistance < _objHarvestMethod.MinYardDistanceFt)
                 {
