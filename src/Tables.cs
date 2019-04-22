@@ -269,6 +269,8 @@ namespace FIA_Biosum_Manager
             static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
             static public string DefaultScenarioResultsPostEconomicWeightedTableName { get { return @"post_economic_weighted"; } }
             static public string DefaultScenarioResultsDbFile { get { return @"db\optimizer_results.accdb"; } }
+            static public string DefaultScenarioResultsEconByRxCycleTableName { get { return @"econ_by_rx_cycle"; } }
+            static public string DefaultScenarioResultsEconByRxSumTableName { get { return @"econ_by_rx_sum"; } }
 
 
 			
@@ -1060,19 +1062,27 @@ namespace FIA_Biosum_Manager
                     "rxpackage CHAR(3)," + 
                     "rx CHAR(3)," + 
 					"rxcycle CHAR(1)," + 
-					"chip_yield_cf DOUBLE," + 
-					"merch_yield_cf DOUBLE," + 
-					"chip_yield_gt DOUBLE," + 
-					"merch_yield_gt DOUBLE," + 
+					"chip_vol_cf DOUBLE," + 
+					"merch_vol_cf DOUBLE," + 
+					"chip_wt_gt DOUBLE," + 
+					"merch_wt_gt DOUBLE," + 
 					"chip_val_dpa DOUBLE," + 
 					"merch_val_dpa DOUBLE," + 
-					"harvest_onsite_cpa DOUBLE," + 
-					"haul_chip_cpa DOUBLE," + 
-					"haul_merch_cpa DOUBLE," + 
+					"harvest_onsite_cost_dpa DOUBLE," + 
+					"chip_haul_cost_dpa DOUBLE," +
+                    "merch_haul_cost_dpa DOUBLE," + 
 					"merch_chip_nr_dpa DOUBLE," + 
 					"merch_nr_dpa DOUBLE," + 
 					"usebiomass_yn CHAR(1)," + 
-					"max_nr_dpa DOUBLE)";
+					"max_nr_dpa DOUBLE," +
+                    "acres DOUBLE," +
+                    "owngrpcd INTEGER," +
+                    "merch_psite_num INTEGER," +
+                    "merch_psite_name CHAR(255)," +
+                    "chip_psite_num INTEGER," +
+                    "chip_psite_name CHAR(255)," +
+                    "haul_costs_dpa CHAR(255)," +
+                    "use_air_dest_YN CHAR(1) )";
 			}
 
             //

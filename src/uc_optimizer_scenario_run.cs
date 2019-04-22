@@ -1383,16 +1383,16 @@ namespace FIA_Biosum_Manager
 					if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "REVENUE")
 					{
 						this.m_strOptimizationTableName = this.m_strOptimizationTableName + "NR";
-						this.m_strOptimizationSourceTableName="product_yields_net_rev_costs_summary_by_rx";
-						this.m_strOptimizationTableNameSql = "cycle1_effective_product_yields_net_rev_costs_summary_by_rx";
+						this.m_strOptimizationSourceTableName=Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
+                        this.m_strOptimizationTableNameSql = "cycle1_effective_" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
 						this.m_strOptimizationSourceColumnName="max_nr_dpa";
 						this.m_strOptimizationColumnNameSql="post_variable_value";
 							
 					}
 					else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "MERCHANTABLE VOLUME")
 					{
-						this.m_strOptimizationSourceTableName="product_yields_net_rev_costs_summary_by_rx";
-						this.m_strOptimizationTableNameSql = "cycle1_effective_product_yields_net_rev_costs_summary_by_rx";
+                        this.m_strOptimizationSourceTableName = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
+                        this.m_strOptimizationTableNameSql = "cycle1_effective_" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
 						this.m_strOptimizationColumnNameSql="post_variable_value";
 						this.m_strOptimizationSourceColumnName= "merch_yield_cf";
 						this.m_strOptimizationTableName = this.m_strOptimizationTableName + "MerchVol";
@@ -1771,7 +1771,7 @@ namespace FIA_Biosum_Manager
 						 **********************************************************************/
 						if (this.m_intError==0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
-							this.product_yields_net_rev_costs_summary_by_rx();
+                            this.econ_by_rx_cycle();
 
 						}
 
@@ -2270,7 +2270,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateBestRxSummaryCycle1Table(oAdo, oAdo.m_OleDbConnection, strScenarioResultsBestRxSummaryTableName + "_air_dest");
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateBestRxSummaryCycle1Table(oAdo, oAdo.m_OleDbConnection, strScenarioResultsBestRxSummaryTableName + "_before_tiebreaks");
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateTreeVolValSumTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName);
-			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsTable(oAdo,oAdo.m_OleDbConnection,"product_yields_net_rev_costs_summary_by_rx");
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName);
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationPlotTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_stands");
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationPSiteTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_psites_sum");
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationOwnershipTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_own_sum");
@@ -4151,7 +4151,7 @@ namespace FIA_Biosum_Manager
             }
 			string strRxList="";
 			string strGrpCd="";
-			int x=0,y=0;
+			int x=0;
 			string strTable="";
             int intListViewIndex = -1;
             string strMDBPathAndFile = "";
@@ -5031,7 +5031,7 @@ namespace FIA_Biosum_Manager
 
 			//insert net revenue per acre into the effective table
 			m_strSQL = "UPDATE " + strEffectiveTableName + " e " + 
-				       "INNER JOIN product_yields_net_rev_costs_summary_by_rx p " + 
+				       "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +" p " + 
 				       "ON e.biosum_cond_id=p.biosum_cond_id AND " + 
                           "e.rxpackage=p.rxpackage AND " + 
 				          "e.rx=p.rx AND " + 
@@ -5407,13 +5407,13 @@ namespace FIA_Biosum_Manager
 			if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "REVENUE")
 			{
                 m_strSQL = "UPDATE " + strOptimizationTableName + " e " +
-					"INNER JOIN product_yields_net_rev_costs_summary_by_rx p " + 
+					"INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " p " + 
 					"ON e.biosum_cond_id=p.biosum_cond_id AND " + 
                     "e.rxpackage=p.rxpackage AND " + 
                     "e.rx=p.rx AND " + 
                     "e.rxcycle = p.rxcycle " + 
-					"SET e.pre_variable_name = 'product_yields_net_rev_costs_summary_by_rx.max_nr_dpa'," + 
-					    "e.post_variable_name = 'product_yields_net_rev_costs_summary_by_rx.max_nr_dpa'," + 
+					"SET e.pre_variable_name = 'p.max_nr_dpa'," + 
+					    "e.post_variable_name = 'p.max_nr_dpa'," + 
 					    "e.pre_variable_value = IIF(p.max_nr_dpa IS NOT NULL,p.max_nr_dpa,0)," + 
 					    "e.post_variable_value = IIF(p.max_nr_dpa IS NOT NULL,p.max_nr_dpa,0)," + 
 					    "e.change_value = 0";																									 
@@ -5421,13 +5421,13 @@ namespace FIA_Biosum_Manager
 			else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "MERCHANTABLE VOLUME")
 			{
                 m_strSQL = "UPDATE " + strOptimizationTableName + " e " + 
-					"INNER JOIN product_yields_net_rev_costs_summary_by_rx p " + 
+					"INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " p " + 
 					"ON e.biosum_cond_id=p.biosum_cond_id AND " +
                     "e.rxpackage=p.rxpackage AND " +
                     "e.rx=p.rx AND " +
                     "e.rxcycle = p.rxcycle " + 
-					"SET e.pre_variable_name = 'product_yields_net_rev_costs_summary_by_rx.merch_yield_cf'," + 
-					"e.post_variable_name = 'product_yields_net_rev_costs_summary_by_rx.merch_yield_cf'," + 
+					"SET e.pre_variable_name = 'p.merch_yield_cf'," + 
+					"e.post_variable_name = 'p.merch_yield_cf'," + 
 					"e.pre_variable_value = IIF(p.merch_yield_cf IS NOT NULL,p.merch_yield_cf,0)," + 
 					"e.post_variable_value = IIF(p.merch_yield_cf IS NOT NULL,p.merch_yield_cf,0)," + 
 					"e.change_value = 0";
@@ -5808,13 +5808,13 @@ namespace FIA_Biosum_Manager
 		/// revenue, and costs of an applied
 		/// treatment on a plot 
 		/// </summary>
-		private void product_yields_net_rev_costs_summary_by_rx()
+		private void econ_by_rx_cycle()
 		{
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//product_yields_net_rev_costs_summary_by_rx\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//econ_by_rx_cycle\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
@@ -5896,7 +5896,7 @@ namespace FIA_Biosum_Manager
 			/********************************************
 			 **delete all records in the table
 			 ********************************************/
-			this.m_strSQL = "delete from product_yields_net_rev_costs_summary_by_rx";
+            this.m_strSQL = "delete from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
 
             
@@ -5917,37 +5917,42 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nInsert Records\r\n");
 
 
-            if (m_ado.TableExist(this.m_TempMDBFileConn, "product_yields_net_rev_costs_summary_by_rx_work_table"))
-                m_ado.SqlNonQuery(this.m_TempMDBFileConn, "DROP TABLE product_yields_net_rev_costs_summary_by_rx_work_table");
+            string workTableName = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + "_work_table";
+            if (m_ado.TableExist(this.m_TempMDBFileConn, workTableName))
+                m_ado.SqlNonQuery(this.m_TempMDBFileConn, "DROP TABLE " + workTableName);
             m_strSQL = 
                 "SELECT validcombos.biosum_cond_id,validcombos.rxpackage,validcombos.rx," + 
                        "validcombos.rxcycle," + 
-                       this.m_strTreeVolValSumTable.Trim() + ".merch_vol_cf AS merch_yield_cf," +
-				       this.m_strTreeVolValSumTable.Trim() + ".chip_vol_cf AS chip_yield_cf," +
-				       this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt AS chip_yield_gt," +
+                       this.m_strTreeVolValSumTable.Trim() + ".merch_vol_cf," +
+				       this.m_strTreeVolValSumTable.Trim() + ".chip_vol_cf," +
+				       this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt," +
 				       this.m_strTreeVolValSumTable.Trim() + ".chip_val_dpa AS chip_val_dpa," + 
-				       this.m_strTreeVolValSumTable.Trim() + ".merch_wt_gt AS merch_yield_gt," +
+				       this.m_strTreeVolValSumTable.Trim() + ".merch_wt_gt," +
 				       this.m_strTreeVolValSumTable.Trim() + ".merch_val_dpa AS merch_val_dpa," +
-                       this.m_strHvstCostsTable.Trim() + ".complete_cpa AS harvest_onsite_cpa," + 
+                       this.m_strHvstCostsTable.Trim() + ".complete_cpa AS harvest_onsite_cost_dpa," + 
                       "IIF(" + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt IS NOT NULL," +
                       "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle2 + "," + 
                       "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle3 + "," + 
                       "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle4 + "," + 
-                       this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt))),0) AS escalator_merch_haul_cpa_pt," + 
-                      "escalator_merch_haul_cpa_pt * tree_vol_val_sum_by_rx.merch_wt_gt AS haul_merch_cpa," + 
+                       this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt))),0) AS escalator_merch_haul_cpa_pt," +
+                      "escalator_merch_haul_cpa_pt * tree_vol_val_sum_by_rx.merch_wt_gt AS merch_haul_cost_dpa," + 
                       "IIF(" + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt IS NOT NULL," + 
                       "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle2 + "," + 
                       "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle3 + "," + 
                       "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + "," + 
                        this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt))),0) AS escalator_chip_haul_cpa_pt," +
-                      "escalator_chip_haul_cpa_pt * tree_vol_val_sum_by_rx.chip_wt_gt AS haul_chip_cpa," + 
-                      "merch_val_dpa + chip_val_dpa - harvest_onsite_cpa - haul_merch_cpa - haul_chip_cpa AS merch_chip_nr_dpa," + 
-                      "merch_val_dpa - harvest_onsite_cpa - haul_merch_cpa AS merch_nr_dpa," + 
+                      "escalator_chip_haul_cpa_pt * tree_vol_val_sum_by_rx.chip_wt_gt AS chip_haul_cost_dpa," +
+                      "merch_val_dpa + chip_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa - chip_haul_cost_dpa AS merch_chip_nr_dpa," +
+                      "merch_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa AS merch_nr_dpa," + 
                       "IIF(" + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt IS NOT NULL AND " + 
                            "merch_chip_nr_dpa > merch_nr_dpa,'Y','N') AS usebiomass_yn," + 
-                      "IIF(usebiomass_yn = 'Y', merch_chip_nr_dpa,merch_nr_dpa) AS max_nr_dpa " +
-                      "INTO product_yields_net_rev_costs_summary_by_rx_work_table " + 
-                      "FROM ((((validcombos " +
+                      "IIF(usebiomass_yn = 'Y', merch_chip_nr_dpa,merch_nr_dpa) AS max_nr_dpa, " +
+                      this.m_strCondTable.Trim() + ".acres, " +
+                      this.m_strCondTable.Trim() + ".owngrpcd, " +
+                      "IIF(usebiomass_yn = 'Y','N','Y') AS use_air_dest_YN, " +
+                      "IIF(usebiomass_yn = 'Y',merch_haul_cost_dpa + chip_haul_cost_dpa, merch_haul_cost_dpa) AS haul_costs_dpa " +
+                      "INTO " + workTableName + 
+                      " FROM ((((validcombos " +
                       "INNER JOIN " + this.m_strCondTable.Trim() + " " +
                       "ON validcombos.biosum_cond_id = " + this.m_strCondTable.Trim() + ".biosum_cond_id) " +
                       "INNER JOIN " + this.m_strPlotTable.Trim() + " " +
@@ -5985,20 +5990,20 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            this.m_strSQL = "INSERT INTO product_yields_net_rev_costs_summary_by_rx " +
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
                                 "(biosum_cond_id,rxpackage,rx,rxcycle," +
-                                "merch_yield_cf,chip_yield_cf," +
-                                "chip_yield_gt,chip_val_dpa," +
-                                "merch_yield_gt,merch_val_dpa,harvest_onsite_cpa," +
-                                "haul_merch_cpa,haul_chip_cpa,merch_chip_nr_dpa," +
-                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa) " + 
+                                "merch_vol_cf,chip_vol_cf," +
+                                "chip_wt_gt,chip_val_dpa," +
+                                "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
+                                "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
+                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa ) " + 
                             "SELECT biosum_cond_id,rxpackage,rx,rxcycle," +
-                                "merch_yield_cf,chip_yield_cf," +
-                                "chip_yield_gt,chip_val_dpa," +
-                                "merch_yield_gt,merch_val_dpa,harvest_onsite_cpa," +
-                                "haul_merch_cpa,haul_chip_cpa,merch_chip_nr_dpa," +
-                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa " + 
-                            "FROM product_yields_net_rev_costs_summary_by_rx_work_table";
+                                "merch_vol_cf,chip_vol_cf," +
+                                "chip_wt_gt,chip_val_dpa," +
+                                "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
+                                "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
+                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa " + 
+                            "FROM " + workTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -6167,7 +6172,7 @@ namespace FIA_Biosum_Manager
 
                     System.Collections.Generic.IDictionary<string, ProductYields> dictProductYields =
                     new System.Collections.Generic.Dictionary<string, ProductYields>();
-                    string strSql = "select * from product_yields_net_rev_costs_summary_by_rx";
+                    string strSql = "select * from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
 
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + strSql + "\r\n");
@@ -6450,8 +6455,8 @@ namespace FIA_Biosum_Manager
                                 "SUM(IIF(merch_chip_nr_dpa IS NULL,0,merch_chip_nr_dpa)) AS sum_merch_chip_nr_dpa," +
                                 "SUM(IIF(merch_nr_dpa IS NULL,0,merch_nr_dpa)) AS sum_merch_nr_dpa," +
                                 "SUM(IIF(max_nr_dpa IS NULL,0,max_nr_dpa)) AS sum_max_nr_dpa " + 
-                           "FROM product_yields_net_rev_costs_summary_by_rx " +
-                           "GROUP BY biosum_cond_id,rxpackage) a";
+                           "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
+                           " GROUP BY biosum_cond_id,rxpackage) a";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -7410,20 +7415,22 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-			if (m_ado.TableExist(this.m_TempMDBFileConn,"cycle1_effective_product_yields_net_rev_costs_summary_by_rx"))
+
+            string strWorkTable = "cycle1_effective_" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
+            if (m_ado.TableExist(this.m_TempMDBFileConn, strWorkTable))
 			{
-				m_ado.SqlNonQuery(m_TempMDBFileConn,"DROP TABLE cycle1_effective_product_yields_net_rev_costs_summary_by_rx");
+				m_ado.SqlNonQuery(m_TempMDBFileConn,"DROP TABLE " + strWorkTable);
 			}
 
 			m_ado.m_strSQL = "SELECT p.* " + 
-				"INTO cycle1_effective_product_yields_net_rev_costs_summary_by_rx " + 
-				"FROM product_yields_net_rev_costs_summary_by_rx p," + 
+				"INTO " + strWorkTable + 
+				" FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " p," + 
                 ReferenceOptimizerScenarioForm.OutputTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsEffectiveTableSuffix + " e " + 
 				"WHERE p.biosum_cond_id = e.biosum_cond_id AND " + 
 				"p.rxpackage=e.rxpackage AND p.rx=e.rx AND p.rxcycle=e.rxcycle AND e.overall_effective_yn='Y'";
 
              if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile,"--write overall effective treatments to the  cycle1_effective_product_yields_net_rev_costs_summary_by_rx--\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile,"--write overall effective treatments to the " + strWorkTable + "--\r\n");
              if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile,"Execute SQL:" + m_ado.m_strSQL + "\r\n\r\n");
 			
@@ -7958,7 +7965,7 @@ namespace FIA_Biosum_Manager
 		/// <summary>
 		/// expand the wood volume,value,and costs by plot acreage for the 
 		/// best treatments and data found in the best_rx_summary
-		/// product_yields_net_rev_costs_summary_by_rx, and effective tables
+        /// ECON_BY_RX_CYCLE, and effective tables
 		/// </summary>
         private void BestTreatmentsByPlot()
 		{
@@ -8074,7 +8081,7 @@ namespace FIA_Biosum_Manager
         /// <summary>
         /// expand the wood volume,value,and costs by plot acreage for all
         /// treatments and data found in the best_rx_summary
-        /// product_yields_net_rev_costs_summary_by_rx, and effective tables
+        /// ECON_BY_RX_CYCLE, and effective tables
         /// </summary>
         private void TreatmentAcreageExpansionByPlot()
         {
@@ -8121,30 +8128,30 @@ namespace FIA_Biosum_Manager
                                    "chip_haul_cost_psite,chip_haul_cost_exp,chip_yield_gt_exp," +
                                    "chip_dollars_val_exp,net_rev_dollars_exp,harv_costs_exp,haul_costs_exp)";
             this.m_strSQL = "SELECT  " +
-                            "product_yields_net_rev_costs_summary_by_rx.biosum_cond_id," +
-                            "product_yields_net_rev_costs_summary_by_rx.rxpackage," +
-                            "product_yields_net_rev_costs_summary_by_rx.rx," +
-                            "product_yields_net_rev_costs_summary_by_rx.rxcycle," +
+                            Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".biosum_cond_id," +
+                            Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".rxpackage," +
+                            Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".rx," +
+                            Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".rxcycle," +
                              this.m_strCondTable + ".owngrpcd," +
                             "ROUND(" + this.m_strCondTable + ".acres,10) AS acres," +
                              this.m_strPlotTable + ".merch_haul_cost_psite," +
-                            "ROUND(" + this.m_strPlotTable + ".merch_haul_cpa_pt * product_yields_net_rev_costs_summary_by_rx.merch_yield_gt * acres,10) AS merch_haul_cost_exp," +
-                            "ROUND(product_yields_net_rev_costs_summary_by_rx.merch_yield_cf * acres,10) AS merch_vol_cf_exp," +
-                            "ROUND(product_yields_net_rev_costs_summary_by_rx.merch_val_dpa * acres,10) AS merch_dollars_val_exp," +
+                            "ROUND(" + this.m_strPlotTable + ".merch_haul_cpa_pt * " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_yield_gt * acres,10) AS merch_haul_cost_exp," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_yield_cf * acres,10) AS merch_vol_cf_exp," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_val_dpa * acres,10) AS merch_dollars_val_exp," +
                              this.m_strPlotTable + ".chip_haul_cost_psite," +
-                            "ROUND(" + this.m_strPlotTable + ".chip_haul_cpa_pt * product_yields_net_rev_costs_summary_by_rx.chip_yield_gt * acres,10) AS chip_haul_cost_exp," +
-                            "ROUND(product_yields_net_rev_costs_summary_by_rx.chip_yield_gt * acres,10) AS chip_yield_gt_exp," +
-                            "ROUND(product_yields_net_rev_costs_summary_by_rx.chip_val_dpa * acres,10) AS chip_dollars_val_exp," +
-                            "ROUND(product_yields_net_rev_costs_summary_by_rx.max_nr_dpa * acres,10) AS net_rev_dollars_exp," +
-                            "ROUND(product_yields_net_rev_costs_summary_by_rx.harvest_onsite_cpa * acres,10) AS harv_costs_exp," +
-                            "ROUND((product_yields_net_rev_costs_summary_by_rx.haul_merch_cpa + product_yields_net_rev_costs_summary_by_rx.haul_chip_cpa) * acres,10) AS haul_costs_exp " +
-                            "FROM  product_yields_net_rev_costs_summary_by_rx " +
-                            "INNER JOIN (" + this.m_strPlotTable + " " +
+                            "ROUND(" + this.m_strPlotTable + ".chip_haul_cpa_pt * " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_yield_gt * acres,10) AS chip_haul_cost_exp," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_yield_gt * acres,10) AS chip_yield_gt_exp," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_val_dpa * acres,10) AS chip_dollars_val_exp," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".max_nr_dpa * acres,10) AS net_rev_dollars_exp," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".harvest_onsite_cpa * acres,10) AS harv_costs_exp," +
+                            "ROUND((" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".haul_merch_cpa + " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".haul_chip_cpa) * acres,10) AS haul_costs_exp " +
+                            "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
+                            " INNER JOIN (" + this.m_strPlotTable + " " +
                             "INNER JOIN " + this.m_strCondTable + " " +
                             "ON " + this.m_strPlotTable + ".biosum_plot_id = " +
                                     this.m_strCondTable + ".biosum_plot_id) " +
                             "ON " + this.m_strCondTable + ".biosum_cond_id = " +
-                                   "product_yields_net_rev_costs_summary_by_rx.biosum_cond_id;";
+                                   Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".biosum_cond_id;";
 
             m_strSQL = strInsertSql + " " + m_strSQL;
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -8238,7 +8245,7 @@ namespace FIA_Biosum_Manager
         /// <summary>
         /// expand the wood volume,value,and costs by plot acreage for all
         /// treatments and data found in the best_rx_summary
-        /// product_yields_net_rev_costs_summary_by_rx, and effective tables
+        /// ECON_BY_RX_CYCLE, and effective tables
         /// </summary>
         private void TreatmentAcreageExpansionByPSite()
         {
@@ -8573,7 +8580,7 @@ namespace FIA_Biosum_Manager
         /// <summary>
         /// expand the wood volume,value,and costs by plot acreage for all
         /// treatments and data found in the best_rx_summary
-        /// product_yields_net_rev_costs_summary_by_rx, and effective tables
+        /// ECON_BY_RX_CYCLE, and effective tables
         /// </summary>
         private void TreatmentAcreageExpansionByOwner()
         {
@@ -8902,7 +8909,7 @@ namespace FIA_Biosum_Manager
                                      "a.merch_nr_dpa," + 
                                      "a.max_nr_dpa," +
                                      "a.usebiomass_yn " +
-                           "FROM cycle1_effective_product_yields_net_rev_costs_summary_by_rx a";
+                           "FROM cycle1_effective_" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " a";
 
            
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -8992,6 +8999,7 @@ namespace FIA_Biosum_Manager
             string strBestRxSummaryAirDestTableName = ReferenceOptimizerScenarioForm.OutputTablePrefix +
                 Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix +
                 "_air_dest";
+            string strWorktable = "cycle1_effective_" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
             this.m_strSQL = "INSERT INTO " + strTable + " " + 
 				"(" + strTypeField + ", owngrpcd,acres,merch_haul_cost_psite," + 
 				"merch_haul_cpa,merch_vol_cf_pa,merch_dollars_val_dpa," + 
@@ -9004,19 +9012,19 @@ namespace FIA_Biosum_Manager
                 "ROUND(" + strBestRxSummaryAirDestTableName + ".acres,10) AS acres," +
 				"null AS merch_haul_cost_psite," + 
 				"null AS merch_haul_cpa," +
-                "ROUND(cycle1_effective_product_yields_net_rev_costs_summary_by_rx.merch_yield_cf * " + strBestRxSummaryAirDestTableName + ".acres,10) AS merch_vol_cf_pa," +
-                "ROUND(cycle1_effective_product_yields_net_rev_costs_summary_by_rx.merch_val_dpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS merch_dollars_val_dpa," + 
+                "ROUND(" + strWorktable + ".merch_yield_cf * " + strBestRxSummaryAirDestTableName + ".acres,10) AS merch_vol_cf_pa," +
+                "ROUND(" + strWorktable + ".merch_val_dpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS merch_dollars_val_dpa," + 
 				"null AS chip_haul_cost_psite," + 
 				"null AS chip_haul_cpa," +
-                "ROUND(cycle1_effective_product_yields_net_rev_costs_summary_by_rx.chip_yield_gt * " + strBestRxSummaryAirDestTableName + ".acres,10) AS chip_yield_gt_pa," +
-                "ROUND(cycle1_effective_product_yields_net_rev_costs_summary_by_rx.chip_val_dpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS chip_dollars_val_dpa," + 
+                "ROUND(" + strWorktable + ".chip_yield_gt * " + strBestRxSummaryAirDestTableName + ".acres,10) AS chip_yield_gt_pa," +
+                "ROUND(" + strWorktable + ".chip_val_dpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS chip_dollars_val_dpa," + 
 				"null AS net_rev_dpa," +
-                "ROUND(cycle1_effective_product_yields_net_rev_costs_summary_by_rx.harvest_onsite_cpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS harv_costs_cpa," + 
+                "ROUND(" + strWorktable + ".harvest_onsite_cpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS harv_costs_cpa," + 
 				"null AS haul_costs_cpa " + //," + 
                 "FROM ((" + strBestRxSummaryAirDestTableName + 
-				" INNER JOIN cycle1_effective_product_yields_net_rev_costs_summary_by_rx  " +
-                "ON (" + strBestRxSummaryAirDestTableName + ".biosum_cond_id = cycle1_effective_product_yields_net_rev_costs_summary_by_rx.biosum_cond_id) AND " + 
-				"(" + strBestRxSummaryAirDestTableName + "." + strRxField + " = cycle1_effective_product_yields_net_rev_costs_summary_by_rx.rx)) " + 
+				" INNER JOIN " + strWorktable +
+                " ON (" + strBestRxSummaryAirDestTableName + ".biosum_cond_id = " + strWorktable + ".biosum_cond_id) AND " + 
+				"(" + strBestRxSummaryAirDestTableName + "." + strRxField + " = " + strWorktable + ".rx)) " + 
 				"INNER JOIN (" + p + 
 				" INNER JOIN " + c + 
 				" ON " + p + ".biosum_plot_id = " + c + ".biosum_plot_id) " +
