@@ -2278,7 +2278,7 @@ namespace FIA_Biosum_Manager
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationOwnershipTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_own_air_dest");
 
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateTreeVolValSumByRxPackageTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumByRxPackageTableName);
-            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsByRxPackageTable(oAdo, oAdo.m_OleDbConnection, "product_yields_net_rev_costs_summary_by_rxpackage");
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsByRxPackageTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePlotRxCostsRevenuesVolumesTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPlotRxCostRevenueVolumesTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePlotRxPackageCostsRevenuesVolumesSumTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPlotRxPackageCostRevenueVolumesSumTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePostEconomicWeightedTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName);
@@ -5527,25 +5527,25 @@ namespace FIA_Biosum_Manager
                     else if (oItem.strVariableName.Equals("total_volume_1"))
                     {
                         strSql = "UPDATE " + strOptimizationTableName + " e " +
-                             "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                             "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName + " p " +
                              "ON e.biosum_cond_id=p.biosum_cond_id AND " +
                              "e.rxpackage=p.rxpackage " +
                              "SET e.pre_variable_name = '" + oItem.strVariableName + "'," +
                              "e.post_variable_name = '" + oItem.strVariableName + "'," +
-                             "e.pre_variable_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
-                             "e.post_variable_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
+                             "e.pre_variable_value = IIF(p.chip_vol_cf + p.merch_vol_cf IS NOT NULL,p.chip_vol_cf + p.merch_vol_cf,0)," +
+                             "e.post_variable_value = IIF(p.chip_vol_cf + p.merch_vol_cf IS NOT NULL,p.chip_vol_cf + p.merch_vol_cf,0)," +
                              "e.change_value = 0";
                     }
                     else if (oItem.strVariableName.Equals("treatment_haul_costs_1"))
                     {
                         strSql = "UPDATE " + strOptimizationTableName + " e " +
-                             "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                             "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName + " p " +
                              "ON e.biosum_cond_id=p.biosum_cond_id AND " +
                              "e.rxpackage=p.rxpackage " +
                              "SET e.pre_variable_name = '" + oItem.strVariableName + "'," +
                              "e.post_variable_name = '" + oItem.strVariableName + "'," +
-                             "e.pre_variable_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
-                             "e.post_variable_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
+                             "e.pre_variable_value = HARVEST_ONSITE_COST_DPA + MERCH_HAUL_COST_DPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, CHIP_HAUL_COST_DPA)," +
+                             "e.post_variable_value = HARVEST_ONSITE_COST_DPA + MERCH_HAUL_COST_DPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, CHIP_HAUL_COST_DPA)," +
                              "e.change_value = 0";
                     }
                 }
@@ -5735,25 +5735,25 @@ namespace FIA_Biosum_Manager
                         else if (oItem.strFVSVariableName.Equals("total_volume_1"))
                         {
                             m_strSQL = "UPDATE tiebreaker e " +
-                                 "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                                 "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName + " p " +
                                  "ON e.biosum_cond_id=p.biosum_cond_id AND " +
                                  "e.rxpackage=p.rxpackage " +
                                  "SET e.pre_variable1_name = '" + oItem.strFVSVariableName + "'," +
                                  "e.post_variable1_name = '" + oItem.strFVSVariableName + "'," +
-                                 "e.pre_variable1_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
-                                 "e.post_variable1_value = IIF(p.chip_yield_cf + p.merch_yield_cf IS NOT NULL,p.chip_yield_cf + p.merch_yield_cf,0)," +
+                                 "e.pre_variable1_value = IIF(p.chip_vol_cf + p.merch_vol_cf IS NOT NULL,p.chip_vol_cf + p.merch_vol_cf,0)," +
+                                 "e.post_variable1_value = IIF(p.chip_vol_cf + p.merch_vol_cf IS NOT NULL,p.chip_vol_cf + p.merch_vol_cf,0)," +
                                  "e.variable1_change = 0";
                         }
                         else if (oItem.strFVSVariableName.Equals("treatment_haul_costs_1"))
                         {
                             m_strSQL = "UPDATE tiebreaker e " +
-                            "INNER JOIN PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE p " +
+                            "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName + " p " +
                             "ON e.biosum_cond_id=p.biosum_cond_id AND " +
                             "e.rxpackage=p.rxpackage " +
                             "SET e.pre_variable1_name = '" + oItem.strFVSVariableName + "'," +
                             "e.post_variable1_name = '" + oItem.strFVSVariableName + "'," +
-                            "e.pre_variable1_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
-                            "e.post_variable1_value = HARVEST_ONSITE_CPA + HAUL_MERCH_CPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, HAUL_CHIP_CPA)," +
+                            "e.pre_variable1_value = HARVEST_ONSITE_COST_DPA + MERCH_HAUL_COST_DPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, CHIP_HAUL_COST_DPA)," +
+                            "e.post_variable1_value = HARVEST_ONSITE_COST_DPA + MERCH_HAUL_COST_DPA + IIF (MERCH_CHIP_NR_DPA < MAX_NR_DPA,0, CHIP_HAUL_COST_DPA)," +
                             "e.variable1_change = 0";
                         }
                     }
@@ -6384,7 +6384,7 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//product_yields_net_rev_costs_summary_by_rxpackage\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//econ_by_rx_sum\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
@@ -6410,7 +6410,7 @@ namespace FIA_Biosum_Manager
             /********************************************
              **delete all records in the table
              ********************************************/
-            this.m_strSQL = "delete from product_yields_net_rev_costs_summary_by_rxpackage";
+            this.m_strSQL = "delete from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName;
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
             if (this.m_ado.m_intError != 0)
@@ -6427,29 +6427,32 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nInsert Records\r\n");
 
-            m_strSQL = "INSERT INTO product_yields_net_rev_costs_summary_by_rxpackage ";
-            m_strSQL =  m_strSQL + "(biosum_cond_id,rxpackage," +
-                                    "chip_yield_cf,merch_yield_cf," +
-                                    "chip_yield_gt,merch_yield_gt," +
+            m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName;
+            m_strSQL =  m_strSQL + " (biosum_cond_id,rxpackage," +
+                                    "chip_vol_cf,merch_vol_cf," +
+                                    "chip_wt_gt,merch_wt_gt," +
                                     "chip_val_dpa,merch_val_dpa," +
-                                    "harvest_onsite_cpa,haul_chip_cpa,haul_merch_cpa," +
+                                    "harvest_onsite_cost_dpa,chip_haul_cost_dpa,merch_haul_cost_dpa," +
                                     "merch_chip_nr_dpa," +
-                                    "merch_nr_dpa," + 
-                                    "max_nr_dpa)";
+                                    "merch_nr_dpa," +
+                                    "max_nr_dpa,haul_costs_dpa," +
+                                    "acres,owngrpcd)";
             m_strSQL = m_strSQL + " " +
                             "SELECT a.biosum_cond_id,a.rxpackage," +
-                                   "a.sum_chip_yield_cf AS chip_yield_cf," +
-                                   "a.sum_merch_yield_cf AS merch_yield_cf," +
-                                   "a.sum_chip_yield_gt AS chip_yield_gt," +
-                                   "a.sum_merch_yield_gt AS merch_yield_gt," +
+                                   "a.sum_chip_yield_cf AS chip_vol_cf," +
+                                   "a.sum_merch_yield_cf AS merch_vol_cf," +
+                                   "a.sum_chip_yield_gt AS chip_wt_gt," +
+                                   "a.sum_merch_yield_gt AS merch_wt_gt," +
                                    "a.sum_chip_val_dpa AS chip_val_dpa," +
                                    "a.sum_merch_val_dpa AS merch_val_dpa," +
-                                   "a.sum_harvest_onsite_cpa AS harvest_onsite_cpa," +
-                                   "a.sum_haul_chip_cpa AS haul_chip_cpa," +
-                                   "a.sum_haul_merch_cpa AS haul_merch_cpa," +
+                                   "a.sum_harvest_onsite_cpa AS harvest_onsite_cost_dpa," +
+                                   "a.sum_haul_chip_cpa AS chip_haul_cost_dpa," +
+                                   "a.sum_haul_merch_cpa AS merch_haul_cost_dpa," +
                                    "a.sum_merch_chip_nr_dpa AS merch_chip_nr_dpa," +
                                    "a.sum_merch_nr_dpa AS merch_nr_dpa, " +
-                                   "a.sum_max_nr_dpa AS max_nr_dpa " + 
+                                   "a.sum_max_nr_dpa AS max_nr_dpa, " +
+                                   "a.sum_haul_costs_dpa AS haul_costs_dpa, " +
+                                   "a.acres, a.owngrpcd " +
                            "FROM (" +
                            "SELECT biosum_cond_id,rxpackage," +
                                 "SUM(IIF(chip_vol_cf IS NULL,0,chip_vol_cf)) AS sum_chip_yield_cf," +
@@ -6463,9 +6466,11 @@ namespace FIA_Biosum_Manager
                                 "SUM(IIF(merch_haul_cost_dpa IS NULL,0,merch_haul_cost_dpa)) AS sum_haul_merch_cpa," +
                                 "SUM(IIF(merch_chip_nr_dpa IS NULL,0,merch_chip_nr_dpa)) AS sum_merch_chip_nr_dpa," +
                                 "SUM(IIF(merch_nr_dpa IS NULL,0,merch_nr_dpa)) AS sum_merch_nr_dpa," +
-                                "SUM(IIF(max_nr_dpa IS NULL,0,max_nr_dpa)) AS sum_max_nr_dpa " + 
+                                "SUM(IIF(max_nr_dpa IS NULL,0,max_nr_dpa)) AS sum_max_nr_dpa, " +
+                                "SUM(IIF(haul_costs_dpa IS NULL,0,haul_costs_dpa)) AS sum_haul_costs_dpa, " +
+                                "acres,owngrpcd " +
                            "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
-                           " GROUP BY biosum_cond_id,rxpackage) a";
+                           " GROUP BY biosum_cond_id,rxpackage,acres,owngrpcd) a";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");

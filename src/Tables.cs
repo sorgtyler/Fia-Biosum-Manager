@@ -1105,18 +1105,25 @@ namespace FIA_Biosum_Manager
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "biosum_cond_id CHAR(25)," +
                     "rxpackage CHAR(3)," +
-                    "chip_yield_cf DOUBLE," +
-                    "merch_yield_cf DOUBLE," +
-                    "chip_yield_gt DOUBLE," +
-                    "merch_yield_gt DOUBLE," +
+                    "chip_vol_cf DOUBLE," +
+                    "merch_vol_cf DOUBLE," +
+                    "chip_wt_gt DOUBLE," +
+                    "merch_wt_gt DOUBLE," +
                     "chip_val_dpa DOUBLE," +
                     "merch_val_dpa DOUBLE," +
-                    "harvest_onsite_cpa DOUBLE," +
-                    "haul_chip_cpa DOUBLE," +
-                    "haul_merch_cpa DOUBLE," +
+                    "harvest_onsite_cost_dpa DOUBLE," +
+                    "chip_haul_cost_dpa DOUBLE," +
+                    "merch_haul_cost_dpa DOUBLE," +
                     "merch_chip_nr_dpa DOUBLE," +
                     "merch_nr_dpa DOUBLE," +
-                    "max_nr_dpa DOUBLE)";
+                    "max_nr_dpa DOUBLE," +
+                    "acres DOUBLE," +
+                    "owngrpcd INTEGER," +
+                    "merch_psite_num INTEGER," +
+                    "merch_psite_name CHAR(255)," +
+                    "chip_psite_num INTEGER," +
+                    "chip_psite_name CHAR(255)," +
+                    "haul_costs_dpa CHAR(255) )";
             }
             //
             //RX PLOT VALUES (COSTS, REVENUES, VOLUMES)
