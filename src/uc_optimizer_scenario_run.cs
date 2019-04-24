@@ -7656,13 +7656,12 @@ namespace FIA_Biosum_Manager
 				oTieBreakerCollection.Item(2).bSelected)
 			{
                 string strTiebreakerValueField = "post_variable1_value";    //Economic attributes will always write the post value
-                if (oTieBreakerCollection.Item(0).strValueSource == "PRE")
+                if (oTieBreakerCollection.Item(0).bSelected)    //FVS attribute selected
                 {
-                    strTiebreakerValueField = "pre_variable1_value";
-                }
-                else if (oTieBreakerCollection.Item(0).strValueSource == "POST-PRE")
-                {
-                    strTiebreakerValueField = "variable1_change";
+                    if (oTieBreakerCollection.Item(0).strValueSource == "POST-PRE")
+                    {
+                        strTiebreakerValueField = "variable1_change";
+                    }
                 }
 
                 //update the tiebreaker and rx intensity fields for each plot
