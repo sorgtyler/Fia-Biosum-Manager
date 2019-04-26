@@ -271,7 +271,8 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsEconByRxCycleTableName { get { return @"econ_by_rx_cycle"; } }
             static public string DefaultScenarioResultsEconByRxSumTableName { get { return @"econ_by_rx_sum"; } }
-
+            static public string DefaultScenarioResultsPSiteAccessibleWorkTableName { get { return @"psite_accessible_work_table"; } }
+            static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
 
 			
 			private string strSQL = "";
@@ -928,9 +929,9 @@ namespace FIA_Biosum_Manager
 					"railhead_id INTEGER," + 
 					"psite_id INTEGER," + 
 					"transfer_cost DOUBLE DEFAULT 0," + 
-					"road_cost DOUBLE DEFAULT 0," + 
-					"rail_cost DOUBLE DEFAULT 0," + 
-					"total_haul_cost DOUBLE DEFAULT 0," + 
+					"road_cost_dpgt DOUBLE DEFAULT 0," +
+                    "rail_cost_dpgt DOUBLE DEFAULT 0," +
+                    "complete_haul_cost_dpgt DOUBLE DEFAULT 0," + 
 					"materialcd CHAR(2))";
 			}
 			public void CreateHaulCostWorkTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
@@ -954,9 +955,9 @@ namespace FIA_Biosum_Manager
 					"railhead_id INTEGER," + 
 					"psite_id INTEGER," + 
 					"transfer_cost DOUBLE DEFAULT 0," + 
-					"road_cost DOUBLE DEFAULT 0," + 
-					"rail_cost DOUBLE DEFAULT 0," + 
-					"total_haul_cost DOUBLE DEFAULT 0," + 
+					"road_cost_dpgt DOUBLE DEFAULT 0," + 
+					"rail_cost_dpgt DOUBLE DEFAULT 0," + 
+					"complete_haul_cost_dpgt DOUBLE DEFAULT 0," + 
 					"materialcd CHAR(2))";
 			}
 			public void CreateHaulCostRailroadTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
@@ -979,9 +980,9 @@ namespace FIA_Biosum_Manager
 					"railhead_id INTEGER," + 
 					"psite_id INTEGER," + 
 					"transfer_cost DOUBLE DEFAULT 0," + 
-					"road_cost DOUBLE DEFAULT 0," + 
-					"rail_cost DOUBLE DEFAULT 0," + 
-					"total_haul_cost DOUBLE DEFAULT 0," + 
+					"road_cost_dpgt DOUBLE DEFAULT 0," +
+                    "rail_cost_dpgt DOUBLE DEFAULT 0," +
+                    "complete_haul_cost_dpgt DOUBLE DEFAULT 0," + 
 					"materialcd CHAR(2))";
 			}
 			//
@@ -1393,6 +1394,40 @@ namespace FIA_Biosum_Manager
                 return "CREATE TABLE " + p_strTableName + " (" +
                        "biosum_cond_id CHAR(25), " +
                        "rxpackage CHAR(3) )";
+            }
+            //
+            //PSITES WORKTABLE
+            //
+            public void CreatePSitesWorktable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreatePSitesWorktableSQL(p_strTableName));
+                CreatePSitesWorktableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreatePSitesWorktableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_plot_id");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "biosum_cond_id");
+            }
+
+            static public string CreatePSitesWorktableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_plot_id CHAR(24)," +
+                    "biosum_cond_id CHAR(25)," +
+                    "merch_haul_cost_id INTEGER," +
+                    "merch_haul_psite INTEGER," +
+                    "merch_haul_psite_name CHAR(255)," +
+                    "merch_haul_cost_dpgt DOUBLE DEFAULT 0," +
+                    "chip_haul_cost_id INTEGER," +
+                    "chip_haul_psite INTEGER," +
+                    "chip_haul_psite_name CHAR(255)," +
+                    "chip_haul_cost_dpgt DOUBLE DEFAULT 0," +
+                    "cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," +
+                    "cond_accessible_yn CHAR(1) DEFAULT 'Y'," +
+                    "all_cond_not_accessible_yn CHAR(1)," +
+                    "plot_accessible_yn CHAR(1) DEFAULT 'Y')";
             }
 			
 		

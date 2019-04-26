@@ -2144,9 +2144,9 @@ namespace FIA_Biosum_Manager
 			 *****************************************************************/
 			this.m_strSQL = "INSERT into all_road_merch_haul_costs_work_table " + 
 				               "SELECT t.biosum_plot_id, 0 AS railhead_id," + 
-				                   "0 AS transfer_cost, s.psite_id," + 
-				                   "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost," + 
-				                   "0 AS rail_cost, (transfer_cost+road_cost+rail_cost) AS total_haul_cost," + 
+				                   "0 AS transfer_cost, s.psite_id," +
+                                   "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
+                                   "0 AS rail_cost_dpgt, (transfer_cost+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				                   "'M' as materialcd " +
                                "FROM " + this.m_strTravelTimeTable + " t," + 
 				                         this.m_strPSiteTable + " s " + 
