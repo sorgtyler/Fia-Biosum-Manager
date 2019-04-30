@@ -2789,22 +2789,37 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
+            /**************************************************
+             * Insert plot_id/cond_id records into PSITE_ACCESSIBLE_WORKTABLE
+             * ************************************************/
 
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
+               "(biosum_cond_id, biosum_plot_id) ";
+            this.m_strSQL += "SELECT DISTINCT (c.biosum_cond_id), c.biosum_plot_id" +
+                            " FROM " + this.m_strCondTable + " c, travel_time " +
+                            " WHERE (((c.biosum_plot_id)=[travel_time].[biosum_plot_id])) " +
+                            "GROUP BY c.biosum_plot_id, c.biosum_cond_id";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
 			
-           
-			/********************************************************************
+            
+            /********************************************************************
 			 **update cond_too_far_steep field to Y if slope is 
 			 **<= 40% and the yarding distance >= to maximum yarding distance 
 			 **for a slope <= 40%
 			 ********************************************************************/
-			this.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
-				"INNER JOIN " + this.m_strPlotTable + " p " +
-				"ON c.biosum_plot_id = p.biosum_plot_id  " + 
-				"SET c.cond_too_far_steep_yn = 'Y' " + 
-				"WHERE c.slope IS NOT NULL AND " + 
-				"c.slope <  " +  m_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + " AND " + 
-				"p.gis_yard_dist >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strNonSteepYardingDistance.Trim() + ";" ;
+            this.m_strSQL = "UPDATE (" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
+                "INNER JOIN " + this.m_strCondTable + " c ON c.biosum_cond_id = p.biosum_cond_id)  " +
+                "INNER JOIN " + this.m_strPlotTable + " AS pt ON c.biosum_plot_id = pt.biosum_plot_id " +
+                "AND p.biosum_plot_id = pt.biosum_plot_id " +
+                "SET p.cond_too_far_steep_yn = 'Y' " +
+                "WHERE c.slope IS NOT NULL AND " +
+                "c.slope <  " + m_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + " AND " +
+                "pt.gis_yard_dist >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strNonSteepYardingDistance.Trim() + ";";
 
+            
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
@@ -2816,13 +2831,15 @@ namespace FIA_Biosum_Manager
 			 **> 40% and the yarding distance >= to maximum yarding distance 
 			 **for a slope > 40%
 			 ********************************************************************/
-			this.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
-				"INNER JOIN " + this.m_strPlotTable + " p " +
-				"ON c.biosum_plot_id = p.biosum_plot_id  " + 
-				"SET c.cond_too_far_steep_yn = 'Y' " + 
-				"WHERE c.slope IS NOT NULL AND " + 
-				"c.slope >= " + m_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + " AND " + 
-				"p.gis_yard_dist >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strSteepYardingDistance.Trim() + ";" ;
+
+            this.m_strSQL = "UPDATE (" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
+                "INNER JOIN " + this.m_strCondTable + " c ON c.biosum_cond_id = p.biosum_cond_id)  " +
+                "INNER JOIN " + this.m_strPlotTable + " AS pt ON c.biosum_plot_id = pt.biosum_plot_id " +
+                "AND p.biosum_plot_id = pt.biosum_plot_id " +
+                "SET p.cond_too_far_steep_yn = 'Y' " +
+                "WHERE c.slope IS NOT NULL AND " +
+                "c.slope >= " + m_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + " AND " +
+                "pt.gis_yard_dist >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strSteepYardingDistance.Trim() + ";";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -2835,10 +2852,10 @@ namespace FIA_Biosum_Manager
 			/*************************************************************
 			 **set the remainder of the cond_too_far_steep_yn fields to N
 			 *************************************************************/
-			this.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
-				"SET c.cond_too_far_steep_yn = 'N' " + 
-				"WHERE c.cond_too_far_steep_yn IS NULL OR (c.cond_too_far_steep_yn <> 'Y' AND " + 
-				"c.cond_too_far_steep_yn <> 'N');";
+            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " + 
+				"SET p.cond_too_far_steep_yn = 'N' " + 
+				"WHERE p.cond_too_far_steep_yn IS NULL OR (p.cond_too_far_steep_yn <> 'Y' AND " + 
+				"p.cond_too_far_steep_yn <> 'N');";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
@@ -2848,7 +2865,8 @@ namespace FIA_Biosum_Manager
 			/*************************************************************
 			 **update the condition accessible flag
 			 *************************************************************/
-			this.m_strSQL = "UPDATE " + this.m_strCondTable +  " SET cond_accessible_yn = " + 
+            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + 
+                " SET cond_accessible_yn = " + 
 				"IIF(cond_too_far_steep_yn='Y','N','Y');";
 
 
@@ -2869,8 +2887,8 @@ namespace FIA_Biosum_Manager
 			 ********************************************************************/
 			//insert the condition counts into the work table
 			this.m_strSQL = "INSERT INTO plot_cond_accessible_work_table (biosum_plot_id, num_cond) " + 
-				" SELECT biosum_plot_id , COUNT(biosum_plot_id) " + 
-				" FROM " + this.m_strCondTable + 
+				" SELECT biosum_plot_id , COUNT(biosum_plot_id) " +
+                " FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + 
 				" GROUP BY biosum_plot_id;";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -2879,8 +2897,9 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
 			this.m_strSQL = "INSERT INTO plot_cond_accessible_work_table2 (biosum_plot_id, num_cond, num_cond_not_accessible) " + 
-				"SELECT a.biosum_plot_id, a.num_cond,b.cond_not_accessible_count as num_cond_not_accessible FROM plot_cond_accessible_work_table a," + 
-				"(SELECT biosum_plot_id, Count(*) AS cond_not_accessible_count FROM " + this.m_strCondTable + " " + 
+				"SELECT a.biosum_plot_id, a.num_cond,b.cond_not_accessible_count as num_cond_not_accessible FROM plot_cond_accessible_work_table a," +
+                "(SELECT biosum_plot_id, Count(*) AS cond_not_accessible_count FROM " + 
+                Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " + 
 				"WHERE cond_accessible_yn='N' GROUP BY biosum_plot_id) b " + 
 				"WHERE a.biosum_plot_id = b.biosum_plot_id;";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -2892,7 +2911,8 @@ namespace FIA_Biosum_Manager
 			/**********************************************************************
 			 **initialize the all_cond_not_accessible_yn flag to N
 			 **********************************************************************/
-			this.m_strSQL = this.m_oVarSub.SQLTranslateVariableSubstitution("UPDATE @@PlotTable@@ SET all_cond_not_accessible_yn = 'N'");
+            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
+                            " SET all_cond_not_accessible_yn = 'N'";
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
@@ -2901,7 +2921,7 @@ namespace FIA_Biosum_Manager
 			 **update the all_cond_not_accessible_yn flag if all conditions 
 			 **are not accessible
 			 **********************************************************************/
-			this.m_strSQL = "UPDATE " + this.m_strPlotTable + " p " + 
+            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " + 
 				"INNER JOIN plot_cond_accessible_work_table2 c " + 
 				"ON p.biosum_plot_id=c.biosum_plot_id " + 
 				"SET p.all_cond_not_accessible_yn=" + 
@@ -2915,10 +2935,9 @@ namespace FIA_Biosum_Manager
 			/*********************************************************************
 			 **update the plot accessible flag
 			 *********************************************************************/
-			this.m_strSQL = "UPDATE " + this.m_strPlotTable +  " SET plot_accessible_yn = " + 
-				"IIF(gis_protected_area_yn='Y' " + 
-				" OR gis_roadless_yn='Y' " + 
-				" OR all_cond_not_accessible_yn='Y','N','Y');";
+            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + 
+                " SET plot_accessible_yn = " + 
+				"IIF(all_cond_not_accessible_yn='Y','N','Y');";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -3851,29 +3870,12 @@ namespace FIA_Biosum_Manager
                 FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
                 FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
 				return;
-			}   
+			}
 
-			//UPDATE PLOT TABLE
+            //UPDATE PSITE_ACCESSIBLE_WORKTABLE TABLE
 
             frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.lblMsg, "Text", "Updating PSite Work Table");
             frmMain.g_oDelegate.ExecuteControlMethod((Control)ReferenceUserControlScenarioRun.lblMsg, "Refresh");
-
-
-            /**************************************************
-             * Insert plot_id/cond_id records into PSITE_ACCESSIBLE_WORKTABLE
-             * ************************************************/
-
-            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
-               "(biosum_cond_id, biosum_plot_id) ";
-            this.m_strSQL += "SELECT DISTINCT (c.biosum_cond_id), c.biosum_plot_id" +
-                            " FROM " + this.m_strCondTable + " c, travel_time " +
-                            " WHERE (((c.biosum_plot_id)=[travel_time].[biosum_plot_id])) " +
-                            "GROUP BY c.biosum_plot_id, c.biosum_cond_id";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
-
 
 			/**************************************************
 			 **Update cheapest merch route fields
@@ -4285,13 +4287,23 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
 
-             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Execute User Defined Plot SQL And Insert Resulting Records Into Table userdefinedplotfilter\r\n");
-			this.m_strSQL = "INSERT INTO userdefinedplotfilter " + this.m_strUserDefinedPlotSQL;
-
-             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+			
+            this.m_strSQL = "INSERT INTO userdefinedplotfilter " + this.m_strUserDefinedPlotSQL;
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Delete inaccessible plots from Table userdefinedplotfilter\r\n");
+            this.m_strSQL = "DELETE FROM userdefinedplotfilter u " +
+                            "WHERE EXISTS " +
+                             "(SELECT p.biosum_plot_id " +
+                             "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
+                             "WHERE u.biosum_plot_id =  p.biosum_plot_id and p.PLOT_ACCESSIBLE_YN = 'N')";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
