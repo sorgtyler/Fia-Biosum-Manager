@@ -1461,9 +1461,7 @@ namespace FIA_Biosum_Manager
 				{
 					//the table below does not have to have records,whereas, all
 					//the other tables are required to have records
-					if (this.lstRequiredTables.Items[x].SubItems[TABLETYPE].Text.Trim().ToUpper() != "TREE SPECIES AND DIAMETER GROUPS DOLLAR VALUES" &&
-						this.lstRequiredTables.Items[x].SubItems[TABLETYPE].Text.Trim().ToUpper() != "PLOT AND CONDITION RECORD AUDIT" && 
-						this.lstRequiredTables.Items[x].SubItems[TABLETYPE].Text.Trim().ToUpper() != "PLOT, CONDITION AND TREATMENT RECORD AUDIT")
+					if (this.lstRequiredTables.Items[x].SubItems[TABLETYPE].Text.Trim().ToUpper() != "TREE SPECIES AND DIAMETER GROUPS DOLLAR VALUES")
 					{
 						MessageBox.Show("Run Scenario Failed: Scenario data source table " + this.lstRequiredTables.Items[x].SubItems[TABLE].Text.Trim() + 
 							" has 0 records");

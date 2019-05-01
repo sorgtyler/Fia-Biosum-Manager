@@ -592,12 +592,6 @@ namespace FIA_Biosum_Manager
                                     case "TREE SPECIES AND DIAMETER GROUPS DOLLAR VALUES":
 										bCore = true;
 										break;
-									case "PLOT AND CONDITION RECORD AUDIT":
-										bCore = true;
-										break;
-									case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-										bCore = true;
-										break;
 									default:
 										break;
 								}

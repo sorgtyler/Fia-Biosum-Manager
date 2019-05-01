@@ -538,9 +538,9 @@ namespace FIA_Biosum_Manager
                  if (System.IO.File.Exists(strMDBPathAndFile) == true)
                  {
                      oAdo.OpenConnection(oAdo.getMDBConnString(strMDBPathAndFile, "", ""));
-                     if (oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName) == true)
+                     if (oAdo.TableExist(oAdo.m_OleDbConnection, Tables.Audit.DefaultPlotCondAuditTableName) == true)
                      {
-                         strTable = frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName;
+                         strTable = Tables.Audit.DefaultPlotCondAuditTableName;
                          strConn = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source=" +
                                     strMDBPathAndFile + ";User Id=admin;Password=;";
 
@@ -550,9 +550,9 @@ namespace FIA_Biosum_Manager
                          this.m_frmGridView.LoadDataSet(strConn, "select * from " + strTable + " " + strTable + "_" + m_strVariantArray[x].Trim(), strTable + "_" + m_strVariantArray[x].Trim());
                          
                      }
-                     if (oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName) == true)
+                     if (oAdo.TableExist(oAdo.m_OleDbConnection, Tables.Audit.DefaultPlotCondRxAuditTableName) == true)
                      {
-                         strTable = frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName;
+                         strTable = Tables.Audit.DefaultPlotCondRxAuditTableName;
                          strConn = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source=" +
                                     strMDBPathAndFile + ";User Id=admin;Password=;";
 
@@ -1988,29 +1988,28 @@ namespace FIA_Biosum_Manager
         private void CreateAuditTables()
         {
             int x;
-            ado_data_access oAdo = new ado_data_access();
             dao_data_access oDao = new dao_data_access();
-            string strMDBPathAndFile = "";
             //
-            //create an audit DB file for every variant
+            //create an audit DB file in the scenario output directory
             //
-            for (x = 0; x <= m_strVariantArray.Length - 1; x++)
+            string strAccdbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\" + Tables.Audit.DefaultPlotCondAuditTableDbFile;
+            if (System.IO.File.Exists(strAccdbPathAndFile) == false)
             {
-                strMDBPathAndFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\audit_" + m_strVariantArray[x].Trim() + ".mdb";
-                if (System.IO.File.Exists(strMDBPathAndFile) == false)
+                oDao.CreateMDB(strAccdbPathAndFile);
+            }
+            ado_data_access oAdo = new ado_data_access();
+            string strConn = oAdo.getMDBConnString(strAccdbPathAndFile, "", "");
+            using (var oConn = new OleDbConnection(strConn))
+            {
+                oConn.Open();
+                if (oAdo.TableExist(oConn, Tables.Audit.DefaultPlotCondAuditTableName) == false)
                 {
-                    oDao.CreateMDB(strMDBPathAndFile);
+                    frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdo, oConn, Tables.Audit.DefaultPlotCondAuditTableName);
                 }
-                oAdo.OpenConnection(oAdo.getMDBConnString(strMDBPathAndFile, "", ""));
-                if (oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName) == false)
+                if (oAdo.TableExist(oConn, Tables.Audit.DefaultPlotCondRxAuditTableName) == false)
                 {
-                    frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdo, oAdo.m_OleDbConnection, frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName);
+                    frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdo, oConn, Tables.Audit.DefaultPlotCondRxAuditTableName);
                 }
-                if (oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName) == false)
-                {
-                    frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdo, oAdo.m_OleDbConnection, frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName);
-                }
-                oAdo.CloseConnection(oAdo.m_OleDbConnection);
             }
             oDao = null;
             oAdo = null;
@@ -2526,43 +2525,37 @@ namespace FIA_Biosum_Manager
 			string[] strTableNames;
             int x,y;
 			strTableNames = new string[1];
-            string strMDBPathAndFile = "";
 			dao_data_access oDao = new dao_data_access();
-			
-           
-			
-            for (x = 0; x <= m_strVariantArray.Length - 1; x++)
+
+            string strAccdbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\" + Tables.Audit.DefaultPlotCondAuditTableDbFile;
+
+            if (System.IO.File.Exists(strAccdbPathAndFile))
             {
-                strMDBPathAndFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\audit_" + m_strVariantArray[x].Trim() + ".mdb";
-                if (System.IO.File.Exists(strMDBPathAndFile))
+                int intCount = oDao.getTableNames(strAccdbPathAndFile, ref strTableNames);
+                if (oDao.m_intError == 0)
                 {
-                    int intCount = oDao.getTableNames(strMDBPathAndFile, ref strTableNames);
-                    if (oDao.m_intError == 0)
+                    if (intCount > 0)
                     {
-                        if (intCount > 0)
+                        for (y = 0; y <= intCount - 1; y++)
                         {
-                            for (y = 0; y <= intCount - 1; y++)
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, strAccdbPathAndFile + "\t" + strTableNames[y] + "\r\n");
+                            oDao.CreateTableLink(this.m_strTempMDBFile, strTableNames[y].Trim(), strAccdbPathAndFile, strTableNames[y]);
+                            if (oDao.m_intError != 0)
                             {
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                                    frmMain.g_oUtils.WriteText(m_strDebugFile, strMDBPathAndFile + "\t" + strTableNames[y] + "\r\n");
-                                oDao.CreateTableLink(this.m_strTempMDBFile, strTableNames[y].Trim() + "_" + m_strVariantArray[x].Trim(), strMDBPathAndFile, strTableNames[y]);
-                                if (oDao.m_intError != 0)
-                                {
-                                    if (frmMain.g_bDebug)
-                                        frmMain.g_oUtils.WriteText(m_strDebugFile, "!!Error Creating Table Link!!!");
+                                if (frmMain.g_bDebug)
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "!!Error Creating Table Link!!!");
                                     this.m_intError = oDao.m_intError;
                                     break;
-                                }
                             }
-
                         }
-                    }
-                    else
-                    {
-                        this.m_intError = oDao.m_intError;
+
                     }
                 }
-               
+                else
+                {
+                    this.m_intError = oDao.m_intError;
+                }
             }
 
 			oDao = null;
@@ -4196,7 +4189,7 @@ namespace FIA_Biosum_Manager
 		/// that exist in the user defined plot filters, condition, ffe, travel times, and
 		/// harvest cost, and tree volume/value tables
 		/// </summary>
-		private void    validcombos()
+		private void validcombos()
 		{
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -4233,34 +4226,27 @@ namespace FIA_Biosum_Manager
 			 **delete audit tables
 			 *****************************************************************/
 
-
-            for (x = 0; x <= m_strVariantArray.Length - 1; x++)
+            this.m_strSQL = "delete from plot_audit";
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
             {
-                this.m_strSQL = "delete from plot_audit_" + m_strVariantArray[x].Trim();
-                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
-                if (this.m_ado.m_intError != 0)
-                {
-                    FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
-                    this.m_intError = this.m_ado.m_intError;
-                    return;
-                }
-
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                this.m_intError = this.m_ado.m_intError;
+                return;
             }
+
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            for (x = 0; x <= m_strVariantArray.Length - 1; x++)
+            this.m_strSQL = "delete from plot_cond_rx_audit";
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
             {
-                this.m_strSQL = "delete from plot_cond_rx_audit_" + m_strVariantArray[x].Trim();
-                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-                if (this.m_ado.m_intError != 0)
-                {
-                    FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
-                    this.m_intError = this.m_ado.m_intError;
-                    return;
-                }
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                this.m_intError = this.m_ado.m_intError;
+                return;
             }
 			
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
@@ -4615,202 +4601,197 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oDelegate.SetControlPropertyValue((Control)ReferenceUserControlScenarioRun.lblMsg, "Visible", true);
                 frmMain.g_oDelegate.ExecuteControlMethod((Control)ReferenceUserControlScenarioRun, "Refresh");
 
-                strMDBPathAndFile = "";
                 //
                 //create an audit DB file for every variant
                 //
-                for (x = 0; x <= m_strVariantArray.Length - 1; x++)
-                {
                     
-                    strMDBPathAndFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db\\audit_" + m_strVariantArray[x].Trim() + ".mdb";
-                    _uc_scenario_run.uc_filesize_monitor4.BeginMonitoringFile(strMDBPathAndFile, 2000000000, "2GB");
+                string strAccdbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + 
+                    "\\db\\" + Tables.Audit.DefaultPlotCondAuditTableDbFile;
+                _uc_scenario_run.uc_filesize_monitor4.BeginMonitoringFile(strAccdbPathAndFile, 2000000000, "2GB");
 
-                    CompactMDB(strMDBPathAndFile, m_TempMDBFileConn);
+                //BIOSUM_COND_ID RECORD AUDIT
+                /******************************************************************************************
+                 **insert all the plots that are being processed into the plot audit table
+                 ******************************************************************************************/
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n--plot_audit--\r\n\r\n");
+                this.m_strSQL = "INSERT INTO plot_audit (biosum_cond_id) SELECT ruledefinitionscondfilter.biosum_cond_id FROM ruledefinitionscondfilter INNER JOIN userdefinedplotfilter ON ruledefinitionscondfilter.biosum_plot_id = userdefinedplotfilter.biosum_plot_id";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Insert All Plots From ruledefinitionscoldfilter table into plot_audit\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                if (this.m_ado.m_intError != 0)
+                {
+                    FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                    this.m_intError = this.m_ado.m_intError;
+                    return;
+                }
 
-                    //BIOSUM_COND_ID RECORD AUDIT
-                    /******************************************************************************************
-                     **insert all the plots that are being processed into the plot audit table
-                     ******************************************************************************************/
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n--plot_audit--\r\n\r\n");
-                    this.m_strSQL = "INSERT INTO plot_audit_" + m_strVariantArray[x].Trim() + " (biosum_cond_id) SELECT ruledefinitionscondfilter.biosum_cond_id FROM ruledefinitionscondfilter INNER JOIN userdefinedplotfilter ON ruledefinitionscondfilter.biosum_plot_id = userdefinedplotfilter.biosum_plot_id WHERE userdefinedplotfilter.fvs_variant='" + m_strVariantArray[x].Trim() + "'";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Insert All Plots From ruledefinitionscoldfilter table into plot_audit\r\n");
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                    this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-                    if (this.m_ado.m_intError != 0)
-                    {
-                        FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
-                        FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
-                        this.m_intError = this.m_ado.m_intError;
-                        return;
-                    }
-
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
 
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
-                    /************************************************************************
-                     **check to see if the plot record exists in the frcs harvest cost table
-                     ************************************************************************/
-                    m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
-                                        "(SELECT TOP 1 a.biosum_cond_id " + 
-                                        "FROM plot_audit_" + m_strVariantArray[x].Trim() + " AS a," + 
+                /************************************************************************
+                 **check to see if the plot record exists in the frcs harvest cost table
+                 ************************************************************************/
+                m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
+                                    "(SELECT TOP 1 a.biosum_cond_id " + 
+                                    "FROM plot_audit AS a," + 
                                             m_strHvstCostsTable + " b " + 
-                                        "WHERE a.biosum_cond_id = b.biosum_cond_id)";
-                    if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL,"temp") > 0)
-                    {
-                        this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " AS a " +
-                                        "SET a.harvest_costs_yn = 'Y' " +
-                                        "WHERE a.biosum_cond_id " +
-                                        "IN (SELECT biosum_cond_id FROM " + this.m_strHvstCostsTable + ");";
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSee if plot record exists in the FRCS harvest cost table\r\n");
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                        this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-                    }
-
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
-
-                    this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " a " + 
-                                    "SET a.harvest_costs_yn = 'N' " +
-                                    "WHERE a.harvest_costs_yn IS NULL OR LEN(TRIM(a.harvest_costs_yn))=0;";
+                                    "WHERE a.biosum_cond_id = b.biosum_cond_id)";
+                if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL,"temp") > 0)
+                {
+                    this.m_strSQL = "UPDATE plot_audit  AS a " +
+                                    "SET a.harvest_costs_yn = 'Y' " +
+                                    "WHERE a.biosum_cond_id " +
+                                    "IN (SELECT biosum_cond_id FROM " + this.m_strHvstCostsTable + ");";
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet harvest_costs_yn=N if column value is null\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSee if plot record exists in the FRCS harvest cost table\r\n");
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
                     this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                }
 
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
-                    /****************************************************************************
-                     **check to see if the plot record exists in the validcombos_fvsprepost table
-                     ****************************************************************************/
-                     m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
-                                        "(SELECT TOP 1 a.biosum_cond_id " + 
-                                        "FROM plot_audit_" + m_strVariantArray[x].Trim() + " AS a," + 
-                                              "validcombos_fvsprepost b " + 
-                                        "WHERE a.biosum_cond_id = b.biosum_cond_id)";
-                     if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL, "temp") > 0)
-                     {
-                         this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " a " +
-                                         "SET a.fvs_prepost_variables_yn = 'Y' " +
-                                         "WHERE a.biosum_cond_id " +
-                                         "IN (SELECT biosum_cond_id FROM validcombos_fvsprepost);";
-                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                             frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet fvs_prepost_variables_yn=Y if plot record exists in validcombos_fvsprepost table\r\n");
-                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                         this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-                     }
+                this.m_strSQL = "UPDATE plot_audit a " + 
+                                "SET a.harvest_costs_yn = 'N' " +
+                                "WHERE a.harvest_costs_yn IS NULL OR LEN(TRIM(a.harvest_costs_yn))=0;";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet harvest_costs_yn=N if column value is null\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
+                /****************************************************************************
+                 **check to see if the plot record exists in the validcombos_fvsprepost table
+                 ****************************************************************************/
+                 m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
+                                    "(SELECT TOP 1 a.biosum_cond_id " + 
+                                    "FROM plot_audit AS a," + 
+                                          "validcombos_fvsprepost b " + 
+                                    "WHERE a.biosum_cond_id = b.biosum_cond_id)";
+                 if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL, "temp") > 0)
+                 {
+                     this.m_strSQL = "UPDATE plot_audit a " +
+                                     "SET a.fvs_prepost_variables_yn = 'Y' " +
+                                     "WHERE a.biosum_cond_id " +
+                                     "IN (SELECT biosum_cond_id FROM validcombos_fvsprepost);";
+                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                         frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet fvs_prepost_variables_yn=Y if plot record exists in validcombos_fvsprepost table\r\n");
+                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                     this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                 }
 
-                    this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " a " + 
-                                    "SET a.fvs_prepost_variables_yn = 'N' " +
-                                    "WHERE a.fvs_prepost_variables_yn IS NULL OR " + 
-                                          "a.fvs_prepost_variables_yn <> 'Y' ;";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet fvs_prepost_variables_yn=N if column value is null\r\n");
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                    this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
-
-
-                    /********************************************************************************************************
-                     **check to see if the plot record exists in the processor tree volume and value tableharvest cost table
-                     ********************************************************************************************************/
-                      m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
-                                        "(SELECT TOP 1 a.biosum_cond_id " + 
-                                        "FROM plot_audit_" + m_strVariantArray[x].Trim() + " AS a," + 
-                                              this.m_strTreeVolValSumTable + " b " + 
-                                        "WHERE a.biosum_cond_id = b.biosum_cond_id)";
-                      if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL, "temp") > 0)
-                      {
-                          this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " a " +
-                                          "SET a.processor_tree_vol_val_yn = 'Y' " +
-                                          "WHERE a.biosum_cond_id " +
-                                          "IN (SELECT biosum_cond_id FROM " + this.m_strTreeVolValSumTable + ");";
-                          if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                              frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet processor_tree_vol_val_yn=Y if plot record exists in " + this.m_strTreeVolValSumTable + " table\r\n");
-                          if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                              frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                          this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-                      }
-
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
 
-                    this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x] + " a " + 
-                                    "SET a.processor_tree_vol_val_yn = 'N' " +
-                                    "WHERE a.processor_tree_vol_val_yn IS NULL OR  " + 
-                                          "a.processor_tree_vol_val_yn<>'Y' ;";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet processor_tree_vol_val_yn=N if column value is null\r\n");
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                    this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                this.m_strSQL = "UPDATE plot_audit a " + 
+                                "SET a.fvs_prepost_variables_yn = 'N' " +
+                                "WHERE a.fvs_prepost_variables_yn IS NULL OR " + 
+                                      "a.fvs_prepost_variables_yn <> 'Y' ;";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet fvs_prepost_variables_yn=N if column value is null\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
-
-
-
-                    /**********************************************************************
-                     **check to see if the plot record exists in the gis travel times table
-                     **********************************************************************/
-                     m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
-                                        "(SELECT TOP 1 a.biosum_cond_id " + 
-                                        "FROM plot_audit_" + m_strVariantArray[x].Trim() + " AS a," + 
-                                             "ruledefinitionscondfilter b," + 
-                                              m_strTravelTimeTable + " c " + 
-                                        "WHERE a.biosum_cond_id = b.biosum_cond_id AND c.biosum_plot_id=b.biosum_plot_id)";
-                     if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL, "temp") > 0)
-                     {
-                         this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " a " +
-                                         "SET a.gis_travel_times_yn = 'Y' " +
-                                         "WHERE a.biosum_cond_id " +
-                                         "IN (SELECT biosum_cond_id FROM ruledefinitionscondfilter " +
-                                             "WHERE ruledefinitionscondfilter.biosum_plot_id " +
-                                                    "IN (SELECT biosum_plot_id FROM " +
-                                                         this.m_strTravelTimeTable + "));";
-                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                             frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet gis_travel_times_yn=Y if plot record exists in " + this.m_strTravelTimeTable + " table\r\n");
-                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                         this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-                     }
-
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
 
-                    this.m_strSQL = "UPDATE plot_audit_" + m_strVariantArray[x].Trim() + " a " + 
-                                    "SET a.gis_travel_times_yn = 'N' " +
-                                    "WHERE a.gis_travel_times_yn IS NULL OR  " + 
-                                          "a.gis_travel_times_yn<>'Y' ;";
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet gis_travel_times_yn=N if column value is null\r\n");
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-                    this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                /********************************************************************************************************
+                 **check to see if the plot record exists in the processor tree volume and value tableharvest cost table
+                 ********************************************************************************************************/
+                  m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
+                                    "(SELECT TOP 1 a.biosum_cond_id " + 
+                                    "FROM plot_audit AS a," + 
+                                          this.m_strTreeVolValSumTable + " b " + 
+                                    "WHERE a.biosum_cond_id = b.biosum_cond_id)";
+                  if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL, "temp") > 0)
+                  {
+                      this.m_strSQL = "UPDATE plot_audit a " +
+                                      "SET a.processor_tree_vol_val_yn = 'Y' " +
+                                      "WHERE a.biosum_cond_id " +
+                                      "IN (SELECT biosum_cond_id FROM " + this.m_strTreeVolValSumTable + ");";
+                      if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                          frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet processor_tree_vol_val_yn=Y if plot record exists in " + this.m_strTreeVolValSumTable + " table\r\n");
+                      if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                          frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                      this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                  }
 
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-                    if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+
+
+                this.m_strSQL = "UPDATE plot_audit a " + 
+                                "SET a.processor_tree_vol_val_yn = 'N' " +
+                                "WHERE a.processor_tree_vol_val_yn IS NULL OR  " + 
+                                      "a.processor_tree_vol_val_yn<>'Y' ;";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet processor_tree_vol_val_yn=N if column value is null\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+
+
+
+                /**********************************************************************
+                 **check to see if the plot record exists in the gis travel times table
+                 **********************************************************************/
+                 m_ado.m_strSQL="SELECT COUNT(*) FROM " + 
+                                    "(SELECT TOP 1 a.biosum_cond_id " + 
+                                    "FROM plot_audit AS a," + 
+                                         "ruledefinitionscondfilter b," + 
+                                          m_strTravelTimeTable + " c " + 
+                                    "WHERE a.biosum_cond_id = b.biosum_cond_id AND c.biosum_plot_id=b.biosum_plot_id)";
+                 if ((int)m_ado.getRecordCount(m_TempMDBFileConn, m_ado.m_strSQL, "temp") > 0)
+                 {
+                     this.m_strSQL = "UPDATE plot_audit a " +
+                                     "SET a.gis_travel_times_yn = 'Y' " +
+                                     "WHERE a.biosum_cond_id " +
+                                     "IN (SELECT biosum_cond_id FROM ruledefinitionscondfilter " +
+                                         "WHERE ruledefinitionscondfilter.biosum_plot_id " +
+                                                "IN (SELECT biosum_plot_id FROM " +
+                                                     this.m_strTravelTimeTable + "));";
+                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                         frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet gis_travel_times_yn=Y if plot record exists in " + this.m_strTravelTimeTable + " table\r\n");
+                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                     this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                 }
+
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+
+
+                this.m_strSQL = "UPDATE plot_audit a " + 
+                                "SET a.gis_travel_times_yn = 'N' " +
+                                "WHERE a.gis_travel_times_yn IS NULL OR  " + 
+                                      "a.gis_travel_times_yn<>'Y' ;";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet gis_travel_times_yn=N if column value is null\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
 
                     //BIOSUM_COND_ID + RX RECORD AUDIT
@@ -4994,7 +4975,6 @@ namespace FIA_Biosum_Manager
 
                     
 
-                }
 
 
 

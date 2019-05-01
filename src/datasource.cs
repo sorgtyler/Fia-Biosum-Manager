@@ -72,8 +72,6 @@ namespace FIA_Biosum_Manager
 			"FIADB FVS Variant",
 			"FIA Tree Macro Plot Breakpoint Diameter",
 			Datasource.TableTypes.HarvestMethods,
-			"Plot And Condition Record Audit",
-			"Plot, Condition And Treatment Record Audit",
 			"Tree Regional Biomass",
 			"Population Evaluation",
 			"Population Estimation Unit",
@@ -108,8 +106,6 @@ namespace FIA_Biosum_Manager
 	        "FIADB FVS Variant",
 	        "FIA Tree Macro Plot Breakpoint Diameter",
 	        Datasource.TableTypes.HarvestMethods,
-	        "Plot And Condition Record Audit",
-	        "Plot, Condition And Treatment Record Audit",
 	        "Tree Regional Biomass",
 	        "Population Evaluation",
 	        "Population Estimation Unit",
@@ -143,8 +139,6 @@ namespace FIA_Biosum_Manager
 	        "FIADB FVS Variant",
 	        "FIA Tree Macro Plot Breakpoint Diameter",
 	        Datasource.TableTypes.HarvestMethods,
-	        "Plot And Condition Record Audit",
-	        "Plot, Condition And Treatment Record Audit",
 	        "Tree Regional Biomass",
 	        "Population Evaluation",
 	        "Population Estimation Unit",
@@ -892,12 +886,6 @@ namespace FIA_Biosum_Manager
 				case "PROCESSING SITES":
 					p_dao.CreatePrimaryKeyIndex(p_strMDBPathAndFile,p_strTable,"psite_id");
 					break;
-				case "PLOT AND CONDITION RECORD AUDIT":
-					p_dao.CreatePrimaryKeyIndex(p_strMDBPathAndFile,p_strTable,"biosum_cond_id");
-					break;
-				case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-					p_dao.CreatePrimaryKeyIndex(p_strMDBPathAndFile,p_strTable,"biosum_cond_id,rx");
-					break;
 				case "TREE REGIONAL BIOMASS":
 					p_dao.CreatePrimaryKeyIndex(p_strMDBPathAndFile, p_strTable,"tre_cn");
 					break;
@@ -962,12 +950,6 @@ namespace FIA_Biosum_Manager
 					p_dao.CreatePrimaryKeyIndex(p_dao.m_DaoDatabase,p_strTable,"id");
 					p_dao.CreateAutoNumber(p_dao.m_DaoDatabase,p_strTable,"id");
 					break;
-				case "PLOT AND CONDITION RECORD AUDIT":
-					p_dao.CreatePrimaryKeyIndex(p_dao.m_DaoDatabase,p_strTable,"biosum_cond_id");
-					break;
-				case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-					p_dao.CreatePrimaryKeyIndex(p_dao.m_DaoDatabase,p_strTable,"biosum_cond_id,rx");
-					break;
 				case "TREE REGIONAL BIOMASS":
 					p_dao.CreatePrimaryKeyIndex(p_dao.m_DaoDatabase,p_strTable,"tre_cn");
 					break;
@@ -1018,12 +1000,6 @@ namespace FIA_Biosum_Manager
 					break;
 				case "TREE SPECIES":
 					frmMain.g_oTables.m_oReference.CreateTreeSpeciesTableIndexes(p_oAdo,p_oConn,p_strTableName);
-					break;
-				case "PLOT AND CONDITION RECORD AUDIT":
-					frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTableIndexes(p_oAdo,p_oConn,p_strTableName);
-					break;
-				case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-					frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTableIndexes(p_oAdo,p_oConn,p_strTableName);
 					break;
 				case "TREE REGIONAL BIOMASS":
 					frmMain.g_oTables.m_oFIAPlot.CreateTreeRegionalBiomassTableIndexes(p_oAdo,p_oConn,p_strTableName);
@@ -1135,14 +1111,6 @@ namespace FIA_Biosum_Manager
 				case "TREE SPECIES":
 					oItem.VariableName="TreeSpeciesTable";
 					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Reference.DefaultTreeSpeciesTableName;
-					break;
-				case "PLOT AND CONDITION RECORD AUDIT":
-					oItem.VariableName="PlotCondAuditTable";
-					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName;
-					break;
-				case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-					oItem.VariableName="PlotCondRxAuditTable";
-					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName;
 					break;
 				case "TREE REGIONAL BIOMASS":
 					oItem.VariableName="TreeRegionalBiomassTable";

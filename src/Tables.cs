@@ -274,6 +274,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsPSiteAccessibleWorkTableName { get { return @"psite_accessible_work_table"; } }
             static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
 
+
 			
 			private string strSQL = "";
 			public OptimizerScenarioResults()
@@ -2964,10 +2965,10 @@ namespace FIA_Biosum_Manager
 		}
 		public class Audit
 		{
-			public string DefaultPlotCondAuditTableDbFile {get {return @"db\audit.mdb";}}
-			public string DefaultPlotCondAuditTableName {get {return "plot_audit";}}
-			public string DefaultPlotCondRxAuditTableDbFile {get {return @"db\audit.mdb";}}
-			public string DefaultPlotCondRxAuditTableName {get {return "plot_cond_rx_audit";}}
+			public static string DefaultPlotCondAuditTableDbFile {get {return @"audit.accdb";}}
+			public static string DefaultPlotCondAuditTableName {get {return "plot_audit";}}
+			public static string DefaultPlotCondRxAuditTableDbFile {get {return @"audit.accdb";}}
+			public static string DefaultPlotCondRxAuditTableName {get {return "plot_cond_rx_audit";}}
 
 			public Audit()
 			{

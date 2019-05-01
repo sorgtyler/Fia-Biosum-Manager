@@ -899,7 +899,7 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.Refresh();
 				p_frmTherm.progressBar1.Minimum = 1;
 				p_frmTherm.AbortProcess = false;
-				p_frmTherm.progressBar1.Maximum = 16;
+				p_frmTherm.progressBar1.Maximum = 15;
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Visible=true;
 				p_frmTherm.lblMsg.Refresh();
@@ -1159,15 +1159,6 @@ namespace FIA_Biosum_Manager
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.version";
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
 
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\audit.mdb";
-				p_dao.CreateMDB(strDestFile);
-				p_frmTherm.Increment(15);
-				p_frmTherm.lblMsg.Text = strDestFile;
-				p_frmTherm.lblMsg.Refresh();
-				strConn = p_ado.getMDBConnString(strDestFile,"admin","");
-				p_ado.OpenConnection(strConn);
-				frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oAudit.DefaultPlotCondAuditTableName);
-				frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oAudit.DefaultPlotCondRxAuditTableName);
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
 
 				
@@ -1449,20 +1440,6 @@ namespace FIA_Biosum_Manager
 						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
 						"'ref_master.mdb'," +
                         "'harvest_methods');";
-					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
-
-					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-						"('Plot And Condition Record Audit'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
-						"'audit.mdb'," + 
-						"'plot_audit');";
-					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
-
-					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
-						"('Plot, Condition And Treatment Record Audit'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\db'," + 
-						"'audit.mdb'," + 
-						"'plot_cond_rx_audit');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
