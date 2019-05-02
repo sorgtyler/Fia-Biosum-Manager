@@ -804,7 +804,7 @@ namespace FIA_Biosum_Manager
 			this.btnViewAuditTables.Enabled=false;
 			try
 			{
-				p_dt = this.m_oRunCore.m_ado.m_DataSet.Tables["plot_cond_rx_audit"].GetChanges();
+                p_dt = this.m_oRunCore.m_ado.m_DataSet.Tables[Tables.Audit.DefaultCondRxAuditTableName].GetChanges();
 			
 
 				if (p_dt.Rows.Count > 0)
@@ -814,9 +814,10 @@ namespace FIA_Biosum_Manager
 					this.progressBar1.Maximum = p_dt.Rows.Count;
 					this.progressBar1.Value = 1;
 					this.lblMsg.Visible=true;
-					this.lblMsg.Text = "Saving plot_cond_rx_audit records";
+					this.lblMsg.Text = "Saving cond_rx_audit records";
 					this.lblMsg.Refresh();
-					if (this.m_oRunCore.m_ado.getRecordCount(this.m_oRunCore.m_TempMDBFileConn,"select count(*) from plot_cond_rx_audit","plot_cond_rx_audit") > 0)
+                    if (this.m_oRunCore.m_ado.getRecordCount(this.m_oRunCore.m_TempMDBFileConn, "select count(*) from " + Tables.Audit.DefaultCondRxAuditTableName, 
+                        Tables.Audit.DefaultCondRxAuditTableName) > 0)
 						strUpdateType = "update";
 				
 				
@@ -867,7 +868,7 @@ namespace FIA_Biosum_Manager
 					 **if the did not complete do not accept changes
 					 ********************************************************/
 					if (x >=p_dt.Rows.Count)
-						this.m_oRunCore.m_ado.m_DataSet.Tables["plot_cond_rx_audit"].AcceptChanges();
+                        this.m_oRunCore.m_ado.m_DataSet.Tables[Tables.Audit.DefaultCondRxAuditTableName].AcceptChanges();
 				}
 			}
 			catch

@@ -2965,10 +2965,10 @@ namespace FIA_Biosum_Manager
 		}
 		public class Audit
 		{
-			public static string DefaultPlotCondAuditTableDbFile {get {return @"audit.accdb";}}
-			public static string DefaultPlotCondAuditTableName {get {return "plot_audit";}}
-			public static string DefaultPlotCondRxAuditTableDbFile {get {return @"audit.accdb";}}
-			public static string DefaultPlotCondRxAuditTableName {get {return "plot_cond_rx_audit";}}
+			public static string DefaultCondAuditTableDbFile {get {return @"audit.accdb";}}
+			public static string DefaultCondAuditTableName {get {return "cond_audit";}}
+			public static string DefaultCondRxAuditTableDbFile {get {return @"audit.accdb";}}
+			public static string DefaultCondRxAuditTableName {get {return "cond_rx_audit";}}
 
 			public Audit()
 			{

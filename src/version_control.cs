@@ -1201,15 +1201,15 @@ namespace FIA_Biosum_Manager
 							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
 								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
 								ReferenceProjectDirectory.Trim() + "\\db",
-								frmMain.g_oUtils.getFileName(Tables.Audit.DefaultPlotCondAuditTableDbFile),
-                                Tables.Audit.DefaultPlotCondAuditTableName);
+								frmMain.g_oUtils.getFileName(Tables.Audit.DefaultCondAuditTableDbFile),
+                                Tables.Audit.DefaultCondAuditTableName);
 							break;
 						case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
 							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
 								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
 								ReferenceProjectDirectory.Trim() + "\\db",
-                                frmMain.g_oUtils.getFileName(Tables.Audit.DefaultPlotCondRxAuditTableDbFile),
-                                Tables.Audit.DefaultPlotCondRxAuditTableName);
+                                frmMain.g_oUtils.getFileName(Tables.Audit.DefaultCondRxAuditTableDbFile),
+                                Tables.Audit.DefaultCondRxAuditTableName);
 							break;
 						case "TREE REGIONAL BIOMASS":
 							strDbFile = frmMain.g_oUtils.getFileNameUsingLastIndexOf(frmMain.g_oTables.m_oFIAPlot.DefaultTreeRegionalBiomassTableDbFile);
@@ -1502,10 +1502,10 @@ namespace FIA_Biosum_Manager
 									break;
 								
 								case "PLOT AND CONDITION RECORD AUDIT":
-                                    frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Audit.DefaultPlotCondAuditTableName);
+                                    frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Audit.DefaultCondAuditTableName);
 									break;
 								case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-                                    frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Audit.DefaultPlotCondRxAuditTableName);
+                                    frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Audit.DefaultCondRxAuditTableName);
 									break;
 								case "TREE REGIONAL BIOMASS":
 									frmMain.g_oTables.m_oFIAPlot.CreateTreeRegionalBiomassTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,frmMain.g_oTables.m_oFIAPlot.DefaultTreeRegionalBiomassTableName);
@@ -1639,11 +1639,11 @@ namespace FIA_Biosum_Manager
 									break;
 								
 								case "PLOT AND CONDITION RECORD AUDIT":
-                                    strTempTableName = Tables.Audit.DefaultPlotCondAuditTableName;
+                                    strTempTableName = Tables.Audit.DefaultCondAuditTableName;
 									frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
-                                    strTempTableName = Tables.Audit.DefaultPlotCondRxAuditTableName;
+                                    strTempTableName = Tables.Audit.DefaultCondRxAuditTableName;
 									frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "TREE REGIONAL BIOMASS":
@@ -3755,8 +3755,8 @@ namespace FIA_Biosum_Manager
 			oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
 				"Plot And Condition Record Audit",
 				ReferenceProjectDirectory.Trim() + "\\db",
-                frmMain.g_oUtils.getFileName(Tables.Audit.DefaultPlotCondAuditTableDbFile),
-                Tables.Audit.DefaultPlotCondAuditTableName);
+                frmMain.g_oUtils.getFileName(Tables.Audit.DefaultCondAuditTableDbFile),
+                Tables.Audit.DefaultCondAuditTableName);
 
 
             oAdo.m_strSQL = "DELETE FROM datasource WHERE TRIM(UCASE(table_type))='PLOT, CONDITION AND TREATMENT RECORD AUDIT'";
@@ -3765,8 +3765,8 @@ namespace FIA_Biosum_Manager
 			oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
 				"Plot, Condition And Treatment Record Audit",
 				ReferenceProjectDirectory.Trim() + "\\db",
-                frmMain.g_oUtils.getFileName(Tables.Audit.DefaultPlotCondRxAuditTableDbFile),
-                Tables.Audit.DefaultPlotCondRxAuditTableName);
+                frmMain.g_oUtils.getFileName(Tables.Audit.DefaultCondRxAuditTableDbFile),
+                Tables.Audit.DefaultCondRxAuditTableName);
 
 
 			oAdo.CloseConnection(oAdo.m_OleDbConnection);
@@ -3780,13 +3780,13 @@ namespace FIA_Biosum_Manager
             if (oAdo.TableExist(oAdo.m_OleDbConnection, "plot_cond_audit"))
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, "DROP TABLE plot_cond_audit");
             if (oAdo.TableExist(oAdo.m_OleDbConnection, "plot_audit"))
-                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, "DROP TABLE plot_audit");
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, "DROP TABLE  ");
             if (oAdo.TableExist(oAdo.m_OleDbConnection, "plot_cond_rx_audit"))
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, "DROP TABLE plot_cond_rx_audit");
 
 
-            frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdo, oAdo.m_OleDbConnection, Tables.Audit.DefaultPlotCondAuditTableName);
-            frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdo, oAdo.m_OleDbConnection, Tables.Audit.DefaultPlotCondRxAuditTableName);
+            frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdo, oAdo.m_OleDbConnection, Tables.Audit.DefaultCondAuditTableName);
+            frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdo, oAdo.m_OleDbConnection, Tables.Audit.DefaultCondRxAuditTableName);
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
 
             //
@@ -3794,12 +3794,12 @@ namespace FIA_Biosum_Manager
             //
             oAdo.OpenConnection(oAdo.getMDBConnString(ReferenceProjectDirectory.Trim() + "\\core\\db\\scenario_core_rule_definitions.mdb","",""));
             oAdo.m_strSQL = "UPDATE scenario_datasource " +
-                            "SET table_name='" + Tables.Audit.DefaultPlotCondAuditTableName + "'," +
+                            "SET table_name='" + Tables.Audit.DefaultCondAuditTableName + "'," +
                                 "path='" + ReferenceProjectDirectory.Trim() + "\\db' " +
                             "WHERE TRIM(UCASE(table_type))='PLOT AND CONDITION RECORD AUDIT'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             oAdo.m_strSQL = "UPDATE scenario_datasource " +
-                            "SET table_name='" + Tables.Audit.DefaultPlotCondRxAuditTableName + "'," +
+                            "SET table_name='" + Tables.Audit.DefaultCondRxAuditTableName + "'," +
                                 "path='" + ReferenceProjectDirectory.Trim() + "\\db' " +
                             "WHERE TRIM(UCASE(table_type))='PLOT, CONDITION AND TREATMENT RECORD AUDIT'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
@@ -3810,12 +3810,12 @@ namespace FIA_Biosum_Manager
             //
             oAdo.OpenConnection(oAdo.getMDBConnString(ReferenceProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb", "", ""));
             oAdo.m_strSQL = "UPDATE scenario_datasource " +
-                            "SET table_name='" + Tables.Audit.DefaultPlotCondAuditTableName + "'," +
+                            "SET table_name='" + Tables.Audit.DefaultCondAuditTableName + "'," +
                                 "path='" + ReferenceProjectDirectory.Trim() + "\\db' " +
                             "WHERE TRIM(UCASE(table_type))='PLOT AND CONDITION RECORD AUDIT'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             oAdo.m_strSQL = "UPDATE scenario_datasource " +
-                            "SET table_name='" + Tables.Audit.DefaultPlotCondRxAuditTableName + "'," +
+                            "SET table_name='" + Tables.Audit.DefaultCondRxAuditTableName + "'," +
                                 "path='" + ReferenceProjectDirectory.Trim() + "\\db' " +
                             "WHERE TRIM(UCASE(table_type))='PLOT, CONDITION AND TREATMENT RECORD AUDIT'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
@@ -5651,13 +5651,13 @@ namespace FIA_Biosum_Manager
                     using (var oRenameConn = new OleDbConnection(strRenameConn))
                     {
                         oRenameConn.Open();
-                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultPlotCondAuditTableName, strOldColumnName)) ;
+                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultCondAuditTableName, strOldColumnName)) ;
                         {
-                            oDao.RenameField(strDatabase, Tables.Audit.DefaultPlotCondAuditTableName, strOldColumnName, strNewColumnName);
+                            oDao.RenameField(strDatabase, Tables.Audit.DefaultCondAuditTableName, strOldColumnName, strNewColumnName);
                         }
-                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultPlotCondRxAuditTableName, strOldColumnName)) ;
+                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultCondRxAuditTableName, strOldColumnName)) ;
                         {
-                            oDao.RenameField(strDatabase, Tables.Audit.DefaultPlotCondRxAuditTableName, strOldColumnName, strNewColumnName);
+                            oDao.RenameField(strDatabase, Tables.Audit.DefaultCondRxAuditTableName, strOldColumnName, strNewColumnName);
                         }
                     }
                 }
