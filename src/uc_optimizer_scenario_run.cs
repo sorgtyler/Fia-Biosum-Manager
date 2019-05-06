@@ -845,34 +845,6 @@ namespace FIA_Biosum_Manager
 			
 		}
 
-		/// <summary>
-		/// Check to see if  fastest travel times 
-		/// from plot to wood processing site exist in the plot table
-		/// </summary>
-		public void chkPlotTableForTravelTimes()
-		{
-			string strConn="";
-            
-            int intIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(listViewEx1, "Get Least Expensive Route From Stand To Wood Processing Facility");
-			ado_data_access p_ado = new ado_data_access();
-
-			string strTable = "";
-			string strMDBFile = "";
-			this.ReferenceOptimizerScenarioForm.uc_datasource1.getScenarioDataSourceMDBAndTableName("PLOT",ref strMDBFile,ref strTable);
-			strConn=p_ado.getMDBConnString(strMDBFile,"admin","");
-			if (p_ado.getRecordCount(strConn,"select COUNT(*) from " + strTable + " p WHERE p.merch_haul_cost_id IS NOT NULL AND p.chip_haul_cost_id IS NOT NULL",strTable) == 0)
-
-			{
-               
-			}
-			else
-			{
-                
-
-			}
-			p_ado = null;
-
-		}
         public static void UpdateThermPercent()
         {
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep++;
@@ -3027,23 +2999,20 @@ namespace FIA_Biosum_Manager
 			}     
 			
 			
-			frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.lblMsg,"Text","Null The Plot Table's Haul Cost Fields");
+			frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)ReferenceUserControlScenarioRun.lblMsg,"Text","Null The PSite Work Table's Haul Cost Fields");
             frmMain.g_oDelegate.ExecuteControlMethod((Control)ReferenceUserControlScenarioRun.lblMsg, "Refresh");
 
-			/***************************************************************
-			 **null the plots merch_haul_cost_psite, merch_haul_cost_id and 
-			 **merch_haul_cpa_pt,chip_haul_cost_psite,chip_haul_cost_id 
-			 **and chip_haul_cpa_pt  fields
-			 ***************************************************************/
-			this.m_strSQL = "UPDATE " + this.m_strPlotTable + " " + 
-				"SET merch_haul_cost_id = null," + 
-				"merch_haul_cost_psite = null, " +
-				"merch_haul_cpa_pt = null ," + 
+			this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + 
+				" SET merch_haul_cost_id = null," + 
+				"merch_haul_psite = null, " +
+                "merch_haul_psite_name = null, " +
+				"merch_haul_cost_dpgt = null ," + 
 				"chip_haul_cost_id = null," + 
-				"chip_haul_cost_psite = null," + 
-				"chip_haul_cpa_pt = null;";
+				"chip_haul_psite = null," +
+                "chip_haul_psite_name = null," +
+                "chip_haul_cost_dpgt = null;";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\nnull the plot table's haul cost fields\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\nnull the psite work table's haul cost fields\r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
@@ -5940,34 +5909,37 @@ namespace FIA_Biosum_Manager
 				       this.m_strTreeVolValSumTable.Trim() + ".merch_wt_gt," +
 				       this.m_strTreeVolValSumTable.Trim() + ".merch_val_dpa AS merch_val_dpa," +
                        this.m_strHvstCostsTable.Trim() + ".complete_cpa AS harvest_onsite_cost_dpa," + 
-                      "IIF(" + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt IS NOT NULL," +
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle2 + "," + 
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle3 + "," + 
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle4 + "," + 
-                       this.m_strPlotTable.Trim() + ".merch_haul_cpa_pt))),0) AS escalator_merch_haul_cpa_pt," +
-                      "escalator_merch_haul_cpa_pt * tree_vol_val_sum_by_rx.merch_wt_gt AS merch_haul_cost_dpa," + 
-                      "IIF(" + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt IS NOT NULL," + 
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle2 + "," + 
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle3 + "," + 
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + "," + 
-                       this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt))),0) AS escalator_chip_haul_cpa_pt," +
+                      "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt IS NOT NULL," +
+                      "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle2 + "," +
+                      "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle3 + "," +
+                      "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle4 + "," +
+                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt))),0) AS escalator_merch_haul_cpa_pt," +
+                      "escalator_merch_haul_cpa_pt * tree_vol_val_sum_by_rx.merch_wt_gt AS merch_haul_cost_dpa," +
+                      "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt IS NOT NULL," +
+                      "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle2 + "," +
+                      "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle3 + "," +
+                      "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + "," +
+                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt))),0) AS escalator_chip_haul_cpa_pt," +
                       "escalator_chip_haul_cpa_pt * tree_vol_val_sum_by_rx.chip_wt_gt AS chip_haul_cost_dpa," +
                       "merch_val_dpa + chip_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa - chip_haul_cost_dpa AS merch_chip_nr_dpa," +
-                      "merch_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa AS merch_nr_dpa," + 
-                      "IIF(" + this.m_strPlotTable.Trim() + ".chip_haul_cpa_pt IS NOT NULL AND " + 
+                      "merch_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa AS merch_nr_dpa," +
+                      "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt IS NOT NULL AND " + 
                            "merch_chip_nr_dpa > merch_nr_dpa,'Y','N') AS usebiomass_yn," + 
                       "IIF(usebiomass_yn = 'Y', merch_chip_nr_dpa,merch_nr_dpa) AS max_nr_dpa, " +
                       this.m_strCondTable.Trim() + ".acres, " +
                       this.m_strCondTable.Trim() + ".owngrpcd, " +
                       "IIF(usebiomass_yn = 'Y','N','Y') AS use_air_dest_YN, " +
-                      "IIF(usebiomass_yn = 'Y',merch_haul_cost_dpa + chip_haul_cost_dpa, merch_haul_cost_dpa) AS haul_costs_dpa " +
+                      "IIF(usebiomass_yn = 'Y',merch_haul_cost_dpa + chip_haul_cost_dpa, merch_haul_cost_dpa) AS haul_costs_dpa, " +
+                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite AS merch_psite_num, " +
+                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite_name AS merch_psite_name " +
                       "INTO " + workTableName + 
                       " FROM ((((validcombos " +
-                      "INNER JOIN " + this.m_strCondTable.Trim() + " " +
+                      "INNER JOIN " + this.m_strCondTable + " " +
                       "ON validcombos.biosum_cond_id = " + this.m_strCondTable.Trim() + ".biosum_cond_id) " +
-                      "INNER JOIN " + this.m_strPlotTable.Trim() + " " +
+                      "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " +
                       "ON " +
-                        this.m_strCondTable.Trim() + ".biosum_plot_id=" + this.m_strPlotTable.Trim() + ".biosum_plot_id) " +
+                        this.m_strCondTable.Trim() + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName 
+                        + ".biosum_cond_id) " +
                       "INNER JOIN " + this.m_strTreeVolValSumTable.Trim() + " " +
                       "ON " +
                       "(validcombos.biosum_cond_id=" + this.m_strTreeVolValSumTable.Trim() + ".biosum_cond_id) AND " +
@@ -6006,13 +5978,15 @@ namespace FIA_Biosum_Manager
                                 "chip_wt_gt,chip_val_dpa," +
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
-                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa ) " + 
+                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
+                                "merch_psite_num, merch_psite_name ) " + 
                             "SELECT biosum_cond_id,rxpackage,rx,rxcycle," +
                                 "merch_vol_cf,chip_vol_cf," +
                                 "chip_wt_gt,chip_val_dpa," +
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
-                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa " + 
+                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
+                                "merch_psite_num, merch_psite_name " +
                             "FROM " + workTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -7411,11 +7385,11 @@ namespace FIA_Biosum_Manager
 			this.m_strSQL = "INSERT INTO " + strTable  +  " " +
 				"SELECT DISTINCT c.biosum_cond_id,c.acres,c.owngrpcd " + 
 				"FROM " + this.m_strCondTable.Trim() + " c, " + 
-				this.m_strPlotTable.Trim() + " p, "  + 
+				Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p, "  + 
                
 				this.ReferenceOptimizerScenarioForm.OutputTablePrefix +
                 Tables.OptimizerScenarioResults.DefaultScenarioResultsOptimizationTableSuffix + " e " +
-				"WHERE c.biosum_plot_id = p.biosum_plot_id  AND " + 
+				"WHERE c.biosum_cond_id = p.biosum_cond_id  AND " + 
 				"e.biosum_cond_id = c.biosum_cond_id AND " + 
 				"e.affordable_YN = 'Y' AND e.rxcycle='1' AND " + 
 				"(p.merch_haul_cost_id IS NOT NULL OR " + 
@@ -7539,9 +7513,9 @@ namespace FIA_Biosum_Manager
                 Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix;
             m_strSQL = "SELECT COUNT(*) AS ROWCOUNT " +
                 "FROM " + this.m_strCondTable.Trim() + " c, " +
-                this.m_strPlotTable.Trim() + " p, " +
+                Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p, " +
                 strBestRxSummaryTableName + " e " +
-                "WHERE c.biosum_plot_id = p.biosum_plot_id  AND " +
+                "WHERE c.biosum_cond_id = p.biosum_cond_id  AND " +
                 "e.biosum_cond_id = c.biosum_cond_id AND " +
                 "(p.chip_haul_cost_id IS NULL);";
             if ((int)this.m_ado.getSingleDoubleValueFromSQLQuery(this.m_TempMDBFileConn, this.m_strSQL, "temp") > 0)
@@ -8126,7 +8100,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.ExecuteControlMethod((Control)ReferenceUserControlScenarioRun.lblMsg, "Refresh");
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n\r\nll Treatments Acreage Expansion By Plot\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n\r\n Treatments Acreage Expansion By Plot\r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "-----------------------------------------\r\n");
 
@@ -8162,22 +8136,22 @@ namespace FIA_Biosum_Manager
                             Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".rxcycle," +
                              this.m_strCondTable + ".owngrpcd," +
                             "ROUND(" + this.m_strCondTable + ".acres,10) AS acres," +
-                             this.m_strPlotTable + ".merch_haul_cost_psite," +
-                            "ROUND(" + this.m_strPlotTable + ".merch_haul_cpa_pt * " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_wt_gt * acres,10) AS merch_haul_cost_exp," +
+                             Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_wt_gt * acres,10) AS merch_haul_cost_exp," +
                             "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_vol_cf * acres,10) AS merch_vol_cf_exp," +
                             "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_val_dpa * acres,10) AS merch_dollars_val_exp," +
-                             this.m_strPlotTable + ".chip_haul_cost_psite," +
-                            "ROUND(" + this.m_strPlotTable + ".chip_haul_cpa_pt * " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_wt_gt * acres,10) AS chip_haul_cost_exp," +
+                             Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite," +
+                            "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_wt_gt * acres,10) AS chip_haul_cost_exp," +
                             "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_wt_gt * acres,10) AS chip_yield_gt_exp," +
                             "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_val_dpa * acres,10) AS chip_dollars_val_exp," +
                             "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".max_nr_dpa * acres,10) AS net_rev_dollars_exp," +
                             "ROUND(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".harvest_onsite_cost_dpa * acres,10) AS harv_costs_exp," +
                             "ROUND((" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".merch_haul_cost_dpa + " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".chip_haul_cost_dpa) * acres,10) AS haul_costs_exp " +
                             "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
-                            " INNER JOIN (" + this.m_strPlotTable + " " +
+                            " INNER JOIN (" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " +
                             "INNER JOIN " + this.m_strCondTable + " " +
-                            "ON " + this.m_strPlotTable + ".biosum_plot_id = " +
-                                    this.m_strCondTable + ".biosum_plot_id) " +
+                            "ON " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".biosum_cond_id = " +
+                                    this.m_strCondTable + ".biosum_cond_id) " +
                             "ON " + this.m_strCondTable + ".biosum_cond_id = " +
                                    Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + ".biosum_cond_id;";
 
@@ -8904,7 +8878,7 @@ namespace FIA_Biosum_Manager
 		
 		private void BestRxAcreageExpansionTableInsert(string strTable,string strTypeField, string strRxField, string strWhereExpression)
 		{
-			string p = this.m_strPlotTable.Trim();
+            string p = Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName;
 			string c = this.m_strCondTable.Trim();
 
            
@@ -8984,12 +8958,12 @@ namespace FIA_Biosum_Manager
                 strBestRxSummaryTableName + ".owngrpcd," +
                 "ROUND(" + strBestRxSummaryTableName + ".acres,10) AS acres," +
                 "ROUND(" + strBestRxSummaryTableName + ".optimization_value,10) AS optimization_value," + 
-				p + ".merch_haul_cost_psite," +
-                "ROUND(" + p + ".merch_haul_cpa_pt * " + strBestRxSummaryTableName + ".acres,10) AS merch_haul_cpa," +
+				p + ".merch_haul_psite," +
+                "ROUND(" + p + ".merch_haul_cost_dpgt * " + strBestRxSummaryTableName + ".acres,10) AS merch_haul_cpa," +
                 "ROUND(cycle1_effective_product_yields_by_rx_work_table3.merch_yield_cf * " + strBestRxSummaryTableName + ".acres,10) AS merch_vol_cf_pa," +
                 "ROUND(cycle1_effective_product_yields_by_rx_work_table3.merch_val_dpa * " + strBestRxSummaryTableName + ".acres,10) AS merch_dollars_val_dpa," + 
-				p + ".chip_haul_cost_psite," + 
-				"ROUND(" + p + ".chip_haul_cpa_pt * " + strBestRxSummaryTableName + ".acres,10) AS chip_haul_cpa," +
+				p + ".chip_haul_psite," +
+                "ROUND(" + p + ".chip_haul_cost_dpgt * " + strBestRxSummaryTableName + ".acres,10) AS chip_haul_cpa," +
                 "ROUND(cycle1_effective_product_yields_by_rx_work_table3.chip_yield_gt * " + strBestRxSummaryTableName + ".acres,10) AS chip_yield_gt_pa," +
                 "ROUND(cycle1_effective_product_yields_by_rx_work_table3.chip_val_dpa * " + strBestRxSummaryTableName + ".acres,10) AS chip_dollars_val_dpa," +
                 "ROUND(cycle1_effective_product_yields_by_rx_work_table3.max_nr_dpa  * " + strBestRxSummaryTableName + ".acres,10) AS net_rev_dpa," +
@@ -9001,7 +8975,7 @@ namespace FIA_Biosum_Manager
                 "(" + strBestRxSummaryTableName + "." + strRxField + " = cycle1_effective_product_yields_by_rx_work_table3.rx)) " + 
 				"INNER JOIN (" + p + 
 				" INNER JOIN " + c + 
-				" ON " + p + ".biosum_plot_id = " + c + ".biosum_plot_id) " + 
+				" ON " + p + ".biosum_cond_id = " + c + ".biosum_cond_id) " + 
 				"ON " + c + ".biosum_cond_id = " + strBestRxSummaryTableName + ".biosum_cond_id)" ;
 				
 			if (strWhereExpression.Trim().Length > 0)

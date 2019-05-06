@@ -1012,7 +1012,7 @@ namespace FIA_Biosum_Manager
 			frmTherm p_frmTherm = new frmTherm();
 			p_frmTherm.lblMsg.Text = "";
 			p_frmTherm.progressBar1.Minimum = 0;
-			p_frmTherm.progressBar1.Maximum = 8;
+			p_frmTherm.progressBar1.Maximum = 7;
 			p_frmTherm.btnCancel.Visible=false;
 			p_frmTherm.lblMsg.Visible=true;
 			p_frmTherm.Show();
@@ -1062,10 +1062,6 @@ namespace FIA_Biosum_Manager
 			this.uc_scenario_cond_filter1.loadvalues(false);
 			this.uc_scenario_psite1.loadvalues();
 			p_frmTherm.progressBar1.Value=7;
-			p_frmTherm.lblMsg.Text = "Rule Definitions: Wood Processing Site Data";
-			p_frmTherm.lblMsg.Refresh();
-			p_frmTherm.progressBar1.Value=8;
-			this.uc_scenario_run1.chkPlotTableForTravelTimes();  //make sure table has travel times
 			p_frmTherm.Close();
 			p_frmTherm = null;
 			this.m_lrulesfirsttime=false;
@@ -1432,7 +1428,6 @@ namespace FIA_Biosum_Manager
                 this.uc_scenario_cond_filter1.loadvalues(true);
                 this.uc_scenario_psite1.loadvalues_FromProperties();
                 
-                this.uc_scenario_run1.chkPlotTableForTravelTimes();  //make sure table has travel times
                 frmMain.g_sbpInfo.Text = "Ready";
                 m_bSave = true;
             }

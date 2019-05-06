@@ -70,7 +70,6 @@ namespace FIA_Biosum_Manager
 			this.m_frmScenario = p_frmScenario;
 			this.Enabled=true;
 			this.chkTreeSumTable();             //make sure table has records
-			this.chkPlotTableForTravelTimes();  //make sure table has travel times
 
 			//
 			// TODO: Add any constructor code after InitializeComponent call
@@ -611,33 +610,6 @@ namespace FIA_Biosum_Manager
 
 		}
 		
-
-        /// <summary>
-        /// Check to see if  fastest travel times 
-        /// from plot to wood processing site exist in the plot table
-        /// </summary>
-		public void chkPlotTableForTravelTimes()
-		{
-			string strConn="";
-			ado_data_access p_ado = new ado_data_access();
-
-			string strTable = "";
-			string strMDBFile = "";
-			this.m_frmScenario.uc_datasource1.getScenarioDataSourceMDBAndTableName("PLOT",ref strMDBFile,ref strTable);
-		    strConn=p_ado.getMDBConnString(strMDBFile,"admin","");
-			if (p_ado.getRecordCount(strConn,"select COUNT(*) from " + strTable + " p WHERE p.merch_haul_cost_id IS NOT NULL AND p.chip_haul_cost_id IS NOT NULL",strTable) == 0)
-
-			{
-				this.chkProcTravelTimes.Checked=true;
-				this.chkProcTravelTimes.Enabled=false;
-			}
-			else
-			{
-				this.chkProcTravelTimes.Enabled=true;
-			}
-			p_ado = null;
-
-		}
 		/// <summary>
 		/// every scenario_results.mdb table is viewed in a uc_gridview control
 		/// </summary>
@@ -1366,8 +1338,6 @@ namespace FIA_Biosum_Manager
 			this.m_frmRunCoreScenario.btnViewLog.Enabled=true;
 			if (this.m_frmRunCoreScenario.chkProcSumTree.Enabled==false)
 				this.m_frmRunCoreScenario.chkTreeSumTable();
-			if (this.m_frmRunCoreScenario.chkProcTravelTimes.Enabled==false)
-				this.m_frmRunCoreScenario.chkPlotTableForTravelTimes();
 			if (this.m_frmRunCoreScenario.chkAuditTables.Enabled==true)
 				this.m_frmRunCoreScenario.btnViewAuditTables.Enabled=true;
 			
