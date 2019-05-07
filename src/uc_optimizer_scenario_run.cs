@@ -2213,16 +2213,12 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEffectiveTable(oAdo, oAdo.m_OleDbConnection, this.ReferenceOptimizerScenarioForm.OutputTablePrefix, strColumnFilterName);
             string strScenarioResultsBestRxSummaryTableName = this.ReferenceOptimizerScenarioForm.OutputTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix;
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateBestRxSummaryCycle1Table(oAdo, oAdo.m_OleDbConnection, strScenarioResultsBestRxSummaryTableName);
-            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateBestRxSummaryCycle1Table(oAdo, oAdo.m_OleDbConnection, strScenarioResultsBestRxSummaryTableName + "_air_dest");
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateBestRxSummaryCycle1Table(oAdo, oAdo.m_OleDbConnection, strScenarioResultsBestRxSummaryTableName + "_before_tiebreaks");
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateTreeVolValSumTable(oAdo,oAdo.m_OleDbConnection,Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName);
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationPlotTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_stands");
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationPSiteTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_psites_sum");
 			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationOwnershipTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_own_sum");
-			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationPlotTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_stands_air_dest");
-			frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationOwnershipTable(oAdo,oAdo.m_OleDbConnection,m_strOptimizationTableName + "_own_air_dest");
-
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateTreeVolValSumByRxPackageTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumByRxPackageTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsByRxPackageTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePlotRxCostsRevenuesVolumesTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPlotRxCostRevenueVolumesTableName);
@@ -4250,7 +4246,9 @@ namespace FIA_Biosum_Manager
 			
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"--Execute rule definition filters for the condition table. The filters include ownership and condition accessible--\r\n");
-			this.m_strSQL = "INSERT INTO ruledefinitionscondfilter SELECT * FROM " + this.m_strCondTable + " c ";
+			this.m_strSQL = "INSERT INTO ruledefinitionscondfilter SELECT c.* FROM " + this.m_strCondTable + " AS c ";
+            this.m_strSQL += " INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " AS p";
+            this.m_strSQL += " ON p.biosum_cond_id = c.biosum_cond_id AND p.biosum_plot_id = c.biosum_plot_id ";
 			this.m_strSQL += " WHERE c.owngrpcd IN (";
 
 			//usfs ownnership
@@ -4297,7 +4295,7 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			this.m_strSQL +=  strGrpCd + ") AND c.cond_accessible_yn = 'Y';";
+			this.m_strSQL +=  strGrpCd + ") AND p.cond_accessible_yn = 'Y';";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -5931,7 +5929,9 @@ namespace FIA_Biosum_Manager
                       "IIF(usebiomass_yn = 'Y','N','Y') AS use_air_dest_YN, " +
                       "IIF(usebiomass_yn = 'Y',merch_haul_cost_dpa + chip_haul_cost_dpa, merch_haul_cost_dpa) AS haul_costs_dpa, " +
                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite AS merch_psite_num, " +
-                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite_name AS merch_psite_name " +
+                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite_name AS merch_psite_name, " +
+                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite AS chip_psite_num, " +
+                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite_name AS chip_psite_name " +
                       "INTO " + workTableName + 
                       " FROM ((((validcombos " +
                       "INNER JOIN " + this.m_strCondTable + " " +
@@ -5979,14 +5979,14 @@ namespace FIA_Biosum_Manager
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
                                 "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name ) " + 
+                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name) " + 
                             "SELECT biosum_cond_id,rxpackage,rx,rxcycle," +
                                 "merch_vol_cf,chip_vol_cf," +
                                 "chip_wt_gt,chip_val_dpa," +
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
                                 "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name " +
+                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name " +
                             "FROM " + workTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -6420,7 +6420,7 @@ namespace FIA_Biosum_Manager
                                     "merch_chip_nr_dpa," +
                                     "merch_nr_dpa," +
                                     "max_nr_dpa,haul_costs_dpa," +
-                                    "acres,owngrpcd)";
+                                    "acres,owngrpcd, merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name)";
             m_strSQL = m_strSQL + " " +
                             "SELECT a.biosum_cond_id,a.rxpackage," +
                                    "a.sum_chip_yield_cf AS chip_vol_cf," +
@@ -6436,7 +6436,7 @@ namespace FIA_Biosum_Manager
                                    "a.sum_merch_nr_dpa AS merch_nr_dpa, " +
                                    "a.sum_max_nr_dpa AS max_nr_dpa, " +
                                    "a.sum_haul_costs_dpa AS haul_costs_dpa, " +
-                                   "a.acres, a.owngrpcd " +
+                                   "a.acres, a.owngrpcd, a.merch_psite_num, a.merch_psite_name, a.chip_psite_num, a.chip_psite_name " +
                            "FROM (" +
                            "SELECT biosum_cond_id,rxpackage," +
                                 "SUM(IIF(chip_vol_cf IS NULL,0,chip_vol_cf)) AS sum_chip_yield_cf," +
@@ -6452,9 +6452,9 @@ namespace FIA_Biosum_Manager
                                 "SUM(IIF(merch_nr_dpa IS NULL,0,merch_nr_dpa)) AS sum_merch_nr_dpa," +
                                 "SUM(IIF(max_nr_dpa IS NULL,0,max_nr_dpa)) AS sum_max_nr_dpa, " +
                                 "SUM(IIF(haul_costs_dpa IS NULL,0,haul_costs_dpa)) AS sum_haul_costs_dpa, " +
-                                "acres,owngrpcd " +
+                                "acres,owngrpcd, merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name " +
                            "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
-                           " GROUP BY biosum_cond_id,rxpackage,acres,owngrpcd) a";
+                           " GROUP BY biosum_cond_id,rxpackage,acres,owngrpcd,merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name) a";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -7211,21 +7211,6 @@ namespace FIA_Biosum_Manager
 							oAdo.m_OleDbConnection,
 							"own_sum_work_table");
 
-
-				if (oAdo.m_intError==0 && oAdo.TableExist(oAdo.m_OleDbConnection,"own_sum_work_table_air_dest"))
-						oAdo.SqlNonQuery(oAdo.m_OleDbConnection,"DROP TABLE own_sum_work_table_air_dest");
-				if (oAdo.m_intError==0) frmMain.g_oTables.m_oOptimizerScenarioResults.CreateOptimizationOwnershipSumTable(
-											oAdo,
-											oAdo.m_OleDbConnection,
-											"own_sum_work_table_air_dest");
-				if (oAdo.m_intError!=0)
-				{
-                    if (frmMain.g_bDebug)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Creating Table Schema!!!\r\n");
-					this.m_intError=oAdo.m_intError;
-					oAdo.CloseConnection(oAdo.m_OleDbConnection);
-					return;
-				}
 				oAdo.CloseConnection(oAdo.m_OleDbConnection);
 			}
 			else
@@ -7502,43 +7487,8 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-			/*************************************************************************************
-			 **AIR CURTAIN DESTRUCTION PLOTS
-			 **insert records into the air curtain destruction table that were processed in the 
-			 **best_rx_summary table. The records to insert will be plots that do not 
-			 **have a place to transport the chips (biomass) so they must be burned on site
-			 *************************************************************************************/
-            //check to see if there are any air destruction stands
             string strBestRxSummaryTableName = this.ReferenceOptimizerScenarioForm.OutputTablePrefix +
                 Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix;
-            m_strSQL = "SELECT COUNT(*) AS ROWCOUNT " +
-                "FROM " + this.m_strCondTable.Trim() + " c, " +
-                Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p, " +
-                strBestRxSummaryTableName + " e " +
-                "WHERE c.biosum_cond_id = p.biosum_cond_id  AND " +
-                "e.biosum_cond_id = c.biosum_cond_id AND " +
-                "(p.chip_haul_cost_id IS NULL);";
-            if ((int)this.m_ado.getSingleDoubleValueFromSQLQuery(this.m_TempMDBFileConn, this.m_strSQL, "temp") > 0)
-            {
-
-                /**************************************************************************************
-                **insert air destruction plots with no haul costs
-                **************************************************************************************/
-
-                this.m_strSQL = "INSERT INTO " + strBestRxSummaryTableName + "_air_dest " +
-                    "SELECT DISTINCT c.biosum_cond_id,c.acres,c.owngrpcd,e.optimization_value,e.tiebreaker_value,e.last_tiebreak_rank,e.rxpackage,e.rx " +
-                    "FROM " + this.m_strCondTable.Trim() + " c, " +
-                    this.m_strPlotTable.Trim() + " p, " +
-                    strBestRxSummaryTableName + " e " +
-                    "WHERE c.biosum_plot_id = p.biosum_plot_id  AND " +
-                    "e.biosum_cond_id = c.biosum_cond_id AND " +
-                    "(p.chip_haul_cost_id IS NULL);";
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "--insert air curtain destruction plots from the  best_rx_summary table to the best_rx_summary_air_dest--\r\n");
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + this.m_strSQL + "\r\n\r\n");
-                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-            }
 			
             if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
 			
@@ -8033,14 +7983,6 @@ namespace FIA_Biosum_Manager
 			/*************************************************
 			 **Finished with best maximum net revenue by plot
 			 *************************************************/
-			/************************************************
-			 **air curtain destruction
-			 **no net revenue for air curtain destruction
-			 **so just some up values
-			 ************************************************/
-			this.BestRxAcreageExpansionTableInsertForAirCurtainDestruction(m_strOptimizationTableName + "_stands_air_dest","biosum_cond_id","rx","");
-            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
-			
 
 			if (this.m_ado.m_intError != 0)
 			{
@@ -8993,60 +8935,6 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void BestRxAcreageExpansionTableInsertForAirCurtainDestruction(string strTable,string strTypeField, string strRxField, string strWhereExpression)
-		{
-			string p = this.m_strPlotTable.Trim();
-			string c = this.m_strCondTable.Trim();
-
-            string strBestRxSummaryAirDestTableName = ReferenceOptimizerScenarioForm.OutputTablePrefix +
-                Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix +
-                "_air_dest";
-            string strWorktable = "cycle1_effective_" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
-            this.m_strSQL = "INSERT INTO " + strTable + " " + 
-				"(" + strTypeField + ", owngrpcd,acres,merch_haul_cost_psite," + 
-				"merch_haul_cpa,merch_vol_cf_pa,merch_dollars_val_dpa," + 
-				"chip_haul_cost_psite,chip_haul_cpa," +
-				"chip_yield_gt_pa,chip_dollars_val_dpa,net_rev_dpa,harv_costs_cpa," + 
-				"haul_costs_cpa) ";  
-			this.m_strSQL += " SELECT  DISTINCT " + 
-				strBestRxSummaryAirDestTableName + ".biosum_cond_id," + 
-				strBestRxSummaryAirDestTableName + ".owngrpcd," +
-                "ROUND(" + strBestRxSummaryAirDestTableName + ".acres,10) AS acres," +
-				"null AS merch_haul_cost_psite," + 
-				"null AS merch_haul_cpa," +
-                "ROUND(" + strWorktable + ".merch_vol_cf * " + strBestRxSummaryAirDestTableName + ".acres,10) AS merch_vol_cf_pa," +
-                "ROUND(" + strWorktable + ".merch_val_dpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS merch_dollars_val_dpa," + 
-				"null AS chip_haul_cost_psite," + 
-				"null AS chip_haul_cpa," +
-                "ROUND(" + strWorktable + ".chip_wt_gt * " + strBestRxSummaryAirDestTableName + ".acres,10) AS chip_yield_gt_pa," +
-                "ROUND(" + strWorktable + ".chip_val_dpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS chip_dollars_val_dpa," + 
-				"null AS net_rev_dpa," +
-                "ROUND(" + strWorktable + ".harvest_onsite_cost_dpa * " + strBestRxSummaryAirDestTableName + ".acres,10) AS harv_costs_cpa," + 
-				"null AS haul_costs_cpa " + //," + 
-                "FROM ((" + strBestRxSummaryAirDestTableName + 
-				" INNER JOIN " + strWorktable +
-                " ON (" + strBestRxSummaryAirDestTableName + ".biosum_cond_id = " + strWorktable + ".biosum_cond_id) AND " + 
-				"(" + strBestRxSummaryAirDestTableName + "." + strRxField + " = " + strWorktable + ".rx)) " + 
-				"INNER JOIN (" + p + 
-				" INNER JOIN " + c + 
-				" ON " + p + ".biosum_plot_id = " + c + ".biosum_plot_id) " +
-                "ON " + c + ".biosum_cond_id = " + strBestRxSummaryAirDestTableName + ".biosum_cond_id)";
-				
-			if (strWhereExpression.Trim().Length > 0)
-			{
-				this.m_strSQL += " WHERE " + strWhereExpression + ";";
-			}
-			else
-			{
-				this.m_strSQL += ";";
-			}
-
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL:" + this.m_strSQL + "\r\n\r\n");
-			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
-
-		}
-
 		private void BestRxAcreageExpansionTableInsertForAirCurtainDestructionOld(string strTable,string strTypeField, string strRxField, string strWhereExpression)
 		{
 			string p = this.m_strPlotTable.Trim();
@@ -9381,7 +9269,7 @@ namespace FIA_Biosum_Manager
                   ReferenceUserControlScenarioRun.listViewEx1, "Summarize The Best Effective Treatment Yields, Revenue, Costs, And Acres By Land Ownership Groups");
 
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 9;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 7;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
             FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
@@ -9461,18 +9349,6 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, this.m_strOptimizationTableName + " Air Curtain Destruction by Ownership\r\n");
-
-                frmMain.g_oUtils.WriteText(m_strDebugFile,"Insert into work table\r\n");
-            }
-			this.SumOwnershipWorkTableInsert(this.m_strOptimizationTableName + "_stands_air_dest","own_sum_work_table");
-
-            
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
             if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
 			
 			if (this.m_ado.m_intError != 0)
@@ -9484,32 +9360,6 @@ namespace FIA_Biosum_Manager
                 FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
                 return;
 			}
-			/*****************************************************************
-			 **insert into max_nr_sum_own
-			 *****************************************************************/
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\nInsert ownership values from work table to " + this.m_strOptimizationTableName + "_own_air_dest\r\n");
-			this.SumOwnershipTableInsert("own_sum_work_table",this.m_strOptimizationTableName + "_own_air_dest");
-
-            
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
-			
-			if (this.m_ado.m_intError != 0)
-			{
-                if (frmMain.g_bDebug)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "!!!Error Executing SQL!!!\r\n");
-                this.m_intError = this.m_ado.m_intError;
-                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
-                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
-                return;
-			}
-
-            
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
 			if (this.m_intError == 0)
 			{
