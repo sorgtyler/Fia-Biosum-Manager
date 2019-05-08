@@ -260,12 +260,6 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx"; } }
             static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableName { get { return "tree_vol_val_sum_by_rxpackage"; } }
-            static public string DefaultScenarioResultsPlotRxCostRevenueVolumesTableName { get { return "stand_costs_revenue_volume_by_rx"; } }
-            static public string DefaultScenarioResultsPlotRxPackageCostRevenueVolumesSumTableName { get { return  "stand_costs_revenue_volume_sum_by_rxpackage"; } }
-            static public string DefaultScenarioResultsPSiteRxCostRevenueVolumesTableName { get { return "psite_AcreExpansion_costs_revenue_volume_by_rx"; } }
-            static public string DefaultScenarioResultsPSiteRxPackageCostRevenueVolumesTableName { get { return "psite_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
-            static public string DefaultScenarioResultsOwnerRxCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rx"; } }
-            static public string DefaultScenarioResultsOwnerRxPackageCostRevenueVolumesTableName { get { return "own_AcreExpansion_costs_revenue_volume_by_rxpackage"; } }
             static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
             static public string DefaultScenarioResultsPostEconomicWeightedTableName { get { return @"post_economic_weighted"; } }
             static public string DefaultScenarioResultsDbFile { get { return @"db\optimizer_results.accdb"; } }
