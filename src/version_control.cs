@@ -1502,7 +1502,7 @@ namespace FIA_Biosum_Manager
 									break;
 								
 								case "PLOT AND CONDITION RECORD AUDIT":
-                                    frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Audit.DefaultCondAuditTableName);
+                                    frmMain.g_oTables.m_oAudit.CreateCondAuditTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Audit.DefaultCondAuditTableName);
 									break;
 								case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
                                     frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.Audit.DefaultCondRxAuditTableName);
@@ -1640,7 +1640,7 @@ namespace FIA_Biosum_Manager
 								
 								case "PLOT AND CONDITION RECORD AUDIT":
                                     strTempTableName = Tables.Audit.DefaultCondAuditTableName;
-									frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdoCurrent,oConn,strTempTableName);
+									frmMain.g_oTables.m_oAudit.CreateCondAuditTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "PLOT, CONDITION AND TREATMENT RECORD AUDIT":
                                     strTempTableName = Tables.Audit.DefaultCondRxAuditTableName;
@@ -3785,7 +3785,7 @@ namespace FIA_Biosum_Manager
                 oAdo.SqlNonQuery(oAdo.m_OleDbConnection, "DROP TABLE plot_cond_rx_audit");
 
 
-            frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdo, oAdo.m_OleDbConnection, Tables.Audit.DefaultCondAuditTableName);
+            frmMain.g_oTables.m_oAudit.CreateCondAuditTable(oAdo, oAdo.m_OleDbConnection, Tables.Audit.DefaultCondAuditTableName);
             frmMain.g_oTables.m_oAudit.CreatePlotCondRxAuditTable(oAdo, oAdo.m_OleDbConnection, Tables.Audit.DefaultCondRxAuditTableName);
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
 

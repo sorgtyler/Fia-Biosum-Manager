@@ -2967,23 +2967,26 @@ namespace FIA_Biosum_Manager
 			public Audit()
 			{
 			}
-			public void CreatePlotCondAuditTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateCondAuditTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
-				p_oAdo.SqlNonQuery(p_oConn,CreatePlotCondAuditTableSQL(p_strTableName));
-				CreatePlotCondAuditTableIndexes(p_oAdo,p_oConn,p_strTableName);
+				p_oAdo.SqlNonQuery(p_oConn,CreateCondAuditTableSQL(p_strTableName));
+				CreateCondAuditTableIndexes(p_oAdo,p_oConn,p_strTableName);
 			}
-			public void CreatePlotCondAuditTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
+			public void CreateCondAuditTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id");
 			}
-			public string CreatePlotCondAuditTableSQL(string p_strTableName)
+			public string CreateCondAuditTableSQL(string p_strTableName)
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
 					"biosum_cond_id CHAR(25)," + 
 					"fvs_prepost_variables_yn CHAR(1)," + 
 					"gis_travel_times_yn CHAR(1)," + 
 					"processor_tree_vol_val_yn CHAR(1), " + 
-					"harvest_costs_yn CHAR(1))";
+					"harvest_costs_yn CHAR(1), " +
+                    "cond_accessible_yn CHAR(1), " +
+                    "psite_merch_yn CHAR(1), " +
+                    "psite_chip_yn CHAR(1)) ";
 			}
 			public void CreatePlotCondRxAuditTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{

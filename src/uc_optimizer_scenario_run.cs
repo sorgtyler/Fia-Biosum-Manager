@@ -1878,7 +1878,7 @@ namespace FIA_Biosum_Manager
                 oConn.Open();
                 if (oAdo.TableExist(oConn, Tables.Audit.DefaultCondAuditTableName) == false)
                 {
-                    frmMain.g_oTables.m_oAudit.CreatePlotCondAuditTable(oAdo, oConn, Tables.Audit.DefaultCondAuditTableName);
+                    frmMain.g_oTables.m_oAudit.CreateCondAuditTable(oAdo, oConn, Tables.Audit.DefaultCondAuditTableName);
                 }
                 if (oAdo.TableExist(oConn, Tables.Audit.DefaultCondRxAuditTableName) == false)
                 {
@@ -2653,10 +2653,12 @@ namespace FIA_Biosum_Manager
 
             this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
                "(biosum_cond_id, biosum_plot_id) ";
-            this.m_strSQL += "SELECT DISTINCT (c.biosum_cond_id), c.biosum_plot_id" +
-                            " FROM " + this.m_strCondTable + " c, travel_time " +
-                            " WHERE (((c.biosum_plot_id)=[travel_time].[biosum_plot_id])) " +
-                            "GROUP BY c.biosum_plot_id, c.biosum_cond_id";
+            //this.m_strSQL += "SELECT DISTINCT (c.biosum_cond_id), c.biosum_plot_id" +
+            //                " FROM " + this.m_strCondTable + " c, travel_time " +
+            //                " WHERE (((c.biosum_plot_id)=[travel_time].[biosum_plot_id])) " +
+            this.m_strSQL += "SELECT DISTINCT biosum_cond_id, biosum_plot_id " +
+                            "FROM " + this.m_strCondTable + " c " +
+                            "GROUP BY c.biosum_cond_id, c.biosum_plot_id";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
@@ -4073,7 +4075,7 @@ namespace FIA_Biosum_Manager
                          ReferenceUserControlScenarioRun.listViewEx1, "Apply User Defined Filters And Get Valid Stand Combinations");
 
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 20;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 21;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
             FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
@@ -4142,20 +4144,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Execute SQL: " + this.m_strSQL + "\r\n");
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Delete inaccessible plots from Table userdefinedplotfilter\r\n");
-            this.m_strSQL = "DELETE FROM userdefinedplotfilter u " +
-                            "WHERE EXISTS " +
-                             "(SELECT p.biosum_plot_id " +
-                             "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
-                             "WHERE u.biosum_plot_id =  p.biosum_plot_id and p.PLOT_ACCESSIBLE_YN = 'N')";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"--Execute User Defined Cond SQL And Insert Resulting Records Into Table userdefinedcondfilter--\r\n");
 			this.m_strSQL = "INSERT INTO userdefinedcondfilter " + this.m_strUserDefinedCondSQL;
@@ -4168,8 +4156,6 @@ namespace FIA_Biosum_Manager
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"--Execute rule definition filters for the condition table. The filters include ownership and condition accessible--\r\n");
 			this.m_strSQL = "INSERT INTO ruledefinitionscondfilter SELECT c.* FROM " + this.m_strCondTable + " AS c ";
-            this.m_strSQL += " INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " AS p";
-            this.m_strSQL += " ON p.biosum_cond_id = c.biosum_cond_id AND p.biosum_plot_id = c.biosum_plot_id ";
 			this.m_strSQL += " WHERE c.owngrpcd IN (";
 
 			//usfs ownnership
@@ -4216,7 +4202,7 @@ namespace FIA_Biosum_Manager
 				}
 
 			}
-			this.m_strSQL +=  strGrpCd + ") AND p.cond_accessible_yn = 'Y';";
+			this.m_strSQL +=  strGrpCd + ")";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -4440,6 +4426,36 @@ namespace FIA_Biosum_Manager
             if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)==true) return;
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            this.m_strSQL = "DELETE v.* " + 
+                            "FROM validcombos v WHERE " +
+                            "EXISTS (SELECT * from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
+                            "WHERE v.biosum_cond_id = p.biosum_cond_id and (p.merch_haul_psite is null OR p.chip_haul_psite is null))";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nDelete combinations that don't have rows in the travel_times table\r\n");
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+
+            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Delete inaccessible plots from Table validcombos\r\n");
+            this.m_strSQL = "DELETE FROM validcombos v " +
+                            "WHERE EXISTS " +
+                             "(SELECT p.* " +
+                             "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
+                             "WHERE v.biosum_cond_id =  p.biosum_cond_id and p.COND_ACCESSIBLE_YN = 'N')";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "Done");
 
 
@@ -4649,6 +4665,23 @@ namespace FIA_Biosum_Manager
                                       "a.gis_travel_times_yn<>'Y' ;";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet gis_travel_times_yn=N if column value is null\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+
+
+                this.m_strSQL = "UPDATE " + Tables.Audit.DefaultCondAuditTableName + " a " +
+                "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
+                "ON a.biosum_cond_id = p.biosum_cond_id " +
+                "SET a.cond_accessible_yn = p.cond_accessible_yn, " +
+                "a.psite_merch_yn = IIF(p.merch_haul_psite IS NULL,'N','Y'), " +
+                "a.psite_chip_yn = IIF(p.chip_haul_psite IS NULL,'N','Y') ";
+                
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nSet accessibility and psite flags\r\n");
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
                 this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
