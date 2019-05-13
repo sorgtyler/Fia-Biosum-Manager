@@ -3253,7 +3253,7 @@ namespace FIA_Biosum_Manager
                 else
                 {
 
-                    p_oOptimizerScenarioItem.PlotTableSQLFilter = "SELECT @@PlotTable@@.* FROM @@PlotTable@@ WHERE @@PlotTable@@.plot_accessible_yn='Y'";
+                    p_oOptimizerScenarioItem.PlotTableSQLFilter = "SELECT @@PlotTable@@.* FROM @@PlotTable@@ ";
 
                 }
 

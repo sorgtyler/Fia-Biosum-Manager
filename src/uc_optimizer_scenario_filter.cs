@@ -326,7 +326,7 @@ namespace FIA_Biosum_Manager
             {
                 if (this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.PlotTableSQLFilter.Trim().Length == 0)
                 {
-                    this.txtCurrentSQL.Text = "SELECT @@PlotTable@@.* FROM @@PlotTable@@ WHERE @@PlotTable@@.plot_accessible_yn='Y'";
+                    this.txtCurrentSQL.Text = "SELECT @@PlotTable@@.* FROM @@PlotTable@@ ";
                 }
                 else
                 {

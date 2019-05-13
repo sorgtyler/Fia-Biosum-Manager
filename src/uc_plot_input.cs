@@ -2604,20 +2604,6 @@ namespace FIA_Biosum_Manager
 
                 if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
                 {
-                    //initialize columns
-                    m_ado.m_strSQL = "UPDATE " + this.m_strPlotTable + " " +
-                        "SET gis_protected_area_yn='N'," +
-                        "gis_roadless_yn='N'," +
-                        "all_cond_not_accessible_yn='N'," +
-                        "plot_accessible_yn='Y'," +
-                        "gis_status_id=1 " +
-                        "WHERE biosum_status_cd=9;";
-                    this.m_ado.SqlNonQuery(this.m_connTempMDBFile, this.m_ado.m_strSQL);
-                    m_intError = m_ado.m_intError;
-                }
-
-                if (m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
-                {
                     //create plot column update work table
                     this.m_strSQL = "SELECT biosum_plot_id, statecd as cond_ttl " +
                         "INTO plot_column_updates_work_table FROM " + this.m_strPlotTable.Trim() + " WHERE 1=2;";

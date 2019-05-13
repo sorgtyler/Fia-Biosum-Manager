@@ -638,7 +638,7 @@ namespace FIA_Biosum_Manager
 					}
 					if (ScenarioType.Trim().ToUpper() == "OPTIMIZER")
 					{
-						string strTemp=p_ado.FixString("SELECT @@PlotTable@@.* FROM @@PlotTable@@ WHERE @@PlotTable@@.plot_accessible_yn='Y'","'","''");
+						string strTemp=p_ado.FixString("SELECT @@PlotTable@@.* FROM @@PlotTable@@ ","'","''");
 						strSQL = "INSERT INTO scenario_plot_filter (scenario_id,sql_command,current_yn) VALUES " + "('" + this.txtScenarioId.Text.Trim() + "'," + 
 							"'" + strTemp + "'," + 
 							"'Y');";

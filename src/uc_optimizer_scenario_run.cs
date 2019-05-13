@@ -1585,7 +1585,7 @@ namespace FIA_Biosum_Manager
 						{
                            
                            
-							this.PlotAccessible();
+							this.CondAccessible();
 				
 						}
 						else
@@ -2623,27 +2623,18 @@ namespace FIA_Biosum_Manager
 
 		}
 		/// <summary>
-		/// set the plot_accessible_yn by evaluating the field values in
-		/// gis_protected_area_yn, gis_moved_from_protected_to_unprotected_yn,
-		/// and gis_roadless_yn
+		/// set the cond_accessible_yn flag
 		/// </summary>
-		private void PlotAccessible()
+		private void CondAccessible()
 		{
-			/*********************************************************************
-			 **set the plot_accessible_yn flag to 'Y' or 'N' based on whether
-			 **the plot is in a protected area, roadless area,
-			 **has been moded from protected to an unprotected area
-			 **when moving the plot to the nearest road, or 
-			 **every condition on the plot is unavailable
-			 *********************************************************************/
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//PlotAccessible\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//CondAccessible\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps =9;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 7;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
@@ -2737,11 +2728,6 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-			/************************************************************************
-			 **set the all_cond_not_accessible_yn flag to Y if every condition on the
-			 **plot is inaccessible
-			 ************************************************************************/
-
 			/********************************************************************
 			 **get the current condition record counts for each plot
 			 ********************************************************************/
@@ -2767,46 +2753,6 @@ namespace FIA_Biosum_Manager
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-			/**********************************************************************
-			 **initialize the all_cond_not_accessible_yn flag to N
-			 **********************************************************************/
-            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
-                            " SET all_cond_not_accessible_yn = 'N'";
-			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-			/**********************************************************************
-			 **update the all_cond_not_accessible_yn flag if all conditions 
-			 **are not accessible
-			 **********************************************************************/
-            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " + 
-				"INNER JOIN plot_cond_accessible_work_table2 c " + 
-				"ON p.biosum_plot_id=c.biosum_plot_id " + 
-				"SET p.all_cond_not_accessible_yn=" + 
-				"IIF(c.num_cond=c.num_cond_not_accessible,'Y','N');";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-			/*********************************************************************
-			 **update the plot accessible flag
-			 *********************************************************************/
-            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + 
-                " SET plot_accessible_yn = " + 
-				"IIF(all_cond_not_accessible_yn='Y','N','Y');";
-
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-
-
 
             if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic) == true) return;
 
@@ -4676,7 +4622,7 @@ namespace FIA_Biosum_Manager
                 this.m_strSQL = "UPDATE " + Tables.Audit.DefaultCondAuditTableName + " a " +
                 "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
                 "ON a.biosum_cond_id = p.biosum_cond_id " +
-                "SET a.cond_accessible_yn = p.cond_accessible_yn, " +
+                "SET a.cond_too_far_steep_yn = p.cond_too_far_steep_yn, " +
                 "a.psite_merch_yn = IIF(p.merch_haul_psite IS NULL,'N','Y'), " +
                 "a.psite_chip_yn = IIF(p.chip_haul_psite IS NULL,'N','Y') ";
                 

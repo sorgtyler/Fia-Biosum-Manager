@@ -1420,9 +1420,7 @@ namespace FIA_Biosum_Manager
                     "chip_haul_psite_name CHAR(255)," +
                     "chip_haul_cost_dpgt DOUBLE DEFAULT 0," +
                     "cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," +
-                    "cond_accessible_yn CHAR(1) DEFAULT 'Y'," +
-                    "all_cond_not_accessible_yn CHAR(1)," +
-                    "plot_accessible_yn CHAR(1) DEFAULT 'Y')";
+                    "cond_accessible_yn CHAR(1) DEFAULT 'Y')";
             }
 			
 		
@@ -2984,7 +2982,7 @@ namespace FIA_Biosum_Manager
 					"gis_travel_times_yn CHAR(1)," + 
 					"processor_tree_vol_val_yn CHAR(1), " + 
 					"harvest_costs_yn CHAR(1), " +
-                    "cond_accessible_yn CHAR(1), " +
+                    "cond_too_far_steep_yn CHAR(1), " +
                     "psite_merch_yn CHAR(1), " +
                     "psite_chip_yn CHAR(1)) ";
 			}
@@ -3058,8 +3056,6 @@ namespace FIA_Biosum_Manager
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_plot_id");
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","num_cond");
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","biosum_status_cd");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","gis_status_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","idb_plot_id");
 			}
 			public string CreatePlotTableSQL(string p_strTableName)
 			{
@@ -3079,26 +3075,13 @@ namespace FIA_Biosum_Manager
 					"half_state CHAR(10)," + 
 					"subplot_count_plot BYTE," + 
 					"gis_yard_dist DOUBLE," + 
-					"gis_protected_area_yn CHAR(1)," + 
-					"gis_roadless_yn CHAR(1)," + 
-					"all_cond_not_accessible_yn CHAR(1)," + 
-					p_strTableName + "_accessible_yn CHAR(1)," + 
 					"num_cond BYTE," + 
 					"one_cond_yn CHAR(1)," + 
 					"lat DOUBLE," + 
 					"lon DOUBLE," + 
                     "macro_breakpoint_dia INTEGER," + 
-					"merch_haul_cost_id LONG," + 
-					"merch_haul_cost_psite INTEGER," + 
-					"merch_haul_cpa_pt DOUBLE," + 
-					"chip_haul_cost_id LONG," + 
-					"chip_haul_cost_psite INTEGER," + 
-					"chip_haul_cpa_pt DOUBLE," + 
 					"biosum_status_cd BYTE," + 
-					"gis_status_id INTEGER," + 
-					"idb_plot_id LONG," + 
 					"cn CHAR(34))";
-
 			}
 			
 			public void CreateConditionTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
@@ -3112,9 +3095,6 @@ namespace FIA_Biosum_Manager
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","biosum_cond_id");
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","biosum_plot_id");
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","condid");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","fvs_filename");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","idb_cond_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx5","idb_plot_id");
 			}
 			public string CreateConditionTableSQL(string p_strTableName)
 			{
@@ -3163,21 +3143,13 @@ namespace FIA_Biosum_Manager
 					"swd_volcsgrs DOUBLE," + 
 					"gsstkcd DOUBLE," + 
 					"alstkcd DOUBLE," + 
-					"sdi DOUBLE," + 
-					"ccf DOUBLE," + 
-					"topht DOUBLE," + 
 					"condprop_unadj DOUBLE," + 
                     "micrprop_unadj DOUBLE," + 
                     "subpprop_unadj DOUBLE," + 
                     "macrprop_unadj DOUBLE," + 
-					"harvest_technique CHAR(30)," + 
-					"cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," + 
-					"cond_accessible_yn CHAR(1) DEFAULT 'Y'," + 
-					"fvs_filename CHAR(12)," +
-					"idb_cond_id LONG," + 
-					"idb_plot_id LONG," + 
 					"cn CHAR(34)," + 
                     "biosum_status_cd BYTE, " +
+                    "model_YN CHAR(1), " +
                     "dwm_fuelbed_typcd TEXT(3))";
 
 			}
