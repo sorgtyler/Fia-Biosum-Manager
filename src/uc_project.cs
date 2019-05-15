@@ -899,7 +899,7 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.Refresh();
 				p_frmTherm.progressBar1.Minimum = 1;
 				p_frmTherm.AbortProcess = false;
-				p_frmTherm.progressBar1.Maximum = 15;
+				p_frmTherm.progressBar1.Maximum = 14;
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Visible=true;
 				p_frmTherm.lblMsg.Refresh();
@@ -1111,17 +1111,9 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.lblMsg.Refresh();
 				//System.IO.File.Copy(strSourceFile, strDestFile,true);		
 
-				//copy default fvsin database to the new project directory
-				strSourceFile = this.m_oEnv.strAppDir + "\\db\\fvsin.mdb";
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\fvsin.mdb";
-				p_frmTherm.Increment(11);
-				p_frmTherm.lblMsg.Text = strDestFile;
-				p_frmTherm.lblMsg.Refresh();
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
-
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\fvsout.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\fvsout.mdb";
-				p_frmTherm.Increment(12);
+				p_frmTherm.Increment(11);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
@@ -1129,7 +1121,7 @@ namespace FIA_Biosum_Manager
 				
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\fvs_out_processor_in.mdb";
 				p_dao.CreateMDB(strDestFile);
-				p_frmTherm.Increment(13);
+				p_frmTherm.Increment(12);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				strConn = p_ado.getMDBConnString(strDestFile,"admin","");
@@ -1151,7 +1143,7 @@ namespace FIA_Biosum_Manager
 
 				strSourceFile = this.m_oEnv.strAppDir + "\\db\\biosum_processor.mdb";
 				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.mdb";
-				p_frmTherm.Increment(14);
+				p_frmTherm.Increment(13);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				System.IO.File.Copy(strSourceFile, strDestFile,true);
@@ -1167,7 +1159,7 @@ namespace FIA_Biosum_Manager
 				{
 					strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\shared_project_links_and_notes.mdb";
 					p_dao.CreateMDB(strDestFile);
-					p_frmTherm.Increment(16);
+					p_frmTherm.Increment(14);
 					p_frmTherm.lblMsg.Text = strDestFile;
 					p_frmTherm.lblMsg.Refresh();
 					strConn = p_ado.getMDBConnString(strDestFile,"admin","");
@@ -1227,7 +1219,7 @@ namespace FIA_Biosum_Manager
 					}                
 				}
 				
-				p_frmTherm.Increment(18);
+				p_frmTherm.Increment(15);
 				strSourceFile = this.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
 				strConn = p_ado.getMDBConnString(strSourceFile,"admin","");
 				p_frmTherm.Close();

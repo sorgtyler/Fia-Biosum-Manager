@@ -38,7 +38,7 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.Button btnYardDistDefault;
 		private int m_intNumberOfOptimizerTablesLoadedIntoDatasets;
 		public System.Windows.Forms.Label lblTitle;
-		private System.Windows.Forms.Button btnAudit;
+		private System.Windows.Forms.Button btnValidate;
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmScenario=null;
 		private string _strFilterType="PLOT";
 		private string m_strScenarioTable="scenario_plot_filter";
@@ -101,7 +101,7 @@ namespace FIA_Biosum_Manager
             this.lblLowSlope = new System.Windows.Forms.Label();
             this.txtYardDist = new System.Windows.Forms.TextBox();
             this.grpboxSQL = new System.Windows.Forms.GroupBox();
-            this.btnAudit = new System.Windows.Forms.Button();
+            this.btnValidate = new System.Windows.Forms.Button();
             this.txtCurrentSQL = new System.Windows.Forms.TextBox();
             this.btnPrevSQL = new System.Windows.Forms.Button();
             this.btnCreateSQL = new System.Windows.Forms.Button();
@@ -206,7 +206,7 @@ namespace FIA_Biosum_Manager
             // 
             // grpboxSQL
             // 
-            this.grpboxSQL.Controls.Add(this.btnAudit);
+            this.grpboxSQL.Controls.Add(this.btnValidate);
             this.grpboxSQL.Controls.Add(this.txtCurrentSQL);
             this.grpboxSQL.Controls.Add(this.btnPrevSQL);
             this.grpboxSQL.Controls.Add(this.btnCreateSQL);
@@ -220,17 +220,17 @@ namespace FIA_Biosum_Manager
             this.grpboxSQL.TabStop = false;
             this.grpboxSQL.Text = "Attribute Filter";
             // 
-            // btnAudit
+            // btnValidate
             // 
-            this.btnAudit.BackColor = System.Drawing.SystemColors.Control;
-            this.btnAudit.ForeColor = System.Drawing.Color.Black;
-            this.btnAudit.Location = new System.Drawing.Point(224, 188);
-            this.btnAudit.Name = "btnAudit";
-            this.btnAudit.Size = new System.Drawing.Size(120, 24);
-            this.btnAudit.TabIndex = 11;
-            this.btnAudit.Text = "Audit";
-            this.btnAudit.UseVisualStyleBackColor = false;
-            this.btnAudit.Click += new System.EventHandler(this.btnAudit_Click);
+            this.btnValidate.BackColor = System.Drawing.SystemColors.Control;
+            this.btnValidate.ForeColor = System.Drawing.Color.Black;
+            this.btnValidate.Location = new System.Drawing.Point(224, 188);
+            this.btnValidate.Name = "btnValidate";
+            this.btnValidate.Size = new System.Drawing.Size(120, 24);
+            this.btnValidate.TabIndex = 11;
+            this.btnValidate.Text = "Validate";
+            this.btnValidate.UseVisualStyleBackColor = false;
+            this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
             // 
             // txtCurrentSQL
             // 
@@ -290,10 +290,10 @@ namespace FIA_Biosum_Manager
             this.btnExecuteSQL.UseVisualStyleBackColor = false;
             this.btnExecuteSQL.Click += new System.EventHandler(this.btnExecuteSQL_Click);
             // 
-            // uc_scenario_filter
+            // uc_optimizer_scenario_filter
             // 
             this.Controls.Add(this.groupBox1);
-            this.Name = "uc_scenario_filter";
+            this.Name = "uc_optimizer_scenario_filter";
             this.Size = new System.Drawing.Size(656, 408);
             this.groupBox1.ResumeLayout(false);
             this.grpboxYardDist.ResumeLayout(false);
@@ -514,15 +514,15 @@ namespace FIA_Biosum_Manager
 				this.txtCurrentSQL.Width = this.grpboxSQL.Width - 8;
 				this.btnEditSQL.Left = (int)(this.grpboxSQL.Width * .50) - (int)(this.btnEditSQL.Width*2); //* .50);
 				this.btnExecuteSQL.Left = this.btnEditSQL.Left - this.btnExecuteSQL.Width;
-				this.btnAudit.Left = this.btnEditSQL.Left + this.btnAudit.Width;
-				this.btnPrevSQL.Left = this.btnAudit.Left + this.btnEditSQL.Width;
+				this.btnValidate.Left = this.btnEditSQL.Left + this.btnValidate.Width;
+				this.btnPrevSQL.Left = this.btnValidate.Left + this.btnEditSQL.Width;
 				this.btnCreateSQL.Left = this.btnPrevSQL.Left + this.btnPrevSQL.Width;
 				this.grpboxSQL.Height = this.groupBox1.Height - this.grpboxSQL.Top;
 				this.btnEditSQL.Top = this.grpboxSQL.Height - this.btnEditSQL.Height - 3;
 				this.btnExecuteSQL.Top = this.btnEditSQL.Top;
 				this.btnPrevSQL.Top = this.btnEditSQL.Top;
 				this.btnCreateSQL.Top= this.btnEditSQL.Top;
-				this.btnAudit.Top = this.btnEditSQL.Top;
+				this.btnValidate.Top = this.btnEditSQL.Top;
 				this.txtCurrentSQL.Height = this.grpboxSQL.Height - this.txtCurrentSQL.Top - this.btnEditSQL.Height - 10;
 			}
 			catch
@@ -1060,6 +1060,10 @@ namespace FIA_Biosum_Manager
                 m_strError = "Invalid Sql: Duplicate biosum_plot_id's were detected. Biosum_plot_id must be unique in the Treatment Optimizer Plot Filter";
 				return -5;
 			}
+            else if (oAdo.m_intError != 0)
+            {
+                return oAdo.m_intError;
+            }
 			else
 			{
 				return 0;
@@ -1068,7 +1072,17 @@ namespace FIA_Biosum_Manager
 		}
 		public int Val_PlotFilter(string p_strSql)
 		{
-			ado_data_access oAdo = new ado_data_access();
+            int intError = 0;
+            if (p_strSql.ToUpper().Contains("PLOT_ACCESSIBLE_YN"))
+            {
+                intError = -1;
+                m_strError = "The Plot filter contains the 'plot_accessible_YN' field. " +
+                             "This field no longer exists on the plot table and must be " +
+                             "removed from the filter !!";
+                return intError;
+            }
+
+            ado_data_access oAdo = new ado_data_access();
 			FIA_Biosum_Manager.Datasource oDs = new Datasource();
 			oDs.m_strDataSourceMDBFile =  frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" +
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
@@ -1077,15 +1091,17 @@ namespace FIA_Biosum_Manager
 			oDs.LoadTableColumnNamesAndDataTypes=false;
 			oDs.LoadTableRecordCount=false;
 			oDs.populate_datasource_array();
-			int intError=0;
 			if (oDs.m_intError==0)
 			{
-				string strConn = "";
 				string strFile = oDs.CreateMDBAndTableDataSourceLinks();
 				oAdo.OpenConnection(oAdo.getMDBConnString(strFile,"",""));
 				if (oAdo.m_intError==0)
-				{
-					intError = (int)Val_PlotFilter(oAdo.m_OleDbConnection,p_strSql.Trim());
+				{                    
+                    intError = (int)Val_PlotFilter(oAdo.m_OleDbConnection,p_strSql.Trim());
+                    if (intError != 0 && String.IsNullOrEmpty(m_strError))
+                    {
+                        m_strError = "An error occurred while validating the Plot filter!";
+                    }
 					oAdo.CloseConnection(oAdo.m_OleDbConnection);
 				}
 				else 
@@ -1131,6 +1147,10 @@ namespace FIA_Biosum_Manager
                 m_strError = "Invalid Sql: Duplicate biosum_cond_id's were detected. Biosum_cond_id must be unique in the Treatment Optimizer Scenario Cond Filter";
 				return -6;
 			}
+            else if (oAdo.m_intError != 0)
+            {
+                return oAdo.m_intError;
+            }
 			else
 			{
 				if (this.txtYardDist.Text.Trim().Length ==0 || this.txtYardDist2.Text.Trim().Length == 0) 
@@ -1158,12 +1178,15 @@ namespace FIA_Biosum_Manager
 			int intError=0;
 			if (oDs.m_intError==0)
 			{
-				string strConn = "";
 				string strFile = oDs.CreateMDBAndTableDataSourceLinks();
 				oAdo.OpenConnection(oAdo.getMDBConnString(strFile,"",""));
 				if (oAdo.m_intError==0)
 				{
 					intError = (int)Val_CondFilter(oAdo.m_OleDbConnection,p_strSql.Trim());
+                    if (intError != 0 && String.IsNullOrEmpty(m_strError))
+                    {
+                        m_strError = "An error occurred while validating the Condition filter!";
+                    }
 					oAdo.CloseConnection(oAdo.m_OleDbConnection);
 				}
 				else
@@ -1185,7 +1208,7 @@ namespace FIA_Biosum_Manager
 
 		}
 
-		private void btnAudit_Click(object sender, System.EventArgs e)
+		private void btnValidate_Click(object sender, System.EventArgs e)
 		{
 			int intError=0;
 
