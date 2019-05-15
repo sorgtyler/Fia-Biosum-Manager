@@ -257,7 +257,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsValidCombosTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsValidCombosTableName { get { return "validcombos"; } }
             static public string DefaultScenarioResultsTreeVolValSumTableDbFile { get { return @"db\optimizer_results.accdb"; } }
-            static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx"; } }
+            static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx_cycle"; } }
             static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableName { get { return "tree_vol_val_sum_by_rxpackage"; } }
             static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
@@ -2863,8 +2863,7 @@ namespace FIA_Biosum_Manager
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","traveltime_id");
 				p_oAdo.AddAutoNumber(p_oConn,p_strTableName,"traveltime_id");				
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","psite_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","plot_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","biosum_plot_id");
+				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","biosum_plot_id");
 			}
 
 			public string CreateDisconnectedRoadTravelTimeOfZeroTableSQL(string p_strTableName)
@@ -2872,8 +2871,7 @@ namespace FIA_Biosum_Manager
 				return "CREATE TABLE disconnected_road_travel_time_of_zero (" +
 					"traveltime_id LONG," + 
 					"psite_id INTEGER," + 
-					"biosum_plot_id CHAR(24)," + 
-					"plot_id LONG)";
+					"biosum_plot_id CHAR(24))";
 			}
 			public void CreateProcessingSiteTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -2910,9 +2908,8 @@ namespace FIA_Biosum_Manager
 				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","traveltime_id");
 				p_oAdo.AddAutoNumber(p_oConn,p_strTableName,"traveltime_id");
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","psite_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","plot_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","collector_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx5","railhead_id");
+				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","collector_id");
+				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","railhead_id");
 			}
 
 			public string CreateTravelTimeTableSQL(string p_strTableName)
@@ -2921,7 +2918,6 @@ namespace FIA_Biosum_Manager
 					"traveltime_id LONG," + 
 					"psite_id INTEGER," + 
 					"biosum_plot_id CHAR(24)," + 
-					"plot_id LONG," + 
 					"collector_id LONG," + 
 					"railhead_id LONG," + 
 					"travel_mode BYTE," + 
@@ -2938,9 +2934,8 @@ namespace FIA_Biosum_Manager
 				p_oAdo.AddAutoNumber(p_oConn,p_strTableName,"traveltime_id");
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","psite_id");
 				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","biosum_plot_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","plot_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","collector_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx5","railhead_id");
+				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","collector_id");
+				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","railhead_id");
 			}
 			public string CreateTravelTimeOfZeroTableSQL(string p_strTableName)
 			{
@@ -2948,7 +2943,6 @@ namespace FIA_Biosum_Manager
 					"traveltime_id LONG," + 
 					"psite_id INTEGER," + 
 					"biosum_plot_id CHAR(24)," +
-					"plot_id LONG," + 
 					"collector_id LONG," + 
 					"railhead_id LONG," + 
 					"travel_mode BYTE," + 

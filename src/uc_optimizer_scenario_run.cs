@@ -1097,7 +1097,7 @@ namespace FIA_Biosum_Manager
 		public string m_strHvstCostsTable;
 		public string m_strPSiteTable;
 		public string m_strTreeVolValBySpcDiamGroupsTable;
-		public string m_strTreeVolValSumTable = "tree_vol_val_sum_by_rx";
+        public string m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
 		public string m_strUserDefinedPlotSQL;
 	    public string m_strUserDefinedCondSQL;
 		
@@ -2590,7 +2590,7 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites:" + m_strPSiteTable + "\r\n");
 
-			this.m_strTreeVolValSumTable = "tree_vol_val_sum_by_rx";
+			this.m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Tree Sum Volume And Value:" + m_strTreeVolValSumTable + "\r\n");
@@ -3800,7 +3800,7 @@ namespace FIA_Biosum_Manager
 
 
 		/// <summary>
-		/// sum the tree_vol_val_by_species_diam_groups table values to tree_vol_val_sum_by_rx
+		/// sum the tree_vol_val_by_species_diam_groups table values to tree_vol_val_sum_by_rx_cycle
 		/// </summary>
 		private void sumTreeVolVal()
 		{
@@ -3816,7 +3816,7 @@ namespace FIA_Biosum_Manager
 			
 			/**************************************************************
 			 **sum the tree_vol_val_by_species_diam_groups table to
-			 **        tree_vol_val_sum_by_rx
+			 **        tree_vol_val_sum_by_rx_cycle
 			 **************************************************************/
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -3825,7 +3825,7 @@ namespace FIA_Biosum_Manager
             }
 			
 
-			this.m_strSQL = "delete from tree_vol_val_sum_by_rx";
+			this.m_strSQL = "delete from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
@@ -3837,8 +3837,8 @@ namespace FIA_Biosum_Manager
 				this.m_intError = this.m_ado.m_intError;
 				return;
 			}
-			this.m_strSQL = "INSERT INTO tree_vol_val_sum_by_rx " + 
-				"(biosum_cond_id,rxpackage,rx,rxcycle,chip_vol_cf," + 
+			this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName + 
+				" (biosum_cond_id,rxpackage,rx,rxcycle,chip_vol_cf," + 
 				"chip_wt_gt,chip_val_dpa,merch_vol_cf," + 
 				"merch_wt_gt,merch_val_dpa) ";
 			this.m_strSQL += "SELECT biosum_cond_id, " + 
@@ -3855,7 +3855,7 @@ namespace FIA_Biosum_Manager
 			this.m_strSQL += " ORDER BY biosum_cond_id,rxpackage,rx,rxcycle;";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\ninsert into tree_vol_val_sum_by_rx table tree volume and value sums\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\ninsert into tree_vol_val_sum_by_rx_cycle table tree volume and value sums\r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n"); 
 
@@ -5808,17 +5808,17 @@ namespace FIA_Biosum_Manager
 				       this.m_strTreeVolValSumTable.Trim() + ".merch_val_dpa AS merch_val_dpa," +
                        this.m_strHvstCostsTable.Trim() + ".complete_cpa AS harvest_onsite_cost_dpa," + 
                       "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt IS NOT NULL," +
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle2 + "," +
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle3 + "," +
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle4 + "," +
+                      "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle2 + "," +
+                      "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='3'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle3 + "," +
+                      "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle4 + "," +
                        Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt))),0) AS escalator_merch_haul_cpa_pt," +
-                      "escalator_merch_haul_cpa_pt * tree_vol_val_sum_by_rx.merch_wt_gt AS merch_haul_cost_dpa," +
+                      "escalator_merch_haul_cpa_pt * " + this.m_strTreeVolValSumTable.Trim() + ".merch_wt_gt AS merch_haul_cost_dpa," +
                       "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt IS NOT NULL," +
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle2 + "," +
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='3'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle3 + "," +
-                      "IIF(tree_vol_val_sum_by_rx.rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + "," +
+                      "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle2 + "," +
+                      "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='3'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle3 + "," +
+                      "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + "," +
                        Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt))),0) AS escalator_chip_haul_cpa_pt," +
-                      "escalator_chip_haul_cpa_pt * tree_vol_val_sum_by_rx.chip_wt_gt AS chip_haul_cost_dpa," +
+                      "escalator_chip_haul_cpa_pt * " + this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt AS chip_haul_cost_dpa," +
                       "merch_val_dpa + chip_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa - chip_haul_cost_dpa AS merch_chip_nr_dpa," +
                       "merch_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa AS merch_nr_dpa," +
                       "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt IS NOT NULL AND " + 

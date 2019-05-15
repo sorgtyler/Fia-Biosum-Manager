@@ -69,7 +69,6 @@ namespace FIA_Biosum_Manager
 			InitializeComponent();
 			this.m_frmScenario = p_frmScenario;
 			this.Enabled=true;
-			this.chkTreeSumTable();             //make sure table has records
 
 			//
 			// TODO: Add any constructor code after InitializeComponent call
@@ -585,29 +584,6 @@ namespace FIA_Biosum_Manager
 		{
 			this.viewScenarioTables();
 		
-		}
-		/// <summary>
-		/// check to ensure that tree_vol_val_sum_by_rx table has records
-		/// </summary>
-		public void chkTreeSumTable()
-		{
-			string strMDBPathAndFile="";
-			string strConn="";
-			
-			ado_data_access p_ado = new ado_data_access();
-			
-			strMDBPathAndFile = m_frmScenario.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\scenario_results.mdb";
-			strConn=p_ado.getMDBConnString(strMDBPathAndFile,"admin","");
-			if (p_ado.getRecordCount(strConn,"select COUNT(*) from tree_vol_val_sum_by_rx","tree_vol_val_sum_by_rx") == 0)
-			{
-				this.chkProcSumTree.Checked=true;
-				this.chkProcSumTree.Enabled=false;
-			}
-			else
-			{
-                this.chkProcSumTree.Enabled=true;
-			}
-
 		}
 		
 		/// <summary>
@@ -1336,8 +1312,6 @@ namespace FIA_Biosum_Manager
 			this.m_txtStreamWriter.Close();
 			this.m_txtFileStream.Close();
 			this.m_frmRunCoreScenario.btnViewLog.Enabled=true;
-			if (this.m_frmRunCoreScenario.chkProcSumTree.Enabled==false)
-				this.m_frmRunCoreScenario.chkTreeSumTable();
 			if (this.m_frmRunCoreScenario.chkAuditTables.Enabled==true)
 				this.m_frmRunCoreScenario.btnViewAuditTables.Enabled=true;
 			
