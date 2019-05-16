@@ -5768,11 +5768,11 @@ namespace FIA_Biosum_Manager
                                                   "ECON_BY_RX_SUM.HARVEST_ONSITE_COST_DPA"};
                     while (oAdo.m_OleDbDataReader.Read())
                     {
-                        string strVariableSource = Convert.ToString(oAdo.m_OleDbDataReader["variable_source"]);
+                        string strVariableSource = Convert.ToString(oAdo.m_OleDbDataReader["variable_source"]).Trim();
                         int i = 0;
                         foreach (string strOldSource in arrOldSources)
                         {
-                            if (strOldSource.Equals(arrOldSources[i]))
+                            if (strOldSource.ToUpper().Equals(arrOldSources[i].ToUpper()))
                             {
                                 int intId = Convert.ToInt16(oAdo.m_OleDbDataReader["id"]);
                                 string strUpdate = "UPDATE " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
