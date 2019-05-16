@@ -5740,6 +5740,268 @@ namespace FIA_Biosum_Manager
             }
         }
 
+        private void UpdateDatasources_5_8_7()
+        {
+            ado_data_access oAdo = new ado_data_access();
+            dao_data_access oDao = new dao_data_access();
+
+            string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
+            frmMain.g_sbpInfo.Text = "Version Update: Update variable source for Calculated Variables ...Stand by";
+
+            string strRenameMdb = ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\optimizer_definitions.accdb";
+            string strRenameConn = m_oAdo.getMDBConnString(strRenameMdb, "", "");
+            using (var oRenameConn = new OleDbConnection(strRenameConn))
+            {
+                oRenameConn.Open();
+                oAdo.m_strSQL = "SELECT ID, VARIABLE_SOURCE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                    " WHERE UCASE(variable_source) like \"PRODUCT_YIELDS*\"";
+                oAdo.SqlQueryReader(oRenameConn, oAdo.m_strSQL);
+                if (oAdo.m_OleDbDataReader.HasRows)
+                {
+                    string[] arrOldSources = {"PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE.chip_yield_cf",
+                                              "PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE.merch_yield_cf",
+                                              "PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE.MAX_NR_DPA",
+                                              "PRODUCT_YIELDS_NET_REV_COSTS_SUMMARY_BY_RXPACKAGE.HARVEST_ONSITE_CPA"};
+                    string[] arrUpdatedSources = {"ECON_BY_RX_SUM.chip_vol_cf",
+                                                  "ECON_BY_RX_SUM.merch_vol_cf",
+                                                  "ECON_BY_RX_SUM.MAX_NR_DPA",
+                                                  "ECON_BY_RX_SUM.HARVEST_ONSITE_COST_DPA"};
+                    while (oAdo.m_OleDbDataReader.Read())
+                    {
+                        string strVariableSource = Convert.ToString(oAdo.m_OleDbDataReader["variable_source"]);
+                        int i = 0;
+                        foreach (string strOldSource in arrOldSources)
+                        {
+                            if (strOldSource.Equals(arrOldSources[i]))
+                            {
+                                int intId = Convert.ToInt16(oAdo.m_OleDbDataReader["id"]);
+                                string strUpdate = "UPDATE " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                                    " SET VARIABLE_SOURCE = '" + arrUpdatedSources[i] + "'" +
+                                    " WHERE ID = " + intId;
+                                oAdo.SqlNonQuery(oRenameConn, strUpdate);
+                                break;
+                            }
+                            i++;
+                        }
+                    }
+                 }
+              }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Updating OPTIMIZER scenario configuration tables ...Stand by";
+
+            string strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                            "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile;
+            //open the scenario_optimizer_rule_definitions.mdb file
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
+            //add new revenue_attribute field if it is missing
+            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
+                "revenue_attribute"))
+            {
+                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
+                    "revenue_attribute", "CHAR", "100");
+            }
+            //remove filter fields from scenario_fvs_variables_overall_effective
+            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
+                "nr_dpa_filter_enabled_yn"))
+            {
+                string[] arrFieldsToDelete = new string[] { "nr_dpa_filter_enabled_yn", "nr_dpa_filter_operator", "nr_dpa_filter_value" };
+                oDao.DeleteField(strDestFile, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
+                    arrFieldsToDelete);
+            }
+            //replace scenario_rx_intensity with scenario_last_tiebreak_rank 
+            if (oAdo.TableExist(oAdo.m_OleDbConnection, "scenario_rx_intensity"))
+            {
+                oDao.RenameTable(strDestFile, "scenario_rx_intensity", "scenario_rx_intensity" + strTableSuffix, true, false);
+            }
+            frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo, oAdo.m_OleDbConnection,
+                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
+            //populate scenario_last_tiebreak_rank with packages for each scenario            
+            string strConn = "";
+            string strRxMDBFile = "";
+            string strRxPackageTableName = "";
+            string strRxConn = "";
+            string strSourceFile = "";
+            oAdo.getScenarioConnStringAndMDBFile(ref strSourceFile,
+                              ref strConn, frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());
+            oAdo.OpenConnection(strConn);
+
+            //retrieve paths for all scenarios in the project and put them in list
+            List<string> lstScenario = new List<string>();
+            oAdo.m_strSQL = "SELECT path, scenario_id from scenario";
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    string strPath = "";
+                    if (oAdo.m_OleDbDataReader["path"] != System.DBNull.Value)
+                        strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
+                    if (!String.IsNullOrEmpty(strPath))
+                    {
+                        if (System.IO.Directory.Exists(strPath))
+                            lstScenario.Add(oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim());
+                    }
+                }
+                oAdo.m_OleDbDataReader.Close();
+            }
+
+            foreach (string strScenarioId in lstScenario)
+            {
+
+                /*************************************************************************
+                 **get the treatment prescription mdb file,table, and connection strings
+                 *************************************************************************/
+                oAdo.getScenarioDataSourceConnStringAndTable(ref strRxMDBFile,
+                                                ref strRxPackageTableName, ref strRxConn,
+                                                "Treatment Packages",
+                                                strScenarioId,
+                                                oAdo.m_OleDbConnection);
+
+                oAdo.OpenConnection(strRxConn);
+                if (oAdo.m_intError != 0)
+                {
+                    oAdo.m_OleDbConnection.Close();
+                    oAdo.m_OleDbConnection = null;
+                    return;
+                }
+                oAdo.m_strSQL = "select * from " + strRxPackageTableName;
+                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+                /********************************************************************************
+                 **insert records into the scenario_last_tiebreak_rank table from the master rxpackage table
+                 ********************************************************************************/
+                List<string> lstRxPackages = new List<string>();
+                if (oAdo.m_intError == 0)
+                {
+                    if (oAdo.m_OleDbDataReader.HasRows)
+                    {
+                        while (oAdo.m_OleDbDataReader.Read())
+                        {
+                            string strRxPackage = "";
+                            if (oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
+                                strRxPackage = oAdo.m_OleDbDataReader["rxpackage"].ToString().Trim();
+                            if (!String.IsNullOrEmpty(strRxPackage))
+                            {
+                                lstRxPackages.Add(strRxPackage);
+                            }
+                        }
+                        oAdo.m_OleDbDataReader.Close();
+
+                        oAdo.OpenConnection(strConn);
+                        foreach (string strRxPackage in lstRxPackages)
+                        {
+                            oAdo.m_strSQL = "INSERT INTO scenario_last_tiebreak_rank (scenario_id," +
+                            "rxpackage) VALUES " +
+                            "('" + strScenarioId + "'," +
+                            "'" + strRxPackage + "')";
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                        }
+                    }
+                }
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Renaming frcs_harvest_costs_yn columns in audit tables ...Stand by";
+            string[] arrDatabases = System.IO.Directory.GetFiles(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db");
+            string strOldColumnName = "frcs_harvest_costs_yn";
+            string strNewColumnName = "harvest_costs_yn";
+            foreach (string strDatabase in arrDatabases)
+            {
+                string strDatabaseName = System.IO.Path.GetFileName(strDatabase);
+                if (strDatabaseName.StartsWith("audit"))
+                {
+                    strRenameConn = m_oAdo.getMDBConnString(strDatabase, "", "");
+                    using (var oRenameConn = new OleDbConnection(strRenameConn))
+                    {
+                        oRenameConn.Open();
+                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultCondAuditTableName, strOldColumnName)) ;
+                        {
+                            oDao.RenameField(strDatabase, Tables.Audit.DefaultCondAuditTableName, strOldColumnName, strNewColumnName);
+                        }
+                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultCondRxAuditTableName, strOldColumnName)) ;
+                        {
+                            oDao.RenameField(strDatabase, Tables.Audit.DefaultCondRxAuditTableName, strOldColumnName, strNewColumnName);
+                        }
+                    }
+                }
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Creating empty GRM tables ...Stand by";
+            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
+            if (!oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMStandName))
+            {
+                frmMain.g_oTables.m_oFIAPlot.CreateMasterAuxGRMStandTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMStandName);
+                frmMain.g_oTables.m_oFIAPlot.CreateMasterAuxGRMTreeTable(oAdo, oAdo.m_OleDbConnection,
+                    frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMTreeName);
+            }
+
+            // Replace opcost_ref.accdb; In the future we want to back it up, but not used much yet
+            frmMain.g_sbpInfo.Text = "Version Update: Updating OPCOST configuration database ...Stand by";
+            strSourceFile = frmMain.g_oEnv.strAppDir + "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
+            strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                            "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
+            if (System.IO.File.Exists(strDestFile) == true)
+            {
+                System.IO.File.Delete(strDestFile);
+            }
+            System.IO.File.Copy(strSourceFile, strDestFile);
+
+            //Rename existing harvest_methods table
+            // Load project data sources table
+            FIA_Biosum_Manager.Datasource oDs = new Datasource();
+            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oDs.m_strDataSourceTableName = "datasource";
+            oDs.m_strScenarioId = "";
+            oDs.LoadTableColumnNamesAndDataTypes = false;
+            oDs.LoadTableRecordCount = false;
+            oDs.populate_datasource_array();
+
+            int intHarvestMethodsTable = oDs.getValidTableNameRow(Datasource.TableTypes.HarvestMethods);
+            string strDirectoryPath = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            string strFileName = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+            string strFileStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            string strTargetTable = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            string strTableStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+
+            if (strFileStatus == "F" && strTableStatus == "F")
+            {
+                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+            }
+
+            // Copying the updated harvest_methods table into ref_master.accdb
+            string strHarvestWorkTableName = "harvestmethod_worktable";
+            string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\" + Tables.Reference.DefaultHarvestMethodsTableDbFile;
+            string strTargetDbFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.Reference.DefaultHarvestMethodsTableDbFile;
+            // Harvest Methods table
+            oDao.CreateTableLink(strTargetDbFile, strHarvestWorkTableName, strSourceDbFile, strTargetTable);
+
+            //copy contents of new harvest methods table into place
+            oAdo.OpenConnection(oAdo.getMDBConnString(strTargetDbFile, "", ""));
+            oAdo.m_strSQL = "SELECT * INTO " + strTargetTable + " FROM " + strHarvestWorkTableName;
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            //drop the harvest methods table link
+            if (oAdo.TableExist(oAdo.m_OleDbConnection, strHarvestWorkTableName))
+            {
+                oAdo.m_strSQL = "DROP TABLE " + strHarvestWorkTableName;
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            }
+
+
+            if (oDao != null)
+            {
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
+            if (oAdo != null)
+            {
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                oAdo = null;
+            }
+        }
+
         public string ReferenceProjectDirectory
 		{
 			get {return _strProjDir;}

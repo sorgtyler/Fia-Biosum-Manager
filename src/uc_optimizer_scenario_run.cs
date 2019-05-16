@@ -1273,13 +1273,7 @@ namespace FIA_Biosum_Manager
 
                     FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile,"--Initialize Air Destruction Tables--\r\n");
-					InitializeAirDestructionTables();
-
-                    FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                         frmMain.g_oUtils.WriteText(m_strDebugFile,"Links MDB File: " + this.m_strTempMDBFile + "\r\n");
 					ReferenceUserControlScenarioRun.btnAccess.Enabled=false;
 
@@ -2089,12 +2083,6 @@ namespace FIA_Biosum_Manager
 
 
 		}
-        private void InitializeAirDestructionTables()
-        {
-           
-
-
-        }
 		
 		/// <summary>
 		/// create links to the tables located in the optimizer_results.accdb file
@@ -6693,112 +6681,7 @@ namespace FIA_Biosum_Manager
 			oAdo=null;
 
 		}
-		
-		/// <summary>
-		/// create temporary work tables for getting 
-		/// a plot's fastest travel time to a processing site
-		/// </summary>
-		private void CreateTableStructureForFastestTravelTimes()
-		{
-
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//CreateTableStructureForFastestTravelTimes\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-            }
-			ado_data_access p_ado = new ado_data_access();
-			this.m_strConn= p_ado.getMDBConnString(this.m_strTempMDBFile,"admin","");
-			p_ado.OpenConnection(this.m_strConn);
-			if (p_ado.m_intError==0)
-			{
-				/*********************************************
-				 **get the plot table structure
-				 *********************************************/
-				this.m_strSQL = "SELECT biosum_plot_id, merch_haul_cost_id, merch_haul_cost_psite, merch_haul_cpa_pt, chip_haul_cost_id,chip_haul_cost_psite,chip_haul_cpa_pt FROM " + this.m_strPlotTable.Trim() + ";";
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				System.Data.DataTable p_dt = p_ado.getTableSchema(p_ado.m_OleDbConnection,this.m_strSQL);
-
-				/*****************************************************************
-				 **create the table structures in the temp mdb file
-				 **and give them the name OF plot_fastest_tvltm_work_table and 
-				 **                          plot_fastest_tvltm_work_table2
-				 *****************************************************************/
-                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile,"--Create travel times work table (plot_fastest_tvltm_work_table) from  the plot table--\r\n");
-				dao_data_access p_dao = new dao_data_access();
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"plot_tvltm_work_table",p_dt,true);
-				if (p_dao.m_intError!=0)
-				{
-					p_dt.Dispose();
-					p_ado.m_OleDbDataReader.Close();
-					p_ado.m_OleDbConnection.Close();
-                    if (frmMain.g_bDebug)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Creating Table Schema!!!\r\n");
-					this.m_intError=p_dao.m_intError;
-					p_ado=null;
-					p_dao=null;
-					return;
-				}
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"plot_tvltm_work_table2",p_dt,true);
-				p_dt.Clear();
 				
-				/*********************************************
-				 **get the haul cost table structure
-				 *********************************************/
-                this.m_strSQL = "SELECT haul_cost_id, biosum_plot_id,railhead_id,psite_id,transfer_cost,road_cost_dpgt,rail_cost_dpgt,complete_haul_cost_dpgt FROM haul_costs;";
-
-				/****************************************************************
-				 **get the table structure that results from executing the sql
-				 ****************************************************************/
-				p_dt = p_ado.getTableSchema(p_ado.m_OleDbConnection,this.m_strSQL);
-
-				/*****************************************************************
-				 **create the table structures in the temp mdb file
-				 **and give them the name OF haul_costs_work_table and 
-				 **                          haul_costs_work_table2
-				 *****************************************************************/
-                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile,"--Create haul costs work table (haul_costs_work_table) from  the haul_costs table--");
-				
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"haul_costs_work_table",p_dt,true);
-				if (p_dao.m_intError!=0)
-				{
-					p_dt.Dispose();
-					p_ado.m_OleDbDataReader.Close();
-					p_ado.m_OleDbConnection.Close();
-                    if (frmMain.g_bDebug)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Creating Table Schema!!!\r\n");
-					this.m_intError=p_dao.m_intError;
-					p_ado=null;
-					p_dao=null;
-					return;
-				}
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"haul_costs_work_table2",p_dt,true);
-				p_dt.Dispose();
-				p_ado.m_OleDbDataReader.Close();
-				p_ado.m_OleDbConnection.Close();
-				if (p_dao.m_intError!=0)
-				{
-                    if (frmMain.g_bDebug)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Creating Table Schema!!!\r\n");
-					this.m_intError=p_dao.m_intError;
-					p_ado=null;
-					p_dao=null;
-					return;
-				}
-			}
-			else
-			{
-				this.m_intError = p_ado.m_intError;
-			}
-			p_ado=null;
-
-		}
-		
 		/// <summary>
 		/// create a temporary work tables for finding best treatments
 		/// </summary>
