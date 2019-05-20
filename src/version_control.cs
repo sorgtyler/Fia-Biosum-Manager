@@ -1171,7 +1171,7 @@ namespace FIA_Biosum_Manager
 							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
 								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
 								ReferenceProjectDirectory.Trim() + "\\gis\\db",
-								frmMain.g_oUtils.getFileNameUsingLastIndexOf(frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableDbFile),
+								frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.TravelTime.DefaultTravelTimeTableDbFile),
 								frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName);
 							break;
 						case "PROCESSING SITES":
@@ -5740,7 +5740,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void UpdateDatasources_5_8_7()
+        public void UpdateDatasources_5_8_7()
         {
             ado_data_access oAdo = new ado_data_access();
             dao_data_access oDao = new dao_data_access();
@@ -5754,7 +5754,7 @@ namespace FIA_Biosum_Manager
             {
                 oRenameConn.Open();
                 oAdo.m_strSQL = "SELECT ID, VARIABLE_SOURCE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
-                    " WHERE UCASE(variable_source) like \"PRODUCT_YIELDS*\"";
+                    " WHERE UCASE(variable_source) like 'PRODUCT_YIELDS%'";
                 oAdo.SqlQueryReader(oRenameConn, oAdo.m_strSQL);
                 if (oAdo.m_OleDbDataReader.HasRows)
                 {
@@ -5772,7 +5772,7 @@ namespace FIA_Biosum_Manager
                         int i = 0;
                         foreach (string strOldSource in arrOldSources)
                         {
-                            if (strOldSource.ToUpper().Equals(arrOldSources[i].ToUpper()))
+                            if (strVariableSource.ToUpper().Equals(arrOldSources[i].ToUpper()))
                             {
                                 int intId = Convert.ToInt16(oAdo.m_OleDbDataReader["id"]);
                                 string strUpdate = "UPDATE " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
@@ -5787,208 +5787,96 @@ namespace FIA_Biosum_Manager
                  }
               }
 
-            frmMain.g_sbpInfo.Text = "Version Update: Updating OPTIMIZER scenario configuration tables ...Stand by";
-
-            string strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                            "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableDbFile;
-            //open the scenario_optimizer_rule_definitions.mdb file
-            oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
-            //add new revenue_attribute field if it is missing
-            if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
-                "revenue_attribute"))
-            {
-                oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOptimizationTableName,
-                    "revenue_attribute", "CHAR", "100");
-            }
-            //remove filter fields from scenario_fvs_variables_overall_effective
-            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
-                "nr_dpa_filter_enabled_yn"))
-            {
-                string[] arrFieldsToDelete = new string[] { "nr_dpa_filter_enabled_yn", "nr_dpa_filter_operator", "nr_dpa_filter_value" };
-                oDao.DeleteField(strDestFile, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioFvsVariablesOverallEffectiveTableName,
-                    arrFieldsToDelete);
-            }
-            //replace scenario_rx_intensity with scenario_last_tiebreak_rank 
-            if (oAdo.TableExist(oAdo.m_OleDbConnection, "scenario_rx_intensity"))
-            {
-                oDao.RenameTable(strDestFile, "scenario_rx_intensity", "scenario_rx_intensity" + strTableSuffix, true, false);
-            }
-            frmMain.g_oTables.m_oOptimizerScenarioRuleDef.CreateScenarioLastTieBreakRankTable(oAdo, oAdo.m_OleDbConnection,
-                Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioLastTieBreakRankTableName);
-            //populate scenario_last_tiebreak_rank with packages for each scenario            
-            string strConn = "";
-            string strRxMDBFile = "";
-            string strRxPackageTableName = "";
-            string strRxConn = "";
-            string strSourceFile = "";
-            oAdo.getScenarioConnStringAndMDBFile(ref strSourceFile,
-                              ref strConn, frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim());
-            oAdo.OpenConnection(strConn);
-
-            //retrieve paths for all scenarios in the project and put them in list
-            List<string> lstScenario = new List<string>();
-            oAdo.m_strSQL = "SELECT path, scenario_id from scenario";
-            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
-            if (oAdo.m_OleDbDataReader.HasRows)
-            {
-                while (oAdo.m_OleDbDataReader.Read())
-                {
-                    string strPath = "";
-                    if (oAdo.m_OleDbDataReader["path"] != System.DBNull.Value)
-                        strPath = oAdo.m_OleDbDataReader["path"].ToString().Trim();
-                    if (!String.IsNullOrEmpty(strPath))
-                    {
-                        if (System.IO.Directory.Exists(strPath))
-                            lstScenario.Add(oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim());
-                    }
-                }
-                oAdo.m_OleDbDataReader.Close();
-            }
-
-            foreach (string strScenarioId in lstScenario)
-            {
-
-                /*************************************************************************
-                 **get the treatment prescription mdb file,table, and connection strings
-                 *************************************************************************/
-                oAdo.getScenarioDataSourceConnStringAndTable(ref strRxMDBFile,
-                                                ref strRxPackageTableName, ref strRxConn,
-                                                "Treatment Packages",
-                                                strScenarioId,
-                                                oAdo.m_OleDbConnection);
-
-                oAdo.OpenConnection(strRxConn);
-                if (oAdo.m_intError != 0)
-                {
-                    oAdo.m_OleDbConnection.Close();
-                    oAdo.m_OleDbConnection = null;
-                    return;
-                }
-                oAdo.m_strSQL = "select * from " + strRxPackageTableName;
-                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
-
-                /********************************************************************************
-                 **insert records into the scenario_last_tiebreak_rank table from the master rxpackage table
-                 ********************************************************************************/
-                List<string> lstRxPackages = new List<string>();
-                if (oAdo.m_intError == 0)
-                {
-                    if (oAdo.m_OleDbDataReader.HasRows)
-                    {
-                        while (oAdo.m_OleDbDataReader.Read())
-                        {
-                            string strRxPackage = "";
-                            if (oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
-                                strRxPackage = oAdo.m_OleDbDataReader["rxpackage"].ToString().Trim();
-                            if (!String.IsNullOrEmpty(strRxPackage))
-                            {
-                                lstRxPackages.Add(strRxPackage);
-                            }
-                        }
-                        oAdo.m_OleDbDataReader.Close();
-
-                        oAdo.OpenConnection(strConn);
-                        foreach (string strRxPackage in lstRxPackages)
-                        {
-                            oAdo.m_strSQL = "INSERT INTO scenario_last_tiebreak_rank (scenario_id," +
-                            "rxpackage) VALUES " +
-                            "('" + strScenarioId + "'," +
-                            "'" + strRxPackage + "')";
-                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
-                        }
-                    }
-                }
-            }
-
-            frmMain.g_sbpInfo.Text = "Version Update: Renaming frcs_harvest_costs_yn columns in audit tables ...Stand by";
-            string[] arrDatabases = System.IO.Directory.GetFiles(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\db");
-            string strOldColumnName = "frcs_harvest_costs_yn";
-            string strNewColumnName = "harvest_costs_yn";
-            foreach (string strDatabase in arrDatabases)
-            {
-                string strDatabaseName = System.IO.Path.GetFileName(strDatabase);
-                if (strDatabaseName.StartsWith("audit"))
-                {
-                    strRenameConn = m_oAdo.getMDBConnString(strDatabase, "", "");
-                    using (var oRenameConn = new OleDbConnection(strRenameConn))
-                    {
-                        oRenameConn.Open();
-                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultCondAuditTableName, strOldColumnName)) ;
-                        {
-                            oDao.RenameField(strDatabase, Tables.Audit.DefaultCondAuditTableName, strOldColumnName, strNewColumnName);
-                        }
-                        if (oAdo.ColumnExist(oRenameConn, Tables.Audit.DefaultCondRxAuditTableName, strOldColumnName)) ;
-                        {
-                            oDao.RenameField(strDatabase, Tables.Audit.DefaultCondRxAuditTableName, strOldColumnName, strNewColumnName);
-                        }
-                    }
-                }
-            }
-
-            frmMain.g_sbpInfo.Text = "Version Update: Creating empty GRM tables ...Stand by";
-            strDestFile = ReferenceProjectDirectory.Trim() + "\\" + frmMain.g_oTables.m_oFIAPlot.DefaultDWMDbFile;
-            oAdo.OpenConnection(oAdo.getMDBConnString(strDestFile, "", ""));
-            if (!oAdo.TableExist(oAdo.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMStandName))
-            {
-                frmMain.g_oTables.m_oFIAPlot.CreateMasterAuxGRMStandTable(oAdo, oAdo.m_OleDbConnection,
-                    frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMStandName);
-                frmMain.g_oTables.m_oFIAPlot.CreateMasterAuxGRMTreeTable(oAdo, oAdo.m_OleDbConnection,
-                    frmMain.g_oTables.m_oFIAPlot.DefaultMasterAuxGRMTreeName);
-            }
-
-            // Replace opcost_ref.accdb; In the future we want to back it up, but not used much yet
-            frmMain.g_sbpInfo.Text = "Version Update: Updating OPCOST configuration database ...Stand by";
-            strSourceFile = frmMain.g_oEnv.strAppDir + "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
-            strDestFile = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
-                            "\\" + Tables.Reference.DefaultOpCostReferenceDbFile;
-            if (System.IO.File.Exists(strDestFile) == true)
-            {
-                System.IO.File.Delete(strDestFile);
-            }
-            System.IO.File.Copy(strSourceFile, strDestFile);
+            frmMain.g_sbpInfo.Text = "Version Update: Updating travel times database and table ...Stand by";
 
             //Rename existing harvest_methods table
             // Load project data sources table
-            FIA_Biosum_Manager.Datasource oDs = new Datasource();
-            oDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
-            oDs.m_strDataSourceTableName = "datasource";
-            oDs.m_strScenarioId = "";
-            oDs.LoadTableColumnNamesAndDataTypes = false;
-            oDs.LoadTableRecordCount = false;
-            oDs.populate_datasource_array();
+            FIA_Biosum_Manager.Datasource oProjectDs = new Datasource();
+            oProjectDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oProjectDs.m_strDataSourceTableName = "datasource";
+            oProjectDs.m_strScenarioId = "";
+            oProjectDs.LoadTableColumnNamesAndDataTypes = false;
+            oProjectDs.LoadTableRecordCount = false;
+            oProjectDs.populate_datasource_array();
 
-            int intHarvestMethodsTable = oDs.getValidTableNameRow(Datasource.TableTypes.HarvestMethods);
-            string strDirectoryPath = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            string strFileName = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            int intTravelTimesTable = oProjectDs.getValidTableNameRow(Datasource.TableTypes.TravelTimes);
+            string strDirectoryPath = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            string strFileName = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
             //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            string strFileStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
-            string strTargetTable = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            string strTableStatus = oDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            string strTableName = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            string strTableStatus = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
 
-            if (strFileStatus == "F" && strTableStatus == "F")
+            if (strTableStatus == "F")
             {
-                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTargetTable, strTargetTable + strTableSuffix, true, false);
+                oDao.OpenDb(strDirectoryPath + "\\" + strFileName);
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "PLOT_ID"))
+                {
+                    string strCommand = "DROP INDEX travel_time_idx3 ON " + strTableName;
+                    oDao.m_DaoDatabase.Execute(strCommand, null);
+                    oDao.DeleteField(strDirectoryPath + "\\" + strFileName, strTableName, new string[]{"PLOT_ID"});
+                    // Note: the DeleteField method closes the database
+                }
+                if (oDao.m_DaoDatabase != null)
+                    oDao.m_DaoDatabase.Close();
             }
 
-            // Copying the updated harvest_methods table into ref_master.accdb
-            string strHarvestWorkTableName = "harvestmethod_worktable";
-            string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\" + Tables.Reference.DefaultHarvestMethodsTableDbFile;
-            string strTargetDbFile = ReferenceProjectDirectory.Trim() + "\\" + Tables.Reference.DefaultHarvestMethodsTableDbFile;
-            // Harvest Methods table
-            oDao.CreateTableLink(strTargetDbFile, strHarvestWorkTableName, strSourceDbFile, strTargetTable);
+            oDao.CreateMDB(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile);
+            // create table links to copy tables
+            string[] arrTableNames = new string[0];
+            oDao.getTableNames(strDirectoryPath + "\\" + strFileName, ref arrTableNames);
+            string strCopyConn = m_oAdo.getMDBConnString(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, "", "");
+            using (var oCopyConn = new OleDbConnection(strCopyConn))
+            {
+                oCopyConn.Open();
+                foreach (string strTable in arrTableNames)
+                {
+                    if (!String.IsNullOrEmpty(strTable))
+                    {
+                        oDao.CreateTableLink(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, strTable + "_1",
+                            strDirectoryPath + "\\" + strFileName, strTable);
+                        if (!oAdo.TableExist(oCopyConn, strTable + "_1"))
+                        {
+                            System.Threading.Thread.Sleep(5000);
+                        }
+                        string strSql = "SELECT * INTO " + strTable + " FROM " + strTable + "_1";
+                        oAdo.SqlNonQuery(oCopyConn, strSql);
+                        strSql = "DROP TABLE " + strTable + "_1";
+                        oAdo.SqlNonQuery(oCopyConn, strSql);
+                    }
+                }
+            }
+            oDao.m_DaoWorkspace.Close();
+            oDao = null;
 
-            //copy contents of new harvest methods table into place
-            oAdo.OpenConnection(oAdo.getMDBConnString(strTargetDbFile, "", ""));
-            oAdo.m_strSQL = "SELECT * INTO " + strTargetTable + " FROM " + strHarvestWorkTableName;
+            // Main datasource table
+            string strDataSourceMdb = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            oAdo.m_strSQL = "UPDATE datasource " +
+                            "SET file = '" + Tables.TravelTime.DefaultTravelTimeAccdbFile+ "' " +
+                            "WHERE TABLE_TYPE IN ('" + Datasource.TableTypes.TravelTimes + "', '" +
+                            Datasource.TableTypes.ProcessingSites + "')";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            oAdo.m_OleDbConnection.Close();
 
-            //drop the harvest methods table link
-            if (oAdo.TableExist(oAdo.m_OleDbConnection, strHarvestWorkTableName))
-            {
-                oAdo.m_strSQL = "DROP TABLE " + strHarvestWorkTableName;
-                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
-            }
+            // Processor datasource table
+            strDataSourceMdb = ReferenceProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            oAdo.m_strSQL = "UPDATE scenario_datasource " +
+                            "SET file = '" + Tables.TravelTime.DefaultTravelTimeAccdbFile + "' " +
+                            "WHERE TABLE_TYPE IN ('" + Datasource.TableTypes.TravelTimes + "', '" +
+                            Datasource.TableTypes.ProcessingSites + "')";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            oAdo.m_OleDbConnection.Close();
 
+            // Optimizer datasource table
+            strDataSourceMdb = ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\scenario_optimizer_rule_definitions.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            oAdo.m_strSQL = "UPDATE scenario_datasource " +
+                            "SET file = '" + Tables.TravelTime.DefaultTravelTimeAccdbFile + "' " +
+                            "WHERE TABLE_TYPE IN ('" + Datasource.TableTypes.TravelTimes + "', '" +
+                            Datasource.TableTypes.ProcessingSites + "')";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            oAdo.m_OleDbConnection.Close();
 
             if (oDao != null)
             {

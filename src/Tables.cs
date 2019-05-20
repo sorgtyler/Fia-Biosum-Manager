@@ -2840,13 +2840,14 @@ namespace FIA_Biosum_Manager
 		}
 		public class TravelTime
 		{
-			public string DefaultTravelTimeTableDbFile {get {return @"gis\db\gis_travel_times.mdb";}}
+            public static string DefaultTravelTimeAccdbFile { get { return "gis_travel_times.accdb"; } }
+            public static string DefaultTravelTimeTableDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
 			public string DefaultTravelTimeTableName {get {return "travel_time";}}
-			public string DefaultProcessingSiteTableDbFile {get {return @"gis\db\gis_travel_times.mdb";}}
+			public string DefaultProcessingSiteTableDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
 			public string DefaultProcessingSiteTableName {get {return "processing_site";}}
-			public string DefaultDisconnectedRoadTravelTimeOfZeroDbFile {get {return @"gis\db\gis_travel_times.mdb";}}
+			public string DefaultDisconnectedRoadTravelTimeOfZeroDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
 			public string DefaultDisconnectedRoadTravelTimeOfZeroTableName {get {return "disconnected_road_travel_time_of_zero";}}
-			public string DefaultTravelTimeOfZeroDbFile {get {return @"gis\db\gis_travel_times.mdb";}}
+			public string DefaultTravelTimeOfZeroDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
 			public string DefaultTravelTimeOfZeroTableName {get {return "travel_time_of_zero";}}
 				
 

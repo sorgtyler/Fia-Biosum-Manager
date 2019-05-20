@@ -939,7 +939,7 @@ namespace FIA_Biosum_Manager
 				//
 				p_frmTherm.Increment(2);
 				p_frmTherm.lblMsg.Text = strDestFile;
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\gis\\db\\gis_travel_times.mdb";
+                strDestFile = this.txtRootDirectory.Text.Trim() + "\\" + Tables.TravelTime.DefaultTravelTimeTableDbFile;
 				p_frmTherm.Increment(2);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
@@ -1401,14 +1401,14 @@ namespace FIA_Biosum_Manager
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
 						"('Travel Times'," + 
 						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\gis\\db'," + 
-						"'gis_travel_times.mdb'," + 
+						"'" + Tables.TravelTime.DefaultTravelTimeAccdbFile + "'," + 
 						"'travel_time');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 
 					strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " + 
 						"('Processing Sites'," + 
-						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\gis\\db'," + 
-						"'gis_travel_times.mdb'," +
+						"'" + this.txtRootDirectory.Text.ToString().Trim() + "\\gis\\db'," +
+                        "'" + Tables.TravelTime.DefaultTravelTimeAccdbFile + "'," + 
 						"'processing_site');";
 					p_ado.SqlNonQuery(p_ado.m_OleDbConnection,strSQL);
 					

@@ -36,7 +36,7 @@ namespace FIA_Biosum_Travel_Times_Generator
             ado_data_access p_ado = new ado_data_access();
 			
 			utils p_utils = new utils();
-			strMDBFile = this.m_frmMain.frmProject.uc_project1.txtRootDirectory.Text + "\\gis\\db\\gis_travel_times.mdb";
+			strMDBFile = this.m_frmMain.frmProject.uc_project1.txtRootDirectory.Text + "\\gis\\db\\gis_travel_times.accdb";
 			strConn=p_ado.getMDBConnString(strMDBFile,"admin","");
 			p_ado.OpenConnection(strConn,ref p_conn);
             p_ado.SqlNonQuery(p_conn,"delete from travel_time");

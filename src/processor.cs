@@ -100,7 +100,7 @@ namespace FIA_Biosum_Manager
             // link gis travel_timetable
             oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
                 frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName,
-                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableDbFile,
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.TravelTime.DefaultTravelTimeTableDbFile,
                 frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName, true);
 
             // link to PRE_FVS_SUMMARY table

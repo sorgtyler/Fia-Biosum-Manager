@@ -1252,6 +1252,8 @@ namespace FIA_Biosum_Manager
             static public string FiaTreeSpeciesReference = "FIA Tree Species Reference";
             static public string HarvestMethods = "Harvest Methods";
             static public string FVSVariant = "FIADB FVS Variant";
+            static public string TravelTimes = "Travel Times";
+            static public string ProcessingSites = "Processing Sites";
         }
 		
 	}
