@@ -5834,10 +5834,12 @@ namespace FIA_Biosum_Manager
                     {
                         oDao.CreateTableLink(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, strTable + "_1",
                             strDirectoryPath + "\\" + strFileName, strTable);
-                        if (!oAdo.TableExist(oCopyConn, strTable + "_1"))
+                        do
                         {
-                            System.Threading.Thread.Sleep(5000);
+                            System.Threading.Thread.Sleep(1000);
                         }
+                        while (!oAdo.TableExist(oCopyConn, strTable + "_1"));
+
                         string strSql = "SELECT * INTO " + strTable + " FROM " + strTable + "_1";
                         oAdo.SqlNonQuery(oCopyConn, strSql);
                         strSql = "DROP TABLE " + strTable + "_1";
@@ -5845,9 +5847,14 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-            oDao.m_DaoWorkspace.Close();
-            oDao = null;
 
+            int intOldAuditTable = oProjectDs.getValidTableNameRow("Plot And Condition Record Audit");
+            string strOldAuditPath = oProjectDs.m_strDataSource[intOldAuditTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+            string strOldAuditStatus = oProjectDs.m_strDataSource[intOldAuditTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+
+            frmMain.g_sbpInfo.Text = "Version Update: Updating data source tables ...Stand by";
+            
             // Main datasource table
             string strDataSourceMdb = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
             oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
@@ -5855,6 +5862,10 @@ namespace FIA_Biosum_Manager
                             "SET file = '" + Tables.TravelTime.DefaultTravelTimeAccdbFile+ "' " +
                             "WHERE TABLE_TYPE IN ('" + Datasource.TableTypes.TravelTimes + "', '" +
                             Datasource.TableTypes.ProcessingSites + "')";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            oAdo.m_strSQL = "DELETE * FROM datasource " +
+                            "WHERE UCASE(FILE) = 'AUDIT.MDB'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             oAdo.m_OleDbConnection.Close();
 
@@ -5875,8 +5886,96 @@ namespace FIA_Biosum_Manager
                             "SET file = '" + Tables.TravelTime.DefaultTravelTimeAccdbFile + "' " +
                             "WHERE TABLE_TYPE IN ('" + Datasource.TableTypes.TravelTimes + "', '" +
                             Datasource.TableTypes.ProcessingSites + "')";
+
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            oAdo.m_strSQL = "DELETE * FROM scenario_datasource " +
+                "WHERE UCASE(FILE) = 'AUDIT.MDB'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             oAdo.m_OleDbConnection.Close();
+
+            frmMain.g_sbpInfo.Text = "Version Update: Delete old audit tables ...Stand by";
+            if (strOldAuditStatus == "F")
+            {
+                string[] arrDbPaths = System.IO.Directory.GetFiles(strOldAuditPath);
+                if (arrDbPaths.Length > 0)
+                {
+                    foreach (string strDbPath in arrDbPaths)
+                    {
+                        string strDbFile = System.IO.Path.GetFileName(strDbPath);
+                        if (strDbFile.IndexOf("audit") > -1)
+                        {
+                            System.IO.File.Delete(strDbPath);
+                        }
+                    }
+                }
+            }
+
+            frmMain.g_sbpInfo.Text = "Version Update: Delete obsolete fields from plot and cond tables ...Stand by";
+
+            int intPlotTable = oProjectDs.getValidTableNameRow(Datasource.TableTypes.Plot);
+            string strPlotDirectory = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            string strPlotMdbFile = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            string strPlotTable = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            string strPlotStatus = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            if (strPlotStatus == "F")
+            {
+                oDao.OpenDb(strPlotDirectory + "\\" + strPlotMdbFile);
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "gis_status_id"))
+                {
+                    string strCommand = "DROP INDEX plot_idx3 ON " + strPlotTable;
+                    oDao.m_DaoDatabase.Execute(strCommand, null);
+                }
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "idb_plot_id"))
+                {
+                    string strCommand = "DROP INDEX plot_idx4 ON " + strPlotTable;
+                    oDao.m_DaoDatabase.Execute(strCommand, null);
+                }
+                string[] arrFieldsToDelete = {"MERCH_HAUL_COST_ID","MERCH_HAUL_COST_PSITE", "MERCH_HAUL_CPA_PT",
+                                              "CHIP_HAUL_COST_ID","CHIP_HAUL_COST_PSITE", "CHIP_HAUL_CPA_PT",
+                                              "gis_status_id","idb_plot_id", "gis_protected_area_yn",
+                                              "gis_roadless_yn","PLOT_ACCESSIBLE_YN", "ALL_COND_NOT_ACCESSIBLE_YN"};
+                oDao.DeleteField(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, arrFieldsToDelete);
+            }
+
+            intPlotTable = oProjectDs.getValidTableNameRow(Datasource.TableTypes.Condition);
+            strPlotDirectory = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+            strPlotMdbFile = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+            strPlotTable = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+            strPlotStatus = oProjectDs.m_strDataSource[intPlotTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            if (strPlotStatus == "F")
+            {
+                oDao.OpenDb(strPlotDirectory + "\\" + strPlotMdbFile);
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "idb_cond_id"))
+                {
+                    string strCommand = "DROP INDEX cond_idx4 ON " + strPlotTable;
+                    oDao.m_DaoDatabase.Execute(strCommand, null);
+                }
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "idb_plot_id"))
+                {
+                    string strCommand = "DROP INDEX cond_idx5 ON " + strPlotTable;
+                    oDao.m_DaoDatabase.Execute(strCommand, null);
+                }
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "fvs_filename"))
+                {
+                    string strCommand = "DROP INDEX cond_idx3 ON " + strPlotTable;
+                    oDao.m_DaoDatabase.Execute(strCommand, null);
+                }
+                string[] arrFieldsToDelete = {"COND_TOO_FAR_STEEP_YN","COND_ACCESSIBLE_YN", "harvest_technique",
+                                              "idb_cond_id","idb_plot_id", "sdi",
+                                              "ccf","topht", "fvs_filename"};
+                oDao.DeleteField(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, arrFieldsToDelete);
+                strDataSourceMdb = strPlotDirectory + "\\" + strPlotMdbFile;
+                oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strPlotTable, "MODEL_YN"))
+                {
+                   oAdo.AddColumn(oAdo.m_OleDbConnection, strPlotTable, "MODEL_YN", "CHAR", "1", "Y");
+                   oAdo.m_strSQL = "UPDATE " + strPlotTable + " SET MODEL_YN = 'Y'";
+                   oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                }
+                oAdo.m_OleDbConnection.Close();
+            }
+
+
 
             if (oDao != null)
             {

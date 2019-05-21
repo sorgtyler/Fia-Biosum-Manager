@@ -1254,6 +1254,8 @@ namespace FIA_Biosum_Manager
             static public string FVSVariant = "FIADB FVS Variant";
             static public string TravelTimes = "Travel Times";
             static public string ProcessingSites = "Processing Sites";
+            static public string Plot = "Plot";
+            static public string Condition = "Condition";
         }
 		
 	}
