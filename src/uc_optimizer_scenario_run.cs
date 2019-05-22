@@ -1089,17 +1089,21 @@ namespace FIA_Biosum_Manager
 		private env m_oEnv;
 		private utils m_oUtils;
 		public string m_strPlotTable;
+        public string m_strPlotPathAndFile;
 		public string m_strRxTable;
         public string m_strRxPackageTable;
 		public string m_strTravelTimeTable;
 		public string m_strCondTable;
+        public string m_strCondPathAndFile;
 		public string m_strFFETable;
 		public string m_strHvstCostsTable;
-		public string m_strPSiteTable;
+		public string m_strPSiteWorkTable;
 		public string m_strTreeVolValBySpcDiamGroupsTable;
         public string m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
 		public string m_strUserDefinedPlotSQL;
 	    public string m_strUserDefinedCondSQL;
+        public string m_strPSiteTable;
+        public string m_strPSitePathAndFile;
 		
 		private string m_strLine;
         private OptimizerScenarioItem.OptimizationVariableItem m_oOptimizationVariable = new OptimizerScenarioItem.OptimizationVariableItem();
@@ -1742,8 +1746,11 @@ namespace FIA_Biosum_Manager
 							this.Best_rx_summary();
 						}
 
+ 
                         if (m_TempMDBFileConn != null) m_ado.CloseConnection(m_TempMDBFileConn);
                         m_TempMDBFileConn = null;
+
+                        this.CreateReferenceResultsTableLinks();
                        
 						if (this.m_intError==0 && ReferenceUserControlScenarioRun.m_bUserCancel==false)
 						{
@@ -2098,11 +2105,7 @@ namespace FIA_Biosum_Manager
             }
 			string[] strTableNames;
 			strTableNames = new string[1];
-			ado_data_access oAdo = new ado_data_access();
-			
-
-		
-			
+			ado_data_access oAdo = new ado_data_access();			
 			oAdo.OpenConnection(oAdo.getMDBConnString(m_strSystemResultsDbPathAndFile,"",""));
 
             strTableNames = oAdo.getTableNames(oAdo.m_OleDbConnection);
@@ -2137,7 +2140,6 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateHaulCostTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName);
 			
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
-
 		}
 		/// <summary>
 		/// Copy the scenario results db file from the scenario?\db directory to the temp directory
@@ -2205,6 +2207,25 @@ namespace FIA_Biosum_Manager
 
 		
 		}
+        /// <summary>
+        /// create links to selected reference tables in the results .accdb
+        /// </summary>
+        private void CreateReferenceResultsTableLinks()
+        {
+            // Create links to relevant tables elsewhere in BioSum project
+            dao_data_access oDao = new dao_data_access();
+            // plot
+            oDao.CreateTableLink(m_strSystemResultsDbPathAndFile, this.m_strPlotTable, this.m_strPlotPathAndFile, this.m_strPlotTable);
+            // cond
+            oDao.CreateTableLink(m_strSystemResultsDbPathAndFile, this.m_strCondTable, this.m_strCondPathAndFile, this.m_strCondTable);
+            // psites
+            oDao.CreateTableLink(m_strSystemResultsDbPathAndFile, this.m_strPSiteTable, this.m_strPSitePathAndFile, this.m_strPSiteTable);
+            if (oDao != null)
+            {
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
+        }
         /// <summary>
         /// create links to the tables located in the validcombo.mdb file
         /// </summary>
@@ -2502,6 +2523,21 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"Plot:" + this.m_strPlotTable + "\r\n");
 
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourcePathAndFile", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strPlotPathAndFile = strValue;
+                }
+            }
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Plot Path and File:" + this.m_strPlotPathAndFile + "\r\n");
+
+
 
 			/**************************************************************
 			 **get the treatment prescriptions table
@@ -2572,11 +2608,54 @@ namespace FIA_Biosum_Manager
             }
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Condition:" + m_strCondTable + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Cond:" + this.m_strCondTable + "\r\n");
 
-			this.m_strPSiteTable = "scenario_psites_work_table";
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourcePathAndFile", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strCondPathAndFile = strValue;
+                }
+            }
+
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites:" + m_strPSiteTable + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Cond Path and File:" + this.m_strCondPathAndFile + "\r\n");
+
+
+            /**************************************************************
+             **get the psites table name and path
+             **************************************************************/
+            arr1 = new string[] { "PROCESSING SITES" };
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strPSiteTable = strValue;
+                }
+            }
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites Table:" + this.m_strPSiteTable + "\r\n");
+
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourcePathAndFile", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strPSitePathAndFile = strValue;
+                }
+            }
+            
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites Path and file:" + m_strPSitePathAndFile + "\r\n");
 
 			this.m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
 
@@ -2973,7 +3052,7 @@ namespace FIA_Biosum_Manager
                 "0 AS rail_cost_dpgt, (transfer_cost+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'M' as materialcd " +
 				"FROM " + this.m_strTravelTimeTable + " t," + 
-				this.m_strPSiteTable + " s " + 
+				this.m_strPSiteWorkTable + " s " + 
 				"WHERE t.psite_id=s.psite_id AND " + 
 				"(s.trancd=1 OR s.trancd =3) AND " +
                 "(s.biocd=3 OR s.biocd=1)  AND t.travel_time > 0;";
@@ -3055,7 +3134,7 @@ namespace FIA_Biosum_Manager
                 "(transfer_cost+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'C' AS materialcd " +
                 "FROM " + this.m_strTravelTimeTable + " t," + 
-				this.m_strPSiteTable + " s " + 
+				this.m_strPSiteWorkTable + " s " + 
 				"WHERE t.psite_id=s.psite_id AND " + 
 				"(s.trancd=1 OR s.trancd=3) AND " +
                 "(s.biocd=3 OR s.biocd=2)  AND t.travel_time > 0;";
@@ -3135,11 +3214,11 @@ namespace FIA_Biosum_Manager
                 "((t.travel_time * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
                 "0 AS complete_haul_cost_dpgt,  'M' AS materialcd " +
                 "FROM " + this.m_strTravelTimeTable + " t  " + 
-				"INNER JOIN  " + this.m_strPSiteTable + " s " + 
+				"INNER JOIN  " + this.m_strPSiteWorkTable + " s " + 
 				"ON t.collector_id = s.psite_id " +
                 "WHERE  s.trancd=3 And (s.biocd=3 Or s.biocd=1)  AND t.travel_time > 0 AND " + 
 				"EXISTS (SELECT ss.psite_id " + 
-				"FROM " + this.m_strPSiteTable + " ss " + 
+				"FROM " + this.m_strPSiteWorkTable + " ss " + 
 				"WHERE t.psite_id=ss.psite_id AND ss.trancd=2 AND (ss.biocd=3 Or ss.biocd=1));";
 
 
@@ -3286,12 +3365,12 @@ namespace FIA_Biosum_Manager
                 "((t.travel_time * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
                 "0 AS complete_haul_cost_dpgt,  'C' AS materialcd " +
                 "FROM " + this.m_strTravelTimeTable + " t  " + 
-				"INNER JOIN  " + this.m_strPSiteTable + " s " + 
+				"INNER JOIN  " + this.m_strPSiteWorkTable + " s " + 
 				"ON t.collector_id = s.psite_id " + 
 				"WHERE s.trancd=3 AND  " +
                 "(s.biocd=3 OR s.biocd=2)  AND t.travel_time > 0 AND " + 
 				"EXISTS (SELECT ss.psite_id " + 
-				"FROM " + this.m_strPSiteTable + " ss " + 
+				"FROM " + this.m_strPSiteWorkTable + " ss " + 
 				"WHERE t.psite_id=ss.psite_id AND ss.trancd=2 AND (ss.biocd=3 Or ss.biocd=2));";
 
 
@@ -6457,7 +6536,8 @@ namespace FIA_Biosum_Manager
                  if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     frmMain.g_oUtils.WriteText(m_strDebugFile,"--Create scenario psites work table from  the scenario_psites table--\r\n");
 				dao_data_access p_dao = new dao_data_access();
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"scenario_psites_work_table",p_dt,true);
+                this.m_strPSiteWorkTable = "scenario_psites_work_table";
+				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,this.m_strPSiteWorkTable,p_dt,true);
 				if (p_dao.m_intError!=0)
 				{
 					p_dt.Dispose();
@@ -6906,7 +6986,7 @@ namespace FIA_Biosum_Manager
 					"p.haul_costs AS sum_haul_costs," + 
 					"p.ti_chg_acres AS sum_ti_chg_acres," + 
 					"p.ci_chg_acres AS sum_ci_chg_acres " + 
-					"FROM max_nr_plots p," + this.m_strPSiteTable.Trim() + " s;";
+					"FROM max_nr_plots p," + this.m_strPSiteWorkTable.Trim() + " s;";
 
 				/****************************************************************
 				 **get the table structure that results from executing the sql

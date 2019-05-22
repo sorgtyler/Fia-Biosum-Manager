@@ -1438,6 +1438,28 @@ namespace FIA_Biosum_Manager
 			}
 			return "";
 		}
+        /********************************************************
+        ** return the database path, including database name, associated with the table type
+        ********************************************************/
+        public string getDataSourcePathAndFile(string pcTableId)
+        {
+            int x;
+            for (x = 0; x <= this.lstRequiredTables.Items.Count - 1; x++)
+            {
+                if (pcTableId.Trim().ToUpper() ==
+                    this.lstRequiredTables.Items[x].SubItems[TABLETYPE].Text.Trim().ToUpper()
+                    &&
+                    this.lstRequiredTables.Items[x].SubItems[FILESTATUS].Text.Trim().ToUpper() == "FOUND"
+                    &&
+                    this.lstRequiredTables.Items[x].SubItems[TABLESTATUS].Text.Trim().ToUpper() == "FOUND")
+                {
+                    string strPathAndFile = this.lstRequiredTables.Items[x].SubItems[PATH].Text.Trim() + "\\" +
+                        this.lstRequiredTables.Items[x].SubItems[MDBFILE].Text.Trim();
+                    return strPathAndFile;
+                }
+            }
+            return "";
+        }
 		public int val_datasources()
 		{
 			
