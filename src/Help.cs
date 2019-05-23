@@ -36,6 +36,7 @@ namespace FIA_Biosum_Manager
         static public string DefaultProcessorXPSFile { get { return "PROCESSOR_Help.xps"; } }
         static public string DefaultFvsXPSFile { get { return "FVS_Help.xps"; } }
         static public string DefaultTreatmentOptimizerFile { get { return "TREATMENT_OPTIMIZER_Help.xps"; } }
+        static public string DefaultMainFile { get { return "MAIN_Help.xps"; } }
 
         
         //call default constructor after initializing variables

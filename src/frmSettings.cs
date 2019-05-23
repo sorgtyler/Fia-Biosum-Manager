@@ -36,6 +36,19 @@ namespace FIA_Biosum_Manager
         private CheckBox chkScenarioProcessorForm;
         private CheckBox chkFVSOutputForm;
         private CheckBox chkFVSInputForm;
+        private GroupBox grpOpcost;
+        private Label lblRScriptDir;
+        private Label lblOpcostDir;
+        private Button btnRdir;
+        private TextBox txtRdir;
+        private Button btnOpcost;
+        private TextBox txtOpcost;
+        private env m_oEnv;
+        private Help m_oHelp;
+        private string m_xpsFile = Help.DefaultMainFile;
+        private Button btnSave;
+        private Button btnHelp;
+
 		
 
 		/// <summary>
@@ -77,7 +90,23 @@ namespace FIA_Biosum_Manager
             chkFVSOutputForm.Checked = frmMain.g_bSuppressFVSOutputTableRowCount;
             chkScenarioProcessorForm.Checked = frmMain.g_bSuppressProcessorScenarioTableRowCount;
 
-            
+            //
+            //OPCOST SETTINGS
+            //
+            if (frmMain.g_strOPCOSTDirectory.Trim().Length == 0)
+            {
+                txtOpcost.Text = frmSettings.GetDefaultOpcostPath();
+            }
+            else
+            {
+                if (System.IO.File.Exists(frmMain.g_strOPCOSTDirectory) == true)
+                    txtOpcost.Text = frmMain.g_strOPCOSTDirectory;
+            }
+
+            if (frmMain.g_strRDirectory.Trim().Length > 0 &&
+                System.IO.File.Exists(frmMain.g_strRDirectory) == true) txtRdir.Text = frmMain.g_strRDirectory;
+
+            this.m_oEnv = new env();
 
 
 			//
@@ -126,16 +155,26 @@ namespace FIA_Biosum_Manager
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.grpDebug = new System.Windows.Forms.GroupBox();
-            this.chkDebug = new System.Windows.Forms.CheckBox();
-            this.cmbDebug = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.cmbDebug = new System.Windows.Forms.ComboBox();
+            this.chkDebug = new System.Windows.Forms.CheckBox();
             this.grpTableRecordCounts = new System.Windows.Forms.GroupBox();
-            this.chkFVSInputForm = new System.Windows.Forms.CheckBox();
-            this.chkFVSOutputForm = new System.Windows.Forms.CheckBox();
             this.chkScenarioProcessorForm = new System.Windows.Forms.CheckBox();
+            this.chkFVSOutputForm = new System.Windows.Forms.CheckBox();
+            this.chkFVSInputForm = new System.Windows.Forms.CheckBox();
+            this.grpOpcost = new System.Windows.Forms.GroupBox();
+            this.btnOpcost = new System.Windows.Forms.Button();
+            this.txtOpcost = new System.Windows.Forms.TextBox();
+            this.lblOpcostDir = new System.Windows.Forms.Label();
+            this.btnRdir = new System.Windows.Forms.Button();
+            this.txtRdir = new System.Windows.Forms.TextBox();
+            this.lblRScriptDir = new System.Windows.Forms.Label();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.grpGrids.SuspendLayout();
             this.grpDebug.SuspendLayout();
             this.grpTableRecordCounts.SuspendLayout();
+            this.grpOpcost.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpGrids
@@ -293,7 +332,7 @@ namespace FIA_Biosum_Manager
             this.btnOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnOK.Location = new System.Drawing.Point(12, 12);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(144, 56);
+            this.btnOK.Size = new System.Drawing.Size(100, 56);
             this.btnOK.TabIndex = 1;
             this.btnOK.Text = "OK";
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -301,9 +340,9 @@ namespace FIA_Biosum_Manager
             // btnCancel
             // 
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(162, 12);
+            this.btnCancel.Location = new System.Drawing.Point(123, 12);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(144, 56);
+            this.btnCancel.Size = new System.Drawing.Size(100, 56);
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -320,15 +359,14 @@ namespace FIA_Biosum_Manager
             this.grpDebug.TabStop = false;
             this.grpDebug.Text = "Debug";
             // 
-            // chkDebug
+            // label1
             // 
-            this.chkDebug.AutoSize = true;
-            this.chkDebug.Location = new System.Drawing.Point(16, 21);
-            this.chkDebug.Name = "chkDebug";
-            this.chkDebug.Size = new System.Drawing.Size(65, 17);
-            this.chkDebug.TabIndex = 4;
-            this.chkDebug.Text = "Turn On";
-            this.chkDebug.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(86, 23);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(33, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Level";
             // 
             // cmbDebug
             // 
@@ -343,14 +381,15 @@ namespace FIA_Biosum_Manager
             this.cmbDebug.TabIndex = 4;
             this.cmbDebug.Text = "3 - Maximum";
             // 
-            // label1
+            // chkDebug
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(86, 23);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(33, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Level";
+            this.chkDebug.AutoSize = true;
+            this.chkDebug.Location = new System.Drawing.Point(16, 21);
+            this.chkDebug.Name = "chkDebug";
+            this.chkDebug.Size = new System.Drawing.Size(65, 17);
+            this.chkDebug.TabIndex = 4;
+            this.chkDebug.Text = "Turn On";
+            this.chkDebug.UseVisualStyleBackColor = true;
             // 
             // grpTableRecordCounts
             // 
@@ -364,15 +403,15 @@ namespace FIA_Biosum_Manager
             this.grpTableRecordCounts.TabStop = false;
             this.grpTableRecordCounts.Text = "Suppress Table Record Counts";
             // 
-            // chkFVSInputForm
+            // chkScenarioProcessorForm
             // 
-            this.chkFVSInputForm.AutoSize = true;
-            this.chkFVSInputForm.Location = new System.Drawing.Point(9, 19);
-            this.chkFVSInputForm.Name = "chkFVSInputForm";
-            this.chkFVSInputForm.Size = new System.Drawing.Size(99, 17);
-            this.chkFVSInputForm.TabIndex = 4;
-            this.chkFVSInputForm.Text = "FVS Input Form";
-            this.chkFVSInputForm.UseVisualStyleBackColor = true;
+            this.chkScenarioProcessorForm.AutoSize = true;
+            this.chkScenarioProcessorForm.Location = new System.Drawing.Point(227, 19);
+            this.chkScenarioProcessorForm.Name = "chkScenarioProcessorForm";
+            this.chkScenarioProcessorForm.Size = new System.Drawing.Size(144, 17);
+            this.chkScenarioProcessorForm.TabIndex = 6;
+            this.chkScenarioProcessorForm.Text = "Processor Scenario Form";
+            this.chkScenarioProcessorForm.UseVisualStyleBackColor = true;
             // 
             // chkFVSOutputForm
             // 
@@ -384,21 +423,117 @@ namespace FIA_Biosum_Manager
             this.chkFVSOutputForm.Text = "FVS Output Form";
             this.chkFVSOutputForm.UseVisualStyleBackColor = true;
             // 
-            // chkScenarioProcessorForm
+            // chkFVSInputForm
             // 
-            this.chkScenarioProcessorForm.AutoSize = true;
-            this.chkScenarioProcessorForm.Location = new System.Drawing.Point(227, 19);
-            this.chkScenarioProcessorForm.Name = "chkScenarioProcessorForm";
-            this.chkScenarioProcessorForm.Size = new System.Drawing.Size(144, 17);
-            this.chkScenarioProcessorForm.TabIndex = 6;
-            this.chkScenarioProcessorForm.Text = "Processor Scenario Form";
-            this.chkScenarioProcessorForm.UseVisualStyleBackColor = true;
+            this.chkFVSInputForm.AutoSize = true;
+            this.chkFVSInputForm.Location = new System.Drawing.Point(9, 19);
+            this.chkFVSInputForm.Name = "chkFVSInputForm";
+            this.chkFVSInputForm.Size = new System.Drawing.Size(99, 17);
+            this.chkFVSInputForm.TabIndex = 4;
+            this.chkFVSInputForm.Text = "FVS Input Form";
+            this.chkFVSInputForm.UseVisualStyleBackColor = true;
+            // 
+            // grpOpcost
+            // 
+            this.grpOpcost.Controls.Add(this.btnOpcost);
+            this.grpOpcost.Controls.Add(this.txtOpcost);
+            this.grpOpcost.Controls.Add(this.lblOpcostDir);
+            this.grpOpcost.Controls.Add(this.btnRdir);
+            this.grpOpcost.Controls.Add(this.txtRdir);
+            this.grpOpcost.Controls.Add(this.lblRScriptDir);
+            this.grpOpcost.Location = new System.Drawing.Point(12, 328);
+            this.grpOpcost.Name = "grpOpcost";
+            this.grpOpcost.Size = new System.Drawing.Size(736, 127);
+            this.grpOpcost.TabIndex = 5;
+            this.grpOpcost.TabStop = false;
+            this.grpOpcost.Text = "OPCOST";
+            // 
+            // btnOpcost
+            // 
+            this.btnOpcost.Image = ((System.Drawing.Image)(resources.GetObject("btnOpcost.Image")));
+            this.btnOpcost.Location = new System.Drawing.Point(568, 86);
+            this.btnOpcost.Name = "btnOpcost";
+            this.btnOpcost.Size = new System.Drawing.Size(32, 32);
+            this.btnOpcost.TabIndex = 36;
+            this.btnOpcost.Click += new System.EventHandler(this.btnOpcost_Click);
+            // 
+            // txtOpcost
+            // 
+            this.txtOpcost.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOpcost.Location = new System.Drawing.Point(13, 88);
+            this.txtOpcost.Name = "txtOpcost";
+            this.txtOpcost.Size = new System.Drawing.Size(549, 22);
+            this.txtOpcost.TabIndex = 35;
+            this.txtOpcost.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtOpcost_KeyDown);
+            this.txtOpcost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtOpcost_KeyPress);
+            // 
+            // lblOpcostDir
+            // 
+            this.lblOpcostDir.AutoSize = true;
+            this.lblOpcostDir.Location = new System.Drawing.Point(11, 71);
+            this.lblOpcostDir.Name = "lblOpcostDir";
+            this.lblOpcostDir.Size = new System.Drawing.Size(206, 13);
+            this.lblOpcostDir.TabIndex = 34;
+            this.lblOpcostDir.Text = "Directory path of the OPCOST.R file name";
+            // 
+            // btnRdir
+            // 
+            this.btnRdir.Image = ((System.Drawing.Image)(resources.GetObject("btnRdir.Image")));
+            this.btnRdir.Location = new System.Drawing.Point(568, 32);
+            this.btnRdir.Name = "btnRdir";
+            this.btnRdir.Size = new System.Drawing.Size(32, 32);
+            this.btnRdir.TabIndex = 33;
+            this.btnRdir.Click += new System.EventHandler(this.btnRdir_Click);
+            // 
+            // txtRdir
+            // 
+            this.txtRdir.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtRdir.Location = new System.Drawing.Point(13, 34);
+            this.txtRdir.Name = "txtRdir";
+            this.txtRdir.Size = new System.Drawing.Size(549, 22);
+            this.txtRdir.TabIndex = 32;
+            this.txtRdir.Enter += new System.EventHandler(this.txtRdir_Enter);
+            this.txtRdir.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtRdir_KeyDown);
+            this.txtRdir.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtRdir_KeyPress);
+            // 
+            // lblRScriptDir
+            // 
+            this.lblRScriptDir.AutoSize = true;
+            this.lblRScriptDir.Location = new System.Drawing.Point(11, 16);
+            this.lblRScriptDir.Name = "lblRScriptDir";
+            this.lblRScriptDir.Size = new System.Drawing.Size(230, 13);
+            this.lblRScriptDir.TabIndex = 31;
+            this.lblRScriptDir.Text = "Directory path of the (i386) RScript.exe location";
+            // 
+            // btnSave
+            // 
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSave.Location = new System.Drawing.Point(234, 12);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(100, 56);
+            this.btnSave.TabIndex = 6;
+            this.btnSave.Text = "Save";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnHelp.Location = new System.Drawing.Point(648, 12);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(100, 56);
+            this.btnHelp.TabIndex = 7;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // frmSettings
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(784, 336);
+            this.ClientSize = new System.Drawing.Size(784, 485);
+            this.Controls.Add(this.btnHelp);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.grpOpcost);
             this.Controls.Add(this.grpTableRecordCounts);
             this.Controls.Add(this.grpDebug);
             this.Controls.Add(this.btnCancel);
@@ -406,12 +541,13 @@ namespace FIA_Biosum_Manager
             this.Controls.Add(this.grpGrids);
             this.Name = "frmSettings";
             this.Text = "Settings";
-            this.Load += new System.EventHandler(this.frmSettings_Load);
             this.grpGrids.ResumeLayout(false);
             this.grpDebug.ResumeLayout(false);
             this.grpDebug.PerformLayout();
             this.grpTableRecordCounts.ResumeLayout(false);
             this.grpTableRecordCounts.PerformLayout();
+            this.grpOpcost.ResumeLayout(false);
+            this.grpOpcost.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -419,15 +555,23 @@ namespace FIA_Biosum_Manager
 
 		private void btnOK_Click(object sender, System.EventArgs e)
 		{
-            //
+            if (saveValuesToMemory() >= 0)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+		}
+
+        private int saveValuesToMemory()
+        {
             //GRIDVIEW
             //
-			frmMain.g_oGridViewAlternateRowBackgroundColor = this.lblGridAlternateRowBackgroundColor.BackColor;
-			frmMain.g_oGridViewRowBackgroundColor = this.lblGridRowBackgroundColor.BackColor;
-			frmMain.g_oGridViewBackgroundColor=this.lblGridBackgroundColor.BackColor;
-			frmMain.g_oGridViewFont = this.lblGridFont.Font;
-			frmMain.g_oGridViewRowForegroundColor = this.lblGridRowForegroundColor.BackColor;
-			frmMain.g_oGridViewSelectedRowBackgroundColor = this.lblGridSelectedRowBackgroundColor.BackColor;
+            frmMain.g_oGridViewAlternateRowBackgroundColor = this.lblGridAlternateRowBackgroundColor.BackColor;
+            frmMain.g_oGridViewRowBackgroundColor = this.lblGridRowBackgroundColor.BackColor;
+            frmMain.g_oGridViewBackgroundColor = this.lblGridBackgroundColor.BackColor;
+            frmMain.g_oGridViewFont = this.lblGridFont.Font;
+            frmMain.g_oGridViewRowForegroundColor = this.lblGridRowForegroundColor.BackColor;
+            frmMain.g_oGridViewSelectedRowBackgroundColor = this.lblGridSelectedRowBackgroundColor.BackColor;
             //
             //DEBUG
             //
@@ -444,10 +588,18 @@ namespace FIA_Biosum_Manager
             frmMain.g_bSuppressFVSInputTableRowCount = chkFVSInputForm.Checked;
             frmMain.g_bSuppressFVSOutputTableRowCount = chkFVSOutputForm.Checked;
             frmMain.g_bSuppressProcessorScenarioTableRowCount = chkScenarioProcessorForm.Checked;
-			this.DialogResult=DialogResult.OK;
-			this.Close();
-
-		}
+            //
+            //OPCOST SETTINGS
+            //
+            int intSuccess = val_data();
+            if (intSuccess < 0)
+            {
+                return intSuccess;
+            }
+            frmMain.g_strOPCOSTDirectory = txtOpcost.Text.Trim();
+            frmMain.g_strRDirectory = txtRdir.Text.Trim();
+            return 0;
+        }
 
 		private void btnGridFont_Click(object sender, System.EventArgs e)
 		{
@@ -528,11 +680,119 @@ namespace FIA_Biosum_Manager
 		
 		}
 
-        private void frmSettings_Load(object sender, EventArgs e)
+        private void btnRdir_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog oDialog = new OpenFileDialog();
+            oDialog.Title = "32-bit version of RScript.exe File";
+            oDialog.Filter = "RScript File (RScript.EXE) |RScript.EXE";
+            DialogResult result = oDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                txtRdir.Text = oDialog.FileName;
+            }
+        }
+
+        private void btnOpcost_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog oDialog = new OpenFileDialog();
+            oDialog.Title = "OPCOST R File";
+            oDialog.Filter = "OPCOST File (*.R) |*.r";
+            DialogResult result = oDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                this.txtOpcost.Text = oDialog.FileName;
+            }
+        }
+
+        private void txtRdir_Enter(object sender, EventArgs e)
         {
 
         }
+        private void txtRdir_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete) e.SuppressKeyPress = true;
 
-		
+        }
+        private void txtRdir_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+            e.Handled = true;
+        }
+        private void txtOpcost_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+            e.Handled = true;
+        }
+        private void txtOpcost_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete) e.SuppressKeyPress = true;
+        }
+
+        private int val_data()
+        {
+            if (txtRdir.Text.Trim().Length == 0)
+            {
+                MessageBox.Show("Specify RScript.EXE file", "FIA Biosum");
+                return -1;
+            }
+            if (txtOpcost.Text.Trim().Length == 0)
+            {
+                MessageBox.Show("Specify OPCOST R file", "FIA Biosum");
+                return -1;
+            }
+
+            if (System.IO.File.Exists(txtRdir.Text) == false)
+            {
+                MessageBox.Show("Specified RScript.EXE file not found", "FIA Biosum");
+                return -1;
+            }
+
+            if (System.IO.File.Exists(txtOpcost.Text) == false)
+            {
+                MessageBox.Show("Specified OPCOST R file not found", "FIA Biosum");
+                return -1;
+            }
+            return 0;
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (this.saveValuesToMemory() >= 0)
+            {
+                frmMain.SaveSettings();
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+        }
+
+        public static string GetDefaultOpcostPath()
+        {
+            string strReturnPath = null;
+            string strDefaultOpcostDir = frmMain.g_oEnv.strAppDir.Trim() + "\\OPCOST";
+            if (System.IO.Directory.Exists(strDefaultOpcostDir))
+            {
+                string[] arrAllFiles = System.IO.Directory.GetFiles(strDefaultOpcostDir);
+                foreach (string strFullPath in arrAllFiles)
+                {
+                    string strExtension = System.IO.Path.GetExtension(strFullPath);
+                    if (strExtension != null && strExtension.ToUpper().Equals(".R"))
+                    {
+                        strReturnPath = strDefaultOpcostDir + "\\" + System.IO.Path.GetFileName(strFullPath);
+                        break;
+                    }
+                }
+
+            }
+            return strReturnPath;
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            if (m_oHelp == null)
+            {
+                m_oHelp = new Help(m_xpsFile, m_oEnv);
+            }
+            m_oHelp.ShowHelp(new string[] { "MAIN", "DEBUG" });
+        }
 	}
 }

@@ -111,7 +111,6 @@ namespace FIA_Biosum_Manager
         //public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpcGrps;
         public FIA_Biosum_Manager.btnMainForm m_btnProcessorTreeSpc;
 		//public FIA_Biosum_Manager.btnMainForm m_btnProcessorFrcs;
-        public FIA_Biosum_Manager.btnMainForm m_btnProcessorOpcost;
 
 		
 
@@ -185,6 +184,10 @@ namespace FIA_Biosum_Manager
         public static bool g_bSuppressFVSInputTableRowCount = false;
         public static bool g_bSuppressFVSOutputTableRowCount = false;
         public static bool g_bSuppressProcessorScenarioTableRowCount = false;
+
+        //OPCOST settings
+        public static string g_strRDirectory = "";
+        public static string g_strOPCOSTDirectory = "";
 
 		//substitution macro variable
 		public static FIA_Biosum_Manager.SQLMacroSubstitutionVariable_Collection g_oSQLMacroSubstitutionVariable_Collection= new SQLMacroSubstitutionVariable_Collection();
@@ -1131,10 +1134,10 @@ namespace FIA_Biosum_Manager
                                 switch (strSettingsArray[0].Trim())
                                 {
                                     case "RFile":
-                                        uc_processor_opcost_settings.g_strRDirectory = strSettingsArray[1].Trim();
+                                        frmMain.g_strRDirectory = strSettingsArray[1].Trim();
                                         break;
                                     case "OPCOSTFile":
-                                        uc_processor_opcost_settings.g_strOPCOSTDirectory = strSettingsArray[1].Trim();
+                                        frmMain.g_strOPCOSTDirectory = strSettingsArray[1].Trim();
                                         break;
                                  
                                 }
@@ -1971,210 +1974,13 @@ namespace FIA_Biosum_Manager
 			{
 				switch (strText.Trim().ToUpper())
 				{
-                    //case "TREE DIAMETER GROUPS":
-                    //    //check to see if the form has already been loaded
-                    //    if (this.IsChildWindowVisible("Processor: Tree Diameter Groups") == false) 
-                    //    {
-                    //        frmMain.g_sbpInfo.Text = "Loading Tree Diameter Groups...Stand By";
-                    //        this.m_frmTreeDiam = new frmDialog(this);
-                    //        this.m_frmTreeDiam.MaximizeBox = false;
-                    //        this.m_frmTreeDiam.BackColor = System.Drawing.SystemColors.Control;
-                    //        this.m_frmTreeDiam.Text = "Processor: Tree Diameter Groups";
-                    //        this.m_frmTreeDiam.MdiParent = this;
-                    //        this.m_frmTreeDiam.Initialize_Plot_Tree_Diam_User_Control();
-
-
-                    //        this.m_frmTreeDiam.Height=0;
-                    //        this.m_frmTreeDiam.Width=0;
-                    //        if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height > this.m_frmTreeDiam.ClientSize.Height + 2)
-                    //        {
-                    //            for (int x=1;;x++)
-                    //            {
-                    //                this.m_frmTreeDiam.Height = x;
-                    //                if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Top + 
-                    //                    this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Height < 
-                    //                    this.m_frmTreeDiam.ClientSize.Height)
-                    //                {
-                    //                    break;
-                    //                }
-                    //            }
-
-                    //        }
-                    //        if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width > this.m_frmTreeDiam.ClientSize.Width + 2)
-                    //        {
-                    //            for (int x=1;;x++)
-                    //            {
-                    //                this.m_frmTreeDiam.Width = x;
-                    //                if (this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Left + 
-                    //                    this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.Width < 
-                    //                    this.m_frmTreeDiam.ClientSize.Width)
-                    //                {
-                    //                    break;
-                    //                }
-                    //            }
-
-                    //        }
-							
-
-                    //        this.m_frmTreeDiam.uc_processor_scenario_tree_diam_groups_list1.loadvalues();		
-                    //        frmMain.g_sbpInfo.Text = "Ready";
-                    //        this.m_frmTreeDiam.Show();
-
-                    //        this.m_frmTreeDiam.Left = 0;
-                    //        this.m_frmTreeDiam.Top = 0;
-                    //        this.m_frmTreeDiam.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-                    //    }
-                    //    else
-                    //    {
-                    //        if (this.m_frmTreeDiam.WindowState == System.Windows.Forms.FormWindowState.Minimized)
-                    //            this.m_frmTreeDiam.WindowState = System.Windows.Forms.FormWindowState.Normal;
-
-                    //        this.m_frmTreeDiam.Focus();
-					
-                    //    }
-                    //    break;
 					case "TREE SPECIES":
 						this.LoadProcessorTreeSpcForm(this,"Processor");
 						break;
-                    //case "TREE SPECIES GROUPS":
-                    //    //check to see if the form has already been loaded
-                    //    if (this.IsChildWindowVisible("Processor: Tree Species Groups") == false) 
-                    //    {
-                    //        ActivateStandByAnimation(this.WindowState,
-                    //            this.Left, this.Height, this.Width, this.Top);
-                    //        frmMain.g_sbpInfo.Text = "Loading Tree Species Groups...Stand By";
-                    //        this.m_frmSpcGrp = new frmDialog(this);
-                    //        this.m_frmSpcGrp.MaximizeBox = false;
-                    //        this.m_frmSpcGrp.BackColor = System.Drawing.SystemColors.Control;
-                    //        this.m_frmSpcGrp.Text = "Processor: Tree Species Groups";
-                    //        this.m_frmSpcGrp.MdiParent = this;
-                    //        FIA_Biosum_Manager.uc_processor_scenario_tree_spc_groups p_uc = new uc_processor_scenario_tree_spc_groups();
-                    //        if (p_uc.m_intError < 0) 
-                    //        {
-                    //            this.DeactivateStandByAnimation();
-                    //            this.m_frmSpcGrp.Dispose();
-                    //            return;
-                    //        }
-                    //        this.m_frmSpcGrp.Controls.Add(p_uc);
-                    //        this.m_frmSpcGrp.uc_processor_scenario_tree_spc_groups1 = p_uc;
-                    //        this.m_frmSpcGrp.Height=0;
-                    //        this.m_frmSpcGrp.Width=0;
-                    //        if (p_uc.Top + p_uc.Height > this.m_frmSpcGrp.ClientSize.Height + 2)
-                    //        {
-                    //            for (int x=1;;x++)
-                    //            {
-                    //                this.m_frmSpcGrp.Height = x;
-                    //                if (p_uc.Top + 
-                    //                    p_uc.Height < 
-                    //                    this.m_frmSpcGrp.ClientSize.Height)
-                    //                {
-                    //                    break;
-                    //                }
-                    //            }
 
-                    //        }
-                    //        if (p_uc.Left + p_uc.Width > this.m_frmSpcGrp.ClientSize.Width + 2)
-                    //        {
-                    //            for (int x=1;;x++)
-                    //            {
-                    //                this.m_frmSpcGrp.Width = x;
-                    //                if (p_uc.Left + 
-                    //                    p_uc.Width < 
-                    //                    this.m_frmSpcGrp.ClientSize.Width)
-                    //                {
-                    //                    break;
-                    //                }
-                    //            }
-
-                    //        }
-							
-
-                    //        p_uc.loadvalues();	
-                    //        this.m_frmSpcGrp.DisposeOfFormWhenClosing = true;
-                    //        this.m_frmSpcGrp.Left = 0;
-                    //        this.m_frmSpcGrp.Top = 0;
-                    //        this.m_frmSpcGrp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-                    //        frmMain.g_sbpInfo.Text = "Ready";
-                    //        DeactivateStandByAnimation();
-                    //        this.m_frmSpcGrp.Show();
-                    //    }
-                    //    else
-                    //    {
-                    //        if (this.m_frmSpcGrp.WindowState == System.Windows.Forms.FormWindowState.Minimized)
-                    //            this.m_frmSpcGrp.WindowState = System.Windows.Forms.FormWindowState.Normal;
-
-                    //        this.m_frmSpcGrp.Focus();
-					
-                    //    }
-                    //    break;
-					case "START FRCS":
-						//write project directory to the fiabiosum_project_path.txt file
-						System.Diagnostics.Process proc = new System.Diagnostics.Process();
-						proc.StartInfo.UseShellExecute = true;
-						try
-						{
-							proc.StartInfo.FileName = this.frmProject.uc_project1.txtRootDirectory.Text.Trim()  + "\\processor\\db\\frcs.xls";
-						}
-						catch
-						{
-						}
-						try
-						{
-							proc.Start();
-						}
-						catch (Exception caught)
-						{
-							MessageBox.Show(caught.Message);
-						}
-						proc.Dispose();
-						proc = null;
-						break;
-					
-                    case "OPCOST":
-                        frmDialog oDialog = new frmDialog();
-                        oDialog.Ininialize_Processor_OPCOST_Settings_User_Control();
-                        DialogResult result = oDialog.ShowDialog();
-                        if (result == DialogResult.OK)
-                        {
-
-                        }
-                        oDialog = null;
-                        break;
 					case "START BIOSUM PROCESSOR":
                         StartBiosumProcessorDialog();
 						break; 
-					case "START BIOSUM PROCESSOR OLD":
-						//write project directory to the fiabiosum_project_path.txt file
-									
-						System.IO.FileStream p_txtFileStream;
-						System.IO.StreamWriter p_txtStreamWriter;
-						p_txtFileStream = new System.IO.FileStream(this.m_oEnv.strTempDir.Trim() + "\\fiabiosum_project_path.txt", System.IO.FileMode.Create, 
-								System.IO.FileAccess.Write);
-						p_txtStreamWriter = new System.IO.StreamWriter(p_txtFileStream);
-						p_txtStreamWriter.WriteLine(this.frmProject.uc_project1.txtRootDirectory.Text.ToString().Trim());
-						p_txtStreamWriter.Close();
-						p_txtFileStream.Close();
-						
-						System.Diagnostics.Process proc2 = new System.Diagnostics.Process();
-						proc2.StartInfo.UseShellExecute = true;
-    					try
-						{
-							proc2.StartInfo.FileName = this.frmProject.uc_project1.txtRootDirectory.Text.Trim()  + "\\processor\\db\\biosum_processor.mdb";
-						}
-						catch
-						{
-						}
-						try
-						{
-							proc2.Start();
-						}
-						catch (Exception caught)
-						{
-							MessageBox.Show(caught.Message);
-						}
-						proc2.Dispose();
-						proc2 = null;
-	     			    break;
 					default:
 						break;
 												
@@ -3335,84 +3141,8 @@ namespace FIA_Biosum_Manager
 		private void frmMain_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 
-			
-
-			
-
-			//save settings file
-			if (!System.IO.Directory.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum"))
-				System.IO.Directory.CreateDirectory(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum");
-
-			if (System.IO.File.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg"))
-					System.IO.File.Delete(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg");
-			//
-            //GRIDVIEW 
-            //
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","[GRIDVIEW]\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","BackgroundColor_A=" + frmMain.g_oGridViewBackgroundColor.A.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","BackgroundColor_R=" + frmMain.g_oGridViewBackgroundColor.R.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","BackgroundColor_G=" + frmMain.g_oGridViewBackgroundColor.G.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","BackgroundColor_B=" + frmMain.g_oGridViewBackgroundColor.B.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowBackgroundColor_A=" + frmMain.g_oGridViewRowBackgroundColor.A.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowBackgroundColor_R=" + frmMain.g_oGridViewRowBackgroundColor.R.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowBackgroundColor_G=" + frmMain.g_oGridViewRowBackgroundColor.G.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowBackgroundColor_B=" + frmMain.g_oGridViewRowBackgroundColor.B.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowForegroundColor_A=" + frmMain.g_oGridViewRowForegroundColor.A.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowForegroundColor_R=" + frmMain.g_oGridViewRowForegroundColor.R.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowForegroundColor_G=" + frmMain.g_oGridViewRowForegroundColor.G.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","RowForegroundColor_B=" + frmMain.g_oGridViewRowForegroundColor.B.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","AlternatingRowBackgroundColor_A=" + frmMain.g_oGridViewAlternateRowBackgroundColor.A.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","AlternatingRowBackgroundColor_R=" + frmMain.g_oGridViewAlternateRowBackgroundColor.R.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","AlternatingRowBackgroundColor_G=" + frmMain.g_oGridViewAlternateRowBackgroundColor.G.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","AlternatingRowBackgroundColor_B=" + frmMain.g_oGridViewAlternateRowBackgroundColor.B.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","SelectedRowBackgroundColor_A=" + frmMain.g_oGridViewSelectedRowBackgroundColor.A.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","SelectedRowBackgroundColor_R=" + frmMain.g_oGridViewSelectedRowBackgroundColor.R.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","SelectedRowBackgroundColor_G=" + frmMain.g_oGridViewSelectedRowBackgroundColor.G.ToString().Trim() + "\r\n");
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","SelectedRowBackgroundColor_B=" + frmMain.g_oGridViewSelectedRowBackgroundColor.B.ToString().Trim() + "\r\n");
-
-
-			if (frmMain.g_oGridViewFont != null)
-			{
-				frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","FontName=" + frmMain.g_oGridViewFont.Name.Trim() + "\r\n");
-				frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","FontSize=" + Convert.ToInt16(frmMain.g_oGridViewFont.Size).ToString().Trim() + "\r\n");
-				frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","FontStyle=" + Convert.ToInt16(frmMain.g_oGridViewFont.Style).ToString().Trim() + "\r\n");
-			}
-            //
-            //DEBUG
-            //
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "\r\n");
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "[DEBUG]\r\n");
-            if (frmMain.g_bDebug) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "Debug=Y\r\n");
-            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "Debug=N\r\n");
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "Level=" + frmMain.g_intDebugLevel.ToString().Trim() + "\r\n");
-            //
-            //SUPPRESS TABLE RECORD COUNTS
-            //
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "\r\n");
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "[SUPPRESS TABLE RECORD COUNTS]\r\n");
-            if (frmMain.g_bSuppressFVSInputTableRowCount) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSInputForm=Y\r\n");
-            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSInputForm=N\r\n");
-            if (frmMain.g_bSuppressFVSOutputTableRowCount) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSOutputForm=Y\r\n");
-            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSOutputForm=N\r\n");
-            if (frmMain.g_bSuppressProcessorScenarioTableRowCount) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "ProcessorScenarioForm=Y\r\n");
-            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "ProcessorScenarioForm=N\r\n");
-            //
-            //OPCOST
-            //
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "\r\n");
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "[OPCOST]\r\n");
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RFile=" + uc_processor_opcost_settings.g_strRDirectory + "\r\n");
-            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "OPCOSTFile=" + uc_processor_opcost_settings.g_strOPCOSTDirectory + "\r\n");
-           
-
-
-
-			frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg","END");
-
-			
+            frmMain.SaveSettings();
 			this.SaveAll(true);
-
-			
 
 			//delete any temporary files
 			string[] strFiles = new string[100];
@@ -3461,7 +3191,77 @@ namespace FIA_Biosum_Manager
 
 
 		}
-		private void SaveAll(bool p_bPrompt)
+		
+        public static void SaveSettings()
+        {
+            //save settings file
+            if (!System.IO.Directory.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum"))
+                System.IO.Directory.CreateDirectory(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum");
+
+            if (System.IO.File.Exists(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg"))
+                System.IO.File.Delete(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg");
+            //
+            //GRIDVIEW 
+            //
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "[GRIDVIEW]\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "BackgroundColor_A=" + frmMain.g_oGridViewBackgroundColor.A.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "BackgroundColor_R=" + frmMain.g_oGridViewBackgroundColor.R.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "BackgroundColor_G=" + frmMain.g_oGridViewBackgroundColor.G.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "BackgroundColor_B=" + frmMain.g_oGridViewBackgroundColor.B.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowBackgroundColor_A=" + frmMain.g_oGridViewRowBackgroundColor.A.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowBackgroundColor_R=" + frmMain.g_oGridViewRowBackgroundColor.R.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowBackgroundColor_G=" + frmMain.g_oGridViewRowBackgroundColor.G.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowBackgroundColor_B=" + frmMain.g_oGridViewRowBackgroundColor.B.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowForegroundColor_A=" + frmMain.g_oGridViewRowForegroundColor.A.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowForegroundColor_R=" + frmMain.g_oGridViewRowForegroundColor.R.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowForegroundColor_G=" + frmMain.g_oGridViewRowForegroundColor.G.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RowForegroundColor_B=" + frmMain.g_oGridViewRowForegroundColor.B.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "AlternatingRowBackgroundColor_A=" + frmMain.g_oGridViewAlternateRowBackgroundColor.A.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "AlternatingRowBackgroundColor_R=" + frmMain.g_oGridViewAlternateRowBackgroundColor.R.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "AlternatingRowBackgroundColor_G=" + frmMain.g_oGridViewAlternateRowBackgroundColor.G.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "AlternatingRowBackgroundColor_B=" + frmMain.g_oGridViewAlternateRowBackgroundColor.B.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "SelectedRowBackgroundColor_A=" + frmMain.g_oGridViewSelectedRowBackgroundColor.A.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "SelectedRowBackgroundColor_R=" + frmMain.g_oGridViewSelectedRowBackgroundColor.R.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "SelectedRowBackgroundColor_G=" + frmMain.g_oGridViewSelectedRowBackgroundColor.G.ToString().Trim() + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "SelectedRowBackgroundColor_B=" + frmMain.g_oGridViewSelectedRowBackgroundColor.B.ToString().Trim() + "\r\n");
+
+
+            if (frmMain.g_oGridViewFont != null)
+            {
+                frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FontName=" + frmMain.g_oGridViewFont.Name.Trim() + "\r\n");
+                frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FontSize=" + Convert.ToInt16(frmMain.g_oGridViewFont.Size).ToString().Trim() + "\r\n");
+                frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FontStyle=" + Convert.ToInt16(frmMain.g_oGridViewFont.Style).ToString().Trim() + "\r\n");
+            }
+            //
+            //DEBUG
+            //
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "[DEBUG]\r\n");
+            if (frmMain.g_bDebug) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "Debug=Y\r\n");
+            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "Debug=N\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "Level=" + frmMain.g_intDebugLevel.ToString().Trim() + "\r\n");
+            //
+            //SUPPRESS TABLE RECORD COUNTS
+            //
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "[SUPPRESS TABLE RECORD COUNTS]\r\n");
+            if (frmMain.g_bSuppressFVSInputTableRowCount) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSInputForm=Y\r\n");
+            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSInputForm=N\r\n");
+            if (frmMain.g_bSuppressFVSOutputTableRowCount) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSOutputForm=Y\r\n");
+            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "FVSOutputForm=N\r\n");
+            if (frmMain.g_bSuppressProcessorScenarioTableRowCount) frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "ProcessorScenarioForm=Y\r\n");
+            else frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "ProcessorScenarioForm=N\r\n");
+            //
+            //OPCOST
+            //
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "[OPCOST]\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "RFile=" + frmMain.g_strRDirectory + "\r\n");
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "OPCOSTFile=" + frmMain.g_strOPCOSTDirectory + "\r\n");
+
+            frmMain.g_oUtils.WriteText(frmMain.g_oEnv.strApplicationDataDirectory.Trim() + "\\FIABiosum\\settings.cfg", "END");
+        }
+        private void SaveAll(bool p_bPrompt)
 		{
 			    bool bPromptMsg=false;
 				DialogResult result;
@@ -3677,26 +3477,16 @@ namespace FIA_Biosum_Manager
             this.m_btnProcessorTreeSpc.strToolTip = "Step 1 - Assess Data Readiness For This Item: \n" +
                                                              "1)Check If Each FIA Tree Species Code, FVS Variant, And FVS Species Code Combination Is Present In The Tree Species Table"; 
 				               
-            
-            //start OPCOST
-            this.m_btnProcessorOpcost = new btnMainForm(this);
-            this.m_pnlProcessor.Controls.Add(this.m_btnProcessorOpcost);
-            this.m_btnProcessorOpcost.Size = this.btnMain1.Size;
-            this.m_btnProcessorOpcost.Left = this.btnMain1.Left;   //this.m_btnDbPlotData.Left;
-            this.m_btnProcessorOpcost.Top = this.m_btnProcessorTreeSpc.Top + this.m_btnProcessorTreeSpc.Height + 5;
-            this.m_btnProcessorOpcost.Text = "OPCOST";
-            this.m_btnProcessorOpcost.strToolTip = "Step 2 - Edit OPCOST Settings";
-
-			//start biosum processor button
-			
+           
+			//start biosum processor button			
 			this.m_btnProcessorStart = new btnMainForm(this);
 			this.m_pnlProcessor.Controls.Add(this.m_btnProcessorStart);
 			this.m_btnProcessorStart.Size = this.btnMain1.Size;
 			this.m_btnProcessorStart.Location = this.btnMain1.Location;
-			this.m_btnProcessorStart.Left = this.m_btnProcessorOpcost.Left;
-			this.m_btnProcessorStart.Top = this.m_btnProcessorOpcost.Top + this.m_btnProcessorOpcost.Height + 5;
+            this.m_btnProcessorStart.Left = this.m_btnProcessorTreeSpc.Left;
+            this.m_btnProcessorStart.Top = this.m_btnProcessorTreeSpc.Top + this.m_btnProcessorTreeSpc.Height + 5;
 			this.m_btnProcessorStart.Text = "Start Biosum Processor";
-			this.m_btnProcessorStart.strToolTip = "Step 3 - Execute Processor";
+			this.m_btnProcessorStart.strToolTip = "Step 2 - Execute Processor";
 	     	
 
 			//DATABASE PANEL AND BUTTONS

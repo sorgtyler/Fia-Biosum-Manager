@@ -1715,7 +1715,7 @@ namespace FIA_Biosum_Manager
                         if (bOPCOST)
                         {
                             strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                            strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
+                            strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(frmMain.g_strOPCOSTDirectory) + "_Input_" +
                                            strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
                             strInputFile = strInputFile.Replace(":", "_");
                             strInputFile = strInputFile.Replace(" ", "_");
@@ -3513,12 +3513,12 @@ namespace FIA_Biosum_Manager
             oTextStreamWriter.Write("ECHO *BIOSUM OPCOST\r\n");
             oTextStreamWriter.Write("ECHO ****************************************************\r\n\r\n");
             oTextStreamWriter.Write("TITLE=BIOSUM OPCOST\r\n\r\n");
-            oTextStreamWriter.Write("SET RFILE=" + uc_processor_opcost_settings.g_strRDirectory + "\r\n");
-            oTextStreamWriter.Write("SET OPCOSTRFILE=" + uc_processor_opcost_settings.g_strOPCOSTDirectory + "\r\n");
+            oTextStreamWriter.Write("SET RFILE=" + frmMain.g_strRDirectory + "\r\n");
+            oTextStreamWriter.Write("SET OPCOSTRFILE=" + frmMain.g_strOPCOSTDirectory + "\r\n");
             oTextStreamWriter.Write("SET INPUTFILE=" + m_oQueries.m_strTempDbFile + "\r\n");
             oTextStreamWriter.Write("SET CONFIGFILE=" + m_strOPCOSTRefPath + "\r\n");
             oTextStreamWriter.Write("SET ERRORFILE=" + strOPCOSTErrorFilePath +  "\r\n");
-            oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(uc_processor_opcost_settings.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
+            oTextStreamWriter.Write("SET PATH=" + frmMain.g_oUtils.getDirectory(frmMain.g_strRDirectory).Trim() + ";%PATH%\r\n\r\n");
             string strRedirect = " 2> " + "\"" + "%ERRORFILE%" + "\"";
             // Suppress OpCost window if debugging is turned off OR debug level < 3
             bool bOPCOSTWindow = frmMain.g_bDebug;
@@ -4333,7 +4333,7 @@ namespace FIA_Biosum_Manager
             string p_strRx3, string p_strRx4, int p_intMinPercentOf2GB)
         {
             string strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-            string strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(uc_processor_opcost_settings.g_strOPCOSTDirectory) + "_Input_" +
+            string strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(frmMain.g_strOPCOSTDirectory) + "_Input_" +
                            p_strVariant + "_P" + p_strRxPackage + "_" + p_strRx1 + "_" + p_strRx2 + "_" + p_strRx3 + "_" + p_strRx4 + "_" + m_strDateTimeCreated + ".accdb";
             strInputFile = strInputFile.Replace(":", "_");
             strInputFile = strInputFile.Replace(" ", "_");
@@ -4915,9 +4915,9 @@ namespace FIA_Biosum_Manager
                 //@ToDo: May want to take some of the conditions out when everyone is on OpCost 10 for performance
                 string strOPCOSTVersion = "";
                 bool bUsesOPCOSTRefAccdb = false;
-                if (!String.IsNullOrEmpty(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                if (!String.IsNullOrEmpty(frmMain.g_strOPCOSTDirectory))
                 {
-                    strOPCOSTVersion = System.IO.Path.GetFileName(uc_processor_opcost_settings.g_strOPCOSTDirectory);
+                    strOPCOSTVersion = System.IO.Path.GetFileName(frmMain.g_strOPCOSTDirectory);
                     string[] strPieces = strOPCOSTVersion.Split('_');
                     if (strPieces.Length > 0)
                     {
@@ -4938,17 +4938,17 @@ namespace FIA_Biosum_Manager
 
                 //Check to make sure OpCost path is set; If not, try to use the default
                 bool bOpcostFileExists = false;
-                if (uc_processor_opcost_settings.g_strOPCOSTDirectory.Trim().Length > 0)
+                if (frmMain.g_strOPCOSTDirectory.Trim().Length > 0)
                 {
-                    if (System.IO.File.Exists(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                    if (System.IO.File.Exists(frmMain.g_strOPCOSTDirectory))
                     {
                         bOpcostFileExists = true;
                     }
                 }
                 else
                 {
-                    uc_processor_opcost_settings.g_strOPCOSTDirectory = uc_processor_opcost_settings.GetDefaultOpcostPath();
-                    if (!String.IsNullOrEmpty(uc_processor_opcost_settings.g_strOPCOSTDirectory))
+                    frmMain.g_strOPCOSTDirectory = frmSettings.GetDefaultOpcostPath();
+                    if (!String.IsNullOrEmpty(frmMain.g_strOPCOSTDirectory))
                     {
                         bOpcostFileExists = true;
                     }

@@ -11,8 +11,6 @@ namespace FIA_Biosum_Manager
 {
     public partial class uc_processor_opcost_settings : UserControl
     {
-        public static string g_strRDirectory = "";
-        public static string g_strOPCOSTDirectory = "";
         private frmDialog _frmDialog = null;
         private env m_oEnv;
         private Help m_oHelp;
@@ -21,20 +19,20 @@ namespace FIA_Biosum_Manager
         public uc_processor_opcost_settings()
         {
             InitializeComponent();
-           
-            
-            if (g_strOPCOSTDirectory.Trim().Length == 0)
+
+
+            if (frmMain.g_strOPCOSTDirectory.Trim().Length == 0)
             {
-                txtOpcost.Text = uc_processor_opcost_settings.GetDefaultOpcostPath();
+                txtOpcost.Text = frmSettings.GetDefaultOpcostPath();
             }
             else
             {
-                if (System.IO.File.Exists(g_strOPCOSTDirectory) == true)
-                    txtOpcost.Text = g_strOPCOSTDirectory;
+                if (System.IO.File.Exists(frmMain.g_strOPCOSTDirectory) == true)
+                    txtOpcost.Text = frmMain.g_strOPCOSTDirectory;
             }
 
-            if (g_strRDirectory.Trim().Length > 0 &&
-                System.IO.File.Exists(g_strRDirectory)==true) txtRdir.Text = g_strRDirectory;
+            if (frmMain.g_strRDirectory.Trim().Length > 0 &&
+                System.IO.File.Exists(frmMain.g_strRDirectory) == true) txtRdir.Text = frmMain.g_strRDirectory;
 
             this.m_oEnv = new env();
         }
@@ -104,8 +102,8 @@ namespace FIA_Biosum_Manager
                 MessageBox.Show("Specified OPCOST R file not found", "FIA Biosum");
                 return;
             }
-            g_strOPCOSTDirectory = txtOpcost.Text.Trim();
-            g_strRDirectory = txtRdir.Text.Trim();
+            frmMain.g_strOPCOSTDirectory = txtOpcost.Text.Trim();
+            frmMain.g_strRDirectory = txtRdir.Text.Trim();
 
             ReferenceDialog.DialogResult = DialogResult.OK;
             ReferenceDialog.Close();
@@ -142,25 +140,5 @@ namespace FIA_Biosum_Manager
             m_oHelp.ShowHelp(new string[] { "PROCESSOR", "OPCOSTSETTINGS" });
         }
 
-        public static string GetDefaultOpcostPath()
-        {
-            string strReturnPath = null;
-            string strDefaultOpcostDir = frmMain.g_oEnv.strAppDir.Trim() + "\\OPCOST";
-            if (System.IO.Directory.Exists(strDefaultOpcostDir))
-            {
-                string[] arrAllFiles = System.IO.Directory.GetFiles(strDefaultOpcostDir);
-                foreach (string strFullPath in arrAllFiles)
-                {
-                    string strExtension = System.IO.Path.GetExtension(strFullPath);
-                    if (strExtension != null && strExtension.ToUpper().Equals(".R"))
-                    {
-                        strReturnPath = strDefaultOpcostDir + "\\" + System.IO.Path.GetFileName(strFullPath);
-                        break;
-                    }
-                }
-
-            }
-            return strReturnPath;
-        }
     }
 }
