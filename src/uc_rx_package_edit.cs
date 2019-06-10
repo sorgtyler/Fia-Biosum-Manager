@@ -33,7 +33,6 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.GroupBox grpboxFVSCycle;
         public System.Windows.Forms.CheckBox chkFVSCycleSkip;
-		private System.Windows.Forms.Button btnFVSCycleClear;
 		public System.Windows.Forms.TextBox txtRxDesc;
 		private System.Windows.Forms.ListView lstRx;
 		private System.Windows.Forms.ColumnHeader colYr;
@@ -132,7 +131,6 @@ namespace FIA_Biosum_Manager
             this.btnFVSCycleCancel = new System.Windows.Forms.Button();
             this.btnFVSCycleOk = new System.Windows.Forms.Button();
             this.chkFVSCycleSkip = new System.Windows.Forms.CheckBox();
-            this.btnFVSCycleClear = new System.Windows.Forms.Button();
             this.btnFVSCycleSelectRx = new System.Windows.Forms.Button();
             this.txtRxDesc = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -269,7 +267,6 @@ namespace FIA_Biosum_Manager
             this.grpboxFVSCycle.Controls.Add(this.btnFVSCycleCancel);
             this.grpboxFVSCycle.Controls.Add(this.btnFVSCycleOk);
             this.grpboxFVSCycle.Controls.Add(this.chkFVSCycleSkip);
-            this.grpboxFVSCycle.Controls.Add(this.btnFVSCycleClear);
             this.grpboxFVSCycle.Controls.Add(this.btnFVSCycleSelectRx);
             this.grpboxFVSCycle.Controls.Add(this.txtRxDesc);
             this.grpboxFVSCycle.Controls.Add(this.label4);
@@ -284,6 +281,7 @@ namespace FIA_Biosum_Manager
             // 
             // cmbRx
             // 
+            this.cmbRx.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbRx.Location = new System.Drawing.Point(56, 48);
             this.cmbRx.Name = "cmbRx";
             this.cmbRx.Size = new System.Drawing.Size(64, 21);
@@ -318,14 +316,6 @@ namespace FIA_Biosum_Manager
             this.chkFVSCycleSkip.TabIndex = 18;
             this.chkFVSCycleSkip.Text = "Skip Treatment";
             this.chkFVSCycleSkip.CheckedChanged += new System.EventHandler(this.chkFVSCycleSkip_CheckedChanged);
-            // 
-            // btnFVSCycleClear
-            // 
-            this.btnFVSCycleClear.Location = new System.Drawing.Point(16, 104);
-            this.btnFVSCycleClear.Name = "btnFVSCycleClear";
-            this.btnFVSCycleClear.Size = new System.Drawing.Size(104, 25);
-            this.btnFVSCycleClear.TabIndex = 11;
-            this.btnFVSCycleClear.Text = "Clear";
             // 
             // btnFVSCycleSelectRx
             // 
@@ -445,7 +435,6 @@ namespace FIA_Biosum_Manager
             this.txtPackageDesc.Size = new System.Drawing.Size(440, 88);
             this.txtPackageDesc.TabIndex = 19;
             this.txtPackageDesc.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPackageDesc_KeyPress);
-
             // 
             // label2
             // 
@@ -797,29 +786,14 @@ namespace FIA_Biosum_Manager
 			{
 				
 				this.btnFVSCycleSelectRx.Enabled=false;
-				this.btnFVSCycleClear.Enabled=false;
-				//GP if (this.chkGP.Checked)
-				//GP {
-				//GP }
-				//GP else
-				//GP {
-					this.cmbRx.Text="";
-					this.cmbRx.Enabled=false;
-					this.txtRxDesc.Text="";
-				//GP }
+			    this.cmbRx.Text="";
+				this.cmbRx.Enabled=false;
+				this.txtRxDesc.Text="";
 			}
 			else
 			{
-				//GP if (this.chkGP.Checked)
-				//GP {
-				//GP }
-				//GP else
-				//GP {
-					cmbRx.Enabled=true;
-					this.btnFVSCycleSelectRx.Enabled=true;
-					this.btnFVSCycleClear.Enabled=true;
-				//GP }
-
+				cmbRx.Enabled=true;
+				this.btnFVSCycleSelectRx.Enabled=true;
 			}
 			
 
@@ -865,7 +839,6 @@ namespace FIA_Biosum_Manager
 			if (this.lstRx.SelectedItems.Count==0) return;
 			
 			this.btnFVSCycleEdit.Enabled=true;
-            this.btnFVSCycleClear.Enabled = true;
             this.btnFVSCycleClearAll.Enabled = true;
 			
 
@@ -993,12 +966,10 @@ namespace FIA_Biosum_Manager
 			{
 				this.cmbRx.Enabled=false;
 				this.btnFVSCycleSelectRx.Enabled=false;
-				this.btnFVSCycleClear.Enabled=false;
 			}
 			else
 			{
 				this.btnFVSCycleSelectRx.Enabled=true;
-				this.btnFVSCycleClear.Enabled=true;
 			}
 		}
 
