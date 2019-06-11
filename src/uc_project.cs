@@ -214,8 +214,8 @@ namespace FIA_Biosum_Manager
 					p_ado.SqlQueryReader(p_ado.m_OleDbConnection,"select * from project");
 
 					p_ado.m_OleDbDataReader.Read();
-					m_strNewProjectId=p_ado.m_OleDbDataReader["proj_id"].ToString();
-                    // Adding trim function to created_by and other optional fields to remove extra spaces
+                    // Adding trim function to remove extra spaces
+					m_strNewProjectId=p_ado.m_OleDbDataReader["proj_id"].ToString().Trim();
                     m_strNewName=p_ado.m_OleDbDataReader["created_by"].ToString().Trim();
 				    m_strNewDate=p_ado.m_OleDbDataReader["created_date"].ToString();
 		            m_strNewCompany=p_ado.m_OleDbDataReader["company"].ToString().Trim();
@@ -744,7 +744,7 @@ namespace FIA_Biosum_Manager
 			this.btnPersonalDirectory.Enabled=true;
 			this.btnSharedDirectory.Enabled=true;
 			this.btnEdit.Enabled=false;
-			this.grpboxProjectId.Enabled=false;
+            this.grpboxProjectId.Enabled = true;
 			
 
 		}
@@ -1518,13 +1518,15 @@ namespace FIA_Biosum_Manager
 				strConn = p_ado.getMDBConnString(strFullPath,"admin","");
 				if (this.txtDescription.Text.Trim().Length > 0)
 					strDesc = p_ado.FixString(this.txtDescription.Text.Trim(),"'","''");
-				strSQL = "UPDATE project SET created_by = '" + this.txtName.Text + "', " +
-					"company = '" +  this.txtCompany.Text + "', " +
-					"description = '" + strDesc + "', " + 
-					"shared_file = '" + this.txtShared.Text + "', " + 
-					"project_root_directory = '" + this.txtRootDirectory.Text + "' " +
-					" WHERE proj_id = '" + 	this.txtProjectId.Text.Trim() + "';";
+                strSQL = "UPDATE project SET created_by = '" + this.txtName.Text + "', " +
+                    "proj_id = '" + this.txtProjectId.Text.Trim() + "', " +
+                    "company = '" + this.txtCompany.Text + "', " +
+                    "description = '" + strDesc + "', " +
+                    "shared_file = '" + this.txtShared.Text + "', " +
+                    "project_root_directory = '" + this.txtRootDirectory.Text + "' ";
 				p_ado.SqlNonQuery(strConn,strSQL);
+                this.m_strProjectId = this.txtProjectId.Text.Trim();
+                ((frmMain)this.ParentForm.ParentForm).Text = "Fia Biosum Manager (" + this.m_strProjectId + ")";
 				System.Data.OleDb.OleDbCommand oCommand = new System.Data.OleDb.OleDbCommand();
 				if (this.txtPersonal.Text.Trim().Length > 0)
 				{
@@ -2067,17 +2069,20 @@ namespace FIA_Biosum_Manager
 				this.txtProjectId.Text = this.txtProjectId.Text.Trim();
 				//replace spaces with underscores
 				this.txtProjectId.Text = this.txtProjectId.Text.Replace(" ","_");
-				
-                if (txtRootDirectory.Text.Trim().Length == 0)
+
+                if (this.m_strAction == "NEW")
                 {
-                    this.txtRootDirectory.Text = this.m_oEnv.strAppDir.Substring(0, 2) + "\\FIA_Biosum\\" + this.txtProjectId.Text.ToLower();
-                }
-                else
-                {
-                    if (txtRootDirectory.Text.Trim().Substring(txtRootDirectory.Text.Trim().Length - 1,1) == @"\")
-                        this.txtRootDirectory.Text = this.txtRootDirectory.Text.Trim() + this.txtProjectId.Text.ToLower();
+                    if (txtRootDirectory.Text.Trim().Length == 0)
+                    {
+                        this.txtRootDirectory.Text = this.m_oEnv.strAppDir.Substring(0, 2) + "\\FIA_Biosum\\" + this.txtProjectId.Text.ToLower();
+                    }
                     else
-                        this.txtRootDirectory.Text = this.txtRootDirectory.Text.Trim() + "\\" + this.txtProjectId.Text.ToLower();
+                    {
+                        if (txtRootDirectory.Text.Trim().Substring(txtRootDirectory.Text.Trim().Length - 1, 1) == @"\")
+                            this.txtRootDirectory.Text = this.txtRootDirectory.Text.Trim() + this.txtProjectId.Text.ToLower();
+                        else
+                            this.txtRootDirectory.Text = this.txtRootDirectory.Text.Trim() + "\\" + this.txtProjectId.Text.ToLower();
+                    }
                 }
 			}
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
