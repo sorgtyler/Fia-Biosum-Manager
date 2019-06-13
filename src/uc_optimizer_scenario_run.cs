@@ -2857,7 +2857,7 @@ namespace FIA_Biosum_Manager
 			string strTruckHaulCost;
 			string strRailHaulCost;
 			string strTransferMerchCost;
-			string strTransferBioCost;
+			string strTransferChipCost;
 
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 27;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
@@ -2903,9 +2903,9 @@ namespace FIA_Biosum_Manager
 			strTransferMerchCost = strTransferMerchCost.Replace(",","");
 			if (strTransferMerchCost.Trim().Length == 1) strTransferMerchCost = "0.00";
 			
-            strTransferBioCost = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_costs1.RailChipTransferCostDollarsPerGreenTonPerHour.Replace("$", "").ToString();
-			strTransferBioCost = strTransferBioCost.Replace(",","");
-			if (strTransferBioCost.Trim().Length == 1) strTransferBioCost = "0.00";
+            strTransferChipCost = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_costs1.RailChipTransferCostDollarsPerGreenTonPerHour.Replace("$", "").ToString();
+			strTransferChipCost = strTransferChipCost.Replace(",","");
+			if (strTransferChipCost.Trim().Length == 1) strTransferChipCost = "0.00";
 			 
 
 
@@ -3046,10 +3046,10 @@ namespace FIA_Biosum_Manager
 			 **merch only or merch/chip
 			 *****************************************************************/
 			this.m_strSQL = "INSERT into all_road_merch_haul_costs_work_table " + 
-				"SELECT t.biosum_plot_id, 0 AS railhead_id," + 
-				"0 AS transfer_cost, s.psite_id," +
+				"SELECT t.biosum_plot_id, 0 AS railhead_id," +
+                "0 AS transfer_cost_dpgt, s.psite_id," +
                 "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
-                "0 AS rail_cost_dpgt, (transfer_cost+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
+                "0 AS rail_cost_dpgt, (transfer_cost_dpgt+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'M' as materialcd " +
 				"FROM " + this.m_strTravelTimeTable + " t," + 
 				this.m_strPSiteWorkTable + " s " + 
@@ -3084,7 +3084,7 @@ namespace FIA_Biosum_Manager
 			 **************************************************************************/
 			this.m_strSQL = "INSERT INTO cheapest_road_merch_haul_costs_work_table " + 
 				"SELECT b.biosum_plot_id,c.psite_id,null AS railhead_id," +
-                "0 AS transfer_cost, a.road_cost_dpgt, 0 AS rail_cost_dpgt," +
+                "0 AS transfer_cost_dpgt, a.road_cost_dpgt, 0 AS rail_cost_dpgt," +
                 "b.min_cost AS complete_haul_cost_dpgt," + 
 				"'M' AS materialcd " + 
 				"FROM  all_road_merch_haul_costs_work_table  a," +
@@ -3127,11 +3127,11 @@ namespace FIA_Biosum_Manager
 			 **chip only or merch/chip
 			 ***********************************************************************/
 			this.m_strSQL = "INSERT INTO all_road_chip_haul_costs_work_table " + 
-				"SELECT t.biosum_plot_id, 0 AS railhead_id," + 
-				"0 AS transfer_cost,s.psite_id," +
+				"SELECT t.biosum_plot_id, 0 AS railhead_id," +
+                "0 AS transfer_cost_dpgt,s.psite_id," +
                 "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
                 "0 AS rail_cost_dpgt, " +
-                "(transfer_cost+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
+                "(transfer_cost_dpgt+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'C' AS materialcd " +
                 "FROM " + this.m_strTravelTimeTable + " t," + 
 				this.m_strPSiteWorkTable + " s " + 
@@ -3163,7 +3163,7 @@ namespace FIA_Biosum_Manager
 			 ******************************************************************/
 			this.m_strSQL = "INSERT INTO cheapest_road_chip_haul_costs_work_table " + 
 				"SELECT b.biosum_plot_id, c.psite_id, null AS railhead_id," +
-                "0 AS transfer_cost,a.road_cost_dpgt," +
+                "0 AS transfer_cost_dpgt,a.road_cost_dpgt," +
                 "0 AS rail_cost_dpgt, b.min_cost AS complete_haul_cost_dpgt," + 
 				"'C' AS materialcd " + 
 				"FROM all_road_chip_haul_costs_work_table  a," +
@@ -3208,8 +3208,8 @@ namespace FIA_Biosum_Manager
 
 			this.m_strSQL = "INSERT INTO merch_rh_to_collector_haul_costs_work_table " + 
 				"SELECT t.psite_id AS railhead_id," + 
-				"t.collector_id AS psite_id," + 
-				"(" + strTransferMerchCost.Trim() + " * t.travel_time)  AS transfer_cost," +
+				"t.collector_id AS psite_id," +
+                strTransferMerchCost.Trim() + " AS transfer_cost_dpgt," +
                 "0 AS road_cost_dpgt," +
                 "((t.travel_time * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
                 "0 AS complete_haul_cost_dpgt,  'M' AS materialcd " +
@@ -3250,10 +3250,10 @@ namespace FIA_Biosum_Manager
 			 ** and the railhead to collector site rail cost.
 			 ***************************************************************************/
 			this.m_strSQL = "INSERT INTO merch_plot_to_rh_to_collector_haul_costs_work_table " + 
-				"SELECT  t.biosum_plot_id, r.railhead_id, r.psite_id," + 
-				"r.transfer_cost," +
+				"SELECT  t.biosum_plot_id, r.railhead_id, r.psite_id," +
+                "r.transfer_cost_dpgt," +
                 "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
-                "r.rail_cost_dpgt, (r.transfer_cost + road_cost_dpgt + r.rail_cost_dpgt) AS complete_haul_cost_dpgt," +
+                "r.rail_cost_dpgt, (r.transfer_cost_dpgt + road_cost_dpgt + r.rail_cost_dpgt) AS complete_haul_cost_dpgt," +
 				"'M' AS materialcd " + 
 				"FROM  " + this.m_strTravelTimeTable + " t," + 
 				"merch_rh_to_collector_haul_costs_work_table r " +
@@ -3280,7 +3280,7 @@ namespace FIA_Biosum_Manager
 
 
 			this.m_strSQL = "UPDATE merch_plot_to_rh_to_collector_haul_costs_work_table " +
-                "SET complete_haul_cost_dpgt = transfer_cost + road_cost_dpgt + rail_cost_dpgt;";
+                "SET complete_haul_cost_dpgt = transfer_cost_dpgt + road_cost_dpgt + rail_cost_dpgt;";
 
 
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -3314,7 +3314,7 @@ namespace FIA_Biosum_Manager
 			 *******************************************************************/
 			this.m_strSQL = "INSERT INTO cheapest_rail_merch_haul_costs_work_table " + 
 				"SELECT a.biosum_plot_id,c.psite_id, a.railhead_id," +
-                "a.transfer_cost, a.road_cost_dpgt,a.rail_cost_dpgt," +
+                "a.transfer_cost_dpgt, a.road_cost_dpgt,a.rail_cost_dpgt," +
                 "c.min_cost AS complete_haul_cost_dpgt,'M' as materialcd " +
 				"FROM merch_plot_to_rh_to_collector_haul_costs_work_table a," +
                 "(SELECT biosum_plot_id, MIN(complete_haul_cost_dpgt) AS min_cost2 " + 
@@ -3359,8 +3359,8 @@ namespace FIA_Biosum_Manager
 			 ***********************************************************************/
 			this.m_strSQL = "INSERT INTO chip_rh_to_collector_haul_costs_work_table " + 
 				"SELECT  t.psite_id AS railhead_id,"  + 
-				"t.collector_id AS psite_id," + 
-				"(" + strTransferBioCost.Trim() + " * t.travel_time)  AS transfer_cost," +
+				"t.collector_id AS psite_id," +
+                strTransferChipCost.Trim() + " AS transfer_cost_dpgt," +
                 "0 AS road_cost_dpgt," +
                 "((t.travel_time * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
                 "0 AS complete_haul_cost_dpgt,  'C' AS materialcd " +
@@ -3401,11 +3401,11 @@ namespace FIA_Biosum_Manager
 			 **and the railhead to collector site rail cost.
 			 *************************************************************************/
 			this.m_strSQL = "INSERT INTO chip_plot_to_rh_to_collector_haul_costs_work_table " + 
-				"SELECT  t.biosum_plot_id, r.railhead_id, r.psite_id," + 
-				"r.transfer_cost," +
+				"SELECT  t.biosum_plot_id, r.railhead_id, r.psite_id," +
+                "r.transfer_cost_dpgt," +
                 "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
                 "r.rail_cost_dpgt, " +
-                "(r.transfer_cost + road_cost_dpgt + r.rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
+                "(r.transfer_cost_dpgt + road_cost_dpgt + r.rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'C' AS materialcd " + 
 				"FROM  " + this.m_strTravelTimeTable + " t," + 
 				"chip_rh_to_collector_haul_costs_work_table r " +
@@ -3433,7 +3433,7 @@ namespace FIA_Biosum_Manager
 			}    
  
 			this.m_strSQL = "UPDATE chip_plot_to_rh_to_collector_haul_costs_work_table " +
-                "SET complete_haul_cost_dpgt = transfer_cost + road_cost_dpgt + rail_cost_dpgt;";
+                "SET complete_haul_cost_dpgt = transfer_cost_dpgt + road_cost_dpgt + rail_cost_dpgt;";
 
 
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -3467,7 +3467,7 @@ namespace FIA_Biosum_Manager
 			 *************************************************************************/ 
 			this.m_strSQL = "INSERT INTO cheapest_rail_chip_haul_costs_work_table " + 
 				"SELECT a.biosum_plot_id,b.psite_id, a.railhead_id," +
-                "a.transfer_cost, a.road_cost_dpgt, a.rail_cost_dpgt," +
+                "a.transfer_cost_dpgt, a.road_cost_dpgt, a.rail_cost_dpgt," +
                 "b.min_cost AS complete_haul_cost_dpgt,'C' AS materialcd " + 
 				"FROM chip_plot_to_rh_to_collector_haul_costs_work_table a," + 
 				"(SELECT biosum_plot_id, " +
@@ -3563,7 +3563,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.ExecuteControlMethod((Control)ReferenceUserControlScenarioRun.lblMsg, "Refresh");
 			this.m_strSQL = "INSERT INTO cheapest_merch_haul_costs_work_table " + 
 				"SELECT a.biosum_plot_id,b.psite_id, a.railhead_id," +
-                "a.transfer_cost, a.road_cost_dpgt,  a.rail_cost_dpgt," +
+                "a.transfer_cost_dpgt, a.road_cost_dpgt,  a.rail_cost_dpgt," +
                 "b.min_cost AS complete_haul_cost_dpgt,'M' AS materialcd " + 
 				"FROM combine_merch_rail_road_haul_costs_work_table a," +
                 "(SELECT biosum_plot_id, MIN(complete_haul_cost_dpgt) AS min_cost2 " + 
@@ -3659,7 +3659,7 @@ namespace FIA_Biosum_Manager
 			 ******************************************/
 			this.m_strSQL = "INSERT INTO cheapest_chip_haul_costs_work_table " + 
 				"SELECT a.biosum_plot_id,b.psite_id, a.railhead_id," +
-                "a.transfer_cost, a.road_cost_dpgt,  a.rail_cost_dpgt," +
+                "a.transfer_cost_dpgt, a.road_cost_dpgt,  a.rail_cost_dpgt," +
                 "b.min_cost AS complete_haul_cost_dpgt,'C' AS materialcd " + 
 				"FROM combine_chip_rail_road_haul_costs_work_table a, " +
                 "(SELECT biosum_plot_id,MIN(complete_haul_cost_dpgt) AS min_cost2 " + 
@@ -4443,7 +4443,7 @@ namespace FIA_Biosum_Manager
             this.m_strSQL = "DELETE v.* " + 
                             "FROM validcombos v WHERE " +
                             "EXISTS (SELECT * from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " p " +
-                            "WHERE v.biosum_cond_id = p.biosum_cond_id and (p.merch_haul_psite is null OR p.chip_haul_psite is null))";
+                            "WHERE v.biosum_cond_id = p.biosum_cond_id and (p.merch_haul_psite is null))";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nDelete combinations that don't have rows in the travel_times table\r\n");

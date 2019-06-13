@@ -327,15 +327,15 @@ namespace FIA_Biosum_Manager
                 txtRailHaulCost.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile;
                 txtRailHaulCost_Leave(null, null);
             }
-            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour.Trim().Length > 0)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTon.Trim().Length > 0)
             {
-                this.txtRailChipTransfer.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour;
+                this.txtRailChipTransfer.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTon;
                 txtRailChipTransfer_Leave(null, null);
                     
             }
-            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour.Trim().Length > 0)
+            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTon.Trim().Length > 0)
             {
-                txtRailMerchTransfer.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour;
+                txtRailMerchTransfer.Text = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTon;
                 txtRailMerchTransfer_Leave(null, null);
             }
 
@@ -419,7 +419,7 @@ namespace FIA_Biosum_Manager
 			}
 
 			
-			strSQL = "INSERT INTO scenario_costs (scenario_id,road_haul_cost_pgt_per_hour,rail_haul_cost_pgt_per_mile,rail_chip_transfer_pgt_per_hour,rail_merch_transfer_pgt_per_hour)" + 
+			strSQL = "INSERT INTO scenario_costs (scenario_id,road_haul_cost_pgt_per_hour,rail_haul_cost_pgt_per_mile,rail_chip_transfer_pgt,rail_merch_transfer_pgt)" + 
 					" VALUES ('" + strScenarioId + "'," + 
 				      strHaulCost + "," + strRailHaulCost + "," + strRailBioTransferCost + "," + strRailMerchTransferCost + ");";
 			p_ado.SqlNonQuery(this.m_OleDbConnectionScenario,strSQL);

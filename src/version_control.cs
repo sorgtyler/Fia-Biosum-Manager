@@ -5975,6 +5975,20 @@ namespace FIA_Biosum_Manager
                 oAdo.m_OleDbConnection.Close();
             }
 
+            frmMain.g_sbpInfo.Text = "Version Update: Update scenario_costs field names ...Stand by";
+            strDataSourceMdb = ReferenceProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
+            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName, "rail_chip_transfer_pgt_per_hour"))
+            {
+                oDao.RenameField(strDataSourceMdb, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName,
+                    "rail_chip_transfer_pgt_per_hour", "rail_chip_transfer_pgt");
+            }
+            if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName, "rail_merch_transfer_pgt_per_hour"))
+            {
+                oDao.RenameField(strDataSourceMdb, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName,
+                    "rail_merch_transfer_pgt_per_hour", "rail_merch_transfer_pgt");
+            }
+            oAdo.m_OleDbConnection.Close();
 
 
             if (oDao != null)

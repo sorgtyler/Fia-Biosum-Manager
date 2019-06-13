@@ -923,7 +923,7 @@ namespace FIA_Biosum_Manager
 					"biosum_plot_id CHAR(24)," + 
 					"railhead_id INTEGER," + 
 					"psite_id INTEGER," + 
-					"transfer_cost DOUBLE DEFAULT 0," + 
+					"transfer_cost_dpgt DOUBLE DEFAULT 0," + 
 					"road_cost_dpgt DOUBLE DEFAULT 0," +
                     "rail_cost_dpgt DOUBLE DEFAULT 0," +
                     "complete_haul_cost_dpgt DOUBLE DEFAULT 0," + 
@@ -949,7 +949,7 @@ namespace FIA_Biosum_Manager
 					"biosum_plot_id CHAR(24)," + 
 					"railhead_id INTEGER," + 
 					"psite_id INTEGER," + 
-					"transfer_cost DOUBLE DEFAULT 0," + 
+					"transfer_cost_dpgt DOUBLE DEFAULT 0," + 
 					"road_cost_dpgt DOUBLE DEFAULT 0," + 
 					"rail_cost_dpgt DOUBLE DEFAULT 0," + 
 					"complete_haul_cost_dpgt DOUBLE DEFAULT 0," + 
@@ -973,8 +973,8 @@ namespace FIA_Biosum_Manager
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
 					"railhead_id INTEGER," + 
-					"psite_id INTEGER," + 
-					"transfer_cost DOUBLE DEFAULT 0," + 
+					"psite_id INTEGER," +
+                    "transfer_cost_dpgt DOUBLE DEFAULT 0," + 
 					"road_cost_dpgt DOUBLE DEFAULT 0," +
                     "rail_cost_dpgt DOUBLE DEFAULT 0," +
                     "complete_haul_cost_dpgt DOUBLE DEFAULT 0," + 
@@ -1486,8 +1486,8 @@ namespace FIA_Biosum_Manager
 					//"water_barring_roads_cpa DOUBLE," +
           //"brush_cutting_cpa DOUBLE," + 
 					"rail_haul_cost_pgt_per_mile DOUBLE DEFAULT 0," + 
-					"rail_chip_transfer_pgt_per_hour DOUBLE DEFAULT 0," + 
-					"rail_merch_transfer_pgt_per_hour DOUBLE DEFAULT 0)";
+					"rail_chip_transfer_pgt DOUBLE DEFAULT 0," + 
+					"rail_merch_transfer_pgt DOUBLE DEFAULT 0)";
 			}
             public void CreateScenarioProcessorScenarioSelectTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {

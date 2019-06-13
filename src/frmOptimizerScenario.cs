@@ -1891,14 +1891,14 @@ namespace FIA_Biosum_Manager
 
             public string RoadHaulCostPerGreenTonPerHour = "";
             public string RailHaulCostPerGreenTonPerMile = "";
-            public string RailChipTransferPerGreenTonPerHour = "";
-            public string RailMerchTransferPerGreenTonPerHour = "";
+            public string RailChipTransferPerGreenTon = "";
+            public string RailMerchTransferPerGreenTon = "";
 
             public void Copy(TransportationCosts p_oSource, TransportationCosts p_oDest)
             {
-                p_oDest.RailChipTransferPerGreenTonPerHour = p_oSource.RailChipTransferPerGreenTonPerHour;
+                p_oDest.RailChipTransferPerGreenTon = p_oSource.RailChipTransferPerGreenTon;
                 p_oDest.RailHaulCostPerGreenTonPerMile = p_oSource.RailHaulCostPerGreenTonPerMile;
-                p_oDest.RailMerchTransferPerGreenTonPerHour = p_oSource.RailMerchTransferPerGreenTonPerHour;
+                p_oDest.RailMerchTransferPerGreenTon = p_oSource.RailMerchTransferPerGreenTon;
                 p_oDest.RoadHaulCostPerGreenTonPerHour = p_oSource.RoadHaulCostPerGreenTonPerHour;
             }
             
@@ -3526,9 +3526,9 @@ namespace FIA_Biosum_Manager
                                          string p_strScenarioId,
                                          OptimizerScenarioItem p_oOptimizerScenarioItem)
         {
-            p_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour = "";
+            p_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTon = "";
             p_oOptimizerScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile = "";
-            p_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour = "";
+            p_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTon = "";
             p_oOptimizerScenarioItem.m_oTranCosts.RoadHaulCostPerGreenTonPerHour="";
 
             
@@ -3552,15 +3552,15 @@ namespace FIA_Biosum_Manager
                         p_oOptimizerScenarioItem.m_oTranCosts.RailHaulCostPerGreenTonPerMile =
                            Convert.ToString(p_oAdo.m_OleDbDataReader["rail_haul_cost_pgt_per_mile"]).Trim();
                     }
-                    if (p_oAdo.m_OleDbDataReader["rail_chip_transfer_pgt_per_hour"] != System.DBNull.Value)
+                    if (p_oAdo.m_OleDbDataReader["rail_chip_transfer_pgt"] != System.DBNull.Value)
                     {
-                        p_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour =
-                           Convert.ToString(p_oAdo.m_OleDbDataReader["rail_chip_transfer_pgt_per_hour"]).Trim();
+                        p_oOptimizerScenarioItem.m_oTranCosts.RailChipTransferPerGreenTon =
+                           Convert.ToString(p_oAdo.m_OleDbDataReader["rail_chip_transfer_pgt"]).Trim();
                     }
-                    if (p_oAdo.m_OleDbDataReader["rail_merch_transfer_pgt_per_hour"] != System.DBNull.Value)
+                    if (p_oAdo.m_OleDbDataReader["rail_merch_transfer_pgt"] != System.DBNull.Value)
                     {
-                        p_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour =
-                           Convert.ToString(p_oAdo.m_OleDbDataReader["rail_merch_transfer_pgt_per_hour"]).Trim();
+                        p_oOptimizerScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTon =
+                           Convert.ToString(p_oAdo.m_OleDbDataReader["rail_merch_transfer_pgt"]).Trim();
                     }
 
                 }
@@ -3887,16 +3887,16 @@ namespace FIA_Biosum_Manager
             {
                 strLine = strLine + "NA\r\n";
             }
-            strLine = strLine + "Transfer Merch To Rail Per Green Ton Per Hour: ";
-            oValidate.ValidateDecimal(p_oScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTonPerHour);
+            strLine = strLine + "Transfer Merch To Rail Per Green Ton: ";
+            oValidate.ValidateDecimal(p_oScenarioItem.m_oTranCosts.RailMerchTransferPerGreenTon);
             if (oValidate.m_intError == 0)
                 strLine = strLine + oValidate.ReturnValue + "\r\n";
             else
             {
                 strLine = strLine + "NA\r\n";
             }
-            strLine = strLine + "Transfer Chips To Rail Per Green Ton Per Hour: ";
-            oValidate.ValidateDecimal(p_oScenarioItem.m_oTranCosts.RailChipTransferPerGreenTonPerHour);
+            strLine = strLine + "Transfer Chips To Rail Per Green Ton: ";
+            oValidate.ValidateDecimal(p_oScenarioItem.m_oTranCosts.RailChipTransferPerGreenTon);
             if (oValidate.m_intError == 0)
                 strLine = strLine + oValidate.ReturnValue + "\r\n";
             else
