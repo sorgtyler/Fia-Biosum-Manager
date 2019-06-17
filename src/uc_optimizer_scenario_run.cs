@@ -6387,7 +6387,7 @@ namespace FIA_Biosum_Manager
                                     "merch_chip_nr_dpa," +
                                     "merch_nr_dpa," +
                                     "max_nr_dpa,haul_costs_dpa," +
-                                    "acres,owngrpcd, merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name)";
+                                    "treated_acres,acres, owngrpcd, merch_psite_num, merch_psite_name)";
             m_strSQL = m_strSQL + " " +
                             "SELECT a.biosum_cond_id,a.rxpackage," +
                                    "a.sum_chip_yield_cf AS chip_vol_cf," +
@@ -6403,7 +6403,8 @@ namespace FIA_Biosum_Manager
                                    "a.sum_merch_nr_dpa AS merch_nr_dpa, " +
                                    "a.sum_max_nr_dpa AS max_nr_dpa, " +
                                    "a.sum_haul_costs_dpa AS haul_costs_dpa, " +
-                                   "a.acres, a.owngrpcd, a.merch_psite_num, a.merch_psite_name, a.chip_psite_num, a.chip_psite_name " +
+                                   "a.sum_treated_acres AS treated_acres, " +
+                                   "a.acres, a.owngrpcd, a.merch_psite_num, a.merch_psite_name " +
                            "FROM (" +
                            "SELECT biosum_cond_id,rxpackage," +
                                 "SUM(IIF(chip_vol_cf IS NULL,0,chip_vol_cf)) AS sum_chip_yield_cf," +
@@ -6419,9 +6420,10 @@ namespace FIA_Biosum_Manager
                                 "SUM(IIF(merch_nr_dpa IS NULL,0,merch_nr_dpa)) AS sum_merch_nr_dpa," +
                                 "SUM(IIF(max_nr_dpa IS NULL,0,max_nr_dpa)) AS sum_max_nr_dpa, " +
                                 "SUM(IIF(haul_costs_dpa IS NULL,0,haul_costs_dpa)) AS sum_haul_costs_dpa, " +
-                                "acres,owngrpcd, merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name " +
+                                "SUM(IIF(acres IS NULL,0,acres)) AS sum_treated_acres, " +
+                                "acres,owngrpcd, merch_psite_num, merch_psite_name " +
                            "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
-                           " GROUP BY biosum_cond_id,rxpackage,acres,owngrpcd,merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name) a";
+                           " GROUP BY biosum_cond_id,rxpackage,acres,owngrpcd,merch_psite_num, merch_psite_name) a";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");

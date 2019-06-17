@@ -1114,11 +1114,10 @@ namespace FIA_Biosum_Manager
                     "merch_nr_dpa DOUBLE," +
                     "max_nr_dpa DOUBLE," +
                     "acres DOUBLE," +
+                    "treated_acres DOUBLE," +
                     "owngrpcd INTEGER," +
                     "merch_psite_num INTEGER," +
                     "merch_psite_name CHAR(255)," +
-                    "chip_psite_num INTEGER," +
-                    "chip_psite_name CHAR(255)," +
                     "haul_costs_dpa CHAR(255) )";
             }
             //
