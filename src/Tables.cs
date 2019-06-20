@@ -2905,23 +2905,25 @@ namespace FIA_Biosum_Manager
 			}
 			public void CreateTravelTimeTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
-				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","traveltime_id");
-				p_oAdo.AddAutoNumber(p_oConn,p_strTableName,"traveltime_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","psite_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","collector_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","railhead_id");
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "TRAVELTIME_ID");
+                p_oAdo.AddAutoNumber(p_oConn, p_strTableName, "TRAVELTIME_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "PSITE_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "COLLECTOR_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx3", "RAILHEAD_ID");
 			}
 
 			public string CreateTravelTimeTableSQL(string p_strTableName)
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
-					"traveltime_id LONG," + 
-					"psite_id INTEGER," + 
-					"biosum_plot_id CHAR(24)," + 
-					"collector_id LONG," + 
-					"railhead_id LONG," + 
-					"travel_mode BYTE," + 
-					"travel_time DOUBLE)";
+                    "TRAVELTIME_ID LONG," +
+                    "PSITE_ID INTEGER," +
+                    "BIOSUM_PLOT_ID CHAR(24)," +
+                    "COLLECTOR_ID LONG," +
+                    "RAILHEAD_ID LONG," +
+                    "TRAVEL_MODE BYTE," +
+                    "ONE_WAY_HOURS DOUBLE," +
+                    "PLOT LONG," +
+                    "STATECD INTEGER)"; 
 			}
 			public void CreateTravelTimeOfZeroTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
@@ -2930,23 +2932,23 @@ namespace FIA_Biosum_Manager
 			}
 			public void CreateTravelTimeOfZeroTableIndexes(ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
-				p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","traveltime_id");
-				p_oAdo.AddAutoNumber(p_oConn,p_strTableName,"traveltime_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","psite_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","biosum_plot_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","collector_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx4","railhead_id");
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "TRAVELTIME_ID");
+                p_oAdo.AddAutoNumber(p_oConn, p_strTableName, "TRAVELTIME_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "PSITE_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "BIOSUM_PLOT_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx3", "COLLECTOR_ID");
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx4", "RAILHEAD_ID");
 			}
 			public string CreateTravelTimeOfZeroTableSQL(string p_strTableName)
 			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"traveltime_id LONG," + 
-					"psite_id INTEGER," + 
-					"biosum_plot_id CHAR(24)," +
-					"collector_id LONG," + 
-					"railhead_id LONG," + 
-					"travel_mode BYTE," + 
-					"travel_time DOUBLE)";
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "TRAVELTIME_ID LONG," +
+                    "PSITE_ID INTEGER," +
+                    "BIOSUM_PLOT_ID CHAR(24)," +
+                    "COLLECTOR_ID LONG," +
+                    "RAILHEAD_ID LONG," +
+                    "TRAVEL_MODE BYTE," +
+                    "ONE_WAY_HOURS DOUBLE)";
 			}
 		}
 		public class Audit

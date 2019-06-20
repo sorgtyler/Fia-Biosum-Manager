@@ -5813,9 +5813,26 @@ namespace FIA_Biosum_Manager
                 {
                     string strCommand = "DROP INDEX travel_time_idx3 ON " + strTableName;
                     oDao.m_DaoDatabase.Execute(strCommand, null);
-                    oDao.DeleteField(strDirectoryPath + "\\" + strFileName, strTableName, new string[]{"PLOT_ID"});
-                    // Note: the DeleteField method closes the database
+                    oDao.RenameField(strDirectoryPath + "\\" + strFileName, strTableName, "PLOT_ID", "PLOT");
+                    // Note: the RenameField method closes the database
                 }
+                oDao.OpenDb(strDirectoryPath + "\\" + strFileName);
+                if (!oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "STATECD"))
+                {
+                    string strTravelConn = m_oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", "");
+                    using (var oTravelConn = new OleDbConnection(strTravelConn))
+                    {
+                        oTravelConn.Open();
+                        oAdo.AddColumn(oTravelConn, strTableName, "STATECD", "INTEGER", "");
+                    }
+
+                }
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "TRAVEL_TIME"))
+                {
+                    oDao.RenameField(strDirectoryPath + "\\" + strFileName, strTableName, "TRAVEL_TIME", "ONE_WAY_HOURS");
+                    // Note: the RenameField method closes the database
+                }
+                
                 if (oDao.m_DaoDatabase != null)
                     oDao.m_DaoDatabase.Close();
             }
@@ -5976,7 +5993,7 @@ namespace FIA_Biosum_Manager
             }
 
             frmMain.g_sbpInfo.Text = "Version Update: Update scenario_costs field names ...Stand by";
-            strDataSourceMdb = ReferenceProjectDirectory.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb";
+            strDataSourceMdb = ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\scenario_optimizer_rule_definitions.mdb";
             oAdo.OpenConnection(oAdo.getMDBConnString(strDataSourceMdb, "", ""));
             if (oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName, "rail_chip_transfer_pgt_per_hour"))
             {

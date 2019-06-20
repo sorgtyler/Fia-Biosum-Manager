@@ -332,8 +332,8 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//This query didn't return any rows: \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, z.dbh, z.tpa, z.volCfNet, z.drybiot, \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, \r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.gis_yard_dist, t.min_traveltime FROM fvs_tree_IN_BM_P001_TREE_CUTLIST z, (SELECT MIN(TRAVEL_TIME) AS  \r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID) t, (SELECT \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.gis_yard_dist, t.min_traveltime FROM fvs_tree_IN_BM_P001_TREE_CUTLIST z, (SELECT MIN(ONE_WAY_HOURS) AS  \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE ONE_WAY_HOURS > 0 GROUP BY BIOSUM_PLOT_ID) t, (SELECT \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON  \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id = d.biosum_plot_id) c WHERE z.rxpackage='001' AND z.biosum_cond_id = c.biosum_cond_id AND \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.biosum_plot_id = t.biosum_plot_id \r\n");
@@ -2822,9 +2822,9 @@ namespace FIA_Biosum_Manager
                 new System.Collections.Generic.Dictionary<String, double>();
             if (m_oAdo.m_intError == 0)
             {
-                string strSQL = "SELECT MIN(TRAVEL_TIME) AS min_traveltime, BIOSUM_PLOT_ID " +
-                                "FROM " + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName + 
-                                " WHERE TRAVEL_TIME > 0 " +
+                string strSQL = "SELECT MIN(ONE_WAY_HOURS) AS min_one_way_hours, BIOSUM_PLOT_ID " +
+                                "FROM " + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName +
+                                " WHERE ONE_WAY_HOURS > 0 " +
                                 "GROUP BY BIOSUM_PLOT_ID";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);
                 if (m_oAdo.m_OleDbDataReader.HasRows)
@@ -2832,7 +2832,7 @@ namespace FIA_Biosum_Manager
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         string strPlotId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_plot_id"]).Trim();
-                        double dblTravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_traveltime"]);
+                        double dblTravelTime = Convert.ToDouble(m_oAdo.m_OleDbDataReader["min_one_way_hours"]);
                         dictTravelTimes.Add(strPlotId, dblTravelTime);
                     }
                 }

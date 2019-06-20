@@ -3048,14 +3048,14 @@ namespace FIA_Biosum_Manager
 			this.m_strSQL = "INSERT into all_road_merch_haul_costs_work_table " + 
 				"SELECT t.biosum_plot_id, 0 AS railhead_id," +
                 "0 AS transfer_cost_dpgt, s.psite_id," +
-                "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
+                "(" + strTruckHaulCost.Trim() + " * t.one_way_hours) AS road_cost_dpgt," +
                 "0 AS rail_cost_dpgt, (transfer_cost_dpgt+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'M' as materialcd " +
 				"FROM " + this.m_strTravelTimeTable + " t," + 
 				this.m_strPSiteWorkTable + " s " + 
 				"WHERE t.psite_id=s.psite_id AND " + 
 				"(s.trancd=1 OR s.trancd =3) AND " +
-                "(s.biocd=3 OR s.biocd=1)  AND t.travel_time > 0;";
+                "(s.biocd=3 OR s.biocd=1)  AND t.one_way_hours > 0;";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\ninsert into work table all travel time records where psite has road access and processes merch\r\n");
@@ -3129,7 +3129,7 @@ namespace FIA_Biosum_Manager
 			this.m_strSQL = "INSERT INTO all_road_chip_haul_costs_work_table " + 
 				"SELECT t.biosum_plot_id, 0 AS railhead_id," +
                 "0 AS transfer_cost_dpgt,s.psite_id," +
-                "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
+                "(" + strTruckHaulCost.Trim() + " * t.one_way_hours) AS road_cost_dpgt," +
                 "0 AS rail_cost_dpgt, " +
                 "(transfer_cost_dpgt+road_cost_dpgt+rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'C' AS materialcd " +
@@ -3137,7 +3137,7 @@ namespace FIA_Biosum_Manager
 				this.m_strPSiteWorkTable + " s " + 
 				"WHERE t.psite_id=s.psite_id AND " + 
 				"(s.trancd=1 OR s.trancd=3) AND " +
-                "(s.biocd=3 OR s.biocd=2)  AND t.travel_time > 0;";
+                "(s.biocd=3 OR s.biocd=2)  AND t.one_way_hours > 0;";
 
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\ninsert into work table all travel time records where psite has road access and processes chips.\r\n");
@@ -3211,12 +3211,12 @@ namespace FIA_Biosum_Manager
 				"t.collector_id AS psite_id," +
                 strTransferMerchCost.Trim() + " AS transfer_cost_dpgt," +
                 "0 AS road_cost_dpgt," +
-                "((t.travel_time * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
+                "((t.one_way_hours * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
                 "0 AS complete_haul_cost_dpgt,  'M' AS materialcd " +
                 "FROM " + this.m_strTravelTimeTable + " t  " + 
 				"INNER JOIN  " + this.m_strPSiteWorkTable + " s " + 
 				"ON t.collector_id = s.psite_id " +
-                "WHERE  s.trancd=3 And (s.biocd=3 Or s.biocd=1)  AND t.travel_time > 0 AND " + 
+                "WHERE  s.trancd=3 And (s.biocd=3 Or s.biocd=1)  AND t.one_way_hours > 0 AND " + 
 				"EXISTS (SELECT ss.psite_id " + 
 				"FROM " + this.m_strPSiteWorkTable + " ss " + 
 				"WHERE t.psite_id=ss.psite_id AND ss.trancd=2 AND (ss.biocd=3 Or ss.biocd=1));";
@@ -3252,12 +3252,12 @@ namespace FIA_Biosum_Manager
 			this.m_strSQL = "INSERT INTO merch_plot_to_rh_to_collector_haul_costs_work_table " + 
 				"SELECT  t.biosum_plot_id, r.railhead_id, r.psite_id," +
                 "r.transfer_cost_dpgt," +
-                "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
+                "(" + strTruckHaulCost.Trim() + " * t.one_way_hours) AS road_cost_dpgt," +
                 "r.rail_cost_dpgt, (r.transfer_cost_dpgt + road_cost_dpgt + r.rail_cost_dpgt) AS complete_haul_cost_dpgt," +
 				"'M' AS materialcd " + 
 				"FROM  " + this.m_strTravelTimeTable + " t," + 
 				"merch_rh_to_collector_haul_costs_work_table r " +
-                "WHERE r.railhead_id = t.psite_id  AND t.travel_time > 0;";
+                "WHERE r.railhead_id = t.psite_id  AND t.one_way_hours > 0;";
 
 
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -3362,13 +3362,13 @@ namespace FIA_Biosum_Manager
 				"t.collector_id AS psite_id," +
                 strTransferChipCost.Trim() + " AS transfer_cost_dpgt," +
                 "0 AS road_cost_dpgt," +
-                "((t.travel_time * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
+                "((t.one_way_hours * 45) * " + strRailHaulCost.Trim() + ") AS rail_cost_dpgt," +
                 "0 AS complete_haul_cost_dpgt,  'C' AS materialcd " +
                 "FROM " + this.m_strTravelTimeTable + " t  " + 
 				"INNER JOIN  " + this.m_strPSiteWorkTable + " s " + 
 				"ON t.collector_id = s.psite_id " + 
 				"WHERE s.trancd=3 AND  " +
-                "(s.biocd=3 OR s.biocd=2)  AND t.travel_time > 0 AND " + 
+                "(s.biocd=3 OR s.biocd=2)  AND t.one_way_hours > 0 AND " + 
 				"EXISTS (SELECT ss.psite_id " + 
 				"FROM " + this.m_strPSiteWorkTable + " ss " + 
 				"WHERE t.psite_id=ss.psite_id AND ss.trancd=2 AND (ss.biocd=3 Or ss.biocd=2));";
@@ -3403,13 +3403,13 @@ namespace FIA_Biosum_Manager
 			this.m_strSQL = "INSERT INTO chip_plot_to_rh_to_collector_haul_costs_work_table " + 
 				"SELECT  t.biosum_plot_id, r.railhead_id, r.psite_id," +
                 "r.transfer_cost_dpgt," +
-                "(" + strTruckHaulCost.Trim() + " * t.travel_time) AS road_cost_dpgt," +
+                "(" + strTruckHaulCost.Trim() + " * t.one_way_hours) AS road_cost_dpgt," +
                 "r.rail_cost_dpgt, " +
                 "(r.transfer_cost_dpgt + road_cost_dpgt + r.rail_cost_dpgt) AS complete_haul_cost_dpgt," + 
 				"'C' AS materialcd " + 
 				"FROM  " + this.m_strTravelTimeTable + " t," + 
 				"chip_rh_to_collector_haul_costs_work_table r " +
-                "WHERE r.railhead_id = t.psite_id  AND t.travel_time > 0;";
+                "WHERE r.railhead_id = t.psite_id  AND t.one_way_hours > 0;";
 
 
 

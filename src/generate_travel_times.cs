@@ -81,7 +81,7 @@ namespace FIA_Biosum_Travel_Times_Generator
 										break;
 									}
 								}
-								strSQL = "insert into travel_time (psite_id,biosum_plot_id,travel_mode,travel_time) VALUES ";
+                                strSQL = "insert into travel_time (psite_id,biosum_plot_id,travel_mode,ONE_WAY_HOURS) VALUES ";
 								strSQL += "(" + p_ado.m_DataSet.Tables["processing_site"].Rows[y]["psite_id"].ToString()
 									+ ",'" + p_ado.m_DataSet.Tables["plot"].Rows[x]["biosum_plot_id"].ToString()
 									+ "',1"  +
@@ -104,11 +104,11 @@ namespace FIA_Biosum_Travel_Times_Generator
                                 strSQL="";
 								if (p_ado.m_DataSet.Tables["processing_site"].Rows[y]["trancd"].ToString().Trim() == "2")
 								{
-									strSQL = "insert into travel_time (psite_id,railhead_id,travel_mode,travel_time) values ";
+                                    strSQL = "insert into travel_time (psite_id,railhead_id,travel_mode,ONE_WAY_HOURS) values ";
 								}
 								else if (p_ado.m_DataSet.Tables["processing_site"].Rows[y]["trancd"].ToString().Trim() == "3")
 								{
-									strSQL = "insert into travel_time (psite_id,collector_id,travel_mode,travel_time) values ";
+                                    strSQL = "insert into travel_time (psite_id,collector_id,travel_mode,ONE_WAY_HOURS) values ";
 								}
 								if (strSQL.Trim().Length > 0)
 								{
