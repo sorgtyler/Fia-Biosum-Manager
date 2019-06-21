@@ -3907,7 +3907,7 @@ namespace FIA_Biosum_Manager
 			this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName + 
 				" (biosum_cond_id,rxpackage,rx,rxcycle,chip_vol_cf," + 
 				"chip_wt_gt,chip_val_dpa,merch_vol_cf," + 
-				"merch_wt_gt,merch_val_dpa) ";
+				"merch_wt_gt,merch_val_dpa,place_holder) ";
 			this.m_strSQL += "SELECT biosum_cond_id, " + 
 				"rxpackage,rx,rxcycle," +
 				"Sum(chip_vol_cf) AS chip_vol_cf," + 
@@ -3915,11 +3915,12 @@ namespace FIA_Biosum_Manager
 				"Sum(chip_val_dpa) AS chip_val_dpa," + 
 				"Sum(merch_vol_cf) AS merch_vol_cf," +
 				"Sum(merch_wt_gt) AS merch_wt_gt," + 
-				"Sum(merch_val_dpa) AS merch_val_dpa ";
+				"Sum(merch_val_dpa) AS merch_val_dpa, " +
+                "place_holder";
 
 			this.m_strSQL += " FROM " + this.m_strTreeVolValBySpcDiamGroupsTable.Trim();
-			this.m_strSQL += " GROUP BY biosum_cond_id,rxpackage,rx,rxcycle";
-			this.m_strSQL += " ORDER BY biosum_cond_id,rxpackage,rx,rxcycle;";
+			this.m_strSQL += " GROUP BY biosum_cond_id,rxpackage,rx,rxcycle, place_holder";
+			this.m_strSQL += " ORDER BY biosum_cond_id,rxpackage,rx,rxcycle, place_holder ;";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\ninsert into tree_vol_val_sum_by_rx_cycle table tree volume and value sums\r\n");
@@ -5898,7 +5899,8 @@ namespace FIA_Biosum_Manager
                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite AS merch_psite_num, " +
                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite_name AS merch_psite_name, " +
                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite AS chip_psite_num, " +
-                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite_name AS chip_psite_name " +
+                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite_name AS chip_psite_name, " +
+                      this.m_strTreeVolValSumTable.Trim() + ".place_holder AS place_holder " +
                       "INTO " + workTableName + 
                       " FROM ((((validcombos " +
                       "INNER JOIN " + this.m_strCondTable + " " +
@@ -5946,14 +5948,14 @@ namespace FIA_Biosum_Manager
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
                                 "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name) " + 
+                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, place_holder ) " + 
                             "SELECT biosum_cond_id,rxpackage,rx,rxcycle," +
                                 "merch_vol_cf,chip_vol_cf," +
                                 "chip_wt_gt,chip_val_dpa," +
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
                                 "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name " +
+                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, place_holder " +
                             "FROM " + workTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)

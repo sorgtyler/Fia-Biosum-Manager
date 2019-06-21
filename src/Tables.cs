@@ -1007,7 +1007,8 @@ namespace FIA_Biosum_Manager
 					"chip_val_dpa DOUBLE," + 
 					"merch_vol_cf DOUBLE," + 
 					"merch_wt_gt DOUBLE," + 
-					"merch_val_dpa DOUBLE)";
+					"merch_val_dpa DOUBLE," +
+                    "place_holder CHAR(1) DEFAULT 'N')";
 			}
             //
             //TREE VOLUME AND VALUE SUM BY RX PACKAGE TABLE
@@ -1078,7 +1079,8 @@ namespace FIA_Biosum_Manager
                     "chip_psite_num INTEGER," +
                     "chip_psite_name CHAR(255)," +
                     "haul_costs_dpa CHAR(255)," +
-                    "use_air_dest_YN CHAR(1) )";
+                    "use_air_dest_YN CHAR(1)," +
+                    "place_holder CHAR(1) DEFAULT 'N')";
 			}
 
             //
