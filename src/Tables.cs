@@ -1080,6 +1080,7 @@ namespace FIA_Biosum_Manager
                     "chip_psite_name CHAR(255)," +
                     "haul_costs_dpa CHAR(255)," +
                     "use_air_dest_YN CHAR(1)," +
+                    "chip_acd_wt_gt DOUBLE," +
                     "place_holder CHAR(1) DEFAULT 'N')";
 			}
 

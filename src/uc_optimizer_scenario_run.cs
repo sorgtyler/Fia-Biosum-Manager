@@ -5865,6 +5865,7 @@ namespace FIA_Biosum_Manager
             string workTableName = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + "_work_table";
             if (m_ado.TableExist(this.m_TempMDBFileConn, workTableName))
                 m_ado.SqlNonQuery(this.m_TempMDBFileConn, "DROP TABLE " + workTableName);
+            
             m_strSQL = 
                 "SELECT validcombos.biosum_cond_id,validcombos.rxpackage,validcombos.rx," + 
                        "validcombos.rxcycle," + 
@@ -5889,9 +5890,8 @@ namespace FIA_Biosum_Manager
                       "escalator_chip_haul_cpa_pt * " + this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt AS chip_haul_cost_dpa," +
                       "merch_val_dpa + chip_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa - chip_haul_cost_dpa AS merch_chip_nr_dpa," +
                       "merch_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa AS merch_nr_dpa," +
-                      "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt IS NOT NULL AND " + 
-                           "merch_chip_nr_dpa > merch_nr_dpa,'Y','N') AS usebiomass_yn," + 
-                      "IIF(usebiomass_yn = 'Y', merch_chip_nr_dpa,merch_nr_dpa) AS max_nr_dpa, " +
+                      "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite IS NULL, 'N','Y') AS usebiomass_yn," +
+                      "CDbl(0) AS max_nr_dpa, " +
                       this.m_strCondTable.Trim() + ".acres, " +
                       this.m_strCondTable.Trim() + ".owngrpcd, " +
                       "IIF(usebiomass_yn = 'Y','N','Y') AS use_air_dest_YN, " +
@@ -5900,6 +5900,7 @@ namespace FIA_Biosum_Manager
                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite_name AS merch_psite_name, " +
                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite AS chip_psite_num, " +
                       Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite_name AS chip_psite_name, " +
+                      "CDbl(0) AS chip_acd_wt_gt, " +
                       this.m_strTreeVolValSumTable.Trim() + ".place_holder AS place_holder " +
                       "INTO " + workTableName + 
                       " FROM ((((validcombos " +
@@ -5939,6 +5940,120 @@ namespace FIA_Biosum_Manager
                 return;
             }
 
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdates to " + workTableName + "\r\n");
+
+            // Get the highest value for chips out of the Processor item. They should all be the same, but just in case ...            
+            string strChipValue = "-1";
+            for (int i = 0; i < this.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Count - 1; i++)
+            {
+                ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem oItem =
+                  this.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(i);
+                if (Convert.ToDouble(strChipValue) < Convert.ToDouble(oItem.ChipsDollarPerCubicFootValue.Trim()))
+                {
+                    strChipValue = oItem.ChipsDollarPerCubicFootValue.Trim();
+                }
+            }
+            // Only use Biomass if chip revenue is higher than the cost of hauling them
+            this.m_strSQL = "UPDATE " + workTableName +
+                            " SET usebiomass_yn = IIF(" + strChipValue + " < chip_haul_cost_dpa, 'N', 'Y')" +
+                            " WHERE usebiomass_yn = 'Y'";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
+            // Don't use Biomass if no chip weight
+            this.m_strSQL = "UPDATE " + workTableName +
+                " SET usebiomass_yn = IIF(CHIP_WT_GT = 0 , 'N', 'Y')" +
+                " WHERE usebiomass_yn = 'Y'";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
+            // Update USE_AIR_DEST_YN 
+            this.m_strSQL = "UPDATE " + workTableName +
+                " SET USE_AIR_DEST_YN = IIF(CHIP_WT_GT = 0 , 'N', IIF(usebiomass_yn = 'Y', 'N','Y'))";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
+            // Update fields based on USE_AIR_DEST_YN
+            this.m_strSQL = "UPDATE " + workTableName +
+                            " SET CHIP_PSITE_NUM = IIF(USE_AIR_DEST_YN = 'Y', NULL, CHIP_PSITE_NUM), " +
+                            " CHIP_PSITE_NAME = IIF(USE_AIR_DEST_YN = 'Y', NULL, CHIP_PSITE_NAME), " +
+                            " CHIP_VOL_CF = IIF(USE_AIR_DEST_YN = 'Y', 0, CHIP_VOL_CF), " +
+                            " CHIP_VAL_DPA = IIF(USE_AIR_DEST_YN = 'Y', 0, CHIP_VAL_DPA), " + 
+                            " HAUL_COSTS_DPA = IIF(USE_AIR_DEST_YN = 'Y', MERCH_HAUL_COST_DPA, MERCH_HAUL_COST_DPA + CHIP_HAUL_COST_DPA ), " +
+                            " MAX_NR_DPA = IIF(USE_AIR_DEST_YN = 'Y', MERCH_NR_DPA, MERCH_CHIP_NR_DPA), " +
+                            " CHIP_ACD_WT_GT = IIF(USE_AIR_DEST_YN = 'Y', CHIP_WT_GT, 0)";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
+            // Recalculate merch_chip_nr_dpa after (possibly) zeroing out chip_val_dpa due to USE_AIR_DEST_YN flag
+            this.m_strSQL = "UPDATE " + workTableName +
+                " SET merch_chip_nr_dpa = IIF(USE_AIR_DEST_YN = 'Y', merch_val_dpa - harvest_onsite_cost_dpa - haul_costs_dpa, " +
+                "merch_val_dpa + chip_val_dpa - harvest_onsite_cost_dpa - haul_costs_dpa)";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
             this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
@@ -5948,14 +6063,14 @@ namespace FIA_Biosum_Manager
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
                                 "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, place_holder ) " + 
+                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, chip_acd_wt_gt, place_holder ) " + 
                             "SELECT biosum_cond_id,rxpackage,rx,rxcycle," +
                                 "merch_vol_cf,chip_vol_cf," +
                                 "chip_wt_gt,chip_val_dpa," +
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
                                 "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,use_air_dest_YN,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, place_holder " +
+                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, chip_acd_wt_gt, place_holder " +
                             "FROM " + workTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
