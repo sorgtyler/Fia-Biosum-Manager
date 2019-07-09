@@ -4260,7 +4260,7 @@ namespace FIA_Biosum_Manager
 			//----------------------PLOT COLUMN UPDATES-----------------------//
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "//----------------------PLOT COLUMN UPDATES-----------------------//\r\n");
-            SetThermValue(m_frmTherm.progressBar1, "Maximum", 3);
+            SetThermValue(m_frmTherm.progressBar1, "Maximum", 4);
             SetThermValue(m_frmTherm.progressBar1, "Minimum", 0);
             SetThermValue(m_frmTherm.progressBar1, "Value", 0);
             SetLabelValue(m_frmTherm.lblMsg,"Text","Updating Plot Table Columns...Stand By");
@@ -4324,6 +4324,24 @@ namespace FIA_Biosum_Manager
 				p_ado.SqlNonQuery(this.m_connTempMDBFile,p_ado.m_strSQL);
 			}
             SetThermValue(m_frmTherm.progressBar1, "Value", 3);
+
+		    //Set plot.gis_yard_dist_ft to fiadb_fvs_variant.MoveDistance_ft if available
+		    if (p_ado.m_intError == 0 && !GetBooleanValue((System.Windows.Forms.Control)m_frmTherm, "AbortProcess"))
+		    {
+		        if (p_ado.ColumnExist(this.m_connTempMDBFile, Tables.Reference.DefaultFiadbFVSVariantTableName, "MoveDistance_ft"))
+		        {
+		            p_ado.m_strSQL = String.Format(
+		                @"UPDATE {0} p INNER JOIN {1} ffv 
+                        ON p.statecd=ffv.statecd and p.countycd=ffv.countycd and p.plot=ffv.plot 
+                        SET p.gis_yard_dist_ft=ffv.MoveDistance_ft 
+                        WHERE ffv.MoveDistance_ft IS NOT NULL and p.biosum_status_cd=9;",
+		                m_strPlotTable, Tables.Reference.DefaultFiadbFVSVariantTableName);
+		            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+		                frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, p_ado.m_strSQL + "\r\n");
+		            p_ado.SqlNonQuery(this.m_connTempMDBFile, p_ado.m_strSQL);
+		        }
+		    }
+		    SetThermValue(m_frmTherm.progressBar1, "Value", 4);
 
 		    return p_ado.m_intError;
 		}

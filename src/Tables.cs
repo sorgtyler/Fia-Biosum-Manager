@@ -3073,7 +3073,7 @@ namespace FIA_Biosum_Manager
 					"fvsloccode INTEGER," + 
 					"half_state CHAR(10)," + 
 					"subplot_count_plot BYTE," + 
-					"gis_yard_dist DOUBLE," + 
+					"gis_yard_dist_ft DOUBLE," + 
 					"num_cond BYTE," + 
 					"one_cond_yn CHAR(1)," + 
 					"lat DOUBLE," + 
@@ -4349,7 +4349,7 @@ namespace FIA_Biosum_Manager
                             " RXCYCLE text (1)," +
                             " elev short," +
                             " slope short," +
-                            " gis_yard_dist DOUBLE," + 
+                            " gis_yard_dist_ft DOUBLE," + 
                             " [Harvesting system] text (50)," +
                            " [CHIPS TPA] single," +
                            " [CHIPS Average Vol (ft3)] single," +

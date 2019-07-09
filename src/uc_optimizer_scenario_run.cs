@@ -2735,8 +2735,7 @@ namespace FIA_Biosum_Manager
                 "SET p.cond_too_far_steep_yn = 'Y' " +
                 "WHERE c.slope IS NOT NULL AND " +
                 "c.slope <  " + m_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + " AND " +
-                "pt.gis_yard_dist >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strNonSteepYardingDistance.Trim() + ";";
-
+                "pt.gis_yard_dist_ft >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strNonSteepYardingDistance.Trim() + ";";
             
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -2757,7 +2756,7 @@ namespace FIA_Biosum_Manager
                 "SET p.cond_too_far_steep_yn = 'Y' " +
                 "WHERE c.slope IS NOT NULL AND " +
                 "c.slope >= " + m_oProcessorScenarioItem.m_oHarvestMethod.SteepSlopePercent + " AND " +
-                "pt.gis_yard_dist >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strSteepYardingDistance.Trim() + ";";
+                "pt.gis_yard_dist_ft >= " + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strSteepYardingDistance.Trim() + ";";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");

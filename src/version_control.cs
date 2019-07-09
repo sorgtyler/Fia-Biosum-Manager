@@ -500,6 +500,18 @@ namespace FIA_Biosum_Manager
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
+                    //5.8.7 modifications to Optimizer tables; Clean-up Plot and Cond tables
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 7) &&
+                           (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 8 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 7))
+                    {
+                        UpdateDatasources_5_8_7();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
                     else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
                         Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) > 6) &&
                         (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
@@ -5952,6 +5964,11 @@ namespace FIA_Biosum_Manager
                                               "gis_status_id","idb_plot_id", "gis_protected_area_yn",
                                               "gis_roadless_yn","PLOT_ACCESSIBLE_YN", "ALL_COND_NOT_ACCESSIBLE_YN"};
                 oDao.DeleteField(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, arrFieldsToDelete);
+                oDao.OpenDb(strPlotDirectory + "\\" + strPlotMdbFile);
+                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "gis_yard_dist"))
+                {
+                    oDao.RenameField(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, "gis_yard_dist", "gis_yard_dist_ft");
+                }
             }
 
             intPlotTable = oProjectDs.getValidTableNameRow(Datasource.TableTypes.Condition);

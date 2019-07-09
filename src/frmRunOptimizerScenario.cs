@@ -1786,7 +1786,7 @@ namespace FIA_Biosum_Manager
 				            "SET c.cond_too_far_steep_yn = 'Y' " + 
 				            "WHERE c.slope IS NOT NULL AND " + 
 				                  "c.slope <= 40 AND " + 
-				                  "p.gis_yard_dist >= " + this.m_frmRunCoreScenario.m_frmScenario.uc_scenario_filter1.strNonSteepYardingDistance.Trim() + ";" ;
+				                  "p.gis_yard_dist_ft >= " + this.m_frmRunCoreScenario.m_frmScenario.uc_scenario_filter1.strNonSteepYardingDistance.Trim() + ";" ;
 
 			this.m_txtStreamWriter.WriteLine("Execute SQL:{0}",this.m_strSQL);
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
@@ -1802,7 +1802,7 @@ namespace FIA_Biosum_Manager
 				"SET c.cond_too_far_steep_yn = 'Y' " + 
 				"WHERE c.slope IS NOT NULL AND " + 
 				"c.slope > 40 AND " + 
-				"p.gis_yard_dist >= " + this.m_frmRunCoreScenario.m_frmScenario.uc_scenario_filter1.strSteepYardingDistance.Trim() + ";" ;
+				"p.gis_yard_dist_ft >= " + this.m_frmRunCoreScenario.m_frmScenario.uc_scenario_filter1.strSteepYardingDistance.Trim() + ";" ;
 
 			this.m_txtStreamWriter.WriteLine("Execute SQL:{0}",this.m_strSQL);
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
