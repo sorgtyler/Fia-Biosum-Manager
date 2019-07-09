@@ -172,7 +172,7 @@ namespace FIA_Biosum_Manager
                 //string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
                 //                "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
                 //                "z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, " +
-                //                "c.slope, p.elev, p.gis_yard_dist, min(t.travel_time) as travel_time " +
+                //                "c.slope, p.elev, p.gis_yard_dist_ft, min(t.travel_time) as travel_time " +
                 //                  "FROM " + strTableName + " z, cond c, plot p, travel_time t " +
                 //                  "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
                 //                  "z.biosum_cond_id = c.biosum_cond_id AND " +
@@ -183,12 +183,12 @@ namespace FIA_Biosum_Manager
                 //                  " group by z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, " +
                 //                  "z.dbh, z.tpa, z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, " +
                 //                  "z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, " +
-                //                  "c.slope, p.elev, p.gis_yard_dist";
+                //                  "c.slope, p.elev, p.gis_yard_dist_ft";
                 string strSQL = "SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, z.dbh, z.tpa, " +
                                 "z.volCfNet, z.drybiot, z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, " +
-                                "z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, c.gis_yard_dist " +
+                                "z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, c.gis_yard_dist_ft " +
                                 "FROM " + strTableName + " z, " +
-                                "(SELECT p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM " +
+                                "(SELECT p.biosum_plot_id,p.gis_yard_dist_ft,p.elev,d.biosum_cond_id,d.slope FROM " +
                                 strPlotTableName + " p INNER JOIN " + strCondTableName + " d ON p.biosum_plot_id = d.biosum_plot_id) c " +
                                 "WHERE z.rxpackage='" + p_strRxPackage + "' AND " +
                                 "z.biosum_cond_id = c.biosum_cond_id";
@@ -287,10 +287,10 @@ namespace FIA_Biosum_Manager
                             newTree.SpCd = Convert.ToString(intSpcd);
                         }
                         newTree.Elevation = Convert.ToInt32(m_oAdo.m_OleDbDataReader["elev"]);
-                        if (m_oAdo.m_OleDbDataReader["gis_yard_dist"] == System.DBNull.Value)
+                        if (m_oAdo.m_OleDbDataReader["gis_yard_dist_ft"] == System.DBNull.Value)
                             newTree.YardingDistance = 0;
                         else
-                            newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist"]);
+                            newTree.YardingDistance = Convert.ToDouble(m_oAdo.m_OleDbDataReader["gis_yard_dist_ft"]);
 
                         m_trees.Add(newTree);
                     }
@@ -311,9 +311,9 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//This query didn't return any rows: \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//SELECT z.biosum_cond_id, c.biosum_plot_id, z.rxCycle, z.rx, z.rxYear, z.dbh, z.tpa, z.volCfNet, z.drybiot, \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//z.drybiom,z.FvsCreatedTree_YN, z.fvs_tree_id, z.fvs_species, z.volTsGrs, z.volCfGrs, c.slope, c.elev, \r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.gis_yard_dist, t.min_traveltime FROM fvs_tree_IN_BM_P001_TREE_CUTLIST z, (SELECT MIN(TRAVEL_TIME) AS  \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.gis_yard_dist_ft, t.min_traveltime FROM fvs_tree_IN_BM_P001_TREE_CUTLIST z, (SELECT MIN(TRAVEL_TIME) AS  \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//min_traveltime, BIOSUM_PLOT_ID FROM TRAVEL_TIME WHERE TRAVEL_TIME > 0 GROUP BY BIOSUM_PLOT_ID) t, (SELECT \r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id,p.gis_yard_dist,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON  \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id,p.gis_yard_dist_ft,p.elev,d.biosum_cond_id,d.slope FROM plot p INNER JOIN cond d ON  \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//p.biosum_plot_id = d.biosum_plot_id) c WHERE z.rxpackage='001' AND z.biosum_cond_id = c.biosum_cond_id AND \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//c.biosum_plot_id = t.biosum_plot_id \r\n");
                 }

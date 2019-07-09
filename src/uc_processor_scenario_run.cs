@@ -2766,7 +2766,7 @@ namespace FIA_Biosum_Manager
                               "INNER JOIN " + m_oQueries.m_oFIAPlot.m_strCondTable + " c " +
                               "ON p.biosum_plot_id = c.biosum_plot_id) " +
                               "ON o.biosum_cond_id = c.biosum_cond_id " +
-                              "SET o.gis_yard_dist = IIF(p.gis_yard_dist IS NULL,1,p.gis_yard_dist)," +
+                              "SET o.gis_yard_dist_ft = IIF(p.gis_yard_dist_ft IS NULL,1,p.gis_yard_dist_ft)," +
                                   "o.elev = p.elev," + 
                                   "o.slope = IIF(c.slope IS NULL,0,c.slope)";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)

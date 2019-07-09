@@ -4762,7 +4762,7 @@ namespace FIA_Biosum_Manager
                         "o.[BRUSH CUT not utilized Chip Fraction] = 0," +
                         "o.[BRUSH CUT not utilized logs (ft3)] = 0," +
                         "o.[BRUSH CUT not utilized chips (tons)] = 0," + 
-                        "o.gis_yard_dist=1," + 
+                        "o.gis_yard_dist_ft=1," + 
                         "o.slope=0," + 
                         "o.elev=0";
 
@@ -5054,7 +5054,7 @@ namespace FIA_Biosum_Manager
             {
                 return "SELECT o.biosum_cond_id + o.rxpackage + o.rx + o.rxcycle AS Stand," +
                                 "o.Slope AS [Percent Slope]," +
-                                "o.gis_yard_dist AS [One-way Yarding Distance]," +
+                                "o.gis_yard_dist_ft AS [One-way Yarding Distance]," +
                                 "Null AS BLANK," +
                                 "o.elev AS [Project Elevation]," +
                                 "o.[Harvesting system] AS [Harvesting System]," +
@@ -5155,7 +5155,7 @@ namespace FIA_Biosum_Manager
             {
                 return "SELECT o.biosum_cond_id + o.rxpackage + o.rx + o.rxcycle AS Stand," +
                                 "o.Slope AS [Percent Slope]," +
-                                "o.gis_yard_dist AS [One-way Yarding Distance]," +
+                                "o.gis_yard_dist_ft AS [One-way Yarding Distance]," +
                                 "Null AS [YearCostCalc]," +
                                 "o.elev AS [Project Elevation]," +
                                 "o.[Harvesting system] AS [Harvesting System]," +
