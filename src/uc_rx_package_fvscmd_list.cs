@@ -892,7 +892,7 @@ namespace FIA_Biosum_Manager
 				this.m_oLvAlternateColors.DelegateListViewItem(lvRxPackageFVSCmd.SelectedItems[0]);
 				if (this.lvRxPackageFVSCmd.SelectedItems[0].SubItems[COLUMN_CYCLE].Text.Trim().Length > 0)
 				{
-					if (this.ReferenceFormRxPackageItem.TabPageHasFocus(2)==true)
+					if (this.ReferenceFormRxPackageItem.TabPageHasFocus(1)==true)
 					{
                         ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_NEW] = true;
                         ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_DELETE] = false;
@@ -907,7 +907,7 @@ namespace FIA_Biosum_Manager
 				}
 				else
 				{
-					if (this.ReferenceFormRxPackageItem.TabPageHasFocus(2)==true)
+					if (this.ReferenceFormRxPackageItem.TabPageHasFocus(1)==true)
 					{
                         ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_NEW] = true;
                         ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_DELETE] = true;
@@ -1295,7 +1295,7 @@ namespace FIA_Biosum_Manager
 			//	}
 			//}
 
-            if (this.ReferenceFormRxPackageItem.TabPageHasFocus(2) == true)
+            if (this.ReferenceFormRxPackageItem.TabPageHasFocus(1) == true)
             {
                 ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_NEW] = true;
                 ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_DELETE] = true;
@@ -1545,7 +1545,7 @@ namespace FIA_Biosum_Manager
             lvwColumnSorter = new ListViewColumnSorter();
             this.lvRxPackageFVSCmd.ListViewItemSorter = lvwColumnSorter;
 
-            if (this.ReferenceFormRxPackageItem.TabPageHasFocus(2) == true)
+            if (this.ReferenceFormRxPackageItem.TabPageHasFocus(1) == true)
             {
                 ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_NEW] = true;
                 ReferenceFormRxPackageItem.m_bToolBarButtonEnabled[frmRxPackageItem.UC_FVSCMD, frmRxPackageItem.BUTTON_DELETE] = true;
