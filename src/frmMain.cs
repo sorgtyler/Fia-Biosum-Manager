@@ -86,10 +86,11 @@ namespace FIA_Biosum_Manager
 
 
 		//CORE panel and buttons
-        public System.Windows.Forms.Panel m_pnlCore;
-		public FIA_Biosum_Manager.btnMainForm m_btnCoreScenario;
+        public System.Windows.Forms.Panel m_pnlOptimizer;
+		public FIA_Biosum_Manager.btnMainForm m_btnOptimizerScenario;
 		public FIA_Biosum_Manager.btnMainForm m_btnCoreMerge;
-        public FIA_Biosum_Manager.btnMainForm m_btnCoreUserVariables;
+        public FIA_Biosum_Manager.btnMainForm m_btnOptimizerUserVariables;
+        public FIA_Biosum_Manager.btnMainForm m_btnOptimizerLoadGisData;
 
 
 		public System.Windows.Forms.Panel m_pnlFrcs;
@@ -1165,10 +1166,10 @@ namespace FIA_Biosum_Manager
 				this.btnFVS.Enabled = true;
 				this.btnProcessor.Dock = DockStyle.Bottom;
 				this.btnProcessor.Enabled=true;
-				this.m_pnlCore.Size = this.m_pnlCurrent.Size;
-				this.m_pnlCore.Location = this.m_pnlCurrent.Location;
+				this.m_pnlOptimizer.Size = this.m_pnlCurrent.Size;
+				this.m_pnlOptimizer.Location = this.m_pnlCurrent.Location;
 				this.m_pnlCurrent.Visible=false;
-				this.m_pnlCurrent = this.m_pnlCore;
+				this.m_pnlCurrent = this.m_pnlOptimizer;
 				this.m_pnlCurrent.Visible=true;
 				this.m_pnlCurrent.Refresh();
 				this.ChildWindowVisible("Treatment Optimizer:");
@@ -1663,6 +1664,48 @@ namespace FIA_Biosum_Manager
                         this.m_frmCoreMerge.Focus();
 
                     }
+                }
+                else if (strText.Trim().ToUpper() == "LOAD GIS DATA")
+                {
+                   GisTools oGisTools = new GisTools();
+                   bool bTablesHaveData = false;
+                   bool bTablesExist = oGisTools.CheckForExistingData(this.frmProject.uc_project1.m_strProjectDirectory, out bTablesHaveData);
+                   bool bCreateBackups = false;
+                   bool bSuccess = true;
+                   if (bTablesHaveData == true)
+                   {
+                       string strMessage = "BioSum has found existing data in your gis data tables. Do you wish to overwrite existing data? " +
+                           "This process cannot be reversed!!";
+                       DialogResult res = MessageBox.Show(strMessage, "FIA BioSum", MessageBoxButtons.YesNo);
+                       if (res != DialogResult.Yes)
+                       {
+                           MessageBox.Show("GIS data load terminated!!", "FIA BioSum");
+                           return;
+                       }
+                       else
+                       {
+                           strMessage = "Would you like BioSum to make copies of your existing GIS tables? The names of the table backups will include today's date.";
+                           res = MessageBox.Show(strMessage, "FIA BioSum", MessageBoxButtons.YesNo);
+                           if (res == DialogResult.Yes)
+                           {
+                               bCreateBackups = true;
+                           }
+                       }
+                       if (bCreateBackups == true)
+                       {
+                           bSuccess = oGisTools.BackupGisData();
+                       }
+                   }
+                   if (bSuccess == true)
+                   {
+                       int intRowCount = oGisTools.LoadGisData();
+                   }
+                   else
+                   {
+                       MessageBox.Show("An error occurred while backing up the tables. GIS data load terminated!!", "FIA BioSum");
+                   }
+                   MessageBox.Show("Load gis data!");
+
                 }
                 else if (strText.Trim().ToUpper() == "OPTIMIZATION SCENARIO") 
 				{
@@ -3433,30 +3476,37 @@ namespace FIA_Biosum_Manager
 		{
 			
             //CORE ANALYSIS PANEL
-            this.m_pnlCore = new Panel();
-			this.grpboxLeft.Controls.Add(this.m_pnlCore);
-            this.PanelProperties(this.panel1,ref this.m_pnlCore);
-			this.m_pnlCore.Visible=false;
-			this.m_pnlCore.Name="CORE";
+            this.m_pnlOptimizer = new Panel();
+			this.grpboxLeft.Controls.Add(this.m_pnlOptimizer);
+            this.PanelProperties(this.panel1,ref this.m_pnlOptimizer);
+			this.m_pnlOptimizer.Visible=false;
+			this.m_pnlOptimizer.Name="CORE";
             //user-defined PRE/POST variables
-            this.m_btnCoreUserVariables = new btnMainForm(this);
-            this.m_pnlCore.Controls.Add(this.m_btnCoreUserVariables);
-            this.m_btnCoreUserVariables.Size = this.btnMain1.Size;
-            this.m_btnCoreUserVariables.Location = this.btnMain1.Location;
-            this.m_btnCoreUserVariables.Text = "Define Calculated Variables";
+            this.m_btnOptimizerUserVariables = new btnMainForm(this);
+            this.m_pnlOptimizer.Controls.Add(this.m_btnOptimizerUserVariables);
+            this.m_btnOptimizerUserVariables.Size = this.btnMain1.Size;
+            this.m_btnOptimizerUserVariables.Location = this.btnMain1.Location;
+            this.m_btnOptimizerUserVariables.Text = "Define Calculated Variables";
+            //Load psites and travel times
+            this.m_btnOptimizerLoadGisData = new btnMainForm(this);
+            this.m_pnlOptimizer.Controls.Add(this.m_btnOptimizerLoadGisData);
+            this.m_btnOptimizerLoadGisData.Size = this.btnMain1.Size;
+            this.m_btnOptimizerLoadGisData.Left = this.m_btnOptimizerUserVariables.Left;
+            this.m_btnOptimizerLoadGisData.Top = this.m_btnOptimizerUserVariables.Top + this.m_btnOptimizerUserVariables.Height + 5;
+            this.m_btnOptimizerLoadGisData.Text = "Load GIS Data";
 			//Optimization scenario
-			this.m_btnCoreScenario = new btnMainForm(this);
-			this.m_pnlCore.Controls.Add(this.m_btnCoreScenario);
-			this.m_btnCoreScenario.Size = this.btnMain1.Size;
-            this.m_btnCoreScenario.Left = this.m_btnCoreUserVariables.Left;
-            this.m_btnCoreScenario.Top = this.m_btnCoreUserVariables.Top + this.m_btnCoreUserVariables.Height + 5;
-			this.m_btnCoreScenario.Text = "Optimization Scenario";
+			this.m_btnOptimizerScenario = new btnMainForm(this);
+			this.m_pnlOptimizer.Controls.Add(this.m_btnOptimizerScenario);
+			this.m_btnOptimizerScenario.Size = this.btnMain1.Size;
+            this.m_btnOptimizerScenario.Left = this.m_btnOptimizerUserVariables.Left;
+            this.m_btnOptimizerScenario.Top = this.m_btnOptimizerLoadGisData.Top + this.m_btnOptimizerLoadGisData.Height + 5;
+			this.m_btnOptimizerScenario.Text = "Optimization Scenario";
 			//merge scenarios
 			this.m_btnCoreMerge = new btnMainForm(this);
-			this.m_pnlCore.Controls.Add(this.m_btnCoreMerge);
+			this.m_pnlOptimizer.Controls.Add(this.m_btnCoreMerge);
 			this.m_btnCoreMerge.Size = this.btnMain1.Size;
-			this.m_btnCoreMerge.Left  = this.m_btnCoreScenario.Left;
-			this.m_btnCoreMerge.Top = this.m_btnCoreScenario.Top + this.m_btnCoreScenario.Height + 5;
+			this.m_btnCoreMerge.Left  = this.m_btnOptimizerScenario.Left;
+			this.m_btnCoreMerge.Top = this.m_btnOptimizerScenario.Top + this.m_btnOptimizerScenario.Height + 5;
 			this.m_btnCoreMerge.Text = "Join Data From Multiple Scenarios";
             this.m_btnCoreMerge.Hide();
 
@@ -3465,7 +3515,7 @@ namespace FIA_Biosum_Manager
 			this.grpboxLeft.Controls.Add(this.m_pnlProcessor);
 			this.PanelProperties(this.panel1,ref this.m_pnlProcessor);
 			this.m_pnlProcessor.Visible=false;
-			this.m_pnlCore.Name="PROCESSOR";
+			this.m_pnlOptimizer.Name="PROCESSOR";
 
 			//tree species
 			this.m_btnProcessorTreeSpc = new btnMainForm(this);

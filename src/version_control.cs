@@ -5757,7 +5757,6 @@ namespace FIA_Biosum_Manager
             ado_data_access oAdo = new ado_data_access();
             dao_data_access oDao = new dao_data_access();
 
-            string strTableSuffix = "_ver_control_" + DateTime.Now.ToString("MMddyyyy");
             frmMain.g_sbpInfo.Text = "Version Update: Update variable source for Calculated Variables ...Stand by";
 
             string strRenameMdb = ReferenceProjectDirectory.Trim() + "\\optimizer\\db\\optimizer_definitions.accdb";

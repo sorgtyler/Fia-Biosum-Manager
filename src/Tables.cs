@@ -2888,16 +2888,22 @@ namespace FIA_Biosum_Manager
 			public string CreateProcessingSiteTableSQL(string p_strTableName)
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
-					"psite_id INTEGER," + 
-					"name CHAR(30)," + 
-					"trancd BYTE," + 
-					"trancd_def CHAR(20)," + 
-					"biocd BYTE," + 
-					"biocd_def CHAR(15)," + 
-					"exists_yn CHAR(1) DEFAULT 'N'," + 
-					"keeplyr_yn CHAR(1) DEFAULT 'N'," + 
-					"lat DOUBLE," + 
-					"lon DOUBLE)";
+                    "PSITE_ID INTEGER," +
+                    "NAME CHAR(30)," +
+                    "TRANCD BYTE," +
+                    "TRANCD_DEF CHAR(20)," +
+                    "BIOCD BYTE," +
+                    "BIOCD_DEF CHAR(15)," +
+                    "EXISTS_YN CHAR(1) DEFAULT 'N'," +
+                    "LAT DOUBLE," +
+                    "LON DOUBLE," +
+                    "STATE CHAR(2)," +
+                    "CITY CHAR(40)," +
+                    "MILL_TYPE CHAR(40)," +
+                    "COUNTY CHAR(40)," +
+                    "STATUS CHAR(40)," +
+                    "NOTES CHAR(50)" +
+                ")";
 			}
 			public void CreateTravelTimeTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
