@@ -1101,12 +1101,12 @@ namespace FIA_Biosum_Manager
                     if (p_strTableName.Trim().Length == 0) p_strTableName = Tables.FVS.DefaultFVSTreeTableName;
 					break;
 				case "TRAVEL TIMES":
-					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName;
+                    if (p_strTableName.Trim().Length == 0) p_strTableName = Tables.TravelTime.DefaultTravelTimeTableName;
 					oItem.VariableName="TravelTimesTable";
 					break;
 				case "PROCESSING SITES":
 					oItem.VariableName="PSitesTable";
-					if (p_strTableName.Trim().Length == 0) p_strTableName=frmMain.g_oTables.m_oTravelTime.DefaultProcessingSiteTableName;
+                    if (p_strTableName.Trim().Length == 0) p_strTableName = Tables.TravelTime.DefaultProcessingSiteTableName;
 					break;
 				case "TREE SPECIES":
 					oItem.VariableName="TreeSpeciesTable";

@@ -4004,6 +4004,10 @@ namespace FIA_Biosum_Manager
     public class GisTools
     {
         private FIA_Biosum_Manager.Datasource m_oProjectDs;
+        private string m_strMasterTravelTime = Tables.TravelTime.DefaultTravelTimeTableName + "_m";
+        private string m_strMasterPSite = Tables.TravelTime.DefaultProcessingSiteTableName + "_m";
+        private string m_strPlotTableName = "";
+
         
         public bool CheckForExistingData(string strReferenceProjectDirectory, out bool bTablesHaveData)
         {
@@ -4091,10 +4095,12 @@ namespace FIA_Biosum_Manager
             string strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
             if (strTableStatus == "F")
             {
-                // Check to see if the backup table already exists; If it does, delete it before trying to backup
+                // Check to see if the backup table already exists; If it does, abort the process so user can delete
                 if (oDao.TableExists(strDirectoryPath + "\\" + strFileName, strTableName + strTableSuffix))
                 {
-                    oDao.DeleteTableFromMDB(strDirectoryPath + "\\" + strFileName, strTableName + strTableSuffix);
+                    MessageBox.Show("A backup table from today already exists: " + strTableName + ". Delete this table manually if you want to " +
+                        "back up today's data again!!", "FIA BioSum");
+                    return false;
                 }
                 oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTableName, strTableName + strTableSuffix, true, false);
             }
@@ -4108,10 +4114,12 @@ namespace FIA_Biosum_Manager
             strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
             if (strTableStatus == "F")
             {
-                // Check to see if the backup table already exists; If it does, delete it before trying to backup
+                // Check to see if the backup table already exists; If it does, abort the process so user can delete
                 if (oDao.TableExists(strDirectoryPath + "\\" + strFileName, strTableName + strTableSuffix))
                 {
-                    oDao.DeleteTableFromMDB(strDirectoryPath + "\\" + strFileName, strTableName + strTableSuffix);
+                    MessageBox.Show("A backup table from today already exists: " + strTableName + ". Delete this table manually if you want to " +
+                        "back up today's data again!!", "FIA BioSum");
+                    return false;
                 }
                 oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTableName, strTableName + strTableSuffix, true, false);
             }
@@ -4128,54 +4136,87 @@ namespace FIA_Biosum_Manager
         public int LoadGisData()
         {
             ado_data_access oAdo = new ado_data_access();
-            // travel times
-            int intTable = m_oProjectDs.getTableNameRow(Datasource.TableTypes.TravelTimes);
-            string strDirectoryPath = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            string strFileName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            string strTableName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            string strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
-            string strLoadConn = oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", "");
-            using (var oLoadConn = new OleDbConnection(strLoadConn))
-            {
-                oLoadConn.Open();
-                if (strTableStatus == "F")
-                {
-                    string strSql = "DROP TABLE " + strTableName;
-                    oAdo.SqlNonQuery(oLoadConn, strSql);
-                }
-                if (oAdo.m_intError == 0)
-                {
-                    frmMain.g_oTables.m_oTravelTime.CreateTravelTimeTable(oAdo, oLoadConn, strTableName);
 
-                }
-            }
-            // processing sies
-            intTable = m_oProjectDs.getTableNameRow(Datasource.TableTypes.ProcessingSites);
-            strDirectoryPath = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            strFileName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            strTableName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
-            strLoadConn = oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", "");
-            using (var oLoadConn = new OleDbConnection(strLoadConn))
+            string[] arrTableTypes = { Datasource.TableTypes.TravelTimes, Datasource.TableTypes.ProcessingSites};
+            string strTravelTimesTableName = "";
+            string strPSitesTableName = "";
+            int intRecordCount = -1;
+
+            frmMain.g_sbpInfo.Text = "Creating travel_time and processing_site tables...Stand by";
+            foreach (string strTableType in arrTableTypes)
             {
-                oLoadConn.Open();
-                if (strTableStatus == "F")
+                // travel times
+                int intTable = m_oProjectDs.getTableNameRow(strTableType);
+                string strDirectoryPath = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+                string strFileName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+                //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+                string strTableName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+                string strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+                string strLoadConn = oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", "");
+                using (var oLoadConn = new OleDbConnection(strLoadConn))
                 {
-                    string strSql = "DROP TABLE " + strTableName;
-                    oAdo.SqlNonQuery(oLoadConn, strSql);
-                }
-                if (oAdo.m_intError == 0)
-                {
-                    frmMain.g_oTables.m_oTravelTime.CreateProcessingSiteTable(oAdo, oLoadConn, strTableName);
+                    oLoadConn.Open();
+                    if (strTableStatus == "F")
+                    {
+                        string strSql = "DROP TABLE " + strTableName;
+                        oAdo.SqlNonQuery(oLoadConn, strSql);
+                    }
+                    if (oAdo.m_intError == 0)
+                    {
+                        if (strTableType.Equals(Datasource.TableTypes.TravelTimes))
+                        {
+                            frmMain.g_oTables.m_oTravelTime.CreateTravelTimeTable(oAdo, oLoadConn, strTableName);
+                            strTravelTimesTableName = strTableName;
+                        }
+                        else
+                        {
+                            frmMain.g_oTables.m_oTravelTime.CreateProcessingSiteTable(oAdo, oLoadConn, strTableName);
+                            strPSitesTableName = strTableName;
+                        }
+
+                    }
                 }
             }
 
             if (oAdo.m_intError == 0)
             {
-                string strTempDb = CreateMDBAndTableDataSourceLinks();
+                frmMain.g_sbpInfo.Text = "Creating temp database and table links...Stand by";
+                string strTempDb = CreateACCDBAndTableDataSourceLinks();
+                string strLoadConn = oAdo.getMDBConnString(strTempDb, "", "");
+                using (var oLoadConn = new OleDbConnection(strLoadConn))
+                {
+                    frmMain.g_sbpInfo.Text = "Loading travel_time table...Stand by";
+                    oLoadConn.Open();
+                    string strSql = "INSERT INTO " + strTravelTimesTableName +
+                                    " SELECT TRAVELTIME_ID, PSITE_ID, biosum_plot_id," +
+                                    " COLLECTOR_ID, RAILHEAD_ID, TRAVEL_MODE, ONE_WAY_HOURS," +
+                                    " PT.PLOT AS PLOT, PT.STATECD AS STATECD" +
+                                    " FROM " + m_strPlotTableName + " PT" +
+                                    " INNER JOIN " + m_strMasterTravelTime + " TT ON (PT.statecd = TT.STATECD) AND (PT.plot = TT.PLOT)";
+                    oAdo.SqlNonQuery(oLoadConn, strSql);
+                    strSql = "SELECT COUNT(*) FROM " + strTravelTimesTableName;
+                    intRecordCount = oAdo.getRecordCount(oLoadConn, strSql, strTravelTimesTableName);
+
+                    if (oAdo.m_intError == 0 && intRecordCount > 0)
+                    {
+                        frmMain.g_sbpInfo.Text = "Loading processing_site table...Stand by";
+                        strSql = "INSERT into " + strPSitesTableName +
+                                 " SELECT distinct p.psite_id, name, 1 as TRANCD, 'Regular' as TRANCD_DEF, BSM_TYP AS BIOCD," +
+                                 " IIf (BSM_TYP='1' , 'Merchantable' , IIf (BSM_TYP='2' , 'Chips' , 'Both' ) ) as BIOCD_DEF," +
+                                 " EXISTS_YN, LAT, LON, STATE, CITY, MLL_TYP as MILL_TYPE, STATUS" +
+                                 " FROM " + m_strMasterPSite + " p" +
+                                 " INNER JOIN " + strTravelTimesTableName + " tt ON p.PSITE_ID = tt.PSITE_ID" +
+                                 " group by P.PSITE_ID, NAME, BSM_TYP, EXISTS_YN, LAT, LON, STATE, CITY, MLL_TYP, STATUS";
+                        oAdo.SqlNonQuery(oLoadConn, strSql);
+                        strSql = "SELECT COUNT(*) FROM " + strPSitesTableName;
+                        intRecordCount = oAdo.getRecordCount(oLoadConn, strSql, strPSitesTableName);
+                    }
+                }
+
             }
+
+            
+            
 
             if (oAdo != null)
             {
@@ -4183,10 +4224,10 @@ namespace FIA_Biosum_Manager
                 oAdo = null;
             }
 
-            return 1;
+            return intRecordCount;
         }
 
-        private string CreateMDBAndTableDataSourceLinks()
+        private string CreateACCDBAndTableDataSourceLinks()
         {
             string strTempMDB = "";
             //used to get the temporary random file name
@@ -4199,34 +4240,29 @@ namespace FIA_Biosum_Manager
             dao_data_access oDao = new dao_data_access();
             oDao.CreateMDB(strTempMDB);
 
-            // travel times
-            int intTable = m_oProjectDs.getTableNameRow(Datasource.TableTypes.TravelTimes);
-            string strDirectoryPath = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            string strFileName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            string strTableName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            string strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
-            if (strTableStatus == "F")
+            //links to the three project tables we need
+            string[] arrTableTypes = { Datasource.TableTypes.TravelTimes, Datasource.TableTypes.ProcessingSites, Datasource.TableTypes.Plot };
+            foreach (string strTableType in arrTableTypes)
             {
-                oDao.CreateTableLink(strTempMDB, strTableName, strDirectoryPath + "\\" + strFileName, strTableName);
+                int intTable = m_oProjectDs.getTableNameRow(strTableType);
+                string strDirectoryPath = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+                string strFileName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+                //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+                string strTableName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+                string strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+                if (strTableStatus == "F")
+                {
+                    oDao.CreateTableLink(strTempMDB, strTableName, strDirectoryPath + "\\" + strFileName, strTableName);
+                    if (strTableType.Equals(Datasource.TableTypes.Plot))
+                    {
+                        m_strPlotTableName = strTableName;
+                    }
+                }
             }
-
-            // processing sites
-            intTable = m_oProjectDs.getTableNameRow(Datasource.TableTypes.ProcessingSites);
-            strDirectoryPath = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            strFileName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            strTableName = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
-            if (strTableStatus == "F")
-            {
-                oDao.CreateTableLink(strTempMDB, strTableName, strDirectoryPath + "\\" + strFileName, strTableName);
-            }
-
+            
             // master databases
-            oDao.CreateTableLink(strTempMDB, "travel_time_m", oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", "travel_time");
-            oDao.CreateTableLink(strTempMDB, "processing_site_m", oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", "processing_site");
-
+            oDao.CreateTableLink(strTempMDB, m_strMasterTravelTime, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultTravelTimeTableName);
+            oDao.CreateTableLink(strTempMDB, m_strMasterPSite, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultProcessingSiteTableName);
 
             if (oDao != null)
             {

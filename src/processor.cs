@@ -99,9 +99,9 @@ namespace FIA_Biosum_Manager
 
             // link gis travel_timetable
             oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
-                frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName,
+                p_oQueries.m_oTravelTime.m_strTravelTimeTable,
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.TravelTime.DefaultTravelTimeTableDbFile,
-                frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName, true);
+                p_oQueries.m_oTravelTime.m_strTravelTimeTable, true);
 
             // link to PRE_FVS_SUMMARY table
             oDao.CreateTableLink(p_oQueries.m_strTempDbFile,
@@ -2822,8 +2822,9 @@ namespace FIA_Biosum_Manager
                 new System.Collections.Generic.Dictionary<String, double>();
             if (m_oAdo.m_intError == 0)
             {
+                string strTravelTimesTableName = m_oQueries.m_oTravelTime.m_strTravelTimeTable;
                 string strSQL = "SELECT MIN(ONE_WAY_HOURS) AS min_one_way_hours, BIOSUM_PLOT_ID " +
-                                "FROM " + frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName +
+                                "FROM " + strTravelTimesTableName +
                                 " WHERE ONE_WAY_HOURS > 0 " +
                                 "GROUP BY BIOSUM_PLOT_ID";
                 m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, strSQL);

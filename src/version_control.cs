@@ -1184,14 +1184,14 @@ namespace FIA_Biosum_Manager
 								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
 								ReferenceProjectDirectory.Trim() + "\\gis\\db",
 								frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.TravelTime.DefaultTravelTimeTableDbFile),
-								frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName);
+                                Tables.TravelTime.DefaultTravelTimeTableName);
 							break;
 						case "PROCESSING SITES":
 							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
 								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
 								ReferenceProjectDirectory.Trim() + "\\gis\\db",
 								frmMain.g_oUtils.getFileNameUsingLastIndexOf(frmMain.g_oTables.m_oTravelTime.DefaultProcessingSiteTableDbFile),
-								frmMain.g_oTables.m_oTravelTime.DefaultProcessingSiteTableName);
+                                Tables.TravelTime.DefaultProcessingSiteTableName);
 							break;
 						case "FVS TREE LIST FOR PROCESSOR":
 							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
@@ -1501,10 +1501,10 @@ namespace FIA_Biosum_Manager
 									break;
 								
 								case "TRAVEL TIMES":
-									frmMain.g_oTables.m_oTravelTime.CreateTravelTimeTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName);
+									frmMain.g_oTables.m_oTravelTime.CreateTravelTimeTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.TravelTime.DefaultTravelTimeTableName);
 									break;
 								case "PROCESSING SITES":
-									frmMain.g_oTables.m_oTravelTime.CreateProcessingSiteTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,frmMain.g_oTables.m_oTravelTime.DefaultProcessingSiteTableName);
+                                    frmMain.g_oTables.m_oTravelTime.CreateProcessingSiteTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection, Tables.TravelTime.DefaultProcessingSiteTableName);
 									break;
 								case "FVS TREE LIST FOR PROCESSOR":
 									frmMain.g_oTables.m_oFvs.CreateFVSOutProcessorIn(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.FVS.DefaultFVSTreeTableName);
@@ -1634,11 +1634,11 @@ namespace FIA_Biosum_Manager
 									break;
 							
 								case "TRAVEL TIMES":
-									strTempTableName = frmMain.g_oTables.m_oTravelTime.DefaultTravelTimeTableName;
+                                    strTempTableName = Tables.TravelTime.DefaultTravelTimeTableName;
 									frmMain.g_oTables.m_oTravelTime.CreateTravelTimeTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "PROCESSING SITES":
-									strTempTableName = frmMain.g_oTables.m_oTravelTime.DefaultProcessingSiteTableName;
+                                    strTempTableName = Tables.TravelTime.DefaultProcessingSiteTableName;
 									frmMain.g_oTables.m_oTravelTime.CreateProcessingSiteTable(oAdoCurrent,oConn,strTempTableName);
 									break;
 								case "FVS TREE LIST FOR PROCESSOR":

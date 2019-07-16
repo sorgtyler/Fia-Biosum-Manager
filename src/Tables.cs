@@ -2844,9 +2844,9 @@ namespace FIA_Biosum_Manager
 		{
             public static string DefaultTravelTimeAccdbFile { get { return "gis_travel_times.accdb"; } }
             public static string DefaultTravelTimeTableDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
-			public string DefaultTravelTimeTableName {get {return "travel_time";}}
+			public static string DefaultTravelTimeTableName {get {return "travel_time";}}
 			public string DefaultProcessingSiteTableDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
-			public string DefaultProcessingSiteTableName {get {return "processing_site";}}
+			public static string DefaultProcessingSiteTableName {get {return "processing_site";}}
 			public string DefaultDisconnectedRoadTravelTimeOfZeroDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
 			public string DefaultDisconnectedRoadTravelTimeOfZeroTableName {get {return "disconnected_road_travel_time_of_zero";}}
 			public string DefaultTravelTimeOfZeroDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}

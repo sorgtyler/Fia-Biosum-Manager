@@ -1691,20 +1691,38 @@ namespace FIA_Biosum_Manager
                                bCreateBackups = true;
                            }
                        }
-                       if (bCreateBackups == true)
-                       {
-                           bSuccess = oGisTools.BackupGisData();
-                       }
+
+                   }
+                   this.ActivateStandByAnimation(
+                        this.WindowState,
+                        this.Left,
+                        this.Height,
+                        this.Width,
+                        this.Top);
+                   g_sbpInfo.Text = "Loading gis data...Stand by";
+
+                   if (bCreateBackups == true)
+                   {
+                       g_sbpInfo.Text = "Backing up old gis data...Stand by";
+                       bSuccess = oGisTools.BackupGisData();
                    }
                    if (bSuccess == true)
                    {
                        int intRowCount = oGisTools.LoadGisData();
+                       if (intRowCount < 1)
+                       {
+                           MessageBox.Show("An error occurred while loading the GIS data!!", "FIA BioSum");
+                           this.DeactivateStandByAnimation();
+                           return;
+                       }
                    }
                    else
                    {
                        MessageBox.Show("An error occurred while backing up the tables. GIS data load terminated!!", "FIA BioSum");
                    }
-                   MessageBox.Show("Load gis data!");
+                   g_sbpInfo.Text = "Ready";
+                    this.DeactivateStandByAnimation();
+                   MessageBox.Show("GIS data successfully loaded!");
 
                 }
                 else if (strText.Trim().ToUpper() == "OPTIMIZATION SCENARIO") 
