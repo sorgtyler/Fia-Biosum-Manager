@@ -4007,6 +4007,7 @@ namespace FIA_Biosum_Manager
         private string m_strMasterTravelTime = Tables.TravelTime.DefaultTravelTimeTableName + "_m";
         private string m_strMasterPSite = Tables.TravelTime.DefaultProcessingSiteTableName + "_m";
         private string m_strPlotTableName = "";
+        dao_data_access m_oDao;
 
         
         public bool CheckForExistingData(string strReferenceProjectDirectory, out bool bTablesHaveData)
@@ -4064,6 +4065,7 @@ namespace FIA_Biosum_Manager
                     using (var oTestConn = new OleDbConnection(strTestConn))
                     {
                         oTestConn.Open();
+                        strSQL = "SELECT count(*) FROM " + strTableName;
                         int intRecordCount = oAdo.getRecordCount(oTestConn, strSQL, strTableName);
                         if (intRecordCount > 0)
                         {
@@ -4083,8 +4085,8 @@ namespace FIA_Biosum_Manager
 
         public bool BackupGisData()
         {
-            dao_data_access oDao = new dao_data_access();
-            string strTableSuffix = "_" + DateTime.Now.ToString("MMddyyyy");
+            string strFileSuffix = "_" + DateTime.Now.ToString("MMddyyyy");
+            string strBackedUpMdb = "";
             bool bSuccess = false;
             // travel times
             int intTable = m_oProjectDs.getValidTableNameRow(Datasource.TableTypes.TravelTimes);
@@ -4095,14 +4097,17 @@ namespace FIA_Biosum_Manager
             string strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
             if (strTableStatus == "F")
             {
-                // Check to see if the backup table already exists; If it does, abort the process so user can delete
-                if (oDao.TableExists(strDirectoryPath + "\\" + strFileName, strTableName + strTableSuffix))
+                string strExtension = System.IO.Path.GetExtension(strFileName);
+                string strNewFileName = System.IO.Path.GetFileNameWithoutExtension(strFileName) + strFileSuffix + strExtension;
+                // Check to see if the backup database already exists; If it does, abort the process so user can delete
+                if (System.IO.File.Exists(strDirectoryPath + "\\" + strNewFileName))
                 {
-                    MessageBox.Show("A backup table from today already exists: " + strTableName + ". Delete this table manually if you want to " +
+                    MessageBox.Show("A backup database from today already exists: " + strFileName + strFileSuffix + ". Delete this database manually if you want to " +
                         "back up today's data again!!", "FIA BioSum");
                     return false;
                 }
-                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTableName, strTableName + strTableSuffix, true, false);
+                System.IO.File.Copy(strDirectoryPath + "\\" + strFileName, strDirectoryPath + "\\" + strNewFileName);
+                strBackedUpMdb = strDirectoryPath + "\\" + strFileName;
             }
  
             // processing sites
@@ -4114,22 +4119,26 @@ namespace FIA_Biosum_Manager
             strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
             if (strTableStatus == "F")
             {
-                // Check to see if the backup table already exists; If it does, abort the process so user can delete
-                if (oDao.TableExists(strDirectoryPath + "\\" + strFileName, strTableName + strTableSuffix))
+                if (strBackedUpMdb.Equals(strDirectoryPath + "\\" + strFileName))
                 {
-                    MessageBox.Show("A backup table from today already exists: " + strTableName + ". Delete this table manually if you want to " +
-                        "back up today's data again!!", "FIA BioSum");
-                    return false;
+                    // Do nothing, we already made a backup for travel times
                 }
-                oDao.RenameTable(strDirectoryPath + "\\" + strFileName, strTableName, strTableName + strTableSuffix, true, false);
+                else
+                {
+                    string strExtension = System.IO.Path.GetExtension(strFileName);
+                    string strNewFileName = System.IO.Path.GetFileNameWithoutExtension(strFileName) + strFileSuffix + strExtension;
+                    // Check to see if the backup database already exists; If it does, abort the process so user can delete
+                    if (System.IO.File.Exists(strDirectoryPath + "\\" + strNewFileName))
+                    {
+                        MessageBox.Show("A backup database from today already exists: " + strFileName + strFileSuffix + ". Delete this database manually if you want to " +
+                            "back up today's data again!!", "FIA BioSum");
+                        return false;
+                    }
+                    System.IO.File.Copy(strDirectoryPath + "\\" + strFileName, strDirectoryPath + "\\" + strNewFileName);
+                }
             }
 
             bSuccess = true;
-            if (oDao != null)
-            {
-                oDao.m_DaoWorkspace.Close();
-                oDao = null;
-            }
             return bSuccess;
         }
 
@@ -4137,6 +4146,8 @@ namespace FIA_Biosum_Manager
         {
             ado_data_access oAdo = new ado_data_access();
 
+            m_oProjectDs.populate_datasource_array();
+            
             string[] arrTableTypes = { Datasource.TableTypes.TravelTimes, Datasource.TableTypes.ProcessingSites};
             string strTravelTimesTableName = "";
             string strPSitesTableName = "";
@@ -4185,8 +4196,15 @@ namespace FIA_Biosum_Manager
                 string strLoadConn = oAdo.getMDBConnString(strTempDb, "", "");
                 using (var oLoadConn = new OleDbConnection(strLoadConn))
                 {
-                    frmMain.g_sbpInfo.Text = "Loading travel_time table...Stand by";
                     oLoadConn.Open();
+                    // Sleep until the table link exists
+                    do
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    while (!oAdo.TableExist(oLoadConn, strTravelTimesTableName));
+                    
+                    frmMain.g_sbpInfo.Text = "Loading travel_time table...Stand by";
                     string strSql = "INSERT INTO " + strTravelTimesTableName +
                                     " SELECT TRAVELTIME_ID, PSITE_ID, biosum_plot_id," +
                                     " COLLECTOR_ID, RAILHEAD_ID, TRAVEL_MODE, ONE_WAY_HOURS," +
@@ -4202,8 +4220,8 @@ namespace FIA_Biosum_Manager
                         frmMain.g_sbpInfo.Text = "Loading processing_site table...Stand by";
                         strSql = "INSERT into " + strPSitesTableName +
                                  " SELECT distinct p.psite_id, name, 1 as TRANCD, 'Regular' as TRANCD_DEF, BSM_TYP AS BIOCD," +
-                                 " IIf (BSM_TYP='1' , 'Merchantable' , IIf (BSM_TYP='2' , 'Chips' , 'Both' ) ) as BIOCD_DEF," +
-                                 " EXISTS_YN, LAT, LON, STATE, CITY, MLL_TYP as MILL_TYPE, STATUS" +
+                                                             " IIf (BSM_TYP='1' , 'Merchantable' , IIf (BSM_TYP='2' , 'Chips' , 'Both' ) ) as BIOCD_DEF," +
+                                                             " EXISTS_YN, LAT, LON, STATE, CITY, MLL_TYP as MILL_TYPE, STATUS" +
                                  " FROM " + m_strMasterPSite + " p" +
                                  " INNER JOIN " + strTravelTimesTableName + " tt ON p.PSITE_ID = tt.PSITE_ID" +
                                  " group by P.PSITE_ID, NAME, BSM_TYP, EXISTS_YN, LAT, LON, STATE, CITY, MLL_TYP, STATUS";
@@ -4237,8 +4255,11 @@ namespace FIA_Biosum_Manager
 
             //create a temporary mdb that will contain all 
             //the links to the scenario datasource tables
-            dao_data_access oDao = new dao_data_access();
-            oDao.CreateMDB(strTempMDB);
+            if (m_oDao == null)
+            {
+                m_oDao = new dao_data_access();
+            }
+            m_oDao.CreateMDB(strTempMDB);
 
             //links to the three project tables we need
             string[] arrTableTypes = { Datasource.TableTypes.TravelTimes, Datasource.TableTypes.ProcessingSites, Datasource.TableTypes.Plot };
@@ -4252,7 +4273,7 @@ namespace FIA_Biosum_Manager
                 string strTableStatus = m_oProjectDs.m_strDataSource[intTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
                 if (strTableStatus == "F")
                 {
-                    oDao.CreateTableLink(strTempMDB, strTableName, strDirectoryPath + "\\" + strFileName, strTableName);
+                    m_oDao.CreateTableLink(strTempMDB, strTableName, strDirectoryPath + "\\" + strFileName, strTableName);
                     if (strTableType.Equals(Datasource.TableTypes.Plot))
                     {
                         m_strPlotTableName = strTableName;
@@ -4261,13 +4282,13 @@ namespace FIA_Biosum_Manager
             }
             
             // master databases
-            oDao.CreateTableLink(strTempMDB, m_strMasterTravelTime, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultTravelTimeTableName);
-            oDao.CreateTableLink(strTempMDB, m_strMasterPSite, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultProcessingSiteTableName);
+            m_oDao.CreateTableLink(strTempMDB, m_strMasterTravelTime, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultTravelTimeTableName);
+            m_oDao.CreateTableLink(strTempMDB, m_strMasterPSite, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultProcessingSiteTableName);
 
-            if (oDao != null)
+            if (m_oDao != null)
             {
-                oDao.m_DaoWorkspace.Close();
-                oDao = null;
+                m_oDao.m_DaoWorkspace.Close();
+                m_oDao = null;
             }
             return strTempMDB;
         }

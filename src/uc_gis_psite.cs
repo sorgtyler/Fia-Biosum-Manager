@@ -2268,9 +2268,6 @@ namespace FIA_Biosum_Manager
 									break;
 							}
 						}
-                        // GitHub issue #56: Remove Keep Temp GIS Layer comboBox
-                        // Always set keeplyr_yn to 'N' for new entries for now
-                        p_row["keeplyr_yn"] = "NO".Substring(0, 1);
 
 						this.m_ado.m_DataSet.Tables["processing_site"].Rows.Add(p_row);
 						p_row=null;

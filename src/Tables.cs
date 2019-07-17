@@ -1642,7 +1642,7 @@ namespace FIA_Biosum_Manager
 				return "CREATE TABLE " + p_strTableName + " (" +
 					"scenario_id CHAR(20)," + 
 					"psite_id INTEGER," + 
-					"name CHAR(30)," + 
+					"name CHAR(100)," + 
 					"trancd BYTE," + 
 					"biocd BYTE," + 
 					"selected_yn CHAR(1))";
@@ -2889,7 +2889,7 @@ namespace FIA_Biosum_Manager
 			{
 				return "CREATE TABLE " + p_strTableName + " (" +
                     "PSITE_ID INTEGER," +
-                    "NAME CHAR(30)," +
+                    "NAME CHAR(100)," +
                     "TRANCD BYTE," +
                     "TRANCD_DEF CHAR(20)," +
                     "BIOCD BYTE," +

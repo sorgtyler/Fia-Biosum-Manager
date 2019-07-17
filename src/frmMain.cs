@@ -1684,7 +1684,7 @@ namespace FIA_Biosum_Manager
                        }
                        else
                        {
-                           strMessage = "Would you like BioSum to make copies of your existing GIS tables? The names of the table backups will include today's date.";
+                           strMessage = "Would you like BioSum to make a copy of your existing GIS database? The name of the database backup will include today's date.";
                            res = MessageBox.Show(strMessage, "FIA BioSum", MessageBoxButtons.YesNo);
                            if (res == DialogResult.Yes)
                            {
@@ -1719,10 +1719,13 @@ namespace FIA_Biosum_Manager
                    else
                    {
                        MessageBox.Show("An error occurred while backing up the tables. GIS data load terminated!!", "FIA BioSum");
+                       g_sbpInfo.Text = "Ready";
+                       this.DeactivateStandByAnimation();
+                       return;
                    }
                    g_sbpInfo.Text = "Ready";
-                    this.DeactivateStandByAnimation();
-                   MessageBox.Show("GIS data successfully loaded!");
+                   this.DeactivateStandByAnimation();
+                   MessageBox.Show("If you updated existing GIS data, verify the selected sites in Treatment Optimizer. GIS data successfully loaded!");
 
                 }
                 else if (strText.Trim().ToUpper() == "OPTIMIZATION SCENARIO") 

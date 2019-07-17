@@ -5914,11 +5914,15 @@ namespace FIA_Biosum_Manager
                             "SET file = '" + Tables.TravelTime.DefaultTravelTimeAccdbFile + "' " +
                             "WHERE TABLE_TYPE IN ('" + Datasource.TableTypes.TravelTimes + "', '" +
                             Datasource.TableTypes.ProcessingSites + "')";
-
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
             oAdo.m_strSQL = "DELETE * FROM scenario_datasource " +
                 "WHERE UCASE(FILE) = 'AUDIT.MDB'";
             oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            oAdo.m_strSQL = "ALTER TABLE SCENARIO_PSITES ALTER COLUMN NAME TEXT (100)"; 
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
             oAdo.m_OleDbConnection.Close();
 
             frmMain.g_sbpInfo.Text = "Version Update: Delete old audit tables ...Stand by";
