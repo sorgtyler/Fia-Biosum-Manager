@@ -2459,7 +2459,43 @@ namespace FIA_Biosum_Manager
 
         }
 
+        /// <summary>
+        /// see if a index exists in an mdb file
+        /// </summary>
+        /// <param name="strMDBPathAndFile">full path and MDB file name</param>
+        /// <param name="strTable">name of the table</param>
+        /// <returns></returns>
+        public bool IndexExists(string strMDBPathAndFile, string strTable, string strIndex)
+        {
+            bool p_bResult = false;
+            //int z = 0;
+            this.m_intError = 0;
+            this.m_strError = "";
+            this.OpenDb(strMDBPathAndFile);
+            if (this.m_intError == 0)
+            {
+                foreach (Microsoft.Office.Interop.Access.Dao.TableDef table in this.m_DaoDatabase.TableDefs)
+                {
+                    if (table.Name.ToLower() == strTable.ToLower())
+                    {
+                        foreach(Microsoft.Office.Interop.Access.Dao.Index idx in table.Indexes)
+                        {
+                            if (idx.Name.ToLower() == strIndex.ToLower())
+                            {
+                                p_bResult = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                this.m_DaoDatabase.Close();
+            }
+
+            return p_bResult;
+        }
+
     }
+
 
 
 }

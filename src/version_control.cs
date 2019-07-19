@@ -5877,9 +5877,29 @@ namespace FIA_Biosum_Manager
             }
 
             int intOldAuditTable = oProjectDs.getValidTableNameRow("Plot And Condition Record Audit");
-            string strOldAuditPath = oProjectDs.m_strDataSource[intOldAuditTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            string strOldAuditStatus = oProjectDs.m_strDataSource[intOldAuditTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+            if (intOldAuditTable >= 0)
+            {
+                string strOldAuditPath = oProjectDs.m_strDataSource[intOldAuditTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+                //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+                string strOldAuditStatus = oProjectDs.m_strDataSource[intOldAuditTable, FIA_Biosum_Manager.Datasource.FILESTATUS].Trim();
+
+                frmMain.g_sbpInfo.Text = "Version Update: Delete old audit tables ...Stand by";
+                if (strOldAuditStatus == "F")
+                {
+                    string[] arrDbPaths = System.IO.Directory.GetFiles(strOldAuditPath);
+                    if (arrDbPaths.Length > 0)
+                    {
+                        foreach (string strDbPath in arrDbPaths)
+                        {
+                            string strDbFile = System.IO.Path.GetFileName(strDbPath);
+                            if (strDbFile.IndexOf("audit") > -1)
+                            {
+                                System.IO.File.Delete(strDbPath);
+                            }
+                        }
+                    }
+                }
+            }
 
             frmMain.g_sbpInfo.Text = "Version Update: Updating data source tables ...Stand by";
             
@@ -5925,23 +5945,6 @@ namespace FIA_Biosum_Manager
 
             oAdo.m_OleDbConnection.Close();
 
-            frmMain.g_sbpInfo.Text = "Version Update: Delete old audit tables ...Stand by";
-            if (strOldAuditStatus == "F")
-            {
-                string[] arrDbPaths = System.IO.Directory.GetFiles(strOldAuditPath);
-                if (arrDbPaths.Length > 0)
-                {
-                    foreach (string strDbPath in arrDbPaths)
-                    {
-                        string strDbFile = System.IO.Path.GetFileName(strDbPath);
-                        if (strDbFile.IndexOf("audit") > -1)
-                        {
-                            System.IO.File.Delete(strDbPath);
-                        }
-                    }
-                }
-            }
-
             frmMain.g_sbpInfo.Text = "Version Update: Delete obsolete fields from plot and cond tables ...Stand by";
 
             int intPlotTable = oProjectDs.getValidTableNameRow(Datasource.TableTypes.Plot);
@@ -5952,12 +5955,12 @@ namespace FIA_Biosum_Manager
             if (strPlotStatus == "F")
             {
                 oDao.OpenDb(strPlotDirectory + "\\" + strPlotMdbFile);
-                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "gis_status_id"))
+                if (oDao.IndexExists(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, "plot_idx3"))
                 {
                     string strCommand = "DROP INDEX plot_idx3 ON " + strPlotTable;
                     oDao.m_DaoDatabase.Execute(strCommand, null);
                 }
-                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "idb_plot_id"))
+                if (oDao.IndexExists(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, "plot_idx4"))
                 {
                     string strCommand = "DROP INDEX plot_idx4 ON " + strPlotTable;
                     oDao.m_DaoDatabase.Execute(strCommand, null);
@@ -5982,17 +5985,17 @@ namespace FIA_Biosum_Manager
             if (strPlotStatus == "F")
             {
                 oDao.OpenDb(strPlotDirectory + "\\" + strPlotMdbFile);
-                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "idb_cond_id"))
+                if (oDao.IndexExists(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, "cond_idx4"))
                 {
                     string strCommand = "DROP INDEX cond_idx4 ON " + strPlotTable;
                     oDao.m_DaoDatabase.Execute(strCommand, null);
                 }
-                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "idb_plot_id"))
+                if (oDao.IndexExists(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, "cond_idx5"))
                 {
                     string strCommand = "DROP INDEX cond_idx5 ON " + strPlotTable;
                     oDao.m_DaoDatabase.Execute(strCommand, null);
                 }
-                if (oDao.ColumnExist(oDao.m_DaoDatabase, strPlotTable, "fvs_filename"))
+                if (oDao.IndexExists(strPlotDirectory + "\\" + strPlotMdbFile, strPlotTable, "cond_idx3"))
                 {
                     string strCommand = "DROP INDEX cond_idx3 ON " + strPlotTable;
                     oDao.m_DaoDatabase.Execute(strCommand, null);
