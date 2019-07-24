@@ -520,12 +520,14 @@ namespace FIA_Biosum_Manager
 
                     if (!String.IsNullOrEmpty(column) && m_dictIdentityColumnsToValues[column].Count > 0)
                     {
-                        m_ado.AddIndex(conn, table, column + "_delete_idx", column);
+                        var strTempIndex = column + "_delete_idx";
+                        if (!m_dao.IndexExists(strDbPathFile, table, strTempIndex))
+                        {
+                            m_ado.AddIndex(conn, table, strTempIndex, column);
+                        }
+
                         if (frmMain.g_bDebug)
                         {
-//                            var message = Checked(chkDeletesDisabled)
-//                                ? "\r\nCounting records to delete from " + strDbPathFile + " " + table + " using " + column + "\r\n"
-//                                : "\r\nDeleting from " + strDbPathFile + " " + table + " using " + column + "\r\n";
                             frmMain.g_oUtils.WriteText(m_strDebugFile, Checked(chkDeletesDisabled)
                                 ? "\r\nCounting records to delete from " + strDbPathFile + " " + table + " using " + column + "\r\n"
                                 : "\r\nDeleting from " + strDbPathFile + " " + table + " using " + column + "\r\n");
@@ -533,7 +535,7 @@ namespace FIA_Biosum_Manager
 
                         int deletedRecords = BuildAndExecuteDeleteSQLStmts(conn, table, column);
                         AddDeletedCountToDictionary(strDbPathFile, table, deletedRecords);
-                        m_ado.SqlNonQuery(conn, String.Format("DROP INDEX {0} ON {1}", column + "_delete_idx", table));
+                        m_ado.SqlNonQuery(conn, String.Format("DROP INDEX {0} ON {1}", strTempIndex, table));
                     }
                 }
             }
