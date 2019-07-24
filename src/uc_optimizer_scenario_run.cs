@@ -3960,7 +3960,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//sumTreeVolValByRxPackage\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 3;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 6;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
@@ -4021,7 +4021,113 @@ namespace FIA_Biosum_Manager
                 this.m_intError = this.m_ado.m_intError;
                 return;
             }
-            
+
+            // Create worktable for HVST_TYPE_BY_CYCLE field
+            string strTreeSumWorktableName = "TREE_SUM_WORKTABLE";
+            if (this.m_ado.TableExist(this.m_TempMDBFileConn, strTreeSumWorktableName))
+            {
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, "DELETE FROM " + strTreeSumWorktableName);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nDelete all records from tree_sum_worktable\r\n");
+
+            }
+            else
+            {
+                this.m_strSQL = "CREATE TABLE " + strTreeSumWorktableName + " (" +
+                                "biosum_cond_id CHAR(25), " +
+                                "rxpackage CHAR(3), " +
+                                "CYCLE_1 CHAR(1), " +
+                                "CYCLE_2 CHAR(1), " +
+                                "CYCLE_3 CHAR(1), " +
+                                "CYCLE_4 CHAR(1))";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nCreate tree_sum_worktable\r\n");
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            }
+
+            if (this.m_ado.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                this.m_intError = this.m_ado.m_intError;
+                return;
+            }
+
+            //Add rows to worktable
+            this.m_strSQL = "INSERT INTO " + strTreeSumWorktableName +
+                            " SELECT BIOSUM_COND_ID, RXPACKAGE, '0' as CYCLE_1, '0' AS CYCLE_2, '0' AS CYCLE_3, '0' AS CYCLE_4" +
+                            " FROM TREE_VOL_VAL_SUM_BY_RXPACKAGE";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nAdd condition/rxpackages to tree_sum_worktable\r\n");
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            if (this.m_ado.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                this.m_intError = this.m_ado.m_intError;
+                return;
+            }
+
+
+            // Update worktable from tree_vol_val_sum_by_rxpackage
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate cycle values on tree_sum_worktable\r\n");
+            string[] arrFieldToUpdate = {"CYCLE_1", "CYCLE_2", "CYCLE_3", "CYCLE_4"};
+            string[] arrRxCycle= {"1","2","3","4"};
+            for (int arrIdx = 0; arrIdx < 4; arrIdx++)
+            {
+                this.m_strSQL = "UPDATE " + strTreeSumWorktableName +
+                                " INNER JOIN tree_vol_val_sum_by_rx_cycle ON (" + strTreeSumWorktableName + ".BIOSUM_COND_ID=tree_vol_val_sum_by_rx_cycle.BIOSUM_COND_ID)" + 
+                                " AND (" + strTreeSumWorktableName + ".RXPACKAGE= tree_vol_val_sum_by_rx_cycle.RXPACKAGE)" +
+                                " SET " + strTreeSumWorktableName + "." + arrFieldToUpdate[arrIdx] + " = IIF (chip_vol_cf > 0 AND merch_vol_cf > 0, '3'," + 
+                                " IIF (chip_vol_cf = 0 AND merch_vol_cf = 0, '0'," +
+                                " IIF (chip_vol_cf > 0, '2','1'))) " +
+                                " WHERE RXCYCLE = '" + arrRxCycle[arrIdx] + "'";
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            }
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            if (this.m_ado.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                this.m_intError = this.m_ado.m_intError;
+                return;
+            }
+
+            // Populate hvst_type_by_cycle from worktable
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate hvst_type_by_cycle from tree_sum_worktable\r\n");
+            this.m_strSQL = "UPDATE tree_vol_val_sum_by_rxpackage" +
+                            " INNER JOIN " + strTreeSumWorktableName + 
+                            " ON (" + strTreeSumWorktableName + ".BIOSUM_COND_ID=TREE_VOL_VAL_SUM_BY_RXPACKAGE.BIOSUM_COND_ID)" +
+                            " AND (" + strTreeSumWorktableName +".RXPACKAGE= TREE_VOL_VAL_SUM_BY_RXPACKAGE.RXPACKAGE)" +
+                            " SET hvst_type_by_cycle = CYCLE_1 + CYCLE_2 + CYCLE_3 + CYCLE_4 ";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            if (this.m_ado.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                this.m_intError = this.m_ado.m_intError;
+                return;
+            }
+
             if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
 
 

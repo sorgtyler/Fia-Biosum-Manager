@@ -1035,7 +1035,8 @@ namespace FIA_Biosum_Manager
                     "chip_val_dpa DOUBLE," +
                     "merch_vol_cf DOUBLE," +
                     "merch_wt_gt DOUBLE," +
-                    "merch_val_dpa DOUBLE)";
+                    "merch_val_dpa DOUBLE," +
+                    "hvst_type_by_cycle CHAR(4))";
             }
 			//
 			//PRODUCT YIELDS NET REVENUE/COSTS SUMMARY TABLE
