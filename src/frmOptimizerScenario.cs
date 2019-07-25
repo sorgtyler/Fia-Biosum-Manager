@@ -4219,12 +4219,12 @@ namespace FIA_Biosum_Manager
                     {
                         frmMain.g_sbpInfo.Text = "Loading processing_site table...Stand by";
                         strSql = "INSERT into " + strPSitesTableName +
-                                 " SELECT distinct p.psite_id, name, 1 as TRANCD, 'Regular' as TRANCD_DEF, BSM_TYP AS BIOCD," +
-                                                             " IIf (BSM_TYP='1' , 'Merchantable' , IIf (BSM_TYP='2' , 'Chips' , 'Both' ) ) as BIOCD_DEF," +
-                                                             " EXISTS_YN, LAT, LON, STATE, CITY, MLL_TYP as MILL_TYPE, STATUS" +
+                                 " SELECT distinct p.psite_id, name, TRANCD, TRANCD_DEF, BIOCD," +
+                                                             " BIOCD_DEF," +
+                                                             " EXISTS_YN, LAT, LON, STATE, CITY, COUNTY, MILL_TYPE, STATUS" +
                                  " FROM " + m_strMasterPSite + " p" +
                                  " INNER JOIN " + strTravelTimesTableName + " tt ON p.PSITE_ID = tt.PSITE_ID" +
-                                 " group by P.PSITE_ID, NAME, BSM_TYP, EXISTS_YN, LAT, LON, STATE, CITY, MLL_TYP, STATUS";
+                                 " group by P.PSITE_ID, NAME, TRANCD, TRANCD_DEF, BIOCD, BIOCD_DEF, EXISTS_YN, LAT, LON, STATE, CITY, COUNTY, MILL_TYPE, STATUS";
                         oAdo.SqlNonQuery(oLoadConn, strSql);
                         strSql = "SELECT COUNT(*) FROM " + strPSitesTableName;
                         intRecordCount = oAdo.getRecordCount(oLoadConn, strSql, strPSitesTableName);
@@ -4282,8 +4282,8 @@ namespace FIA_Biosum_Manager
             }
             
             // master databases
-            m_oDao.CreateTableLink(strTempMDB, m_strMasterTravelTime, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultTravelTimeTableName);
-            m_oDao.CreateTableLink(strTempMDB, m_strMasterPSite, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_9state_0709.accdb", Tables.TravelTime.DefaultProcessingSiteTableName);
+            m_oDao.CreateTableLink(strTempMDB, m_strMasterTravelTime, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_master.accdb", Tables.TravelTime.DefaultTravelTimeTableName);
+            m_oDao.CreateTableLink(strTempMDB, m_strMasterPSite, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_master.accdb", Tables.TravelTime.DefaultProcessingSiteTableName);
 
             if (m_oDao != null)
             {
