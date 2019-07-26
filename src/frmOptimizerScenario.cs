@@ -4007,6 +4007,7 @@ namespace FIA_Biosum_Manager
         private string m_strMasterTravelTime = Tables.TravelTime.DefaultTravelTimeTableName + "_m";
         private string m_strMasterPSite = Tables.TravelTime.DefaultProcessingSiteTableName + "_m";
         private string m_strPlotTableName = "";
+        private string m_masterFolder = frmMain.g_oEnv.strApplicationDataDirectory.Trim() + frmMain.g_strBiosumDataDir;
         dao_data_access m_oDao;
 
         
@@ -4282,8 +4283,9 @@ namespace FIA_Biosum_Manager
             }
             
             // master databases
-            m_oDao.CreateTableLink(strTempMDB, m_strMasterTravelTime, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_master.accdb", Tables.TravelTime.DefaultTravelTimeTableName);
-            m_oDao.CreateTableLink(strTempMDB, m_strMasterPSite, oEnv.strAppDir.Trim() + "\\db\\gis_travel_times_master.accdb", Tables.TravelTime.DefaultProcessingSiteTableName);
+            
+            m_oDao.CreateTableLink(strTempMDB, m_strMasterTravelTime, m_masterFolder + "\\" + Tables.TravelTime.DefaultMasterTravelTimeAccdbFile, Tables.TravelTime.DefaultTravelTimeTableName);
+            m_oDao.CreateTableLink(strTempMDB, m_strMasterPSite, m_masterFolder + "\\" + Tables.TravelTime.DefaultMasterTravelTimeAccdbFile, Tables.TravelTime.DefaultProcessingSiteTableName);
 
             if (m_oDao != null)
             {

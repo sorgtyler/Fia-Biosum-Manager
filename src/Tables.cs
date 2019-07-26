@@ -2852,6 +2852,7 @@ namespace FIA_Biosum_Manager
 			public string DefaultDisconnectedRoadTravelTimeOfZeroTableName {get {return "disconnected_road_travel_time_of_zero";}}
 			public string DefaultTravelTimeOfZeroDbFile {get {return @"gis\db\" + DefaultTravelTimeAccdbFile;}}
 			public string DefaultTravelTimeOfZeroTableName {get {return "travel_time_of_zero";}}
+            public static string DefaultMasterTravelTimeAccdbFile { get { return "gis_travel_times_master.accdb"; } }
 				
 
 			public TravelTime()
