@@ -3438,7 +3438,7 @@ namespace FIA_Biosum_Manager
 		                                "p.countycd, p.plot, p.fvs_variant, p.measyear," +
 		                                "c.adforcd,p.elev,c.condid, c.habtypcd1," +
 		                                "c.stdage,c.slope,c.aspect,c.ground_land_class_pnw," +
-		                                "c.sisp,p.lat,p.lon,p.idb_plot_id,c.adforcd,c.habtypcd1, " +
+		                                "c.sisp,p.lat,p.lon,c.adforcd,c.habtypcd1, " +
 		                                "p.elev,c.landclcd,c.ba_ft2_ac,c.habtypcd1 " +
 		                                "FROM " + strCondTableName + " c," +
 		                                strPlotTableName + " p " +
