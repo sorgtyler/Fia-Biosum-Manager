@@ -5811,67 +5811,91 @@ namespace FIA_Biosum_Manager
             oProjectDs.populate_datasource_array();
 
             int intTravelTimesTable = oProjectDs.getValidTableNameRow(Datasource.TableTypes.TravelTimes);
-            string strDirectoryPath = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
-            string strFileName = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
-            //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
-            string strTableName = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
-            string strTableStatus = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+            string strDirectoryPath = "";
+            string strFileName = "";
 
-            if (strTableStatus == "F")
+            if (intTravelTimesTable > -1)
             {
-                oDao.OpenDb(strDirectoryPath + "\\" + strFileName);
-                if (oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "PLOT_ID"))
+                strDirectoryPath = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+                strFileName = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+                //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+                string strTableName = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+                string strTableStatus = oProjectDs.m_strDataSource[intTravelTimesTable, FIA_Biosum_Manager.Datasource.TABLESTATUS].Trim();
+
+                if (strTableStatus == "F")
                 {
-                    string strCommand = "DROP INDEX travel_time_idx3 ON " + strTableName;
-                    oDao.m_DaoDatabase.Execute(strCommand, null);
-                    oDao.RenameField(strDirectoryPath + "\\" + strFileName, strTableName, "PLOT_ID", "PLOT");
-                    // Note: the RenameField method closes the database
-                }
-                oDao.OpenDb(strDirectoryPath + "\\" + strFileName);
-                if (!oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "STATECD"))
-                {
-                    string strTravelConn = m_oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", "");
-                    using (var oTravelConn = new OleDbConnection(strTravelConn))
+                    if (oDao.IndexExists(strDirectoryPath + "\\" + strFileName, strTableName, "travel_time_idx3"))
                     {
-                        oTravelConn.Open();
-                        oAdo.AddColumn(oTravelConn, strTableName, "STATECD", "INTEGER", "");
+                        string strCommand = "DROP INDEX travel_time_idx3 ON " + strTableName;
+                        oDao.OpenDb(strDirectoryPath + "\\" + strFileName);
+                        oDao.m_DaoDatabase.Execute(strCommand, null);
+                        oDao.RenameField(strDirectoryPath + "\\" + strFileName, strTableName, "PLOT_ID", "PLOT");
+                        // Note: the RenameField method closes the database
+                    }
+                    oDao.OpenDb(strDirectoryPath + "\\" + strFileName);
+                    if (!oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "STATECD"))
+                    {
+                        string strTravelConn = m_oAdo.getMDBConnString(strDirectoryPath + "\\" + strFileName, "", "");
+                        using (var oTravelConn = new OleDbConnection(strTravelConn))
+                        {
+                            oTravelConn.Open();
+                            oAdo.AddColumn(oTravelConn, strTableName, "STATECD", "INTEGER", "");
+                        }
+
+                    }
+                    if (oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "TRAVEL_TIME"))
+                    {
+                        oDao.RenameField(strDirectoryPath + "\\" + strFileName, strTableName, "TRAVEL_TIME", "ONE_WAY_HOURS");
+                        // Note: the RenameField method closes the database
                     }
 
+                    if (oDao.m_DaoDatabase != null)
+                        oDao.m_DaoDatabase.Close();
                 }
-                if (oDao.ColumnExist(oDao.m_DaoDatabase, strTableName, "TRAVEL_TIME"))
-                {
-                    oDao.RenameField(strDirectoryPath + "\\" + strFileName, strTableName, "TRAVEL_TIME", "ONE_WAY_HOURS");
-                    // Note: the RenameField method closes the database
-                }
-                
-                if (oDao.m_DaoDatabase != null)
-                    oDao.m_DaoDatabase.Close();
             }
 
-            oDao.CreateMDB(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile);
-            // create table links to copy tables
-            string[] arrTableNames = new string[0];
-            oDao.getTableNames(strDirectoryPath + "\\" + strFileName, ref arrTableNames);
-            string strCopyConn = m_oAdo.getMDBConnString(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, "", "");
-            using (var oCopyConn = new OleDbConnection(strCopyConn))
+            // Check to see if gis_travel_times.accdb before trying to create it
+            if (! System.IO.File.Exists(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile))
             {
-                oCopyConn.Open();
-                foreach (string strTable in arrTableNames)
+                oDao.CreateMDB(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile);
+                // create table links to copy tables
+                string[] arrTableNames = new string[0];
+                oDao.getTableNames(strDirectoryPath + "\\" + strFileName, ref arrTableNames);
+                string strCopyConn = m_oAdo.getMDBConnString(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, "", "");
+                using (var oCopyConn = new OleDbConnection(strCopyConn))
                 {
-                    if (!String.IsNullOrEmpty(strTable))
+                    oCopyConn.Open();
+                    foreach (string strTable in arrTableNames)
                     {
-                        oDao.CreateTableLink(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, strTable + "_1",
-                            strDirectoryPath + "\\" + strFileName, strTable);
-                        do
+                        bool bNextTable = true;
+                        if (!String.IsNullOrEmpty(strTable) && bNextTable == true)
                         {
-                            System.Threading.Thread.Sleep(1000);
-                        }
-                        while (!oAdo.TableExist(oCopyConn, strTable + "_1"));
+                            oDao.CreateTableLink(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, strTable + "_1",
+                                strDirectoryPath + "\\" + strFileName, strTable);
+                            int i = 0;
+                            do
+                            {
+                                // break out of loop if it runs too long
+                                if (i > 20)
+                                {
+                                    System.Windows.Forms.MessageBox.Show("An error occurred while trying to update gis_travel_times.accdb! " +
+                                    "Validate the contents of this database before trying to run Treatment Optimizer.", "FIA Biosum");
+                                    bNextTable = false;  //error flag: should we continue?
+                                    break;
+                                }
+                                System.Threading.Thread.Sleep(1000);
+                                i++;
+                            }
+                            while (!oAdo.TableExist(oCopyConn, strTable + "_1"));
 
-                        string strSql = "SELECT * INTO " + strTable + " FROM " + strTable + "_1";
-                        oAdo.SqlNonQuery(oCopyConn, strSql);
-                        strSql = "DROP TABLE " + strTable + "_1";
-                        oAdo.SqlNonQuery(oCopyConn, strSql);
+                            if (bNextTable == true)
+                            {
+                                string strSql = "SELECT * INTO " + strTable + " FROM " + strTable + "_1";
+                                oAdo.SqlNonQuery(oCopyConn, strSql);
+                                strSql = "DROP TABLE " + strTable + "_1";
+                                oAdo.SqlNonQuery(oCopyConn, strSql);
+                            }
+                        }
                     }
                 }
             }

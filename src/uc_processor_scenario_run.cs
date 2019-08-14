@@ -4823,7 +4823,7 @@ namespace FIA_Biosum_Manager
                     }
                     else
                     {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Saving tables to OPCOST directory...Stand By");
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Error encountered...Saving tables to OPCOST directory...Stand By");
                         strOpcostInputPath = RunScenario_CopyOPCOSTTables(strVariant, strRxPackage, strRx1, strRx2, strRx3, strRx4, 0);
                     }
 
