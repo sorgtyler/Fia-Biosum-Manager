@@ -4516,8 +4516,8 @@ namespace FIA_Biosum_Manager
 					"species_group INTEGER," + 
 					"diam_group INTEGER," + 
                     "wood_bin CHAR(1) DEFAULT 'M'," + 
-					"merch_value DECIMAL (4,2) DEFAULT 0," + 
-					"chip_value DECIMAL (4,2) DEFAULT 0)";
+					"merch_value DOUBLE DEFAULT 0," + 
+					"chip_value DOUBLE DEFAULT 0)";
 			}
 			public void CreateScenarioRxHarvestMethodTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
