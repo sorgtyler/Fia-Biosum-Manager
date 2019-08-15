@@ -5860,7 +5860,7 @@ namespace FIA_Biosum_Manager
                 oDao.CreateMDB(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile);
                 // create table links to copy tables
                 string[] arrTableNames = new string[0];
-                oDao.getTableNames(strDirectoryPath + "\\" + strFileName, ref arrTableNames);
+                oDao.getTableNames(strDirectoryPath + "\\" + strFileName, ref arrTableNames, false);
                 string strCopyConn = m_oAdo.getMDBConnString(strDirectoryPath + "\\" + Tables.TravelTime.DefaultTravelTimeAccdbFile, "", "");
                 using (var oCopyConn = new OleDbConnection(strCopyConn))
                 {
