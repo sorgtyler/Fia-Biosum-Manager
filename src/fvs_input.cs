@@ -223,11 +223,6 @@ namespace FIA_Biosum_Manager
 	            //create work tables with similar schemas to the FVS Input tables
 	            CreateFVSWorkTables();
 
-	            //Create FVS input text files
-	            if (this.m_intError != 0) return;
-	            InitializeFields();
-	            if (this.m_intError != 0) return;
-
 	            //Create/append to database input files
 	            if (this.m_intError != 0) return;
 	            CreateFVSInputDbLOC();
@@ -1218,16 +1213,6 @@ namespace FIA_Biosum_Manager
             System.IO.File.Delete(this.m_strFVSInMDBFile);
 			System.IO.Directory.SetCurrentDirectory(strCurrDir);
 
-		}
-		private void InitializeFields()
-		{
-			m_ado.m_strSQL = "UPDATE " + this.m_strCondTable + " c " + 
-				                   " INNER JOIN " + this.m_strPlotTable + " p " + 
-				                   " ON c.biosum_plot_id = p.biosum_plot_id " + 
-				                   " SET c.fvs_filename = NULL " + 
-				                   " WHERE TRIM(p.fvs_variant)='" + this.m_strVariant.Trim() + "';";
-			m_ado.SqlNonQuery(this.m_strConn,m_ado.m_strSQL);
-			if (m_ado.m_intError != 0) this.m_intError = -1;
 		}
 
 		/// <summary>

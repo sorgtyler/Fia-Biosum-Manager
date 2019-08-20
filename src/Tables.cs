@@ -2608,15 +2608,15 @@ namespace FIA_Biosum_Manager
                           "[INDEX] CHAR(3)," +
                           "FVS_TREE_FILE CHAR(26)," +
                           "COLUMN_NAME CHAR(30)," +
-                          "NOVALUE_ERROR CHAR(5)," +
-                          "NF_IN_COND_TABLE_ERROR CHAR(5)," +
-                          "NF_IN_PLOT_TABLE_ERROR CHAR(5)," +
+                          "NOVALUE_ERROR CHAR(10)," +
+                          "NF_IN_COND_TABLE_ERROR CHAR(10)," +
+                          "NF_IN_PLOT_TABLE_ERROR CHAR(10)," +
                           "VALUE_ERROR CHAR(20)," +
-                          "NF_IN_RX_TABLE_ERROR CHAR(5)," +
-                          "NF_RXPACKAGE_RXCYCLE_RX_ERROR CHAR(5)," +
-                          "NF_IN_RXPACKAGE_TABLE_ERROR CHAR(5)," +
-                          "NF_IN_TREE_TABLE_ERROR CHAR(5)," +
-                          "TREE_SPECIES_CHANGE_WARNING CHAR(5)," +
+                          "NF_IN_RX_TABLE_ERROR CHAR(10)," +
+                          "NF_RXPACKAGE_RXCYCLE_RX_ERROR CHAR(10)," +
+                          "NF_IN_RXPACKAGE_TABLE_ERROR CHAR(10)," +
+                          "NF_IN_TREE_TABLE_ERROR CHAR(10)," +
+                          "TREE_SPECIES_CHANGE_WARNING CHAR(10)," +
                           "CREATED_DATE DATETIME)";
                     }
                     /// <summary>
@@ -4516,8 +4516,8 @@ namespace FIA_Biosum_Manager
 					"species_group INTEGER," + 
 					"diam_group INTEGER," + 
                     "wood_bin CHAR(1) DEFAULT 'M'," + 
-					"merch_value DECIMAL (4,2) DEFAULT 0," + 
-					"chip_value DECIMAL (4,2) DEFAULT 0)";
+					"merch_value DOUBLE DEFAULT 0," + 
+					"chip_value DOUBLE DEFAULT 0)";
 			}
 			public void CreateScenarioRxHarvestMethodTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{

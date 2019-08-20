@@ -201,44 +201,59 @@ namespace FIA_Biosum_Manager
                     while (m_oAdo.m_OleDbDataReader.Read())
                     {
                         tree newTree = new tree();
-                        newTree.DebugFile = m_strDebugFile;
-                        newTree.CondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
-                        newTree.PlotId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_plot_id"]).Trim();
-                        newTree.RxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
-                        newTree.RxPackage = p_strRxPackage;
-                        newTree.Rx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
-                        newTree.RxYear = Convert.ToString(m_oAdo.m_OleDbDataReader["rxYear"]).Trim();
-                        newTree.Dbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["dbh"]);
-                        newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
-                        // Special processing for saplings where volCfNet may be null
-                        if (m_oAdo.m_OleDbDataReader["volCfNet"] == System.DBNull.Value && newTree.IsSapling)
+                        try
                         {
-                            newTree.VolCfNet = 0;
+                            newTree.DebugFile = m_strDebugFile;
+                            newTree.CondId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_cond_id"]).Trim();
+                            newTree.PlotId = Convert.ToString(m_oAdo.m_OleDbDataReader["biosum_plot_id"]).Trim();
+                            newTree.FvsTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
+                            newTree.RxCycle = Convert.ToString(m_oAdo.m_OleDbDataReader["rxCycle"]).Trim();
+                            newTree.RxPackage = p_strRxPackage;
+                            newTree.Rx = Convert.ToString(m_oAdo.m_OleDbDataReader["rx"]).Trim();
+                            newTree.RxYear = Convert.ToString(m_oAdo.m_OleDbDataReader["rxYear"]).Trim();
+                            newTree.Dbh = Convert.ToDouble(m_oAdo.m_OleDbDataReader["dbh"]);
+                            newTree.Tpa = Convert.ToDouble(m_oAdo.m_OleDbDataReader["tpa"]);
+                            // Special processing for saplings where volCfNet may be null
+                            if (m_oAdo.m_OleDbDataReader["volCfNet"] == System.DBNull.Value && newTree.IsSapling)
+                            {
+                                newTree.VolCfNet = 0;
+                            }
+                            else
+                            {
+                                newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
+                            }
+                            newTree.VolTsGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volTsGrs"]);
+                            // Special processing for saplings where volCfGrs may be null
+                            if (m_oAdo.m_OleDbDataReader["volCfGrs"] == System.DBNull.Value && newTree.IsSapling)
+                            {
+                                newTree.VolCfGrs = 0;
+                            }
+                            else
+                            {
+                                newTree.VolCfGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfGrs"]);
+                            }
+                            newTree.DryBiot = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiot"]);
+                            // Special processing for saplings where drybiom may be null
+                            if (m_oAdo.m_OleDbDataReader["drybiom"] == System.DBNull.Value && newTree.IsSapling)
+                            {
+                                newTree.DryBiom = 0;
+                            }
+                            else
+                            {
+                                newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
+                            }
                         }
-                        else
+                        catch (System.InvalidCastException castEx)
                         {
-                            newTree.VolCfNet = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfNet"]);
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Unable to load fvs_tree_id: " + newTree.FvsTreeId + " due to null values!\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "loadTrees: Process aborted for variant: " + p_strVariant + " rxPackage: " + p_strRxPackage + "!\r\n");
+                            string strErrorMessage = "Unable to process selected variant/package due to missing tree weights or volume! " +
+                                                     "Please run 'Step 4 - Post-processing audit check' from the 'FVS Output Data' menu" +
+                                                     " to identify the trees.";
+                            System.Windows.Forms.MessageBox.Show(strErrorMessage, "FIA Biosum");
+                            return -1;
                         }
-                        newTree.VolTsGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volTsGrs"]);
-                        // Special processing for saplings where volCfGrs may be null
-                        if (m_oAdo.m_OleDbDataReader["volCfGrs"] == System.DBNull.Value && newTree.IsSapling)
-                        {
-                            newTree.VolCfGrs = 0;
-                        }
-                        else
-                        {
-                            newTree.VolCfGrs = Convert.ToDouble(m_oAdo.m_OleDbDataReader["volCfGrs"]);
-                        }
-                        newTree.DryBiot = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiot"]);
-                        // Special processing for saplings where drybiom may be null
-                        if (m_oAdo.m_OleDbDataReader["drybiom"] == System.DBNull.Value && newTree.IsSapling)
-                        {
-                            newTree.DryBiom = 0;
-                        }
-                        else
-                        {
-                            newTree.DryBiom = Convert.ToDouble(m_oAdo.m_OleDbDataReader["drybiom"]);
-                        }
+
                         newTree.Slope = Convert.ToInt32(m_oAdo.m_OleDbDataReader["slope"]);
                         // find default harvest methods in prescription in case we need them
                         harvestMethod objDefaultHarvestMethodLowSlope = null;
@@ -279,7 +294,6 @@ namespace FIA_Biosum_Manager
                                 newTree.HarvestMethod = objDefaultHarvestMethodSteepSlope;
                             }
                         }
-                        newTree.FvsTreeId = Convert.ToString(m_oAdo.m_OleDbDataReader["fvs_tree_id"]).Trim();
                         if (Convert.ToString(m_oAdo.m_OleDbDataReader["FvsCreatedTree_YN"]).Trim().ToUpper() == "Y")
                         {
                             newTree.FvsCreatedTree = true;
