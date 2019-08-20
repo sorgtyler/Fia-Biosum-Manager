@@ -34,6 +34,7 @@ namespace FIA_Biosum_Manager
 		private System.ComponentModel.IContainer components;
         private env m_oEnv;
         private Help m_oHelp;
+        private ToolBarButton tblbtnDeletePackages;
         private string m_xpsFile = Help.DefaultDatabaseXPSFile;
 
 
@@ -80,8 +81,9 @@ namespace FIA_Biosum_Manager
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.mnuEditDeleteAll = new System.Windows.Forms.MenuItem();
             this.mnuEditBrowse = new System.Windows.Forms.MenuItem();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tlbbtnHelp = new System.Windows.Forms.ToolBarButton();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.tblbtnDeletePackages = new System.Windows.Forms.ToolBarButton();
             this.SuspendLayout();
             // 
             // btnAdd
@@ -108,6 +110,7 @@ namespace FIA_Biosum_Manager
             this.tlbPlotAddEdit.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
             this.tlbbtnAdd,
             this.tblbtnDeleteConds,
+            this.tblbtnDeletePackages,
             this.tlbbtnEdit,
             this.tlbbtnHelp});
             this.tlbPlotAddEdit.ButtonSize = new System.Drawing.Size(150, 55);
@@ -137,6 +140,7 @@ namespace FIA_Biosum_Manager
             // tlbbtnEdit
             // 
             this.tlbbtnEdit.DropDownMenu = this.contextMenu1;
+            this.tlbbtnEdit.Enabled = false;
             this.tlbbtnEdit.ImageIndex = 1;
             this.tlbbtnEdit.Name = "tlbbtnEdit";
             this.tlbbtnEdit.Style = System.Windows.Forms.ToolBarButtonStyle.DropDownButton;
@@ -160,6 +164,12 @@ namespace FIA_Biosum_Manager
             this.mnuEditBrowse.Text = "Browse And Delete Selected Plot Records";
             this.mnuEditBrowse.Click += new System.EventHandler(this.mnuEditBrowse_Click);
             // 
+            // tlbbtnHelp
+            // 
+            this.tlbbtnHelp.ImageIndex = 2;
+            this.tlbbtnHelp.Name = "tlbbtnHelp";
+            this.tlbbtnHelp.Text = "Help";
+            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -168,11 +178,11 @@ namespace FIA_Biosum_Manager
             this.imageList1.Images.SetKeyName(1, "");
             this.imageList1.Images.SetKeyName(2, "HelpSystemBlue32.png");
             // 
-            // tlbbtnHelp
+            // tblbtnDeletePackages
             // 
-            this.tlbbtnHelp.ImageIndex = 2;
-            this.tlbbtnHelp.Name = "tlbbtnHelp";
-            this.tlbbtnHelp.Text = "Help";
+            this.tblbtnDeletePackages.ImageIndex = 1;
+            this.tblbtnDeletePackages.Name = "tblbtnDeletePackages";
+            this.tblbtnDeletePackages.Text = "Delete Packages";
             // 
             // uc_plot_add_edit
             // 
@@ -253,6 +263,26 @@ namespace FIA_Biosum_Manager
                     frmTemp2.ParentControl = frmMain.g_oFrmMain;
                     frmTemp2.ParentControl.Enabled = false;
 					frmTemp2.Show();
+					break;
+
+				case "DELETE PACKAGES":
+					frmDialog frmTemp3 = new frmDialog(((frmDialog)this.ParentForm).m_frmMain);
+					frmTemp3.Visible=false;
+					frmTemp3.Initialize_Delete_Packages_User_Control();
+					frmTemp3.MaximizeBox = false;
+					frmTemp3.MinimizeBox = true;
+					frmTemp3.Width = frmTemp3.uc_delete_packages.m_DialogWd;
+					frmTemp3.Height = frmTemp3.uc_delete_packages.m_DialogHt;
+					frmTemp3.Text = "Database: Delete Packages";
+					frmTemp3.uc_delete_packages.Dock = System.Windows.Forms.DockStyle.Fill;
+					frmTemp3.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+					frmTemp3.uc_delete_packages.Visible=true;
+					frmTemp3.DisposeOfFormWhenClosing=true;
+                    frmTemp3.uc_delete_packages.ReferenceFormDialog = frmTemp3;
+                    frmTemp3.MinimizeMainForm = true;
+                    frmTemp3.ParentControl = frmMain.g_oFrmMain;
+                    frmTemp3.ParentControl.Enabled = false;
+					frmTemp3.Show();
 					break;
 
                 case "BROWSE AND DELETE SELECTED PLOT RECORDS":

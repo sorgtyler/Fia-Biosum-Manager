@@ -277,7 +277,6 @@ namespace FIA_Biosum_Manager
                 UpdateProgressBar2(80);
                 ConnectToDatabasesInPathAndExecuteDeletes(
                     Directory.GetFiles(m_strProjDir + "\\optimizer\\db\\", "prepost*.accdb"));
-                UpdateProgressBar2(100);
 
                 //ProjectRoot\db Section
                 UpdateProgressBar2(90);
@@ -291,6 +290,9 @@ namespace FIA_Biosum_Manager
                     CreateLogFile(frmMain.g_oFrmMain.getProjectDirectory() + "\\db\\biosum_deleted_records" +
                                   String.Format("{0:yyyyMMddhhmm}", DateTime.Now) + ".txt");
                 }
+
+                //Done
+                UpdateProgressBar2(100);
 
                 MessageBox.Show(
                     String.Format("Successfully deleted data associated with {0} Conditions!",
