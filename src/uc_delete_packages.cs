@@ -134,7 +134,6 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        //throw new NotImplementedException("Delete Pkgs, with or without filters, using m_strPackageNumbers built with either a text file or GUI menu. use it to collect biosum_cond_ids, plot.cn, tree.cn");
         private void DeletePkgsFromBiosumProject_Start()
         {
             frmMain.g_oDelegate.InitializeThreadEvents();
@@ -144,7 +143,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.CurrentThreadProcessDone = false;
             frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
             m_strCurrentProcess = "DeletePackages";
-            StartTherm("2", "Delete Biosum Condition Data");
+            StartTherm("2", "Delete Biosum Package Data");
             frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(DeletePkgsFromBiosumProject_Process));
             frmMain.g_oDelegate.m_oThread.IsBackground = true;
             frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
@@ -176,9 +175,31 @@ namespace FIA_Biosum_Manager
                 UpdateProgressBar2(0);
 
                 var projectFiles = new List<string>();
-                projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\db\\", "*.*", SearchOption.AllDirectories));
-                projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\fvs\\", "*.*", SearchOption.AllDirectories));
-                projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\processor\\", "*.*", SearchOption.AllDirectories));
+                if (Directory.Exists(m_strProjDir + "\\db\\"))
+                {
+                    projectFiles.AddRange(Directory
+                        .GetFiles(m_strProjDir + "\\db\\", "*.*", SearchOption.AllDirectories)
+                        .Where(s => !s.ToLower().Contains("fvsmaster.mdb")));
+                }
+
+                if (Directory.Exists(m_strProjDir + "\\fvs\\"))
+                {
+                    projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\fvs\\", "*.*",
+                        SearchOption.AllDirectories));
+                }
+
+                if (Directory.Exists(m_strProjDir + "\\processor\\"))
+                {
+                    projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\processor\\", "*.*",
+                        SearchOption.AllDirectories));
+                }
+
+                if (Directory.Exists(m_strProjDir + "\\opcost\\"))
+                {
+                    projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\opcost\\", "*.*",
+                        SearchOption.AllDirectories));
+                }
+
                 var allProjectFiles = projectFiles.ToArray();
                 var databases = allProjectFiles.Where(s => s.ToLower().EndsWith(".mdb") || s.ToLower().EndsWith(".accdb")).ToArray();
                 Regex packagePattern = new Regex(".*P\\d{3}.*");
@@ -188,7 +209,6 @@ namespace FIA_Biosum_Manager
                                                               && !s.ToLower().EndsWith(".kcp")
                                                               && !s.ToLower().EndsWith(".kcp.template")).ToArray();
 
-                //TODO: 0% to 50% of the work. take number of packageFiles and increment the progressbar2 (or 1?) based on it regardless of matching packages
                 //Delete databases entirely if their names match one of the package numbers supplied by the user
                 var counter = 0;
                 foreach (var pathFile in packageFiles)
@@ -221,9 +241,9 @@ namespace FIA_Biosum_Manager
 
                 UpdateProgressBar1("", 0);
                 UpdateProgressBar2(51);
-                //TODO: 51% to 100%. increment progress bar1 for each database and 2 for each table
-                //Look at every access database without PXXX in filename in project
-                ConnectToDatabasesInPathAndExecuteDeletes(nonPackageDatabases, strTableExceptions: new String[] {"rxpackage"});
+
+                //Look at every access database without PXXX in filename in project and perform delete queries
+                ConnectToDatabasesInPathAndExecuteDeletes(nonPackageDatabases);
 
                 //Results
                 if (Checked(chkCreateLog))
