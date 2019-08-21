@@ -2488,7 +2488,6 @@ namespace FIA_Biosum_Manager
                         }
                     }
                 }
-                this.m_DaoDatabase.Close();
             }
 
             return p_bResult;
