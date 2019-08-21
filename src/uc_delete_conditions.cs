@@ -323,7 +323,9 @@ namespace FIA_Biosum_Manager
                     true);
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Enabled",
                     true);
-
+                
+                m_dictDeletedRowCountsByDatabaseAndTable = new Dictionary<string, Dictionary<string, int>>();
+                m_dictIdentityColumnsToValues = new Dictionary<string, HashSet<string>>();
                 DeleteCondsFromBiosumProject_Finish();
             }
             catch (System.Threading.ThreadInterruptedException err)
@@ -412,13 +414,13 @@ namespace FIA_Biosum_Manager
 
         private void ConnectToDatabasesInPathAndExecuteDeletes(string[] strDatabaseNames, string[] strTargetTables = null, string[] strTableExceptions = null)
         {
-            int progressbar1_value_incr = 100 / (strDatabaseNames.Length + 1);
             int counter = 0;
 
             foreach (string db in strDatabaseNames)
             {
-                UpdateProgressBar1("Deleting from " + Path.GetFileName(db), counter);
-                counter += progressbar1_value_incr;
+                UpdateProgressBar1("Deleting from " + Path.GetFileName(db),
+                    (int) Math.Floor(100 * ((double) (counter + 1) / (strDatabaseNames.Length + 1))));
+                counter += 1;
                 ExecuteDeleteOnTables(db, tables: strTargetTables, exceptions: strTableExceptions);
             }
             UpdateProgressBar1("", 0);
