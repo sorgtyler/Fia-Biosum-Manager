@@ -15,8 +15,7 @@ namespace FIA_Biosum_Manager
 		private System.Windows.Forms.Button btnAdd;
 		private System.Windows.Forms.Button btnEdit;
 		private System.Windows.Forms.ToolBar tlbPlotAddEdit;
-		private System.Windows.Forms.ToolBarButton tlbbtnAdd;
-		private System.Windows.Forms.ToolBarButton tlbbtnEdit;
+        private System.Windows.Forms.ToolBarButton tlbbtnAdd;
 		private System.Windows.Forms.ContextMenu contextMenu1;
 		private System.Windows.Forms.MenuItem mnuEditDeleteAll;
 		private System.Windows.Forms.MenuItem mnuEditBrowse;
@@ -35,6 +34,7 @@ namespace FIA_Biosum_Manager
         private env m_oEnv;
         private Help m_oHelp;
         private ToolBarButton tblbtnDeletePackages;
+        private ToolBarButton tlbbtnEdit;
         private string m_xpsFile = Help.DefaultDatabaseXPSFile;
 
 
@@ -77,13 +77,13 @@ namespace FIA_Biosum_Manager
             this.tlbPlotAddEdit = new System.Windows.Forms.ToolBar();
             this.tlbbtnAdd = new System.Windows.Forms.ToolBarButton();
             this.tblbtnDeleteConds = new System.Windows.Forms.ToolBarButton();
+            this.tblbtnDeletePackages = new System.Windows.Forms.ToolBarButton();
             this.tlbbtnEdit = new System.Windows.Forms.ToolBarButton();
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.mnuEditDeleteAll = new System.Windows.Forms.MenuItem();
             this.mnuEditBrowse = new System.Windows.Forms.MenuItem();
             this.tlbbtnHelp = new System.Windows.Forms.ToolBarButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.tblbtnDeletePackages = new System.Windows.Forms.ToolBarButton();
             this.SuspendLayout();
             // 
             // btnAdd
@@ -121,7 +121,7 @@ namespace FIA_Biosum_Manager
             this.tlbPlotAddEdit.Location = new System.Drawing.Point(5, 5);
             this.tlbPlotAddEdit.Name = "tlbPlotAddEdit";
             this.tlbPlotAddEdit.ShowToolTips = true;
-            this.tlbPlotAddEdit.Size = new System.Drawing.Size(650, 62);
+            this.tlbPlotAddEdit.Size = new System.Drawing.Size(610, 62);
             this.tlbPlotAddEdit.TabIndex = 2;
             this.tlbPlotAddEdit.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.tlbPlotAddEdit_ButtonClick);
             // 
@@ -137,6 +137,12 @@ namespace FIA_Biosum_Manager
             this.tblbtnDeleteConds.Name = "tblbtnDeleteConds";
             this.tblbtnDeleteConds.Text = "Delete Conditions";
             // 
+            // tblbtnDeletePackages
+            // 
+            this.tblbtnDeletePackages.ImageIndex = 1;
+            this.tblbtnDeletePackages.Name = "tblbtnDeletePackages";
+            this.tblbtnDeletePackages.Text = "Delete Packages";
+            // 
             // tlbbtnEdit
             // 
             this.tlbbtnEdit.DropDownMenu = this.contextMenu1;
@@ -145,6 +151,7 @@ namespace FIA_Biosum_Manager
             this.tlbbtnEdit.Name = "tlbbtnEdit";
             this.tlbbtnEdit.Style = System.Windows.Forms.ToolBarButtonStyle.DropDownButton;
             this.tlbbtnEdit.Text = "Delete Plot Data";
+            this.tlbbtnEdit.Visible = false;
             // 
             // contextMenu1
             // 
@@ -178,19 +185,13 @@ namespace FIA_Biosum_Manager
             this.imageList1.Images.SetKeyName(1, "");
             this.imageList1.Images.SetKeyName(2, "HelpSystemBlue32.png");
             // 
-            // tblbtnDeletePackages
-            // 
-            this.tblbtnDeletePackages.ImageIndex = 1;
-            this.tblbtnDeletePackages.Name = "tblbtnDeletePackages";
-            this.tblbtnDeletePackages.Text = "Delete Packages";
-            // 
             // uc_plot_add_edit
             // 
             this.Controls.Add(this.tlbPlotAddEdit);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnAdd);
             this.Name = "uc_plot_add_edit";
-            this.Size = new System.Drawing.Size(660, 72);
+            this.Size = new System.Drawing.Size(615, 72);
             this.ResumeLayout(false);
             this.PerformLayout();
 
