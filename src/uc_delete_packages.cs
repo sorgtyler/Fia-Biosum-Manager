@@ -16,7 +16,6 @@ namespace FIA_Biosum_Manager
     {
         public int m_DialogHt;
         public int m_DialogWd;
-        private Datasource m_oDatasource;
 
         private string m_strPackageNumbers;
         private string[] m_packageNumbers;
@@ -30,15 +29,10 @@ namespace FIA_Biosum_Manager
         private Help m_oHelp;
         private string m_xpsFile = Help.DefaultDatabaseXPSFile;
         private int m_intError;
-        private string m_strStateCountyPlotSQL;
-        private string m_strStateCountySQL;
         private string m_strCurrentProcess;
         private frmTherm m_frmTherm;
         private ado_data_access m_ado;
         private dao_data_access m_dao;
-        private string m_strTempMDBFileConn;
-        private string m_strTempMDBFile;
-        private string m_strSQL;
         private string m_strProjDir;
         private string m_strMessage = "";
         private string m_strDebugFile = "";
@@ -60,19 +54,7 @@ namespace FIA_Biosum_Manager
             m_oEnv = new env();
             m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_delete_packages_debug" +
                              String.Format("{0:yyyyMMddhhmm}", DateTime.Now) + ".txt";
-        }
-
-        private void InitializeDatasource()
-        {
             m_strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
-
-            m_oDatasource = new Datasource();
-            m_oDatasource.LoadTableColumnNamesAndDataTypes = false;
-            m_oDatasource.LoadTableRecordCount = false;
-            m_oDatasource.m_strDataSourceMDBFile = m_strProjDir + "\\db\\project.mdb";
-            m_oDatasource.m_strDataSourceTableName = "datasource";
-            m_oDatasource.m_strScenarioId = "";
-            m_oDatasource.populate_datasource_array();
         }
 
         private void rdoFilterByFile_Click(object sender, System.EventArgs e)
@@ -110,10 +92,7 @@ namespace FIA_Biosum_Manager
 
         private void btnFilterFinish_Click(object sender, System.EventArgs e)
         {
-            m_strStateCountyPlotSQL = "";
-            m_strStateCountySQL = "";
             m_intError = 0;
-            InitializeDatasource();
             if (m_intError == 0)
             {
                 if (rdoFilterByFile.Checked)
@@ -203,7 +182,6 @@ namespace FIA_Biosum_Manager
                 var allProjectFiles = projectFiles.ToArray();
                 var databases = allProjectFiles.Where(s => s.ToLower().EndsWith(".mdb") || s.ToLower().EndsWith(".accdb")).ToArray();
                 Regex packagePattern = new Regex(".*P\\d{3}.*");
-                var packageDatabases = databases.Where(s => packagePattern.Match(s).Success).ToArray();
                 var nonPackageDatabases = databases.Where(s => !packagePattern.Match(s).Success).ToArray();
                 var packageFiles = allProjectFiles.Where(s => packagePattern.Match(s).Success
                                                               && !s.ToLower().EndsWith(".kcp")
@@ -401,7 +379,7 @@ namespace FIA_Biosum_Manager
                         }
                     }
 
-                    if (!String.IsNullOrEmpty(column) /*&& m_dictIdentityColumnsToValues[column].Count > 0*/)
+                    if (!String.IsNullOrEmpty(column))
                     {
                         var strTempIndex = column + "_delete_idx";
                         if (!m_dao.IndexExists(strDbPathFile, table, strTempIndex))
