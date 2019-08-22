@@ -249,7 +249,7 @@ namespace FIA_Biosum_Manager
                     foreach (string variant in strVariants)
                         if (Directory.Exists(strFvsDataDir + "\\" + variant + "\\"))
                             num_variants_in_fvs_data++;
-                    int progressbar2_value = 50;
+                    int progressbar2_value = 40;
                     foreach (string variant in strVariants)
                     {
                         //Collect pathfiles of databases to delete from in FVS Data directory
