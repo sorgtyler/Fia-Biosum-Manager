@@ -226,8 +226,11 @@ namespace FIA_Biosum_Manager
                 //Results
                 if (Checked(chkCreateLog))
                 {
-                    CreateLogFile(frmMain.g_oFrmMain.getProjectDirectory() + "\\db\\biosum_deleted_packages" +
-                                  String.Format("{0:yyyyMMddhhmm}", DateTime.Now) + ".txt");
+                    CreateLogFile(String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
+                        "\\db\\biosum_deleted_packages_",
+                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now), 
+                        Checked(chkDeletesDisabled) ? "_no_deletes" : "",
+                        ".txt"));
                 }
 
                 UpdateProgressBar2(100); 
