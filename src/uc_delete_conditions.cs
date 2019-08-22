@@ -498,7 +498,7 @@ namespace FIA_Biosum_Manager
                 string[] strTables = tables;
                 if (tables == null || tables.Length == 0)
                 {
-                    strTables = m_ado.getTableNamesOfSpecificTypes(conn);
+                    strTables = m_ado.getTableNamesOfSpecificTypes(conn).Where(s => !(s.Contains("~") || s.Contains(" "))).ToArray();
                     //In case none of the tables are valid
                     if (strTables.Length == 1 && strTables[0] == "")
                         return;

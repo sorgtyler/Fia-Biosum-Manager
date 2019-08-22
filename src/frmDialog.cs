@@ -425,9 +425,9 @@ namespace FIA_Biosum_Manager
 
 	    public void Initialize_Delete_Packages_User_Control()
 	    {
-	        this.uc_delete_packages = new uc_delete_packages();
+            this.uc_delete_packages = new uc_delete_packages();
             this.Controls.Add(this.uc_delete_packages);
-	        this.uc_delete_packages.Visible = true;
+            this.uc_delete_packages.Visible = true;
 	    }
 
 		public void Initialize_Plot_Tree_Diam_User_Control()

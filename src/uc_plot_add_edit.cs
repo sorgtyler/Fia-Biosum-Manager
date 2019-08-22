@@ -12,25 +12,25 @@ namespace FIA_Biosum_Manager
 	/// </summary>
 	public class uc_plot_add_edit : System.Windows.Forms.UserControl
 	{
-		private System.Windows.Forms.Button btnAdd;
-		private System.Windows.Forms.Button btnEdit;
-		private System.Windows.Forms.ToolBar tlbPlotAddEdit;
+        private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.Button btnEdit;
+        private System.Windows.Forms.ToolBar tlbPlotAddEdit;
         private System.Windows.Forms.ToolBarButton tlbbtnAdd;
-		private System.Windows.Forms.ContextMenu contextMenu1;
-		private System.Windows.Forms.MenuItem mnuEditDeleteAll;
-		private System.Windows.Forms.MenuItem mnuEditBrowse;
-		//private int m_intError=0;
-		public const int TABLETYPE = 0;
-		public const int PATH = 1;
-		public const int MDBFILE = 2;
-		public const int FILESTATUS = 3;
-		public const int TABLE = 4;
-		public const int TABLESTATUS = 5;
-		public const int RECORDCOUNT = 6;
-		private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ContextMenu contextMenu1;
+        private System.Windows.Forms.MenuItem mnuEditDeleteAll;
+        private System.Windows.Forms.MenuItem mnuEditBrowse;
+        //private int m_intError=0;
+        public const int TABLETYPE = 0;
+        public const int PATH = 1;
+        public const int MDBFILE = 2;
+        public const int FILESTATUS = 3;
+        public const int TABLE = 4;
+        public const int TABLESTATUS = 5;
+        public const int RECORDCOUNT = 6;
+        private System.Windows.Forms.ImageList imageList1;
         private ToolBarButton tblbtnDeleteConds;
         private ToolBarButton tlbbtnHelp;
-		private System.ComponentModel.IContainer components;
+        private System.ComponentModel.IContainer components;
         private env m_oEnv;
         private Help m_oHelp;
         private ToolBarButton tblbtnDeletePackages;
@@ -266,25 +266,25 @@ namespace FIA_Biosum_Manager
 					frmTemp2.Show();
 					break;
 
-				case "DELETE PACKAGES":
-					frmDialog frmTemp3 = new frmDialog(((frmDialog)this.ParentForm).m_frmMain);
-					frmTemp3.Visible=false;
-					frmTemp3.Initialize_Delete_Packages_User_Control();
-					frmTemp3.MaximizeBox = false;
-					frmTemp3.MinimizeBox = true;
-					frmTemp3.Width = frmTemp3.uc_delete_packages.m_DialogWd;
-					frmTemp3.Height = frmTemp3.uc_delete_packages.m_DialogHt;
-					frmTemp3.Text = "Database: Delete Packages";
-					frmTemp3.uc_delete_packages.Dock = System.Windows.Forms.DockStyle.Fill;
-					frmTemp3.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-					frmTemp3.uc_delete_packages.Visible=true;
-					frmTemp3.DisposeOfFormWhenClosing=true;
+                case "DELETE PACKAGES":
+                    frmDialog frmTemp3 = new frmDialog(((frmDialog) this.ParentForm).m_frmMain);
+                    frmTemp3.Visible = false;
+                    frmTemp3.Initialize_Delete_Packages_User_Control();
+                    frmTemp3.MaximizeBox = false;
+                    frmTemp3.MinimizeBox = true;
+                    frmTemp3.Width = frmTemp3.uc_delete_packages.m_DialogWd;
+                    frmTemp3.Height = frmTemp3.uc_delete_packages.m_DialogHt;
+                    frmTemp3.Text = "Database: Delete Packages";
+                    frmTemp3.uc_delete_packages.Dock = System.Windows.Forms.DockStyle.Fill;
+                    frmTemp3.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+                    frmTemp3.uc_delete_packages.Visible = true;
+                    frmTemp3.DisposeOfFormWhenClosing = true;
                     frmTemp3.uc_delete_packages.ReferenceFormDialog = frmTemp3;
                     frmTemp3.MinimizeMainForm = true;
                     frmTemp3.ParentControl = frmMain.g_oFrmMain;
                     frmTemp3.ParentControl.Enabled = false;
-					frmTemp3.Show();
-					break;
+                    frmTemp3.Show();
+                    break;
 
                 case "BROWSE AND DELETE SELECTED PLOT RECORDS":
 					//instantiate the datasource class
