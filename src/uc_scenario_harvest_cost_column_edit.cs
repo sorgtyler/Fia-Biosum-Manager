@@ -118,7 +118,7 @@ namespace FIA_Biosum_Manager
             this.cmbCol.Name = "cmbCol";
             this.cmbCol.Size = new System.Drawing.Size(352, 28);
             this.cmbCol.TabIndex = 4;
-            this.cmbCol.TextUpdate += new System.EventHandler(this.cmbCol_TextUpdate);
+            this.cmbCol.Validating += new System.ComponentModel.CancelEventHandler(this.cmbCol_Validating);
             // 
             // label1
             // 
@@ -344,19 +344,23 @@ namespace FIA_Biosum_Manager
 			((frmDialog)this.ParentForm).DialogResult = System.Windows.Forms.DialogResult.OK;
 		}
 
-        private void cmbCol_TextUpdate(Object sender, EventArgs e)
+        // Prevent invalid characters from column name
+        private void cmbCol_Validating(object sender, CancelEventArgs e)
         {
-            //21-AUG-2019: Temporarly comment this out for an emergency build
-            //ComboBox comboBox = (ComboBox)sender;
-            //System.Text.RegularExpressions.Regex rx =
-            //    new System.Text.RegularExpressions.Regex("^[a-zA-Z_][a-zA-Z0-9_]*$");
+            ComboBox comboBox = (ComboBox)sender;
+            if (String.IsNullOrEmpty(comboBox.Text))
+            {
+                return;
+            }
+            System.Text.RegularExpressions.Regex rx =
+                new System.Text.RegularExpressions.Regex("^[a-zA-Z_][a-zA-Z0-9_]*$");
 
-            //System.Text.RegularExpressions.MatchCollection matches = rx.Matches(comboBox.Text);
-            //if (matches.Count < 1)
-            //{
-            //    MessageBox.Show("The component name contains an invalid character. Only letters and underscores are permitted!!", "FIA Biosum");
-                
-            //}
+            System.Text.RegularExpressions.MatchCollection matches = rx.Matches(comboBox.Text);
+            if (matches.Count < 1)
+            {
+                MessageBox.Show("The component name contains an invalid character. Only letters, numbers and underscores are permitted!!", "FIA Biosum");
+                e.Cancel = true;
+            }
         }
 
 	}

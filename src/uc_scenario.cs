@@ -369,11 +369,25 @@ namespace FIA_Biosum_Manager
 			//
 			if (this.txtScenarioId.Text.Length == 0 ) 
 			{
-					MessageBox.Show("Enter A Unique Optimization scenario Id");
+                MessageBox.Show("Enter a unique " + ScenarioType + " scenario id");
 					this.txtScenarioId.Focus();
 					m_intError=-1;
 					return;
 			}
+            else
+            {
+                System.Text.RegularExpressions.Regex rx =
+                    new System.Text.RegularExpressions.Regex("^[a-zA-Z_][a-zA-Z0-9_]*$");
+
+                System.Text.RegularExpressions.MatchCollection matches = rx.Matches(txtScenarioId.Text);
+                if (matches.Count < 1)
+                {
+                    MessageBox.Show("The scenario id contains an invalid character. Only letters, numbers and underscores are permitted!!", "FIA Biosum");
+                    this.txtScenarioId.Focus();
+                    m_intError=-1;
+                    return;
+                }
+            }
 			//
 			//check for duplicate scenario id
 			//
