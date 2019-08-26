@@ -195,19 +195,11 @@ namespace FIA_Biosum_Manager
                     {
                         if (pathFile.Contains(packageNumber))
                         {
-                            var fileSize = String.Format("{0:0.00}", new FileInfo(pathFile).Length / 1048576.0);
+                            var fileSize = string.Format("{0:0.00}", new FileInfo(pathFile).Length / 1048576.0);
                             m_dictDeletedDatabasesAndFileSizes.Add(pathFile, fileSize);
-
-                            var message = "Would delete : " + pathFile + "\r\n";
-                            if (!Checked(chkDeletesDisabled))
-                            {
-                                message = "Attempting to delete: " + pathFile + "\r\n";
-                                File.Delete(pathFile);
-                            }
-                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                            {
-                                frmMain.g_oUtils.WriteText(m_strDebugFile, message);
-                            }
+                            var message = (!Checked(chkDeletesDisabled) ? "Would delete : " : "Attempting to delete: ") + pathFile + "\r\n";
+                            if (!Checked(chkDeletesDisabled)) File.Delete(pathFile);
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2) frmMain.g_oUtils.WriteText(m_strDebugFile, message);
                             break;
                         }
                     }
@@ -223,25 +215,12 @@ namespace FIA_Biosum_Manager
                 //Look at every access database without PXXX in filename in project and perform delete queries
                 ConnectToDatabasesInPathAndExecuteDeletes(nonPackageDatabases);
 
-                //Results
-                if (Checked(chkCreateLog))
-                {
-                    CreateLogFile(String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
-                        "\\db\\biosum_deleted_packages_",
-                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now), 
-                        Checked(chkDeletesDisabled) ? "_no_deletes" : "",
-                        ".txt"));
-                }
-
                 UpdateProgressBar2(100); 
 
                 MessageBox.Show(
                     String.Format("Successfully deleted data associated with {0} packages!",
                         m_packageNumbers.Length), "Delete Packages Results");
 
-                //Cleanup section, assuming no exceptions were thrown
-                m_dictDeletedDatabasesAndFileSizes = new Dictionary<string, string>();
-                m_dictDeletedRowCountsByDatabaseAndTable = new Dictionary<string, Dictionary<string, int>>();
 
                 if (m_ado != null)
                 {
@@ -295,6 +274,17 @@ namespace FIA_Biosum_Manager
             }
             finally
             {
+                if (Checked(chkCreateLog))
+                {
+                    CreateLogFile(String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
+                        "\\db\\biosum_deleted_packages_",
+                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now), 
+                        Checked(chkDeletesDisabled) ? "_no_deletes" : "",
+                        ".txt"));
+                }
+
+                m_dictDeletedDatabasesAndFileSizes = new Dictionary<string, string>();
+                m_dictDeletedRowCountsByDatabaseAndTable = new Dictionary<string, Dictionary<string, int>>();
             }
 
             if (m_ado != null)
@@ -340,7 +330,8 @@ namespace FIA_Biosum_Manager
 
             foreach (string db in strDatabaseNames)
             {
-                UpdateProgressBar1("Deleting from " + Path.GetFileName(db), (int)Math.Floor(100 * ((double)(counter + 1) / (strDatabaseNames.Length + 1))));
+                var message = (Checked(chkDeletesDisabled) ? "Checking " : "Deleting from ") + Path.GetFileName(db);
+                UpdateProgressBar1(message, (int)Math.Floor(100 * ((double)(counter + 1) / (strDatabaseNames.Length + 1))));
                 UpdateProgressBar2(50 + (int)Math.Floor(50 * ((double)(counter + 1) / (strDatabaseNames.Length + 1))));
                 counter += 1;
                 ExecuteDeleteOnTables(db, tables: strTargetTables, exceptions: strTableExceptions);
@@ -398,7 +389,7 @@ namespace FIA_Biosum_Manager
                         }
 
                         int deletedRecords = BuildAndExecuteDeleteSQLStmts(conn, table, column);
-                        AddDeletedCountToDictionary(strDbPathFile, table, deletedRecords);
+                        if (deletedRecords > 0) AddDeletedCountToDictionary(strDbPathFile, table, deletedRecords);
                         m_ado.SqlNonQuery(conn, String.Format("DROP INDEX {0} ON {1}", strTempIndex, table));
                     }
                 }
@@ -437,35 +428,58 @@ namespace FIA_Biosum_Manager
 
         private void CreateLogFile(string strLogFileName)
         {
-            frmMain.g_oUtils.WriteText(strLogFileName,
-                String.Format("Deleting files associated with these packages: {0}{1}",
-                    String.Join(",", m_packageNumbers), Environment.NewLine));
-            var strMessage = Checked(chkDeletesDisabled) ? "would be deleted": "was deleted"; 
-            foreach (var pathFile in m_dictDeletedDatabasesAndFileSizes.Keys)
+            string strMessage;
+
+            if (m_dictDeletedDatabasesAndFileSizes.Keys.Count > 0)
             {
                 frmMain.g_oUtils.WriteText(strLogFileName,
-                    String.Format("  {0} ({1} MB) {2}{3}", pathFile,
-                        m_dictDeletedDatabasesAndFileSizes[pathFile], strMessage, Environment.NewLine));
-            }
-            frmMain.g_oUtils.WriteText(strLogFileName,
-                String.Format("{1}Deleting records from databases where rxpackage in ({0}):{1}",
-                    String.Join(",", m_strPackageNumbers), Environment.NewLine));
-            strMessage = Checked(chkDeletesDisabled)
-                ? "records would be deleted from"
-                : "records were deleted from";
-            foreach (var strDbPathFile in m_dictDeletedRowCountsByDatabaseAndTable.Keys)
-            {
-                frmMain.g_oUtils.WriteText(strLogFileName, String.Concat("  ",strDbPathFile, Environment.NewLine));
-                foreach (var strTable in m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Keys)
+                    String.Format("Databases or other files associated with these packages: {0}{1}",
+                        String.Join(",", m_packageNumbers), Environment.NewLine));
+                strMessage = Checked(chkDeletesDisabled) ? "would be deleted" : "was deleted";
+                foreach (var pathFile in m_dictDeletedDatabasesAndFileSizes.Keys)
                 {
-                    var deletedRecordsCount = m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile][strTable];
-                    if (deletedRecordsCount > 0)
+                    frmMain.g_oUtils.WriteText(strLogFileName,
+                        String.Format("  {0} ({1} MB) {2}{3}", pathFile,
+                            m_dictDeletedDatabasesAndFileSizes[pathFile], strMessage, Environment.NewLine));
+                }
+            }
+            else
+            {
+                frmMain.g_oUtils.WriteText(strLogFileName, "No matching package-specific files were found." + Environment.NewLine);
+            }
+
+            if (m_dictDeletedRowCountsByDatabaseAndTable.Keys.Count > 0)
+            {
+                frmMain.g_oUtils.WriteText(strLogFileName,
+                    String.Format("{1}Deleting records from databases where rxpackage in ({0}):{1}",
+                        String.Join(",", m_strPackageNumbers), Environment.NewLine));
+                strMessage = Checked(chkDeletesDisabled)
+                    ? "records would be deleted from"
+                    : "records were deleted from";
+
+                foreach (var strDbPathFile in m_dictDeletedRowCountsByDatabaseAndTable.Keys)
+                {
+                    if (m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Keys.Count > 0)
                     {
                         frmMain.g_oUtils.WriteText(strLogFileName,
-                            String.Format("    {0} {1} {2}{3}", deletedRecordsCount, strMessage, strTable,
-                                Environment.NewLine));
+                            String.Concat("  ", strDbPathFile, Environment.NewLine));
+                    }
+
+                    foreach (var strTable in m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Keys)
+                    {
+                        var deletedRecordsCount = m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile][strTable];
+                        if (deletedRecordsCount > 0)
+                        {
+                            frmMain.g_oUtils.WriteText(strLogFileName,
+                                String.Format("    {0} {1} {2}{3}", deletedRecordsCount, strMessage, strTable,
+                                    Environment.NewLine));
+                        }
                     }
                 }
+            }
+            else
+            {
+                frmMain.g_oUtils.WriteText(strLogFileName, "No matching package data was deleted from tables." + Environment.NewLine);
             }
         }
 
