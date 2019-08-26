@@ -284,16 +284,6 @@ namespace FIA_Biosum_Manager
                     .GetFiles(m_strProjDir + "\\db\\", "*.*", SearchOption.AllDirectories)
                     .Where(s => s.ToLower().EndsWith(".mdb") || s.ToLower().EndsWith(".accdb")).ToArray());
 
-                //Results
-                if (Checked(chkCreateLog))
-                {
-                    CreateLogFile(String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
-                        "\\db\\biosum_deleted_records_",
-                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now), 
-                        Checked(chkDeletesDisabled) ? "_no_deletes" : "",
-                        ".txt"));
-                }
-
                 //Done
                 UpdateProgressBar2(100);
 
@@ -327,8 +317,6 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form) ReferenceFormDialog, "Enabled",
                     true);
                 
-                m_dictDeletedRowCountsByDatabaseAndTable = new Dictionary<string, Dictionary<string, int>>();
-                m_dictIdentityColumnsToValues = new Dictionary<string, HashSet<string>>();
                 DeleteCondsFromBiosumProject_Finish();
             }
             catch (System.Threading.ThreadInterruptedException err)
@@ -368,6 +356,16 @@ namespace FIA_Biosum_Manager
             }
             finally
             {
+                if (Checked(chkCreateLog))
+                {
+                    CreateLogFile(String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
+                        "\\db\\biosum_deleted_records_",
+                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now), 
+                        Checked(chkDeletesDisabled) ? "_no_deletes" : "",
+                        ".txt"));
+                }
+                m_dictDeletedRowCountsByDatabaseAndTable = new Dictionary<string, Dictionary<string, int>>();
+                m_dictIdentityColumnsToValues = new Dictionary<string, HashSet<string>>();
             }
 
             if (this.m_connTempMDBFile != null)
@@ -421,8 +419,8 @@ namespace FIA_Biosum_Manager
 
             foreach (string db in strDatabaseNames)
             {
-                UpdateProgressBar1("Deleting from " + Path.GetFileName(db),
-                    (int) Math.Floor(100 * ((double) (counter + 1) / (strDatabaseNames.Length + 1))));
+                var message = (Checked(chkDeletesDisabled) ? "Checking " : "Deleting from ") + Path.GetFileName(db);
+                UpdateProgressBar1(message, (int) Math.Floor(100 * ((double) (counter + 1) / (strDatabaseNames.Length + 1))));
                 counter += 1;
                 ExecuteDeleteOnTables(db, tables: strTargetTables, exceptions: strTableExceptions);
             }
@@ -541,7 +539,7 @@ namespace FIA_Biosum_Manager
                         }
 
                         int deletedRecords = BuildAndExecuteDeleteSQLStmts(conn, table, column);
-                        AddDeletedCountToDictionary(strDbPathFile, table, deletedRecords);
+                        if (deletedRecords > 0) AddDeletedCountToDictionary(strDbPathFile, table, deletedRecords);
                         m_ado.SqlNonQuery(conn, String.Format("DROP INDEX {0} ON {1}", strTempIndex, table));
                     }
                 }
@@ -596,24 +594,31 @@ namespace FIA_Biosum_Manager
             return matchedRecordCount;
         }
 
-        private void CreateLogFile(string strPathFile)
+        private void CreateLogFile(string strLogFileName)
         {
-            var strMessage = Checked(chkDeletesDisabled)
-                ? "records would be deleted from"
-                : "records were deleted from";
-            foreach (var strDbPathFile in m_dictDeletedRowCountsByDatabaseAndTable.Keys)
+            if (m_dictDeletedRowCountsByDatabaseAndTable.Keys.Count > 0)
             {
-                frmMain.g_oUtils.WriteText(strPathFile, String.Concat(strDbPathFile, Environment.NewLine));
-                foreach (var strTable in m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Keys)
+                var strMessage = Checked(chkDeletesDisabled)
+                    ? "records would be deleted from"
+                    : "records were deleted from";
+                foreach (var strDbPathFile in m_dictDeletedRowCountsByDatabaseAndTable.Keys)
                 {
-                    var deletedRecordsCount = m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile][strTable];
-                    if (deletedRecordsCount > 0)
+                    if (m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Keys.Count > 0)
                     {
-                        frmMain.g_oUtils.WriteText(strPathFile,
-                            String.Format("  {0} {1} {2}{3}", deletedRecordsCount, strMessage, strTable,
-                                Environment.NewLine));
+                        frmMain.g_oUtils.WriteText(strLogFileName, String.Concat(strDbPathFile, Environment.NewLine));
+                        foreach (var strTable in m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile].Keys)
+                        {
+                            frmMain.g_oUtils.WriteText(strLogFileName,
+                                String.Format("  {0} {1} {2}{3}",
+                                    m_dictDeletedRowCountsByDatabaseAndTable[strDbPathFile][strTable], strMessage,
+                                    strTable, Environment.NewLine));
+                        }
                     }
                 }
+            }
+            else
+            {
+                frmMain.g_oUtils.WriteText(strLogFileName, "No records were deleted." + Environment.NewLine);
             }
         }
 
