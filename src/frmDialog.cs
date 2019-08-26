@@ -36,6 +36,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.uc_plot_add_edit uc_plot_add_edit1;
 		public FIA_Biosum_Manager.uc_plot_input uc_plot_input1;
 		public FIA_Biosum_Manager.uc_delete_conditions uc_delete_conditions;
+		public FIA_Biosum_Manager.uc_delete_packages uc_delete_packages;
 		public FIA_Biosum_Manager.uc_project_notes uc_project_notes1;
 		public FIA_Biosum_Manager.uc_processor_scenario_tree_diam_groups_list uc_processor_scenario_tree_diam_groups_list1;
 		public FIA_Biosum_Manager.uc_processor_scenario_tree_diam_groups_edit uc_processor_scenario_tree_diam_groups_edit1;
@@ -263,6 +264,7 @@ namespace FIA_Biosum_Manager
                 if (this.uc_gis_psite1 != null) this.ParentControl.Enabled = true;
                 if (this.uc_plot_input1 != null) this.ParentControl.Enabled = true;
                 if (this.uc_delete_conditions != null) this.ParentControl.Enabled = true;
+                if (this.uc_delete_packages != null) this.ParentControl.Enabled = true;
                
 
 				this.Dispose();
@@ -419,6 +421,13 @@ namespace FIA_Biosum_Manager
 	        this.uc_delete_conditions = new uc_delete_conditions();
             this.Controls.Add(this.uc_delete_conditions);
 	        this.uc_delete_conditions.Visible = true;
+	    }
+
+	    public void Initialize_Delete_Packages_User_Control()
+	    {
+            this.uc_delete_packages = new uc_delete_packages();
+            this.Controls.Add(this.uc_delete_packages);
+            this.uc_delete_packages.Visible = true;
 	    }
 
 		public void Initialize_Plot_Tree_Diam_User_Control()

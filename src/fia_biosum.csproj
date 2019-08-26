@@ -158,6 +158,12 @@
     <Compile Include="btnMainForm.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="uc_delete_packages.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc_delete_packages.Designer.cs">
+      <DependentUpon>uc_delete_packages.cs</DependentUpon>
+    </Compile>
     <Compile Include="uc_delete_conditions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -584,6 +590,9 @@
     <Content Include="table-select-row-icon.png" />
     <EmbeddedResource Include="btnMainForm.resx">
       <DependentUpon>btnMainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_delete_packages.resx">
+      <DependentUpon>uc_delete_packages.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_delete_conditions.resx">
       <DependentUpon>uc_delete_conditions.cs</DependentUpon>
