@@ -36,22 +36,14 @@ namespace FIA_Biosum_Manager
 			public string DefaultProjectTableName {get {return "project";}}
 			public string DefaultProjectNotesTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectNotesTableName {get {return "notes";}}
-			public string DefaultProjectLinksDepositoryTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectLinksDepositoryTableName {get {return "links_depository";}}
-			public string DefaultProjectLinksCategoryTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectLinksCategoryTableName {get {return "links_category";}}
 			public string DefaultProjectUserConfigTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectUserConfigTableName {get {return "user_config";}}
-			public string DefaultProjectProcessorScenarioDatasourceTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectProcessorScenarioDatasourceTableName {get {return "processor_scenario_datasource";}}
-			public string DefaultProjectProcessorScenarioTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectProcessorScenarioTableName {get {return "processor_scenario";}}
 			public string DefaultProjectContactsTableDbFile {get {return @"db\project.mdb";}}
 			public string DefaultProjectContactsTableName {get {return "contacts";}}
 			static public string DefaultProjectDatasourceTableDbFile {get {return @"db\project.mdb";}}
 			static public string DefaultProjectDatasourceTableName {get {return "datasource";}}
-			public string DefaultProjectTravelTimesFormTableDbFile {get {return @"db\project.mdb";}}
-			public string DefaultProjectTravelTimesFormTableName {get {return "form_travel_times";}}
 			public Project()
 			{
 			}
@@ -90,27 +82,6 @@ namespace FIA_Biosum_Manager
 					"file CHAR(50)," + 
 					"table_name CHAR(50))";
 			
-			}
-			public void CreateTravelTimesFormTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateTravelTimesFormTableSQL(p_strTableName));
-			}
-			public string CreateTravelTimesFormTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" + 
-					   "map_proj CHAR(50)," + 
-					   "disconnected_roads BYTE," + 
-					   "travel_mode BYTE," + 
-					   "psite_layer CHAR(50)," + 
-					   "plot_layer CHAR(50)," + 
-					   "weighted_speed_layer CHAR(50)," + 
-					   "travel_times_mdb_file CHAR(254)," + 
-					   "plot_mdb_file CHAR(254)," + 
-					   "psite_mdb_file CHAR(254)," + 
-					   "travel_times_layer_folder CHAR(254)," + 
-					   "maximum_travel_time CHAR(4)," + 
-					   "records_to_process1 BYTE DEFAULT 0," + 
-					   "records_to_process2 BYTE DEFAULT 0)";
 			}
 			public void CreateLinksCategoryTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{

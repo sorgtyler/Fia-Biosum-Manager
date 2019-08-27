@@ -26,10 +26,10 @@ namespace FIA_Biosum_Manager
 
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.CheckBox chkCore;
+		private System.Windows.Forms.CheckBox chkOptimizer;
 		private System.Windows.Forms.CheckBox chkFvs;
 		private System.Windows.Forms.CheckBox chkProcessor;
-		private System.Windows.Forms.CheckBox chkFrcs;
+		private System.Windows.Forms.CheckBox chkOpcost;
 		private System.Windows.Forms.CheckBox chkGis;
 		private System.Windows.Forms.TextBox txtEmail;
 		private System.Windows.Forms.TextBox txtAreaCode;
@@ -102,432 +102,422 @@ namespace FIA_Biosum_Manager
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.txtExt = new System.Windows.Forms.TextBox();
-			this.label9 = new System.Windows.Forms.Label();
-			this.txtPhone = new System.Windows.Forms.TextBox();
-			this.label8 = new System.Windows.Forms.Label();
-			this.txtPrefix = new System.Windows.Forms.TextBox();
-			this.label7 = new System.Windows.Forms.Label();
-			this.txtZip2 = new System.Windows.Forms.TextBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.txtZip1 = new System.Windows.Forms.TextBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.cmbState = new System.Windows.Forms.ComboBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.chkGis = new System.Windows.Forms.CheckBox();
-			this.chkFrcs = new System.Windows.Forms.CheckBox();
-			this.chkProcessor = new System.Windows.Forms.CheckBox();
-			this.chkFvs = new System.Windows.Forms.CheckBox();
-			this.chkCore = new System.Windows.Forms.CheckBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.txtEmail = new System.Windows.Forms.TextBox();
-			this.txtAreaCode = new System.Windows.Forms.TextBox();
-			this.txtCity = new System.Windows.Forms.TextBox();
-			this.txtStreet = new System.Windows.Forms.TextBox();
-			this.label12 = new System.Windows.Forms.Label();
-			this.label11 = new System.Windows.Forms.Label();
-			this.label10 = new System.Windows.Forms.Label();
-			this.txtName = new System.Windows.Forms.TextBox();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.btnOK = new System.Windows.Forms.Button();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.lblTitle = new System.Windows.Forms.Label();
-			this.txtOrg = new System.Windows.Forms.TextBox();
-			this.label13 = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.txtOrg);
-			this.groupBox1.Controls.Add(this.label13);
-			this.groupBox1.Controls.Add(this.txtExt);
-			this.groupBox1.Controls.Add(this.label9);
-			this.groupBox1.Controls.Add(this.txtPhone);
-			this.groupBox1.Controls.Add(this.label8);
-			this.groupBox1.Controls.Add(this.txtPrefix);
-			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Controls.Add(this.txtZip2);
-			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Controls.Add(this.txtZip1);
-			this.groupBox1.Controls.Add(this.label4);
-			this.groupBox1.Controls.Add(this.cmbState);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.groupBox2);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.txtEmail);
-			this.groupBox1.Controls.Add(this.txtAreaCode);
-			this.groupBox1.Controls.Add(this.txtCity);
-			this.groupBox1.Controls.Add(this.txtStreet);
-			this.groupBox1.Controls.Add(this.label12);
-			this.groupBox1.Controls.Add(this.label11);
-			this.groupBox1.Controls.Add(this.label10);
-			this.groupBox1.Controls.Add(this.txtName);
-			this.groupBox1.Controls.Add(this.btnCancel);
-			this.groupBox1.Controls.Add(this.btnOK);
-			this.groupBox1.Controls.Add(this.label5);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Controls.Add(this.lblTitle);
-			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.groupBox1.Size = new System.Drawing.Size(624, 592);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			// 
-			// txtExt
-			// 
-			this.txtExt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtExt.Location = new System.Drawing.Point(500, 440);
-			this.txtExt.MaxLength = 4;
-			this.txtExt.Name = "txtExt";
-			this.txtExt.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtExt.Size = new System.Drawing.Size(48, 23);
-			this.txtExt.TabIndex = 11;
-			this.txtExt.Text = "";
-			this.txtExt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtExt_KeyPress);
-			// 
-			// label9
-			// 
-			this.label9.Location = new System.Drawing.Point(452, 444);
-			this.label9.Name = "label9";
-			this.label9.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.label9.Size = new System.Drawing.Size(40, 16);
-			this.label9.TabIndex = 41;
-			this.label9.Text = "Ext.";
-			// 
-			// txtPhone
-			// 
-			this.txtPhone.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtPhone.Location = new System.Drawing.Point(380, 440);
-			this.txtPhone.MaxLength = 4;
-			this.txtPhone.Name = "txtPhone";
-			this.txtPhone.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtPhone.Size = new System.Drawing.Size(56, 23);
-			this.txtPhone.TabIndex = 10;
-			this.txtPhone.Text = "";
-			this.txtPhone.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPhone_KeyPress);
-			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(356, 444);
-			this.label8.Name = "label8";
-			this.label8.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.label8.Size = new System.Drawing.Size(16, 16);
-			this.label8.TabIndex = 39;
-			this.label8.Text = "-";
-			// 
-			// txtPrefix
-			// 
-			this.txtPrefix.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtPrefix.Location = new System.Drawing.Point(292, 440);
-			this.txtPrefix.MaxLength = 3;
-			this.txtPrefix.Name = "txtPrefix";
-			this.txtPrefix.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtPrefix.Size = new System.Drawing.Size(48, 23);
-			this.txtPrefix.TabIndex = 9;
-			this.txtPrefix.Text = "";
-			this.txtPrefix.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPrefix_KeyPress);
-			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(278, 444);
-			this.label7.Name = "label7";
-			this.label7.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.label7.Size = new System.Drawing.Size(16, 16);
-			this.label7.TabIndex = 37;
-			this.label7.Text = "-";
-			// 
-			// txtZip2
-			// 
-			this.txtZip2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtZip2.Location = new System.Drawing.Point(324, 408);
-			this.txtZip2.MaxLength = 4;
-			this.txtZip2.Name = "txtZip2";
-			this.txtZip2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtZip2.Size = new System.Drawing.Size(56, 23);
-			this.txtZip2.TabIndex = 7;
-			this.txtZip2.Text = "";
-			this.txtZip2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtZip2_KeyPress);
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(300, 408);
-			this.label6.Name = "label6";
-			this.label6.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.label6.Size = new System.Drawing.Size(16, 16);
-			this.label6.TabIndex = 35;
-			this.label6.Text = "-";
-			// 
-			// txtZip1
-			// 
-			this.txtZip1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtZip1.Location = new System.Drawing.Point(221, 408);
-			this.txtZip1.MaxLength = 5;
-			this.txtZip1.Name = "txtZip1";
-			this.txtZip1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtZip1.Size = new System.Drawing.Size(64, 23);
-			this.txtZip1.TabIndex = 6;
-			this.txtZip1.Text = "";
-			this.txtZip1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtZip1_KeyPress);
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(52, 408);
-			this.label4.Name = "label4";
-			this.label4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label4.Size = new System.Drawing.Size(160, 16);
-			this.label4.TabIndex = 33;
-			this.label4.Text = "Zip Code";
-			// 
-			// cmbState
-			// 
-			this.cmbState.Location = new System.Drawing.Point(220, 376);
-			this.cmbState.Name = "cmbState";
-			this.cmbState.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.cmbState.Size = new System.Drawing.Size(232, 24);
-			this.cmbState.TabIndex = 5;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(52, 376);
-			this.label2.Name = "label2";
-			this.label2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label2.Size = new System.Drawing.Size(160, 16);
-			this.label2.TabIndex = 31;
-			this.label2.Text = "State";
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.BackColor = System.Drawing.SystemColors.Control;
-			this.groupBox2.Controls.Add(this.chkGis);
-			this.groupBox2.Controls.Add(this.chkFrcs);
-			this.groupBox2.Controls.Add(this.chkProcessor);
-			this.groupBox2.Controls.Add(this.chkFvs);
-			this.groupBox2.Controls.Add(this.chkCore);
-			this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.groupBox2.Location = new System.Drawing.Point(220, 112);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.groupBox2.Size = new System.Drawing.Size(352, 192);
-			this.groupBox2.TabIndex = 2;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Select One Or More User Associated Processes";
-			// 
-			// chkGis
-			// 
-			this.chkGis.Location = new System.Drawing.Point(16, 152);
-			this.chkGis.Name = "chkGis";
-			this.chkGis.Size = new System.Drawing.Size(320, 24);
-			this.chkGis.TabIndex = 4;
-			this.chkGis.Text = "Maps And Travel Times (GIS)";
-			// 
-			// chkFrcs
-			// 
-			this.chkFrcs.Location = new System.Drawing.Point(16, 118);
-			this.chkFrcs.Name = "chkFrcs";
-			this.chkFrcs.Size = new System.Drawing.Size(320, 24);
-			this.chkFrcs.TabIndex = 3;
-			this.chkFrcs.Text = "Wood Harvesting And Costs (FRCS)";
-			// 
-			// chkProcessor
-			// 
-			this.chkProcessor.Location = new System.Drawing.Point(16, 88);
-			this.chkProcessor.Name = "chkProcessor";
-			this.chkProcessor.Size = new System.Drawing.Size(320, 24);
-			this.chkProcessor.TabIndex = 2;
-			this.chkProcessor.Text = "Wood Volumes And Values (Processor)";
-			// 
-			// chkFvs
-			// 
-			this.chkFvs.Location = new System.Drawing.Point(16, 56);
-			this.chkFvs.Name = "chkFvs";
-			this.chkFvs.Size = new System.Drawing.Size(320, 24);
-			this.chkFvs.TabIndex = 1;
-			this.chkFvs.Text = "Forest Vegetation Simulator (FVS)";
-			// 
-			// chkCore
-			// 
-			this.chkCore.Location = new System.Drawing.Point(16, 24);
-			this.chkCore.Name = "chkCore";
-			this.chkCore.Size = new System.Drawing.Size(320, 24);
-			this.chkCore.TabIndex = 0;
-			this.chkCore.Text = "Core Analysis";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(44, 120);
-			this.label1.Name = "label1";
-			this.label1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label1.Size = new System.Drawing.Size(152, 16);
-			this.label1.TabIndex = 29;
-			this.label1.Text = "Process";
-			// 
-			// txtEmail
-			// 
-			this.txtEmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtEmail.Location = new System.Drawing.Point(220, 472);
-			this.txtEmail.MaxLength = 50;
-			this.txtEmail.Name = "txtEmail";
-			this.txtEmail.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtEmail.Size = new System.Drawing.Size(296, 23);
-			this.txtEmail.TabIndex = 12;
-			this.txtEmail.Text = "";
-			// 
-			// txtAreaCode
-			// 
-			this.txtAreaCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtAreaCode.Location = new System.Drawing.Point(220, 440);
-			this.txtAreaCode.MaxLength = 3;
-			this.txtAreaCode.Name = "txtAreaCode";
-			this.txtAreaCode.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtAreaCode.Size = new System.Drawing.Size(48, 23);
-			this.txtAreaCode.TabIndex = 8;
-			this.txtAreaCode.Text = "";
-			this.txtAreaCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAreaCode_KeyPress);
-			// 
-			// txtCity
-			// 
-			this.txtCity.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtCity.Location = new System.Drawing.Point(220, 344);
-			this.txtCity.MaxLength = 50;
-			this.txtCity.Name = "txtCity";
-			this.txtCity.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtCity.Size = new System.Drawing.Size(296, 23);
-			this.txtCity.TabIndex = 4;
-			this.txtCity.Text = "";
-			// 
-			// txtStreet
-			// 
-			this.txtStreet.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtStreet.Location = new System.Drawing.Point(220, 312);
-			this.txtStreet.MaxLength = 30;
-			this.txtStreet.Name = "txtStreet";
-			this.txtStreet.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtStreet.Size = new System.Drawing.Size(296, 23);
-			this.txtStreet.TabIndex = 3;
-			this.txtStreet.Text = "";
-			// 
-			// label12
-			// 
-			this.label12.Location = new System.Drawing.Point(44, 480);
-			this.label12.Name = "label12";
-			this.label12.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label12.Size = new System.Drawing.Size(160, 16);
-			this.label12.TabIndex = 20;
-			this.label12.Text = "Email Address";
-			// 
-			// label11
-			// 
-			this.label11.Location = new System.Drawing.Point(52, 443);
-			this.label11.Name = "label11";
-			this.label11.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label11.Size = new System.Drawing.Size(160, 16);
-			this.label11.TabIndex = 19;
-			this.label11.Text = "Work Phone";
-			// 
-			// label10
-			// 
-			this.label10.Location = new System.Drawing.Point(28, 345);
-			this.label10.Name = "label10";
-			this.label10.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label10.Size = new System.Drawing.Size(184, 16);
-			this.label10.TabIndex = 18;
-			this.label10.Text = "City";
-			// 
-			// txtName
-			// 
-			this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtName.Location = new System.Drawing.Point(220, 57);
-			this.txtName.MaxLength = 50;
-			this.txtName.Name = "txtName";
-			this.txtName.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtName.Size = new System.Drawing.Size(352, 23);
-			this.txtName.TabIndex = 0;
-			this.txtName.Text = "";
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Location = new System.Drawing.Point(312, 520);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(88, 48);
-			this.btnCancel.TabIndex = 14;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// btnOK
-			// 
-			this.btnOK.Location = new System.Drawing.Point(224, 520);
-			this.btnOK.Name = "btnOK";
-			this.btnOK.Size = new System.Drawing.Size(88, 48);
-			this.btnOK.TabIndex = 13;
-			this.btnOK.Text = "OK";
-			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(52, 315);
-			this.label5.Name = "label5";
-			this.label5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label5.Size = new System.Drawing.Size(160, 16);
-			this.label5.TabIndex = 7;
-			this.label5.Text = "Street Address";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(44, 57);
-			this.label3.Name = "label3";
-			this.label3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label3.Size = new System.Drawing.Size(152, 16);
-			this.label3.TabIndex = 5;
-			this.label3.Text = "Name";
-			// 
-			// lblTitle
-			// 
-			this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblTitle.ForeColor = System.Drawing.Color.Green;
-			this.lblTitle.Location = new System.Drawing.Point(3, 19);
-			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.lblTitle.Size = new System.Drawing.Size(618, 24);
-			this.lblTitle.TabIndex = 2;
-			this.lblTitle.Text = "Contacts Edit";
-			// 
-			// txtOrg
-			// 
-			this.txtOrg.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.txtOrg.Location = new System.Drawing.Point(219, 88);
-			this.txtOrg.MaxLength = 75;
-			this.txtOrg.Name = "txtOrg";
-			this.txtOrg.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.txtOrg.Size = new System.Drawing.Size(352, 23);
-			this.txtOrg.TabIndex = 1;
-			this.txtOrg.Text = "";
-			// 
-			// label13
-			// 
-			this.label13.Location = new System.Drawing.Point(43, 88);
-			this.label13.Name = "label13";
-			this.label13.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.label13.Size = new System.Drawing.Size(152, 16);
-			this.label13.TabIndex = 43;
-			this.label13.Text = "Organization";
-			// 
-			// uc_contact_edit
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "uc_contact_edit";
-			this.Size = new System.Drawing.Size(624, 592);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtOrg = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtExt = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtPhone = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtPrefix = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txtZip2 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtZip1 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cmbState = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkGis = new System.Windows.Forms.CheckBox();
+            this.chkOpcost = new System.Windows.Forms.CheckBox();
+            this.chkProcessor = new System.Windows.Forms.CheckBox();
+            this.chkFvs = new System.Windows.Forms.CheckBox();
+            this.chkOptimizer = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtAreaCode = new System.Windows.Forms.TextBox();
+            this.txtCity = new System.Windows.Forms.TextBox();
+            this.txtStreet = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnOK = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.txtOrg);
+            this.groupBox1.Controls.Add(this.label13);
+            this.groupBox1.Controls.Add(this.txtExt);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.txtPhone);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.txtPrefix);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.txtZip2);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.txtZip1);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.cmbState);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.groupBox2);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.txtEmail);
+            this.groupBox1.Controls.Add(this.txtAreaCode);
+            this.groupBox1.Controls.Add(this.txtCity);
+            this.groupBox1.Controls.Add(this.txtStreet);
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.txtName);
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.btnOK);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.lblTitle);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.groupBox1.Size = new System.Drawing.Size(624, 592);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            // 
+            // txtOrg
+            // 
+            this.txtOrg.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOrg.Location = new System.Drawing.Point(219, 88);
+            this.txtOrg.MaxLength = 75;
+            this.txtOrg.Name = "txtOrg";
+            this.txtOrg.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtOrg.Size = new System.Drawing.Size(352, 23);
+            this.txtOrg.TabIndex = 1;
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(43, 88);
+            this.label13.Name = "label13";
+            this.label13.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label13.Size = new System.Drawing.Size(152, 16);
+            this.label13.TabIndex = 43;
+            this.label13.Text = "Organization";
+            // 
+            // txtExt
+            // 
+            this.txtExt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtExt.Location = new System.Drawing.Point(500, 440);
+            this.txtExt.MaxLength = 4;
+            this.txtExt.Name = "txtExt";
+            this.txtExt.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtExt.Size = new System.Drawing.Size(48, 23);
+            this.txtExt.TabIndex = 11;
+            this.txtExt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtExt_KeyPress);
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(452, 444);
+            this.label9.Name = "label9";
+            this.label9.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label9.Size = new System.Drawing.Size(40, 16);
+            this.label9.TabIndex = 41;
+            this.label9.Text = "Ext.";
+            // 
+            // txtPhone
+            // 
+            this.txtPhone.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPhone.Location = new System.Drawing.Point(380, 440);
+            this.txtPhone.MaxLength = 4;
+            this.txtPhone.Name = "txtPhone";
+            this.txtPhone.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtPhone.Size = new System.Drawing.Size(56, 23);
+            this.txtPhone.TabIndex = 10;
+            this.txtPhone.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPhone_KeyPress);
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(356, 444);
+            this.label8.Name = "label8";
+            this.label8.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label8.Size = new System.Drawing.Size(16, 16);
+            this.label8.TabIndex = 39;
+            this.label8.Text = "-";
+            // 
+            // txtPrefix
+            // 
+            this.txtPrefix.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPrefix.Location = new System.Drawing.Point(292, 440);
+            this.txtPrefix.MaxLength = 3;
+            this.txtPrefix.Name = "txtPrefix";
+            this.txtPrefix.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtPrefix.Size = new System.Drawing.Size(48, 23);
+            this.txtPrefix.TabIndex = 9;
+            this.txtPrefix.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPrefix_KeyPress);
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(278, 444);
+            this.label7.Name = "label7";
+            this.label7.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label7.Size = new System.Drawing.Size(16, 16);
+            this.label7.TabIndex = 37;
+            this.label7.Text = "-";
+            // 
+            // txtZip2
+            // 
+            this.txtZip2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtZip2.Location = new System.Drawing.Point(324, 408);
+            this.txtZip2.MaxLength = 4;
+            this.txtZip2.Name = "txtZip2";
+            this.txtZip2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtZip2.Size = new System.Drawing.Size(56, 23);
+            this.txtZip2.TabIndex = 7;
+            this.txtZip2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtZip2_KeyPress);
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(300, 408);
+            this.label6.Name = "label6";
+            this.label6.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label6.Size = new System.Drawing.Size(16, 16);
+            this.label6.TabIndex = 35;
+            this.label6.Text = "-";
+            // 
+            // txtZip1
+            // 
+            this.txtZip1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtZip1.Location = new System.Drawing.Point(221, 408);
+            this.txtZip1.MaxLength = 5;
+            this.txtZip1.Name = "txtZip1";
+            this.txtZip1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtZip1.Size = new System.Drawing.Size(64, 23);
+            this.txtZip1.TabIndex = 6;
+            this.txtZip1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtZip1_KeyPress);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(52, 408);
+            this.label4.Name = "label4";
+            this.label4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label4.Size = new System.Drawing.Size(160, 16);
+            this.label4.TabIndex = 33;
+            this.label4.Text = "Zip Code";
+            // 
+            // cmbState
+            // 
+            this.cmbState.Location = new System.Drawing.Point(220, 376);
+            this.cmbState.Name = "cmbState";
+            this.cmbState.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.cmbState.Size = new System.Drawing.Size(232, 24);
+            this.cmbState.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(52, 376);
+            this.label2.Name = "label2";
+            this.label2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label2.Size = new System.Drawing.Size(160, 16);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "State";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox2.Controls.Add(this.chkGis);
+            this.groupBox2.Controls.Add(this.chkOpcost);
+            this.groupBox2.Controls.Add(this.chkProcessor);
+            this.groupBox2.Controls.Add(this.chkFvs);
+            this.groupBox2.Controls.Add(this.chkOptimizer);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Location = new System.Drawing.Point(220, 112);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.groupBox2.Size = new System.Drawing.Size(352, 192);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Select One Or More User Associated Processes";
+            // 
+            // chkGis
+            // 
+            this.chkGis.Location = new System.Drawing.Point(16, 152);
+            this.chkGis.Name = "chkGis";
+            this.chkGis.Size = new System.Drawing.Size(320, 24);
+            this.chkGis.TabIndex = 4;
+            this.chkGis.Text = "Maps And Travel Times (GIS)";
+            // 
+            // chkOpcost
+            // 
+            this.chkOpcost.Location = new System.Drawing.Point(16, 118);
+            this.chkOpcost.Name = "chkOpcost";
+            this.chkOpcost.Size = new System.Drawing.Size(320, 24);
+            this.chkOpcost.TabIndex = 3;
+            this.chkOpcost.Text = "Wood Harvesting And Costs (OpCost)";
+            // 
+            // chkProcessor
+            // 
+            this.chkProcessor.Location = new System.Drawing.Point(16, 88);
+            this.chkProcessor.Name = "chkProcessor";
+            this.chkProcessor.Size = new System.Drawing.Size(320, 24);
+            this.chkProcessor.TabIndex = 2;
+            this.chkProcessor.Text = "Wood Volumes And Values (Processor)";
+            // 
+            // chkFvs
+            // 
+            this.chkFvs.Location = new System.Drawing.Point(16, 56);
+            this.chkFvs.Name = "chkFvs";
+            this.chkFvs.Size = new System.Drawing.Size(320, 24);
+            this.chkFvs.TabIndex = 1;
+            this.chkFvs.Text = "Forest Vegetation Simulator (FVS)";
+            // 
+            // chkOptimizer
+            // 
+            this.chkOptimizer.Location = new System.Drawing.Point(16, 24);
+            this.chkOptimizer.Name = "chkOptimizer";
+            this.chkOptimizer.Size = new System.Drawing.Size(320, 24);
+            this.chkOptimizer.TabIndex = 0;
+            this.chkOptimizer.Text = "Treatment Optimizer";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(44, 120);
+            this.label1.Name = "label1";
+            this.label1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label1.Size = new System.Drawing.Size(152, 16);
+            this.label1.TabIndex = 29;
+            this.label1.Text = "Process";
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEmail.Location = new System.Drawing.Point(220, 472);
+            this.txtEmail.MaxLength = 50;
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtEmail.Size = new System.Drawing.Size(296, 23);
+            this.txtEmail.TabIndex = 12;
+            // 
+            // txtAreaCode
+            // 
+            this.txtAreaCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtAreaCode.Location = new System.Drawing.Point(220, 440);
+            this.txtAreaCode.MaxLength = 3;
+            this.txtAreaCode.Name = "txtAreaCode";
+            this.txtAreaCode.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtAreaCode.Size = new System.Drawing.Size(48, 23);
+            this.txtAreaCode.TabIndex = 8;
+            this.txtAreaCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAreaCode_KeyPress);
+            // 
+            // txtCity
+            // 
+            this.txtCity.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCity.Location = new System.Drawing.Point(220, 344);
+            this.txtCity.MaxLength = 50;
+            this.txtCity.Name = "txtCity";
+            this.txtCity.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtCity.Size = new System.Drawing.Size(296, 23);
+            this.txtCity.TabIndex = 4;
+            // 
+            // txtStreet
+            // 
+            this.txtStreet.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtStreet.Location = new System.Drawing.Point(220, 312);
+            this.txtStreet.MaxLength = 30;
+            this.txtStreet.Name = "txtStreet";
+            this.txtStreet.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtStreet.Size = new System.Drawing.Size(296, 23);
+            this.txtStreet.TabIndex = 3;
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(44, 480);
+            this.label12.Name = "label12";
+            this.label12.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label12.Size = new System.Drawing.Size(160, 16);
+            this.label12.TabIndex = 20;
+            this.label12.Text = "Email Address";
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(52, 443);
+            this.label11.Name = "label11";
+            this.label11.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label11.Size = new System.Drawing.Size(160, 16);
+            this.label11.TabIndex = 19;
+            this.label11.Text = "Work Phone";
+            // 
+            // label10
+            // 
+            this.label10.Location = new System.Drawing.Point(28, 345);
+            this.label10.Name = "label10";
+            this.label10.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label10.Size = new System.Drawing.Size(184, 16);
+            this.label10.TabIndex = 18;
+            this.label10.Text = "City";
+            // 
+            // txtName
+            // 
+            this.txtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtName.Location = new System.Drawing.Point(220, 57);
+            this.txtName.MaxLength = 50;
+            this.txtName.Name = "txtName";
+            this.txtName.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.txtName.Size = new System.Drawing.Size(352, 23);
+            this.txtName.TabIndex = 0;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(312, 520);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(88, 48);
+            this.btnCancel.TabIndex = 14;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnOK
+            // 
+            this.btnOK.Location = new System.Drawing.Point(224, 520);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(88, 48);
+            this.btnOK.TabIndex = 13;
+            this.btnOK.Text = "OK";
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(52, 315);
+            this.label5.Name = "label5";
+            this.label5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label5.Size = new System.Drawing.Size(160, 16);
+            this.label5.TabIndex = 7;
+            this.label5.Text = "Street Address";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(44, 57);
+            this.label3.Name = "label3";
+            this.label3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label3.Size = new System.Drawing.Size(152, 16);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Name";
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Green;
+            this.lblTitle.Location = new System.Drawing.Point(3, 19);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblTitle.Size = new System.Drawing.Size(618, 24);
+            this.lblTitle.TabIndex = 2;
+            this.lblTitle.Text = "Contacts Edit";
+            // 
+            // uc_contact_edit
+            // 
+            this.Controls.Add(this.groupBox1);
+            this.Name = "uc_contact_edit";
+            this.Size = new System.Drawing.Size(624, 592);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -902,8 +892,8 @@ namespace FIA_Biosum_Manager
 		}
 		public bool checkFrcs
 		{
-			set	{ this.chkFrcs.Checked = value; }
-			get { return this.chkFrcs.Checked; }
+			set	{ this.chkOpcost.Checked = value; }
+			get { return this.chkOpcost.Checked; }
 		}
 		public bool checkProcessor
 		{
@@ -912,8 +902,8 @@ namespace FIA_Biosum_Manager
 		}
 		public bool checkCore
 		{
-			set	{ this.chkCore.Checked = value; }
-			get { return this.chkCore.Checked; }
+			set	{ this.chkOptimizer.Checked = value; }
+			get { return this.chkOptimizer.Checked; }
 		}
 		
 

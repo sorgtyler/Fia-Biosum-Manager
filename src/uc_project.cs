@@ -916,21 +916,8 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oProject.CreateContactsTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectContactsTableName);
 				//datasource table
 				frmMain.g_oTables.m_oProject.CreateDatasourceTable(p_ado,p_ado.m_OleDbConnection,Tables.Project.DefaultProjectDatasourceTableName);
-				//form_travel_times table
-				frmMain.g_oTables.m_oProject.CreateTravelTimesFormTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectTravelTimesFormTableName);
-				//links_category table
-				frmMain.g_oTables.m_oProject.CreateLinksCategoryTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectLinksCategoryTableName);
-				//links_depository
-				frmMain.g_oTables.m_oProject.CreateLinksDepositoryTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectLinksDepositoryTableName);
 				//project table
 				frmMain.g_oTables.m_oProject.CreateProjectTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectTableName);
-				//processor scenario table
-				frmMain.g_oTables.m_oScenario.CreateScenarioTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectProcessorScenarioTableName);
-				//processor scenario datasource table
-				frmMain.g_oTables.m_oScenario.CreateScenarioDatasourceTable(
-					p_ado,p_ado.m_OleDbConnection,
-					frmMain.g_oTables.m_oProject.DefaultProjectProcessorScenarioDatasourceTableName);
-				
 				//user config table
 				frmMain.g_oTables.m_oProject.CreateUserConfigTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oProject.DefaultProjectUserConfigTableName);
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
