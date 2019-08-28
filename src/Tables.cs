@@ -1850,7 +1850,6 @@ namespace FIA_Biosum_Manager
 			static public string DefaultRxPackageFvsCommandsOrderTableDbFile {get {return @"db\fvsmaster.mdb";}}
 			static public string DefaultRxPackageFvsCommandsOrderTableName {get {return "rxpackage_fvs_commands_order";}}
 
-			static public string DefaultFVSTreeTableDbFile {get {return @"processor\db\fvs_out_processor_in.mdb";}}
 			static public string DefaultFVSTreeTableName {get {return "FVS_Tree";}}
 
             static public string DefaultOracleInputVolumesTable { get { return "biosum_volumes_input"; } }
@@ -3959,7 +3958,6 @@ namespace FIA_Biosum_Manager
 		}
 		public class ProcessorScenarioRun
 		{
-			private string strSQL = "";
 			static public string DefaultHarvestCostsTableDbFile {get {return @"db\scenario_results.mdb";}}
 			static public string DefaultHarvestCostsTableName {get {return "harvest_costs";}}
 			static public string DefaultTreeVolValSpeciesDiamGroupsDbFile {get {return @"db\scenario_results.mdb";}}

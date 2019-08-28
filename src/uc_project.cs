@@ -899,7 +899,7 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.Refresh();
 				p_frmTherm.progressBar1.Minimum = 1;
 				p_frmTherm.AbortProcess = false;
-				p_frmTherm.progressBar1.Maximum = 14;
+				p_frmTherm.progressBar1.Maximum = 13;
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Visible=true;
 				p_frmTherm.lblMsg.Refresh();
@@ -1071,7 +1071,7 @@ namespace FIA_Biosum_Manager
                 //copy default optimizer_definitions.accdb to the new project directory
                 strSourceFile = this.m_oEnv.strAppDir + "\\db\\optimizer_definitions.accdb";
                 strDestFile = this.txtRootDirectory.Text.Trim() + "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
-                p_frmTherm.Increment(7);
+                p_frmTherm.Increment(8);
                 p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
                 System.IO.File.Copy(strSourceFile, strDestFile, true);
@@ -1089,28 +1089,11 @@ namespace FIA_Biosum_Manager
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				CreateProcessorScenarioRuleDefinitionDbAndTables(this.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_processor_rule_definitions.mdb");
-				//copy default scenario_results database to the new project directory
-				CreateProcessorScenarioRunDbAndTables(this.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_results.mdb");
-				//strSourceFile = this.m_oEnv.strAppDir + "\\db\\scenario_results.mdb";
-				//strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\scenario_results.mdb";
 				p_frmTherm.Increment(10);
 				//p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
 				//System.IO.File.Copy(strSourceFile, strDestFile,true);		
-
-				strSourceFile = this.m_oEnv.strAppDir + "\\db\\fvsout.mdb";
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\fvsout.mdb";
-				p_frmTherm.Increment(11);
-				p_frmTherm.lblMsg.Text = strDestFile;
-				p_frmTherm.lblMsg.Refresh();
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
-
 				
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\fvs_out_processor_in.mdb";
-				p_dao.CreateMDB(strDestFile);
-				p_frmTherm.Increment(12);
-				p_frmTherm.lblMsg.Text = strDestFile;
-				p_frmTherm.lblMsg.Refresh();
 				strConn = p_ado.getMDBConnString(strDestFile,"admin","");
 				p_ado.OpenConnection(strConn);
 				frmMain.g_oTables.m_oFvs.CreateFVSOutProcessorIn(p_ado,p_ado.m_OleDbConnection,Tables.FVS.DefaultFVSTreeTableName);
@@ -1128,15 +1111,9 @@ namespace FIA_Biosum_Manager
                 strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_DeleteSeedlings.txt";
                 System.IO.File.Copy(strSourceFile, strDestFile, true);
 
-				strSourceFile = this.m_oEnv.strAppDir + "\\db\\biosum_processor.mdb";
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.mdb";
-				p_frmTherm.Increment(13);
+				p_frmTherm.Increment(10);
 				p_frmTherm.lblMsg.Text = strDestFile;
 				p_frmTherm.lblMsg.Refresh();
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
-				strSourceFile = this.m_oEnv.strAppDir + "\\db\\biosum_processor.version";
-				strDestFile = this.txtRootDirectory.Text.Trim() + "\\processor\\db\\biosum_processor.version";
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
 
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
 
@@ -1146,7 +1123,7 @@ namespace FIA_Biosum_Manager
 				{
 					strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\shared_project_links_and_notes.mdb";
 					p_dao.CreateMDB(strDestFile);
-					p_frmTherm.Increment(14);
+					p_frmTherm.Increment(11);
 					p_frmTherm.lblMsg.Text = strDestFile;
 					p_frmTherm.lblMsg.Refresh();
 					strConn = p_ado.getMDBConnString(strDestFile,"admin","");
@@ -1184,7 +1161,7 @@ namespace FIA_Biosum_Manager
 								}
 								strDestFile = this.txtRootDirectory.Text.Trim() + "\\db\\" +  System.Environment.UserName.ToString().Trim() + "\\personal_project_links_and_notes.mdb";
 								p_dao.CreateMDB(strDestFile);
-								p_frmTherm.Increment(17);
+								p_frmTherm.Increment(12);
 								p_frmTherm.lblMsg.Text = strDestFile;
 								p_frmTherm.lblMsg.Refresh();
 								this.txtPersonal.Text = this.txtRootDirectory.Text.Trim() + "\\db\\" +  System.Environment.UserName.ToString().Trim();
@@ -1206,7 +1183,7 @@ namespace FIA_Biosum_Manager
 					}                
 				}
 				
-				p_frmTherm.Increment(15);
+				p_frmTherm.Increment(13);
 				strSourceFile = this.txtRootDirectory.Text.Trim() + "\\db\\project.mdb";
 				strConn = p_ado.getMDBConnString(strSourceFile,"admin","");
 				p_frmTherm.Close();
@@ -1667,22 +1644,6 @@ namespace FIA_Biosum_Manager
 
 			oDao = null;
 		}
-		public void CreateProcessorScenarioRunDbAndTables(string p_strPathAndFile)
-		{
-			dao_data_access oDao = new dao_data_access();
-			ado_data_access oAdo = new ado_data_access();
-
-			string strDestFile = p_strPathAndFile;
-			oDao.CreateMDB(strDestFile);
-			string strConn = oAdo.getMDBConnString(strDestFile,"admin","");
-			oAdo.OpenConnection(strConn);
-			frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(oAdo,oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName);
-			frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(oAdo,oAdo.m_OleDbConnection,Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName);
-			
-			oAdo.CloseConnection(oAdo.m_OleDbConnection);
-			oDao = null;
-		}
-		
 
 		private void btnSharedDirectory_Click(object sender, System.EventArgs e)
 		{

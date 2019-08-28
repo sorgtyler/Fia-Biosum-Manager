@@ -534,10 +534,6 @@ namespace FIA_Biosum_Manager
                 CheckProjectTable();
                 frmMain.g_sbpInfo.Text = "Version Update: Checking Core Analysis Scenario Rule Definitions...Stand by";
                 CheckCoreScenarioRuleDefinitionTables();
-                frmMain.g_sbpInfo.Text = "Version Update: Checking Processor Database File...Stand by";
-                CheckBiosumProcessorDbFile();
-                frmMain.g_sbpInfo.Text = "Version Update: Checking FRCS Excel File...Stand by";
-                CheckFRCSFile();
                 frmMain.g_sbpInfo.Text = "Version Update: Checking Project Datasource Table Records...Stand by";
                 CheckProjectDatasourceTableRecords();
                 frmMain.g_sbpInfo.Text = "Version Update: Checking Project Datasource Tables...Stand by";
@@ -985,103 +981,7 @@ namespace FIA_Biosum_Manager
 			oDao=null;
 			
 		}
-		/// <summary>
-		/// Update the Processor with the latest biosum_processor.mdb file.
-		/// </summary>
-		private void CheckBiosumProcessorDbFile()
-		{
-			string strSourceFile = frmMain.g_oEnv.strAppDir + "\\db\\biosum_processor.mdb";
-			string strDestFile = this.ReferenceProjectDirectory + "\\processor\\db\\biosum_processor.mdb";
-			string strProjVersionFile = this.ReferenceProjectDirectory + "\\processor\\db\\biosum_processor.version";
-			string strAppVersionFile = frmMain.g_oEnv.strAppDir + "\\db\\biosum_processor.version";
-			bool bCopyAppVersion=false;
 
-			if (System.IO.File.Exists(strProjVersionFile))
-			{
-				//Open the file in a stream reader.
-				System.IO.StreamReader s = new System.IO.StreamReader(strProjVersionFile);
-        
-				//Split the first line into the columns       
-				string strProjVersion = s.ReadLine();
-				s.Close();
-
-				s = new System.IO.StreamReader(strAppVersionFile);
-				string strAppVersion = s.ReadLine();
-				s.Close();
-
-				if (strProjVersion.Trim() != strAppVersion.Trim()) 
-				{ 
-					System.IO.File.Copy(strDestFile,strDestFile + "_previousversion_" + strProjVersion + ".mdb",true);
-					bCopyAppVersion=true;
-				}
-
-
-
-			}
-			else 
-			{  
-				System.IO.File.Copy(strDestFile,strDestFile + "_previousversion_1.0.0.mdb",true);
-				bCopyAppVersion=true;
-			}
-
-
-			if (bCopyAppVersion)
-			{
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
-				System.IO.File.Copy(strAppVersionFile,strProjVersionFile,true);
-			}
-
-
-		}
-		/// <summary>
-		/// Update FRCS with the latest FRCS.xls file.
-		/// </summary>
-		private void CheckFRCSFile()
-		{
-			string strSourceFile = frmMain.g_oEnv.strAppDir + "\\db\\frcs.xls";
-			string strDestFile = this.ReferenceProjectDirectory + "\\processor\\db\\frcs.xls";
-			string strProjVersionFile = this.ReferenceProjectDirectory + "\\processor\\db\\frcs.version";
-			string strAppVersionFile = frmMain.g_oEnv.strAppDir + "\\db\\frcs.version";
-			bool bCopyAppVersion=false;
-
-			if (System.IO.File.Exists(strProjVersionFile))
-			{
-				//Open the file in a stream reader.
-				System.IO.StreamReader s = new System.IO.StreamReader(strProjVersionFile);
-        
-				//Split the first line into the columns       
-				string strProjVersion = s.ReadLine();
-				s.Close();
-
-				s = new System.IO.StreamReader(strAppVersionFile);
-				string strAppVersion = s.ReadLine();
-				s.Close();
-
-				if (strProjVersion.Trim() != strAppVersion.Trim()) 
-				{ 
-					System.IO.File.Copy(strDestFile,strDestFile + "_previousversion_" + strProjVersion + ".xls",true);
-					bCopyAppVersion=true;
-				}
-
-
-
-			}
-			else 
-			{  
-				if (System.IO.File.Exists(strDestFile))
-					System.IO.File.Copy(strDestFile,strDestFile + "_previousversion_1.0.0.xls",true);
-				bCopyAppVersion=true;
-			}
-
-
-			if (bCopyAppVersion)
-			{
-				System.IO.File.Copy(strSourceFile, strDestFile,true);
-				System.IO.File.Copy(strAppVersionFile,strProjVersionFile,true);
-			}
-
-
-		}
 		/// <summary>
 		/// Check and update the project datasource table with the latest version of table type entries
 		/// </summary>
@@ -1192,13 +1092,6 @@ namespace FIA_Biosum_Manager
 								ReferenceProjectDirectory.Trim() + "\\gis\\db",
 								frmMain.g_oUtils.getFileNameUsingLastIndexOf(frmMain.g_oTables.m_oTravelTime.DefaultProcessingSiteTableDbFile),
                                 Tables.TravelTime.DefaultProcessingSiteTableName);
-							break;
-						case "FVS TREE LIST FOR PROCESSOR":
-							oDs.InsertDatasourceRecord(oAdo,oAdo.m_OleDbConnection,
-								Datasource.g_strProjectDatasourceTableTypesArray[x].Trim(),
-								ReferenceProjectDirectory.Trim() + "\\processor\\db",
-								frmMain.g_oUtils.getFileNameUsingLastIndexOf(Tables.FVS.DefaultFVSTreeTableDbFile),
-                               Tables.FVS.DefaultFVSTreeTableName);
 							break;
 						case "FIADB FVS VARIANT":
 							oAdo.m_strSQL = "INSERT INTO datasource (table_type,Path,file,table_name) VALUES " +
