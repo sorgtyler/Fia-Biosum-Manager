@@ -141,6 +141,7 @@ namespace FIA_Biosum_Manager
         private ColumnHeader vVariableSource;
         private Button BtnDeleteEconVariable;
         private Button BtnHelpCalculatedMenu;
+        public Button BtnImport;
         private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
 
         public uc_optimizer_scenario_calculated_variables(FIA_Biosum_Manager.frmMain p_frmMain)
@@ -249,6 +250,7 @@ namespace FIA_Biosum_Manager
             this.vVariableSource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
+            this.BtnImport = new System.Windows.Forms.Button();
             this.lblFvsVariableName = new System.Windows.Forms.Label();
             this.btnFVSVariableValue = new System.Windows.Forms.Button();
             this.m_dg = new System.Windows.Forms.DataGrid();
@@ -630,6 +632,7 @@ namespace FIA_Biosum_Manager
             // pnlDetails
             // 
             this.pnlDetails.AutoScroll = true;
+            this.pnlDetails.Controls.Add(this.BtnImport);
             this.pnlDetails.Controls.Add(this.lblFvsVariableName);
             this.pnlDetails.Controls.Add(this.btnFVSVariableValue);
             this.pnlDetails.Controls.Add(this.m_dg);
@@ -652,6 +655,15 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Name = "pnlDetails";
             this.pnlDetails.Size = new System.Drawing.Size(850, 451);
             this.pnlDetails.TabIndex = 70;
+            // 
+            // BtnImport
+            // 
+            this.BtnImport.Location = new System.Drawing.Point(463, 165);
+            this.BtnImport.Name = "BtnImport";
+            this.BtnImport.Size = new System.Drawing.Size(121, 24);
+            this.BtnImport.TabIndex = 94;
+            this.BtnImport.Text = "Import weights";
+            this.BtnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // lblFvsVariableName
             // 
@@ -3139,6 +3151,93 @@ namespace FIA_Biosum_Manager
                 label7.Focus();
             }
 
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            string strWeightsFile = "";
+            var OpenFileDialog1 = new OpenFileDialog();
+            OpenFileDialog1.Title = "Text File With FVS variable weights";
+            OpenFileDialog1.Filter = "Text File (*.TXT) |*.txt";
+            var result = OpenFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (OpenFileDialog1.FileName.Trim().Length > 0)
+                {
+                    strWeightsFile = OpenFileDialog1.FileName.Trim();
+                }
+                OpenFileDialog1 = null;
+            }
+            if (! String.IsNullOrEmpty(strWeightsFile))
+            {
+                //Open the file with a stream reader.
+                System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = 
+                    new System.Collections.Generic.List<System.Collections.Generic.IList<Object>>();
+                using (System.IO.StreamReader s = new System.IO.StreamReader(strWeightsFile, System.Text.Encoding.Default))
+                {
+                    string strNextLine = null;
+                    bool bFailed = false;
+                    while ((strNextLine = s.ReadLine()) != null)
+                    {
+                        if (! String.IsNullOrEmpty(strNextLine))
+                        {
+                            System.Collections.Generic.IList<Object> lstNextLine = new System.Collections.Generic.List<Object>();
+                            string[] strPieces = strNextLine.Split(',');
+                            if (strPieces.Length == 3)
+                            {
+                                // This is an FVS variable
+                                int intCycle = -1;
+                                bool bSuccess = Int32.TryParse(strPieces[0], out intCycle);
+                                if (bSuccess == false)
+                                {
+                                    bFailed = true;
+                                    break;
+                                }
+                                string strPrePost = "";
+                                if (!String.IsNullOrEmpty(strPieces[1].Trim()) )
+                                {
+                                    strPrePost = strPieces[1].Trim().ToUpper();
+                                    if (!strPrePost.Equals("PRE") &&
+                                        !strPrePost.Equals("POST"))
+                                    {
+                                        bFailed = true;
+                                        break;
+                                    }
+                                }
+                                double dblWeight = -1.0F;
+                                bSuccess = Double.TryParse(strPieces[2], out dblWeight);
+                                if (bSuccess == false)
+                                {
+                                    bFailed = true;
+                                    break;
+                                }
+                                lstNextLine.Add(intCycle);
+                                lstNextLine.Add(strPrePost);
+                                lstNextLine.Add(dblWeight);
+                                lstTable.Add(lstNextLine);
+                            }
+                            else if (strPieces.Length == 2)
+                            {
+                                // This is an Economic variable
+                            }
+                            else
+                            {
+                                bFailed = true;
+                                break;
+                            }
+                           
+                        }
+                    }
+                    if (lstTable.Count != 8)
+                    {
+                        bFailed = true;
+                    }
+                    if (bFailed == true)
+                    {
+                        MessageBox.Show("This file does not contain weights in the correct format and cannot be loaded!!", "FIA Biosum");
+                    }
+                }
+            }
         }
     }
 
