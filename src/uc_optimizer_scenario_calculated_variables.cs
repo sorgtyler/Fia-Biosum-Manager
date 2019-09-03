@@ -3155,6 +3155,37 @@ namespace FIA_Biosum_Manager
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
+            bool bFailed = false;
+            System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = LoadWeightsFromFile(out bFailed);
+            if (lstTable.Count != 8)
+            {
+                bFailed = true;
+            }
+            if (bFailed == true)
+            {
+                MessageBox.Show("This file does not contain weights in the correct format and cannot be loaded!!", "FIA Biosum");
+                return;
+            }
+            foreach (System.Collections.Generic.IList<Object> lstRow in lstTable)
+            {
+                for (int i=0; i < lstTable.Count; i++)
+                {
+                    int intRxCycle = Convert.ToInt16(this.m_dg[i, 0]);
+                    string strPost = this.m_dg[i, 1].ToString().Trim();
+                    if ((intRxCycle == Convert.ToInt16(lstRow[0])) &&                       // match rxCycle
+                        (this.m_dg[i, 1].ToString().Trim().Equals(lstRow[1].ToString())))   // match PRE or POST
+                    {
+                        this.m_dg[i,3] = lstRow[2];
+                        break;
+                    }
+                }
+            }
+            this.m_dg.SetDataBinding(this.m_dv, "");
+            this.m_dg.Update();
+        }
+
+        private System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> LoadWeightsFromFile(out bool bFailed)
+        {
             string strWeightsFile = "";
             var OpenFileDialog1 = new OpenFileDialog();
             OpenFileDialog1.Title = "Text File With FVS variable weights";
@@ -3168,18 +3199,18 @@ namespace FIA_Biosum_Manager
                 }
                 OpenFileDialog1 = null;
             }
-            if (! String.IsNullOrEmpty(strWeightsFile))
+            System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable =
+                new System.Collections.Generic.List<System.Collections.Generic.IList<Object>>();
+            bFailed = false;
+            if (!String.IsNullOrEmpty(strWeightsFile))
             {
                 //Open the file with a stream reader.
-                System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = 
-                    new System.Collections.Generic.List<System.Collections.Generic.IList<Object>>();
                 using (System.IO.StreamReader s = new System.IO.StreamReader(strWeightsFile, System.Text.Encoding.Default))
                 {
                     string strNextLine = null;
-                    bool bFailed = false;
                     while ((strNextLine = s.ReadLine()) != null)
                     {
-                        if (! String.IsNullOrEmpty(strNextLine))
+                        if (!String.IsNullOrEmpty(strNextLine))
                         {
                             System.Collections.Generic.IList<Object> lstNextLine = new System.Collections.Generic.List<Object>();
                             string[] strPieces = strNextLine.Split(',');
@@ -3194,7 +3225,7 @@ namespace FIA_Biosum_Manager
                                     break;
                                 }
                                 string strPrePost = "";
-                                if (!String.IsNullOrEmpty(strPieces[1].Trim()) )
+                                if (!String.IsNullOrEmpty(strPieces[1].Trim()))
                                 {
                                     strPrePost = strPieces[1].Trim().ToUpper();
                                     if (!strPrePost.Equals("PRE") &&
@@ -3225,23 +3256,16 @@ namespace FIA_Biosum_Manager
                                 bFailed = true;
                                 break;
                             }
-                           
+
                         }
-                    }
-                    if (lstTable.Count != 8)
-                    {
-                        bFailed = true;
-                    }
-                    if (bFailed == true)
-                    {
-                        MessageBox.Show("This file does not contain weights in the correct format and cannot be loaded!!", "FIA Biosum");
                     }
                 }
             }
+            return lstTable;
         }
+
+
     }
-
-
 
 
     public class WeightedAverage_DataGridColoredTextBoxColumn : DataGridTextBoxColumn
