@@ -3575,12 +3575,19 @@ namespace FIA_Biosum_Manager
             int x, y;
             RxTools oRxTools = new RxTools();
 
+            string strTargetMdb = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb";
+            
+            //
+            //delete the old table links first in case any are obsolete
+            //
+            oRxTools.DeleteTableLinksToFVSPrePostTables(strTargetMdb);
+            
             //
             //load list box with all the pre and post table columns
             //
-            oRxTools.CreateTableLinksToFVSPrePostTables(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb");
+            oRxTools.CreateTableLinksToFVSPrePostTables(strTargetMdb);
             oRxTools = null;
-            p_oAdo.OpenConnection(p_oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\fvs\\db\\biosum_fvsout_prepost_rx.mdb", "", ""));
+            p_oAdo.OpenConnection(p_oAdo.getMDBConnString(strTargetMdb, "", ""));
             System.Collections.Generic.Dictionary<string, System.Collections.Generic.IList<String>> _dictFVSTables = 
                 new System.Collections.Generic.Dictionary<string,
                 System.Collections.Generic.IList<string>>();

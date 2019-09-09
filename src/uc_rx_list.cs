@@ -3009,6 +3009,27 @@ namespace FIA_Biosum_Manager
 		
         }
 
+        public void DeleteTableLinksToFVSPrePostTables(string p_strDestinationDbFile)
+        {
+
+            int x;
+            dao_data_access oDao = new dao_data_access();
+            string[] arrTableNames = null;
+            int y = oDao.getTableNames(p_strDestinationDbFile, ref arrTableNames, true);
+            for (x = 0; x <= y - 1; x++)
+            {
+                if (oDao.TableType(p_strDestinationDbFile, arrTableNames[x]).Equals("L"))
+                {
+                    oDao.DeleteTableFromMDB(p_strDestinationDbFile, arrTableNames[x]);
+                }
+                    
+            }
+
+            oDao.m_DaoWorkspace.Close();
+            oDao = null;
+
+        }
+
         public string TreatmentProperties(FIA_Biosum_Manager.RxItem_Collection p_oColl)
         {
             string strLine = "";

@@ -141,7 +141,8 @@ namespace FIA_Biosum_Manager
         private ColumnHeader vVariableSource;
         private Button BtnDeleteEconVariable;
         private Button BtnHelpCalculatedMenu;
-        public Button BtnImport;
+        public Button BtnFvsImport;
+        public Button BtnEconImport;
         private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
 
         public uc_optimizer_scenario_calculated_variables(FIA_Biosum_Manager.frmMain p_frmMain)
@@ -218,6 +219,7 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpBoxEconomicVariable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.BtnEconImport = new System.Windows.Forms.Button();
             this.BtnDeleteEconVariable = new System.Windows.Forms.Button();
             this.m_dgEcon = new System.Windows.Forms.DataGrid();
             this.lblEconVariableName = new System.Windows.Forms.Label();
@@ -250,7 +252,7 @@ namespace FIA_Biosum_Manager
             this.vVariableSource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpboxDetails = new System.Windows.Forms.GroupBox();
             this.pnlDetails = new System.Windows.Forms.Panel();
-            this.BtnImport = new System.Windows.Forms.Button();
+            this.BtnFvsImport = new System.Windows.Forms.Button();
             this.lblFvsVariableName = new System.Windows.Forms.Label();
             this.btnFVSVariableValue = new System.Windows.Forms.Button();
             this.m_dg = new System.Windows.Forms.DataGrid();
@@ -318,6 +320,7 @@ namespace FIA_Biosum_Manager
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.BtnEconImport);
             this.panel1.Controls.Add(this.BtnDeleteEconVariable);
             this.panel1.Controls.Add(this.m_dgEcon);
             this.panel1.Controls.Add(this.lblEconVariableName);
@@ -338,6 +341,17 @@ namespace FIA_Biosum_Manager
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(850, 451);
             this.panel1.TabIndex = 70;
+            // 
+            // BtnEconImport
+            // 
+            this.BtnEconImport.Enabled = false;
+            this.BtnEconImport.Location = new System.Drawing.Point(380, 171);
+            this.BtnEconImport.Name = "BtnEconImport";
+            this.BtnEconImport.Size = new System.Drawing.Size(121, 24);
+            this.BtnEconImport.TabIndex = 97;
+            this.BtnEconImport.Text = "Import weights";
+            this.BtnEconImport.Visible = false;
+            this.BtnEconImport.Click += new System.EventHandler(this.BtnEconImport_Click);
             // 
             // BtnDeleteEconVariable
             // 
@@ -632,7 +646,7 @@ namespace FIA_Biosum_Manager
             // pnlDetails
             // 
             this.pnlDetails.AutoScroll = true;
-            this.pnlDetails.Controls.Add(this.BtnImport);
+            this.pnlDetails.Controls.Add(this.BtnFvsImport);
             this.pnlDetails.Controls.Add(this.lblFvsVariableName);
             this.pnlDetails.Controls.Add(this.btnFVSVariableValue);
             this.pnlDetails.Controls.Add(this.m_dg);
@@ -656,14 +670,15 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Size = new System.Drawing.Size(850, 451);
             this.pnlDetails.TabIndex = 70;
             // 
-            // BtnImport
+            // BtnFvsImport
             // 
-            this.BtnImport.Location = new System.Drawing.Point(463, 165);
-            this.BtnImport.Name = "BtnImport";
-            this.BtnImport.Size = new System.Drawing.Size(121, 24);
-            this.BtnImport.TabIndex = 94;
-            this.BtnImport.Text = "Import weights";
-            this.BtnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            this.BtnFvsImport.Location = new System.Drawing.Point(463, 165);
+            this.BtnFvsImport.Name = "BtnFvsImport";
+            this.BtnFvsImport.Size = new System.Drawing.Size(121, 24);
+            this.BtnFvsImport.TabIndex = 94;
+            this.BtnFvsImport.Text = "Import weights";
+            this.BtnFvsImport.Visible = false;
+            this.BtnFvsImport.Click += new System.EventHandler(this.BtnFvsImport_Click);
             // 
             // lblFvsVariableName
             // 
@@ -2153,6 +2168,7 @@ namespace FIA_Biosum_Manager
         {
             this.LblSelectedVariable.Text = "Not Defined";
             this.lblFvsVariableName.Text = "Not Defined";
+            this.BtnFvsImport.Enabled = false;
             //if (this.lstFVSFieldsList.SelectedIndex > -1)
             //{
             //    this.btnFVSVariablesOptimizationVariableValues.Enabled = true;
@@ -2193,6 +2209,7 @@ namespace FIA_Biosum_Manager
             this.loadm_dg();
             //Remove and re-add weight column so it is editable
             this.updateWeightColumn(VARIABLE_FVS, true);
+            this.BtnFvsImport.Enabled = true;
             this.SumWeights(false);
         }
 
@@ -2801,6 +2818,7 @@ namespace FIA_Biosum_Manager
             this.txtFVSVariableDescr.ReadOnly = !bEnabled;
             this.btnFvsCalculate.Enabled = bEnabled;
             this.btnDeleteFvsVariable.Enabled = !bEnabled;
+            this.BtnFvsImport.Visible = bEnabled;
         }
 
         private void enableEconVariableUc(bool bEnabled)
@@ -2810,6 +2828,8 @@ namespace FIA_Biosum_Manager
             this.txtEconVariableDescr.ReadOnly = !bEnabled;
             this.BtnSaveEcon.Enabled = bEnabled;
             this.BtnDeleteEconVariable.Enabled = bEnabled;
+            this.BtnEconImport.Visible = bEnabled;
+            this.BtnEconImport.Enabled = bEnabled;
         }
 
         public class VariableItem
@@ -3153,10 +3173,10 @@ namespace FIA_Biosum_Manager
 
         }
 
-        private void BtnImport_Click(object sender, EventArgs e)
+        private void BtnFvsImport_Click(object sender, EventArgs e)
         {
             bool bFailed = false;
-            System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = LoadWeightsFromFile(out bFailed);
+            System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = loadWeightsFromFile(out bFailed);
             if (lstTable.Count != 8)
             {
                 bFailed = true;
@@ -3182,9 +3202,10 @@ namespace FIA_Biosum_Manager
             }
             this.m_dg.SetDataBinding(this.m_dv, "");
             this.m_dg.Update();
+            this.SumWeights(false);
         }
 
-        private System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> LoadWeightsFromFile(out bool bFailed)
+        private System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> loadWeightsFromFile(out bool bFailed)
         {
             string strWeightsFile = "";
             var OpenFileDialog1 = new OpenFileDialog();
@@ -3250,6 +3271,23 @@ namespace FIA_Biosum_Manager
                             else if (strPieces.Length == 2)
                             {
                                 // This is an Economic variable
+                                int intCycle = -1;
+                                bool bSuccess = Int32.TryParse(strPieces[0], out intCycle);
+                                if (bSuccess == false)
+                                {
+                                    bFailed = true;
+                                    break;
+                                }
+                                double dblWeight = -1.0F;
+                                bSuccess = Double.TryParse(strPieces[1], out dblWeight);
+                                if (bSuccess == false)
+                                {
+                                    bFailed = true;
+                                    break;
+                                }
+                                lstNextLine.Add(intCycle);
+                                lstNextLine.Add(dblWeight);
+                                lstTable.Add(lstNextLine);
                             }
                             else
                             {
@@ -3262,6 +3300,36 @@ namespace FIA_Biosum_Manager
                 }
             }
             return lstTable;
+        }
+
+        private void BtnEconImport_Click(object sender, EventArgs e)
+        {
+            bool bFailed = false;
+            System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = loadWeightsFromFile(out bFailed);
+            if (lstTable.Count != 4)
+            {
+                bFailed = true;
+            }
+            if (bFailed == true)
+            {
+                MessageBox.Show("This file does not contain weights in the correct format and cannot be loaded!!", "FIA Biosum");
+                return;
+            }
+            foreach (System.Collections.Generic.IList<Object> lstRow in lstTable)
+            {
+                for (int i = 0; i < lstTable.Count; i++)
+                {
+                    int intRxCycle = Convert.ToInt16(this.m_dgEcon[i, 0]);
+                    if (intRxCycle == Convert.ToInt16(lstRow[0]))
+                    {
+                        this.m_dgEcon[i, 1] = lstRow[1];
+                        break;
+                    }
+                }
+            }
+            this.m_dgEcon.SetDataBinding(this.m_econ_dv, "");
+            this.m_dgEcon.Update();
+            this.SumWeights(true);
         }
 
 
