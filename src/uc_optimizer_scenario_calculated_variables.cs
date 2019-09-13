@@ -350,7 +350,6 @@ namespace FIA_Biosum_Manager
             this.BtnEconImport.Size = new System.Drawing.Size(121, 24);
             this.BtnEconImport.TabIndex = 97;
             this.BtnEconImport.Text = "Import weights";
-            this.BtnEconImport.Visible = false;
             this.BtnEconImport.Click += new System.EventHandler(this.BtnEconImport_Click);
             // 
             // BtnDeleteEconVariable
@@ -672,12 +671,12 @@ namespace FIA_Biosum_Manager
             // 
             // BtnFvsImport
             // 
+            this.BtnFvsImport.Enabled = false;
             this.BtnFvsImport.Location = new System.Drawing.Point(463, 165);
             this.BtnFvsImport.Name = "BtnFvsImport";
             this.BtnFvsImport.Size = new System.Drawing.Size(121, 24);
             this.BtnFvsImport.TabIndex = 94;
             this.BtnFvsImport.Text = "Import weights";
-            this.BtnFvsImport.Visible = false;
             this.BtnFvsImport.Click += new System.EventHandler(this.BtnFvsImport_Click);
             // 
             // lblFvsVariableName
@@ -1125,6 +1124,7 @@ namespace FIA_Biosum_Manager
                 m_oAdoFvs.m_OleDbDataAdapter.SelectCommand = m_oAdoFvs.m_OleDbCommand;
                 m_oAdoFvs.m_OleDbDataAdapter.SelectCommand.Transaction = m_oAdoFvs.m_OleDbTransaction;
                 m_oAdoFvs.m_OleDbDataAdapter.Fill(m_oAdoFvs.m_DataSet, m_strFvsViewTableName);
+                BtnFvsImport.Enabled = true;
             }
             else
             {
@@ -1708,6 +1708,7 @@ namespace FIA_Biosum_Manager
                     this.m_dgEcon.DataSource = this.m_econ_dv;
                     this.m_dgEcon.Expand(-1);
                     this.SumWeights(true);
+                    this.BtnEconImport.Enabled = true;
                 }
                 catch (Exception e2)
                 {
@@ -2209,7 +2210,6 @@ namespace FIA_Biosum_Manager
             this.loadm_dg();
             //Remove and re-add weight column so it is editable
             this.updateWeightColumn(VARIABLE_FVS, true);
-            this.BtnFvsImport.Enabled = true;
             this.SumWeights(false);
         }
 
@@ -2818,7 +2818,14 @@ namespace FIA_Biosum_Manager
             this.txtFVSVariableDescr.ReadOnly = !bEnabled;
             this.btnFvsCalculate.Enabled = bEnabled;
             this.btnDeleteFvsVariable.Enabled = !bEnabled;
-            this.BtnFvsImport.Visible = bEnabled;
+            if (bEnabled == true)
+            {
+                BtnFvsImport.Text = "Import weights";
+            }
+            else
+            {
+                BtnFvsImport.Text = "Export weights";
+            }
         }
 
         private void enableEconVariableUc(bool bEnabled)
@@ -2828,8 +2835,14 @@ namespace FIA_Biosum_Manager
             this.txtEconVariableDescr.ReadOnly = !bEnabled;
             this.BtnSaveEcon.Enabled = bEnabled;
             this.BtnDeleteEconVariable.Enabled = bEnabled;
-            this.BtnEconImport.Visible = bEnabled;
-            this.BtnEconImport.Enabled = bEnabled;
+            if (bEnabled == true)
+            {
+                BtnEconImport.Text = "Import weights";
+            }
+            else
+            {
+                BtnEconImport.Text = "Export weights";
+            }
         }
 
         public class VariableItem
@@ -3175,7 +3188,9 @@ namespace FIA_Biosum_Manager
 
         private void BtnFvsImport_Click(object sender, EventArgs e)
         {
-            bool bFailed = false;
+            if (BtnFvsImport.Text.ToUpper().Equals("IMPORT WEIGHTS"))
+            {
+                bool bFailed = false;
             System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = loadWeightsFromFile(out bFailed);
             if (lstTable.Count != 8)
             {
@@ -3200,9 +3215,54 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
-            this.m_dg.SetDataBinding(this.m_dv, "");
-            this.m_dg.Update();
-            this.SumWeights(false);
+                this.m_dg.SetDataBinding(this.m_dv, "");
+                this.m_dg.Update();
+                this.SumWeights(false);
+            }
+            else
+            {
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog
+                {
+                    Title = "Select Export Text File Name",
+
+                    CheckPathExists = true,
+                    OverwritePrompt = true,
+
+                    DefaultExt = "txt",
+                    Filter = "txt files (*.txt)|*.txt",
+                    FilterIndex = 2,
+                    RestoreDirectory = true,
+                    
+                };
+
+                string strPath = "";
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    if (!String.IsNullOrEmpty(saveFileDialog1.FileName))
+                    {
+                        strPath = saveFileDialog1.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+                Int16 intLines = 8;
+                string[] arrLines = new string[intLines];
+                for (int i = 0; i < intLines; i++)
+                {
+                    string strLine = this.m_dg[i, 0].ToString().Trim() + ",";
+                    strLine = strLine + this.m_dg[i, 1].ToString().Trim() + ",";
+                    strLine = strLine + this.m_dg[i, 3].ToString().Trim();
+                    arrLines[i] = strLine;
+                }
+                System.IO.File.WriteAllLines(strPath, arrLines);
+                System.Windows.MessageBox.Show("Weights successfully saved!!", "FIA Biosum");
+            }
         }
 
         private System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> loadWeightsFromFile(out bool bFailed)
@@ -3304,33 +3364,79 @@ namespace FIA_Biosum_Manager
 
         private void BtnEconImport_Click(object sender, EventArgs e)
         {
-            bool bFailed = false;
-            System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = loadWeightsFromFile(out bFailed);
-            if (lstTable.Count != 4)
+            if (BtnEconImport.Text.ToUpper().Equals("IMPORT WEIGHTS"))
             {
-                bFailed = true;
-            }
-            if (bFailed == true)
-            {
-                MessageBox.Show("This file does not contain weights in the correct format and cannot be loaded!!", "FIA Biosum");
-                return;
-            }
-            foreach (System.Collections.Generic.IList<Object> lstRow in lstTable)
-            {
-                for (int i = 0; i < lstTable.Count; i++)
+                bool bFailed = false;
+                System.Collections.Generic.IList<System.Collections.Generic.IList<Object>> lstTable = loadWeightsFromFile(out bFailed);
+                if (lstTable.Count != 4)
                 {
-                    int intRxCycle = Convert.ToInt16(this.m_dgEcon[i, 0]);
-                    if (intRxCycle == Convert.ToInt16(lstRow[0]))
+                    bFailed = true;
+                }
+                if (bFailed == true)
+                {
+                    MessageBox.Show("This file does not contain weights in the correct format and cannot be loaded!!", "FIA Biosum");
+                    return;
+                }
+                foreach (System.Collections.Generic.IList<Object> lstRow in lstTable)
+                {
+                    for (int i = 0; i < lstTable.Count; i++)
                     {
-                        this.m_dgEcon[i, 1] = lstRow[1];
-                        break;
+                        int intRxCycle = Convert.ToInt16(this.m_dgEcon[i, 0]);
+                        if (intRxCycle == Convert.ToInt16(lstRow[0]))
+                        {
+                            this.m_dgEcon[i, 1] = lstRow[1];
+                            break;
+                        }
                     }
                 }
+                this.m_dgEcon.SetDataBinding(this.m_econ_dv, "");
+                this.m_dgEcon.Update();
+                this.SumWeights(true);
             }
-            this.m_dgEcon.SetDataBinding(this.m_econ_dv, "");
-            this.m_dgEcon.Update();
-            this.SumWeights(true);
-        }
+            else
+            {
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog
+                {
+                    Title = "Select Export Text File Name",
+
+                    CheckPathExists = true,
+                    OverwritePrompt = true,
+
+                    DefaultExt = "txt",
+                    Filter = "txt files (*.txt)|*.txt",
+                    FilterIndex = 2,
+                    RestoreDirectory = true,
+                    
+                };
+
+                string strPath = "";
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    if (!String.IsNullOrEmpty(saveFileDialog1.FileName))
+                    {
+                        strPath = saveFileDialog1.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+                Int16 intLines = 4;
+                string[] arrLines = new string[intLines];
+                for (int i = 0; i < intLines; i++)
+                {
+                    string strLine = this.m_dgEcon[i, 0].ToString().Trim() + ",";
+                    strLine = strLine + this.m_dgEcon[i, 1].ToString().Trim();
+                    arrLines[i] = strLine;
+                }
+                System.IO.File.WriteAllLines(strPath, arrLines);
+                System.Windows.MessageBox.Show("Weights successfully saved!!", "FIA Biosum");
+            }
+          }
 
 
     }
