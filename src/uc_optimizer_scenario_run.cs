@@ -4521,16 +4521,7 @@ namespace FIA_Biosum_Manager
                                   "(validcombos_fvsprepost.rxpackage=" + this.m_strHvstCostsTable + ".rxpackage) AND " + 
                                   "(validcombos_fvsprepost.rx = " + this.m_strHvstCostsTable + ".rx) AND " + 
                                   "(validcombos_fvsprepost.rxcycle = " + this.m_strHvstCostsTable + ".rxcycle) AND " + 
-                                  "(validcombos_fvsprepost.biosum_cond_id = " + this.m_strHvstCostsTable + ".biosum_cond_id)) " +
-                " INNER JOIN " + this.m_strTreeVolValSumTable + " ON " + 
-                                  "(" + this.m_strHvstCostsTable + ".biosum_cond_id = " + this.m_strTreeVolValSumTable + ".biosum_cond_id) AND " + 
-                                  "(" + this.m_strHvstCostsTable + ".rxpackage = " + this.m_strTreeVolValSumTable + ".rxpackage) AND " + 
-                                  "(" + this.m_strHvstCostsTable + ".rx = " + this.m_strTreeVolValSumTable + ".rx) AND " + 
-                                  "(" + this.m_strHvstCostsTable + ".rxcycle = " + this.m_strTreeVolValSumTable + ".rxcycle) AND " + 
-                                  "(validcombos_fvsprepost.biosum_cond_id = " + this.m_strTreeVolValSumTable + ".biosum_cond_id) AND " + 
-                                  "(validcombos_fvsprepost.rxpackage = " + this.m_strTreeVolValSumTable + ".rxpackage)  AND " + 
-                                  "(validcombos_fvsprepost.rx = " + this.m_strTreeVolValSumTable + ".rx) AND " + 
-                                  "(validcombos_fvsprepost.rxcycle = " + this.m_strTreeVolValSumTable + ".rxcycle)";
+                                  "(validcombos_fvsprepost.biosum_cond_id = " + this.m_strHvstCostsTable + ".biosum_cond_id))";
 
 
 			 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)

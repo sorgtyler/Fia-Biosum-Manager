@@ -423,6 +423,11 @@ namespace FIA_Biosum_Manager
                 Tables.FVS.DefaultPreFVSSummaryTableName,
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSSummaryDbFile,
                 Tables.FVS.DefaultPreFVSSummaryTableName, true);
+            // link to POST_FVS_COMPUTE table
+            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                Tables.FVS.DefaultPostFVSComputeTableName,
+                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPostFVSComputeDbFile,
+                Tables.FVS.DefaultPostFVSComputeTableName, true);
 
 
             oDao.m_DaoDbEngine.Idle(1);
