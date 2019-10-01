@@ -227,10 +227,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsValidCombosFVSPostTableName { get { return "validcombos_fvspost"; } }
             static public string DefaultScenarioResultsValidCombosTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsValidCombosTableName { get { return "validcombos"; } }
-            static public string DefaultScenarioResultsTreeVolValSumTableDbFile { get { return @"db\optimizer_results.accdb"; } }
-            static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx_cycle"; } }
-            static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\optimizer_results.accdb"; } }
-            static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableName { get { return "tree_vol_val_sum_by_rxpackage"; } }
+            static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx_cycle_work"; } }
             static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
             static public string DefaultScenarioResultsPostEconomicWeightedTableName { get { return @"post_economic_weighted"; } }
             static public string DefaultScenarioResultsDbFile { get { return @"db\optimizer_results.accdb"; } }
@@ -981,34 +978,7 @@ namespace FIA_Biosum_Manager
 					"merch_val_dpa DOUBLE," +
                     "place_holder CHAR(1) DEFAULT 'N')";
 			}
-            //
-            //TREE VOLUME AND VALUE SUM BY RX PACKAGE TABLE
-            //
-            public void CreateTreeVolValSumByRxPackageTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
-            {
-                p_oAdo.SqlNonQuery(p_oConn, CreateTreeVolValSumByRxPackageTableSQL(p_strTableName));
-                CreateTreeVolValSumByRxPackageTableIndexes(p_oAdo, p_oConn, p_strTableName);
 
-
-            }
-            public void CreateTreeVolValSumByRxPackageTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
-            {
-                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id,rxpackage");
-            }
-
-            static public string CreateTreeVolValSumByRxPackageTableSQL(string p_strTableName)
-            {
-                return "CREATE TABLE " + p_strTableName + " (" +
-                    "biosum_cond_id CHAR(25)," +
-                    "rxpackage CHAR(3)," +
-                    "chip_vol_cf DOUBLE," +
-                    "chip_wt_gt DOUBLE," +
-                    "chip_val_dpa DOUBLE," +
-                    "merch_vol_cf DOUBLE," +
-                    "merch_wt_gt DOUBLE," +
-                    "merch_val_dpa DOUBLE," +
-                    "hvst_type_by_cycle CHAR(4))";
-            }
 			//
 			//PRODUCT YIELDS NET REVENUE/COSTS SUMMARY TABLE
 			//
@@ -1051,8 +1021,6 @@ namespace FIA_Biosum_Manager
                     "chip_psite_num INTEGER," +
                     "chip_psite_name CHAR(255)," +
                     "haul_costs_dpa CHAR(255)," +
-                    "use_air_dest_YN CHAR(1)," +
-                    "chip_acd_wt_gt DOUBLE," +
                     "place_holder CHAR(1) DEFAULT 'N')";
 			}
 
@@ -1093,7 +1061,10 @@ namespace FIA_Biosum_Manager
                     "owngrpcd INTEGER," +
                     "merch_psite_num INTEGER," +
                     "merch_psite_name CHAR(255)," +
-                    "haul_costs_dpa CHAR(255) )";
+                    "chip_psite_num INTEGER," +
+                    "chip_psite_name CHAR(255)," +
+                    "haul_costs_dpa CHAR(255)," +
+                    "hvst_type_by_cycle CHAR(4))";
             }
             //
             //RX PLOT VALUES (COSTS, REVENUES, VOLUMES)

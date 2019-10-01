@@ -86,7 +86,7 @@ namespace FIA_Biosum_Manager
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(480, 112);
+            this.pictureBox1.Size = new System.Drawing.Size(582, 129);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -95,44 +95,44 @@ namespace FIA_Biosum_Manager
             // 
             this.label1.BackColor = System.Drawing.Color.White;
             this.label1.Font = new System.Drawing.Font("Tahoma", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(32, 36);
+            this.label1.Location = new System.Drawing.Point(38, 42);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(184, 32);
+            this.label1.Size = new System.Drawing.Size(221, 36);
             this.label1.TabIndex = 1;
             this.label1.Text = "FIA Biosum";
             // 
             // lblOwner
             // 
             this.lblOwner.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOwner.Location = new System.Drawing.Point(24, 16);
+            this.lblOwner.Location = new System.Drawing.Point(29, 18);
             this.lblOwner.Name = "lblOwner";
-            this.lblOwner.Size = new System.Drawing.Size(416, 16);
+            this.lblOwner.Size = new System.Drawing.Size(499, 19);
             this.lblOwner.TabIndex = 3;
             this.lblOwner.Text = "USDA Forest Service, PNW FIA Portland Forestry Sciences Lab";
             // 
             // lblVersion
             // 
             this.lblVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblVersion.Location = new System.Drawing.Point(155, 135);
+            this.lblVersion.Location = new System.Drawing.Point(186, 156);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(176, 22);
+            this.lblVersion.Size = new System.Drawing.Size(211, 25);
             this.lblVersion.TabIndex = 4;
-            this.lblVersion.Text = "Beta Version 5.7.4";
+            this.lblVersion.Text = "Beta Version 5.8.7";
             // 
             // lblDesc
             // 
-            this.lblDesc.Location = new System.Drawing.Point(24, 19);
+            this.lblDesc.Location = new System.Drawing.Point(29, 22);
             this.lblDesc.Name = "lblDesc";
-            this.lblDesc.Size = new System.Drawing.Size(416, 48);
+            this.lblDesc.Size = new System.Drawing.Size(499, 102);
             this.lblDesc.TabIndex = 6;
             this.lblDesc.Text = resources.GetString("lblDesc.Text");
             this.lblDesc.Click += new System.EventHandler(this.lblDesc_Click);
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(392, 328);
+            this.btnOK.Location = new System.Drawing.Point(471, 429);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(80, 32);
+            this.btnOK.Size = new System.Drawing.Size(96, 37);
             this.btnOK.TabIndex = 7;
             this.btnOK.Text = "OK";
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -140,18 +140,18 @@ namespace FIA_Biosum_Manager
             // grpboxOwner
             // 
             this.grpboxOwner.Controls.Add(this.lblOwner);
-            this.grpboxOwner.Location = new System.Drawing.Point(8, 176);
+            this.grpboxOwner.Location = new System.Drawing.Point(10, 203);
             this.grpboxOwner.Name = "grpboxOwner";
-            this.grpboxOwner.Size = new System.Drawing.Size(464, 40);
+            this.grpboxOwner.Size = new System.Drawing.Size(556, 46);
             this.grpboxOwner.TabIndex = 8;
             this.grpboxOwner.TabStop = false;
             // 
             // grpboxDesc
             // 
             this.grpboxDesc.Controls.Add(this.lblDesc);
-            this.grpboxDesc.Location = new System.Drawing.Point(8, 240);
+            this.grpboxDesc.Location = new System.Drawing.Point(10, 277);
             this.grpboxDesc.Name = "grpboxDesc";
-            this.grpboxDesc.Size = new System.Drawing.Size(464, 80);
+            this.grpboxDesc.Size = new System.Drawing.Size(556, 131);
             this.grpboxDesc.TabIndex = 9;
             this.grpboxDesc.TabStop = false;
             this.grpboxDesc.Text = "Description";
@@ -159,17 +159,17 @@ namespace FIA_Biosum_Manager
             // LblReleaseDate
             // 
             this.LblReleaseDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LblReleaseDate.Location = new System.Drawing.Point(144, 154);
+            this.LblReleaseDate.Location = new System.Drawing.Point(173, 178);
             this.LblReleaseDate.Name = "LblReleaseDate";
-            this.LblReleaseDate.Size = new System.Drawing.Size(176, 17);
+            this.LblReleaseDate.Size = new System.Drawing.Size(295, 19);
             this.LblReleaseDate.TabIndex = 10;
             this.LblReleaseDate.Text = "Release date";
             // 
             // frmAbout
             // 
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.ClientSize = new System.Drawing.Size(480, 372);
+            this.ClientSize = new System.Drawing.Size(582, 478);
             this.Controls.Add(this.LblReleaseDate);
             this.Controls.Add(this.grpboxDesc);
             this.Controls.Add(this.grpboxOwner);
