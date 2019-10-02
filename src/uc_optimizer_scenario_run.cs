@@ -1917,7 +1917,7 @@ namespace FIA_Biosum_Manager
 			if (p_dao.m_intError !=0)
 			{
                 if (frmMain.g_bDebug)
-                frmMain.g_oUtils.WriteText(m_strDebugFile,"!! Error Deleting userdefinedplotfilter_work Table!!\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "!! Error Deleting ruledefinitionsplotfilter Table!!\r\n");
 				this.m_intError = p_dao.m_intError;
 				p_dao=null;
 				return;
@@ -4231,8 +4231,8 @@ namespace FIA_Biosum_Manager
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile,"--Execute User Defined Cond SQL And Insert Resulting Records Into Table userdefinedcondfilter--\r\n");
-			this.m_strSQL = "INSERT INTO userdefinedcondfilter " + this.m_strUserDefinedCondSQL;
+                frmMain.g_oUtils.WriteText(m_strDebugFile,"--Execute User Defined Cond SQL And Insert Resulting Records Into Table userdefinedcondfilter_work--\r\n");
+			this.m_strSQL = "INSERT INTO userdefinedcondfilter_work " + this.m_strUserDefinedCondSQL;
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 			this.m_ado.SqlNonQuery(this.m_TempMDBFileConn,this.m_strSQL);
@@ -4298,12 +4298,12 @@ namespace FIA_Biosum_Manager
 
 
 			 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile,"--Execute SQL that deletes from the condition rule definitions table (ruledefinitionscondfilter) those biosum_cond_id that are not found in the user defined condition SQL filter table (userdefinedcondfilter)--\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile,"--Execute SQL that deletes from the condition rule definitions table (ruledefinitionscondfilter) those biosum_cond_id that are not found in the user defined condition SQL filter table (userdefinedcondfilter_work)--\r\n");
 
 			this.m_strSQL = "DELETE FROM ruledefinitionscondfilter a " + 
 				            "WHERE NOT EXISTS " + 
 				                "(SELECT b.biosum_cond_id " + 
-								 "FROM userdefinedcondfilter b " + 
+								 "FROM userdefinedcondfilter_work b " + 
 				                 "WHERE a.biosum_cond_id =  b.biosum_cond_id)";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -7143,12 +7143,12 @@ namespace FIA_Biosum_Manager
 
 				/*****************************************************************
 				 **create the table structure in the optimizer_results.accdb file
-				 **and give it the name of userdefinedcondfilter
+				 **and give it the name of userdefinedcondfilter_work
 				 *****************************************************************/
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile,"--Create userdefinedcondfilter Table Schema From User Defined Condition Filter SQL--\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile,"--Create userdefinedcondfilter_work Table Schema From User Defined Condition Filter SQL--\r\n");
 				dao_data_access p_dao = new dao_data_access();
-				p_dao.CreateMDBTableFromDataSetTable(this.m_strSystemResultsDbPathAndFile,"userdefinedcondfilter",p_dt,true);
+				p_dao.CreateMDBTableFromDataSetTable(this.m_strTempMDBFile,"userdefinedcondfilter_work",p_dt,true);
 				p_dt.Dispose();
 				this.m_ado.m_OleDbDataReader.Close();
 				if (p_dao.m_intError!=0)
@@ -7159,16 +7159,6 @@ namespace FIA_Biosum_Manager
 					p_dao=null;
 					return;
 				}
-				/***********************************************************************
-				 **create a table link to the user defined plot filter table in the
-				 **temporary MDB file located on the hard drive of the user
-				 ***********************************************************************/
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile,"--Create link in " + this.m_strTempMDBFile + "--\r\n");
-				p_dao.CreateTableLink(this.m_strTempMDBFile,"userdefinedcondfilter",m_strSystemResultsDbPathAndFile,"userdefinedcondfilter",true);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile,m_strSystemResultsDbPathAndFile + "\tuserdefinedcondfilter\r\n");
-
 
 				/*********************************************
 				 **get fields from the plot table
