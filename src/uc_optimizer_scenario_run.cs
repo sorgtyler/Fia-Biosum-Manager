@@ -119,6 +119,10 @@ namespace FIA_Biosum_Manager
             //
             //
             //
+            this.AddListViewRowItem("Create Condition - Processing Site Table", true);
+            //
+            //
+            //
             this.AddListViewRowItem("Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment", false);
             //
             //
@@ -1653,6 +1657,15 @@ namespace FIA_Biosum_Manager
 							this.validcombos();
 
 						}
+                        /***************************************************************************
+                         **cond psite table
+                         ***************************************************************************/
+
+                        if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel == false)
+                        {
+                            this.CondPsiteTable();
+
+                        }
 						/**********************************************************************
 						 **wood product yields net revenue and costs summary by treatment table
 						 **********************************************************************/
@@ -2097,7 +2110,8 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateProductYieldsByRxPackageTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxSumTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePostEconomicWeightedTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateHaulCostTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName);
-			
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateCondPsiteTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsCondPsiteTableName);
+            
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
 		}
 		/// <summary>
@@ -5852,7 +5866,7 @@ namespace FIA_Biosum_Manager
                         ReferenceUserControlScenarioRun.listViewEx1, "Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment");
 
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 5;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 4;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
             FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
@@ -5877,36 +5891,6 @@ namespace FIA_Biosum_Manager
 				p_ado = null;
 				return;
 			}
-
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-			/**********************************************************
-			 **create the at hazard expression
-			 **********************************************************/
-			this.m_strSQL = "SELECT * FROM scenario_costs WHERE trim(ucase(scenario_id))= '" + ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim().ToUpper() + "';";
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-			p_ado.SqlQueryReader(p_ado.m_OleDbConnection,this.m_strSQL);
-			double dblChipMktValPgt=0;
-			double dblDriverCostPgtPerHour=0;
-			if (p_ado.m_OleDbDataReader.HasRows==true)
-			{
-				while (p_ado.m_OleDbDataReader.Read())
-				{
-					if (p_ado.m_OleDbDataReader["road_haul_cost_pgt_per_hour"] != System.DBNull.Value)
-					{
-						dblChipMktValPgt = Convert.ToDouble(p_ado.m_OleDbDataReader["chip_mkt_val_pgt"].ToString().Trim());
-						dblDriverCostPgtPerHour= Convert.ToDouble(p_ado.m_OleDbDataReader["road_haul_cost_pgt_per_hour"].ToString().Trim());
-					}																																  
-				}
-			}
-			p_ado.m_OleDbDataReader.Close();
-            dblChipMktValPgt = Convert.ToDouble(m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Item(0).ChipsDollarPerCubicFootValue);
-
-            /**************************************************
-             **END:BYPASS SINCE HARVEST COSTS ARE CALCULATED
-             **IN THE PROCESSOR SCENARIO
-             **************************************************/
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
@@ -5937,17 +5921,17 @@ namespace FIA_Biosum_Manager
             string workTableName = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + "_work_table";
             if (m_ado.TableExist(this.m_TempMDBFileConn, workTableName))
                 m_ado.SqlNonQuery(this.m_TempMDBFileConn, "DROP TABLE " + workTableName);
-            
-            m_strSQL = 
-                "SELECT validcombos.biosum_cond_id,validcombos.rxpackage,validcombos.rx," + 
-                       "validcombos.rxcycle," + 
+
+            m_strSQL =
+                "SELECT validcombos.biosum_cond_id,validcombos.rxpackage,validcombos.rx," +
+                       "validcombos.rxcycle," +
                        this.m_strTreeVolValSumTable.Trim() + ".merch_vol_cf," +
-				       this.m_strTreeVolValSumTable.Trim() + ".chip_vol_cf," +
-				       this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt," +
-				       this.m_strTreeVolValSumTable.Trim() + ".chip_val_dpa AS chip_val_dpa," + 
-				       this.m_strTreeVolValSumTable.Trim() + ".merch_wt_gt," +
-				       this.m_strTreeVolValSumTable.Trim() + ".merch_val_dpa AS merch_val_dpa," +
-                       this.m_strHvstCostsTable.Trim() + ".complete_cpa AS harvest_onsite_cost_dpa," + 
+                       this.m_strTreeVolValSumTable.Trim() + ".chip_vol_cf," +
+                       this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt," +
+                       this.m_strTreeVolValSumTable.Trim() + ".chip_val_dpa AS chip_val_dpa," +
+                       this.m_strTreeVolValSumTable.Trim() + ".merch_wt_gt," +
+                       this.m_strTreeVolValSumTable.Trim() + ".merch_val_dpa AS merch_val_dpa," +
+                       this.m_strHvstCostsTable.Trim() + ".complete_cpa AS harvest_onsite_cost_dpa," +
                       "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt IS NOT NULL," +
                       "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle2 + "," +
                       "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='3'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle3 + "," +
@@ -5966,19 +5950,14 @@ namespace FIA_Biosum_Manager
                       "CDbl(0) AS max_nr_dpa, " +
                       this.m_strCondTable.Trim() + ".acres, " +
                       this.m_strCondTable.Trim() + ".owngrpcd, " +
-                      "IIF(usebiomass_yn = 'Y',merch_haul_cost_dpa + chip_haul_cost_dpa, merch_haul_cost_dpa) AS haul_costs_dpa, " +
-                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite AS merch_psite_num, " +
-                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_psite_name AS merch_psite_name, " +
-                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite AS chip_psite_num, " +
-                      Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite_name AS chip_psite_name, " +
-                      this.m_strTreeVolValSumTable.Trim() + ".place_holder AS place_holder " +
-                      "INTO " + workTableName + 
+                      "IIF(usebiomass_yn = 'Y',merch_haul_cost_dpa + chip_haul_cost_dpa, merch_haul_cost_dpa) AS haul_costs_dpa " +
+                      "INTO " + workTableName +
                       " FROM ((((validcombos " +
                       "INNER JOIN " + this.m_strCondTable + " " +
                       "ON validcombos.biosum_cond_id = " + this.m_strCondTable.Trim() + ".biosum_cond_id) " +
                       "INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " +
                       "ON " +
-                        this.m_strCondTable.Trim() + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName 
+                        this.m_strCondTable.Trim() + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName
                         + ".biosum_cond_id) " +
                       "INNER JOIN " + this.m_strTreeVolValSumTable.Trim() + " " +
                       "ON " +
@@ -5992,7 +5971,8 @@ namespace FIA_Biosum_Manager
                       "(validcombos.biosum_cond_id=" + this.m_strHvstCostsTable.Trim() + ".biosum_cond_id) AND " +
                       "(validcombos.rxpackage=" + this.m_strHvstCostsTable.Trim() + ".rxpackage) AND " +
                       "(validcombos.rx=" + this.m_strHvstCostsTable.Trim() + ".rx) AND " +
-                      "(validcombos.rxcycle=" + this.m_strHvstCostsTable.Trim() + ".rxcycle)); ";
+                      "(validcombos.rxcycle=" + this.m_strHvstCostsTable.Trim() + ".rxcycle)) " +
+                      "WHERE " + this.m_strTreeVolValSumTable.Trim() + ".place_holder = 'N'";
 
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -6092,15 +6072,13 @@ namespace FIA_Biosum_Manager
                                 "chip_wt_gt,chip_val_dpa," +
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
-                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, place_holder ) " + 
+                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,haul_costs_dpa) " + 
                             "SELECT biosum_cond_id,rxpackage,rx,rxcycle," +
                                 "merch_vol_cf,chip_vol_cf," +
                                 "chip_wt_gt,chip_val_dpa," +
                                 "merch_wt_gt,merch_val_dpa,harvest_onsite_cost_dpa," +
                                 "merch_haul_cost_dpa,chip_haul_cost_dpa,merch_chip_nr_dpa," +
-                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,haul_costs_dpa, " +
-                                "merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name, place_holder " +
+                                "merch_nr_dpa,usebiomass_yn,max_nr_dpa,acres,owngrpcd,haul_costs_dpa " +
                             "FROM " + workTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -6534,8 +6512,7 @@ namespace FIA_Biosum_Manager
                                     "merch_chip_nr_dpa," +
                                     "merch_nr_dpa," +
                                     "max_nr_dpa,haul_costs_dpa," +
-                                    "treated_acres,acres, owngrpcd, merch_psite_num, merch_psite_name," +
-                                    "chip_psite_num, chip_psite_name)";
+                                    "treated_acres,acres, owngrpcd)";
             m_strSQL = m_strSQL + " " +
                             "SELECT a.biosum_cond_id,a.rxpackage," +
                                    "a.sum_chip_yield_cf AS chip_vol_cf," +
@@ -6552,8 +6529,7 @@ namespace FIA_Biosum_Manager
                                    "a.sum_max_nr_dpa AS max_nr_dpa, " +
                                    "a.sum_haul_costs_dpa AS haul_costs_dpa, " +
                                    "a.sum_treated_acres AS treated_acres, " +
-                                   "a.acres, a.owngrpcd, a.merch_psite_num, a.merch_psite_name, " +
-                                   "a.chip_psite_num, a.chip_psite_name " +
+                                   "a.acres, a.owngrpcd " +
                            "FROM (" +
                            "SELECT biosum_cond_id,rxpackage," +
                                 "SUM(IIF(chip_vol_cf IS NULL,0,chip_vol_cf)) AS sum_chip_yield_cf," +
@@ -6570,9 +6546,9 @@ namespace FIA_Biosum_Manager
                                 "SUM(IIF(max_nr_dpa IS NULL,0,max_nr_dpa)) AS sum_max_nr_dpa, " +
                                 "SUM(IIF(haul_costs_dpa IS NULL,0,haul_costs_dpa)) AS sum_haul_costs_dpa, " +
                                 "SUM(IIF(acres IS NULL,0,acres)) AS sum_treated_acres, " +
-                                "acres,owngrpcd, merch_psite_num, merch_psite_name, chip_psite_num, chip_psite_name " +
+                                "acres,owngrpcd " +
                            "FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
-                           " GROUP BY biosum_cond_id,rxpackage,acres,owngrpcd,merch_psite_num, merch_psite_name,chip_psite_num, chip_psite_name) a";
+                           " GROUP BY biosum_cond_id,rxpackage,acres,owngrpcd) a";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -8301,8 +8277,80 @@ namespace FIA_Biosum_Manager
             
             return strPrefix;
         }
-		
-		
+
+        /// <summary>
+        /// create table that lists all conditions in valid combos tables with psite information
+        /// </summary>
+        private void CondPsiteTable()
+        {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//CondPsiteTable\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 2;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
+
+            intListViewIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(
+                ReferenceUserControlScenarioRun.listViewEx1, "Create Condition - Processing Site Table");
+                        
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
+            FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.EnsureListViewExItemVisible(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "Selected", true);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "focused", true);
+
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n\r\nPopulate cond_psite table\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "----------------------------------------\r\n");
+            }
+
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsCondPsiteTableName +
+                " (BIOSUM_COND_ID,MERCH_PSITE_NUM,MERCH_PSITE_NAME," +
+                "CHIP_PSITE_NUM,CHIP_PSITE_NAME) ";
+            this.m_strSQL += "SELECT DISTINCT " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".BIOSUM_COND_ID, " +
+                "MERCH_HAUL_PSITE,MERCH_HAUL_PSITE_NAME," +
+                "CHIP_HAUL_PSITE,CHIP_HAUL_PSITE_NAME ";
+
+            this.m_strSQL += " FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName;
+            this.m_strSQL += " INNER JOIN validcombos ON " +
+                             " validcombos.biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
+                             ".biosum_cond_id ";
+            this.m_strSQL += " GROUP BY " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + 
+                             ".BIOSUM_COND_ID,MERCH_HAUL_PSITE,MERCH_HAUL_PSITE_NAME,CHIP_HAUL_PSITE,CHIP_HAUL_PSITE_NAME";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\ninsert into cond_psite \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            if (this.m_ado.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+                this.m_intError = this.m_ado.m_intError;
+
+                return;
+            }
+
+            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+
+
+            if (this.m_intError == 0)
+            {
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "Done");
+
+            }
+        }
 	}
 
     public class ProductYields

@@ -235,6 +235,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsEconByRxSumTableName { get { return @"econ_by_rx_sum"; } }
             static public string DefaultScenarioResultsPSiteAccessibleWorkTableName { get { return @"psite_accessible_work_table"; } }
             static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
+            static public string DefaultScenarioResultsCondPsiteTableName { get { return @"cond_psite"; } }
 
 
 			
@@ -1016,12 +1017,7 @@ namespace FIA_Biosum_Manager
 					"max_nr_dpa DOUBLE," +
                     "acres DOUBLE," +
                     "owngrpcd INTEGER," +
-                    "merch_psite_num INTEGER," +
-                    "merch_psite_name CHAR(255)," +
-                    "chip_psite_num INTEGER," +
-                    "chip_psite_name CHAR(255)," +
-                    "haul_costs_dpa CHAR(255)," +
-                    "place_holder CHAR(1) DEFAULT 'N')";
+                    "haul_costs_dpa CHAR(255) )";
 			}
 
             //
@@ -1059,10 +1055,6 @@ namespace FIA_Biosum_Manager
                     "acres DOUBLE," +
                     "treated_acres DOUBLE," +
                     "owngrpcd INTEGER," +
-                    "merch_psite_num INTEGER," +
-                    "merch_psite_name CHAR(255)," +
-                    "chip_psite_num INTEGER," +
-                    "chip_psite_name CHAR(255)," +
                     "haul_costs_dpa CHAR(255)," +
                     "hvst_type_by_cycle CHAR(4))";
             }
@@ -1367,8 +1359,31 @@ namespace FIA_Biosum_Manager
                     "cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," +
                     "cond_accessible_yn CHAR(1) DEFAULT 'Y')";
             }
-			
-		
+
+            //
+            //COND_PSITE TABLE
+            //
+            public void CreateCondPsiteTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCondPsiteTableSQL(p_strTableName));
+                CreateCondPsiteTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateCondPsiteTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+            }
+
+            static public string CreateCondPsiteTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "BIOSUM_COND_ID CHAR(25)," +
+                    "MERCH_PSITE_NUM INTEGER," +
+                    "MERCH_PSITE_NAME CHAR(255)," +
+                    "CHIP_PSITE_NUM INTEGER," +
+                    "CHIP_PSITE_NAME CHAR(255) )";
+            }
 		}
 		public class OptimizerScenarioRuleDefinitions
 		{
