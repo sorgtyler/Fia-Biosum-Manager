@@ -845,20 +845,7 @@ namespace FIA_Biosum_Manager
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
 
-				//strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\in";
-				//if (!System.IO.Directory.Exists(strFullPath))
-				//	System.IO.Directory.CreateDirectory(strFullPath);
-
-				//strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\out";
-				//if (!System.IO.Directory.Exists(strFullPath))
-				//	System.IO.Directory.CreateDirectory(strFullPath);
-
 				strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\data";
-				if (!System.IO.Directory.Exists(strFullPath))
-					System.IO.Directory.CreateDirectory(strFullPath);
-
-
-				strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts";
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
 
@@ -1098,26 +1085,6 @@ namespace FIA_Biosum_Manager
 				p_ado.OpenConnection(strConn);
 				frmMain.g_oTables.m_oFvs.CreateFVSOutProcessorIn(p_ado,p_ado.m_OleDbConnection,Tables.FVS.DefaultFVSTreeTableName);
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
-
-                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_PREDISPOSE_FIXTREEID.txt";
-                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_PREDISPOSE_FIXTREEID.txt";
-                System.IO.File.Copy(strSourceFile, strDestFile, true);
-
-                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
-                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_AddSeedlings.txt";
-                System.IO.File.Copy(strSourceFile, strDestFile, true);
-
-                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
-                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_DeleteSeedlings.txt";
-                System.IO.File.Copy(strSourceFile, strDestFile, true);
-
-				p_frmTherm.Increment(10);
-				p_frmTherm.lblMsg.Text = strDestFile;
-				p_frmTherm.lblMsg.Refresh();
-
-				p_ado.CloseConnection(p_ado.m_OleDbConnection);
-
-				
 
 				if (this.txtShared.Text.Trim().Length > 0)
 				{
