@@ -960,14 +960,6 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oFIAPlot.CreateTreeRegionalBiomassTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oFIAPlot.DefaultTreeRegionalBiomassTableName);
 				//tree table
 				frmMain.g_oTables.m_oFIAPlot.CreateTreeTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oFIAPlot.DefaultTreeTableName);
-				//harvest costs table
-				frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(p_ado,p_ado.m_OleDbConnection,"harvest_costs");
-                //harvest costs extra costs table
-                frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(p_ado, p_ado.m_OleDbConnection, Tables.Processor.DefaultAdditionalHarvestCostsTableName);
-				//tree species diam dollar values table
-				//frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesDollarValuesTable(p_ado,p_ado.m_OleDbConnection,"tree_species_diam_dollar_values");
-				//tree vol val species diam table
-				frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_vol_val_by_species_diam_groups");
                 //biosum pop stratum adjustment factors table
                 frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
 

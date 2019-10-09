@@ -3608,15 +3608,6 @@ namespace FIA_Biosum_Manager
             public Processor()
             {
             }
-            static public string DefaultHarvestCostsTableDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultHarvestCostsTableName { get { return "harvest_costs"; } }
-            static public string DefaultAdditionalHarvestCostsTableName { get { return "additional_harvest_costs"; } }
-            static public string DefaultAdditionalHarvestCostsTableDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultTreeVolValSpeciesDiamGroupsDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultTreeVolValSpeciesDiamGroupsTableName { get { return "tree_vol_val_by_species_diam_groups"; } }
-            static public string DefaultHarvestMethodTableDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultHarvestMethodTableName { get { return @"harvest_method"; } }
-            static public string DefaultOpcostErrorsTableName { get { return @"opcost_errors"; } }
 
             public void CreateHarvestCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -3957,6 +3948,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeBinSteepSlopeTableName { get { return "BinsSteepSlope"; } }
             static public string DefaultTreeHwdBinSteepSlopeTableName { get { return "Hwd_BinsSteepSlope"; } }
             static public string DefaultFiaTreeSpeciesRefTableName { get { return "FIA_TREE_SPECIES_REF"; } }
+            static public string DefaultOpcostErrorsTableName { get { return @"opcost_errors"; } }
 
 			public ProcessorScenarioRun()
 			{
@@ -4677,8 +4669,6 @@ namespace FIA_Biosum_Manager
 			static public string DefaultTreeSpeciesTableName {get {return "tree_species";}}
 			static public string DefaultOwnerGroupsTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultOwnerGroupsTableName {get {return "owner_groups";}}
-			static public string DefaultInventoriesTableDbFile {get {return @"db\ref_master.mdb";}}
-			static public string DefaultInventoriesTableName {get {return "inventories";}}
 			static public string DefaultFVSTreeSpeciesTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultFVSTreeSpeciesTableName {get {return "fvs_tree_species";}}
 			static public string DefaultFiadbFVSVariantTableName {get {return "fiadb_fvs_variant";}}
@@ -4796,25 +4786,6 @@ namespace FIA_Biosum_Manager
 					"owngrpcd INTEGER," + 
 					"idb_owngrpcd INTEGER," + 
 					"`desc` CHAR(25))";
-			}
-			public void CreateInventoriesTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateInventoriesTableSQL(p_strTableName));
-				CreateInventoriesTableIndexes(p_oAdo,p_oConn,p_strTableName);
-			}
-			public void CreateInventoriesTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","inv_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","idb_data_source");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","inv_id_def");
-			}
-			static public string CreateInventoriesTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"inv_id CHAR(4)," + 
-					"idb_data_source CHAR(6)," + 
-					"description CHAR(50)," + 
-					"inv_id_def CHAR(50)";
 			}
 			public void CreateFVSTreeSpeciesTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{

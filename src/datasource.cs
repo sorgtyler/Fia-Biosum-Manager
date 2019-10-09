@@ -1070,7 +1070,7 @@ namespace FIA_Biosum_Manager
 					break;
 				case "HARVEST COSTS":
 					oItem.VariableName="HarvestCostsTable";
-					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Processor.DefaultHarvestCostsTableName;
+                    if (p_strTableName.Trim().Length == 0) p_strTableName = Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName;
 					break;
 				case "FVS TREE SPECIES":
 					oItem.VariableName="FvsTreeSpeciesTable";
@@ -1093,7 +1093,7 @@ namespace FIA_Biosum_Manager
 					oItem.VariableName="RxPackageTable";
 					break;
 				case "TREE VOLUMES AND VALUES BY SPECIES AND DIAMETER GROUPS":
-					if (p_strTableName.Trim().Length == 0) p_strTableName=Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName;
+                    if (p_strTableName.Trim().Length == 0) p_strTableName = Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName;
 					oItem.VariableName="TreeVolValBySpcGrpDiaGrpTable";
 					break;
 				case "FVS TREE LIST FOR PROCESSOR":
