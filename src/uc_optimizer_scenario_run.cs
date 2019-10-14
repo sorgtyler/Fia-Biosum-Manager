@@ -123,7 +123,7 @@ namespace FIA_Biosum_Manager
             //
             //
             //
-            this.AddListViewRowItem("Populate Context Database", true, false);
+            this.AddListViewRowItem("Populate Context Database", true, true);
             //
             //
             //
@@ -1104,6 +1104,8 @@ namespace FIA_Biosum_Manager
 		public string m_strTravelTimeTable;
 		public string m_strCondTable;
         public string m_strCondPathAndFile;
+        public string m_strHarvestMethodsTable;
+        public string m_strHarvestMethodsPathAndFile;
 		public string m_strFFETable;
 		public string m_strHvstCostsTable;
 		public string m_strPSiteWorkTable;
@@ -1301,6 +1303,13 @@ namespace FIA_Biosum_Manager
 					ReferenceUserControlScenarioRun.btnAccess.Enabled=false;
 
 					getTableNames();
+                    if (this.m_intError != 0)
+                    {
+                        MessageBox.Show("An error occurred while retrieving Treatment Optimizer table names");
+                        FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                        FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                        return;
+                    }
 
                     FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
@@ -1696,6 +1705,17 @@ namespace FIA_Biosum_Manager
                         if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel == false)
                         {
                             this.CondPsiteTable();
+
+                        }
+
+                        /***************************************************************************
+                         **context reference database
+                         ***************************************************************************/
+
+                        if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel == false &&
+                            !String.IsNullOrEmpty(m_strContextDbPathAndFile))
+                        {
+                            this.ContextReferenceTables();
 
                         }
 						/**********************************************************************
@@ -2287,7 +2307,6 @@ namespace FIA_Biosum_Manager
                 this.m_intError = p_dao.m_intError;
             }
 
-
         }
 
         /// <summary>
@@ -2303,6 +2322,7 @@ namespace FIA_Biosum_Manager
             oDao.CreateTableLink(m_strSystemResultsDbPathAndFile, this.m_strCondTable, this.m_strCondPathAndFile, this.m_strCondTable);
             // psites
             oDao.CreateTableLink(m_strSystemResultsDbPathAndFile, this.m_strPSiteTable, this.m_strPSitePathAndFile, this.m_strPSiteTable);
+
             if (oDao != null)
             {
                 oDao.m_DaoWorkspace.Close();
@@ -2741,7 +2761,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites Path and file:" + m_strPSitePathAndFile + "\r\n");
 
             /**************************************************************
-             **get the harvest table name and path
+             **get the processing sites table name and path
              **************************************************************/
             arr1 = new string[] { "PROCESSING SITES" };
             oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
@@ -2771,6 +2791,46 @@ namespace FIA_Biosum_Manager
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites Path and file:" + m_strPSitePathAndFile + "\r\n");
+            this.m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
+
+            /**************************************************************
+             **get the harvest methods table name and path
+             **************************************************************/
+            arr1 = new string[] { "HARVEST METHODS" };
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strHarvestMethodsTable = strValue;
+                }
+                else
+                {
+                    this.m_intError = -1;
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Unable to locate Harvest Methods table on data sources tab!! \r\n");
+                    return;
+                }
+            }
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Harvest methods Table:" + this.m_strPSiteTable + "\r\n");
+
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourcePathAndFile", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strHarvestMethodsPathAndFile = strValue;
+                }
+            }
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Harvest Methods Path and file:" + m_strPSitePathAndFile + "\r\n");
             this.m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -8530,27 +8590,57 @@ namespace FIA_Biosum_Manager
             {
                 strRxHarvestMethod = "N";
             }
-            this.m_strSQL = 
-            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsCondPsiteTableName +
-                " (BIOSUM_COND_ID,MERCH_PSITE_NUM,MERCH_PSITE_NAME," +
-                "CHIP_PSITE_NUM,CHIP_PSITE_NAME) ";
-            this.m_strSQL += "SELECT DISTINCT " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".BIOSUM_COND_ID, " +
-                "MERCH_HAUL_PSITE,MERCH_HAUL_PSITE_NAME," +
-                "CHIP_HAUL_PSITE,CHIP_HAUL_PSITE_NAME ";
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
+            this.m_strSQL += " SELECT RX, HarvestMethodLowSlope AS RX_HARVEST_METHOD_LOW, " + m_strHarvestMethodsTable +
+                             ".HarvestMethodID AS RX_HARVEST_METHOD_LOW_ID, " + m_strHarvestMethodsTable + ".BIOSUM_CATEGORY AS RX_HARVEST_METHOD_LOW_CATEGORY, " +
+                             m_strHarvestMethodsTable + ".top_limb_slope_status AS RX_HARVEST_METHOD_LOW_CATEGORY_DESCR, " +
+                             "HarvestMethodSteepSlope AS RX_HARVEST_METHOD_STEEP, '" + strRxHarvestMethod + "' as USE_RX_HARVEST_METHOD_YN ";
 
-            this.m_strSQL += " FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName;
-            this.m_strSQL += " INNER JOIN validcombos ON " +
-                             " validcombos.biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
-                             ".biosum_cond_id ";
-            this.m_strSQL += " GROUP BY " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
-                             ".BIOSUM_COND_ID,MERCH_HAUL_PSITE,MERCH_HAUL_PSITE_NAME,CHIP_HAUL_PSITE,CHIP_HAUL_PSITE_NAME";
+            this.m_strSQL += " FROM " + this.m_strRxTable;
+            this.m_strSQL += " INNER JOIN " + m_strHarvestMethodsTable + " ON " +
+                             " TRIM(" + m_strHarvestMethodsTable + ".Method) = TRIM(RX.HarvestMethodLowSlope) ";
+            this.m_strSQL += " WHERE STEEP_YN = 'N'";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\ninsert into cond_psite \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\ninsert rx harvest methods into HARVEST_METHOD_REF \r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
+            this.m_strSQL += " INNER JOIN " + m_strHarvestMethodsTable +
+                            " ON TRIM(" + m_strHarvestMethodsTable + ".Method) = TRIM(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName + ".RX_HARVEST_METHOD_STEEP)";
+            this.m_strSQL += " SET RX_HARVEST_METHOD_STEEP_ID = HarvestMethodID, RX_HARVEST_METHOD_STEEP_CATEGORY = BIOSUM_CATEGORY," +
+                             "RX_HARVEST_METHOD_STEEP_CATEGORY_DESCR = top_limb_slope_status";
+            this.m_strSQL += " WHERE STEEP_YN = 'Y'";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate HARVEST_METHOD_REF with properties of rx steep slope methods\r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            if (strRxHarvestMethod.Equals("N"))
+            {
+                this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
+                this.m_strSQL += " INNER JOIN " + m_strHarvestMethodsTable +
+                                " ON TRIM(" + m_strHarvestMethodsTable + ".Method) = " + m_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodLowSlope.Trim();
+                this.m_strSQL += " SET SCENARIO_HARVEST_METHOD_LOW = '" + m_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodLowSlope.Trim() +
+                                 "', SCENARIO_HARVEST_METHOD_LOW_ID = HarvestMethodID, SCENARIO_HARVEST_METHOD_LOW_CATEGORY=BIOSUM_CATEGORY, " +
+                                 "SCENARIO_HARVEST_METHOD_LOW_CATEGORY_DESCR = top_limb_slope_status, " +
+                                 "SCENARIO_HARVEST_METHOD_STEEP ='" + m_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodSteepSlope.Trim() + "'";
+                this.m_strSQL += " WHERE STEEP_YN = 'N'";
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate HARVEST_METHOD_REF for scenario harvest methods\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            }
+
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 

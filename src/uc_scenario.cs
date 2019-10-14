@@ -546,7 +546,7 @@ namespace FIA_Biosum_Manager
 									if (ScenarioType=="processor")	bOptimizer = true;
 									break;
 								case "HARVEST METHODS":
-									if (ScenarioType=="processor") bOptimizer=true;
+									bOptimizer=true;
 									break;
 								case "TREATMENT PACKAGES":
 									bOptimizer=true;
