@@ -236,7 +236,8 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsPSiteAccessibleWorkTableName { get { return @"psite_accessible_work_table"; } }
             static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
             static public string DefaultScenarioResultsCondPsiteTableName { get { return @"cond_psite"; } }
-
+            static public string DefaultScenarioResultsContextDbFile { get { return @"db\context.accdb"; } }
+            static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"HARVEST_METHOD_REF"; } }
 
 			
 			private string strSQL = "";
@@ -1383,6 +1384,44 @@ namespace FIA_Biosum_Manager
                     "MERCH_PSITE_NAME CHAR(255)," +
                     "CHIP_PSITE_NUM INTEGER," +
                     "CHIP_PSITE_NAME CHAR(255) )";
+            }
+
+            //
+            //COND_PSITE TABLE
+            //
+            public void CreateHarvestMethodRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateHarvestMethodRefTableSQL(p_strTableName));
+                CreateHarvestMethodRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateHarvestMethodRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk1", "RX");
+            }
+
+            static public string CreateHarvestMethodRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "RX CHAR(3)," +
+                    "RX_HARVEST_METHOD_LOW CHAR(50)," +
+                    "RX_HARVEST_METHOD_LOW_ID INTEGER," +
+                    "RX_HARVEST_METHOD_LOW_CATEGORY INTEGER," +
+                    "RX_HARVEST_METHOD_LOW_CATEGORY_DESCR CHAR(100)," +
+                    "RX_HARVEST_METHOD_STEEP CHAR(50)," +
+                    "RX_HARVEST_METHOD_STEEP_ID INTEGER," +
+                    "RX_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
+                    "RX_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100)," +
+                    "USE_RX_HARVEST_METHOD_YN CHAR(1)," +
+                    "SCENARIO_HARVEST_METHOD_LOW CHAR(50)," +
+                    "SCENARIO_HARVEST_METHOD_LOW_ID INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_LOW_CATEGORY INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_LOW_CATEGORY_DESCR CHAR(100)," +
+                    "SCENARIO_HARVEST_METHOD_STEEP CHAR(50)," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_ID INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100) )";
             }
 		}
 		public class OptimizerScenarioRuleDefinitions

@@ -87,74 +87,78 @@ namespace FIA_Biosum_Manager
             //
             //Validate Rule Definitions
             //
-            this.AddListViewRowItem("Validate Rule Definitions",false);
+            this.AddListViewRowItem("Validate Rule Definitions",false, false);
             //
             //Save Rule Definitions
             //
-            this.AddListViewRowItem("Save Rule Definitions",false);
+            this.AddListViewRowItem("Save Rule Definitions",false, false);
             //
             //Initialize and Load Variables
             //
-            this.AddListViewRowItem("Initialize and Load Variables", false);
+            this.AddListViewRowItem("Initialize and Load Variables", false, false);
             //
             //Accessibility
             //
-            this.AddListViewRowItem("Determine If Stand And Conditions Are Accessible For Treatment And Harvest",false);
+            this.AddListViewRowItem("Determine If Stand And Conditions Are Accessible For Treatment And Harvest",false, false);
             //
             //Least Expensive Routes
             //
-            this.AddListViewRowItem("Get Least Expensive Route From Stand To Wood Processing Facility",false);
+            this.AddListViewRowItem("Get Least Expensive Route From Stand To Wood Processing Facility",false, false);
             //
             //
             //
-            this.AddListViewRowItem("Sum Tree Yields, Volume, And Value For A Stand And Treatment",false);
+            this.AddListViewRowItem("Sum Tree Yields, Volume, And Value For A Stand And Treatment",false, false);
             //
             //
             //
-            this.AddListViewRowItem("Apply User Defined Filters And Get Valid Stand Combinations", false);
+            this.AddListViewRowItem("Apply User Defined Filters And Get Valid Stand Combinations", false, false);
             //
             //
             //
-            this.AddListViewRowItem("Populate Valid Combination Audit Data", true);
+            this.AddListViewRowItem("Populate Valid Combination Audit Data", true, true);
             //
             //
             //
-            this.AddListViewRowItem("Create Condition - Processing Site Table", true);
+            this.AddListViewRowItem("Create Condition - Processing Site Table", false, false);
             //
             //
             //
-            this.AddListViewRowItem("Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment", false);
+            this.AddListViewRowItem("Populate Context Database", true, false);
             //
             //
             //
-            this.AddListViewRowItem("Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment Package", false);
+            this.AddListViewRowItem("Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment", false, false);
             //
             //
             //
-            this.AddListViewRowItem("Calculate Weighted Economic Variables For Each Stand And Treatment Package", false);
+            this.AddListViewRowItem("Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment Package", false, false);
             //
             //
             //
-            this.AddListViewRowItem("Identify Effective Treatments For Each Stand", false);
+            this.AddListViewRowItem("Calculate Weighted Economic Variables For Each Stand And Treatment Package", false, false);
             //
             //
             //
-            this.AddListViewRowItem("Optimize the Effective Treatments For Each Stand", false);
+            this.AddListViewRowItem("Identify Effective Treatments For Each Stand", false, false);
             //
             //
             //
-            this.AddListViewRowItem("Load Tie Breaker Tables", false);
+            this.AddListViewRowItem("Optimize the Effective Treatments For Each Stand", false, false);
             //
             //
             //
-            this.AddListViewRowItem("Identify The Best Effective Treatment For Each Stand", false);
+            this.AddListViewRowItem("Load Tie Breaker Tables", false, false);
+            //
+            //
+            //
+            this.AddListViewRowItem("Identify The Best Effective Treatment For Each Stand", false, false);
             this.listViewEx1.Columns[2].Width = -1;
 
 
 
         }
 
-        private void AddListViewRowItem(string p_strDescription,bool p_bCheckBox)
+        private void AddListViewRowItem(string p_strDescription,bool p_bCheckBox, bool p_bCheckBoxChecked)
         {
             System.Windows.Forms.ListViewItem entryListItem = null;
           
@@ -179,7 +183,7 @@ namespace FIA_Biosum_Manager
                 oCheckBox.Visible = p_bCheckBox;
                 oCheckBox.Show();
                 oCheckBox.Enabled = p_bCheckBox;
-                oCheckBox.Checked = true;
+                oCheckBox.Checked = p_bCheckBoxChecked;
             }
            
 
@@ -281,9 +285,9 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.btnViewAuditTables);
             this.panel1.Controls.Add(this.btnViewLog);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 16);
+            this.panel1.Location = new System.Drawing.Point(3, 18);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(920, 489);
+            this.panel1.Size = new System.Drawing.Size(920, 487);
             this.panel1.TabIndex = 40;
             // 
             // pnlFileSizeMonitor
@@ -303,6 +307,7 @@ namespace FIA_Biosum_Manager
             this.uc_filesize_monitor4.ForeColor = System.Drawing.Color.Black;
             this.uc_filesize_monitor4.Information = "";
             this.uc_filesize_monitor4.Location = new System.Drawing.Point(616, 10);
+            this.uc_filesize_monitor4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uc_filesize_monitor4.Name = "uc_filesize_monitor4";
             this.uc_filesize_monitor4.Size = new System.Drawing.Size(181, 76);
             this.uc_filesize_monitor4.TabIndex = 3;
@@ -313,6 +318,7 @@ namespace FIA_Biosum_Manager
             this.uc_filesize_monitor3.ForeColor = System.Drawing.Color.Black;
             this.uc_filesize_monitor3.Information = "";
             this.uc_filesize_monitor3.Location = new System.Drawing.Point(429, 10);
+            this.uc_filesize_monitor3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uc_filesize_monitor3.Name = "uc_filesize_monitor3";
             this.uc_filesize_monitor3.Size = new System.Drawing.Size(181, 76);
             this.uc_filesize_monitor3.TabIndex = 2;
@@ -323,6 +329,7 @@ namespace FIA_Biosum_Manager
             this.uc_filesize_monitor2.ForeColor = System.Drawing.Color.Black;
             this.uc_filesize_monitor2.Information = "";
             this.uc_filesize_monitor2.Location = new System.Drawing.Point(206, 10);
+            this.uc_filesize_monitor2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uc_filesize_monitor2.Name = "uc_filesize_monitor2";
             this.uc_filesize_monitor2.Size = new System.Drawing.Size(181, 76);
             this.uc_filesize_monitor2.TabIndex = 1;
@@ -333,6 +340,7 @@ namespace FIA_Biosum_Manager
             this.uc_filesize_monitor1.ForeColor = System.Drawing.Color.Black;
             this.uc_filesize_monitor1.Information = "";
             this.uc_filesize_monitor1.Location = new System.Drawing.Point(5, 10);
+            this.uc_filesize_monitor1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uc_filesize_monitor1.Name = "uc_filesize_monitor1";
             this.uc_filesize_monitor1.Size = new System.Drawing.Size(181, 76);
             this.uc_filesize_monitor1.TabIndex = 0;
@@ -347,10 +355,10 @@ namespace FIA_Biosum_Manager
             this.listViewEx1.FullRowSelect = true;
             this.listViewEx1.GridLines = true;
             this.listViewEx1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewEx1.Location = new System.Drawing.Point(12, 33);
+            this.listViewEx1.Location = new System.Drawing.Point(13, 50);
             this.listViewEx1.MultiSelect = false;
             this.listViewEx1.Name = "listViewEx1";
-            this.listViewEx1.Size = new System.Drawing.Size(896, 324);
+            this.listViewEx1.Size = new System.Drawing.Size(896, 275);
             this.listViewEx1.TabIndex = 42;
             this.listViewEx1.UseCompatibleStateImageBehavior = false;
             this.listViewEx1.View = System.Windows.Forms.View.Details;
@@ -386,9 +394,9 @@ namespace FIA_Biosum_Manager
             // 
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.ForeColor = System.Drawing.Color.Black;
-            this.btnCancel.Location = new System.Drawing.Point(83, 3);
+            this.btnCancel.Location = new System.Drawing.Point(83, 8);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(72, 24);
+            this.btnCancel.Size = new System.Drawing.Size(72, 30);
             this.btnCancel.TabIndex = 39;
             this.btnCancel.Text = "Start";
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -407,9 +415,9 @@ namespace FIA_Biosum_Manager
             // 
             this.btnAccess.Enabled = false;
             this.btnAccess.ForeColor = System.Drawing.Color.Black;
-            this.btnAccess.Location = new System.Drawing.Point(315, 7);
+            this.btnAccess.Location = new System.Drawing.Point(314, 8);
             this.btnAccess.Name = "btnAccess";
-            this.btnAccess.Size = new System.Drawing.Size(120, 20);
+            this.btnAccess.Size = new System.Drawing.Size(120, 30);
             this.btnAccess.TabIndex = 33;
             this.btnAccess.Text = "Microsoft Access";
             this.btnAccess.Click += new System.EventHandler(this.btnAccess_Click);
@@ -417,9 +425,9 @@ namespace FIA_Biosum_Manager
             // btnViewResultsTables
             // 
             this.btnViewResultsTables.ForeColor = System.Drawing.Color.Black;
-            this.btnViewResultsTables.Location = new System.Drawing.Point(189, 7);
+            this.btnViewResultsTables.Location = new System.Drawing.Point(188, 8);
             this.btnViewResultsTables.Name = "btnViewResultsTables";
-            this.btnViewResultsTables.Size = new System.Drawing.Size(120, 20);
+            this.btnViewResultsTables.Size = new System.Drawing.Size(120, 30);
             this.btnViewResultsTables.TabIndex = 32;
             this.btnViewResultsTables.Text = "View Results Tables";
             this.btnViewResultsTables.Click += new System.EventHandler(this.btnViewScenarioTables_Click);
@@ -427,9 +435,9 @@ namespace FIA_Biosum_Manager
             // btnViewAuditTables
             // 
             this.btnViewAuditTables.ForeColor = System.Drawing.Color.Black;
-            this.btnViewAuditTables.Location = new System.Drawing.Point(439, 7);
+            this.btnViewAuditTables.Location = new System.Drawing.Point(438, 8);
             this.btnViewAuditTables.Name = "btnViewAuditTables";
-            this.btnViewAuditTables.Size = new System.Drawing.Size(120, 20);
+            this.btnViewAuditTables.Size = new System.Drawing.Size(120, 30);
             this.btnViewAuditTables.TabIndex = 31;
             this.btnViewAuditTables.Text = "View Audit Data";
             this.btnViewAuditTables.Click += new System.EventHandler(this.btnViewAuditTables_Click);
@@ -437,9 +445,9 @@ namespace FIA_Biosum_Manager
             // btnViewLog
             // 
             this.btnViewLog.ForeColor = System.Drawing.Color.Black;
-            this.btnViewLog.Location = new System.Drawing.Point(565, 7);
+            this.btnViewLog.Location = new System.Drawing.Point(564, 8);
             this.btnViewLog.Name = "btnViewLog";
-            this.btnViewLog.Size = new System.Drawing.Size(96, 20);
+            this.btnViewLog.Size = new System.Drawing.Size(96, 30);
             this.btnViewLog.TabIndex = 34;
             this.btnViewLog.Text = "View Log File";
             this.btnViewLog.Click += new System.EventHandler(this.btnViewLog_Click);
@@ -973,7 +981,7 @@ namespace FIA_Biosum_Manager
             this.lblMsg.Width = this.listViewEx1.Width;
             this.pnlFileSizeMonitor.Top = this.groupBox1.Height - this.groupBox1.Top - this.pnlFileSizeMonitor.Height - 2;
             this.lblMsg.Top = pnlFileSizeMonitor.Top - this.lblMsg.Height - 2;
-            this.listViewEx1.Height = this.lblMsg.Top - this.listViewEx1.Top - 5;
+            this.listViewEx1.Height = this.lblMsg.Top - this.listViewEx1.Top -5;
 
             if (uc_filesize_monitor1.lblMaxSize.Left + uc_filesize_monitor1.lblMaxSize.Width > uc_filesize_monitor1.Width)
             {
@@ -1083,6 +1091,7 @@ namespace FIA_Biosum_Manager
         private dao_data_access m_oDao;
 		public System.Data.OleDb.OleDbConnection m_TempMDBFileConn;
 		public string m_strSystemResultsDbPathAndFile="";
+        public string m_strContextDbPathAndFile = "";
         public string m_strFVSPreValidComboDbPathAndFile = "";
         public string m_strFVSPostValidComboDbPathAndFile = "";
         
@@ -1209,10 +1218,20 @@ namespace FIA_Biosum_Manager
 				this.m_oVarSub.ReferenceSQLMacroSubstitutionVariableCollection = 
 					frmMain.g_oSQLMacroSubstitutionVariable_Collection;
 
-				this.m_strSystemResultsDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir,"mdb");
-				this.CopyScenarioResultsTable(this.m_strSystemResultsDbPathAndFile,ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile);
+				string strScenarioOutputFolder = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim();
+                this.m_strSystemResultsDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir,"mdb");
+				this.CopyScenarioResultsTable(this.m_strSystemResultsDbPathAndFile,strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile);
 
-
+                this.m_strContextDbPathAndFile = "";
+                intListViewIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(
+                    ReferenceUserControlScenarioRun.listViewEx1, "Populate Context Database");
+                oCheckBox = (CheckBox) ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(0, intListViewIndex);
+                if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)oCheckBox, "Checked", false) == true)
+                {
+                    this.m_strContextDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir, "accdb");
+                    this.CopyScenarioResultsTable(this.m_strContextDbPathAndFile, strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile);
+                }
+                
                 this.m_strFVSPreValidComboDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir, "mdb");
                 this.CopyScenarioResultsTable(this.m_strFVSPreValidComboDbPathAndFile, ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo.mdb");
 
@@ -1397,6 +1416,8 @@ namespace FIA_Biosum_Manager
 
                     CreateAuditTables();
 					CreateScenarioResultTables();
+                    if (!String.IsNullOrEmpty(m_strContextDbPathAndFile))
+                        CreateContextTables();
                     CreateValidComboTables();
 
 
@@ -1416,6 +1437,17 @@ namespace FIA_Biosum_Manager
                         FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
                         FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
                         return;
+                    }
+
+                    if (! String.IsNullOrEmpty(m_strContextDbPathAndFile))
+                    {
+                        this.CreateContextTableLinks();
+                        if (this.m_intError != 0)
+                        {
+                            FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                            return;
+                        }
                     }
 
                     FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
@@ -1745,9 +1777,11 @@ namespace FIA_Biosum_Manager
 							string strFileDate = oDate.ToString(strDateFormat);
 							strFileDate = strFileDate.Replace("/","_"); strFileDate=strFileDate.Replace(":","_");
 							this.CreateHtml();
-							this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, this.m_strSystemResultsDbPathAndFile);
-                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.accdb", this.m_strFVSPreValidComboDbPathAndFile);
-                            this.CopyScenarioResultsTable(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspost.accdb", this.m_strFVSPostValidComboDbPathAndFile);
+							this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, this.m_strSystemResultsDbPathAndFile);
+                            if (! String.IsNullOrEmpty(this.m_strContextDbPathAndFile))
+                                this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile, this.m_strContextDbPathAndFile);
+                            this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\db\\validcombo_fvspre.accdb", this.m_strFVSPreValidComboDbPathAndFile);
+                            this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\db\\validcombo_fvspost.accdb", this.m_strFVSPostValidComboDbPathAndFile);
                             this.m_strSystemResultsDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
                             this.m_strFVSPreValidComboDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.mdb";
                             
@@ -2114,6 +2148,36 @@ namespace FIA_Biosum_Manager
             
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
 		}
+
+        private void CreateContextTables()
+        {
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//CreateContextTables\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+            string[] strTableNames;
+            strTableNames = new string[1];
+            ado_data_access oAdo = new ado_data_access();
+            oAdo.OpenConnection(oAdo.getMDBConnString(m_strContextDbPathAndFile, "", ""));
+
+            strTableNames = oAdo.getTableNames(oAdo.m_OleDbConnection);
+            for (int x = 0; x <= strTableNames.Length - 1; x++)
+            {
+                if (strTableNames[x] != null &&
+                    strTableNames[x].Trim().Length > 0)
+                {
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, "DROP TABLE " + strTableNames[x]);
+                }
+            }
+
+
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateHarvestMethodRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName);
+            oAdo.CloseConnection(oAdo.m_OleDbConnection);
+        }
+
 		/// <summary>
 		/// Copy the scenario results db file from the scenario?\db directory to the temp directory
         /// where the temp directory version is used during a single Optimizer run. Once
@@ -2180,6 +2244,52 @@ namespace FIA_Biosum_Manager
 
 		
 		}
+
+        /// <summary>
+        /// create links to the tables located in the context.accdb file
+        /// </summary>
+        private void CreateContextTableLinks()
+        {
+
+            string[] strTableNames;
+            strTableNames = new string[1];
+            dao_data_access p_dao = new dao_data_access();
+            p_dao.CreateTableLinks(this.m_strTempMDBFile, this.m_strContextDbPathAndFile);
+            if (p_dao.m_intError == 0)
+            {
+
+                int intCount = p_dao.getTableNames(m_strContextDbPathAndFile, ref strTableNames);
+                if (p_dao.m_intError == 0)
+                {
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        if (intCount > 0)
+                        {
+                            for (int x = 0; x <= intCount - 1; x++)
+                            {
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile,
+                                        "context\t" + strTableNames[x] + "\r\n");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    this.m_intError = p_dao.m_intError;
+                }
+
+            }
+            else
+            {
+                if (frmMain.g_bDebug) frmMain.g_oUtils.WriteText(m_strDebugFile, p_dao.m_strError + "\r\n");
+                this.m_intError = p_dao.m_intError;
+            }
+
+
+        }
+
         /// <summary>
         /// create links to selected reference tables in the results .accdb
         /// </summary>
@@ -2630,7 +2740,38 @@ namespace FIA_Biosum_Manager
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites Path and file:" + m_strPSitePathAndFile + "\r\n");
 
-			this.m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
+            /**************************************************************
+             **get the harvest table name and path
+             **************************************************************/
+            arr1 = new string[] { "PROCESSING SITES" };
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strPSiteTable = strValue;
+                }
+            }
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites Table:" + this.m_strPSiteTable + "\r\n");
+
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourcePathAndFile", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
+                {
+                    this.m_strPSitePathAndFile = strValue;
+                }
+            }
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Processing Sites Path and file:" + m_strPSitePathAndFile + "\r\n");
+            this.m_strTreeVolValSumTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTreeVolValSumTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Tree Sum Volume And Value:" + m_strTreeVolValSumTable + "\r\n");
@@ -8321,6 +8462,87 @@ namespace FIA_Biosum_Manager
                              " validcombos.biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
                              ".biosum_cond_id ";
             this.m_strSQL += " GROUP BY " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + 
+                             ".BIOSUM_COND_ID,MERCH_HAUL_PSITE,MERCH_HAUL_PSITE_NAME,CHIP_HAUL_PSITE,CHIP_HAUL_PSITE_NAME";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\ninsert into cond_psite \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            if (this.m_ado.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+                this.m_intError = this.m_ado.m_intError;
+
+                return;
+            }
+
+            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+
+
+            if (this.m_intError == 0)
+            {
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "Done");
+
+            }
+        }
+
+        /// <summary>
+        /// Populate context reference tables
+        /// </summary>
+        private void ContextReferenceTables()
+        {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//ContextReferenceTables\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 5;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
+
+            intListViewIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(
+                ReferenceUserControlScenarioRun.listViewEx1, "Populate Context Database");
+
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
+            FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.EnsureListViewExItemVisible(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "Selected", true);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "focused", true);
+
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n\r\nPopulate HARVEST_METHOD_REF table\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "----------------------------------------\r\n");
+            }
+
+            ProcessorScenarioItem.HarvestMethod oHarvestMethod = this.m_oProcessorScenarioItem.m_oHarvestMethod;
+            string strRxHarvestMethod = "Y";
+            if (!oHarvestMethod.SelectedHarvestMethod.Equals("RX"))
+            {
+                strRxHarvestMethod = "N";
+            }
+            this.m_strSQL = 
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsCondPsiteTableName +
+                " (BIOSUM_COND_ID,MERCH_PSITE_NUM,MERCH_PSITE_NAME," +
+                "CHIP_PSITE_NUM,CHIP_PSITE_NAME) ";
+            this.m_strSQL += "SELECT DISTINCT " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".BIOSUM_COND_ID, " +
+                "MERCH_HAUL_PSITE,MERCH_HAUL_PSITE_NAME," +
+                "CHIP_HAUL_PSITE,CHIP_HAUL_PSITE_NAME ";
+
+            this.m_strSQL += " FROM " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName;
+            this.m_strSQL += " INNER JOIN validcombos ON " +
+                             " validcombos.biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
+                             ".biosum_cond_id ";
+            this.m_strSQL += " GROUP BY " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName +
                              ".BIOSUM_COND_ID,MERCH_HAUL_PSITE,MERCH_HAUL_PSITE_NAME,CHIP_HAUL_PSITE,CHIP_HAUL_PSITE_NAME";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
