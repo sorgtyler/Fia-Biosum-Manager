@@ -1140,11 +1140,6 @@ namespace FIA_Biosum_Manager
         int intListViewIndex = -1;
         private string m_strDebugFile = "";
 
-        
-
-		
-		
-
 		public RunOptimizer(FIA_Biosum_Manager.uc_optimizer_scenario_run p_form)
 		{
 			
@@ -2195,6 +2190,8 @@ namespace FIA_Biosum_Manager
 
 
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateHarvestMethodRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateRxPackageRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName);
+
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
 
@@ -2306,6 +2303,10 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug) frmMain.g_oUtils.WriteText(m_strDebugFile, p_dao.m_strError + "\r\n");
                 this.m_intError = p_dao.m_intError;
             }
+
+            string strRefMasterDir = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.Reference.DefaultRxCategoryTableDbFile;
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.Reference.DefaultRxCategoryTableName, strRefMasterDir, Tables.Reference.DefaultRxCategoryTableName);
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.Reference.DefaultRxSubCategoryTableName, strRefMasterDir, Tables.Reference.DefaultRxSubCategoryTableName);
 
         }
 
@@ -8564,7 +8565,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//ContextReferenceTables\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 5;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 6;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
@@ -8625,13 +8626,8 @@ namespace FIA_Biosum_Manager
             if (strRxHarvestMethod.Equals("N"))
             {
                 this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
-                this.m_strSQL += " INNER JOIN " + m_strHarvestMethodsTable +
-                                " ON TRIM(" + m_strHarvestMethodsTable + ".Method) = " + m_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodLowSlope.Trim();
                 this.m_strSQL += " SET SCENARIO_HARVEST_METHOD_LOW = '" + m_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodLowSlope.Trim() +
-                                 "', SCENARIO_HARVEST_METHOD_LOW_ID = HarvestMethodID, SCENARIO_HARVEST_METHOD_LOW_CATEGORY=BIOSUM_CATEGORY, " +
-                                 "SCENARIO_HARVEST_METHOD_LOW_CATEGORY_DESCR = top_limb_slope_status, " +
-                                 "SCENARIO_HARVEST_METHOD_STEEP ='" + m_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodSteepSlope.Trim() + "'";
-                this.m_strSQL += " WHERE STEEP_YN = 'N'";
+                                 "', SCENARIO_HARVEST_METHOD_STEEP = '" + m_oProcessorScenarioItem.m_oHarvestMethod.HarvestMethodSteepSlope.Trim() + "'";
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate HARVEST_METHOD_REF for scenario harvest methods\r\n");
@@ -8639,10 +8635,74 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
                 this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+                this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
+                this.m_strSQL += " INNER JOIN " + m_strHarvestMethodsTable +
+                                " ON TRIM(" + m_strHarvestMethodsTable + ".Method) = TRIM(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName + ".SCENARIO_HARVEST_METHOD_LOW)";
+                this.m_strSQL += " SET SCENARIO_HARVEST_METHOD_LOW_ID = HarvestMethodID, SCENARIO_HARVEST_METHOD_LOW_CATEGORY = BIOSUM_CATEGORY," +
+                                 "SCENARIO_HARVEST_METHOD_LOW_CATEGORY_DESCR = top_limb_slope_status";
+                this.m_strSQL += " WHERE STEEP_YN = 'N'";
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate HARVEST_METHOD_REF with properties of scenario low slope methods\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+                this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
+                this.m_strSQL += " INNER JOIN " + m_strHarvestMethodsTable +
+                                " ON TRIM(" + m_strHarvestMethodsTable + ".Method) = TRIM(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName + ".SCENARIO_HARVEST_METHOD_STEEP)";
+                this.m_strSQL += " SET SCENARIO_HARVEST_METHOD_STEEP_ID = HarvestMethodID, SCENARIO_HARVEST_METHOD_STEEP_CATEGORY = BIOSUM_CATEGORY," +
+                                 "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR = top_limb_slope_status";
+                this.m_strSQL += " WHERE STEEP_YN = 'Y'";
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate HARVEST_METHOD_REF with properties of scenario steep slope methods\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
             }
 
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
+            this.m_strSQL += " SELECT RXPACKAGE, " + this.m_strRxPackageTable + ".description, simyear1_rx, simyear2_rx, simyear3_rx, simyear4_rx ";
+            this.m_strSQL += " FROM " + this.m_strRxPackageTable;
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nInsert records into RXPACKAGE_REF \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            string[] arrRxCycle = new string[] { "SIMYEAR1_RX", "SIMYEAR2_RX", "SIMYEAR3_RX", "SIMYEAR4_RX", };
+            foreach (string strRxCycle in arrRxCycle) 
+            {
+                this.m_strSQL = "UPDATE ((" + Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
+                this.m_strSQL += " INNER JOIN " + this.m_strRxTable + " ON " + Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName + 
+                                 "." + strRxCycle + " = " + this.m_strRxTable + ".rx) " +
+                                 " INNER JOIN fvs_rx_category ON " + this.m_strRxTable + ".catid = fvs_rx_category.catid)" +
+                                 " INNER JOIN fvs_rx_subcategory ON (" + this.m_strRxTable + ".catid = fvs_rx_subcategory.catid)" +
+                                 " AND (" + this.m_strRxTable + ".subcatid = fvs_rx_subcategory.subcatid)";
+                this.m_strSQL += " SET " + strRxCycle + "_DESCRIPTION = " + this.m_strRxTable + ".DESCRIPTION, " +
+                                 strRxCycle + "_CATEGORY = FVS_RX_CATEGORY.DESC, " +
+                                 strRxCycle + "_SUBCATEGORY = FVS_RX_SUBCATEGORY.DESC";
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate RXPACKAGE_REF for " + strRxCycle + " \r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            }
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            
 
             if (this.m_ado.m_intError != 0)
             {
@@ -8883,5 +8943,7 @@ namespace FIA_Biosum_Manager
         }
 
     }
+
+
 
 }

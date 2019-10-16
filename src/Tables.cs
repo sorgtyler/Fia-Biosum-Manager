@@ -238,6 +238,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsCondPsiteTableName { get { return @"cond_psite"; } }
             static public string DefaultScenarioResultsContextDbFile { get { return @"db\context.accdb"; } }
             static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"HARVEST_METHOD_REF"; } }
+            static public string DefaultScenarioResultsRxPackageRefTableName { get { return @"RXPACKAGE_REF"; } }
 
 			
 			private string strSQL = "";
@@ -1387,7 +1388,7 @@ namespace FIA_Biosum_Manager
             }
 
             //
-            //COND_PSITE TABLE
+            //HARVEST_METHOD_REF TABLE
             //
             public void CreateHarvestMethodRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -1422,6 +1423,44 @@ namespace FIA_Biosum_Manager
                     "SCENARIO_HARVEST_METHOD_STEEP_ID INTEGER," +
                     "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
                     "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100) )";
+            }
+
+            //
+            //RXPACKAGE_REF TABLE
+            //
+            public void CreateRxPackageRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateRxPackageRefTableSQL(p_strTableName));
+                CreateRxPackageRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateRxPackageRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk1", "RXPACKAGE");
+            }
+
+            static public string CreateRxPackageRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "RXPACKAGE CHAR(3)," +
+                    "DESCRIPTION MEMO," +
+                    "SIMYEAR1_RX CHAR(3)," +
+                    "SIMYEAR1_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR1_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR1_RX_DESCRIPTION MEMO," +
+                    "SIMYEAR2_RX CHAR(3)," +
+                    "SIMYEAR2_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR2_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR2_RX_DESCRIPTION MEMO," +
+                    "SIMYEAR3_RX CHAR(3)," +
+                    "SIMYEAR3_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR3_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR3_RX_DESCRIPTION MEMO," +
+                    "SIMYEAR4_RX CHAR(3)," +
+                    "SIMYEAR4_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR4_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR4_RX_DESCRIPTION MEMO )";
             }
 		}
 		public class OptimizerScenarioRuleDefinitions
