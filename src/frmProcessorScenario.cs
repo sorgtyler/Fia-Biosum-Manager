@@ -1699,6 +1699,18 @@ namespace FIA_Biosum_Manager
                 get { return _strChipsDollarPerCubicFootValue; }
                 set { _strChipsDollarPerCubicFootValue = value; }
             }
+            private int _intSpeciesGroupId;
+            public int SpeciesGroupId
+            {
+                get { return _intSpeciesGroupId; }
+                set { _intSpeciesGroupId = value; }
+            }
+            private int _intDiameterGroupId;
+            public int DiameterGroupId
+            {
+                get { return _intDiameterGroupId; }
+                set { _intDiameterGroupId = value; }
+            }
             public void Copy(TreeSpeciesAndDbhDollarValuesItem p_oSource,
                              TreeSpeciesAndDbhDollarValuesItem p_oDest)
             {
@@ -2459,6 +2471,9 @@ namespace FIA_Biosum_Manager
                     ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem oItem = new ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem();
                     oItem.SpeciesGroup = objSpcGroup.SpeciesGroupLabel;
                     oItem.DbhGroup = objDiamGroup.DiamClass;
+                    // Added to support Optimizer context table DIAMETER_SPECIES_GROUP_REF
+                    oItem.SpeciesGroupId = objSpcGroup.SpeciesGroup;
+                    oItem.DiameterGroupId = Convert.ToInt16(objDiamGroup.DiamGroup);
                     p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Add(oItem);
                 }
             }

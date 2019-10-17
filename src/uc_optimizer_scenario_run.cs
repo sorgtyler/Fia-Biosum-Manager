@@ -2191,7 +2191,9 @@ namespace FIA_Biosum_Manager
 
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateHarvestMethodRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateRxPackageRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName);
-
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateDiameterSpeciesGroupRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateFvsWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName);
+            
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
 
@@ -2307,6 +2309,10 @@ namespace FIA_Biosum_Manager
             string strRefMasterDir = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.Reference.DefaultRxCategoryTableDbFile;
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.Reference.DefaultRxCategoryTableName, strRefMasterDir, Tables.Reference.DefaultRxCategoryTableName);
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.Reference.DefaultRxSubCategoryTableName, strRefMasterDir, Tables.Reference.DefaultRxSubCategoryTableName);
+            string strOptimizerDir = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName);
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName);
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName);
 
         }
 
@@ -8565,7 +8571,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//ContextReferenceTables\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 6;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 7;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
@@ -8703,7 +8709,44 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
             
+            foreach (ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem oItem in this.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection)
+            {
+                bool bEnergyWood = Convert.ToBoolean(oItem.UseAsEnergyWood);
+                string strEnergyWood = "Y";
+                if (bEnergyWood == false)
+                    strEnergyWood = "N";
+                this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName +
+                                " (DIAM_GROUP, DIAM_CLASS, SPECIES_GROUP, SPECIES_GROUP_LABEL, WOOD_BIN, MERCH_VALUE, CHIP_VALUE)" +
+                                " VALUES (" + oItem.DiameterGroupId + ", '" + oItem.DbhGroup + "'," + oItem.SpeciesGroupId + ",'" + oItem.SpeciesGroup + "','" +
+                                strEnergyWood + "', " + oItem.MerchDollarPerCubicFootValue + ", " +
+                                oItem.ChipsDollarPerCubicFootValue + ")";
 
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate DIAMETER_SPECIES_GROUP_REF table \r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            }
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName;
+            this.m_strSQL += " SELECT VARIABLE_NAME, VARIABLE_DESCRIPTION, BASELINE_RXPACKAGE, VARIABLE_SOURCE," +
+                             " weight_1_pre, weight_1_post, weight_2_pre, weight_2_post, weight_3_pre, weight_3_post, weight_4_pre, weight_4_post";
+            this.m_strSQL += " FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                             " INNER JOIN " + Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName + " ON " +
+                             Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName + ".calculated_variables_id = " +
+                             Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName + ".ID";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate FVS_WEIGHTED_VARIABLES_REF table \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
             if (this.m_ado.m_intError != 0)
             {
                 FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;

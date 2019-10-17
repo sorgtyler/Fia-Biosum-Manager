@@ -239,7 +239,8 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsContextDbFile { get { return @"db\context.accdb"; } }
             static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"HARVEST_METHOD_REF"; } }
             static public string DefaultScenarioResultsRxPackageRefTableName { get { return @"RXPACKAGE_REF"; } }
-
+            static public string DefaultScenarioResultsDiameterSpeciesGroupRefTableName { get { return @"DIAMETER_SPECIES_GROUP_REF"; } }
+            static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"FVS_WEIGHTED_VARIABLES_REF"; } }
 			
 			private string strSQL = "";
 			public OptimizerScenarioResults()
@@ -1461,6 +1462,65 @@ namespace FIA_Biosum_Manager
                     "SIMYEAR4_RX_CATEGORY CHAR(100)," +
                     "SIMYEAR4_RX_SUBCATEGORY CHAR(100)," +
                     "SIMYEAR4_RX_DESCRIPTION MEMO )";
+            }
+
+            //
+            //DIAMETER_SPECIES_GROUP_REF TABLE
+            //
+            public void CreateDiameterSpeciesGroupRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateDiameterSpeciesGroupRefTableSQL(p_strTableName));
+                CreateDiameterSpeciesGroupRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateDiameterSpeciesGroupRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn,p_strTableName,p_strTableName + "_pk","diam_group,species_group");
+            }
+
+            static public string CreateDiameterSpeciesGroupRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "DIAM_GROUP INTEGER," +
+                    "DIAM_CLASS CHAR(15)," +
+                    "SPECIES_GROUP INTEGER," +
+                    "SPECIES_GROUP_LABEL CHAR(50)," +
+                    "WOOD_BIN CHAR(1)," +
+                    "MERCH_VALUE DOUBLE," +
+                    "CHIP_VALUE DOUBLE )";
+            }
+
+            //
+            //FVS_WEIGHTED_VARIABLES_REF TABLE
+            //
+            public void CreateFvsWeightedVariableRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateFvsWeightedVariableRefTableSQL(p_strTableName));
+                CreateFvsWeightedVariableRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateFvsWeightedVariableRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "VARIABLE_NAME");
+            }
+
+            static public string CreateFvsWeightedVariableRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "VARIABLE_NAME CHAR(40)," +
+                    "VARIABLE_DESCRIPTION CHAR(255)," +
+                    "BASELINE_RXPACKAGE CHAR(3)," +
+                    "VARIABLE_SOURCE CHAR(100)," +
+                    "weight_1_pre DOUBLE," +
+                    "weight_1_post DOUBLE," +
+                    "weight_2_pre DOUBLE," +
+                    "weight_2_post DOUBLE," +
+                    "weight_3_pre DOUBLE," +
+                    "weight_3_post DOUBLE," +
+                    "weight_4_pre DOUBLE," +
+                    "weight_4_post DOUBLE )";
             }
 		}
 		public class OptimizerScenarioRuleDefinitions
