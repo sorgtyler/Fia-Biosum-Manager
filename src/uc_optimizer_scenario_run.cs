@@ -2193,6 +2193,8 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateRxPackageRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateDiameterSpeciesGroupRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateFvsWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEconWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName);
+
             
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
@@ -8684,7 +8686,7 @@ namespace FIA_Biosum_Manager
 
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
-            string[] arrRxCycle = new string[] { "SIMYEAR1_RX", "SIMYEAR2_RX", "SIMYEAR3_RX", "SIMYEAR4_RX", };
+            string[] arrRxCycle = new string[] { "SIMYEAR1_RX", "SIMYEAR2_RX", "SIMYEAR3_RX", "SIMYEAR4_RX" };
             foreach (string strRxCycle in arrRxCycle) 
             {
                 this.m_strSQL = "UPDATE ((" + Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
@@ -8747,6 +8749,48 @@ namespace FIA_Biosum_Manager
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName;
+            this.m_strSQL += " SELECT VARIABLE_NAME, VARIABLE_DESCRIPTION, VARIABLE_SOURCE," +
+                             " weight as CYCLE_1_WEIGHT";
+            this.m_strSQL += " FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                             " INNER JOIN " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + " ON " +
+                             Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + ".calculated_variables_id = " +
+                             Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName + ".ID" +
+                             " WHERE rxcycle = '1'";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate ECON_WEIGHTED_VARIABLES_REF table \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
+            arrRxCycle = new string[] { "2", "3", "4"};
+            
+            foreach (string strRxCycle in arrRxCycle)
+            {
+                string strFieldName = "CYCLE_" + strRxCycle + "_WEIGHT";
+                this.m_strSQL = "UPDATE (" + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName;
+                this.m_strSQL += " INNER JOIN " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName + " ON " +
+                                  Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName + ".VARIABLE_NAME = " +
+                                  Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName + ".VARIABLE_NAME)" +
+                                 " INNER JOIN " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + " ON " +
+                                 Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName + ".ID = " +
+                                 Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + ".calculated_variables_id";
+                this.m_strSQL += " SET ECON_WEIGHTED_VARIABLES_REF." + strFieldName + " = calculated_econ_variables_definition.weight";
+                this.m_strSQL += " where " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + ".rxcycle = '" + strRxCycle + "'";
+                
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate " + strFieldName + " field \r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            }
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
             if (this.m_ado.m_intError != 0)
             {
                 FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;

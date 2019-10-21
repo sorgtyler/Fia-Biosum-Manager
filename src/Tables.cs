@@ -241,6 +241,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsRxPackageRefTableName { get { return @"RXPACKAGE_REF"; } }
             static public string DefaultScenarioResultsDiameterSpeciesGroupRefTableName { get { return @"DIAMETER_SPECIES_GROUP_REF"; } }
             static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"FVS_WEIGHTED_VARIABLES_REF"; } }
+            static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"ECON_WEIGHTED_VARIABLES_REF"; } }
 			
 			private string strSQL = "";
 			public OptimizerScenarioResults()
@@ -1521,6 +1522,32 @@ namespace FIA_Biosum_Manager
                     "weight_3_post DOUBLE," +
                     "weight_4_pre DOUBLE," +
                     "weight_4_post DOUBLE )";
+            }
+            //
+            //ECON_WEIGHTED_VARIABLES_REF TABLE
+            //
+            public void CreateEconWeightedVariableRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateEconWeightedVariableRefTableSQL(p_strTableName));
+                CreateEconWeightedVariableRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateEconWeightedVariableRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "VARIABLE_NAME");
+            }
+
+            static public string CreateEconWeightedVariableRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "VARIABLE_NAME CHAR(40)," +
+                    "VARIABLE_DESCRIPTION CHAR(255)," +
+                    "VARIABLE_SOURCE CHAR(100)," +
+                    "CYCLE_1_WEIGHT DOUBLE," +
+                    "CYCLE_2_WEIGHT DOUBLE," +
+                    "CYCLE_3_WEIGHT DOUBLE," +
+                    "CYCLE_4_WEIGHT DOUBLE )";
             }
 		}
 		public class OptimizerScenarioRuleDefinitions
