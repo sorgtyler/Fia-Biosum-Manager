@@ -558,7 +558,7 @@ namespace FIA_Biosum_Manager
 									if (ScenarioType=="processor") bOptimizer=true;
 									break;
                                 case "TREATMENT PRESCRIPTIONS HARVEST COST COLUMNS":
-                                    if (ScenarioType=="processor") bOptimizer = true;
+                                    bOptimizer = true;
                                     break;
                                 case "FIA TREE SPECIES REFERENCE":
                                     if (ScenarioType=="processor") bOptimizer = true;
