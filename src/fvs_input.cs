@@ -2832,6 +2832,7 @@ namespace FIA_Biosum_Manager
                         dblBasalArea = dblBasalArea + (Math.Pow(tempDia, 2) * 0.00545415) * tempTpa;
                     }
                 }
+                _oAdo.m_OleDbDataReader.Dispose();
 
                 if (dblCount > 0)
                 {
