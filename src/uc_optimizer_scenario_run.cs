@@ -2194,8 +2194,23 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateDiameterSpeciesGroupRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateFvsWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEconWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName);
+            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioAdditionalHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
+            // Add the ad hoc additional harvest cost columns to table
+            string strProcessorPath = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strProcessorPath, "", ""));
+            string strSourceColumnsList = oAdo.getFieldNames(oAdo.m_OleDbConnection, "SELECT * FROM scenario_additional_harvest_costs");
+            string[] strSourceColumnsArray = frmMain.g_oUtils.ConvertListToArray(strSourceColumnsList, ",");
 
-            
+            oAdo.OpenConnection(oAdo.getMDBConnString(m_strContextDbPathAndFile, "", ""));
+            foreach (string strColumn in strSourceColumnsArray)
+            {
+                if (! oAdo.ColumnExist(oAdo.m_OleDbConnection,
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName, strColumn))
+                {
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName,
+                        strColumn, "DOUBLE", "");
+                }
+            }
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
 
@@ -2315,7 +2330,9 @@ namespace FIA_Biosum_Manager
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName);
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName);
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName);
-
+            string strProcessorDir = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsDbFile;
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_1", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
+        
         }
 
         /// <summary>
@@ -8573,7 +8590,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//ContextReferenceTables\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 7;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 8;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
@@ -8788,6 +8805,19 @@ namespace FIA_Biosum_Manager
 
                 this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
             }
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName +
+                            " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_1" +
+                            " WHERE SCENARIO_ID = '" + this.m_oProcessorScenarioItem.ScenarioId + "'";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate SCENARIO_ADDITIONAL_ HARVEST_COSTS table \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
