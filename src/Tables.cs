@@ -1549,6 +1549,32 @@ namespace FIA_Biosum_Manager
                     "CYCLE_3_WEIGHT DOUBLE," +
                     "CYCLE_4_WEIGHT DOUBLE )";
             }
+            //
+            //PRE POST FVS WEIGHTED TABLES TABLES
+            //This is only used when creating the context db. The tables are initially built
+            //in uc_optimizer_scenario_calculated_variables.cs when the variable is calculated
+            //
+            public void CreatePrePostFvsWeightedTables(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreatePrePostFvsWeightedTablesSQL(p_strTableName));
+                CreatePrePostFvsWeightedTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreatePrePostFvsWeightedTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id, rxpackage,rx,rxcycle");
+            }
+
+            static public string CreatePrePostFvsWeightedTablesSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id CHAR(25)," +
+                    "rxpackage CHAR(3)," +
+                    "rx CHAR(3)," +
+                    "rxcycle CHAR(1)," +
+                    "fvs_variant CHAR(2))";
+            }
 		}
 		public class OptimizerScenarioRuleDefinitions
 		{

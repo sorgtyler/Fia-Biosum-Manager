@@ -1094,6 +1094,7 @@ namespace FIA_Biosum_Manager
         public string m_strContextDbPathAndFile = "";
         public string m_strFVSPreValidComboDbPathAndFile = "";
         public string m_strFVSPostValidComboDbPathAndFile = "";
+        public System.Collections.Generic.IList<string> m_lstFVSPrePostWeightedTables;
         
 		private env m_oEnv;
 		private utils m_oUtils;
@@ -1489,6 +1490,12 @@ namespace FIA_Biosum_Manager
                         FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
                         FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
                         return;
+                    }
+
+                    //CREATE PRE POST FVS WEIGHTED TABLES FOR CONTEXT
+                    if (! String.IsNullOrEmpty(this.m_strContextDbPathAndFile))
+                    {
+                        CreatePrePostFvsWeightedTableLinks();
                     }
 
 					//CREATE WORK TABLES
@@ -2195,6 +2202,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateFvsWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEconWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName);
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioAdditionalHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
+            
             // Add the ad hoc additional harvest cost columns to table
             string strProcessorPath = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsDbFile;
             oAdo.OpenConnection(oAdo.getMDBConnString(strProcessorPath, "", ""));
@@ -2214,7 +2222,9 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsListTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
             frmMain.g_oTables.m_oFvs.CreateRxHarvestCostColumnTable(oAdo, oAdo.m_OleDbConnection, Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_1");
             frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_1");
+            frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_1");
 
+            
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
 
@@ -2338,6 +2348,58 @@ namespace FIA_Biosum_Manager
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_1", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_1", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
 
+            if (p_dao != null)
+            {
+                p_dao.m_DaoWorkspace.Close();
+                p_dao = null;
+
+            }
+        }
+
+        private void CreatePrePostFvsWeightedTableLinks()
+        {
+            // Creating the PRE / POST weighted tables
+            string strWeightedPath = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            string[] strWeightedTables = new string[1];
+            dao_data_access p_dao = new dao_data_access();
+            int intTables = p_dao.getTableNames(strWeightedPath, ref strWeightedTables);
+            if (intTables > 0)
+            {
+                m_lstFVSPrePostWeightedTables = new System.Collections.Generic.List<string>();
+                this.m_ado = new ado_data_access();
+                string strConn = this.m_ado.getMDBConnString(m_strContextDbPathAndFile, "", "");
+                using (var oConn = new OleDbConnection(strConn))
+                {
+                    oConn.Open();
+                    foreach (string strWeightedTable in strWeightedTables)
+                    {
+                        if (!String.IsNullOrEmpty(strWeightedTable))
+                        {
+                            if (p_dao.TableExists(this.m_strTempMDBFile, strWeightedTable))
+                            {
+                                frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePrePostFvsWeightedTables(this.m_ado,
+                                    oConn, strWeightedTable + "_1");
+                                string[] strSourceColumnsArray = new string[1];
+                                p_dao.getFieldNames(this.m_strTempMDBFile, strWeightedTable, ref strSourceColumnsArray);
+                                foreach (string strColumn in strSourceColumnsArray)
+                                {
+                                    if (! this.m_ado.ColumnExist(oConn, strWeightedTable + "_1", strColumn))
+                                    {
+                                        this.m_ado.AddColumn(oConn, strWeightedTable + "_1", strColumn, "DOUBLE", "");
+                                    }
+                                }
+                                p_dao.CreateTableLink(this.m_strTempMDBFile, strWeightedTable + "_1", this.m_strContextDbPathAndFile, strWeightedTable + "_1");
+                                m_lstFVSPrePostWeightedTables.Add(strWeightedTable);
+                            }
+                        }
+                    }
+                }
+            }
+            if (p_dao != null)
+            {
+                p_dao.m_DaoWorkspace.Close();
+                p_dao = null;
+            }
         }
 
         /// <summary>
@@ -8860,6 +8922,33 @@ namespace FIA_Biosum_Manager
 
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
+            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_1" +
+                            " SELECT * FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName;
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate tree_vol_val_by_species_diam_groups_1 table \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+           
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+
+            if (m_lstFVSPrePostWeightedTables != null)
+            {
+                foreach(string strWeightedTable in m_lstFVSPrePostWeightedTables)
+                {
+                    this.m_strSQL = "INSERT INTO " + strWeightedTable + "_1" +
+                                    " SELECT * FROM " + strWeightedTable;
+
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nInsert records into " + strWeightedTable + "_1 table \r\n");
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                    this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                }
+            }
             
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
