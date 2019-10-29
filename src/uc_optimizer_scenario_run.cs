@@ -6085,7 +6085,7 @@ namespace FIA_Biosum_Manager
                       "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + "," +
                        Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt))),0) AS escalator_chip_haul_cpa_pt," +
                       "escalator_chip_haul_cpa_pt * " + this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt AS chip_haul_cost_dpa," +
-                      "merch_val_dpa + chip_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa - chip_haul_cost_dpa AS merch_chip_nr_dpa," +
+                      "MERCH_VAL_DPA + CHIP_VAL_DPA - HARVEST_ONSITE_COST_DPA - ((CHIP_HAUL_COST_DPA * CHIP_WT_GT) + (MERCH_HAUL_COST_DPA * MERCH_WT_GT)) AS merch_chip_nr_dpa," +
                       "merch_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa AS merch_nr_dpa," +
                       "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite IS NULL, 'N','Y') AS usebiomass_yn," +
                       "CDbl(0) AS max_nr_dpa, " +
@@ -6148,7 +6148,11 @@ namespace FIA_Biosum_Manager
             }
             // Only use Biomass if chip revenue is higher than the cost of hauling them
             this.m_strSQL = "UPDATE " + workTableName +
-                            " SET usebiomass_yn = IIF(" + strChipValue + " < chip_haul_cost_dpa, 'N', 'Y')" +
+                            " INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " +
+                            "ON " +
+                            workTableName + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName
+                            + ".biosum_cond_id " +
+                            " SET usebiomass_yn = IIF(" + strChipValue + " < CHIP_HAUL_COST_DPGT, 'N', 'Y')" +
                             " WHERE usebiomass_yn = 'Y'";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
@@ -6187,9 +6191,7 @@ namespace FIA_Biosum_Manager
             // Update fields based on USEBIOMASS_YN
             this.m_strSQL = "UPDATE " + workTableName +
                             " SET HAUL_COSTS_DPA = IIF(USEBIOMASS_YN = 'N', MERCH_HAUL_COST_DPA, MERCH_HAUL_COST_DPA + CHIP_HAUL_COST_DPA ), " +
-                            " MAX_NR_DPA = IIF(USEBIOMASS_YN = 'N' = 'Y', MERCH_NR_DPA, MERCH_CHIP_NR_DPA), " +
-                            " MERCH_CHIP_NR_DPA = IIF(USEBIOMASS_YN = 'N', merch_val_dpa - harvest_onsite_cost_dpa - haul_costs_dpa," +
-                            " merch_val_dpa + chip_val_dpa - harvest_onsite_cost_dpa - haul_costs_dpa)";
+                            " MAX_NR_DPA = IIF(USEBIOMASS_YN = 'N' = 'Y', MERCH_NR_DPA, MERCH_CHIP_NR_DPA)";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
