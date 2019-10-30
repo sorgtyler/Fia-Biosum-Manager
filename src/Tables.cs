@@ -232,7 +232,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsPostEconomicWeightedTableName { get { return @"post_economic_weighted"; } }
             static public string DefaultScenarioResultsDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsEconByRxCycleTableName { get { return @"econ_by_rx_cycle"; } }
-            static public string DefaultScenarioResultsEconByRxSumTableName { get { return @"econ_by_rx_sum"; } }
+            static public string DefaultScenarioResultsEconByRxUtilSumTableName { get { return @"econ_by_rx_utilized_sum"; } }
             static public string DefaultScenarioResultsPSiteAccessibleWorkTableName { get { return @"psite_accessible_work_table"; } }
             static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
             static public string DefaultScenarioResultsCondPsiteTableName { get { return @"cond_psite"; } }
@@ -1027,31 +1027,31 @@ namespace FIA_Biosum_Manager
             //
             //PRODUCT YIELDS NET REVENUE/COSTS SUMMARY BY PACKAGE TABLE
             //
-            public void CreateProductYieldsByRxPackageTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateEconByRxUtilSumTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
-                p_oAdo.SqlNonQuery(p_oConn, CreateProductYieldsByRxPackageTableSQL(p_strTableName));
-                CreateProductYieldsByRxPackageTableIndexes(p_oAdo, p_oConn, p_strTableName);
+                p_oAdo.SqlNonQuery(p_oConn, CreateEconByRxUtilTableSQL(p_strTableName));
+                CreateEconByRxUtilTableIndexes(p_oAdo, p_oConn, p_strTableName);
 
 
             }
-            public void CreateProductYieldsByRxPackageTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateEconByRxUtilTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id,rxpackage");
             }
 
-            static public string CreateProductYieldsByRxPackageTableSQL(string p_strTableName)
+            static public string CreateEconByRxUtilTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "biosum_cond_id CHAR(25)," +
                     "rxpackage CHAR(3)," +
-                    "chip_vol_cf DOUBLE," +
+                    "chip_vol_cf_utilized DOUBLE," +
                     "merch_vol_cf DOUBLE," +
-                    "chip_wt_gt DOUBLE," +
+                    "chip_wt_gt_utilized DOUBLE," +
                     "merch_wt_gt DOUBLE," +
-                    "chip_val_dpa DOUBLE," +
+                    "chip_val_dpa_utilized DOUBLE," +
                     "merch_val_dpa DOUBLE," +
                     "harvest_onsite_cost_dpa DOUBLE," +
-                    "chip_haul_cost_dpa DOUBLE," +
+                    "chip_haul_cost_dpa_utilized DOUBLE," +
                     "merch_haul_cost_dpa DOUBLE," +
                     "merch_chip_nr_dpa DOUBLE," +
                     "merch_nr_dpa DOUBLE," +
