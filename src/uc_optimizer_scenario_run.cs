@@ -127,6 +127,10 @@ namespace FIA_Biosum_Manager
             //
             //
             //
+            this.AddListViewRowItem("Populate FVS PRE-POST Context Database", true, true);
+            //
+            //
+            //
             this.AddListViewRowItem("Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment", false, false);
             //
             //
@@ -1092,9 +1096,9 @@ namespace FIA_Biosum_Manager
 		public System.Data.OleDb.OleDbConnection m_TempMDBFileConn;
 		public string m_strSystemResultsDbPathAndFile="";
         public string m_strContextDbPathAndFile = "";
+        public string m_strFvsContextDbPathAndFile = "";
         public string m_strFVSPreValidComboDbPathAndFile = "";
         public string m_strFVSPostValidComboDbPathAndFile = "";
-        public System.Collections.Generic.IList<string> m_lstFVSPrePostWeightedTables;
         
 		private env m_oEnv;
 		private utils m_oUtils;
@@ -1229,6 +1233,15 @@ namespace FIA_Biosum_Manager
                 {
                     this.m_strContextDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir, "accdb");
                     this.CopyScenarioResultsTable(this.m_strContextDbPathAndFile, strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile);
+                }
+
+                this.m_strFvsContextDbPathAndFile = "";
+                intListViewIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(
+                    ReferenceUserControlScenarioRun.listViewEx1, "Populate FVS PRE-POST Context Database");
+                oCheckBox = (CheckBox)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(0, intListViewIndex);
+                if ((bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.Control)oCheckBox, "Checked", false) == true)
+                {
+                    this.m_strFvsContextDbPathAndFile = strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsContextDbFile;
                 }
                 
                 this.m_strFVSPreValidComboDbPathAndFile = frmMain.g_oUtils.getRandomFile(frmMain.g_oEnv.strTempDir, "mdb");
@@ -1493,12 +1506,6 @@ namespace FIA_Biosum_Manager
                         return;
                     }
 
-                    //CREATE PRE POST FVS WEIGHTED TABLES FOR CONTEXT
-                    if (! String.IsNullOrEmpty(this.m_strContextDbPathAndFile))
-                    {
-                        CreatePrePostFvsWeightedTableLinks();
-                    }
-
 					//CREATE WORK TABLES
 					CreateTableStructureOfHarvestCosts();
                     if (this.m_intError != 0)
@@ -1721,6 +1728,18 @@ namespace FIA_Biosum_Manager
                             this.ContextReferenceTables();
 
                         }
+
+                        /***************************************************************************
+                         **FVS context reference database
+                         ***************************************************************************/
+
+                        if (this.m_intError == 0 && ReferenceUserControlScenarioRun.m_bUserCancel == false &&
+                            !String.IsNullOrEmpty(this.m_strFvsContextDbPathAndFile))
+                        {
+                            this.FvsContextReferenceTables();
+
+                        }
+
 						/**********************************************************************
 						 **wood product yields net revenue and costs summary by treatment table
 						 **********************************************************************/
@@ -2221,9 +2240,9 @@ namespace FIA_Biosum_Manager
                 }
             }
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsListTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
-            frmMain.g_oTables.m_oFvs.CreateRxHarvestCostColumnTable(oAdo, oAdo.m_OleDbConnection, Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_1");
-            frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_1");
-            frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_1");
+            frmMain.g_oTables.m_oFvs.CreateRxHarvestCostColumnTable(oAdo, oAdo.m_OleDbConnection, Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C");
+            frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C");
+            frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C");
 
             
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
@@ -2346,60 +2365,14 @@ namespace FIA_Biosum_Manager
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName);
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName);
             string strProcessorDir = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsDbFile;
-            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_1", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
-            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_1", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
 
             if (p_dao != null)
             {
                 p_dao.m_DaoWorkspace.Close();
                 p_dao = null;
 
-            }
-        }
-
-        private void CreatePrePostFvsWeightedTableLinks()
-        {
-            // Creating the PRE / POST weighted tables
-            string strWeightedPath = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
-            string[] strWeightedTables = new string[1];
-            dao_data_access p_dao = new dao_data_access();
-            int intTables = p_dao.getTableNames(strWeightedPath, ref strWeightedTables);
-            if (intTables > 0)
-            {
-                m_lstFVSPrePostWeightedTables = new System.Collections.Generic.List<string>();
-                this.m_ado = new ado_data_access();
-                string strConn = this.m_ado.getMDBConnString(m_strContextDbPathAndFile, "", "");
-                using (var oConn = new OleDbConnection(strConn))
-                {
-                    oConn.Open();
-                    foreach (string strWeightedTable in strWeightedTables)
-                    {
-                        if (!String.IsNullOrEmpty(strWeightedTable))
-                        {
-                            if (p_dao.TableExists(this.m_strTempMDBFile, strWeightedTable))
-                            {
-                                frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePrePostFvsWeightedTables(this.m_ado,
-                                    oConn, strWeightedTable + "_1");
-                                string[] strSourceColumnsArray = new string[1];
-                                p_dao.getFieldNames(this.m_strTempMDBFile, strWeightedTable, ref strSourceColumnsArray);
-                                foreach (string strColumn in strSourceColumnsArray)
-                                {
-                                    if (! this.m_ado.ColumnExist(oConn, strWeightedTable + "_1", strColumn))
-                                    {
-                                        this.m_ado.AddColumn(oConn, strWeightedTable + "_1", strColumn, "DOUBLE", "");
-                                    }
-                                }
-                                p_dao.CreateTableLink(this.m_strTempMDBFile, strWeightedTable + "_1", this.m_strContextDbPathAndFile, strWeightedTable + "_1");
-                                m_lstFVSPrePostWeightedTables.Add(strWeightedTable);
-                            }
-                        }
-                    }
-                }
-            }
-            if (p_dao != null)
-            {
-                p_dao.m_DaoWorkspace.Close();
-                p_dao = null;
             }
         }
 
@@ -8687,7 +8660,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//ContextReferenceTables\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 10;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 9;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
 
@@ -8906,7 +8879,7 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
             this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName +
-                            " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_1" +
+                            " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C" +
                             " WHERE SCENARIO_ID = '" + this.m_oProcessorScenarioItem.ScenarioId + "'";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -8919,7 +8892,7 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
             this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
-                " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_1" +
+                " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C" +
                 " WHERE SCENARIO_ID = '" + this.m_oProcessorScenarioItem.ScenarioId + "'";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -8929,11 +8902,11 @@ namespace FIA_Biosum_Manager
 
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
-            this.m_strSQL = "INSERT INTO " + Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_1" +
+            this.m_strSQL = "INSERT INTO " + Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C" +
                             " SELECT * FROM " + Tables.FVS.DefaultRxHarvestCostColumnsTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate rx_harvest_cost_columns_1 table \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate rx_harvest_cost_columns_C table \r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
@@ -8942,43 +8915,25 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_1" +
+            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C" +
                 " SELECT * FROM " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate harvest_costs_1 table \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate harvest_costs_C table \r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
 
-            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_1" +
+            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C" +
                             " SELECT * FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName;
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate tree_vol_val_by_species_diam_groups_1 table \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate tree_vol_val_by_species_diam_groups_C table \r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-           
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
-
-            if (m_lstFVSPrePostWeightedTables != null)
-            {
-                foreach(string strWeightedTable in m_lstFVSPrePostWeightedTables)
-                {
-                    this.m_strSQL = "INSERT INTO " + strWeightedTable + "_1" +
-                                    " SELECT * FROM " + strWeightedTable;
-
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nInsert records into " + strWeightedTable + "_1 table \r\n");
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
-
-                    this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
-                }
-            }
             
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
@@ -8999,6 +8954,120 @@ namespace FIA_Biosum_Manager
             {
                 FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "Done");
 
+            }
+        }
+
+        public void FvsContextReferenceTables()
+        {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//FvsContextReferenceTables\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 10;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
+
+            intListViewIndex = FIA_Biosum_Manager.uc_optimizer_scenario_run.GetListViewItemIndex(
+                ReferenceUserControlScenarioRun.listViewEx1, "Populate FVS PRE-POST Context Database");
+
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
+            FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.EnsureListViewExItemVisible(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "Selected", true);
+            frmMain.g_oDelegate.SetListViewItemPropertyValue(ReferenceUserControlScenarioRun.listViewEx1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem, "focused", true);
+
+
+            dao_data_access oDao = new dao_data_access();
+            ado_data_access oAdo = new ado_data_access();
+
+            // Prepare the database for the next run
+            if (!System.IO.File.Exists(this.m_strFvsContextDbPathAndFile))
+            {
+                oDao.CreateMDB(this.m_strFvsContextDbPathAndFile);
+            }
+            else
+            {
+                string[] arrTableNames = new string[0];
+                oDao.getTableNames(this.m_strFvsContextDbPathAndFile, ref arrTableNames);
+                foreach (string strTableName in arrTableNames)
+                {
+                    if (!String.IsNullOrEmpty(strTableName))
+                    {
+                        oDao.DeleteTableFromMDB(this.m_strFvsContextDbPathAndFile, strTableName);
+                    }
+                }
+            }
+
+            _uc_scenario_run.uc_filesize_monitor3.BeginMonitoringFile(
+              m_strFvsContextDbPathAndFile, 2000000000, "2GB");
+            _uc_scenario_run.uc_filesize_monitor3.Information = "FVS Context Reference Tables";
+
+            // Add FVS PRE-POST tables
+            m_oRxTools.CreateTableLinksToFVSPrePostTables(this.m_strFvsContextDbPathAndFile);
+            m_intError = m_oRxTools.m_intError;
+            if (this.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                return;
+            }
+
+            string[] arrFvsTableNames = new string[0];
+            oDao.getTableNames(this.m_strFvsContextDbPathAndFile, ref arrFvsTableNames);
+
+            string strConn = oAdo.getMDBConnString(this.m_strFvsContextDbPathAndFile, "", "");
+            using (OleDbConnection oConn = new OleDbConnection(strConn))
+            {
+                oConn.Open();
+                foreach (string strFvsTableName in arrFvsTableNames)
+                {
+                    if (!String.IsNullOrEmpty(strFvsTableName))
+                    {
+                        oAdo.m_strSQL = "SELECT * INTO " + strFvsTableName + "_C" +
+                        " from " + strFvsTableName;
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + oAdo.m_strSQL + "\r\n");
+                        oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
+
+                        oAdo.m_strSQL = "DROP TABLE " + strFvsTableName;
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + oAdo.m_strSQL + "\r\n");
+                        oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
+
+                        FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+                    }
+                }
+                CompactMDB(this.m_strFvsContextDbPathAndFile, oConn);               
+            }
+
+            if (oAdo.m_intError != 0)
+            {
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+                this.m_intError = oAdo.m_intError;
+
+                return;
+            }
+
+            _uc_scenario_run.uc_filesize_monitor3.EndMonitoringFile();
+
+            if (this.UserCancel(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic)) return;
+
+
+            if (this.m_intError == 0)
+            {
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "Done");
+
+            }
+
+            if (oDao != null)
+            {
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
             }
         }
 	}
