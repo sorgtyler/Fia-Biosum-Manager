@@ -237,11 +237,11 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
             static public string DefaultScenarioResultsCondPsiteTableName { get { return @"cond_psite"; } }
             static public string DefaultScenarioResultsContextDbFile { get { return @"db\context.accdb"; } }
-            static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"harvest_method_ref"; } }
-            static public string DefaultScenarioResultsRxPackageRefTableName { get { return @"rxpackage_ref"; } }
-            static public string DefaultScenarioResultsDiameterSpeciesGroupRefTableName { get { return @"diameter_species_group_ref"; } }
-            static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"fvs_weighted_variables_ref"; } }
-            static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"econ_weighted_variables_ref"; } }
+            static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"harvest_method_ref_C"; } }
+            static public string DefaultScenarioResultsRxPackageRefTableName { get { return @"rxpackage_ref_C"; } }
+            static public string DefaultScenarioResultsDiameterSpeciesGroupRefTableName { get { return @"diameter_species_group_ref_C"; } }
+            static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"fvs_weighted_variables_ref_C"; } }
+            static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"econ_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsFvsContextDbFile { get { return @"db\fvs_context.accdb"; } }
 			
 			private string strSQL = "";

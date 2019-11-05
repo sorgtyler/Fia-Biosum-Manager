@@ -127,7 +127,7 @@ namespace FIA_Biosum_Manager
             //
             //
             //
-            this.AddListViewRowItem("Populate FVS PRE-POST Context Database", true, true);
+            this.AddListViewRowItem("Populate FVS PRE-POST Context Database", true, false);
             //
             //
             //
@@ -1726,7 +1726,7 @@ namespace FIA_Biosum_Manager
                             !String.IsNullOrEmpty(m_strContextDbPathAndFile))
                         {
                             this.ContextReferenceTables();
-
+                            this.ContextTextFiles(strScenarioOutputFolder);
                         }
 
                         /***************************************************************************
@@ -1822,8 +1822,6 @@ namespace FIA_Biosum_Manager
 							this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile, this.m_strSystemResultsDbPathAndFile);
                             if (! String.IsNullOrEmpty(this.m_strContextDbPathAndFile))
                                 this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile, this.m_strContextDbPathAndFile);
-                            this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\db\\validcombo_fvspre.accdb", this.m_strFVSPreValidComboDbPathAndFile);
-                            this.CopyScenarioResultsTable(strScenarioOutputFolder + "\\db\\validcombo_fvspost.accdb", this.m_strFVSPostValidComboDbPathAndFile);
                             this.m_strSystemResultsDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
                             this.m_strFVSPreValidComboDbPathAndFile = ReferenceUserControlScenarioRun.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioPath.Text.Trim() + "\\db\\validcombo_fvspre.mdb";
                             
@@ -2221,7 +2219,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateDiameterSpeciesGroupRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateFvsWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEconWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName);
-            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioAdditionalHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
+            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioAdditionalHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C");
             
             // Add the ad hoc additional harvest cost columns to table
             string strProcessorPath = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsDbFile;
@@ -2233,13 +2231,13 @@ namespace FIA_Biosum_Manager
             foreach (string strColumn in strSourceColumnsArray)
             {
                 if (! oAdo.ColumnExist(oAdo.m_OleDbConnection,
-                    Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName, strColumn))
+                    Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C", strColumn))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName,
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C",
                         strColumn, "DOUBLE", "");
                 }
             }
-            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsListTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
+            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsListTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C");
             frmMain.g_oTables.m_oFvs.CreateRxHarvestCostColumnTable(oAdo, oAdo.m_OleDbConnection, Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C");
             frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C");
             frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C");
@@ -2365,8 +2363,8 @@ namespace FIA_Biosum_Manager
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedFVSVariablesTableName);
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName, strOptimizerDir, Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName);
             string strProcessorDir = ((frmMain)this._frmScenario.ParentForm).frmProject.uc_project1.m_strProjectDirectory + "\\processor\\" + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsDbFile;
-            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
-            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C", strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName, strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
+            p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName, strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
 
             if (p_dao != null)
             {
@@ -8865,7 +8863,8 @@ namespace FIA_Biosum_Manager
                                  " INNER JOIN " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + " ON " +
                                  Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName + ".ID = " +
                                  Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + ".calculated_variables_id";
-                this.m_strSQL += " SET ECON_WEIGHTED_VARIABLES_REF." + strFieldName + " = calculated_econ_variables_definition.weight";
+                this.m_strSQL += " SET " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName + "." + strFieldName 
+                                 + " = calculated_econ_variables_definition.weight";
                 this.m_strSQL += " where " + Tables.OptimizerDefinitions.DefaultCalculatedEconVariablesTableName + ".rxcycle = '" + strRxCycle + "'";
                 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -8878,8 +8877,8 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName +
-                            " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C" +
+            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C" +
+                            " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName  +
                             " WHERE SCENARIO_ID = '" + this.m_oProcessorScenarioItem.ScenarioId + "'";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -8891,8 +8890,8 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
-                " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C" +
+            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C" +
+                " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
                 " WHERE SCENARIO_ID = '" + this.m_oProcessorScenarioItem.ScenarioId + "'";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -8955,6 +8954,19 @@ namespace FIA_Biosum_Manager
                 FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "Done");
 
             }
+        }
+
+        public void ContextTextFiles(string strScenarioOutputFolder)
+        {
+            ProcessorScenarioTools oProcessorScenarioTools = new ProcessorScenarioTools();
+            string strProperties = oProcessorScenarioTools.ScenarioProperties(this.m_oProcessorScenarioItem);
+            string strPath = strScenarioOutputFolder + @"\db\processor_params_" + this.m_oProcessorScenarioItem.ScenarioId + ".txt";
+            System.IO.File.WriteAllText(strPath, strProperties);
+
+            OptimizerScenarioTools oOptimizerScenarioTools = new OptimizerScenarioTools();
+            strProperties = oOptimizerScenarioTools.ScenarioProperties(this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0));
+            strPath = strScenarioOutputFolder + @"\db\optimizer_params_" + this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).ScenarioId + ".txt";
+            System.IO.File.WriteAllText(strPath, strProperties);
         }
 
         public void FvsContextReferenceTables()
