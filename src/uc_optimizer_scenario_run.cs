@@ -6210,7 +6210,7 @@ namespace FIA_Biosum_Manager
                       "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='4'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + "," +
                        Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_cost_dpgt))),0) AS escalator_chip_haul_cpa_pt," +
                       "escalator_chip_haul_cpa_pt * " + this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt AS chip_haul_cost_dpa," +
-                      "MERCH_VAL_DPA + CHIP_VAL_DPA - HARVEST_ONSITE_COST_DPA - ((CHIP_HAUL_COST_DPA * CHIP_WT_GT) + (MERCH_HAUL_COST_DPA * MERCH_WT_GT)) AS merch_chip_nr_dpa," +
+                      "MERCH_VAL_DPA + CHIP_VAL_DPA - HARVEST_ONSITE_COST_DPA - (CHIP_HAUL_COST_DPA + MERCH_HAUL_COST_DPA) AS merch_chip_nr_dpa," +
                       "merch_val_dpa - harvest_onsite_cost_dpa - merch_haul_cost_dpa AS merch_nr_dpa," +
                       "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".chip_haul_psite IS NULL, 'N','Y') AS usebiomass_yn," +
                       "CDbl(0) AS max_nr_dpa, " +
@@ -6278,7 +6278,73 @@ namespace FIA_Biosum_Manager
                             this.m_strEconByRxWorkTableName + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName
                             + ".biosum_cond_id " +
                             " SET usebiomass_yn = IIF(" + strChipValue + " < CHIP_HAUL_COST_DPGT, 'N', 'Y')" +
-                            " WHERE usebiomass_yn = 'Y'";
+                            " WHERE usebiomass_yn = 'Y' AND RXCYCLE = '1'";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
+            this.m_strSQL = "UPDATE " + this.m_strEconByRxWorkTableName +
+                            " INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " +
+                            "ON " +
+                            this.m_strEconByRxWorkTableName + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName
+                            + ".biosum_cond_id " +
+                            " SET usebiomass_yn = IIF(" + strChipValue + " < CHIP_HAUL_COST_DPGT * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle2 + ", 'N', 'Y')" +
+                            " WHERE usebiomass_yn = 'Y' AND RXCYCLE = '2'";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
+            this.m_strSQL = "UPDATE " + this.m_strEconByRxWorkTableName +
+                " INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " +
+                "ON " +
+                this.m_strEconByRxWorkTableName + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName
+                + ".biosum_cond_id " +
+                " SET usebiomass_yn = IIF(" + strChipValue + " < CHIP_HAUL_COST_DPGT * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle3 + ", 'N', 'Y')" +
+                " WHERE usebiomass_yn = 'Y' AND RXCYCLE = '3'";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+
+
+                return;
+            }
+
+            this.m_strSQL = "UPDATE " + this.m_strEconByRxWorkTableName +
+                " INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + " " +
+                "ON " +
+                this.m_strEconByRxWorkTableName + ".biosum_cond_id=" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName
+                + ".biosum_cond_id " +
+                " SET usebiomass_yn = IIF(" + strChipValue + " < CHIP_HAUL_COST_DPGT * " + this.m_oProcessorScenarioItem.m_oEscalators.EnergyWoodRevenueCycle4 + ", 'N', 'Y')" +
+                " WHERE usebiomass_yn = 'Y' AND RXCYCLE = '4'";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
             this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
