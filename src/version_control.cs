@@ -172,7 +172,6 @@ namespace FIA_Biosum_Manager
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Check m_strProjectVersionArray\r\n");
-            //UpdateDatasources_5_8_8();
             
             try
             {
@@ -510,6 +509,18 @@ namespace FIA_Biosum_Manager
                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 7))
                     {
                         UpdateDatasources_5_8_7();
+                        UpdateProjectVersionFile(strProjVersionFile);
+                        bPerformCheck = false;
+                    }
+                    //5.8.8 Adding Optimizer context database
+                    else if ((Convert.ToInt16(m_strAppVerArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR1]) >= 8 &&
+                            Convert.ToInt16(m_strAppVerArray[APP_VERSION_MINOR2]) >= 8) &&
+                           (Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MAJOR]) == 5 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 8 &&
+                            Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 8))
+                    {
+                        UpdateDatasources_5_8_8();
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
@@ -5971,7 +5982,7 @@ namespace FIA_Biosum_Manager
                         lstScenarios.Add(oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim());
                     }
                 }
-                oAdo.m_OleDbDataReader.Close();
+                oAdo.m_OleDbDataReader.Dispose();
 
                 // Get table locations from project data sources
                 // Load project data sources table
@@ -5994,9 +6005,10 @@ namespace FIA_Biosum_Manager
                     strHarvestMethodFileName = oProjectDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
                     //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
                     strHarvestMethodTableName = oProjectDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+                    
                     foreach (string strScenario in lstScenarios)
                     {
-                        oAdo.m_strSQL = "select * from scenario_datasource where scenario_id = '" + strScenario + "'" +
+                        oAdo.m_strSQL = "select COUNT(*) from scenario_datasource where scenario_id = '" + strScenario + "'" +
                                         " and table_type = '" + Datasource.TableTypes.HarvestMethods + "'";
                         int intCount = oAdo.getRecordCount(oAdo.m_OleDbConnection, oAdo.m_strSQL, "scenario_datasource");
                         if (intCount < 1)
@@ -6017,7 +6029,7 @@ namespace FIA_Biosum_Manager
                     string strTableName = oProjectDs.m_strDataSource[intRxHarvestTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
                     foreach (string strScenario in lstScenarios)
                     {
-                        oAdo.m_strSQL = "select * from scenario_datasource where scenario_id = '" + strScenario + "'" +
+                        oAdo.m_strSQL = "select COUNT(*) from scenario_datasource where scenario_id = '" + strScenario + "'" +
                                         " and table_type = 'Treatment Prescriptions Harvest Cost Columns'";
                         int intCount = oAdo.getRecordCount(oAdo.m_OleDbConnection, oAdo.m_strSQL, "scenario_datasource");
                         if (intCount < 1)
@@ -6033,31 +6045,35 @@ namespace FIA_Biosum_Manager
                 // Add new and populate column to harvest methods table
                 if (intHarvestMethodsTable > -1)
                 {
+                    frmMain.g_sbpInfo.Text = "Version Update: Adding and populating new column in harvest_methods table ...Stand by";
                     string strHarvestMdb = strHarvestMethodDirectoryPath + "\\" + strHarvestMethodFileName;
+                    string strWorktable = "harvest_methods_work";
                     oAdo.OpenConnection(oAdo.getMDBConnString(strHarvestMdb, "", ""));
                     if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strHarvestMethodTableName, "top_limb_slope_status"))
                     {
+                        oAdo.CloseConnection(oAdo.m_OleDbConnection);   // close/reopen connection to avoid missing table errors after creating link
+                        string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\ref_master.mdb";
+                        oDao.CreateTableLink(strHarvestMethodDirectoryPath + "\\" + strHarvestMethodFileName, strWorktable,
+                            strSourceDbFile, "harvest_methods");
+                        oAdo.OpenConnection(oAdo.getMDBConnString(strHarvestMdb, "", ""));
+                        int i = 0;
+                        do
+                        {
+                            // break out of loop if it runs too long
+                            if (i > 20)
+                            {
+                                System.Windows.Forms.MessageBox.Show("An error occurred while trying to update the harvest_methos table! " +
+                                "Validate the contents of this table before trying to run Treatment Optimizer.", "FIA Biosum");
+                                break;
+                            }
+                            System.Threading.Thread.Sleep(1000);
+                            i++;
+                        }
+                        while (!oAdo.TableExist(oAdo.m_OleDbConnection, strWorktable));
+                        
                         oAdo.AddColumn(oAdo.m_OleDbConnection, strHarvestMethodTableName, "top_limb_slope_status", "CHAR", "100");
                         if (oAdo.m_intError == 0)
                         {
-                            string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\ref_master.mdb";
-                            string strWorktable = "harvest_methods_work";
-                            oDao.CreateTableLink(strHarvestMethodDirectoryPath + "\\" + strHarvestMethodFileName, strWorktable,
-                                strSourceDbFile, "harvest_methods");
-                            do
-                            {
-                                // break out of loop if it runs too long
-                                int i = 0;
-                                if (i > 20)
-                                {
-                                    System.Windows.Forms.MessageBox.Show("An error occurred while trying to update the harvest_methos table! " +
-                                    "Validate the contents of this table before trying to run Treatment Optimizer.", "FIA Biosum");
-                                    break;
-                                }
-                                System.Threading.Thread.Sleep(1000);
-                                i++;
-                            }
-                            while (!oAdo.TableExist(oAdo.m_OleDbConnection, strWorktable));
                             oAdo.m_strSQL = "UPDATE " + strHarvestMethodTableName +
                                             " INNER JOIN " + strWorktable + " ON TRIM(" + strWorktable + ".Method)" +
                                             " = TRIM(" + strHarvestMethodTableName + ".Method) AND " +
@@ -6070,12 +6086,16 @@ namespace FIA_Biosum_Manager
                     }
                 }
 
-
-
+                // Update variable_source values for calculated economic variables
+                string strVariablesAccdb = ReferenceProjectDirectory.Trim() + "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
+                oAdo.OpenConnection(oAdo.getMDBConnString(strVariablesAccdb, "", ""));
+                oAdo.m_strSQL = "UPDATE " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                                " SET variable_source = replace(variable_source, 'ECON_BY_RX_SUM','ECON_BY_RX_UTILIZED_SUM')";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                oAdo.m_strSQL = "UPDATE " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                " SET variable_source = replace(variable_source, 'chip_vol','chip_vol_utilized')";
+                oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
             }
-
-
-
             oAdo.m_OleDbConnection.Close();
 
 
