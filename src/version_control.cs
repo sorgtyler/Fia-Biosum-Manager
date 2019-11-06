@@ -172,7 +172,8 @@ namespace FIA_Biosum_Manager
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(frmMain.g_oFrmMain.frmProject.uc_project1.m_strDebugFile, "version_control.PerformVersionCheck: Check m_strProjectVersionArray\r\n");
-
+            //UpdateDatasources_5_8_8();
+            
             try
             {
                 if (bProjectVersionArrayUsed)
@@ -5631,7 +5632,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        public void UpdateDatasources_5_8_7()
+        private void UpdateDatasources_5_8_7()
         {
             ado_data_access oAdo = new ado_data_access();
             dao_data_access oDao = new dao_data_access();
@@ -5946,6 +5947,151 @@ namespace FIA_Biosum_Manager
             }
         }
 
+        private void UpdateDatasources_5_8_8()
+        {
+            ado_data_access oAdo = new ado_data_access();
+            dao_data_access oDao = new dao_data_access();
+
+            // Resize column name
+            string strMdb = ReferenceProjectDirectory.Trim() + "\\" + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableDbFile;
+            oAdo.OpenConnection(oAdo.getMDBConnString(strMdb, "", ""));
+            oAdo.m_strSQL = "ALTER TABLE " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioPSitesTableName + " ALTER COLUMN NAME TEXT (100)";
+            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+            // Add entries to Optimizer scenario_datasource table
+            oAdo.m_strSQL = "SELECT SCENARIO_ID FROM " + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioCostsTableName;
+            oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+            if (oAdo.m_OleDbDataReader.HasRows)
+            {
+                IList<string> lstScenarios = new List<string>();
+                while (oAdo.m_OleDbDataReader.Read())
+                {
+                    if (oAdo.m_OleDbDataReader["scenario_id"] != System.DBNull.Value)
+                    {
+                        lstScenarios.Add(oAdo.m_OleDbDataReader["scenario_id"].ToString().Trim());
+                    }
+                }
+                oAdo.m_OleDbDataReader.Close();
+
+                // Get table locations from project data sources
+                // Load project data sources table
+                FIA_Biosum_Manager.Datasource oProjectDs = new Datasource();
+                oProjectDs.m_strDataSourceMDBFile = ReferenceProjectDirectory.Trim() + "\\db\\project.mdb";
+                oProjectDs.m_strDataSourceTableName = "datasource";
+                oProjectDs.m_strScenarioId = "";
+                oProjectDs.LoadTableColumnNamesAndDataTypes = false;
+                oProjectDs.LoadTableRecordCount = false;
+                oProjectDs.populate_datasource_array();
+
+                int intHarvestMethodsTable = oProjectDs.getValidTableNameRow(Datasource.TableTypes.HarvestMethods);
+                int intRxHarvestTable = oProjectDs.getValidTableNameRow("Treatment Prescriptions Harvest Cost Columns");
+                string strHarvestMethodDirectoryPath = "";
+                string strHarvestMethodFileName = "";
+                string strHarvestMethodTableName = "";
+                if (intHarvestMethodsTable > -1)
+                {
+                    strHarvestMethodDirectoryPath = oProjectDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+                    strHarvestMethodFileName = oProjectDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+                    //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+                    strHarvestMethodTableName = oProjectDs.m_strDataSource[intHarvestMethodsTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+                    foreach (string strScenario in lstScenarios)
+                    {
+                        oAdo.m_strSQL = "select * from scenario_datasource where scenario_id = '" + strScenario + "'" +
+                                        " and table_type = '" + Datasource.TableTypes.HarvestMethods + "'";
+                        int intCount = oAdo.getRecordCount(oAdo.m_OleDbConnection, oAdo.m_strSQL, "scenario_datasource");
+                        if (intCount < 1)
+                        {
+                            oAdo.m_strSQL = "insert into scenario_datasource" +
+                                            " (scenario_id, table_type, path, file, table_name)" +
+                                            "values ('" + strScenario + "', '" + Datasource.TableTypes.HarvestMethods + "','" +
+                                            strHarvestMethodDirectoryPath + "', '" + strHarvestMethodFileName + "', '" + strHarvestMethodTableName + "')";
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                        }
+                    }
+                }
+                if (intRxHarvestTable > -1)
+                {
+                    string strDirectoryPath = oProjectDs.m_strDataSource[intRxHarvestTable, FIA_Biosum_Manager.Datasource.PATH].Trim();
+                    string strFileName = oProjectDs.m_strDataSource[intRxHarvestTable, FIA_Biosum_Manager.Datasource.MDBFILE].Trim();
+                    //(‘F’ = FILE FOUND, ‘NF’ = NOT FOUND)
+                    string strTableName = oProjectDs.m_strDataSource[intRxHarvestTable, FIA_Biosum_Manager.Datasource.TABLE].Trim();
+                    foreach (string strScenario in lstScenarios)
+                    {
+                        oAdo.m_strSQL = "select * from scenario_datasource where scenario_id = '" + strScenario + "'" +
+                                        " and table_type = 'Treatment Prescriptions Harvest Cost Columns'";
+                        int intCount = oAdo.getRecordCount(oAdo.m_OleDbConnection, oAdo.m_strSQL, "scenario_datasource");
+                        if (intCount < 1)
+                        {
+                            oAdo.m_strSQL = "insert into scenario_datasource" +
+                                            " (scenario_id, table_type, path, file, table_name)" +
+                                            "values ('" + strScenario + "', 'Treatment Prescriptions Harvest Cost Columns','" +
+                                            strDirectoryPath + "', '" + strFileName + "', '" + strTableName + "')";
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                        }
+                    }
+                }
+                // Add new and populate column to harvest methods table
+                if (intHarvestMethodsTable > -1)
+                {
+                    string strHarvestMdb = strHarvestMethodDirectoryPath + "\\" + strHarvestMethodFileName;
+                    oAdo.OpenConnection(oAdo.getMDBConnString(strHarvestMdb, "", ""));
+                    if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, strHarvestMethodTableName, "top_limb_slope_status"))
+                    {
+                        oAdo.AddColumn(oAdo.m_OleDbConnection, strHarvestMethodTableName, "top_limb_slope_status", "CHAR", "100");
+                        if (oAdo.m_intError == 0)
+                        {
+                            string strSourceDbFile = frmMain.g_oEnv.strAppDir.Trim() + "\\db\\ref_master.mdb";
+                            string strWorktable = "harvest_methods_work";
+                            oDao.CreateTableLink(strHarvestMethodDirectoryPath + "\\" + strHarvestMethodFileName, strWorktable,
+                                strSourceDbFile, "harvest_methods");
+                            do
+                            {
+                                // break out of loop if it runs too long
+                                int i = 0;
+                                if (i > 20)
+                                {
+                                    System.Windows.Forms.MessageBox.Show("An error occurred while trying to update the harvest_methos table! " +
+                                    "Validate the contents of this table before trying to run Treatment Optimizer.", "FIA Biosum");
+                                    break;
+                                }
+                                System.Threading.Thread.Sleep(1000);
+                                i++;
+                            }
+                            while (!oAdo.TableExist(oAdo.m_OleDbConnection, strWorktable));
+                            oAdo.m_strSQL = "UPDATE " + strHarvestMethodTableName +
+                                            " INNER JOIN " + strWorktable + " ON TRIM(" + strWorktable + ".Method)" +
+                                            " = TRIM(" + strHarvestMethodTableName + ".Method) AND " +
+                                            strWorktable + ".STEEP_YN = " + strHarvestMethodTableName + ".STEEP_YN" +
+                                            " SET " + strHarvestMethodTableName + ".top_limb_slope_status = " + strWorktable + ".top_limb_slope_status";
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                            oAdo.m_strSQL = "DROP TABLE " + strWorktable;
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                        }
+                    }
+                }
+
+
+
+            }
+
+
+
+            oAdo.m_OleDbConnection.Close();
+
+
+            if (oDao != null)
+            {
+                oDao.m_DaoWorkspace.Close();
+                oDao = null;
+            }
+            if (oAdo != null)
+            {
+                oAdo.CloseConnection(oAdo.m_OleDbConnection);
+                oAdo = null;
+            }
+        }
+
+        
         public string ReferenceProjectDirectory
 		{
 			get {return _strProjDir;}
