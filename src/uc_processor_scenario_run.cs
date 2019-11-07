@@ -47,6 +47,7 @@ namespace FIA_Biosum_Manager
         string m_strRxCycleList = "";
         string[] m_strFVSTreeTableLinkNameArray = null;
         private ListViewColumnSorter lvwColumnSorter;
+        private bool bIncludeInactiveStands = true;
 
         //reference variables
         private string _strScenarioId = "";
@@ -424,11 +425,20 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSSummaryDbFile,
                 Tables.FVS.DefaultPreFVSSummaryTableName, true);
             // link to POST_FVS_COMPUTE table
-            oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
-                Tables.FVS.DefaultPostFVSComputeTableName,
-                frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPostFVSComputeDbFile,
-                Tables.FVS.DefaultPostFVSComputeTableName, true);
-
+            if (oDao.TableExists(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPostFVSComputeDbFile, Tables.FVS.DefaultPostFVSComputeTableName))
+            {
+                oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
+                    Tables.FVS.DefaultPostFVSComputeTableName,
+                    frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPostFVSComputeDbFile,
+                    Tables.FVS.DefaultPostFVSComputeTableName, true);
+            }
+            else
+            {
+                bIncludeInactiveStands = false;
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(strDebugFile, "loadvalues(): POST_FVS_COMPUTE table was not found. Stands with no " +
+                        "activity will not be included in analysis! \r\n");
+            }
 
             oDao.m_DaoDbEngine.Idle(1);
             oDao.m_DaoDbEngine.Idle(8);
@@ -4061,6 +4071,69 @@ namespace FIA_Biosum_Manager
 
         }
 
+        private void RunScenario_AppendInactiveStandsToHarvestCostsTable(string p_strHarvestCostsTableName, string p_strVariant, string p_strRxPackage)
+        {
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_AddInactiveStandsToHarvestCostsTable\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+            }
+
+            if (m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.FVS.DefaultPostFVSComputeTableName, "activity_YN"))
+            {
+                m_oAdo.m_strSQL = "select count (*) from " + Tables.FVS.DefaultPostFVSComputeTableName +
+                    " where activity_YN='Y'";
+                int intInactiveCount = m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, Tables.FVS.DefaultPostFVSComputeTableName);
+                if (intInactiveCount < 1)
+                {
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//No inactive stands marked in POST_FVS_COMPUTE table! " +
+                            "Nothing to append \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                    }
+                    bIncludeInactiveStands = false;
+                    return;
+                }
+            }
+            else
+            {
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//activity_YN column is missing from POST_FVS_COMPUTE table. " +
+                        "Stands with no activity will not be included in analysis! \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                }
+                bIncludeInactiveStands = false;
+                return;
+            }
+
+            string strFvsComputeTable = Tables.FVS.DefaultPostFVSComputeTableName;
+            m_oAdo.m_strSQL = "insert into " + p_strHarvestCostsTableName +
+                              " select " + strFvsComputeTable + ".biosum_cond_id, " + strFvsComputeTable + ".rxpackage, " + strFvsComputeTable + ".rx, " +
+                              strFvsComputeTable + ".rxcycle, 0 as complete_cpa, 0 as harvest_cpa, '" + m_strDateTimeCreated + "' as DateTimeCreated" +
+                              " from " + p_strHarvestCostsTableName +
+                              " right outer join " + strFvsComputeTable + " on " +
+                              p_strHarvestCostsTableName + ".biosum_cond_id=" + strFvsComputeTable + ".biosum_cond_id and " +
+                              p_strHarvestCostsTableName + ".rxpackage=" + strFvsComputeTable + ".rxpackage and " +
+                              p_strHarvestCostsTableName + ".rx=" + strFvsComputeTable + ".rx and " +
+                              p_strHarvestCostsTableName + ".rxcycle=" + strFvsComputeTable + ".rxcycle" +
+                              " where " + p_strHarvestCostsTableName + ".biosum_cond_id is null" +
+                              " and " + strFvsComputeTable + ".activity_YN = 'Y' AND " +
+                              strFvsComputeTable + ".FVS_VARIANT = '" + p_strVariant + "' AND " +
+                              strFvsComputeTable + ".RXPACKAGE = '" + p_strRxPackage + "'";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + m_oAdo.m_strSQL + "\r\n");
+            m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+
+            m_intError = m_oAdo.m_intError;
+            m_strError = m_oAdo.m_strError;
+        }
+
 
         private void RunScenario_DeleteFromTreeVolValAndHarvestCostsTable(string p_strVariant, string p_strRxPackage)
         {
@@ -4679,6 +4752,16 @@ namespace FIA_Biosum_Manager
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append OPCOST Data To Harvest Costs Work Table...Stand By");
                         RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable", false);
+                    }
+                    if (m_intError == 0)
+                    {
+                        y++;
+                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                    }
+                    if (m_intError == 0 && bIncludeInactiveStands == true)
+                    {
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Inactive Stands With Harvest Costs To Harvest Costs Work Table...Stand By");
+                        RunScenario_AppendInactiveStandsToHarvestCostsTable("HarvestCostsWorkTable", strVariant, strRxPackage);
                     }
                     if (m_intError == 0)
                     {
