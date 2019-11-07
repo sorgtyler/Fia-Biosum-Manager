@@ -845,20 +845,7 @@ namespace FIA_Biosum_Manager
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
 
-				//strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\in";
-				//if (!System.IO.Directory.Exists(strFullPath))
-				//	System.IO.Directory.CreateDirectory(strFullPath);
-
-				//strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\db\\out";
-				//if (!System.IO.Directory.Exists(strFullPath))
-				//	System.IO.Directory.CreateDirectory(strFullPath);
-
 				strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\data";
-				if (!System.IO.Directory.Exists(strFullPath))
-					System.IO.Directory.CreateDirectory(strFullPath);
-
-
-				strFullPath = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts";
 				if (!System.IO.Directory.Exists(strFullPath))
 					System.IO.Directory.CreateDirectory(strFullPath);
 
@@ -973,14 +960,6 @@ namespace FIA_Biosum_Manager
 				frmMain.g_oTables.m_oFIAPlot.CreateTreeRegionalBiomassTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oFIAPlot.DefaultTreeRegionalBiomassTableName);
 				//tree table
 				frmMain.g_oTables.m_oFIAPlot.CreateTreeTable(p_ado,p_ado.m_OleDbConnection,frmMain.g_oTables.m_oFIAPlot.DefaultTreeTableName);
-				//harvest costs table
-				frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(p_ado,p_ado.m_OleDbConnection,"harvest_costs");
-                //harvest costs extra costs table
-                frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(p_ado, p_ado.m_OleDbConnection, Tables.Processor.DefaultAdditionalHarvestCostsTableName);
-				//tree species diam dollar values table
-				//frmMain.g_oTables.m_oProcessor.CreateTreeSpeciesDollarValuesTable(p_ado,p_ado.m_OleDbConnection,"tree_species_diam_dollar_values");
-				//tree vol val species diam table
-				frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(p_ado,p_ado.m_OleDbConnection,"tree_vol_val_by_species_diam_groups");
                 //biosum pop stratum adjustment factors table
                 frmMain.g_oTables.m_oFIAPlot.CreateBiosumPopStratumAdjustmentFactorsTable(p_ado, p_ado.m_OleDbConnection, frmMain.g_oTables.m_oFIAPlot.DefaultBiosumPopStratumAdjustmentFactorsTableName);
 
@@ -1098,26 +1077,6 @@ namespace FIA_Biosum_Manager
 				p_ado.OpenConnection(strConn);
 				frmMain.g_oTables.m_oFvs.CreateFVSOutProcessorIn(p_ado,p_ado.m_OleDbConnection,Tables.FVS.DefaultFVSTreeTableName);
 				p_ado.CloseConnection(p_ado.m_OleDbConnection);
-
-                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_PREDISPOSE_FIXTREEID.txt";
-                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_PREDISPOSE_FIXTREEID.txt";
-                System.IO.File.Copy(strSourceFile, strDestFile, true);
-
-                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
-                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_AddSeedlings.txt";
-                System.IO.File.Copy(strSourceFile, strDestFile, true);
-
-                strSourceFile = this.m_oEnv.strAppDir + "\\SCRIPT_VB_AddSeedlings.txt";
-                strDestFile = this.txtRootDirectory.Text.Trim() + "\\fvs\\scripts\\SCRIPT_VB_DeleteSeedlings.txt";
-                System.IO.File.Copy(strSourceFile, strDestFile, true);
-
-				p_frmTherm.Increment(10);
-				p_frmTherm.lblMsg.Text = strDestFile;
-				p_frmTherm.lblMsg.Refresh();
-
-				p_ado.CloseConnection(p_ado.m_OleDbConnection);
-
-				
 
 				if (this.txtShared.Text.Trim().Length > 0)
 				{

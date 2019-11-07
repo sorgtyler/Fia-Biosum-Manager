@@ -227,18 +227,17 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsValidCombosFVSPostTableName { get { return "validcombos_fvspost"; } }
             static public string DefaultScenarioResultsValidCombosTableDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsValidCombosTableName { get { return "validcombos"; } }
-            static public string DefaultScenarioResultsTreeVolValSumTableDbFile { get { return @"db\optimizer_results.accdb"; } }
-            static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx_cycle"; } }
-            static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableDbFile { get { return @"db\optimizer_results.accdb"; } }
-            static public string DefaultScenarioResultsTreeVolValSumByRxPackageTableName { get { return "tree_vol_val_sum_by_rxpackage"; } }
+            static public string DefaultScenarioResultsTreeVolValSumTableName { get { return "tree_vol_val_sum_by_rx_cycle_work"; } }
             static public string DefaultCalculatedPrePostFVSVariableTableDbFile { get { return @"optimizer\db\prepost_fvs_weighted.accdb"; } }
             static public string DefaultScenarioResultsPostEconomicWeightedTableName { get { return @"post_economic_weighted"; } }
             static public string DefaultScenarioResultsDbFile { get { return @"db\optimizer_results.accdb"; } }
             static public string DefaultScenarioResultsEconByRxCycleTableName { get { return @"econ_by_rx_cycle"; } }
-            static public string DefaultScenarioResultsEconByRxSumTableName { get { return @"econ_by_rx_sum"; } }
+            static public string DefaultScenarioResultsEconByRxUtilSumTableName { get { return @"econ_by_rx_utilized_sum"; } }
             static public string DefaultScenarioResultsPSiteAccessibleWorkTableName { get { return @"psite_accessible_work_table"; } }
             static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
-
+            static public string DefaultScenarioResultsCondPsiteTableName { get { return @"cond_psite"; } }
+            static public string DefaultScenarioResultsContextDbFile { get { return @"db\context.accdb"; } }
+            static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"HARVEST_METHOD_REF"; } }
 
 			
 			private string strSQL = "";
@@ -981,34 +980,7 @@ namespace FIA_Biosum_Manager
 					"merch_val_dpa DOUBLE," +
                     "place_holder CHAR(1) DEFAULT 'N')";
 			}
-            //
-            //TREE VOLUME AND VALUE SUM BY RX PACKAGE TABLE
-            //
-            public void CreateTreeVolValSumByRxPackageTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
-            {
-                p_oAdo.SqlNonQuery(p_oConn, CreateTreeVolValSumByRxPackageTableSQL(p_strTableName));
-                CreateTreeVolValSumByRxPackageTableIndexes(p_oAdo, p_oConn, p_strTableName);
 
-
-            }
-            public void CreateTreeVolValSumByRxPackageTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
-            {
-                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id,rxpackage");
-            }
-
-            static public string CreateTreeVolValSumByRxPackageTableSQL(string p_strTableName)
-            {
-                return "CREATE TABLE " + p_strTableName + " (" +
-                    "biosum_cond_id CHAR(25)," +
-                    "rxpackage CHAR(3)," +
-                    "chip_vol_cf DOUBLE," +
-                    "chip_wt_gt DOUBLE," +
-                    "chip_val_dpa DOUBLE," +
-                    "merch_vol_cf DOUBLE," +
-                    "merch_wt_gt DOUBLE," +
-                    "merch_val_dpa DOUBLE," +
-                    "hvst_type_by_cycle CHAR(4))";
-            }
 			//
 			//PRODUCT YIELDS NET REVENUE/COSTS SUMMARY TABLE
 			//
@@ -1046,44 +1018,37 @@ namespace FIA_Biosum_Manager
 					"max_nr_dpa DOUBLE," +
                     "acres DOUBLE," +
                     "owngrpcd INTEGER," +
-                    "merch_psite_num INTEGER," +
-                    "merch_psite_name CHAR(255)," +
-                    "chip_psite_num INTEGER," +
-                    "chip_psite_name CHAR(255)," +
-                    "haul_costs_dpa CHAR(255)," +
-                    "use_air_dest_YN CHAR(1)," +
-                    "chip_acd_wt_gt DOUBLE," +
-                    "place_holder CHAR(1) DEFAULT 'N')";
+                    "haul_costs_dpa CHAR(255) )";
 			}
 
             //
             //PRODUCT YIELDS NET REVENUE/COSTS SUMMARY BY PACKAGE TABLE
             //
-            public void CreateProductYieldsByRxPackageTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateEconByRxUtilSumTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
-                p_oAdo.SqlNonQuery(p_oConn, CreateProductYieldsByRxPackageTableSQL(p_strTableName));
-                CreateProductYieldsByRxPackageTableIndexes(p_oAdo, p_oConn, p_strTableName);
+                p_oAdo.SqlNonQuery(p_oConn, CreateEconByRxUtilTableSQL(p_strTableName));
+                CreateEconByRxUtilTableIndexes(p_oAdo, p_oConn, p_strTableName);
 
 
             }
-            public void CreateProductYieldsByRxPackageTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            public void CreateEconByRxUtilTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
                 p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id,rxpackage");
             }
 
-            static public string CreateProductYieldsByRxPackageTableSQL(string p_strTableName)
+            static public string CreateEconByRxUtilTableSQL(string p_strTableName)
             {
                 return "CREATE TABLE " + p_strTableName + " (" +
                     "biosum_cond_id CHAR(25)," +
                     "rxpackage CHAR(3)," +
-                    "chip_vol_cf DOUBLE," +
+                    "chip_vol_cf_utilized DOUBLE," +
                     "merch_vol_cf DOUBLE," +
-                    "chip_wt_gt DOUBLE," +
+                    "chip_wt_gt_utilized DOUBLE," +
                     "merch_wt_gt DOUBLE," +
-                    "chip_val_dpa DOUBLE," +
+                    "chip_val_dpa_utilized DOUBLE," +
                     "merch_val_dpa DOUBLE," +
                     "harvest_onsite_cost_dpa DOUBLE," +
-                    "chip_haul_cost_dpa DOUBLE," +
+                    "chip_haul_cost_dpa_utilized DOUBLE," +
                     "merch_haul_cost_dpa DOUBLE," +
                     "merch_chip_nr_dpa DOUBLE," +
                     "merch_nr_dpa DOUBLE," +
@@ -1091,9 +1056,8 @@ namespace FIA_Biosum_Manager
                     "acres DOUBLE," +
                     "treated_acres DOUBLE," +
                     "owngrpcd INTEGER," +
-                    "merch_psite_num INTEGER," +
-                    "merch_psite_name CHAR(255)," +
-                    "haul_costs_dpa CHAR(255) )";
+                    "haul_costs_dpa CHAR(255)," +
+                    "hvst_type_by_cycle CHAR(4))";
             }
             //
             //RX PLOT VALUES (COSTS, REVENUES, VOLUMES)
@@ -1396,8 +1360,69 @@ namespace FIA_Biosum_Manager
                     "cond_too_far_steep_yn CHAR(1) DEFAULT 'N'," +
                     "cond_accessible_yn CHAR(1) DEFAULT 'Y')";
             }
-			
-		
+
+            //
+            //COND_PSITE TABLE
+            //
+            public void CreateCondPsiteTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateCondPsiteTableSQL(p_strTableName));
+                CreateCondPsiteTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateCondPsiteTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id");
+            }
+
+            static public string CreateCondPsiteTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "BIOSUM_COND_ID CHAR(25)," +
+                    "MERCH_PSITE_NUM INTEGER," +
+                    "MERCH_PSITE_NAME CHAR(255)," +
+                    "CHIP_PSITE_NUM INTEGER," +
+                    "CHIP_PSITE_NAME CHAR(255) )";
+            }
+
+            //
+            //COND_PSITE TABLE
+            //
+            public void CreateHarvestMethodRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateHarvestMethodRefTableSQL(p_strTableName));
+                CreateHarvestMethodRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateHarvestMethodRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk1", "RX");
+            }
+
+            static public string CreateHarvestMethodRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "RX CHAR(3)," +
+                    "RX_HARVEST_METHOD_LOW CHAR(50)," +
+                    "RX_HARVEST_METHOD_LOW_ID INTEGER," +
+                    "RX_HARVEST_METHOD_LOW_CATEGORY INTEGER," +
+                    "RX_HARVEST_METHOD_LOW_CATEGORY_DESCR CHAR(100)," +
+                    "RX_HARVEST_METHOD_STEEP CHAR(50)," +
+                    "RX_HARVEST_METHOD_STEEP_ID INTEGER," +
+                    "RX_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
+                    "RX_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100)," +
+                    "USE_RX_HARVEST_METHOD_YN CHAR(1)," +
+                    "SCENARIO_HARVEST_METHOD_LOW CHAR(50)," +
+                    "SCENARIO_HARVEST_METHOD_LOW_ID INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_LOW_CATEGORY INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_LOW_CATEGORY_DESCR CHAR(100)," +
+                    "SCENARIO_HARVEST_METHOD_STEEP CHAR(50)," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_ID INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100) )";
+            }
 		}
 		public class OptimizerScenarioRuleDefinitions
 		{
@@ -3627,15 +3652,6 @@ namespace FIA_Biosum_Manager
             public Processor()
             {
             }
-            static public string DefaultHarvestCostsTableDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultHarvestCostsTableName { get { return "harvest_costs"; } }
-            static public string DefaultAdditionalHarvestCostsTableName { get { return "additional_harvest_costs"; } }
-            static public string DefaultAdditionalHarvestCostsTableDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultTreeVolValSpeciesDiamGroupsDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultTreeVolValSpeciesDiamGroupsTableName { get { return "tree_vol_val_by_species_diam_groups"; } }
-            static public string DefaultHarvestMethodTableDbFile { get { return @"db\master.mdb"; } }
-            static public string DefaultHarvestMethodTableName { get { return @"harvest_method"; } }
-            static public string DefaultOpcostErrorsTableName { get { return @"opcost_errors"; } }
 
             public void CreateHarvestCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -3976,6 +3992,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultTreeBinSteepSlopeTableName { get { return "BinsSteepSlope"; } }
             static public string DefaultTreeHwdBinSteepSlopeTableName { get { return "Hwd_BinsSteepSlope"; } }
             static public string DefaultFiaTreeSpeciesRefTableName { get { return "FIA_TREE_SPECIES_REF"; } }
+            static public string DefaultOpcostErrorsTableName { get { return @"opcost_errors"; } }
 
 			public ProcessorScenarioRun()
 			{
@@ -4696,8 +4713,6 @@ namespace FIA_Biosum_Manager
 			static public string DefaultTreeSpeciesTableName {get {return "tree_species";}}
 			static public string DefaultOwnerGroupsTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultOwnerGroupsTableName {get {return "owner_groups";}}
-			static public string DefaultInventoriesTableDbFile {get {return @"db\ref_master.mdb";}}
-			static public string DefaultInventoriesTableName {get {return "inventories";}}
 			static public string DefaultFVSTreeSpeciesTableDbFile {get {return @"db\ref_master.mdb";}}
 			static public string DefaultFVSTreeSpeciesTableName {get {return "fvs_tree_species";}}
 			static public string DefaultFiadbFVSVariantTableName {get {return "fiadb_fvs_variant";}}
@@ -4815,25 +4830,6 @@ namespace FIA_Biosum_Manager
 					"owngrpcd INTEGER," + 
 					"idb_owngrpcd INTEGER," + 
 					"`desc` CHAR(25))";
-			}
-			public void CreateInventoriesTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.SqlNonQuery(p_oConn,CreateInventoriesTableSQL(p_strTableName));
-				CreateInventoriesTableIndexes(p_oAdo,p_oConn,p_strTableName);
-			}
-			public void CreateInventoriesTableIndexes(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
-			{
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx1","inv_id");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx2","idb_data_source");
-				p_oAdo.AddIndex(p_oConn,p_strTableName,p_strTableName + "_idx3","inv_id_def");
-			}
-			static public string CreateInventoriesTableSQL(string p_strTableName)
-			{
-				return "CREATE TABLE " + p_strTableName + " (" +
-					"inv_id CHAR(4)," + 
-					"idb_data_source CHAR(6)," + 
-					"description CHAR(50)," + 
-					"inv_id_def CHAR(50)";
 			}
 			public void CreateFVSTreeSpeciesTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{

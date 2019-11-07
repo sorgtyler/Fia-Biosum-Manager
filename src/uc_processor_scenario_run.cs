@@ -3414,12 +3414,12 @@ namespace FIA_Biosum_Manager
             using (var oConn = new System.Data.OleDb.OleDbConnection(m_oAdo.m_OleDbConnection.ConnectionString))
             {
                 oConn.Open();
-                if (oAdo.TableExist(oConn.ConnectionString, Tables.Processor.DefaultOpcostErrorsTableName))
+                if (oAdo.TableExist(oConn.ConnectionString, Tables.ProcessorScenarioRun.DefaultOpcostErrorsTableName))
                 {
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Querying " + Tables.Processor.DefaultOpcostErrorsTableName + "table \r\n");
-                    int intCount = Convert.ToInt32(oAdo.getRecordCount(oConn, "select count(*) from " + Tables.Processor.DefaultOpcostErrorsTableName, 
-                        Tables.Processor.DefaultOpcostErrorsTableName));
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Querying " + Tables.ProcessorScenarioRun.DefaultOpcostErrorsTableName + "table \r\n");
+                    int intCount = Convert.ToInt32(oAdo.getRecordCount(oConn, "select count(*) from " + Tables.ProcessorScenarioRun.DefaultOpcostErrorsTableName,
+                        Tables.ProcessorScenarioRun.DefaultOpcostErrorsTableName));
 
                     if (intCount > 0)
                     {
@@ -4120,7 +4120,7 @@ namespace FIA_Biosum_Manager
                 //
                 //APPEND TO SCENARIO TREE VOL VAL TABLE
                 //
-                m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
+                m_oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
                                   "SELECT * FROM TreeVolValLowSlope";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
@@ -4131,7 +4131,7 @@ namespace FIA_Biosum_Manager
                 //
                 //APPEND TO SCENARIO TREE VOL VAL TABLE
                 //
-                m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
+                m_oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
                                   "SELECT * FROM TreeVolValSteepSlope";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
@@ -4142,7 +4142,7 @@ namespace FIA_Biosum_Manager
                 //
                 //APPEND TO SCENARIO HARVEST COST TABLE
                 //
-                m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultHarvestCostsTableName + " " +
+                m_oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + " " +
                                   "SELECT * FROM HarvestCostsWorkTable";
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
@@ -4210,11 +4210,11 @@ namespace FIA_Biosum_Manager
             {
                 // Query the conditions/rxpackage that have records in cycles 2,3, and 4 but not in cycle 1
                 m_oAdo.m_strSQL = "SELECT t.biosum_cond_id, t.rxpackage, t.rx " +
-                    "FROM " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " t " +
+                    "FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " t " +
                     "WHERE t.rxcycle in ('2','3','4') " +
                     "AND NOT EXISTS (" +
                     "SELECT t1.biosum_cond_id, t1.rxpackage " +
-                    "FROM " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " t1 " +
+                    "FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " t1 " +
                     "WHERE t1.rxcycle = '1' " +
                     "AND t.biosum_cond_id = t1.biosum_cond_id " +
                     "AND t.rxpackage = t1.rxpackage) " +
@@ -4246,7 +4246,7 @@ namespace FIA_Biosum_Manager
                             rx = m_oAdo.m_OleDbDataReader["rx"].ToString().Trim();
 
                         //Insert a placeholder row with default values
-                        m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
+                        m_oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
                             "(biosum_cond_id, rxpackage, rx, rxcycle, species_group, diam_group, " +
                             "merch_wt_gt, merch_val_dpa, merch_vol_cf, merch_to_chipbin_YN, " +
                             "chip_wt_gt, chip_val_dpa, chip_vol_cf, bc_vol_cf, bc_wt_gt, " +
@@ -4274,11 +4274,11 @@ namespace FIA_Biosum_Manager
             {
                 // Query the conditions/rxpackage that have records in cycles 2,3, and 4 but not in cycle 1
                 m_oAdo.m_strSQL = "SELECT t.biosum_cond_id, t.rxpackage, t.rx " +
-                    "FROM " + Tables.Processor.DefaultHarvestCostsTableName + " t " +
+                    "FROM " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + " t " +
                     "WHERE t.rxcycle in ('2','3','4') " +
                     "AND NOT EXISTS (" +
                     "SELECT t1.biosum_cond_id, t1.rxpackage " +
-                    "FROM " + Tables.Processor.DefaultHarvestCostsTableName + " t1 " +
+                    "FROM " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + " t1 " +
                     "WHERE t1.rxcycle = '1' " +
                     "AND t.biosum_cond_id = t1.biosum_cond_id " +
                     "AND t.rxpackage = t1.rxpackage) " +
@@ -4309,7 +4309,7 @@ namespace FIA_Biosum_Manager
                             rx = m_oAdo.m_OleDbDataReader["rx"].ToString().Trim();
 
                         //Insert a placeholder row with default values
-                        m_oAdo.m_strSQL = "INSERT INTO " + Tables.Processor.DefaultHarvestCostsTableName + " " +
+                        m_oAdo.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + " " +
                             "(biosum_cond_id, rxpackage, rx, rxcycle, " +
                             "complete_cpa, harvest_cpa," +
                             "DateTimeCreated, place_holder) " +

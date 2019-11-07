@@ -1430,9 +1430,6 @@ namespace FIA_Biosum_Manager
 								case "SITE TREE":
 									frmMain.g_oTables.m_oFIAPlot.CreateSiteTreeTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,frmMain.g_oTables.m_oFIAPlot.DefaultSiteTreeTableName);
 									break;
-								case "INVENTORIES":
-									frmMain.g_oTables.m_oReference.CreateInventoriesTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.Reference.DefaultInventoriesTableName);
-									break;
                                 //version 5 additions
                                 case "TREATMENT PRESCRIPTIONS ASSIGNED FVS COMMANDS":
                                     frmMain.g_oTables.m_oFvs.CreateRxFvsCommandsTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection,Tables.FVS.DefaultRxFvsCommandTableName);
@@ -1461,9 +1458,6 @@ namespace FIA_Biosum_Manager
                                
                                 case "HARVEST METHODS":
                                     frmMain.g_oTables.m_oReference.CreateHarvestMethodsTable(oAdoCurrent,oAdoCurrent.m_OleDbConnection, Tables.Reference.DefaultHarvestMethodsTableName);
-                                    break;
-                                case "ADDITIONAL HARVEST COSTS":
-                                    frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(oAdoCurrent, oAdoCurrent.m_OleDbConnection,Tables.Processor.DefaultAdditionalHarvestCostsTableName);
                                     break;
                                 //5.2.1 additions
                                 case "FVS WESTERN TREE SPECIES TRANSLATOR":
@@ -1575,10 +1569,6 @@ namespace FIA_Biosum_Manager
 									strTempTableName = frmMain.g_oTables.m_oFIAPlot.DefaultSiteTreeTableName;
 									frmMain.g_oTables.m_oFIAPlot.CreateSiteTreeTable(oAdoCurrent,oConn,strTempTableName);
 									break;
-								case "INVENTORIES":
-									strTempTableName = Tables.Reference.DefaultInventoriesTableName;
-									frmMain.g_oTables.m_oReference.CreateInventoriesTable(oAdoCurrent,oConn,strTempTableName);
-									break;
                                 //version 5 additions
                                 case "TREATMENT PRESCRIPTIONS ASSIGNED FVS COMMANDS":
                                     strTempTableName = Tables.FVS.DefaultRxFvsCommandTableName;
@@ -1616,10 +1606,6 @@ namespace FIA_Biosum_Manager
                                 case "HARVEST METHODS":
                                     strTempTableName = Tables.Reference.DefaultHarvestMethodsTableName;
                                     frmMain.g_oTables.m_oReference.CreateHarvestMethodsTable(oAdoCurrent, oConn, strTempTableName);
-                                    break;
-                                case "ADDITIONAL HARVEST COSTS":
-                                    strTempTableName = Tables.Processor.DefaultAdditionalHarvestCostsTableName;
-                                    frmMain.g_oTables.m_oProcessor.CreateAdditionalHarvestCostsTable(oAdoCurrent, oConn, strTempTableName);
                                     break;
                                 //5.2.1 additions
                                 case "FVS WESTERN TREE SPECIES TRANSLATOR":
@@ -4195,32 +4181,32 @@ namespace FIA_Biosum_Manager
             {
                 // Add columns to tree_vol_val_by_species_diam_groups table
                 oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strPlaceholder))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strPlaceholder))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strPlaceholder, "CHAR", "1", "N");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strPlaceholder, "CHAR", "1", "N");
 
                     // Set place_holder field to 'N' for new column
-                    oAdo.m_strSQL = "UPDATE " + Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
+                    oAdo.m_strSQL = "UPDATE " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " " +
                         "SET place_holder = IIF(place_holder IS NULL,'N',place_holder)";
                     oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
 
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcVolCf))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcVolCf))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcVolCf, "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcVolCf, "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt, "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strBcWtGt, "DOUBLE", "");
                 }
 
                 // Add placeholder column to harvest_costs table
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, strPlaceholder))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, strPlaceholder))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, strPlaceholder, "CHAR", "1", "N");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, strPlaceholder, "CHAR", "1", "N");
 
                     // Set place_holder field to 'N' for new column
-                    oAdo.m_strSQL = "UPDATE " + Tables.Processor.DefaultHarvestCostsTableName + " " +
+                    oAdo.m_strSQL = "UPDATE " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + " " +
                         "SET place_holder = IIF(place_holder IS NULL,'N',place_holder)";
                     oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
                 }
@@ -4511,9 +4497,9 @@ namespace FIA_Biosum_Manager
             {
                 // Add columns to tree_vol_val_by_species_diam_groups table
                 oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strStandResidueWtGt))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strStandResidueWtGt))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultTreeVolValSpeciesDiamGroupsTableName, strStandResidueWtGt, "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName, strStandResidueWtGt, "DOUBLE", "");
                 }
             }
 
@@ -4557,33 +4543,33 @@ namespace FIA_Biosum_Manager
             {
                 // Add columns to harvest_costs table
                 oAdo.OpenConnection(oAdo.getMDBConnString(strPath, "", ""));
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "chip_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "chip_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "chip_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "chip_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "assumed_movein_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "assumed_movein_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "assumed_movein_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "assumed_movein_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_complete_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_complete_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_complete_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_complete_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_harvest_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_harvest_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_harvest_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_harvest_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_chip_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_chip_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_chip_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_chip_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_assumed_movein_cpa"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_assumed_movein_cpa"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "ideal_assumed_movein_cpa", "DOUBLE", "");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "ideal_assumed_movein_cpa", "DOUBLE", "");
                 }
-                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "override_YN"))
+                if (!oAdo.ColumnExist(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "override_YN"))
                 {
-                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.Processor.DefaultHarvestCostsTableName, "override_YN", "CHAR", "1", "N");
+                    oAdo.AddColumn(oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName, "override_YN", "CHAR", "1", "N");
                 }
             }
 

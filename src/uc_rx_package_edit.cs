@@ -174,9 +174,9 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 16);
+            this.panel1.Location = new System.Drawing.Point(3, 18);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(746, 517);
+            this.panel1.Size = new System.Drawing.Size(746, 515);
             this.panel1.TabIndex = 0;
             // 
             // groupBox2
@@ -284,8 +284,9 @@ namespace FIA_Biosum_Manager
             this.cmbRx.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbRx.Location = new System.Drawing.Point(56, 48);
             this.cmbRx.Name = "cmbRx";
-            this.cmbRx.Size = new System.Drawing.Size(64, 21);
+            this.cmbRx.Size = new System.Drawing.Size(64, 24);
             this.cmbRx.TabIndex = 21;
+            this.cmbRx.SelectedIndexChanged += new System.EventHandler(this.cmbRx_SelectedIndexChanged);
             this.cmbRx.TextChanged += new System.EventHandler(this.cmbRx_TextChanged);
             // 
             // btnFVSCycleCancel
@@ -386,7 +387,7 @@ namespace FIA_Biosum_Manager
             // 
             this.cmbRxPackageId.Location = new System.Drawing.Point(88, 24);
             this.cmbRxPackageId.Name = "cmbRxPackageId";
-            this.cmbRxPackageId.Size = new System.Drawing.Size(96, 21);
+            this.cmbRxPackageId.Size = new System.Drawing.Size(96, 24);
             this.cmbRxPackageId.TabIndex = 27;
             this.cmbRxPackageId.SelectedIndexChanged += new System.EventHandler(this.cmbRxPackageId_SelectedIndexChanged);
             // 
@@ -415,7 +416,7 @@ namespace FIA_Biosum_Manager
             // 
             this.txtKcpFile.Location = new System.Drawing.Point(8, 16);
             this.txtKcpFile.Name = "txtKcpFile";
-            this.txtKcpFile.Size = new System.Drawing.Size(720, 20);
+            this.txtKcpFile.Size = new System.Drawing.Size(720, 22);
             this.txtKcpFile.TabIndex = 2;
             // 
             // btnLoadKCPFile
@@ -1105,5 +1106,21 @@ namespace FIA_Biosum_Manager
 			set {this._frmRxPackageItem=value;}
 
 		}
+
+        private void cmbRx_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbRx.SelectedIndex > -1 && ! String.IsNullOrEmpty(this.cmbRx.Text))
+            {
+                txtRxDesc.Clear();
+                string strRx = this.cmbRx.Text.Trim();
+                foreach (RxItem oItem in this.ReferenceFormRxPackageItem.ReferenceRxItemCollection)
+                {
+                    if (strRx.Equals(oItem.RxId))
+                    {
+                        txtRxDesc.Text = oItem.Description;
+                    }
+                }
+            }
+        }
 	}
 }
