@@ -5415,8 +5415,8 @@ namespace FIA_Biosum_Manager
                            "IIF(h.RXCycle='2',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle2," + 
                            "IIF(h.RXCycle='3',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle3," + 
                            "IIF(h.RXCycle='4',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle4,0)))) " +
-                       "WHERE h.harvest_cpa IS NOT NULL AND h.harvest_cpa > 0  AND " + 
-                             "TRIM(UCASE(e.scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
+                           "WHERE h.harvest_cpa IS NOT NULL AND " + 
+                           "TRIM(UCASE(e.scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
 
             }
             //2018-30-JUL: No longer calculating ideal costs

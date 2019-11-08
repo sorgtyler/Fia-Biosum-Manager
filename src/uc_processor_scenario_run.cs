@@ -4114,7 +4114,9 @@ namespace FIA_Biosum_Manager
             string strFvsComputeTable = Tables.FVS.DefaultPostFVSComputeTableName;
             m_oAdo.m_strSQL = "insert into " + p_strHarvestCostsTableName +
                               " select " + strFvsComputeTable + ".biosum_cond_id, " + strFvsComputeTable + ".rxpackage, " + strFvsComputeTable + ".rx, " +
-                              strFvsComputeTable + ".rxcycle, 0 as complete_cpa, 0 as harvest_cpa, '" + m_strDateTimeCreated + "' as DateTimeCreated" +
+                              strFvsComputeTable + ".rxcycle, 0 as complete_cpa, 0 as harvest_cpa, 0 as chip_cpa, 0 as assumed_movein_cpa, " +
+                              "0 as ideal_complete_cpa, 0 as ideal_harvest_cpa, 0 as ideal_chip_cpa, 0 as ideal_assumed_movein_cpa, '" + 
+                              m_strDateTimeCreated + "' as DateTimeCreated" +
                               " from " + p_strHarvestCostsTableName +
                               " right outer join " + strFvsComputeTable + " on " +
                               p_strHarvestCostsTableName + ".biosum_cond_id=" + strFvsComputeTable + ".biosum_cond_id and " +
