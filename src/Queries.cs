@@ -5404,20 +5404,28 @@ namespace FIA_Biosum_Manager
                 string p_strScenarioCostRevenueEscalatorValuesTableName,
                 string p_strTotalAdditionalCostsTableName,
                 string p_strHarvestCostsTableName,
-                string p_strScenarioId)
+                string p_strScenarioId,
+                bool p_bIncludeZeroHarvestCpa)
             {
-                return "UPDATE " + p_strHarvestCostsTableName + " h " +
-                       "INNER JOIN " +  p_strTotalAdditionalCostsTableName + " a " + 
-                       "ON h.biosum_cond_id = a.biosum_cond_id AND h.rx=a.rx," + 
-                       "scenario_cost_revenue_escalators e " + 
-                       "SET h.complete_cpa = " + 
-                           "IIF(h.RXCycle='1',(h.harvest_cpa+a.complete_additional_cpa)," + 
-                           "IIF(h.RXCycle='2',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle2," + 
-                           "IIF(h.RXCycle='3',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle3," + 
-                           "IIF(h.RXCycle='4',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle4,0)))) " +
-                           "WHERE h.harvest_cpa IS NOT NULL AND " + 
-                           "TRIM(UCASE(e.scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
-
+                string strSql = "UPDATE " + p_strHarvestCostsTableName + " h " +
+                       "INNER JOIN " + p_strTotalAdditionalCostsTableName + " a " +
+                       "ON h.biosum_cond_id = a.biosum_cond_id AND h.rx=a.rx," +
+                       "scenario_cost_revenue_escalators e " +
+                       "SET h.complete_cpa = " +
+                           "IIF(h.RXCycle='1',(h.harvest_cpa+a.complete_additional_cpa)," +
+                           "IIF(h.RXCycle='2',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle2," +
+                           "IIF(h.RXCycle='3',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle3," +
+                           "IIF(h.RXCycle='4',(h.harvest_cpa+a.complete_additional_cpa) * e.EscalatorOperatingCosts_Cycle4,0)))) ";
+                if (p_bIncludeZeroHarvestCpa == false)
+                {
+                    strSql += "WHERE h.harvest_cpa IS NOT NULL AND h.harvest_cpa > 0  AND ";
+                }
+                else
+                {
+                    strSql += "WHERE h.harvest_cpa IS NOT NULL AND ";
+                }
+                strSql += "TRIM(UCASE(e.scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "'";
+                return strSql;
             }
             //2018-30-JUL: No longer calculating ideal costs
             //See uc_processor_scenario_run.RunScenario_UpdateHarvestCostsTableWithAdditionalCosts() to re-implement

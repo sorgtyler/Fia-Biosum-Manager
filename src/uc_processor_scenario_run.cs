@@ -1568,7 +1568,7 @@ namespace FIA_Biosum_Manager
                     if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Harvest Costs Work Table With Additional Costs...Stand By");
-                        RunScenario_UpdateHarvestCostsTableWithAdditionalCosts("HarvestCostsWorkTable");
+                        RunScenario_UpdateHarvestCostsTableWithAdditionalCosts("HarvestCostsWorkTable","");
                     }
                     if (m_intError == 0)
                     {
@@ -3829,7 +3829,7 @@ namespace FIA_Biosum_Manager
             m_strError = m_oAdo.m_strError;
 
         }
-        private void RunScenario_UpdateHarvestCostsTableWithAdditionalCosts(string p_strHarvestCostsTableName)
+        private void RunScenario_UpdateHarvestCostsTableWithAdditionalCosts(string p_strHarvestCostsTableName, string p_strInactiveStandsTableName)
         {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -4044,7 +4044,33 @@ namespace FIA_Biosum_Manager
                         m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHarvestCostsTableWithCompleteCostsPerAcre(
                                              "scenario_cost_revenue_escalators",
                                              "HarvestCostsTotalAdditionalWorkTable",
-                                             p_strHarvestCostsTableName, ScenarioId);
+                                             p_strHarvestCostsTableName, ScenarioId, false);
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    }
+                    if (m_oAdo.m_intError == 0 && bIncludeInactiveStands == true)
+                    {                        
+                        //update the inactive stands table complete costs per acre column
+                        m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHarvestCostsTableWithCompleteCostsPerAcre(
+                                             "scenario_cost_revenue_escalators",
+                                             "HarvestCostsTotalAdditionalWorkTable",
+                                             p_strInactiveStandsTableName, ScenarioId, true);
+
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                    }
+                    if (m_oAdo.m_intError == 0 && bIncludeInactiveStands == true)
+                    {
+                        //append the inactive stands to the harvest cost table where complete_cpa > 0
+                        m_oAdo.m_strSQL = "INSERT INTO " + p_strHarvestCostsTableName +
+                                          " SELECT biosum_cond_id, rxpackage, rx, rxcycle, harvest_cpa, complete_cpa, '" +
+                                          m_strDateTimeCreated + "' as DateTimeCreated, 0 as chip_cpa, 0 as assumed_movein_cpa, " +
+                                          "0 as ideal_complete_cpa, 0 as ideal_harvest_cpa, 0 as ideal_chip_cpa, 0 as ideal_assumed_movein_cpa" +
+                                          " FROM " + p_strInactiveStandsTableName +
+                                          " WHERE complete_cpa > 0";
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                             frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
@@ -4071,12 +4097,13 @@ namespace FIA_Biosum_Manager
 
         }
 
-        private void RunScenario_AppendInactiveStandsToHarvestCostsTable(string p_strHarvestCostsTableName, string p_strVariant, string p_strRxPackage)
+        private void RunScenario_CreateInactiveStandsHarvestCostsWorkTable(string p_strHarvestCostsTableName, string p_strInactiveStandsTableName,
+            string p_strVariant, string p_strRxPackage)
         {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_AddInactiveStandsToHarvestCostsTable\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "//RunScenario_CreateInactiveStandsHarvestCostsWorkTable\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
@@ -4112,13 +4139,12 @@ namespace FIA_Biosum_Manager
             }
 
             string strFvsComputeTable = Tables.FVS.DefaultPostFVSComputeTableName;
-            m_oAdo.m_strSQL = "insert into " + p_strHarvestCostsTableName +
-                              " select " + strFvsComputeTable + ".biosum_cond_id, " + strFvsComputeTable + ".rxpackage, " + strFvsComputeTable + ".rx, " +
-                              strFvsComputeTable + ".rxcycle, 0 as complete_cpa, 0 as harvest_cpa, 0 as chip_cpa, 0 as assumed_movein_cpa, " +
-                              "0 as ideal_complete_cpa, 0 as ideal_harvest_cpa, 0 as ideal_chip_cpa, 0 as ideal_assumed_movein_cpa, '" + 
-                              m_strDateTimeCreated + "' as DateTimeCreated" +
-                              " from " + p_strHarvestCostsTableName +
-                              " right outer join " + strFvsComputeTable + " on " +
+            m_oAdo.m_strSQL = "SELECT " + strFvsComputeTable + ".biosum_cond_id, " + strFvsComputeTable + ".rxpackage, " +
+                              strFvsComputeTable + ".rx," + strFvsComputeTable + ".rxcycle, " + strFvsComputeTable + 
+                              ".fvs_variant, 0 as harvest_cpa, 0 as complete_cpa" +
+                              " INTO " + p_strInactiveStandsTableName +
+                              " from " + strFvsComputeTable +
+                              " left outer join " + p_strHarvestCostsTableName + " on " +
                               p_strHarvestCostsTableName + ".biosum_cond_id=" + strFvsComputeTable + ".biosum_cond_id and " +
                               p_strHarvestCostsTableName + ".rxpackage=" + strFvsComputeTable + ".rxpackage and " +
                               p_strHarvestCostsTableName + ".rx=" + strFvsComputeTable + ".rx and " +
@@ -4132,6 +4158,11 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + m_oAdo.m_strSQL + "\r\n");
             m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
 
+            if (m_oAdo.m_intError != 0)
+            {
+                bIncludeInactiveStands = false;
+            }
+            
             m_intError = m_oAdo.m_intError;
             m_strError = m_oAdo.m_strError;
         }
@@ -4643,6 +4674,9 @@ namespace FIA_Biosum_Manager
                     if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "HarvestCostsWorkTable") == true)
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE HarvestCostsWorkTable");
 
+                    if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "InactiveStandsWorkTable") == true)
+                        m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE InactiveStandsWorkTable");
+
                     if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "opcost_input") == true)
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, "DROP TABLE opcost_input");
 
@@ -4750,6 +4784,7 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                         }
                     }
+                    string strInactiveStandsWorkTable = "InactiveStandsWorkTable";
                     if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append OPCOST Data To Harvest Costs Work Table...Stand By");
@@ -4763,7 +4798,7 @@ namespace FIA_Biosum_Manager
                     if (m_intError == 0 && bIncludeInactiveStands == true)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Inactive Stands With Harvest Costs To Harvest Costs Work Table...Stand By");
-                        RunScenario_AppendInactiveStandsToHarvestCostsTable("HarvestCostsWorkTable", strVariant, strRxPackage);
+                        RunScenario_CreateInactiveStandsHarvestCostsWorkTable("HarvestCostsWorkTable", strInactiveStandsWorkTable, strVariant, strRxPackage);
                     }
                     if (m_intError == 0)
                     {
@@ -4774,7 +4809,7 @@ namespace FIA_Biosum_Manager
                     if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Harvest Costs Work Table With Additional Costs...Stand By");
-                        RunScenario_UpdateHarvestCostsTableWithAdditionalCosts("HarvestCostsWorkTable");
+                        RunScenario_UpdateHarvestCostsTableWithAdditionalCosts("HarvestCostsWorkTable", strInactiveStandsWorkTable);
                     }
                     if (m_intError == 0)
                     {
