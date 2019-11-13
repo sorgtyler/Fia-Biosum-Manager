@@ -5999,7 +5999,7 @@ namespace FIA_Biosum_Manager
                         ReferenceUserControlScenarioRun.listViewEx1, "Summarize Wood Product Volume Yields, Costs, And Net Revenue For A Stand And Treatment");
 
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem = intListViewIndex;
-            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 4;
+            FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMaximumSteps = 5;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicMinimumSteps = 1;
             FIA_Biosum_Manager.RunOptimizer.g_intCurrentProgressBarBasicCurrentStep = 1;
             FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic = (ProgressBarBasic.ProgressBarBasic)ReferenceUserControlScenarioRun.listViewEx1.GetEmbeddedControl(1, FIA_Biosum_Manager.RunOptimizer.g_intCurrentListViewItem);
@@ -6061,9 +6061,9 @@ namespace FIA_Biosum_Manager
                        this.m_strTreeVolValSumTable.Trim() + ".merch_vol_cf," +
                        this.m_strTreeVolValSumTable.Trim() + ".chip_vol_cf," +
                        this.m_strTreeVolValSumTable.Trim() + ".chip_wt_gt," +
-                       this.m_strTreeVolValSumTable.Trim() + ".chip_val_dpa AS chip_val_dpa," +
+                       this.m_strTreeVolValSumTable.Trim() + ".chip_val_dpa," +
                        this.m_strTreeVolValSumTable.Trim() + ".merch_wt_gt," +
-                       this.m_strTreeVolValSumTable.Trim() + ".merch_val_dpa AS merch_val_dpa," +
+                       this.m_strTreeVolValSumTable.Trim() + ".merch_val_dpa," +
                        this.m_strHvstCostsTable.Trim() + ".complete_cpa AS harvest_onsite_cost_dpa," +
                       "IIF(" + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt IS NOT NULL," +
                       "IIF(" + this.m_strTreeVolValSumTable.Trim() + ".rxcycle='2'," + Tables.OptimizerScenarioResults.DefaultScenarioResultsPSiteAccessibleWorkTableName + ".merch_haul_cost_dpgt * " + this.m_oProcessorScenarioItem.m_oEscalators.MerchWoodRevenueCycle2 + "," +
@@ -6267,6 +6267,72 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
+            // Create temp table with inactive stands from harvest_costs table
+            // This should only contain the inactive stands missing from the econ_by_rx_cycle worktable, but we will
+            // do an outer join when appending them to be sure
+            string strInactiveStandsWorkTable = "InactiveStandsWorkTable";
+            this.m_strSQL = "SELECT validcombos.biosum_cond_id,validcombos.rxpackage,validcombos.rx,validcombos.rxcycle," +
+                            " 0 AS merch_vol_cf, 0 as chip_vol_cf, 0 as chip_wt_gt," +
+                            " 0 as chip_val_dpa, 0 as merch_wt_gt, 0 AS merch_val_dpa," +
+                            " harvest_costs.complete_cpa AS harvest_onsite_cost_dpa, 0 AS escalator_merch_haul_cpa_pt," +
+                            " 0 AS merch_haul_cost_dpa, 0 AS escalator_chip_haul_cpa_pt, 0 AS chip_haul_cost_dpa," +
+                            " 0 AS merch_chip_nr_dpa, 0 AS merch_nr_dpa, 0 AS max_nr_dpa," +
+                            " cond.acres, cond.owngrpcd, 0 AS haul_costs_dpa" +
+                            " INTO " + strInactiveStandsWorkTable + " FROM" +
+                            " ((validcombos INNER JOIN cond ON validcombos.biosum_cond_id = cond.biosum_cond_id)" +
+                            " INNER JOIN harvest_costs ON (validcombos.biosum_cond_id=harvest_costs.biosum_cond_id) AND" +
+                            " (validcombos.rxpackage=harvest_costs.rxpackage) AND" +
+                            " (validcombos.rx=harvest_costs.rx) AND (validcombos.rxcycle=harvest_costs.rxcycle))" +
+                            " WHERE harvest_costs.harvest_cpa = 0 and harvest_costs.complete_cpa <> 0";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                return;
+            }
+
+            this.m_strSQL = "INSERT INTO " + this.m_strEconByRxWorkTableName +
+                            " SELECT " + strInactiveStandsWorkTable + ".biosum_cond_id," + strInactiveStandsWorkTable + ".rxPackage, " +
+                            strInactiveStandsWorkTable + ".rx, " + strInactiveStandsWorkTable + ".rxcycle," +
+                            strInactiveStandsWorkTable + ".merch_vol_cf, " + strInactiveStandsWorkTable + ".chip_vol_cf," +
+                            strInactiveStandsWorkTable + ".chip_wt_gt, " + strInactiveStandsWorkTable + ".chip_val_dpa," +
+                            strInactiveStandsWorkTable + ".merch_wt_gt, " + strInactiveStandsWorkTable + ".merch_val_dpa," +
+                            strInactiveStandsWorkTable + ".harvest_onsite_cost_dpa, " + strInactiveStandsWorkTable + ".escalator_merch_haul_cpa_pt," +
+                            strInactiveStandsWorkTable + ".merch_haul_cost_dpa, " + strInactiveStandsWorkTable + ".escalator_chip_haul_cpa_pt," +
+                            strInactiveStandsWorkTable + ".chip_haul_cost_dpa, " + strInactiveStandsWorkTable + ".merch_chip_nr_dpa," +
+                            strInactiveStandsWorkTable + ".merch_nr_dpa, 'N' as usebiomass_yn, " + 
+                            strInactiveStandsWorkTable + ".max_nr_dpa, " + strInactiveStandsWorkTable + ".acres," +
+                            strInactiveStandsWorkTable + ".owngrpcd, " + strInactiveStandsWorkTable + ".haul_costs_dpa" +
+                            " FROM " + strInactiveStandsWorkTable +
+                            " LEFT outer join " + this.m_strEconByRxWorkTableName + " on " + 
+                            this.m_strEconByRxWorkTableName + ".biosum_cond_id = " + strInactiveStandsWorkTable + ".biosum_cond_id" +
+                            " and " + this.m_strEconByRxWorkTableName + ".rxpackage = " + strInactiveStandsWorkTable + ".rxpackage" +
+                            " and " + this.m_strEconByRxWorkTableName + ".rx = " + strInactiveStandsWorkTable + ".rx" +
+                            " and " + this.m_strEconByRxWorkTableName + ".rxcycle = " + strInactiveStandsWorkTable + ".rxcycle" + 
+                            " where " + this.m_strEconByRxWorkTableName + ".biosum_cond_id is null";
+            
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+            if (this.m_ado.m_intError != 0)
+            {
+                if (frmMain.g_bDebug)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n!!!Error Executing SQL!!!\r\n");
+                this.m_intError = this.m_ado.m_intError;
+                FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic.TextColor = Color.Red;
+                FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermText(FIA_Biosum_Manager.RunOptimizer.g_oCurrentProgressBarBasic, "!!Error!!");
+                return;
+            }
+            
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
+            
             this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName +
                                 "(biosum_cond_id,rxpackage,rx,rxcycle," +
                                 "merch_vol_cf,chip_vol_cf," +
