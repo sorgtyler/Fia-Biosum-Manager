@@ -46,8 +46,11 @@ namespace FIA_Biosum_Manager
         FIA_Biosum_Manager.RxPackageItem m_oRxPackageItem = null;
         string m_strRxCycleList = "";
         string[] m_strFVSTreeTableLinkNameArray = null;
+        IList<string> m_lstFVSVariantRxPackage = null;
         private ListViewColumnSorter lvwColumnSorter;
-        private bool bIncludeInactiveStands = true;
+        /* Indicates that inactive stands will be included in the analysis:
+         * There is a POST_FVS_COMPUTE table with a column named activity_YN */
+        private bool m_bIncludeInactiveStands = true; 
 
         //reference variables
         private string _strScenarioId = "";
@@ -434,7 +437,7 @@ namespace FIA_Biosum_Manager
             }
             else
             {
-                bIncludeInactiveStands = false;
+                m_bIncludeInactiveStands = false;
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     frmMain.g_oUtils.WriteText(strDebugFile, "loadvalues(): POST_FVS_COMPUTE table was not found. Stands with no " +
                         "activity will not be included in analysis! \r\n");
@@ -500,6 +503,7 @@ namespace FIA_Biosum_Manager
                 string strVariantsList = m_oRxTools.GetListOfFVSVariantsInPlotTable(m_oAdo, m_oAdo.m_OleDbConnection, m_oQueries.m_oFIAPlot.m_strPlotTable);
                 string[] strVariantsArray = frmMain.g_oUtils.ConvertListToArray(strVariantsList, ",");
                 //find the variants that have tree cut list tables
+                m_lstFVSVariantRxPackage = new List<string>();
                 for (x = 0; x <= strVariantsArray.Length - 1; x++)
                 {
                     cmbFilter.Items.Add(strVariantsArray[x].Trim());
@@ -509,6 +513,7 @@ namespace FIA_Biosum_Manager
                         if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, strTableName))
                         {
                             strFVSTreeTableLinkNameList = strFVSTreeTableLinkNameList + strTableName + ",";
+                            m_lstFVSVariantRxPackage.Add(strVariantsArray[x].Trim() + "," + m_oRxPackageItem_Collection.Item(y).RxPackageId);
                         }
                     }
                 }
@@ -524,6 +529,15 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(strDebugFile, "START: Populate List " + System.DateTime.Now.ToString() + "\r\n");
 
+                //Check for activity_YN column so we know if we should include inactive stands
+                if (m_bIncludeInactiveStands == true)
+                {
+                    if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.FVS.DefaultPostFVSComputeTableName, "activity_YN"))
+                    {
+                        m_bIncludeInactiveStands = false;
+                    }
+                }
+    
                 //populate the listview object
                 for (x = 0; x <= m_strFVSTreeTableLinkNameArray.Length - 1; x++)
                 {
@@ -546,10 +560,11 @@ namespace FIA_Biosum_Manager
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         frmMain.g_oUtils.WriteText(strDebugFile, "END SQL " + System.DateTime.Now.ToString() + "\r\n");
 
+                    /* Method-level variable indicating that this variant-rxPackage is an inactive combination:
+                     * There are no rows in the fvs_cutlist table */
+                    bool _bInactiveVarRxPackage = false;
                     if (m_oAdo.m_OleDbDataReader.HasRows)
                     {
-
-
                         while (m_oAdo.m_OleDbDataReader.Read())
                         {
                             if (m_oAdo.m_OleDbDataReader["rxpackage"] != System.DBNull.Value)
@@ -558,224 +573,240 @@ namespace FIA_Biosum_Manager
                                 strVariant = m_oAdo.m_OleDbDataReader["fvs_variant"].ToString().Trim();
                             if (m_oAdo.m_OleDbDataReader["rxpackage_variant_count"] != System.DBNull.Value)
                                 strCount = m_oAdo.m_OleDbDataReader["rxpackage_variant_count"].ToString().Trim();
+                        }
+                        m_oAdo.m_OleDbDataReader.Dispose();
+                    }
+                    else if (m_bIncludeInactiveStands == true)
+                    {
+                        string[] arrVariantRxPkg = frmMain.g_oUtils.ConvertListToArray(m_lstFVSVariantRxPackage[x],",");
+                        int count = m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM " + Tables.FVS.DefaultPostFVSComputeTableName + " WHERE fvs_variant = '" +
+                                        arrVariantRxPkg[0] + "' AND rxpackage = '" + arrVariantRxPkg[1] + "'", Tables.FVS.DefaultPostFVSComputeTableName);
+                        if (count > 0)
+                        {
+                            strVariant = arrVariantRxPkg[0];
+                            strRxPackage = arrVariantRxPkg[1];
+                            strCount = "1";
+                            _bInactiveVarRxPackage = true;
+                        }
+                    }
+
+                    if (!String.IsNullOrEmpty(strVariant))
+                    {
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            frmMain.g_oUtils.WriteText(strDebugFile, "Add To List Variant:" + strVariant + " RxPackage:" + strRxPackage + " " + System.DateTime.Now.ToString() + "\r\n");
+
+                        //find the package item
+                        for (y = 0; y <= m_oRxPackageItem_Collection.Count - 1; y++)
+                        {
+                            if (m_oRxPackageItem_Collection.Item(y).RxPackageId.Trim() == strRxPackage.Trim())
+                            {
+                                break;
+                            }
+                        }
+                        if (y <= m_oRxPackageItem_Collection.Count - 1)
+                        {
+                            frmMain.g_oDelegate.SetStatusBarPanelTextValue(frmMain.g_sbpInfo.Parent, 1, "Loading Scenario Run Data (Variant:" + strVariant + " RxPackage:" + strRxPackage + ")...Stand By");
+                            frmMain.g_oDelegate.ExecuteStatusBarPanelMethod(frmMain.g_sbpInfo.Parent, 1, "Refresh");
+                            bUpdate = false;
+                            //found package item
+                            //create listview row
+                            // Add a ListItem object to the ListView.
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(strDebugFile, "Checkpoint 1 " + System.DateTime.Now.ToString() + "\r\n");
+                            entryListItem =
+                                m_lvEx.Items.Add(" ");
+
+                            entryListItem.UseItemStyleForSubItems = false;
+
+                            this.m_oLvAlternateColors.AddRow();
+                            this.m_oLvAlternateColors.AddColumns(m_lvEx.Items.Count - 1, m_lvEx.Columns.Count);
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(strDebugFile, "Checkpoint 2 " + System.DateTime.Now.ToString() + "\r\n");
+
+                            //variant
+                            entryListItem.SubItems.Add(strVariant);
+                            //rxpackage
+                            entryListItem.SubItems.Add(strRxPackage);
+                            //progress bar
+                            entryListItem.SubItems.Add(" ");
+                            this.m_oProgressBarEx1 = new ProgressBarEx.ProgressBarEx(Color.Gold);
+                            this.m_oProgressBarEx1.MarqueePercentage = 25;
+                            this.m_oProgressBarEx1.MarqueeSpeed = 30;
+                            this.m_oProgressBarEx1.MarqueeStep = 1;
+                            this.m_oProgressBarEx1.Maximum = 100;
+                            this.m_oProgressBarEx1.Minimum = 0;
+                            this.m_oProgressBarEx1.Name = "m_oProgressBarEx1";
+                            this.m_oProgressBarEx1.ProgressPadding = 0;
+                            this.m_oProgressBarEx1.ProgressType = ProgressBarEx.ProgressType.Smooth;
+                            this.m_oProgressBarEx1.ShowPercentage = true;
+                            this.m_oProgressBarEx1.BackColor = Color.LawnGreen;
+
+
+
+                            this.m_oProgressBarEx1.BackgroundColor = Color.Black;
+                            this.m_oProgressBarEx1.TabIndex = 18;
+                            this.m_oProgressBarEx1.Text = "0%";
+                            this.m_oProgressBarEx1.Value = 0;
+                            m_lvEx.AddEmbeddedControl(this.m_oProgressBarEx1, COL_RUNSTATUS, m_lvEx.Items.Count - 1, System.Windows.Forms.DockStyle.Fill);
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(strDebugFile, "Checkpoint 3" + System.DateTime.Now.ToString() + "\r\n");
+
+                            //tree volval count
+                            m_oAdo.m_strSQL = "SELECT COUNT(*) as rowcount " +
+                                              "FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " t," +
+                                                        m_oQueries.m_oFIAPlot.m_strCondTable + " c," +
+                                                        m_oQueries.m_oFIAPlot.m_strPlotTable + " p " +
+                                              "WHERE t.rxpackage='" + strRxPackage + "' AND " +
+                                                    "(t.biosum_cond_id=c.biosum_cond_id AND " +
+                                                     "p.biosum_plot_id=c.biosum_plot_id AND " +
+                                                     "p.fvs_variant='" + strVariant + "')";
+                            if (frmMain.g_bSuppressProcessorScenarioTableRowCount == false && _bInactiveVarRxPackage == false)
+                            {
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
+
+                                entryListItem.SubItems.Add(Convert.ToString(m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection,
+                                    m_oAdo.m_strSQL, "temp")));
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    frmMain.g_oUtils.WriteText(strDebugFile, "END SQL " + System.DateTime.Now.ToString() + "\r\n");
+
+                            }
+                            else
+                                entryListItem.SubItems.Add(" ");
+                            //tree harvest cost count
+                            m_oAdo.m_strSQL = "SELECT COUNT(*) as rowcount " +
+                                              "FROM " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + " t," +
+                                                        m_oQueries.m_oFIAPlot.m_strCondTable + " c," +
+                                                        m_oQueries.m_oFIAPlot.m_strPlotTable + " p " +
+                                              "WHERE t.rxpackage='" + strRxPackage + "' AND " +
+                                                    "(t.biosum_cond_id=c.biosum_cond_id AND " +
+                                                     "p.biosum_plot_id=c.biosum_plot_id AND " +
+                                                     "p.fvs_variant='" + strVariant + "')";
+                            if (frmMain.g_bSuppressProcessorScenarioTableRowCount == false && _bInactiveVarRxPackage == false)
+                            {
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
+
+                                entryListItem.SubItems.Add(Convert.ToString(m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection,
+                                    m_oAdo.m_strSQL, "temp")));
+
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    frmMain.g_oUtils.WriteText(strDebugFile, "END SQL: " + System.DateTime.Now.ToString() + "\r\n");
+
+                            }
+                            else
+                                entryListItem.SubItems.Add(" ");
+                            //opcost dropped column count; Always empty
+                            entryListItem.SubItems.Add(" ");
+                            //tree cutlist count
+                            if (frmMain.g_bSuppressProcessorScenarioTableRowCount == false && !_bInactiveVarRxPackage)
+                                entryListItem.SubItems.Add(strCount);
+                            else if (_bInactiveVarRxPackage)
+                            {
+                                entryListItem.SubItems.Add("0");
+                            }
+                            else
+                                entryListItem.SubItems.Add("> 0");
+                            //cycle1 rx
+                            if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear1Rx.Trim().Length > 0)
+                                entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear1Rx);
+                            else
+                                entryListItem.SubItems.Add("000");
+                            //cycle2 rx
+                            if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear2Rx.Trim().Length > 0)
+                                entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear2Rx);
+                            else
+                                entryListItem.SubItems.Add("000");
+                            //cycle3 rx
+                            if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear3Rx.Trim().Length > 0)
+                                entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear3Rx);
+                            else
+                                entryListItem.SubItems.Add("000");
+                            //cycle4 rx
+                            if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear4Rx.Trim().Length > 0)
+                                entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear4Rx);
+                            else
+                                entryListItem.SubItems.Add("000");
+
+                            entryListItem.SubItems.Add(strVariant + "_P" + strRxPackage + "_tree_cutlist.mdb");  //out mdb file
+                            entryListItem.SubItems.Add("Found");  //file found
+                            //fvstree processing date and time variant,rxpackage
+                            string strFvsTreeDateCreated = " ";
+                            if (_bInactiveVarRxPackage == false)
+                            {
+                                m_oAdo.m_strSQL = "SELECT DISTINCT DateTimeCreated " +
+                                              "FROM " + m_strFVSTreeTableLinkNameArray[x] + " t " +
+                                              "WHERE t.rxpackage='" + strRxPackage + "'";
+
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
+
+                                strFvsTreeDateCreated = (string)m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
+
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                    frmMain.g_oUtils.WriteText(strDebugFile, "END SQL: " + System.DateTime.Now.ToString() + "\r\n");
+                            }
+
+                            entryListItem.SubItems.Add((strFvsTreeDateCreated.Trim())); //date and time created
+
+
+                            m_oAdo.m_strSQL = "SELECT DateTimeCreated " +
+                                              "FROM  ProcessorVariantPackageDateTimeCreated_work_table " +
+                                              "WHERE rxpackage='" + strRxPackage + "' AND " +
+                                                    "fvs_variant='" + strVariant + "'";
 
                             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                frmMain.g_oUtils.WriteText(strDebugFile, "Add To List Variant:" + strVariant + " RxPackage:" + strRxPackage +  " " +  System.DateTime.Now.ToString() +  "\r\n");
+                                frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
 
-                            //find the package item
-                            for (y = 0; y <= m_oRxPackageItem_Collection.Count - 1; y++)
+                            m_oAdo.m_strSQL = (string)m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
+
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                frmMain.g_oUtils.WriteText(strDebugFile, "END SQL: " + System.DateTime.Now.ToString() + "\r\n");
+
+                            //fvstree processing date and time variant,rxpackage 
+                            if (m_oAdo.m_strSQL.Trim().Length > 0)
                             {
-                                if (m_oRxPackageItem_Collection.Item(y).RxPackageId.Trim() == strRxPackage.Trim())
-                                {
-                                    break;
-                                }
-                            }
-                            if (y <= m_oRxPackageItem_Collection.Count - 1)
-                            {
-                                frmMain.g_oDelegate.SetStatusBarPanelTextValue(frmMain.g_sbpInfo.Parent, 1, "Loading Scenario Run Data (Variant:" + strVariant + " RxPackage:" + strRxPackage + ")...Stand By");
-                                frmMain.g_oDelegate.ExecuteStatusBarPanelMethod(frmMain.g_sbpInfo.Parent,1, "Refresh");
-                                bUpdate = false;
-                                //found package item
-                                //create listview row
-                                // Add a ListItem object to the ListView.
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(strDebugFile, "Checkpoint 1 " + System.DateTime.Now.ToString() + "\r\n");
-                                entryListItem =
-                                    m_lvEx.Items.Add(" ");
-
-                                entryListItem.UseItemStyleForSubItems = false;
-
-                                this.m_oLvAlternateColors.AddRow();
-                                this.m_oLvAlternateColors.AddColumns(m_lvEx.Items.Count - 1, m_lvEx.Columns.Count);
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(strDebugFile, "Checkpoint 2 " + System.DateTime.Now.ToString() + "\r\n");
-
-                                //variant
-                                entryListItem.SubItems.Add(strVariant);
-                                //rxpackage
-                                entryListItem.SubItems.Add(strRxPackage);
-                                //progress bar
-                                entryListItem.SubItems.Add(" ");
-                                this.m_oProgressBarEx1 = new ProgressBarEx.ProgressBarEx(Color.Gold);
-                                this.m_oProgressBarEx1.MarqueePercentage = 25;
-                                this.m_oProgressBarEx1.MarqueeSpeed = 30;
-                                this.m_oProgressBarEx1.MarqueeStep = 1;
-                                this.m_oProgressBarEx1.Maximum = 100;
-                                this.m_oProgressBarEx1.Minimum = 0;
-                                this.m_oProgressBarEx1.Name = "m_oProgressBarEx1";
-                                this.m_oProgressBarEx1.ProgressPadding = 0;
-                                this.m_oProgressBarEx1.ProgressType = ProgressBarEx.ProgressType.Smooth;
-                                this.m_oProgressBarEx1.ShowPercentage = true;
-                                this.m_oProgressBarEx1.BackColor = Color.LawnGreen;
-                                
-                                                               
-                               
-                                this.m_oProgressBarEx1.BackgroundColor = Color.Black;
-                                this.m_oProgressBarEx1.TabIndex = 18;
-                                this.m_oProgressBarEx1.Text = "0%";
-                                this.m_oProgressBarEx1.Value = 0;
-                                m_lvEx.AddEmbeddedControl(this.m_oProgressBarEx1, COL_RUNSTATUS, m_lvEx.Items.Count - 1, System.Windows.Forms.DockStyle.Fill);
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(strDebugFile, "Checkpoint 3" + System.DateTime.Now.ToString() + "\r\n");
-
-                                //tree volval count
-                                m_oAdo.m_strSQL = "SELECT COUNT(*) as rowcount " + 
-                                                  "FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + " t," + 
-                                                            m_oQueries.m_oFIAPlot.m_strCondTable + " c," + 
-                                                            m_oQueries.m_oFIAPlot.m_strPlotTable + " p " + 
-                                                  "WHERE t.rxpackage='" + strRxPackage + "' AND " + 
-                                                        "(t.biosum_cond_id=c.biosum_cond_id AND " + 
-                                                         "p.biosum_plot_id=c.biosum_plot_id AND " + 
-                                                         "p.fvs_variant='" + strVariant + "')";
-                                if (frmMain.g_bSuppressProcessorScenarioTableRowCount == false)
-                                {
-                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                        frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
-
-                                    entryListItem.SubItems.Add(Convert.ToString(m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection,
-                                        m_oAdo.m_strSQL, "temp")));
-                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                        frmMain.g_oUtils.WriteText(strDebugFile, "END SQL " +  System.DateTime.Now.ToString() + "\r\n");
-
-                                }
-                                else
-                                    entryListItem.SubItems.Add(" ");
-                                //tree harvest cost count
-                                m_oAdo.m_strSQL = "SELECT COUNT(*) as rowcount " +
-                                                  "FROM " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + " t," +
-                                                            m_oQueries.m_oFIAPlot.m_strCondTable + " c," +
-                                                            m_oQueries.m_oFIAPlot.m_strPlotTable + " p " +
-                                                  "WHERE t.rxpackage='" + strRxPackage + "' AND " +
-                                                        "(t.biosum_cond_id=c.biosum_cond_id AND " +
-                                                         "p.biosum_plot_id=c.biosum_plot_id AND " +
-                                                         "p.fvs_variant='" + strVariant + "')";
-                                if (frmMain.g_bSuppressProcessorScenarioTableRowCount == false)
-                                {
-                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                        frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
-
-                                    entryListItem.SubItems.Add(Convert.ToString(m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection,
-                                        m_oAdo.m_strSQL, "temp")));
-
-                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                        frmMain.g_oUtils.WriteText(strDebugFile, "END SQL: " + System.DateTime.Now.ToString() + "\r\n");
-
-                                }
-                                else
-                                    entryListItem.SubItems.Add(" ");
-                                //opcost dropped column count; Always empty
-                                entryListItem.SubItems.Add(" ");
-                                //tree cutlist count
-                                if (frmMain.g_bSuppressProcessorScenarioTableRowCount == false)
-                                    entryListItem.SubItems.Add(strCount);
-                                else
-                                    entryListItem.SubItems.Add("> 0");
-                                //cycle1 rx
-                                if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear1Rx.Trim().Length > 0)
-                                    entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear1Rx);
-                                else
-                                    entryListItem.SubItems.Add("000");
-                                //cycle2 rx
-                                if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear2Rx.Trim().Length > 0)
-                                    entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear2Rx);
-                                else
-                                    entryListItem.SubItems.Add("000");
-                                //cycle3 rx
-                                if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear3Rx.Trim().Length > 0)
-                                    entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear3Rx);
-                                else
-                                    entryListItem.SubItems.Add("000");
-                                //cycle4 rx
-                                if (this.m_oRxPackageItem_Collection.Item(y).SimulationYear4Rx.Trim().Length > 0)
-                                    entryListItem.SubItems.Add(this.m_oRxPackageItem_Collection.Item(y).SimulationYear4Rx);
-                                else
-                                    entryListItem.SubItems.Add("000");
-
-                                entryListItem.SubItems.Add(strVariant + "_P" + strRxPackage + "_tree_cutlist.mdb");  //out mdb file
-                                entryListItem.SubItems.Add("Found");  //file found
-                                //fvstree processing date and time variant,rxpackage 
-                                m_oAdo.m_strSQL = "SELECT DISTINCT DateTimeCreated " +
-                                                  "FROM " + m_strFVSTreeTableLinkNameArray[x] + " t " +
-                                                  "WHERE t.rxpackage='" + strRxPackage + "'";
-
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
-
-                                m_oAdo.m_strSQL = (string)m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(strDebugFile, "END SQL: " + System.DateTime.Now.ToString() + "\r\n");
-
-                                
-                                if (m_oAdo.m_strSQL.Trim().Length > 0)
-                                {
-                                    entryListItem.SubItems.Add(m_oAdo.m_strSQL); //date and time created
-                                }
-                                else
-                                {
-                                    entryListItem.SubItems.Add(" ");
-                                }
-
-                               
-
-                                m_oAdo.m_strSQL = "SELECT DateTimeCreated " + 
-                                                  "FROM  ProcessorVariantPackageDateTimeCreated_work_table " + 
-                                                  "WHERE rxpackage='" + strRxPackage + "' AND " +
-                                                        "fvs_variant='" + strVariant + "'";
-
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + " " + System.DateTime.Now.ToString() + "\r\n");
-
-                                m_oAdo.m_strSQL = (string)m_oAdo.getSingleStringValueFromSQLQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, "temp");
-
-                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                                    frmMain.g_oUtils.WriteText(strDebugFile, "END SQL: " + System.DateTime.Now.ToString() + "\r\n");
-
-                                //fvstree processing date and time variant,rxpackage 
-                                if (m_oAdo.m_strSQL.Trim().Length > 0)
-                                {
-                                    entryListItem.SubItems.Add(m_oAdo.m_strSQL); //date and time created
-                                }
-                                else
-                                {
-                                    entryListItem.SubItems.Add(" ");
-                                }
-
-                                this.m_oLvAlternateColors.m_oRowCollection.Item(m_oLvAlternateColors.m_oRowCollection.Count-1).m_oColumnCollection.Item(COL_RUNSTATUS).UpdateColumn = false;
-
-                                if (entryListItem.SubItems[COL_CUTCOUNT].Text.Trim() == "> 0" ||
-                                    Convert.ToInt32(entryListItem.SubItems[COL_CUTCOUNT].Text.Trim()) > 0)
-                                {
-                                    if (entryListItem.SubItems[COL_FVSTREE_PROCESSINGDATETIME].Text.Trim().Length == 0 ||
-                                        entryListItem.SubItems[COL_PROCESSOR_PROCESSINGDATETIME].Text.Trim().Length == 0)
-                                    {
-                                        bUpdate = true;
-                                    }
-                                    else
-                                    {
-                                        if (Convert.ToDateTime(entryListItem.SubItems[COL_FVSTREE_PROCESSINGDATETIME].Text.Trim()) >
-                                            Convert.ToDateTime(entryListItem.SubItems[COL_PROCESSOR_PROCESSINGDATETIME].Text.Trim()))
-                                        {
-                                            bUpdate = true;
-                                        }
-                                    }
-                                }
-                                   
-                               
-                                this.m_oLvAlternateColors.ListViewItem(m_lvEx.Items[m_lvEx.Items.Count - 1]);
-                                if (bUpdate)
-                                {
-                                    this.lblMsg.Text = "* = New FVS Tree records to process";
-                                    if (this.lblMsg.Visible == false) lblMsg.Show();
-                                    frmMain.g_oDelegate.SetListViewSubItemPropertyValue(m_lvEx, m_lvEx.Items.Count - 1, 0, "Text", "*");
-                                }
-                                
+                                entryListItem.SubItems.Add(m_oAdo.m_strSQL); //date and time created
                             }
                             else
                             {
-                                //did not find package item so display error
-                                strErrMsg = strErrMsg + "Table " + m_strFVSTreeTableLinkNameArray[x] + " contains RXPACKAGE: " + strRxPackage + " but " + strRxPackage + " is not a defined package. \r\n";
+                                entryListItem.SubItems.Add(" ");
                             }
+
+                            this.m_oLvAlternateColors.m_oRowCollection.Item(m_oLvAlternateColors.m_oRowCollection.Count - 1).m_oColumnCollection.Item(COL_RUNSTATUS).UpdateColumn = false;
+
+                            if (entryListItem.SubItems[COL_CUTCOUNT].Text.Trim() == "> 0" ||
+                                Convert.ToInt32(entryListItem.SubItems[COL_CUTCOUNT].Text.Trim()) > 0)
+                            {
+                                if (entryListItem.SubItems[COL_FVSTREE_PROCESSINGDATETIME].Text.Trim().Length == 0 ||
+                                    entryListItem.SubItems[COL_PROCESSOR_PROCESSINGDATETIME].Text.Trim().Length == 0)
+                                {
+                                    bUpdate = true;
+                                }
+                                else
+                                {
+                                    if (Convert.ToDateTime(entryListItem.SubItems[COL_FVSTREE_PROCESSINGDATETIME].Text.Trim()) >
+                                        Convert.ToDateTime(entryListItem.SubItems[COL_PROCESSOR_PROCESSINGDATETIME].Text.Trim()))
+                                    {
+                                        bUpdate = true;
+                                    }
+                                }
+                            }
+
+
+                            this.m_oLvAlternateColors.ListViewItem(m_lvEx.Items[m_lvEx.Items.Count - 1]);
+                            if (bUpdate && _bInactiveVarRxPackage == false)
+                            {
+                                this.lblMsg.Text = "* = New FVS Tree records to process";
+                                if (this.lblMsg.Visible == false) lblMsg.Show();
+                                frmMain.g_oDelegate.SetListViewSubItemPropertyValue(m_lvEx, m_lvEx.Items.Count - 1, 0, "Text", "*");
+                            }
+
+                        }
+                        else
+                        {
+                            //did not find package item so display error
+                            strErrMsg = strErrMsg + "Table " + m_strFVSTreeTableLinkNameArray[x] + " contains RXPACKAGE: " + strRxPackage + " but " + strRxPackage + " is not a defined package. \r\n";
                         }
                     }
 
@@ -787,9 +818,9 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(strDebugFile, "END: Populate List " + System.DateTime.Now.ToString() + "\r\n");
 
-               
 
 
+                m_oAdo.m_OleDbDataReader.Dispose();
             }
             this.panel1_Resize();
             if (frmMain.g_bDebug)
@@ -1552,12 +1583,12 @@ namespace FIA_Biosum_Manager
                     if (m_intError == 0 && bFRCS)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append FRCS Data To Harvest Costs Work Table...Stand By");
-                        RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable",true);
+                        RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable",true,false);
                     }
                     if (m_intError == 0 && bOPCOST)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append OPCOST Data To Harvest Costs Work Table...Stand By");
-                        RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable", false);
+                        RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable", false,false);
                     }
                     if (m_intError == 0)
                     {
@@ -3773,7 +3804,7 @@ namespace FIA_Biosum_Manager
             
 
         }
-        private void RunScenario_AppendToHarvestCosts(string p_strHarvestCostTableName, bool bFRCS)
+        private void RunScenario_AppendToHarvestCosts(string p_strHarvestCostTableName, bool bFRCS, bool bInactiveVarRxPackage)
         {
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
             {
@@ -3786,25 +3817,28 @@ namespace FIA_Biosum_Manager
 
             if (bFRCS)
             {
-               
-
-                    m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.AppendToHarvestCostsTable(
-                        "FRCS_output", p_strHarvestCostTableName, m_strDateTimeCreated);
+                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.AppendToHarvestCostsTable(
+                    "FRCS_output", p_strHarvestCostTableName, m_strDateTimeCreated);
+            }
+            else if (bInactiveVarRxPackage)
+            {
+                // Don't append anything; There is nothing to append
+                m_oAdo.m_strSQL = "";
             }
             else
             {
-                
-
-                
-                     m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.AppendToOPCOSTHarvestCostsTable(
-                         "OpCost_Output", "OpCost_Input", p_strHarvestCostTableName, m_strDateTimeCreated);
+                m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.AppendToOPCOSTHarvestCostsTable(
+                    "OpCost_Output", "OpCost_Input", p_strHarvestCostTableName, m_strDateTimeCreated);
                 
             }
 
-            if (m_oAdo.m_intError==0 && frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
+            if (m_oAdo.m_strSQL.Length > 0)
+            {
+                if (m_oAdo.m_intError == 0 && frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
 
-            if (m_oAdo.m_intError==0) m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+                if (m_oAdo.m_intError == 0) m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
+            }
 
             if (m_oAdo.m_intError == 0 & bFRCS)
             {
@@ -4050,7 +4084,7 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
-                    if (m_oAdo.m_intError == 0 && bIncludeInactiveStands == true)
+                    if (m_oAdo.m_intError == 0 && m_bIncludeInactiveStands == true)
                     {                        
                         //update the inactive stands table complete costs per acre column
                         m_oAdo.m_strSQL = Queries.ProcessorScenarioRun.UpdateHarvestCostsTableWithCompleteCostsPerAcre(
@@ -4062,7 +4096,7 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, m_oAdo.m_strSQL + " \r\n START: " + System.DateTime.Now.ToString() + "\r\n");
                         m_oAdo.SqlNonQuery(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
                     }
-                    if (m_oAdo.m_intError == 0 && bIncludeInactiveStands == true)
+                    if (m_oAdo.m_intError == 0 && m_bIncludeInactiveStands == true)
                     {
                         //append the inactive stands to the harvest cost table where complete_cpa > 0
                         m_oAdo.m_strSQL = "INSERT INTO " + p_strHarvestCostsTableName +
@@ -4121,7 +4155,7 @@ namespace FIA_Biosum_Manager
                             "Nothing to append \r\n");
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                     }
-                    bIncludeInactiveStands = false;
+                    m_bIncludeInactiveStands = false;
                     return;
                 }
             }
@@ -4134,7 +4168,7 @@ namespace FIA_Biosum_Manager
                         "Stands with no activity will not be included in analysis! \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                 }
-                bIncludeInactiveStands = false;
+                m_bIncludeInactiveStands = false;
                 return;
             }
 
@@ -4160,7 +4194,7 @@ namespace FIA_Biosum_Manager
 
             if (m_oAdo.m_intError != 0)
             {
-                bIncludeInactiveStands = false;
+                m_bIncludeInactiveStands = false;
             }
             
             m_intError = m_oAdo.m_intError;
@@ -4534,7 +4568,7 @@ namespace FIA_Biosum_Manager
             dao_data_access oDao = new dao_data_access();
 
 
-            string strRx1, strRx2, strRx3, strRx4, strRxPackage, strVariant;
+            string strRx1, strRx2, strRx3, strRx4, strRxPackage, strVariant, strCutCount;
 
 
             frmMain.g_oDelegate.CurrentThreadProcessName = "main";
@@ -4629,6 +4663,11 @@ namespace FIA_Biosum_Manager
                     strRx4 = (string)frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_RXCYCLE4, "Text", false);
                     strRx4 = strRx4.Trim();
 
+                    strCutCount = (string) frmMain.g_oDelegate.GetListViewSubItemPropertyValue(m_lvEx, x, COL_CUTCOUNT, "Text", false);
+                    bool _bInactiveVarRxPackage = false;
+                    if (strCutCount.Trim().Equals("0"))
+                        _bInactiveVarRxPackage = true;
+
                     m_strOPCOSTBatchFile = frmMain.g_oEnv.strTempDir + "\\" +
                         "OPCOST_Input_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + ".BAT";
 
@@ -4690,7 +4729,7 @@ namespace FIA_Biosum_Manager
 
                     //Here we set the maximum number of ticks on the progress bar
                     //y cannot exceed this max number
-                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 12);
+                    frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Maximum", 13);
                     
                     y = 0;
 
@@ -4698,106 +4737,114 @@ namespace FIA_Biosum_Manager
                     y++;
                     frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     processor mainProcessor = new processor(m_strDebugFile, ScenarioId.Trim().ToUpper(), m_oAdo, m_oQueries);
-                    m_intError = mainProcessor.loadTrees(strVariant, strRxPackage);
-
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    if (!_bInactiveVarRxPackage)
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.loadTrees return value: " + m_intError + "\r\n");
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-                    }
-
-                    if (m_intError == 0)
-                    {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        bool blnCreateReconcileTreesTable = false;
-                        // print reconcile trees table if debug at highest level; This will be in temporary .accdb
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                            blnCreateReconcileTreesTable = true;
-                        m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, blnCreateReconcileTreesTable);
+                        m_intError = mainProcessor.loadTrees(strVariant, strRxPackage);
 
                         if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                         {
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.updateTrees return value: " + m_intError + "\r\n");
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.loadTrees return value: " + m_intError + "\r\n");
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                         }
-                    }
-                        
-                    if (m_intError == 0)
-                    {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        m_intError = mainProcessor.createOpcostInput(strVariant);
 
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                        if (m_intError == 0)
                         {
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createOpcostInput return value: " + m_intError + "\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update species codes and groups for trees...Stand By");
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                            bool blnCreateReconcileTreesTable = false;
+                            // print reconcile trees table if debug at highest level; This will be in temporary .accdb
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                                blnCreateReconcileTreesTable = true;
+                            m_intError = mainProcessor.updateTrees(strVariant, strRxPackage, blnCreateReconcileTreesTable);
+
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.updateTrees return value: " + m_intError + "\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                            }
                         }
-                    }
 
-                    if (m_intError == 0)
-                    {
-                        m_oAdo.m_strSQL = "SELECT COUNT(*) AS reccount FROM opcost_input";
+                        if (m_intError == 0)
+                        {
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Creating OpCost Input...Stand By");
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                            m_intError = mainProcessor.createOpcostInput(strVariant);
 
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                    }
-                    
-                    intCount++;
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createOpcostInput return value: " + m_intError + "\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                            }
+                        }
 
-                    if (m_intError == 0)
-                    {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "OPCOST Processing Batch Input...Stand By");
-                        RunScenario_ProcessOPCOST(strVariant, strRxPackage);
+                        if (m_intError == 0)
+                        {
+                            m_oAdo.m_strSQL = "SELECT COUNT(*) AS reccount FROM opcost_input";
+
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        }
+
+                        intCount++;
+
+                        if (m_intError == 0)
+                        {
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "OPCOST Processing Batch Input...Stand By");
+                            RunScenario_ProcessOPCOST(strVariant, strRxPackage);
+                        }
+                        else
+                        {
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//OPCOST Processing Batch Input ERROR: " + m_strError + "\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                            }
+                        }
+                        if (m_intError == 0)
+                        {
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                        }
+                        if (m_intError == 0)
+                        {
+                            frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
+                            y++;
+                            frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
+                            m_intError = mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, false);
+
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createTreeVolValWorkTable return value: " + m_intError + "\r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
+                            }
+                        }
                     }
                     else
                     {
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        {
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//OPCOST Processing Batch Input ERROR: " + m_strError + "\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-                        }
+                        y = y + 5;  // increment the progress indicator for inactive stands that skip steps
                     }
-                    if (m_intError == 0)
-                    {
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                    }
-                    if (m_intError == 0)
-                    {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Update Tree Vol Val Table With Merch and Chip Market Values...Stand By");
-                        y++;
-                        frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
-                        m_intError = mainProcessor.createTreeVolValWorkTable(m_strDateTimeCreated, false);
 
-                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                        {
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//Processor.createTreeVolValWorkTable return value: " + m_intError + "\r\n");
-                            frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
-                        }
-                    }
-                    string strInactiveStandsWorkTable = "InactiveStandsWorkTable";
                     if (m_intError == 0)
                     {
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append OPCOST Data To Harvest Costs Work Table...Stand By");
-                        RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable", false);
+                        RunScenario_AppendToHarvestCosts("HarvestCostsWorkTable", false, _bInactiveVarRxPackage);
                     }
                     if (m_intError == 0)
                     {
                         y++;
                         frmMain.g_oDelegate.SetControlPropertyValue(ReferenceProgressBarEx, "Value", y);
                     }
-                    if (m_intError == 0 && bIncludeInactiveStands == true)
+                    string strInactiveStandsWorkTable = "InactiveStandsWorkTable";
+                    if (m_intError == 0 && m_bIncludeInactiveStands == true)
                     {
-                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Append Inactive Stands With Harvest Costs To Harvest Costs Work Table...Stand By");
+                        frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Create Inactive Stands Work Table...Stand By");
                         RunScenario_CreateInactiveStandsHarvestCostsWorkTable("HarvestCostsWorkTable", strInactiveStandsWorkTable, strVariant, strRxPackage);
                     }
                     if (m_intError == 0)
@@ -4853,11 +4900,8 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(lblMsg, "Text", "Finalizing Processor Scenario Database Tables...Stand By");
                         //update counts
                         intRowCount = 0;
-                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "TreeVolValLowSlope"))
+                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "TreeVolValLowSlope") && ! _bInactiveVarRxPackage)
                             intRowCount = (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM TreeVolValLowSlope", "temp");
-
-                        if (m_oAdo.TableExist(m_oAdo.m_OleDbConnection, "TreeVolValSteepSlope"))
-                            intRowCount = intRowCount + (int)m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM TreeVolValSteepSlope", "temp");
 
                         frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_VOLVAL, intRowCount.ToString());
 
@@ -4885,6 +4929,10 @@ namespace FIA_Biosum_Manager
                                 }
 
                             }
+                        }
+                        else
+                        {
+                            frmMain.g_oDelegate.SetListViewTextValue(m_lvEx, x, COL_OPCOSTDROP, "0");
                         }
                     }
 
