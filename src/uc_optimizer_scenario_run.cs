@@ -5704,7 +5704,7 @@ namespace FIA_Biosum_Manager
 			if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "REVENUE")
 			{
                 m_strSQL = "UPDATE " + strOptimizationTableName + " e " +
-					"INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " p " + 
+					"LEFT OUTER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " p " + 
 					"ON e.biosum_cond_id=p.biosum_cond_id AND " + 
                     "e.rxpackage=p.rxpackage AND " + 
                     "e.rx=p.rx AND " + 
@@ -5718,7 +5718,7 @@ namespace FIA_Biosum_Manager
 			else if (this.m_oOptimizationVariable.strOptimizedVariable.Trim().ToUpper() == "MERCHANTABLE VOLUME")
 			{
                 m_strSQL = "UPDATE " + strOptimizationTableName + " e " + 
-					"INNER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " p " + 
+					"LEFT OUTER JOIN " + Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName + " p " + 
 					"ON e.biosum_cond_id=p.biosum_cond_id AND " +
                     "e.rxpackage=p.rxpackage AND " +
                     "e.rx=p.rx AND " +
