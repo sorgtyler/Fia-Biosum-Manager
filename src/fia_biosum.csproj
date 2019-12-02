@@ -173,6 +173,9 @@
     <Compile Include="uc_optimizer_scenario_calculated_variables.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="uc_optimizer_scenario_select_packages.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="uc_textboxWithButtons.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -599,6 +602,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="uc_optimizer_scenario_calculated_variables.resx">
       <DependentUpon>uc_optimizer_scenario_calculated_variables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_optimizer_scenario_select_packages.af.resx">
+      <DependentUpon>uc_optimizer_scenario_select_packages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_optimizer_scenario_select_packages.en-US.resx">
+      <DependentUpon>uc_optimizer_scenario_select_packages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_optimizer_scenario_select_packages.en.resx">
+      <DependentUpon>uc_optimizer_scenario_select_packages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="uc_optimizer_scenario_select_packages.resx">
+      <DependentUpon>uc_optimizer_scenario_select_packages.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="uc_textboxWithButtons.resx">
       <DependentUpon>uc_textboxWithButtons.cs</DependentUpon>
