@@ -2219,6 +2219,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateDiameterSpeciesGroupRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateFvsWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateEconWeightedVariableRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSpeciesGroupRefTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsSpeciesGroupRefTableName);
             frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioAdditionalHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C");
             
             // Add the ad hoc additional harvest cost columns to table
@@ -2237,7 +2238,6 @@ namespace FIA_Biosum_Manager
                         strColumn, "DOUBLE", "");
                 }
             }
-            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateScenarioTreeSpeciesGroupsListTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C");
             frmMain.g_oTables.m_oFvs.CreateRxHarvestCostColumnTable(oAdo, oAdo.m_OleDbConnection, Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C");
             frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C");
             frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C");
@@ -8750,11 +8750,14 @@ namespace FIA_Biosum_Manager
             {
                 strRxHarvestMethod = "N";
             }
+            int intSteepSlopePct = -1;
+            bool bSuccess = int.TryParse(oHarvestMethod.SteepSlopePercent, out intSteepSlopePct);
             this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
             this.m_strSQL += " SELECT RX, HarvestMethodLowSlope AS RX_HARVEST_METHOD_LOW, " + m_strHarvestMethodsTable +
                              ".HarvestMethodID AS RX_HARVEST_METHOD_LOW_ID, " + m_strHarvestMethodsTable + ".BIOSUM_CATEGORY AS RX_HARVEST_METHOD_LOW_CATEGORY, " +
                              m_strHarvestMethodsTable + ".top_limb_slope_status AS RX_HARVEST_METHOD_LOW_CATEGORY_DESCR, " +
-                             "HarvestMethodSteepSlope AS RX_HARVEST_METHOD_STEEP, '" + strRxHarvestMethod + "' as USE_RX_HARVEST_METHOD_YN ";
+                             "HarvestMethodSteepSlope AS RX_HARVEST_METHOD_STEEP, '" + strRxHarvestMethod + "' as USE_RX_HARVEST_METHOD_YN, " +
+                             intSteepSlopePct + " AS STEEP_SLOPE_PCT";
 
             this.m_strSQL += " FROM " + this.m_strRxTable;
             this.m_strSQL += " INNER JOIN " + m_strHarvestMethodsTable + " ON " +
@@ -8824,6 +8827,23 @@ namespace FIA_Biosum_Manager
                 this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
             }
 
+            this.m_strSQL = "UPDATE " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName +
+                            " SET RX_HARVEST_METHOD_LOW = 'NA', RX_HARVEST_METHOD_LOW_ID = 999, RX_HARVEST_METHOD_LOW_CATEGORY = 999," +
+                            " RX_HARVEST_METHOD_LOW_CATEGORY_DESCR = 'NA'," +
+                            " RX_HARVEST_METHOD_STEEP = 'NA', RX_HARVEST_METHOD_STEEP_ID = 999, RX_HARVEST_METHOD_STEEP_CATEGORY = 999," +
+                            " RX_HARVEST_METHOD_STEEP_CATEGORY_DESCR = 'NA'," +
+                            " SCENARIO_HARVEST_METHOD_LOW = 'NA', SCENARIO_HARVEST_METHOD_LOW_ID = 999, SCENARIO_HARVEST_METHOD_LOW_CATEGORY = 999," +
+                            " SCENARIO_HARVEST_METHOD_LOW_CATEGORY_DESCR = 'NA'," +
+                            " SCENARIO_HARVEST_METHOD_STEEP = 'NA', SCENARIO_HARVEST_METHOD_STEEP_ID = 999, SCENARIO_HARVEST_METHOD_STEEP_CATEGORY = 999," +
+                            " SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR = 'NA'" +
+                            " WHERE RX = '999'";
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nUpdate HARVEST_METHOD_REF for rx 999 (grow-only) \r\n");
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
             this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
@@ -8865,17 +8885,22 @@ namespace FIA_Biosum_Manager
             foreach (ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem oItem in this.m_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection)
             {
                 bool bEnergyWood = Convert.ToBoolean(oItem.UseAsEnergyWood);
+                double dblChippedValue = Convert.ToDouble(oItem.ChipsDollarPerCubicFootValue);
                 string strEnergyWood = "Y";
                 if (bEnergyWood == false)
+                {
                     strEnergyWood = "N";
+                    dblChippedValue = 0.0F;
+                }
+
                 this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName +
-                                " (DIAM_GROUP, DIAM_CLASS, SPECIES_GROUP, SPECIES_GROUP_LABEL, WOOD_BIN, MERCH_VALUE, CHIP_VALUE)" +
+                                " (DBH_CLASS_NUM, DBH_RANGE_INCHES, SPP_GRP_CODE, SPP_GRP, TO_CHIPS, MERCH_VAL_DpCF, VALUE_IF_CHIPPED_DpGT)" +
                                 " VALUES (" + oItem.DiameterGroupId + ", '" + oItem.DbhGroup + "'," + oItem.SpeciesGroupId + ",'" + oItem.SpeciesGroup + "','" +
                                 strEnergyWood + "', " + oItem.MerchDollarPerCubicFootValue + ", " +
-                                oItem.ChipsDollarPerCubicFootValue + ")";
+                                dblChippedValue + ")";
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate DIAMETER_SPECIES_GROUP_REF table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate DIAMETER_SPP_GRP_REF_C table \r\n");
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
@@ -8956,12 +8981,13 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName + "_C" +
-                " SELECT * FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
+            this.m_strSQL = "INSERT INTO " + Tables.OptimizerScenarioResults.DefaultScenarioResultsSpeciesGroupRefTableName +
+                " SELECT species_group AS SPP_GRP_CD, COMMON_NAME, spcd AS FIA_SPCD" +
+                " FROM " + Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName +
                 " WHERE SCENARIO_ID = '" + this.m_oProcessorScenarioItem.ScenarioId + "'";
 
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate scenario_tree_species_groups_list table \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate spp_grp_ref_C table \r\n");
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 

@@ -2471,7 +2471,7 @@ namespace FIA_Biosum_Manager
                     ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem oItem = new ProcessorScenarioItem.TreeSpeciesAndDbhDollarValuesItem();
                     oItem.SpeciesGroup = objSpcGroup.SpeciesGroupLabel;
                     oItem.DbhGroup = objDiamGroup.DiamClass;
-                    // Added to support Optimizer context table DIAMETER_SPECIES_GROUP_REF
+                    // Added to support Optimizer context table DIAMETER_SPP_GRP_REF_C
                     oItem.SpeciesGroupId = objSpcGroup.SpeciesGroup;
                     oItem.DiameterGroupId = Convert.ToInt16(objDiamGroup.DiamGroup);
                     p_oProcessorScenarioItem.m_oTreeSpeciesAndDbhDollarValuesItem_Collection.Add(oItem);
