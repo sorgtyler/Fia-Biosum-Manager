@@ -344,5 +344,18 @@ namespace FIA_Biosum_Manager
             return 0;
 
         }
+
+        public string ProcessorScenario
+        {
+            get
+            {
+                string strProcessorScenario = "";
+                if (lvProcessorScenario.CheckedItems.Count > 0)
+                {
+                    strProcessorScenario =  lvProcessorScenario.CheckedItems[0].SubItems[COL_SCENARIOID].Text.Trim();
+                }
+                return strProcessorScenario;
+            }                           
+        }
     }
 }
