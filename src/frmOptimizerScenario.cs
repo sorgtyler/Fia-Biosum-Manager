@@ -106,7 +106,7 @@ namespace FIA_Biosum_Manager
         private string m_helpChapter = "OPEN_SCENARIO";
         public FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection m_oWeightedVariableCollection =
             new FIA_Biosum_Manager.uc_optimizer_scenario_calculated_variables.Variable_Collection();
-        private TabPage tbRxPkgFilter;
+        private TabPage tbFilterPkg;
         private string m_strOutputTablePrefix;
 
 
@@ -236,7 +236,7 @@ namespace FIA_Biosum_Manager
                 this.uc_scenario_processor_scenario_select1.ReferenceOptimizerScenarioForm = this;
 
                 this.uc_optimizer_scenario_select_packages1 = new uc_optimizer_scenario_select_packages();
-                this.tbRxPkgFilter.Controls.Add(uc_optimizer_scenario_select_packages1);
+                this.tbFilterPkg.Controls.Add(uc_optimizer_scenario_select_packages1);
                 this.uc_optimizer_scenario_select_packages1.Dock = System.Windows.Forms.DockStyle.Fill;
                 this.uc_optimizer_scenario_select_packages1.ReferenceOptimizerScenarioForm = this;
 
@@ -330,9 +330,9 @@ namespace FIA_Biosum_Manager
             this.tbEffective = new System.Windows.Forms.TabPage();
             this.tbOptimization = new System.Windows.Forms.TabPage();
             this.tbTieBreaker = new System.Windows.Forms.TabPage();
-            this.tbRxPkgFilter = new System.Windows.Forms.TabPage();
             this.tbRun = new System.Windows.Forms.TabPage();
             this.btnHelp = new System.Windows.Forms.Button();
+            this.tbFilterPkg = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.dataView1)).BeginInit();
             this.tabControlScenario.SuspendLayout();
             this.tbRules.SuspendLayout();
@@ -359,7 +359,7 @@ namespace FIA_Biosum_Manager
             this.tlbScenario.Location = new System.Drawing.Point(0, 0);
             this.tlbScenario.Name = "tlbScenario";
             this.tlbScenario.ShowToolTips = true;
-            this.tlbScenario.Size = new System.Drawing.Size(909, 47);
+            this.tlbScenario.Size = new System.Drawing.Size(909, 44);
             this.tlbScenario.TabIndex = 42;
             this.tlbScenario.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.tlbScenario_ButtonClick);
             // 
@@ -433,11 +433,11 @@ namespace FIA_Biosum_Manager
             this.txtDropDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDropDown.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtDropDown.HideSelection = false;
-            this.txtDropDown.Location = new System.Drawing.Point(269, 480);
+            this.txtDropDown.Location = new System.Drawing.Point(224, 416);
             this.txtDropDown.Multiline = true;
             this.txtDropDown.Name = "txtDropDown";
             this.txtDropDown.ReadOnly = true;
-            this.txtDropDown.Size = new System.Drawing.Size(29, 28);
+            this.txtDropDown.Size = new System.Drawing.Size(24, 24);
             this.txtDropDown.TabIndex = 12;
             this.txtDropDown.Visible = false;
             // 
@@ -457,9 +457,9 @@ namespace FIA_Biosum_Manager
             // btnClose
             // 
             this.btnClose.Enabled = false;
-            this.btnClose.Location = new System.Drawing.Point(672, 480);
+            this.btnClose.Location = new System.Drawing.Point(560, 416);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(115, 37);
+            this.btnClose.Size = new System.Drawing.Size(96, 32);
             this.btnClose.TabIndex = 40;
             this.btnClose.Text = "Close";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -473,10 +473,10 @@ namespace FIA_Biosum_Manager
             this.tabControlScenario.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tabControlScenario.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControlScenario.ItemSize = new System.Drawing.Size(100, 18);
-            this.tabControlScenario.Location = new System.Drawing.Point(0, 37);
+            this.tabControlScenario.Location = new System.Drawing.Point(0, 32);
             this.tabControlScenario.Name = "tabControlScenario";
             this.tabControlScenario.SelectedIndex = 0;
-            this.tabControlScenario.Size = new System.Drawing.Size(778, 415);
+            this.tabControlScenario.Size = new System.Drawing.Size(648, 360);
             this.tabControlScenario.TabIndex = 41;
             this.tabControlScenario.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlScenario_DrawItem);
             this.tabControlScenario.SelectedIndexChanged += new System.EventHandler(this.tabControlScenario_SelectedIndexChanged);
@@ -489,7 +489,7 @@ namespace FIA_Biosum_Manager
             this.tbDesc.AutoScroll = true;
             this.tbDesc.Location = new System.Drawing.Point(4, 22);
             this.tbDesc.Name = "tbDesc";
-            this.tbDesc.Size = new System.Drawing.Size(770, 389);
+            this.tbDesc.Size = new System.Drawing.Size(640, 334);
             this.tbDesc.TabIndex = 0;
             this.tbDesc.Text = "Description";
             // 
@@ -498,7 +498,7 @@ namespace FIA_Biosum_Manager
             this.tbNotes.AutoScroll = true;
             this.tbNotes.Location = new System.Drawing.Point(4, 22);
             this.tbNotes.Name = "tbNotes";
-            this.tbNotes.Size = new System.Drawing.Size(770, 389);
+            this.tbNotes.Size = new System.Drawing.Size(640, 334);
             this.tbNotes.TabIndex = 1;
             this.tbNotes.Text = "Notes";
             // 
@@ -507,7 +507,7 @@ namespace FIA_Biosum_Manager
             this.tbDataSources.AutoScroll = true;
             this.tbDataSources.Location = new System.Drawing.Point(4, 22);
             this.tbDataSources.Name = "tbDataSources";
-            this.tbDataSources.Size = new System.Drawing.Size(770, 389);
+            this.tbDataSources.Size = new System.Drawing.Size(640, 334);
             this.tbDataSources.TabIndex = 2;
             this.tbDataSources.Text = "Data Sources";
             // 
@@ -517,7 +517,7 @@ namespace FIA_Biosum_Manager
             this.tbRules.ForeColor = System.Drawing.Color.Red;
             this.tbRules.Location = new System.Drawing.Point(4, 22);
             this.tbRules.Name = "tbRules";
-            this.tbRules.Size = new System.Drawing.Size(770, 389);
+            this.tbRules.Size = new System.Drawing.Size(640, 334);
             this.tbRules.TabIndex = 3;
             this.tbRules.Text = "Rule Definitions";
             this.tbRules.Click += new System.EventHandler(this.tbRules_Click);
@@ -530,7 +530,7 @@ namespace FIA_Biosum_Manager
             this.tabControlRules.Controls.Add(this.tbFilterPlots);
             this.tabControlRules.Controls.Add(this.tbFilterCond);
             this.tabControlRules.Controls.Add(this.tbFVSVariables);
-            this.tabControlRules.Controls.Add(this.tbRxPkgFilter);
+            this.tabControlRules.Controls.Add(this.tbFilterPkg);
             this.tabControlRules.Controls.Add(this.tbRun);
             this.tabControlRules.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlRules.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
@@ -539,7 +539,7 @@ namespace FIA_Biosum_Manager
             this.tabControlRules.Location = new System.Drawing.Point(0, 0);
             this.tabControlRules.Name = "tabControlRules";
             this.tabControlRules.SelectedIndex = 0;
-            this.tabControlRules.Size = new System.Drawing.Size(770, 389);
+            this.tabControlRules.Size = new System.Drawing.Size(640, 334);
             this.tabControlRules.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlRules.TabIndex = 0;
             this.tabControlRules.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlRules_DrawItem);
@@ -549,7 +549,7 @@ namespace FIA_Biosum_Manager
             // 
             this.tbOwners.Location = new System.Drawing.Point(4, 22);
             this.tbOwners.Name = "tbOwners";
-            this.tbOwners.Size = new System.Drawing.Size(762, 363);
+            this.tbOwners.Size = new System.Drawing.Size(632, 308);
             this.tbOwners.TabIndex = 1;
             this.tbOwners.Text = "Land Ownership Groups";
             this.tbOwners.Click += new System.EventHandler(this.tbOwners_Click);
@@ -559,7 +559,7 @@ namespace FIA_Biosum_Manager
             this.tbCostsAndRevenue.Controls.Add(this.tabControlCosts);
             this.tbCostsAndRevenue.Location = new System.Drawing.Point(4, 22);
             this.tbCostsAndRevenue.Name = "tbCostsAndRevenue";
-            this.tbCostsAndRevenue.Size = new System.Drawing.Size(760, 359);
+            this.tbCostsAndRevenue.Size = new System.Drawing.Size(632, 308);
             this.tbCostsAndRevenue.TabIndex = 10;
             this.tbCostsAndRevenue.Text = "Cost And Revenue";
             this.tbCostsAndRevenue.UseVisualStyleBackColor = true;
@@ -573,27 +573,27 @@ namespace FIA_Biosum_Manager
             this.tabControlCosts.Location = new System.Drawing.Point(0, 0);
             this.tabControlCosts.Name = "tabControlCosts";
             this.tabControlCosts.SelectedIndex = 0;
-            this.tabControlCosts.Size = new System.Drawing.Size(760, 359);
+            this.tabControlCosts.Size = new System.Drawing.Size(632, 308);
             this.tabControlCosts.TabIndex = 1;
             this.tabControlCosts.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlCosts_DrawItem);
             this.tabControlCosts.SelectedIndexChanged += new System.EventHandler(this.tabControlCosts_SelectedIndexChanged);
             // 
             // tbCosts
             // 
-            this.tbCosts.Location = new System.Drawing.Point(4, 26);
+            this.tbCosts.Location = new System.Drawing.Point(4, 22);
             this.tbCosts.Name = "tbCosts";
             this.tbCosts.Padding = new System.Windows.Forms.Padding(3);
-            this.tbCosts.Size = new System.Drawing.Size(752, 329);
+            this.tbCosts.Size = new System.Drawing.Size(624, 282);
             this.tbCosts.TabIndex = 0;
             this.tbCosts.Text = "Haul Costs";
             this.tbCosts.UseVisualStyleBackColor = true;
             // 
             // tbProcessorScenario
             // 
-            this.tbProcessorScenario.Location = new System.Drawing.Point(4, 26);
+            this.tbProcessorScenario.Location = new System.Drawing.Point(4, 22);
             this.tbProcessorScenario.Name = "tbProcessorScenario";
             this.tbProcessorScenario.Padding = new System.Windows.Forms.Padding(3);
-            this.tbProcessorScenario.Size = new System.Drawing.Size(750, 325);
+            this.tbProcessorScenario.Size = new System.Drawing.Size(624, 282);
             this.tbProcessorScenario.TabIndex = 1;
             this.tbProcessorScenario.Text = "Processor Scenario";
             this.tbProcessorScenario.UseVisualStyleBackColor = true;
@@ -602,7 +602,7 @@ namespace FIA_Biosum_Manager
             // 
             this.tbPSites.Location = new System.Drawing.Point(4, 22);
             this.tbPSites.Name = "tbPSites";
-            this.tbPSites.Size = new System.Drawing.Size(760, 359);
+            this.tbPSites.Size = new System.Drawing.Size(632, 308);
             this.tbPSites.TabIndex = 4;
             this.tbPSites.Text = "Wood Processing Sites";
             this.tbPSites.Click += new System.EventHandler(this.tbPSites_Click);
@@ -612,7 +612,7 @@ namespace FIA_Biosum_Manager
             // 
             this.tbFilterPlots.Location = new System.Drawing.Point(4, 22);
             this.tbFilterPlots.Name = "tbFilterPlots";
-            this.tbFilterPlots.Size = new System.Drawing.Size(760, 359);
+            this.tbFilterPlots.Size = new System.Drawing.Size(632, 308);
             this.tbFilterPlots.TabIndex = 5;
             this.tbFilterPlots.Text = "Filter Plot Records";
             // 
@@ -620,7 +620,7 @@ namespace FIA_Biosum_Manager
             // 
             this.tbFilterCond.Location = new System.Drawing.Point(4, 22);
             this.tbFilterCond.Name = "tbFilterCond";
-            this.tbFilterCond.Size = new System.Drawing.Size(760, 359);
+            this.tbFilterCond.Size = new System.Drawing.Size(632, 308);
             this.tbFilterCond.TabIndex = 9;
             this.tbFilterCond.Text = "Filter Condition Records";
             // 
@@ -629,7 +629,7 @@ namespace FIA_Biosum_Manager
             this.tbFVSVariables.Controls.Add(this.tabControlFVSVariables);
             this.tbFVSVariables.Location = new System.Drawing.Point(4, 22);
             this.tbFVSVariables.Name = "tbFVSVariables";
-            this.tbFVSVariables.Size = new System.Drawing.Size(760, 359);
+            this.tbFVSVariables.Size = new System.Drawing.Size(632, 308);
             this.tbFVSVariables.TabIndex = 8;
             this.tbFVSVariables.Text = "FVS Variables";
             // 
@@ -644,7 +644,7 @@ namespace FIA_Biosum_Manager
             this.tabControlFVSVariables.Location = new System.Drawing.Point(0, 0);
             this.tabControlFVSVariables.Name = "tabControlFVSVariables";
             this.tabControlFVSVariables.SelectedIndex = 0;
-            this.tabControlFVSVariables.Size = new System.Drawing.Size(760, 359);
+            this.tabControlFVSVariables.Size = new System.Drawing.Size(632, 308);
             this.tabControlFVSVariables.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlFVSVariables.TabIndex = 0;
             this.tabControlFVSVariables.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tbFVSVariablesSelect_DrawItem);
@@ -654,7 +654,7 @@ namespace FIA_Biosum_Manager
             // 
             this.tbEffective.Location = new System.Drawing.Point(4, 22);
             this.tbEffective.Name = "tbEffective";
-            this.tbEffective.Size = new System.Drawing.Size(752, 333);
+            this.tbEffective.Size = new System.Drawing.Size(624, 282);
             this.tbEffective.TabIndex = 0;
             this.tbEffective.Text = "Effective";
             // 
@@ -662,7 +662,7 @@ namespace FIA_Biosum_Manager
             // 
             this.tbOptimization.Location = new System.Drawing.Point(4, 22);
             this.tbOptimization.Name = "tbOptimization";
-            this.tbOptimization.Size = new System.Drawing.Size(750, 329);
+            this.tbOptimization.Size = new System.Drawing.Size(624, 282);
             this.tbOptimization.TabIndex = 1;
             this.tbOptimization.Text = "Optimization";
             // 
@@ -670,40 +670,40 @@ namespace FIA_Biosum_Manager
             // 
             this.tbTieBreaker.Location = new System.Drawing.Point(4, 22);
             this.tbTieBreaker.Name = "tbTieBreaker";
-            this.tbTieBreaker.Size = new System.Drawing.Size(750, 329);
+            this.tbTieBreaker.Size = new System.Drawing.Size(624, 282);
             this.tbTieBreaker.TabIndex = 2;
             this.tbTieBreaker.Text = "Tie Breaker";
-            // 
-            // tbRxPkgFilter
-            // 
-            this.tbRxPkgFilter.Location = new System.Drawing.Point(4, 22);
-            this.tbRxPkgFilter.Name = "tbRxPkgFilter";
-            this.tbRxPkgFilter.Size = new System.Drawing.Size(762, 363);
-            this.tbRxPkgFilter.TabIndex = 11;
-            this.tbRxPkgFilter.Text = "RxPackage Filter";
-            this.tbRxPkgFilter.UseVisualStyleBackColor = true;
             // 
             // tbRun
             // 
             this.tbRun.Location = new System.Drawing.Point(4, 22);
             this.tbRun.Name = "tbRun";
-            this.tbRun.Size = new System.Drawing.Size(760, 359);
+            this.tbRun.Size = new System.Drawing.Size(632, 308);
             this.tbRun.TabIndex = 6;
             this.tbRun.Text = "Run";
             // 
             // btnHelp
             // 
             this.btnHelp.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.btnHelp.Location = new System.Drawing.Point(10, 480);
+            this.btnHelp.Location = new System.Drawing.Point(8, 416);
             this.btnHelp.Name = "btnHelp";
-            this.btnHelp.Size = new System.Drawing.Size(115, 37);
+            this.btnHelp.Size = new System.Drawing.Size(96, 32);
             this.btnHelp.TabIndex = 48;
             this.btnHelp.Text = "Help";
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
+            // tbFilterPkg
+            // 
+            this.tbFilterPkg.Location = new System.Drawing.Point(4, 22);
+            this.tbFilterPkg.Name = "tbFilterPkg";
+            this.tbFilterPkg.Size = new System.Drawing.Size(762, 363);
+            this.tbFilterPkg.TabIndex = 11;
+            this.tbFilterPkg.Text = "Filter RxPackage";
+            this.tbFilterPkg.UseVisualStyleBackColor = true;
+            // 
             // frmOptimizerScenario
             // 
-            this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(909, 762);
             this.Controls.Add(this.btnHelp);
@@ -1067,12 +1067,6 @@ namespace FIA_Biosum_Manager
 			this.uc_scenario_filter1.loadvalues(false);
 			this.uc_scenario_cond_filter1.loadvalues(false);
 			this.uc_scenario_psite1.loadvalues();
-            ProcessorScenarioItem_Collection oProcItemCollection = this.m_oOptimizerScenarioItem.m_oProcessorScenarioItem_Collection;
-            if (oProcItemCollection != null && oProcItemCollection.Count > 0)
-            {
-                ProcessorScenarioItem oProcItem = oProcItemCollection.Item(0);
-                this.uc_optimizer_scenario_select_packages1.loadvalues(oProcItem);
-            }
 			p_frmTherm.progressBar1.Value=7;
 			p_frmTherm.Close();
 			p_frmTherm = null;
@@ -1342,7 +1336,7 @@ namespace FIA_Biosum_Manager
                     // This logic is in the HelpChapter getter
                     break;
                 case "FILTER RXPACKAGE":
-                    if (((Control)this.tbRxPkgFilter).Enabled)
+                    if (((Control)this.tbFilterPkg).Enabled)
 						this.uc_scenario_run1.lblTitle.Text = "Run";
 					else
 						this.uc_scenario_run1.lblTitle.Text = "Run (Read Only)";
