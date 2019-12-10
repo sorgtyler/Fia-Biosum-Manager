@@ -91,57 +91,10 @@ namespace FIA_Biosum_Manager
 			}
 			base.Dispose( disposing );
 		}
-        public void loadvalues_FromProperties()
+        public void loadvalues_FromProperties(ProcessorScenarioItem oProcItem)
         {
-            //int x,y;
-            //string strPSiteId;
-            //string strTranDef="";
-            //string strBioDef="";
-            //for (x=0;x<=lstRxPackages.Items.Count-1;x++)
-            //{
-            //    strPSiteId=Convert.ToString(lstRxPackages.Items[x].SubItems[COLUMN_PSITEID].Text.Trim());
-
-            //    for (y = 0; y <= ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Count - 1; y++)
-            //    {
-                    
-                   
-            //        if (strPSiteId ==
-            //            ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).ProcessingSiteId.Trim())
-            //        {
-            //            //
-            //            //ITEM CHECKED
-            //            //
-            //            lstRxPackages.Items[x].Checked = ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).Selected;
-            //            //
-            //            //TRANSPORTATION CODE
-            //            //
-            //            strTranDef = 
-            //                 ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).m_strTranCdDescArray[
-            //                    Convert.ToInt32(ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).TransportationCode) - 1, 1];
-            //            if (ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).TransportationCode == "1")
-            //            {
-            //                lstRxPackages.Items[x].SubItems[COLUMN_PSITEROADRAIL].Text = "Processing Site - Road Access Only";
-            //            }
-            //            else
-            //            {
-            //                m_Combo = (System.Windows.Forms.ComboBox)this.lstRxPackages.GetEmbeddedControl(COLUMN_PSITEROADRAIL, x);
-            //                m_Combo.Text = strTranDef;
-            //            }
-            //            //
-            //            //BIOMASS TYPE CODE
-            //            //
-            //            strBioDef =  
-            //                ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).m_strBioCdDescArray[
-            //                    Convert.ToInt32( ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(y).BiomassCode) - 1, 1];
-            //             m_Combo=(System.Windows.Forms.ComboBox)this.lstRxPackages.GetEmbeddedControl(COLUMN_PSITEBIOPROCESSTYPE,x);
-            //            m_Combo.Text = strBioDef;
-
-            //            break;
-                       
-                      
-            //        }
-            //    }
-            //}
+            // For now we don't store selected fvs_variant/rxPackages at the scenario level
+            this.loadvalues(oProcItem);
         }
 		public void loadvalues(ProcessorScenarioItem oProcItem)
 		{
@@ -173,7 +126,7 @@ namespace FIA_Biosum_Manager
                 return;
             }
 
-            string strPlotPathAndFile = "";
+            //string strPlotPathAndFile = "";
             string[] arr1 = new string[] { "PLOT" };
             //object oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceOptimizerScenarioForm.uc_datasource1,
             //    "getDataSourcePathAndFile", arr1, true);
@@ -621,12 +574,37 @@ namespace FIA_Biosum_Manager
             //this.btnUnselectAll.Top = this.btnScenarioPSiteDefault.Top;
             //lstPSites.Height = this.ClientSize.Height - lstPSites.Top - (int)(this.btnScenarioPSiteDefault.Height * 1.5) - 3;
 		}
-	
-		public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
-		{
-			get {return _frmScenario;}
-			set {_frmScenario=value;}
-		}
+
+        public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm
+        {
+            get { return _frmScenario; }
+            set { _frmScenario = value; }
+        }
+
+        public string RxPackagesNotSelected
+        {
+            get
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                for (int x = 0; x <= this.lstRxPackages.Items.Count - 1; x++)
+                {
+                    if (this.lstRxPackages.Items[x].Checked == false)
+                    {
+                        string strFvsVariant = this.lstRxPackages.Items[x].SubItems[COLUMN_FVS_VARIANT].Text.Trim();
+                        string strRxPackage = this.lstRxPackages.Items[x].SubItems[COLUMN_RXPACKAGE].Text.Trim();
+                        if (sb.Length == 0)
+                        {
+                            sb.Append(strFvsVariant + strRxPackage);
+                        }
+                        else
+                        {
+                            sb.Append("," + strFvsVariant + strRxPackage);
+                        }
+                    }
+                }
+                return sb.ToString();
+            }
+        }
 		
 	}
 

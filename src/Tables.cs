@@ -569,7 +569,8 @@ namespace FIA_Biosum_Manager
 					"biosum_cond_id text(25)," + 
                     "rxpackage text(3)," + 
 					"rx text(3)," + 
-                    "rxcycle text(1))";
+                    "rxcycle text(1)," +
+                    "fvs_variant text(2))";
 			}
 			//
 			//BEST TREATMENT TABLE

@@ -4633,9 +4633,40 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
 			m_ado.SqlNonQuery(this.m_TempMDBFileConn,m_strSQL);
-            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            
+            // Set the fvs_variant from the plot table
+            m_strSQL = "UPDATE (validcombos_fvsprepost INNER JOIN " + this.m_strCondTable +
+                       " ON validcombos_fvsprepost.biosum_cond_id = " + this.m_strCondTable + ".biosum_cond_id)" +
+                       " INNER JOIN " + this.m_strPlotTable + " ON " + this.m_strCondTable + ".biosum_plot_id" +
+                       " = " + this.m_strPlotTable + ".biosum_plot_id" +
+                       " SET validcombos_fvsprepost.FVS_VARIANT = " + this.m_strPlotTable + ".fvs_variant";
+
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+            m_ado.SqlNonQuery(this.m_TempMDBFileConn, m_strSQL);
+
+            // Delete records from the validcombos_fvsprepost if they are in variant/packages on the filter's exclusion list
+            //string strUnselectedPackages = _frmScenario.uc_optimizer_scenario_select_packages1.RxPackagesNotSelected;
+            string strUnselectedPackages =
+                (string)frmMain.g_oDelegate.GetControlPropertyValue((uc_optimizer_scenario_select_packages)_frmScenario.uc_optimizer_scenario_select_packages1, "RxPackagesNotSelected", false);
+            if (! string.IsNullOrEmpty(strUnselectedPackages))
+            {
+                string[] strUnselectedPackagesArray = frmMain.g_oUtils.ConvertListToArray(strUnselectedPackages, ",");
+                string strTempWhere = " WHERE FVS_VARIANT & RXPACKAGE IN ( ";
+                foreach (string strVariantPackage in strUnselectedPackagesArray)
+                {
+                    strTempWhere = strTempWhere + "'" + strVariantPackage + "',";
+                }
+                string strTrimWhere = strTempWhere.TrimEnd(',') + ")";
+                m_strSQL = "DELETE FROM validcombos_fvsprepost" + strTrimWhere;
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                m_ado.SqlNonQuery(this.m_TempMDBFileConn, m_strSQL);
+            }
+
+            FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
             this.m_strSQL = "INSERT INTO validcombos (biosum_cond_id,rxpackage,rx,rxcycle) SELECT DISTINCT ruledefinitionscondfilter.biosum_cond_id,validcombos_fvsprepost.rxpackage,validcombos_fvsprepost.rx,validcombos_fvsprepost.rxcycle " +
 				"FROM (((ruledefinitionsplotfilter INNER JOIN ruledefinitionscondfilter ON ruledefinitionsplotfilter.biosum_plot_id = ruledefinitionscondfilter.biosum_plot_id) " + 
