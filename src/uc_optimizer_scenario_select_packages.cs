@@ -120,8 +120,7 @@ namespace FIA_Biosum_Manager
             m_oEnv = new env();
             ado_data_access oAdo = new ado_data_access();
 
-            string strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario_processor_scenario_select1.ProcessorScenario;
-            if (String.IsNullOrEmpty(strScenarioId))
+            if (String.IsNullOrEmpty(oProcItem.ScenarioId))
             {
                 return;
             }
@@ -349,11 +348,11 @@ namespace FIA_Biosum_Manager
 			
 			return x;
 		}
-		public int val_psites()
+		public int val_rxPackages()
 		{
 			if (this.lstRxPackages.CheckedItems.Count == 0)
 			{
-				MessageBox.Show("Run Scenario Failed: Select at least one processing site in <Wood Processing Sites>","FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MessageBox.Show("Run Scenario Failed: Select at least one FVS variant + RxPackage combination in <Filter RxPackage>", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
 				return -1;
 			}
 			return 0;

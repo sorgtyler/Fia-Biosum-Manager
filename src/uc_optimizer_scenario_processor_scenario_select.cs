@@ -296,7 +296,8 @@ namespace FIA_Biosum_Manager
 
                         ReferenceOptimizerScenarioForm.uc_scenario_cond_filter1.strSteepSlope =
                             m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.SelectedItems[0].Index).m_oHarvestMethod.SteepSlopePercent;
-
+                        // Reload the select rxPackage list when the scenario changes
+                        ReferenceOptimizerScenarioForm.uc_optimizer_scenario_select_packages1.loadvalues(m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.SelectedItems[0].Index));
                     }
                 }
 

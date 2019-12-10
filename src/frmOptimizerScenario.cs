@@ -330,9 +330,9 @@ namespace FIA_Biosum_Manager
             this.tbEffective = new System.Windows.Forms.TabPage();
             this.tbOptimization = new System.Windows.Forms.TabPage();
             this.tbTieBreaker = new System.Windows.Forms.TabPage();
+            this.tbFilterPkg = new System.Windows.Forms.TabPage();
             this.tbRun = new System.Windows.Forms.TabPage();
             this.btnHelp = new System.Windows.Forms.Button();
-            this.tbFilterPkg = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.dataView1)).BeginInit();
             this.tabControlScenario.SuspendLayout();
             this.tbRules.SuspendLayout();
@@ -674,6 +674,15 @@ namespace FIA_Biosum_Manager
             this.tbTieBreaker.TabIndex = 2;
             this.tbTieBreaker.Text = "Tie Breaker";
             // 
+            // tbFilterPkg
+            // 
+            this.tbFilterPkg.Location = new System.Drawing.Point(4, 22);
+            this.tbFilterPkg.Name = "tbFilterPkg";
+            this.tbFilterPkg.Size = new System.Drawing.Size(760, 359);
+            this.tbFilterPkg.TabIndex = 11;
+            this.tbFilterPkg.Text = "Filter RxPackage";
+            this.tbFilterPkg.UseVisualStyleBackColor = true;
+            // 
             // tbRun
             // 
             this.tbRun.Location = new System.Drawing.Point(4, 22);
@@ -691,15 +700,6 @@ namespace FIA_Biosum_Manager
             this.btnHelp.TabIndex = 48;
             this.btnHelp.Text = "Help";
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
-            // 
-            // tbFilterPkg
-            // 
-            this.tbFilterPkg.Location = new System.Drawing.Point(4, 22);
-            this.tbFilterPkg.Name = "tbFilterPkg";
-            this.tbFilterPkg.Size = new System.Drawing.Size(762, 363);
-            this.tbFilterPkg.TabIndex = 11;
-            this.tbFilterPkg.Text = "Filter RxPackage";
-            this.tbFilterPkg.UseVisualStyleBackColor = true;
             // 
             // frmOptimizerScenario
             // 

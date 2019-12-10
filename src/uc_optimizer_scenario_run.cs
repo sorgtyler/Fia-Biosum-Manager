@@ -884,7 +884,12 @@ namespace FIA_Biosum_Manager
                 UpdateThermPercent();
                 this.m_intError = ReferenceOptimizerScenarioForm.uc_scenario_processor_scenario_select1.val_processorscenario();
             }
-            
+
+            if (this.m_intError == 0)
+            {
+                UpdateThermPercent();
+                this.m_intError = ReferenceOptimizerScenarioForm.uc_optimizer_scenario_select_packages1.val_rxPackages();
+            }
 
 			if (this.m_intError==0)  
 			{
