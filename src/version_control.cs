@@ -508,7 +508,7 @@ namespace FIA_Biosum_Manager
                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR1]) <= 8 &&
                             Convert.ToInt16(m_strProjectVersionArray[APP_VERSION_MINOR2]) < 7))
                     {
-                        UpdateDatasources_5_8_7();
+                        UpdateDatasources_5_8_8();  // Allow v5.8.6 to upgrade directly to v5.8.8
                         UpdateProjectVersionFile(strProjVersionFile);
                         bPerformCheck = false;
                     }
@@ -5960,6 +5960,12 @@ namespace FIA_Biosum_Manager
 
         private void UpdateDatasources_5_8_8()
         {
+            //v5.8.7 was never in wide release. This allows projects to be upgraded from v5.8.6 without having to install v5.8.7
+            if (this.m_strProjectVersion.Equals("5.8.6"))
+            {
+                UpdateDatasources_5_8_7();
+            }
+            
             ado_data_access oAdo = new ado_data_access();
             dao_data_access oDao = new dao_data_access();
 
