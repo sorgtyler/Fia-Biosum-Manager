@@ -3772,8 +3772,12 @@ namespace FIA_Biosum_Manager
 				return;
 			}     
 
-			this.m_strSQL = "INSERT INTO combine_merch_rail_road_haul_costs_work_table " + 
-				"SELECT * FROM cheapest_rail_merch_haul_costs_work_table;";
+            // Need to specify all fields except the haul_cost_id because there may be duplicate haul_cost_id's  
+            // between the rail and road tables. This allows MS Access to auto-assign the haul_cost_id for the
+            // inserted records
+            this.m_strSQL = "INSERT INTO combine_merch_rail_road_haul_costs_work_table " +
+                "SELECT biosum_plot_id, railhead_id, psite_id, transfer_cost_dpgt, road_cost_dpgt, " +
+                "rail_cost_dpgt, complete_haul_cost_dpgt, materialcd FROM cheapest_rail_merch_haul_costs_work_table;";
 
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\nInsert into work table. Cheapest rail route to merch psite\r\n ");
@@ -3867,8 +3871,13 @@ namespace FIA_Biosum_Manager
 				return;
 			}     
 
-			this.m_strSQL = "INSERT INTO combine_chip_rail_road_haul_costs_work_table " + 
-				"SELECT * FROM cheapest_rail_chip_haul_costs_work_table;";
+            // Need to specify all fields except the haul_cost_id because there may be duplicate haul_cost_id's  
+            // between the rail and road tables. This allows MS Access to auto-assign the haul_cost_id for the
+            // inserted records
+            this.m_strSQL = "INSERT INTO combine_chip_rail_road_haul_costs_work_table " +
+                "SELECT biosum_plot_id, railhead_id, psite_id, transfer_cost_dpgt, road_cost_dpgt, " +
+                "rail_cost_dpgt, complete_haul_cost_dpgt, materialcd FROM cheapest_rail_chip_haul_costs_work_table;";
+
 
 			if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 frmMain.g_oUtils.WriteText(m_strDebugFile,"\r\nInsert into work table. Cheapest rail route to chip psite\r\n ");
