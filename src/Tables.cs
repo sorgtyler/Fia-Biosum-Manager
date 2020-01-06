@@ -237,8 +237,13 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsHaulCostsTableName { get { return @"haul_costs"; } }
             static public string DefaultScenarioResultsCondPsiteTableName { get { return @"cond_psite"; } }
             static public string DefaultScenarioResultsContextDbFile { get { return @"db\context.accdb"; } }
-            static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"HARVEST_METHOD_REF"; } }
-
+            static public string DefaultScenarioResultsHarvestMethodRefTableName { get { return @"harvest_method_ref_C"; } }
+            static public string DefaultScenarioResultsRxPackageRefTableName { get { return @"rxpackage_ref_C"; } }
+            static public string DefaultScenarioResultsDiameterSpeciesGroupRefTableName { get { return @"diameter_spp_grp_ref_C"; } }
+            static public string DefaultScenarioResultsSpeciesGroupRefTableName { get { return @"spp_grp_ref_C"; } }
+            static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"fvs_weighted_variables_ref_C"; } }
+            static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"econ_weighted_variables_ref_C"; } }
+            static public string DefaultScenarioResultsFvsContextDbFile { get { return @"db\fvs_context.accdb"; } }
 			
 			private string strSQL = "";
 			public OptimizerScenarioResults()
@@ -1388,7 +1393,7 @@ namespace FIA_Biosum_Manager
             }
 
             //
-            //COND_PSITE TABLE
+            //HARVEST_METHOD_REF TABLE
             //
             public void CreateHarvestMethodRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -1415,6 +1420,7 @@ namespace FIA_Biosum_Manager
                     "RX_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
                     "RX_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100)," +
                     "USE_RX_HARVEST_METHOD_YN CHAR(1)," +
+                    "STEEP_SLOPE_PCT INTEGER," +
                     "SCENARIO_HARVEST_METHOD_LOW CHAR(50)," +
                     "SCENARIO_HARVEST_METHOD_LOW_ID INTEGER," +
                     "SCENARIO_HARVEST_METHOD_LOW_CATEGORY INTEGER," +
@@ -1423,6 +1429,170 @@ namespace FIA_Biosum_Manager
                     "SCENARIO_HARVEST_METHOD_STEEP_ID INTEGER," +
                     "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
                     "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100) )";
+            }
+
+            //
+            //RXPACKAGE_REF TABLE
+            //
+            public void CreateRxPackageRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateRxPackageRefTableSQL(p_strTableName));
+                CreateRxPackageRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateRxPackageRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk1", "RXPACKAGE");
+            }
+
+            static public string CreateRxPackageRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "RXPACKAGE CHAR(3)," +
+                    "DESCRIPTION MEMO," +
+                    "SIMYEAR1_RX CHAR(3)," +
+                    "SIMYEAR1_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR1_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR1_RX_DESCRIPTION MEMO," +
+                    "SIMYEAR2_RX CHAR(3)," +
+                    "SIMYEAR2_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR2_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR2_RX_DESCRIPTION MEMO," +
+                    "SIMYEAR3_RX CHAR(3)," +
+                    "SIMYEAR3_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR3_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR3_RX_DESCRIPTION MEMO," +
+                    "SIMYEAR4_RX CHAR(3)," +
+                    "SIMYEAR4_RX_CATEGORY CHAR(100)," +
+                    "SIMYEAR4_RX_SUBCATEGORY CHAR(100)," +
+                    "SIMYEAR4_RX_DESCRIPTION MEMO )";
+            }
+
+            //
+            //DIAMETER_SPP_GRP_REF_C TABLE
+            //
+            public void CreateDiameterSpeciesGroupRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateDiameterSpeciesGroupRefTableSQL(p_strTableName));
+                CreateDiameterSpeciesGroupRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateDiameterSpeciesGroupRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "DBH_CLASS_NUM,SPP_GRP_CODE");
+            }
+
+            static public string CreateDiameterSpeciesGroupRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "DBH_CLASS_NUM INTEGER," +
+                    "DBH_RANGE_INCHES CHAR(15)," +
+                    "SPP_GRP_CODE INTEGER," +
+                    "SPP_GRP CHAR(50)," +
+                    "TO_CHIPS CHAR(1)," +
+                    "MERCH_VAL_DpCF DOUBLE," +
+                    "VALUE_IF_CHIPPED_DpGT DOUBLE )";
+            }
+
+            //
+            //SPP_GRP_REF_C TABLE
+            //
+            public void CreateSpeciesGroupRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateSpeciesGroupRefTableSQL(p_strTableName));
+            }
+            static public string CreateSpeciesGroupRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "SPP_GRP_CD INTEGER," +
+                    "COMMON_NAME CHAR(50)," +
+                    "FIA_SPCD INTEGER )";
+            }
+
+            //
+            //FVS_WEIGHTED_VARIABLES_REF TABLE
+            //
+            public void CreateFvsWeightedVariableRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateFvsWeightedVariableRefTableSQL(p_strTableName));
+                CreateFvsWeightedVariableRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateFvsWeightedVariableRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "VARIABLE_NAME");
+            }
+
+            static public string CreateFvsWeightedVariableRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "VARIABLE_NAME CHAR(40)," +
+                    "VARIABLE_DESCRIPTION CHAR(255)," +
+                    "BASELINE_RXPACKAGE CHAR(3)," +
+                    "VARIABLE_SOURCE CHAR(100)," +
+                    "weight_1_pre DOUBLE," +
+                    "weight_1_post DOUBLE," +
+                    "weight_2_pre DOUBLE," +
+                    "weight_2_post DOUBLE," +
+                    "weight_3_pre DOUBLE," +
+                    "weight_3_post DOUBLE," +
+                    "weight_4_pre DOUBLE," +
+                    "weight_4_post DOUBLE )";
+            }
+            //
+            //ECON_WEIGHTED_VARIABLES_REF TABLE
+            //
+            public void CreateEconWeightedVariableRefTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateEconWeightedVariableRefTableSQL(p_strTableName));
+                CreateEconWeightedVariableRefTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreateEconWeightedVariableRefTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "VARIABLE_NAME");
+            }
+
+            static public string CreateEconWeightedVariableRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "VARIABLE_NAME CHAR(40)," +
+                    "VARIABLE_DESCRIPTION CHAR(255)," +
+                    "VARIABLE_SOURCE CHAR(100)," +
+                    "CYCLE_1_WEIGHT DOUBLE," +
+                    "CYCLE_2_WEIGHT DOUBLE," +
+                    "CYCLE_3_WEIGHT DOUBLE," +
+                    "CYCLE_4_WEIGHT DOUBLE )";
+            }
+            //
+            //PRE POST FVS WEIGHTED TABLES TABLES
+            //This is only used when creating the context db. The tables are initially built
+            //in uc_optimizer_scenario_calculated_variables.cs when the variable is calculated
+            //
+            public void CreatePrePostFvsWeightedTables(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreatePrePostFvsWeightedTablesSQL(p_strTableName));
+                CreatePrePostFvsWeightedTableIndexes(p_oAdo, p_oConn, p_strTableName);
+
+
+            }
+            public void CreatePrePostFvsWeightedTableIndexes(ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.AddPrimaryKey(p_oConn, p_strTableName, p_strTableName + "_pk", "biosum_cond_id, rxpackage,rx,rxcycle");
+            }
+
+            static public string CreatePrePostFvsWeightedTablesSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id CHAR(25)," +
+                    "rxpackage CHAR(3)," +
+                    "rx CHAR(3)," +
+                    "rxcycle CHAR(1)," +
+                    "fvs_variant CHAR(2))";
             }
 		}
 		public class OptimizerScenarioRuleDefinitions

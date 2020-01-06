@@ -1518,76 +1518,122 @@ namespace FIA_Biosum_Manager
             return oAdo.m_intError;
         }
 
-        private void val_data(string strVariableType)
+        private void val_data_fvs(string strPrePostAccdb, string strPreTable, string strPostTable)
         {
             this.m_intError = 0;    // Reset error variable
-            if (strVariableType.Equals("FVS"))
+            if (this.lblFvsVariableName.Text.Trim().Equals("Not Defined") ||
+                this.LblSelectedVariable.Text.Trim().Equals("Not Defined"))
             {
-                if (this.lblFvsVariableName.Text.Trim().Equals("Not Defined") ||
-                    this.LblSelectedVariable.Text.Trim().Equals("Not Defined"))
+                MessageBox.Show("!!Select An FVS Variable!!", "FIA Biosum",
+                                 System.Windows.Forms.MessageBoxButtons.OK,
+                                 System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                this.btnFVSVariableValue.Focus();
+                return;
+            }
+            double dblTotalWeights = -1;
+            bool bIsNumber = Double.TryParse(txtFvsVariableTotalWeight.Text, out dblTotalWeights);
+            if (dblTotalWeights <= 0)
+            {
+                MessageBox.Show("!!Select Weights Totaling More Than 0!!", "FIA Biosum",
+                                System.Windows.Forms.MessageBoxButtons.OK,
+                                System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                this.m_dg.Focus();
+                return;
+            }
+            if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
+            {
+                MessageBox.Show("!!No Baseline RxPackage Selected!!", "FIA Biosum",
+                               System.Windows.Forms.MessageBoxButtons.OK,
+                               System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                this.cboFvsVariableBaselinePkg.Focus();
+                return;
+            }
+            string strOutputAccdb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory + "\\" + 
+                Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            if (!System.IO.File.Exists(strOutputAccdb))
+            {
+                MessageBox.Show("!!FVS Weighted Variable output database missing. It should be here: " + 
+                    strOutputAccdb + "!!", "FIA Biosum",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                return;
+            }
+            string strCalculateConn = m_oAdo.getMDBConnString(frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                                      "\\fvs\\db\\" + strPrePostAccdb, "", "");
+            using (var calculateConn = new OleDbConnection(strCalculateConn))
+            {
+                calculateConn.Open();
+                m_oAdo.m_strSQL = "SELECT COUNT(*)" +
+                                  " FROM " + strPreTable +
+                                  " WHERE " + this.lstFVSFieldsList.SelectedItems[0].ToString() + " < 0";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 {
-                    MessageBox.Show("!!Select An FVS Variable!!", "FIA Biosum",
-                                     System.Windows.Forms.MessageBoxButtons.OK,
-                                     System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    this.m_intError = -1;
-                    this.btnFVSVariableValue.Focus();
-                    return;
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Checking for negative FVS values \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + "\r\n\r\n");
                 }
-                double dblTotalWeights = -1;
-                bool bIsNumber = Double.TryParse(txtFvsVariableTotalWeight.Text, out dblTotalWeights);
-                if (dblTotalWeights <= 0)
+                int intCount = m_oAdo.getRecordCount(calculateConn, m_oAdo.m_strSQL, strPreTable);
+                if (intCount > 0)
                 {
-                    MessageBox.Show("!!Select Weights Totaling More Than 0!!", "FIA Biosum",
-                                    System.Windows.Forms.MessageBoxButtons.OK,
-                                    System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    this.m_intError = -1;
-                    this.m_dg.Focus();
-                    return;
+                    string strMessage = "!! BioSum found " + intCount + " negative values in the " + strPreTable + " table!!" +
+                                        " Do you wish to continue with the weighted variable calculation ?";
+                    DialogResult res = MessageBox.Show(strMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo,
+                                                       System.Windows.Forms.MessageBoxIcon.Question);
+                    if (res != DialogResult.Yes)
+                    {
+                        this.m_intError = -1;
+                        return;
+                    }
                 }
-                if (cboFvsVariableBaselinePkg.SelectedIndex < 0)
+
+                m_oAdo.m_strSQL = "SELECT COUNT(*)" +
+                  " FROM " + strPostTable +
+                  " WHERE " + this.lstFVSFieldsList.SelectedItems[0].ToString() + " < 0";
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 {
-                    MessageBox.Show("!!No Baseline RxPackage Selected!!", "FIA Biosum",
-                                   System.Windows.Forms.MessageBoxButtons.OK,
-                                   System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    this.m_intError = -1;
-                    this.cboFvsVariableBaselinePkg.Focus();
-                    return;
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "EXECUTE SQL: " + m_oAdo.m_strSQL + "\r\n\r\n");
                 }
-                string strOutputAccdb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory + "\\" + 
-                    Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
-                if (!System.IO.File.Exists(strOutputAccdb))
+                intCount = m_oAdo.getRecordCount(calculateConn, m_oAdo.m_strSQL, strPreTable);
+                if (intCount > 0)
                 {
-                    MessageBox.Show("!!FVS Weighted Variable output database missing. It should be here: " + 
-                        strOutputAccdb + "!!", "FIA Biosum",
-                        System.Windows.Forms.MessageBoxButtons.OK,
-                        System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    this.m_intError = -1;
-                    return;
+                    string strMessage = "!! BioSum found " + intCount + " negative values in the " + strPostTable + " table!!" +
+                                        " Do you wish to continue with the weighted variable calculation ?";
+                    DialogResult res = MessageBox.Show(strMessage, "FIA Biosum", System.Windows.Forms.MessageBoxButtons.YesNo,
+                                                       System.Windows.Forms.MessageBoxIcon.Question);
+                    if (res != DialogResult.Yes)
+                    {
+                        this.m_intError = -1;
+                        return;
+                    }
                 }
             }
-            else
+        }
+
+        private void val_data_econ()
+        {
+            if (this.lblSelectedEconType.Text.Trim().Equals("Not Defined") ||
+                this.lblEconVariableName.Text.Trim().Equals("Not Defined"))
             {
-                if (this.lblSelectedEconType.Text.Trim().Equals("Not Defined") ||
-                    this.lblEconVariableName.Text.Trim().Equals("Not Defined"))
-                {
-                    MessageBox.Show("!!Select An Economic Variable!!", "FIA Biosum",
-                                     System.Windows.Forms.MessageBoxButtons.OK,
-                                     System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    this.m_intError = -1;
-                    this.btnEconVariableType.Focus();
-                    return;
-                }
-                double dblTotalWeights = -1;
-                bool bIsNumber = Double.TryParse(txtEconVariableTotalWeight.Text, out dblTotalWeights);
-                if (dblTotalWeights <= 0)
-                {
-                    MessageBox.Show("!!Select Weights Totaling More Than 0!!", "FIA Biosum",
-                                    System.Windows.Forms.MessageBoxButtons.OK,
-                                    System.Windows.Forms.MessageBoxIcon.Exclamation);
-                    this.m_intError = -1;
-                    this.m_dgEcon.Focus();
-                    return;
-                }
+                MessageBox.Show("!!Select An Economic Variable!!", "FIA Biosum",
+                                 System.Windows.Forms.MessageBoxButtons.OK,
+                                 System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                this.btnEconVariableType.Focus();
+                return;
+            }
+            double dblTotalWeights = -1;
+            bool bIsNumber = Double.TryParse(txtEconVariableTotalWeight.Text, out dblTotalWeights);
+            if (dblTotalWeights <= 0)
+            {
+                MessageBox.Show("!!Select Weights Totaling More Than 0!!", "FIA Biosum",
+                                System.Windows.Forms.MessageBoxButtons.OK,
+                                System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_intError = -1;
+                this.m_dgEcon.Focus();
+                return;
             }
         }
 
@@ -2493,7 +2539,19 @@ namespace FIA_Biosum_Manager
             dao_data_access oDao = new dao_data_access();
             try
             {
-                this.val_data("FVS");
+                //Determine database and table names based on the source FVS variable
+                string[] strPieces = LblSelectedVariable.Text.Split('.');
+                string strSourcePreTable = "PRE_" + strPieces[0];
+                string strSourcePostTable = "POST_" + strPieces[0];
+                string strSourceDatabaseName = "PREPOST_" + strPieces[0] + ".ACCDB";
+                string strTargetPreTable = "PRE_" + strPieces[0] + "_WEIGHTED";
+                string strTargetPostTable = "POST_" + strPieces[0] + "_WEIGHTED";
+                string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
+                string strWeightsByRxCyclePostTable = "WEIGHTS_BY_RX_CYCLE_POST";
+                string strWeightsByRxPkgPreTable = "WEIGHTS_BY_RXPACKAGE_PRE";
+                string strWeightsByRxPkgPostTable = "WEIGHTS_BY_RXPACKAGE_POST";
+
+                this.val_data_fvs(strSourceDatabaseName, strSourcePreTable, strSourcePostTable);
                 if (this.m_intError == 0)
                 {
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -2511,23 +2569,10 @@ namespace FIA_Biosum_Manager
                        frmMain.g_oFrmMain.Height,
                        frmMain.g_oFrmMain.Width,
                        frmMain.g_oFrmMain.Top);
-
+                    
                     //Save associated configuration records
                     frmMain.g_sbpInfo.Text = "Saving scenario rule definitions...Stand by";
                     savevalues("FVS");
-
-                    //Determine database and table names based on the source FVS variable
-                    string[] strPieces = LblSelectedVariable.Text.Split('.');
-                    string strSourcePreTable = "PRE_" + strPieces[0];
-                    string strSourcePostTable = "POST_" + strPieces[0];
-                    string strSourceDatabaseName = "PREPOST_" + strPieces[0] + ".ACCDB";
-                    string strTargetPreTable = "PRE_" + strPieces[0] + "_WEIGHTED";
-                    string strTargetPostTable = "POST_" + strPieces[0] + "_WEIGHTED";
-                    string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
-                    string strWeightsByRxCyclePostTable = "WEIGHTS_BY_RX_CYCLE_POST";
-                    string strWeightsByRxPkgPreTable = "WEIGHTS_BY_RXPACKAGE_PRE";
-                    string strWeightsByRxPkgPostTable = "WEIGHTS_BY_RXPACKAGE_POST";
-
 
                     frmMain.g_sbpInfo.Text = "Calculating and saving PRE/POST values...Stand by";
                     string strPrePostWeightedDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
@@ -3112,7 +3157,7 @@ namespace FIA_Biosum_Manager
 
         private void BtnSaveEcon_Click(object sender, EventArgs e)
         {
-            this.val_data("ECON");
+            this.val_data_econ();
             if (this.m_intError == 0)
             {
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
@@ -3437,7 +3482,6 @@ namespace FIA_Biosum_Manager
                 System.Windows.MessageBox.Show("Weights successfully saved!!", "FIA Biosum");
             }
           }
-
 
     }
 
