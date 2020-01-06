@@ -18,8 +18,6 @@ namespace FIA_Biosum_Manager
         private System.Windows.Forms.ImageList imgSize;
 		private System.Windows.Forms.ListView listView1;
 		private System.ComponentModel.IContainer components;
-		private string m_strTravelTimeTable;
-		private string m_strPSiteTable;
 		private string m_strTempMDBFile;
 		private env m_oEnv;
 		public int m_intError=0;
@@ -54,10 +52,9 @@ namespace FIA_Biosum_Manager
 			lstRxPackages.GridLines = true;
 			lstRxPackages.MultiSelect=false;
 			lstRxPackages.View = System.Windows.Forms.View.Details;
-			lstRxPackages.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(lstPSites_ColumnClick);
-			lstRxPackages.ItemCheck += new ItemCheckEventHandler(lstPSites_ItemCheck);
-			lstRxPackages.MouseUp += new System.Windows.Forms.MouseEventHandler(lstPSites_MouseUp);
-			lstRxPackages.SelectedIndexChanged += new System.EventHandler(lstPSites_SelectedIndexChanged);
+			lstRxPackages.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(lstRxPackages_ColumnClick);
+			lstRxPackages.MouseUp += new System.Windows.Forms.MouseEventHandler(lstRxPackages_MouseUp);
+			lstRxPackages.SelectedIndexChanged += new System.EventHandler(lstRxPackages_SelectedIndexChanged);
 			
 			// 
 
@@ -98,11 +95,6 @@ namespace FIA_Biosum_Manager
         }
 		public void loadvalues(ProcessorScenarioItem oProcItem)
 		{
-			int x;
-			byte byteTranCd=9;
-			byte byteBioCd=9;
-			int intPSiteId;
-
 			this.lstRxPackages.Clear();
 			this.m_oLvRowColors.InitializeRowCollection();
 
@@ -125,18 +117,7 @@ namespace FIA_Biosum_Manager
                 return;
             }
 
-            //string strPlotPathAndFile = "";
             string[] arr1 = new string[] { "PLOT" };
-            //object oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceOptimizerScenarioForm.uc_datasource1,
-            //    "getDataSourcePathAndFile", arr1, true);
-            //if (oValue != null)
-            //{
-            //    string strValue = Convert.ToString(oValue);
-            //    if (strValue != "false")
-            //    {
-            //        strPlotPathAndFile = strValue;
-            //    }
-            //}
             string strPlotTableName = "";
             object oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceOptimizerScenarioForm.uc_datasource1,
                 "getDataSourceTableName", arr1, true);
@@ -150,29 +131,18 @@ namespace FIA_Biosum_Manager
             }
             string strHarvestCostsPathAndFile = oProcItem.DbPath + "\\" + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableDbFile;
 
-                //string strCondPathAndFile = "";
             arr1 = new string[] { "CONDITION" };
-                //oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceOptimizerScenarioForm.uc_datasource1,
-                //    "getDataSourcePathAndFile", arr1, true);
-                //if (oValue != null)
-                //{
-                //    string strValue = Convert.ToString(oValue);
-                //    if (strValue != "false")
-                //    {
-                //        strCondPathAndFile = strValue;
-                //    }
-                //}
-                string strCondTableName = "";
-                oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceOptimizerScenarioForm.uc_datasource1,
-                    "getDataSourceTableName", arr1, true);
-                if (oValue != null)
+            string strCondTableName = "";
+            oValue = frmMain.g_oDelegate.GetValueExecuteControlMethodWithParam(ReferenceOptimizerScenarioForm.uc_datasource1,
+                "getDataSourceTableName", arr1, true);
+            if (oValue != null)
+            {
+                string strValue = Convert.ToString(oValue);
+                if (strValue != "false")
                 {
-                    string strValue = Convert.ToString(oValue);
-                    if (strValue != "false")
-                    {
-                        strCondTableName = strValue;
-                    }
+                   strCondTableName = strValue;
                 }
+            }
 
                 /**************************************************************
                  **create a temporary MDB File that will contain table links
@@ -236,14 +206,11 @@ namespace FIA_Biosum_Manager
                 }
 		}
 
-		public int savevalues()
+		// We do not currently save the list of selected packages. It is reloaded
+        // each time a scenario is loaded.
+        public int savevalues()
 		{
-			string strTranCd;
-			string strBioCd;
-			string strSelected;
-			string strName;
 			string strScenarioId;
-			string strPSiteId;
             int x = -1;
 
 			ado_data_access p_ado = new ado_data_access();
@@ -253,7 +220,6 @@ namespace FIA_Biosum_Manager
                 Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioTableDbFile;
 
 			string strConn = p_ado.getMDBConnString(strScenarioMDB,"admin","");
-			//string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + strScenarioMDB + ";User Id=admin;Password=;";
 			p_ado.OpenConnection(strConn);	
 			if (p_ado.m_intError != 0)
 			{
@@ -261,90 +227,6 @@ namespace FIA_Biosum_Manager
 				p_ado=null;
 				return x;
 			}
-
-			//delete all records from the scenario psites table
-			p_ado.m_strSQL = "DELETE FROM scenario_psites WHERE " + 
-				" scenario_id = '" + strScenarioId + "';";
-
-			p_ado.SqlNonQuery(p_ado.m_OleDbConnection,p_ado.m_strSQL);
-			if (p_ado.m_intError < 0)
-			{
-				p_ado.m_OleDbConnection.Close();
-				x=p_ado.m_intError;
-				p_ado = null;
-				return x;
-			}
-            //for (x = 0; x <= this.lstRxPackages.Items.Count - 1; x++)
-            //{
-            //    strTranCd = "";
-            //    strBioCd = "";
-            //    strSelected = "";
-            //    strName = "";
-            //    strScenarioId = "";
-            //    strPSiteId = "";
-
-            //    p_ado.m_strSQL = "INSERT INTO scenario_psites (scenario_id,psite_id,name,trancd,biocd,selected_yn)" +
-            //                   " VALUES ";
-            //    strScenarioId = this.ReferenceOptimizerScenarioForm.uc_scenario1.txtScenarioId.Text.Trim();
-            //    strPSiteId = lstRxPackages.Items[x].SubItems[COLUMN_PSITEID].Text.Trim();
-            //    strName = lstRxPackages.Items[x].SubItems[COLUMN_PSITENAME].Text.Trim();
-            //    strName = p_ado.FixString(strName.Trim(), "'", "''");
-            //    if (lstRxPackages.Items[x].Checked==true)
-            //    {
-            //        strSelected="Y";
-            //    }
-            //    else
-            //    {
-            //        strSelected="N";
-            //    }
-            //    if (lstRxPackages.Items[x].SubItems[COLUMN_PSITEROADRAIL].Text.Trim()=="Processing Site - Road Access Only")
-            //    {
-            //        strTranCd="1";
-            //    }
-            //    else
-            //    {
-            //        this.m_Combo=(System.Windows.Forms.ComboBox)this.lstRxPackages.GetEmbeddedControl(COLUMN_PSITEROADRAIL,x);
-            //        switch (m_Combo.SelectedIndex)
-            //        {
-            //            case 0 :
-            //                strTranCd="2";
-            //                break;
-            //            case 1 :
-            //                strTranCd="3";
-            //                break;
-            //            default:
-            //                strTranCd="9";
-            //                break;
-            //        }
-            //    }
-            //    this.m_Combo=(System.Windows.Forms.ComboBox)this.lstRxPackages.GetEmbeddedControl(COLUMN_PSITEBIOPROCESSTYPE,x);
-            //    switch (m_Combo.SelectedIndex)
-            //    {
-            //        case 0 :
-            //            strBioCd="1";
-            //            break;
-            //        case 1 :
-            //            strBioCd="2";
-            //            break;
-            //        case 2:
-            //            strBioCd="3";
-            //            break;
-            //        default:
-            //            strBioCd="9";
-            //            break;
-            //    }
-            //    p_ado.m_strSQL=p_ado.m_strSQL + "('" + strScenarioId + "'," + 
-            //                                           strPSiteId    + ",'" + 
-            //                                           strName       + "'," + 
-            //                                           strTranCd     + ","  +
-            //                                           strBioCd      + ",'" +
-            //                                           strSelected   + "')";
-            //    p_ado.SqlNonQuery(p_ado.m_OleDbConnection,p_ado.m_strSQL);
-            //    if (p_ado.m_intError != 0) 	break;
-            //}
-            //x=p_ado.m_intError;
-            //p_ado.m_OleDbConnection.Close();
-            //p_ado=null;
 			
 			return x;
 		}
@@ -450,16 +332,11 @@ namespace FIA_Biosum_Manager
 		}
 		#endregion
 
-
-		private void cmdPSites_Click(object sender, System.EventArgs e)
-		{
-		}
-
 		private void grpboxPSites_Resize(object sender, System.EventArgs e)
 		{
 			this.lstRxPackages.Width = this.ClientSize.Width - (int)(this.lstRxPackages.Left * 2);
 		}
-		private void lstPSites_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+		private void lstRxPackages_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
 		{
             int x, y;
             // Determine if clicked column is already the column that is being sorted.
@@ -496,11 +373,6 @@ namespace FIA_Biosum_Manager
 
 		private void btnSelectAll_Click(object sender, System.EventArgs e)
 		{
-			//if (this.lstPSites.CheckedItems.Count<this.lstPSites.Items.Count)
-			//{
-			//	if (this.ReferenceCoreScenarioForm.btnSave.Enabled==false) 
-			//		((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			//}
 			for (int x=0;x<=this.lstRxPackages.Items.Count-1;x++)
 			{
 				this.lstRxPackages.Items[x].Checked=true;
@@ -509,42 +381,14 @@ namespace FIA_Biosum_Manager
 
 		private void btnUnselectAll_Click(object sender, System.EventArgs e)
 		{
-			//if (this.lstPSites.CheckedItems.Count>0)
-			//{
-			//	if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
-			//		((frmScenario)this.ParentForm).btnSave.Enabled=true;
-			//}
 			for (int x=0;x<=this.lstRxPackages.Items.Count-1;x++)
 			{
 				this.lstRxPackages.Items[x].Checked=false;
 			}
 		}
 
-		private void m_Combo_SelectedIndexChanged(object sender, EventArgs e)
+		private void lstRxPackages_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			//MessageBox.Show("SelectedIndexChanged");
-//			if (((frmScenario)this.Parent).m_lrulesfirsttime==false)
-//			{
-//				if (this.ReferenceCoreScenarioForm.btnSave.Enabled==false) 
-//					((frmScenario)this.ParentForm).btnSave.Enabled=true;
-//			}
-		}
-		private void m_Combo_SelectedValueChanged(object sender, EventArgs e)
-		{
-			//MessageBox.Show("SelectedValueChanged");
-		}
-		private void lstPSites_ItemCheck(object sender, 
-			System.Windows.Forms.ItemCheckEventArgs e)
-		{
-//			if (((frmScenario)this.Parent).m_lrulesfirsttime==false)
-//			{
-//				if (((frmScenario)this.ParentForm).btnSave.Enabled==false) 
-//					((frmScenario)this.ParentForm).btnSave.Enabled=true;
-//			}
-		}
-		private void lstPSites_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			int x;
 			try
 			{
 				if (e.Button == MouseButtons.Left)
@@ -558,7 +402,7 @@ namespace FIA_Biosum_Manager
 			{
 			}
 		}
-		private void lstPSites_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void lstRxPackages_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if (this.lstRxPackages.SelectedItems.Count > 0)
 				m_oLvRowColors.DelegateListViewItem(this.lstRxPackages.SelectedItems[0]);
@@ -567,11 +411,9 @@ namespace FIA_Biosum_Manager
 		private void groupBox1_Resize(object sender, System.EventArgs e)
 		{
 			lstRxPackages.Width = this.ClientSize.Width - (lstRxPackages.Left * 2);
-            //this.btnScenarioPSiteDefault.Top = this.ClientSize.Height - (int)(this.btnScenarioPSiteDefault.Height * 1.5);
-            //this.btnScenarioPSiteUpdate.Top = this.btnScenarioPSiteDefault.Top;
-            //this.btnSelectAll.Top = this.btnScenarioPSiteDefault.Top;
-            //this.btnUnselectAll.Top = this.btnScenarioPSiteDefault.Top;
-            //lstPSites.Height = this.ClientSize.Height - lstPSites.Top - (int)(this.btnScenarioPSiteDefault.Height * 1.5) - 3;
+            this.btnSelectAll.Top = this.ClientSize.Height - (int)(this.btnSelectAll.Height * 1.5);
+            this.btnUnselectAll.Top = this.btnSelectAll.Top;
+            lstRxPackages.Height = this.ClientSize.Height - lstRxPackages.Top - (int)(this.btnSelectAll.Height * 1.5) - 3;
 		}
 
         public FIA_Biosum_Manager.frmOptimizerScenario ReferenceOptimizerScenarioForm

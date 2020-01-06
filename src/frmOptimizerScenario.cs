@@ -1068,11 +1068,13 @@ namespace FIA_Biosum_Manager
 			this.uc_scenario_cond_filter1.loadvalues(false);
 			this.uc_scenario_psite1.loadvalues();
             ProcessorScenarioItem_Collection oProcItemCollection = this.m_oOptimizerScenarioItem.m_oProcessorScenarioItem_Collection;
-            if (oProcItemCollection != null && oProcItemCollection.Count > 0)
+            foreach (ProcessorScenarioItem psItem in oProcItemCollection)
             {
-                ProcessorScenarioItem oProcItem = oProcItemCollection.Item(0);
-                this.uc_optimizer_scenario_select_packages1.loadvalues(oProcItem);
-            } 
+                if (psItem.Selected == true)
+                {
+                    this.uc_optimizer_scenario_select_packages1.loadvalues_FromProperties(psItem);
+                }
+            }
 			p_frmTherm.progressBar1.Value=7;
 			p_frmTherm.Close();
 			p_frmTherm = null;
@@ -1446,11 +1448,18 @@ namespace FIA_Biosum_Manager
                 this.uc_scenario_cond_filter1.loadvalues(true);
                 this.uc_scenario_psite1.loadvalues_FromProperties();
                 ProcessorScenarioItem_Collection oProcItemCollection = this.m_oOptimizerScenarioItem.m_oProcessorScenarioItem_Collection;
-                if (oProcItemCollection != null && oProcItemCollection.Count > 0)
+                //if (oProcItemCollection != null && oProcItemCollection.Count > 0)
+                //{
+                //    ProcessorScenarioItem oProcItem = oProcItemCollection.Item(0);
+                //    this.uc_optimizer_scenario_select_packages1.loadvalues_FromProperties(oProcItem);
+                //}
+                foreach (ProcessorScenarioItem psItem in oProcItemCollection)
                 {
-                    ProcessorScenarioItem oProcItem = oProcItemCollection.Item(0);
-                    this.uc_optimizer_scenario_select_packages1.loadvalues_FromProperties(oProcItem);
-                } 
+                    if (psItem.Selected == true)
+                    {
+                        this.uc_optimizer_scenario_select_packages1.loadvalues_FromProperties(psItem);
+                    }
+                }
                 
                 frmMain.g_sbpInfo.Text = "Ready";
                 m_bSave = true;

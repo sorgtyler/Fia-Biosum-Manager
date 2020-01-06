@@ -337,7 +337,7 @@ namespace FIA_Biosum_Manager
             }
             if (this.lvProcessorScenario.CheckedItems.Count == 0)
             {
-                MessageBox.Show("Run Scenario Failed: Select at least one processor scenario in <Cost and Revenue><Processor Scenario>", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MessageBox.Show("Run Scenario Failed: Select a processor scenario in <Cost and Revenue><Processor Scenario>", "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return -1;
             }
             this.m_oProcessorScenarioItem = this.m_oProcessorScenarioItem_Collection.Item(lvProcessorScenario.CheckedItems[0].Index);
