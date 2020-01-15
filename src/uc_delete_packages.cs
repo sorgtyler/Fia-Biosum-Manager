@@ -712,7 +712,8 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "DATABASE", "DELETE_PACKAGES" });
+            //@ToDo: Need help for Delete Packages screen. Disable for now
+            //m_oHelp.ShowHelp(new string[] { "DATABASE", "DELETE_PACKAGES" });
         }
     }
 }
