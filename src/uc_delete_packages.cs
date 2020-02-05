@@ -178,6 +178,13 @@ namespace FIA_Biosum_Manager
                     projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\opcost\\", "*.*",
                         SearchOption.AllDirectories));
                 }
+                //OPTIMIZER weighted variables
+                if (Directory.Exists(m_strProjDir + "\\optimizer\\db\\"))
+                {
+                    projectFiles.AddRange(Directory.GetFiles(m_strProjDir + "\\optimizer\\db\\", "prepost*.accdb",
+                        SearchOption.AllDirectories));
+                }
+
 
                 var allProjectFiles = projectFiles.ToArray();
                 var databases = allProjectFiles.Where(s => s.ToLower().EndsWith(".mdb") || s.ToLower().EndsWith(".accdb")).ToArray();
@@ -712,7 +719,8 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "DATABASE", "DELETE_PACKAGES" });
+            //@ToDo: Need help for Delete Packages screen. Disable for now
+            //m_oHelp.ShowHelp(new string[] { "DATABASE", "DELETE_PACKAGES" });
         }
     }
 }
