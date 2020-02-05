@@ -6,6 +6,7 @@ using System.Data;
 using System.Windows.Forms;
 using System.Text;
 using System.Data.OleDb;
+using System.Data.SQLite;
 
 namespace FIA_Biosum_Manager
 {
@@ -901,25 +902,79 @@ namespace FIA_Biosum_Manager
                 //}
                 //dataMgr.CloseConnection(dataMgr.m_Connection);
 
-                // open connection to the same table as link in ms access db
+                // sample of copying a SQLITE table link into an MS Access table
                 ado_data_access oAdo = new ado_data_access();
-                string strConnection = oAdo.getMDBConnString(@"C:\Docs\Biosum\Blue11_demo_588\optimizer\weighted_ptmod\db\optimizer_results.accdb", "", "");
-                using (OleDbConnection oConn = new OleDbConnection(strConnection))
+                //string strConnection = oAdo.getMDBConnString(@"C:\Docs\Biosum\Blue11_demo_588\optimizer\weighted_ptmod\db\optimizer_results.accdb", "", "");
+                //using (OleDbConnection oConn = new OleDbConnection(strConnection))
+                //{
+                //    oConn.Open();
+                //    if (oAdo.TableExist(oConn, "albums"))
+                //    {
+                //        string albums2 = "albums2";
+                //        if (oAdo.TableExist(oConn, albums2))
+                //        {
+                //            oAdo.m_strSQL = "drop table " + albums2;
+                //            oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
+                //        }
+                //        oAdo.m_strSQL = "select * into " + albums2 + " from albums";
+                //        oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
+                //        MessageBox.Show("Table created!!");
+                //    }
+                //}
+
+                //Create database and create table using our MS Access SQL
+                //System.Data.SQLite.SQLiteConnection.CreateFile(@"C:\Docs\fia_biosum\Docs\Reporting\attach.db");
+                //using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(@"data source=C:\Docs\fia_biosum\Docs\Reporting\attach.db"))
+                //{
+                //    using (System.Data.SQLite.SQLiteCommand com = new System.Data.SQLite.SQLiteCommand(con))
+                //    {
+                //        con.Open();
+                //        com.CommandText = Tables.OptimizerScenarioResults.CreateHaulCostTableSQL(Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName);
+                //        com.ExecuteNonQuery();
+                //    }
+                //}
+
+                //string strHaulCosts = oAdo.getMDBConnString(@"C:\Docs\Biosum\Blue11_demo_588\optimizer\weighted_ptmod\db\optimizer_results.accdb", "", "");
+                //string strSQL = "Select * from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName;
+                //DataTable dt = new DataTable();
+                //using (OleDbDataAdapter da = new OleDbDataAdapter(strSQL, strHaulCosts))
+                //{
+                //    //tell it not to set rows to Unchanged
+                //    da.AcceptChangesDuringFill = false;
+                //    da.Fill(dt);
+                //}
+
+                //string LiteConnStr = @"data source=C:\Docs\fia_biosum\Docs\Reporting\attach.db";
+                //using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSQL, LiteConnStr))
+                //{
+                //    System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da);
+                //    da.InsertCommand = cb.GetInsertCommand();
+                //    int rows = da.Update(dt);
+                //}
+
+                string conFirstDb = @"data source=C:\Docs\fia_biosum\Docs\Reporting\ok_test.db;Version=3;";
+                string attachSQL = @"attach 'C:\Docs\fia_biosum\Docs\Reporting\attach.db' as db1";
+                string sqlQuery = "select a.biosum_plot_id, b.complete_haul_cost_dpgt from plot as a " +
+                                  "inner join db1.haul_costs as b on a.biosum_plot_id = b.biosum_plot_id " +
+                                  "where trim(b.materialcd) = 'M'";
+                using (SQLiteConnection singleConnectionFor2DBFiles = new SQLiteConnection(conFirstDb))
                 {
-                    oConn.Open();
-                    if (oAdo.TableExist(oConn, "albums"))
+                    singleConnectionFor2DBFiles.Open();
+                    dataMgr.SqlNonQuery(singleConnectionFor2DBFiles, attachSQL);
+                    dataMgr.SqlQueryReader(singleConnectionFor2DBFiles, sqlQuery);
+                    int rowCount = 0;
+                    if (dataMgr.m_DataReader.HasRows == true)
                     {
-                        string albums2 = "albums2";
-                        if (oAdo.TableExist(oConn, albums2))
+                        int i = 0;
+                        while (dataMgr.m_DataReader.Read())
                         {
-                            oAdo.m_strSQL = "drop table " + albums2;
-                            oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
+                            i++;
                         }
-                        oAdo.m_strSQL = "select * into " + albums2 + " from albums";
-                        oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
-                        MessageBox.Show("Table created!!");
+                        rowCount = i;
                     }
+                    System.Diagnostics.Debug.WriteLine("number of rows retrieved: " + rowCount);
                 }
+  
             }
             catch (Exception e2)
             {
