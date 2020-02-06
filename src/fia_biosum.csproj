@@ -976,10 +976,6 @@
       <Project>{2651779D-1307-4C18-9CEF-2F2E10432FF3}</Project>
       <Name>FIADBOracleServices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ODP\src\ODP.csproj">
-      <Project>{498D58F0-D98C-4B18-AB46-90CDE59592DB}</Project>
-      <Name>ODP</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Progress-Bar-Basic\src\ProgressBarBasic.csproj">
       <Project>{FF455DC4-70F8-4158-A9B3-B5F406091E5B}</Project>
       <Name>ProgressBarBasic</Name>
