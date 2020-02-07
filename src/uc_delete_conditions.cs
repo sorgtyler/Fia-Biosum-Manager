@@ -287,10 +287,13 @@ namespace FIA_Biosum_Manager
                 //Done
                 UpdateProgressBar2(100);
 
-                MessageBox.Show(
-                    String.Format("Successfully deleted data associated with {0} Conditions!",
-                        ((HashSet<string>) m_dictIdentityColumnsToValues["biosum_cond_id"]).Count),
-                    "Delete Conditions Results");
+                if (!Checked(chkDeletesDisabled))
+                {
+                    MessageBox.Show(
+                        String.Format("Successfully deleted data associated with {0} Conditions!",
+                            ((HashSet<string>)m_dictIdentityColumnsToValues["biosum_cond_id"]).Count),
+                        "Delete Conditions Results");
+                }
 
                 //Cleanup section, assuming no exceptions were thrown
                 this.m_connTempMDBFile.Close();
@@ -356,13 +359,19 @@ namespace FIA_Biosum_Manager
             }
             finally
             {
-                if (Checked(chkCreateLog))
+                string strLogFileName = String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
+                    "\\db\\biosum_deleted_records_",
+                    String.Format("{0:yyyyMMddhhmm}", DateTime.Now),
+                    Checked(chkDeletesDisabled) ? "_no_deletes" : "",
+                    ".txt");
+                if (Checked(chkCreateLog) || Checked(chkDeletesDisabled))
                 {
-                    CreateLogFile(String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
-                        "\\db\\biosum_deleted_records_",
-                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now), 
-                        Checked(chkDeletesDisabled) ? "_no_deletes" : "",
-                        ".txt"));
+                    CreateLogFile(strLogFileName);
+                    if (Checked(chkDeletesDisabled))
+                    {
+                        MessageBox.Show("Record count complete! The results were recorded in " + strLogFileName,
+                        "Delete Conditions Results");
+                    }
                 }
                 m_dictDeletedRowCountsByDatabaseAndTable = new Dictionary<string, Dictionary<string, int>>();
                 m_dictIdentityColumnsToValues = new Dictionary<string, HashSet<string>>();
@@ -852,6 +861,24 @@ namespace FIA_Biosum_Manager
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
             m_oHelp.ShowHelp(new string[] { "DATABASE", "DELETE_CONDITIONS" });
+        }
+
+        private void chkDeletesDisabled_CheckedChanged(object sender, EventArgs e)
+        {
+            // Don't allow chkCompactMDB to be checked if chkDeletesDisabled is checked
+            if (Checked(chkDeletesDisabled))
+            {
+                chkCompactMDB.Checked = false;
+            }
+        }
+
+        private void chkCompactMDB_CheckedChanged(object sender, EventArgs e)
+        {
+            // Don't allow chkCompactMDB to be checked if chkDeletesDisabled is checked
+            if (Checked(chkCompactMDB))
+            {
+                chkDeletesDisabled.Checked = false;
+            }
         }
     }
 }
