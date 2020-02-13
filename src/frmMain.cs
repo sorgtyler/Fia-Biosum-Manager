@@ -91,6 +91,7 @@ namespace FIA_Biosum_Manager
 		public FIA_Biosum_Manager.btnMainForm m_btnCoreMerge;
         public FIA_Biosum_Manager.btnMainForm m_btnOptimizerUserVariables;
         public FIA_Biosum_Manager.btnMainForm m_btnOptimizerLoadGisData;
+        public FIA_Biosum_Manager.btnMainForm m_btnOptimizerSqlite;
 
 
 		public System.Windows.Forms.Panel m_pnlFrcs;
@@ -138,6 +139,8 @@ namespace FIA_Biosum_Manager
 		private FIA_Biosum_Manager.frmDialog m_frmPSite;          //wood processing site form
 		private FIA_Biosum_Manager.frmDialog m_frmFvsVariant;     //plot fvs variant
 		private FIA_Biosum_Manager.frmDialog m_frmDb;                //database utilities
+        private FIA_Biosum_Manager.frmDialog m_frmSqlite;            //export to sqlite
+
 
 		public const int TABLETYPE = 0;
 		public const int PATH = 1;
@@ -1776,55 +1779,78 @@ namespace FIA_Biosum_Manager
 					}
 				
 				}
-				else if (strText.Trim().ToUpper() == "JOIN DATA FROM MULTIPLE SCENARIOS")
-				{
-					//check to see if the form has already been loaded
-                    if (this.IsChildWindowVisible("Treatment Optimizer: Join Data From Multiple Scenarios") == false) 
-					{
-						
-						this.m_frmCoreMerge = new frmDialog(this);
-						this.m_frmCoreMerge.MaximizeBox = false;
-						this.m_frmCoreMerge.BackColor = System.Drawing.SystemColors.Control;
+                else if (strText.Trim().ToUpper() == "EXPORT TO SQLITE")
+                {
+                    this.m_frmSqlite = new frmDialog(this);
+                    this.m_frmSqlite.MaximizeBox = false;
+                    this.m_frmSqlite.MinimizeBox = false;
+                    this.m_frmSqlite.BackColor = System.Drawing.SystemColors.Control;
+                    this.m_frmSqlite.Text = "Treatment Optimizer: Export to SQLITE";
+                    this.m_frmSqlite.MdiParent = this;
+                    this.m_frmSqlite.Initialize_Optimizer_Sqlite_User_Control();
+
+                    this.m_frmSqlite.DisposeOfFormWhenClosing = true;
+
+                    this.m_frmSqlite.Width = this.m_frmSqlite.uc_optimizer_sqlite_export1.Width + 25;
+                    this.m_frmSqlite.Height = this.m_frmSqlite.uc_optimizer_sqlite_export1.Height + 40;
+                    this.m_frmSqlite.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+                    this.m_frmSqlite.uc_optimizer_sqlite_export1.Top = 0;
+                    this.m_frmSqlite.uc_optimizer_sqlite_export1.Left = 0;
+
+                    this.m_frmSqlite.uc_optimizer_sqlite_export1.Visible = true;
+                    this.m_frmSqlite.MinimizeMainForm = true;
+                    this.m_frmSqlite.ParentControl = frmMain.g_oFrmMain;
+                    this.m_frmSqlite.Show();
+                }
+                else if (strText.Trim().ToUpper() == "JOIN DATA FROM MULTIPLE SCENARIOS")
+                {
+                    //check to see if the form has already been loaded
+                    if (this.IsChildWindowVisible("Treatment Optimizer: Join Data From Multiple Scenarios") == false)
+                    {
+
+                        this.m_frmCoreMerge = new frmDialog(this);
+                        this.m_frmCoreMerge.MaximizeBox = false;
+                        this.m_frmCoreMerge.BackColor = System.Drawing.SystemColors.Control;
                         this.m_frmCoreMerge.Text = "Treatment Optimizer: Join Data From Multiple Scenarios";
-						this.m_frmCoreMerge.MdiParent = this;
-						this.m_frmCoreMerge.Initialize_Join_Scenario_User_Control();
-						this.m_frmCoreMerge.uc_merge_tables1.Top = 0;
-						this.m_frmCoreMerge.uc_merge_tables1.Left = 0;
-						int intHt=0;
-						
+                        this.m_frmCoreMerge.MdiParent = this;
+                        this.m_frmCoreMerge.Initialize_Join_Scenario_User_Control();
+                        this.m_frmCoreMerge.uc_merge_tables1.Top = 0;
+                        this.m_frmCoreMerge.uc_merge_tables1.Left = 0;
+                        int intHt = 0;
 
 
-						int intHt2=this.m_frmCoreMerge.uc_merge_tables1.groupBox1.Top + this.m_frmCoreMerge.uc_merge_tables1.lblTitle.Height + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Top + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Height;
-						int intTop=this.m_frmCoreMerge.uc_merge_tables1.groupBox1.Top;
-						while (intTop + intHt2 + 20
-							>=  intHt)
-						{
-							intHt += 10;
-			
-						}
-						this.m_frmCoreMerge.Height = intHt;
 
-					
-						this.m_frmCoreMerge.DisposeOfFormWhenClosing = true;
-						this.m_frmCoreMerge.Height = this.m_frmCoreMerge.uc_merge_tables1.Height + this.m_frmCoreMerge.uc_merge_tables1.lblTitle.Height;
-						this.m_frmCoreMerge.Width = ((this.m_frmCoreMerge.uc_merge_tables1.Left + this.m_frmCoreMerge.uc_merge_tables1.groupBox1.Left + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Left) * 2) + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Width + 5;
+                        int intHt2 = this.m_frmCoreMerge.uc_merge_tables1.groupBox1.Top + this.m_frmCoreMerge.uc_merge_tables1.lblTitle.Height + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Top + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Height;
+                        int intTop = this.m_frmCoreMerge.uc_merge_tables1.groupBox1.Top;
+                        while (intTop + intHt2 + 20
+                            >= intHt)
+                        {
+                            intHt += 10;
 
-						this.m_frmCoreMerge.Left = 0;
-						this.m_frmCoreMerge.Top = 0;
-						this.m_frmCoreMerge.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-						this.m_frmCoreMerge.Show();
-						
-					}
-					else
-					{
-						if (this.m_frmCoreMerge.WindowState == System.Windows.Forms.FormWindowState.Minimized)
-							this.m_frmCoreMerge.WindowState = System.Windows.Forms.FormWindowState.Normal;
+                        }
+                        this.m_frmCoreMerge.Height = intHt;
 
-						this.m_frmCoreMerge.Focus();
-					
-					}
 
-				}
+                        this.m_frmCoreMerge.DisposeOfFormWhenClosing = true;
+                        this.m_frmCoreMerge.Height = this.m_frmCoreMerge.uc_merge_tables1.Height + this.m_frmCoreMerge.uc_merge_tables1.lblTitle.Height;
+                        this.m_frmCoreMerge.Width = ((this.m_frmCoreMerge.uc_merge_tables1.Left + this.m_frmCoreMerge.uc_merge_tables1.groupBox1.Left + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Left) * 2) + this.m_frmCoreMerge.uc_merge_tables1.grpboxOpen.Width + 5;
+
+                        this.m_frmCoreMerge.Left = 0;
+                        this.m_frmCoreMerge.Top = 0;
+                        this.m_frmCoreMerge.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+                        this.m_frmCoreMerge.Show();
+
+                    }
+                    else
+                    {
+                        if (this.m_frmCoreMerge.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                            this.m_frmCoreMerge.WindowState = System.Windows.Forms.FormWindowState.Normal;
+
+                        this.m_frmCoreMerge.Focus();
+
+                    }
+
+                }
 			}
 			else if (this.btnDB.Enabled==false) 
 			{   
@@ -3535,13 +3561,20 @@ namespace FIA_Biosum_Manager
             this.m_btnOptimizerLoadGisData.Left = this.m_btnOptimizerUserVariables.Left;
             this.m_btnOptimizerLoadGisData.Top = this.m_btnOptimizerUserVariables.Top + this.m_btnOptimizerUserVariables.Height + 5;
             this.m_btnOptimizerLoadGisData.Text = "Load GIS Data";
-			//Optimization scenario
-			this.m_btnOptimizerScenario = new btnMainForm(this);
-			this.m_pnlOptimizer.Controls.Add(this.m_btnOptimizerScenario);
-			this.m_btnOptimizerScenario.Size = this.btnMain1.Size;
+            //Optimization scenario
+            this.m_btnOptimizerScenario = new btnMainForm(this);
+            this.m_pnlOptimizer.Controls.Add(this.m_btnOptimizerScenario);
+            this.m_btnOptimizerScenario.Size = this.btnMain1.Size;
             this.m_btnOptimizerScenario.Left = this.m_btnOptimizerUserVariables.Left;
             this.m_btnOptimizerScenario.Top = this.m_btnOptimizerLoadGisData.Top + this.m_btnOptimizerLoadGisData.Height + 5;
-			this.m_btnOptimizerScenario.Text = "Optimization Scenario";
+            this.m_btnOptimizerScenario.Text = "Optimization Scenario";
+            //Generate SQLITE database
+            this.m_btnOptimizerSqlite = new btnMainForm(this);
+            this.m_pnlOptimizer.Controls.Add(this.m_btnOptimizerSqlite);
+            this.m_btnOptimizerSqlite.Size = this.btnMain1.Size;
+            this.m_btnOptimizerSqlite.Left = this.m_btnOptimizerUserVariables.Left;
+            this.m_btnOptimizerSqlite.Top = this.m_btnOptimizerScenario.Top + this.m_btnOptimizerScenario.Height + 5;
+            this.m_btnOptimizerSqlite.Text = "Export to SQLITE";
 			//merge scenarios
 			this.m_btnCoreMerge = new btnMainForm(this);
 			this.m_pnlOptimizer.Controls.Add(this.m_btnCoreMerge);
