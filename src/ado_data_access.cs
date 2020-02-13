@@ -1136,6 +1136,42 @@ namespace FIA_Biosum_Manager
 			
 		}
 
+        /// <summary>
+        /// Create ADO.NET data table and fill it with data from SQL execution 
+        /// </summary>
+        /// <param name="p_conn"></param>
+        /// <param name="strSQL"></param>
+        /// <param name="strTableName"></param>
+        /// <param name="bAcceptChanges">Set to false if you want to write data to another connection</param>
+        public void CreateDataTable(System.Data.OleDb.OleDbConnection p_conn,
+            string strSQL, string strTableName, bool bAcceptChanges)
+        {
+            this.m_intError = 0;
+            this.m_strError = "";
+            try
+            {
+                this.m_OleDbDataAdapter = new System.Data.OleDb.OleDbDataAdapter(strSQL, p_conn);
+                this.m_OleDbDataAdapter.AcceptChangesDuringFill = bAcceptChanges;
+                this.m_DataTable = new DataTable();
+                this.m_OleDbDataAdapter.Fill(this.m_DataTable);
+            }
+            catch (Exception caught)
+            {
+                this.m_intError = -1;
+                this.m_strError = caught.Message + " : SQL query command " + strSQL + " failed";
+                if (_bDisplayErrors)
+                    MessageBox.Show("!!Error!! \n" +
+                        "Module - ado_data_access:CreateDataTable  \n" +
+                        "Err Msg - " + this.m_strError,
+                        "FIA Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Exclamation);
+                this.m_OleDbDataAdapter = null;
+                this.m_DataSet = null;
+                return;
+            }
+
+        }
+
 		public void AddSQLQueryToDataSet(System.Data.OleDb.OleDbConnection p_conn,
 			ref System.Data.OleDb.OleDbDataAdapter p_da,
 			ref System.Data.DataSet p_ds,

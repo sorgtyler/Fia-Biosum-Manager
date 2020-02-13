@@ -6,6 +6,7 @@ using System.Data;
 using System.Windows.Forms;
 using System.Text;
 using System.Data.SQLite;
+using System.Data.OleDb;
 
 namespace FIA_Biosum_Manager
 {
@@ -18,7 +19,7 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.Label lblTitle;
         private Button BtnExport;
         private FIA_Biosum_Manager.frmMain m_frmMain;
-
+        private string m_strDebugFile = "";
 
 		/// <summary> 
 		/// Required designer variable.
@@ -119,6 +120,91 @@ namespace FIA_Biosum_Manager
 
         private void BtnExport_Click(object sender, EventArgs e)
         {
+            string strOptimizerScenario = "weighted_ptmod";
+            string strContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteContextDbFile;
+            string strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
+            m_strDebugFile = m_frmMain.getProjectDirectory() + @"\optimizer\" + strOptimizerScenario + @"\db\sqlite_log.txt";
+
+            SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+            ado_data_access oAdo = new ado_data_access();
+
+            if (System.IO.File.Exists(strContextDbPath))
+            {
+                DialogResult res = MessageBox.Show("The SQLITE context database already exists!! Do you want to replace it?", "FIA Biosum",
+                    MessageBoxButtons.YesNo);
+                if (res != DialogResult.Yes)
+                {
+                    return;
+                }
+                else
+                {
+                    // Delete existing db
+                    System.IO.File.Delete(strContextDbPath);
+                }
+            }
+            try
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "START: SQLITE export Log " + System.DateTime.Now.ToString() + "\r\n\r\n");
+                if (frmMain.g_intDebugLevel > 1)
+                {
+
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Project: " + frmMain.g_oFrmMain.frmProject.uc_project1.txtProjectId.Text + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Project Directory: " + frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Scenario Directory: " + strOptimizerScenario + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "---------------------------------------------------------------\r\n");
+                }
+                oDataMgr.CreateDbFile(strContextDbPath);    // create new, blank database
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the context tables \r\n");
+                }
+
+                string strConnection = "data source=" + strContextDbPath;
+                string strAccdbConnection = oAdo.getMDBConnString(strContextAccdbPath, "", "");
+                string strSql = "";
+                string strTable = "";
+                using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
+                {
+                    con.Open();
+                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName;
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteDiameterSpeciesGroupRefTable(oDataMgr, con,
+                        strTable);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                    }
+
+                    using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
+                    {
+                        oAccessConn.Open();
+                        if (oAdo.TableExist(oAccessConn, strTable))
+                        {
+                            strSql = "select * from " + strTable;
+                            //oAdo.CreateDataSet(oAccessConn, strSql, strTable, false);
+                            oAdo.CreateDataTable(oAccessConn, strSql, strTable, false);
+
+                            using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                            {
+                                System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da);
+                                da.InsertCommand = cb.GetInsertCommand();
+                                int rows = da.Update(oAdo.m_DataTable);
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e2)
+            {
+                MessageBox.Show(e2.Message);
+
+            }
+        }
+
+        private void CodeExamples()
+        {
             SQLite.ADO.DataMgr dataMgr = new SQLite.ADO.DataMgr();
             string strConn = @"Data Source=C:\sqlite\db\chinook.db;Version=3;";
             try
@@ -174,7 +260,7 @@ namespace FIA_Biosum_Manager
 
                 //string strHaulCosts = oAdo.getMDBConnString(@"C:\Docs\Biosum\Blue11_demo_588\optimizer\weighted_ptmod\db\optimizer_results.accdb", "", "");
                 //string strSQL = "Select * from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName;
-                //DataTable dt = new DataTable();
+                DataTable dt = new DataTable();
                 //using (OleDbDataAdapter da = new OleDbDataAdapter(strSQL, strHaulCosts))
                 //{
                 //    //tell it not to set rows to Unchanged
@@ -220,4 +306,6 @@ namespace FIA_Biosum_Manager
         }
 
      }
+
+
 }

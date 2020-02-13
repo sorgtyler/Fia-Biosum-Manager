@@ -244,8 +244,8 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"fvs_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"econ_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsFvsContextDbFile { get { return @"db\fvs_context.accdb"; } }
+            static public string DefaultScenarioResultsSqliteContextDbFile { get { return @"db\context.db3"; } }
 			
-			private string strSQL = "";
 			public OptimizerScenarioResults()
 			{
 			}
@@ -1494,6 +1494,24 @@ namespace FIA_Biosum_Manager
                     "TO_CHIPS CHAR(1)," +
                     "MERCH_VAL_DpCF DOUBLE," +
                     "VALUE_IF_CHIPPED_DpGT DOUBLE )";
+            }
+
+            public void CreateSqliteDiameterSpeciesGroupRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteDiameterSpeciesGroupRefTableSQL(p_strTableName));
+            }
+            
+            static public string CreateSqliteDiameterSpeciesGroupRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "DBH_CLASS_NUM INTEGER," +
+                    "DBH_RANGE_INCHES TEXT," +
+                    "SPP_GRP_CODE INTEGER," +
+                    "SPP_GRP TEXT," +
+                    "TO_CHIPS TEXT," +
+                    "MERCH_VAL_DpCF REAL," +
+                    "VALUE_IF_CHIPPED_DpGT REAL," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (DBH_CLASS_NUM, SPP_GRP_CODE))";
             }
 
             //
