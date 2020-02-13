@@ -162,38 +162,53 @@ namespace FIA_Biosum_Manager
 
                 string strConnection = "data source=" + strContextDbPath;
                 string strAccdbConnection = oAdo.getMDBConnString(strContextAccdbPath, "", "");
-                string strSql = "";
                 string strTable = "";
+                System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
                 using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
                 {
                     con.Open();
                     strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName;
                     frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteDiameterSpeciesGroupRefTable(oDataMgr, con,
                         strTable);
+                    lstTables.Add(strTable);
+
+                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName;
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteFvsWeightedVariableRefTable(oDataMgr, con, strTable);
+                    lstTables.Add(strTable);
+
+                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName;
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEconWeightedVariableRefTable(oDataMgr, con, strTable);
+                    lstTables.Add(strTable);
+
+
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created target tables \r\n");
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
                     }
+
 
                     using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
                     {
                         oAccessConn.Open();
-                        if (oAdo.TableExist(oAccessConn, strTable))
+                        foreach(string strTableName in lstTables)
                         {
-                            strSql = "select * from " + strTable;
-                            //oAdo.CreateDataSet(oAccessConn, strSql, strTable, false);
-                            oAdo.CreateDataTable(oAccessConn, strSql, strTable, false);
-
-                            using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                            if (oAdo.TableExist(oAccessConn, strTableName))
                             {
-                                System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da);
-                                da.InsertCommand = cb.GetInsertCommand();
-                                int rows = da.Update(oAdo.m_DataTable);
+                                string strSql = "select * from " + strTableName;
+                                oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
+
+                                using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                                {
+                                    System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da);
+                                    da.InsertCommand = cb.GetInsertCommand();
+                                    int rows = da.Update(oAdo.m_DataTable);
+                                }
                             }
                         }
                     }
                 }
+                MessageBox.Show("done!!");
 
             }
             catch (Exception e2)

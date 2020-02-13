@@ -1560,6 +1560,28 @@ namespace FIA_Biosum_Manager
                     "weight_4_pre DOUBLE," +
                     "weight_4_post DOUBLE )";
             }
+            public void CreateSqliteFvsWeightedVariableRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateFvsWeightedVariableRefTableSQL(p_strTableName));
+            }
+
+            static public string CreateSqliteFvsWeightedVariableRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "VARIABLE_NAME TEXT," +
+                    "VARIABLE_DESCRIPTION TEXT," +
+                    "BASELINE_RXPACKAGE TEXT," +
+                    "VARIABLE_SOURCE TEXT," +
+                    "weight_1_pre REAL," +
+                    "weight_1_post REAL," +
+                    "weight_2_pre REAL," +
+                    "weight_2_post REAL," +
+                    "weight_3_pre REAL," +
+                    "weight_3_post REAL," +
+                    "weight_4_pre REAL," +
+                    "weight_4_post REAL," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (VARIABLE_NAME))";
+            }
             //
             //ECON_WEIGHTED_VARIABLES_REF TABLE
             //
@@ -1585,6 +1607,22 @@ namespace FIA_Biosum_Manager
                     "CYCLE_2_WEIGHT DOUBLE," +
                     "CYCLE_3_WEIGHT DOUBLE," +
                     "CYCLE_4_WEIGHT DOUBLE )";
+            }
+            public void CreateSqliteEconWeightedVariableRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateEconWeightedVariableRefTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteEconWeightedVariableRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "VARIABLE_NAME TEXT," +
+                    "VARIABLE_DESCRIPTION TEXT," +
+                    "VARIABLE_SOURCE TEXT," +
+                    "CYCLE_1_WEIGHT REAL," +
+                    "CYCLE_2_WEIGHT REAL," +
+                    "CYCLE_3_WEIGHT REAL," +
+                    "CYCLE_4_WEIGHT REAL," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (VARIABLE_NAME))";
             }
             //
             //PRE POST FVS WEIGHTED TABLES TABLES
