@@ -5,8 +5,6 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using System.Text;
-using System.Data.OleDb;
-using System.Data.SQLite;
 
 namespace FIA_Biosum_Manager
 {
@@ -43,7 +41,6 @@ namespace FIA_Biosum_Manager
 		public string m_strError="";
 		private FIA_Biosum_Manager.frmOptimizerScenario _frmOptimizerScenario;
 		private FIA_Biosum_Manager.frmProcessorScenario _frmProcessorScenario;
-        public Button BtnTest;
 		private string _strScenarioType="optimizer";
 		
 		// public FIA_Biosum_Manager.frmScenario frmscenario1;
@@ -105,7 +102,6 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.btnClose = new System.Windows.Forms.Button();
-            this.BtnTest = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataSet1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -156,7 +152,7 @@ namespace FIA_Biosum_Manager
             this.txtScenarioPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtScenarioPath.Location = new System.Drawing.Point(16, 129);
             this.txtScenarioPath.Name = "txtScenarioPath";
-            this.txtScenarioPath.Size = new System.Drawing.Size(592, 30);
+            this.txtScenarioPath.Size = new System.Drawing.Size(592, 26);
             this.txtScenarioPath.TabIndex = 7;
             // 
             // dataSet1
@@ -186,7 +182,7 @@ namespace FIA_Biosum_Manager
             this.txtScenarioId.Location = new System.Drawing.Point(16, 75);
             this.txtScenarioId.MaxLength = 20;
             this.txtScenarioId.Name = "txtScenarioId";
-            this.txtScenarioId.Size = new System.Drawing.Size(120, 30);
+            this.txtScenarioId.Size = new System.Drawing.Size(120, 26);
             this.txtScenarioId.TabIndex = 10;
             this.txtScenarioId.Leave += new System.EventHandler(this.txtScenarioId_Leave);
             // 
@@ -204,7 +200,6 @@ namespace FIA_Biosum_Manager
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.BtnTest);
             this.groupBox1.Controls.Add(this.lblTitle);
             this.groupBox1.Controls.Add(this.btnClose);
             this.groupBox1.Controls.Add(this.lblNewScenario);
@@ -227,7 +222,7 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.ForeColor = System.Drawing.Color.Green;
-            this.lblTitle.Location = new System.Drawing.Point(3, 18);
+            this.lblTitle.Location = new System.Drawing.Point(3, 16);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(626, 32);
             this.lblTitle.TabIndex = 25;
@@ -244,17 +239,6 @@ namespace FIA_Biosum_Manager
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // BtnTest
-            // 
-            this.BtnTest.BackColor = System.Drawing.SystemColors.Control;
-            this.BtnTest.Location = new System.Drawing.Point(417, 77);
-            this.BtnTest.Name = "BtnTest";
-            this.BtnTest.Size = new System.Drawing.Size(96, 32);
-            this.BtnTest.TabIndex = 26;
-            this.BtnTest.Text = "Test";
-            this.BtnTest.UseVisualStyleBackColor = false;
-            this.BtnTest.Click += new System.EventHandler(this.BtnTest_Click);
             // 
             // uc_scenario
             // 
@@ -878,112 +862,6 @@ namespace FIA_Biosum_Manager
 			get {return this._strScenarioType;}
 			set {this._strScenarioType=value;}
 		}
-
-        private void BtnTest_Click(object sender, EventArgs e)
-        {
-            SQLite.ADO.DataMgr dataMgr = new SQLite.ADO.DataMgr();
-            string strConn = @"Data Source=C:\sqlite\db\chinook.db;Version=3;";
-            try
-            {
-                // opening a connection and reading records
-                //dataMgr.OpenConnection(strConn);
-                //dataMgr.m_strSQL = "select title from albums";
-                //dataMgr.SqlQueryReader(dataMgr.m_Connection, dataMgr.m_strSQL);
-                //int rowCount = -1;
-                //if (dataMgr.m_DataReader.HasRows == true)
-                //{
-                //    int i = 0;
-                //    while(dataMgr.m_DataReader.Read())
-                //    {
-                //        System.Diagnostics.Debug.WriteLine(i + " " + dataMgr.m_DataReader["title"].ToString().Trim());
-                //        i++;
-                //    }
-                //    rowCount = i;
-                //}
-                //dataMgr.CloseConnection(dataMgr.m_Connection);
-
-                // sample of copying a SQLITE table link into an MS Access table
-                ado_data_access oAdo = new ado_data_access();
-                //string strConnection = oAdo.getMDBConnString(@"C:\Docs\Biosum\Blue11_demo_588\optimizer\weighted_ptmod\db\optimizer_results.accdb", "", "");
-                //using (OleDbConnection oConn = new OleDbConnection(strConnection))
-                //{
-                //    oConn.Open();
-                //    if (oAdo.TableExist(oConn, "albums"))
-                //    {
-                //        string albums2 = "albums2";
-                //        if (oAdo.TableExist(oConn, albums2))
-                //        {
-                //            oAdo.m_strSQL = "drop table " + albums2;
-                //            oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
-                //        }
-                //        oAdo.m_strSQL = "select * into " + albums2 + " from albums";
-                //        oAdo.SqlNonQuery(oConn, oAdo.m_strSQL);
-                //        MessageBox.Show("Table created!!");
-                //    }
-                //}
-
-                //Create database and create table using our MS Access SQL
-                //System.Data.SQLite.SQLiteConnection.CreateFile(@"C:\Docs\fia_biosum\Docs\Reporting\attach.db");
-                //using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(@"data source=C:\Docs\fia_biosum\Docs\Reporting\attach.db"))
-                //{
-                //    using (System.Data.SQLite.SQLiteCommand com = new System.Data.SQLite.SQLiteCommand(con))
-                //    {
-                //        con.Open();
-                //        com.CommandText = Tables.OptimizerScenarioResults.CreateHaulCostTableSQL(Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName);
-                //        com.ExecuteNonQuery();
-                //    }
-                //}
-
-                //string strHaulCosts = oAdo.getMDBConnString(@"C:\Docs\Biosum\Blue11_demo_588\optimizer\weighted_ptmod\db\optimizer_results.accdb", "", "");
-                //string strSQL = "Select * from " + Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName;
-                //DataTable dt = new DataTable();
-                //using (OleDbDataAdapter da = new OleDbDataAdapter(strSQL, strHaulCosts))
-                //{
-                //    //tell it not to set rows to Unchanged
-                //    da.AcceptChangesDuringFill = false;
-                //    da.Fill(dt);
-                //}
-
-                //string LiteConnStr = @"data source=C:\Docs\fia_biosum\Docs\Reporting\attach.db";
-                //using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSQL, LiteConnStr))
-                //{
-                //    System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da);
-                //    da.InsertCommand = cb.GetInsertCommand();
-                //    int rows = da.Update(dt);
-                //}
-
-                string conFirstDb = @"data source=C:\Docs\fia_biosum\Docs\Reporting\ok_test.db;Version=3;";
-                string attachSQL = @"attach 'C:\Docs\fia_biosum\Docs\Reporting\attach.db' as db1";
-                string sqlQuery = "select a.biosum_plot_id, b.complete_haul_cost_dpgt from plot as a " +
-                                  "inner join db1.haul_costs as b on a.biosum_plot_id = b.biosum_plot_id " +
-                                  "where trim(b.materialcd) = 'M'";
-                using (SQLiteConnection singleConnectionFor2DBFiles = new SQLiteConnection(conFirstDb))
-                {
-                    singleConnectionFor2DBFiles.Open();
-                    dataMgr.SqlNonQuery(singleConnectionFor2DBFiles, attachSQL);
-                    dataMgr.SqlQueryReader(singleConnectionFor2DBFiles, sqlQuery);
-                    int rowCount = 0;
-                    if (dataMgr.m_DataReader.HasRows == true)
-                    {
-                        int i = 0;
-                        while (dataMgr.m_DataReader.Read())
-                        {
-                            i++;
-                        }
-                        rowCount = i;
-                    }
-                    System.Diagnostics.Debug.WriteLine("number of rows retrieved: " + rowCount);
-                }
-  
-            }
-            catch (Exception e2)
-            {
-                MessageBox.Show(e2.Message);
-            }
-           
-
-            
-        }
 		
 	}
 }
