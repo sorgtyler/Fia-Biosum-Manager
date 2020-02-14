@@ -171,15 +171,37 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteDiameterSpeciesGroupRefTable(oDataMgr, con,
                         strTable);
                     lstTables.Add(strTable);
-
                     strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName;
                     frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteFvsWeightedVariableRefTable(oDataMgr, con, strTable);
                     lstTables.Add(strTable);
-
                     strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName;
                     frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEconWeightedVariableRefTable(oDataMgr, con, strTable);
                     lstTables.Add(strTable);
-
+                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteHarvestMethodRefTable(oDataMgr, con, strTable);
+                    lstTables.Add(strTable);
+                    strTable = Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C";
+                    frmMain.g_oTables.m_oProcessor.CreateSqliteHarvestCostsTable(oDataMgr, con, strTable);
+                    //@ToDo
+                    lstTables.Add(strTable);
+                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteRxPackageRefTable(oDataMgr, con, strTable);
+                    lstTables.Add(strTable);
+                    strTable = Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C";
+                    frmMain.g_oTables.m_oFvs.CreateSqliteRxHarvestCostColumnTable(oDataMgr, con, strTable);
+                    lstTables.Add(strTable);
+                    strTable = Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C";
+                    if (this.CreateScenarioAdditionalHarvestCostsTable(oDataMgr, con, oAdo,strAccdbConnection, strTable)  == true)
+                    {
+                        //@ToDo
+                        lstTables.Add(strTable);
+                    }
+                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsSpeciesGroupRefTableName;
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteSpeciesGroupRefTable(oDataMgr, con, strTable);
+                    lstTables.Add(strTable);
+                    strTable = Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C";
+                    frmMain.g_oTables.m_oProcessor.CreateSqliteTreeVolValSpeciesDiamGroupsTable(oDataMgr, con, strTable);
+                    lstTables.Add(strTable);
 
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
@@ -318,6 +340,26 @@ namespace FIA_Biosum_Manager
             {
                 MessageBox.Show(e2.Message);
             }
+        }
+
+        private bool CreateScenarioAdditionalHarvestCostsTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn,
+                                                               FIA_Biosum_Manager.ado_data_access p_oAdo, string strAccessConn, string strTableName)
+        {
+            frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateSqliteScenarioAdditionalHarvestCostsTable(p_oDataMgr, p_oConn, strTableName);
+            using (OleDbConnection oAccessConn = new OleDbConnection(strAccessConn))
+            {
+                oAccessConn.Open();
+                string strSourceColumnsList = p_oAdo.getFieldNames(oAccessConn, "SELECT * FROM " + strTableName);
+                string[] strSourceColumnsArray = frmMain.g_oUtils.ConvertListToArray(strSourceColumnsList, ",");
+                foreach (string strColumn in strSourceColumnsArray)
+                {
+                    if (!p_oDataMgr.ColumnExist(p_oConn, strTableName, strColumn))
+                    {
+                        p_oDataMgr.AddColumn(p_oConn, strTableName, strColumn, "REAL", "");
+                    }
+                }
+            }
+            return true;
         }
 
      }

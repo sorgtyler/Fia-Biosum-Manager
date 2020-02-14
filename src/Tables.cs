@@ -1430,6 +1430,35 @@ namespace FIA_Biosum_Manager
                     "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
                     "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR CHAR(100) )";
             }
+            public void CreateSqliteHarvestMethodRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteHarvestMethodRefTableSQL(p_strTableName));
+            }
+
+            static public string CreateSqliteHarvestMethodRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "RX TEXT," +
+                    "RX_HARVEST_METHOD_LOW TEXT," +
+                    "RX_HARVEST_METHOD_LOW_ID INTEGER," +
+                    "RX_HARVEST_METHOD_LOW_CATEGORY INTEGER," +
+                    "RX_HARVEST_METHOD_LOW_CATEGORY_DESCR TEXT," +
+                    "RX_HARVEST_METHOD_STEEP TEXT," +
+                    "RX_HARVEST_METHOD_STEEP_ID INTEGER," +
+                    "RX_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
+                    "RX_HARVEST_METHOD_STEEP_CATEGORY_DESCR TEXT," +
+                    "USE_RX_HARVEST_METHOD_YN TEXT," +
+                    "STEEP_SLOPE_PCT INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_LOW TEXT," +
+                    "SCENARIO_HARVEST_METHOD_LOW_ID INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_LOW_CATEGORY INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_LOW_CATEGORY_DESCR TEXT," +
+                    "SCENARIO_HARVEST_METHOD_STEEP TEXT," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_ID INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY INTEGER," +
+                    "SCENARIO_HARVEST_METHOD_STEEP_CATEGORY_DESCR TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (RX))";
+            }
 
             //
             //RXPACKAGE_REF TABLE
@@ -1467,6 +1496,33 @@ namespace FIA_Biosum_Manager
                     "SIMYEAR4_RX_CATEGORY CHAR(100)," +
                     "SIMYEAR4_RX_SUBCATEGORY CHAR(100)," +
                     "SIMYEAR4_RX_DESCRIPTION MEMO )";
+            }
+            public void CreateSqliteRxPackageRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteRxPackageRefTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteRxPackageRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "RXPACKAGE TEXT," +
+                    "DESCRIPTION TEXT," +
+                    "SIMYEAR1_RX TEXT," +
+                    "SIMYEAR1_RX_CATEGORY TEXT," +
+                    "SIMYEAR1_RX_SUBCATEGORY TEXT," +
+                    "SIMYEAR1_RX_DESCRIPTION TEXT," +
+                    "SIMYEAR2_RX TEXT," +
+                    "SIMYEAR2_RX_CATEGORY TEXT," +
+                    "SIMYEAR2_RX_SUBCATEGORY TEXT," +
+                    "SIMYEAR2_RX_DESCRIPTION TEXT," +
+                    "SIMYEAR3_RX TEXT," +
+                    "SIMYEAR3_RX_CATEGORY TEXT," +
+                    "SIMYEAR3_RX_SUBCATEGORY TEXT," +
+                    "SIMYEAR3_RX_DESCRIPTION TEXT," +
+                    "SIMYEAR4_RX TEXT," +
+                    "SIMYEAR4_RX_CATEGORY TEXT," +
+                    "SIMYEAR4_RX_SUBCATEGORY TEXT," +
+                    "SIMYEAR4_RX_DESCRIPTION TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (RXPACKAGE))";
             }
 
             //
@@ -1528,6 +1584,17 @@ namespace FIA_Biosum_Manager
                     "COMMON_NAME CHAR(50)," +
                     "FIA_SPCD INTEGER )";
             }
+            public void CreateSqliteSpeciesGroupRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteSpeciesGroupRefTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteSpeciesGroupRefTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "SPP_GRP_CD INTEGER," +
+                    "COMMON_NAME TEXT," +
+                    "FIA_SPCD INTEGER )";
+            }
 
             //
             //FVS_WEIGHTED_VARIABLES_REF TABLE
@@ -1562,7 +1629,7 @@ namespace FIA_Biosum_Manager
             }
             public void CreateSqliteFvsWeightedVariableRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
             {
-                p_oDataMgr.SqlNonQuery(p_oConn, CreateFvsWeightedVariableRefTableSQL(p_strTableName));
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteFvsWeightedVariableRefTableSQL(p_strTableName));
             }
 
             static public string CreateSqliteFvsWeightedVariableRefTableSQL(string p_strTableName)
@@ -1610,7 +1677,7 @@ namespace FIA_Biosum_Manager
             }
             public void CreateSqliteEconWeightedVariableRefTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
             {
-                p_oDataMgr.SqlNonQuery(p_oConn, CreateEconWeightedVariableRefTableSQL(p_strTableName));
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteEconWeightedVariableRefTableSQL(p_strTableName));
             }
             static public string CreateSqliteEconWeightedVariableRefTableSQL(string p_strTableName)
             {
@@ -2460,6 +2527,18 @@ namespace FIA_Biosum_Manager
 					"ColumnName CHAR(50)," + 
 					"Description CHAR(255))";
 			}
+            public void CreateSqliteRxHarvestCostColumnTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteRxHarvestCostColumnTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteRxHarvestCostColumnTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "rx TEXT," +
+                    "ColumnName TEXT," +
+                    "Description TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (RX, COLUMNNAME))";
+            }
 			//
 			//RX PACKAGE TABLE
 			//
@@ -3908,7 +3987,31 @@ namespace FIA_Biosum_Manager
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "override_YN CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
-
+            }
+            public void CreateSqliteHarvestCostsTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, Tables.Processor.CreateSqliteHarvestCostsTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteHarvestCostsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "rxcycle TEXT," +
+                    "complete_cpa REAL DEFAULT 0," +
+                    "harvest_cpa REAL," +
+                    "chip_cpa REAL," +
+                    "assumed_movein_cpa REAL," +
+                    "ideal_complete_cpa REAL," +
+                    "ideal_harvest_cpa REAL," +
+                    "ideal_chip_cpa REAL," +
+                    "ideal_assumed_movein_cpa REAL," +
+                    "harvest_cpa_warning_msg TEXT," +
+                    "place_holder TEXT DEFAULT 'N'," +
+                    "override_YN TEXT DEFAULT 'N'," +
+                    "DateTimeCreated TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id,rxpackage,rx,rxcycle))";
             }
             public void CreateAdditionalHarvestCostsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -3987,6 +4090,39 @@ namespace FIA_Biosum_Manager
                     "stand_residue_wt_gt DOUBLE," +
                     "place_holder CHAR(1) DEFAULT 'N'," +
                     "DateTimeCreated CHAR(22))";
+            }
+            public void CreateSqliteTreeVolValSpeciesDiamGroupsTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, Tables.Processor.CreateSqliteTreeVolValSpeciesDiamGroupsTableSQL(p_strTableName));
+                p_oDataMgr.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx1", "biosum_cond_id,rxpackage,rx,rxcycle");
+                p_oDataMgr.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx2", "rx");
+                p_oDataMgr.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx3", "species_group");
+                p_oDataMgr.AddIndex(p_oConn, p_strTableName, p_strTableName + "_idx4", "diam_group");
+            }
+            static public string CreateSqliteTreeVolValSpeciesDiamGroupsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "rxcycle TEXT," +
+                    "species_group INTEGER," +
+                    "diam_group INTEGER DEFAULT 0," +
+                    "biosum_harvest_method_category INTEGER DEFAULT 0," +
+                    "chip_vol_cf REAL," +
+                    "chip_wt_gt REAL," +
+                    "chip_val_dpa REAL," +
+                    "chip_mkt_val_pgt REAL DEFAULT 0," +
+                    "merch_vol_cf REAL," +
+                    "merch_wt_gt REAL," +
+                    "merch_val_dpa REAL," +
+                    "merch_to_chipbin_YN TEXT DEFAULT 'N'," +
+                    "bc_vol_cf REAL," +
+                    "bc_wt_gt REAL," +
+                    "stand_residue_wt_gt REAL," +
+                    "place_holder TEXT DEFAULT 'N'," +
+                    "DateTimeCreated TEXT)";
             }
             public void CreateTreeVolValSpeciesDiamGroupsWorkTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
             {
@@ -4870,6 +5006,19 @@ namespace FIA_Biosum_Manager
                     //"water_barring_roads_cpa DOUBLE," +
                     //"brush_cutting_cpa DOUBLE)";
 
+            }
+            public void CreateSqliteScenarioAdditionalHarvestCostsTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, Tables.ProcessorScenarioRuleDefinitions.CreateSqliteScenarioAdditionalHarvestCostsTableSQL(p_strTableName));
+                p_oDataMgr.AddIndex(p_oConn, p_strTableName, p_strTableName + "_plotrx", "biosum_cond_id,rx");
+            }
+             static public string CreateSqliteScenarioAdditionalHarvestCostsTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "scenario_id TEXT," +
+                    "biosum_cond_id TEXT," +
+                    "rx TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (scenario_id,biosum_cond_id,rx))";
             }
 
             public void CreateScenarioTreeDiamGroupsTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
