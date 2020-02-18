@@ -1797,6 +1797,7 @@ namespace FIA_Biosum_Manager
                     this.m_frmSqlite.uc_optimizer_sqlite_export1.Top = 0;
                     this.m_frmSqlite.uc_optimizer_sqlite_export1.Left = 0;
 
+                    this.m_frmSqlite.uc_optimizer_sqlite_export1.ReferenceFormDialog = this.m_frmSqlite;
                     this.m_frmSqlite.uc_optimizer_sqlite_export1.Visible = true;
                     this.m_frmSqlite.MinimizeMainForm = true;
                     this.m_frmSqlite.ParentControl = frmMain.g_oFrmMain;

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using System.Text;
+using System.Threading;
 using System.Data.SQLite;
 using System.Data.OleDb;
 
@@ -19,7 +20,12 @@ namespace FIA_Biosum_Manager
 		public System.Windows.Forms.Label lblTitle;
         private Button BtnExport;
         private FIA_Biosum_Manager.frmMain m_frmMain;
+        private frmTherm m_frmTherm;
+        private int m_intError;
         private string m_strDebugFile = "";
+        private string m_strOptimizerScenario = "";
+        private string m_strContextDbPath = "";
+        private string m_strContextAccdbPath = "";
 
 		/// <summary> 
 		/// Required designer variable.
@@ -118,17 +124,16 @@ namespace FIA_Biosum_Manager
 			this.Visible=false;
 		}
 
+        public frmDialog ReferenceFormDialog { set; get; }
+        
         private void BtnExport_Click(object sender, EventArgs e)
         {
-            string strOptimizerScenario = "weighted_ptmod";
-            string strContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteContextDbFile;
-            string strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
-            m_strDebugFile = m_frmMain.getProjectDirectory() + @"\optimizer\" + strOptimizerScenario + @"\db\sqlite_log.txt";
+            m_strOptimizerScenario = "weighted_ptmod";
+            m_strContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteContextDbFile;
+            m_strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
+            m_strDebugFile = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\db\sqlite_log.txt";
 
-            SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
-            ado_data_access oAdo = new ado_data_access();
-
-            if (System.IO.File.Exists(strContextDbPath))
+            if (System.IO.File.Exists(m_strContextDbPath))
             {
                 DialogResult res = MessageBox.Show("The SQLITE context database already exists!! Do you want to replace it?", "FIA Biosum",
                     MessageBoxButtons.YesNo);
@@ -139,9 +144,38 @@ namespace FIA_Biosum_Manager
                 else
                 {
                     // Delete existing db
-                    System.IO.File.Delete(strContextDbPath);
+                    System.IO.File.Delete(m_strContextDbPath);
                 }
             }
+
+            CreateSqliteDatabases_Start();
+
+        }
+
+        private void CreateSqliteDatabases_Start()
+        {
+            frmMain.g_oDelegate.InitializeThreadEvents();
+            frmMain.g_oDelegate.m_oEventStopThread.Reset();
+            frmMain.g_oDelegate.m_oEventThreadStopped.Reset();
+            frmMain.g_oDelegate.CurrentThreadProcessAborted = false;
+            frmMain.g_oDelegate.CurrentThreadProcessDone = false;
+            frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
+            //@ToDo: progress implementation
+            //StartTherm("2", "Delete Biosum Package Data");
+            frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(CreateSqliteDatabases_Process));
+            frmMain.g_oDelegate.m_oThread.IsBackground = true;
+            frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
+            frmMain.g_oDelegate.m_oThread.Start();
+        }
+        
+        private void CreateSqliteDatabases_Process()
+        {
+            frmMain.g_oDelegate.CurrentThreadProcessStarted = true;
+            m_intError = 0;
+
+            SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+            ado_data_access oAdo = new ado_data_access();
+            
             try
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "START: SQLITE export Log " + System.DateTime.Now.ToString() + "\r\n\r\n");
@@ -150,18 +184,18 @@ namespace FIA_Biosum_Manager
 
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Project: " + frmMain.g_oFrmMain.frmProject.uc_project1.txtProjectId.Text + "\r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Project Directory: " + frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text + "\r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Scenario Directory: " + strOptimizerScenario + "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Scenario Directory: " + m_strOptimizerScenario + "\r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "---------------------------------------------------------------\r\n");
                 }
-                oDataMgr.CreateDbFile(strContextDbPath);    // create new, blank database
+                oDataMgr.CreateDbFile(m_strContextDbPath);    // create new, blank database
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the context tables \r\n");
                 }
 
-                string strConnection = "data source=" + strContextDbPath;
-                string strAccdbConnection = oAdo.getMDBConnString(strContextAccdbPath, "", "");
+                string strConnection = "data source=" + m_strContextDbPath;
+                string strAccdbConnection = oAdo.getMDBConnString(m_strContextAccdbPath, "", "");
                 string strTable = "";
                 System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
                 using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
@@ -191,7 +225,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oTables.m_oFvs.CreateSqliteRxHarvestCostColumnTable(oDataMgr, con, strTable);
                     lstTables.Add(strTable);
                     strTable = Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C";
-                    if (this.CreateScenarioAdditionalHarvestCostsTable(oDataMgr, con, oAdo,strAccdbConnection, strTable)  == true)
+                    if (this.CreateScenarioAdditionalHarvestCostsTable(oDataMgr, con, oAdo, strAccdbConnection, strTable) == true)
                     {
                         //@ToDo
                         lstTables.Add(strTable);
@@ -213,7 +247,7 @@ namespace FIA_Biosum_Manager
                     using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
                     {
                         oAccessConn.Open();
-                        foreach(string strTableName in lstTables)
+                        foreach (string strTableName in lstTables)
                         {
                             if (oAdo.TableExist(oAccessConn, strTableName))
                             {
@@ -230,8 +264,55 @@ namespace FIA_Biosum_Manager
                         }
                     }
                 }
-                MessageBox.Show("done!!");
 
+                if (oAdo != null)
+                {
+                    if (oAdo.m_DataSet != null)
+                    {
+                        oAdo.m_DataSet.Clear();
+                        oAdo.m_DataSet.Dispose();
+                    }
+                    oAdo = null;
+                }
+
+                if (oDataMgr != null)
+                {
+                    if (oDataMgr.m_DataTable != null)
+                    {
+                        oAdo.m_DataTable.Clear();
+                        oAdo.m_DataTable.Dispose();
+                    }
+                    oDataMgr = null;
+                }
+
+                MessageBox.Show("done!!");
+            }
+            catch (System.Threading.ThreadInterruptedException err)
+            {
+                MessageBox.Show("Threading Interruption Error " + err.Message.ToString());
+            }
+            catch (System.Threading.ThreadAbortException err)
+            {
+                if (oAdo != null)
+                {
+                    if (oAdo.m_DataSet != null)
+                    {
+                        oAdo.m_DataSet.Clear();
+                        oAdo.m_DataSet.Dispose();
+                    }
+                    oAdo = null;
+                }
+
+                if (oDataMgr != null)
+                {
+                    if (oDataMgr.m_DataTable != null)
+                    {
+                        oAdo.m_DataTable.Clear();
+                        oAdo.m_DataTable.Dispose();
+                    }
+                    oDataMgr = null;
+                }
+                ThreadCleanUp();
             }
             catch (Exception e2)
             {
@@ -240,6 +321,28 @@ namespace FIA_Biosum_Manager
             }
         }
 
+        private void ThreadCleanUp()
+        {
+            try
+            {
+                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)ReferenceFormDialog, "Visible",
+                    true);
+                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)ReferenceFormDialog, "Enabled",
+                    true);
+
+                if (m_frmTherm != null)
+                {
+                    frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Close");
+                    frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Dispose");
+
+                    m_frmTherm = null;
+                }
+            }
+            catch
+            {
+            }
+        }
+        
         private void CodeExamples()
         {
             SQLite.ADO.DataMgr dataMgr = new SQLite.ADO.DataMgr();
