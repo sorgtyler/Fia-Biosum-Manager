@@ -22,10 +22,15 @@ namespace FIA_Biosum_Manager
         private FIA_Biosum_Manager.frmMain m_frmMain;
         private frmTherm m_frmTherm;
         private int m_intError;
+        private dao_data_access m_oDao;
         private string m_strDebugFile = "";
         private string m_strOptimizerScenario = "";
         private string m_strContextDbPath = "";
         private string m_strContextAccdbPath = "";
+        private string m_strResultsDbPath = "";
+        private string m_strResultsAccdbPath = "";
+
+
         private int m_intDatabaseCount;
 
 		/// <summary> 
@@ -157,12 +162,15 @@ namespace FIA_Biosum_Manager
             m_strOptimizerScenario = "weighted_ptmod";
             m_strContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteContextDbFile;
             m_strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
-            m_intDatabaseCount = 1;
+            m_strResultsDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteResultsDbFile;
+            m_strResultsAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
+            
+            m_intDatabaseCount = 2;
             m_strDebugFile = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\db\sqlite_log.txt";
 
-            if (System.IO.File.Exists(m_strContextDbPath))
+            if (System.IO.File.Exists(m_strContextDbPath) || System.IO.File.Exists(m_strResultsDbPath))
             {
-                DialogResult res = MessageBox.Show("The SQLITE context database already exists!! Do you want to replace it?", "FIA Biosum",
+                DialogResult res = MessageBox.Show("One or more of the SQLITE context database already exists!! Do you want to replace them?", "FIA Biosum",
                     MessageBoxButtons.YesNo);
                 if (res != DialogResult.Yes)
                 {
@@ -170,8 +178,11 @@ namespace FIA_Biosum_Manager
                 }
                 else
                 {
-                    // Delete existing db
-                    System.IO.File.Delete(m_strContextDbPath);
+                    // Delete existing dbs
+                    if (System.IO.File.Exists(m_strContextDbPath))
+                        System.IO.File.Delete(m_strContextDbPath);
+                    if (System.IO.File.Exists(m_strResultsDbPath))
+                        System.IO.File.Delete(m_strResultsDbPath);
                 }
             }
 
@@ -199,12 +210,15 @@ namespace FIA_Biosum_Manager
         {
             frmMain.g_oDelegate.CurrentThreadProcessStarted = true;
             m_intError = 0;
-
-            SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
-            ado_data_access oAdo = new ado_data_access();
             
             try
             {
+                // Delete old log so we start fresh
+                if (System.IO.File.Exists(m_strDebugFile))
+                    System.IO.File.Delete(m_strDebugFile);
+
+                m_oDao = new dao_data_access();
+                
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "START: SQLITE export Log " + System.DateTime.Now.ToString() + "\r\n\r\n");
                 if (frmMain.g_intDebugLevel > 1)
                 {
@@ -214,12 +228,6 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Scenario Directory: " + m_strOptimizerScenario + "\r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "---------------------------------------------------------------\r\n");
                 }
-                oDataMgr.CreateDbFile(m_strContextDbPath);    // create new, blank database
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the context tables \r\n");
-                }
 
                 //progress bar: single process
                 SetThermValue(m_frmTherm.progressBar1, "Maximum", 100);
@@ -228,108 +236,19 @@ namespace FIA_Biosum_Manager
                 SetLabelValue(m_frmTherm.lblMsg, "Text", "");
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
 
+                CreateResultsSqliteDb();
 
-                string strConnection = "data source=" + m_strContextDbPath;
-                string strAccdbConnection = oAdo.getMDBConnString(m_strContextAccdbPath, "", "");
-                string strTable = "";
-                System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
-                using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
-                {
-                    con.Open();
-                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName;
-                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteDiameterSpeciesGroupRefTable(oDataMgr, con,
-                        strTable);
-                    lstTables.Add(strTable);
-                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName;
-                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteFvsWeightedVariableRefTable(oDataMgr, con, strTable);
-                    lstTables.Add(strTable);
-                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName;
-                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEconWeightedVariableRefTable(oDataMgr, con, strTable);
-                    lstTables.Add(strTable);
-                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
-                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteHarvestMethodRefTable(oDataMgr, con, strTable);
-                    lstTables.Add(strTable);
-                    strTable = Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C";
-                    frmMain.g_oTables.m_oProcessor.CreateSqliteHarvestCostsTable(oDataMgr, con, strTable);
-                    //@ToDo
-                    //lstTables.Add(strTable);
-                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
-                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteRxPackageRefTable(oDataMgr, con, strTable);
-                    lstTables.Add(strTable);
-                    strTable = Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C";
-                    frmMain.g_oTables.m_oFvs.CreateSqliteRxHarvestCostColumnTable(oDataMgr, con, strTable);
-                    lstTables.Add(strTable);
-                    strTable = Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C";
-                    if (this.CreateScenarioAdditionalHarvestCostsTable(strConnection, oAdo, strAccdbConnection, strTable) == true)
-                    {
-                        //@ToDo
-                        lstTables.Add(strTable);
-                    }
-                    strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsSpeciesGroupRefTableName;
-                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteSpeciesGroupRefTable(oDataMgr, con, strTable);
-                    lstTables.Add(strTable);
-                    strTable = Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C";
-                    frmMain.g_oTables.m_oProcessor.CreateSqliteTreeVolValSpeciesDiamGroupsTable(oDataMgr, con, strTable);
-                    //lstTables.Add(strTable);
-
-                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created target tables \r\n");
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
-                    }
-                   
-                    using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
-                    {
-                        oAccessConn.Open();
-                        var counter = 0;
-                        foreach (string strTableName in lstTables)
-                        {
-                            if (oAdo.TableExist(oAccessConn, strTableName))
-                            {
-                                counter += 1;
-                                string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strContextDbPath);
-                                UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
-                                string strSql = "select * from " + strTableName;
-                                oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
-
-                                using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
-                                {
-                                    using (System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da))
-                                    {
-                                        da.InsertCommand = cb.GetInsertCommand();
-                                        int rows = da.Update(oAdo.m_DataTable);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
+                System.Threading.Thread.Sleep(5000);
+                
+                CreateContextSqliteDb();               
+                
                 UpdateProgressBar1("All databases complete!!", 100);
 
-                if (oAdo != null)
+                if (m_oDao != null)
                 {
-                    if (oAdo.m_DataSet != null)
-                    {
-                        oAdo.m_DataSet.Clear();
-                        oAdo.m_DataSet.Dispose();
-                    }
-                    oAdo = null;
-                }
-
-                if (oDataMgr != null)
-                {
-                    if (oDataMgr.m_DataTable != null)
-                    {
-                        oAdo.m_DataTable.Clear();
-                        oAdo.m_DataTable.Dispose();
-                    }
-                    if (oDataMgr.m_Connection != null)
-                    {
-                        oDataMgr.m_Connection.Close();
-                        oDataMgr.m_Connection.Dispose();
-                    }
-                    oDataMgr = null;
+                    m_oDao.m_DaoWorkspace.Close();
+                    m_oDao.m_DaoWorkspace = null;
+                    m_oDao = null;
                 }
 
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)ReferenceFormDialog, "Visible",
@@ -346,32 +265,330 @@ namespace FIA_Biosum_Manager
             }
             catch (System.Threading.ThreadAbortException err)
             {
-                if (oAdo != null)
-                {
-                    if (oAdo.m_DataSet != null)
-                    {
-                        oAdo.m_DataSet.Clear();
-                        oAdo.m_DataSet.Dispose();
-                    }
-                    oAdo = null;
-                }
-
-                if (oDataMgr != null)
-                {
-                    if (oDataMgr.m_DataTable != null)
-                    {
-                        oDataMgr.m_DataTable.Clear();
-                        oDataMgr.m_DataTable.Dispose();
-                    }
-                    oDataMgr = null;
-                }
                 ThreadCleanUp();
             }
             catch (Exception e2)
             {
                 MessageBox.Show(e2.Message);
-
             }
+        }
+
+        public void CreateContextSqliteDb()
+        {
+            SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+            ado_data_access oAdo = new ado_data_access();
+
+            oDataMgr.CreateDbFile(m_strContextDbPath);    // create new, blank database
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the context tables \r\n");
+            }
+            
+            string strConnection = "data source=" + m_strContextDbPath;
+            string strAccdbConnection = oAdo.getMDBConnString(m_strContextAccdbPath, "", "");
+            string strTable = "";
+            System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
+            using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
+            {
+                con.Open();
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsDiameterSpeciesGroupRefTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteDiameterSpeciesGroupRefTable(oDataMgr, con,
+                    strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteFvsWeightedVariableRefTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEconWeightedVariableRefTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteHarvestMethodRefTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C";
+                frmMain.g_oTables.m_oProcessor.CreateSqliteHarvestCostsTable(oDataMgr, con, strTable);
+                //@ToDo
+                //lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteRxPackageRefTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C";
+                frmMain.g_oTables.m_oFvs.CreateSqliteRxHarvestCostColumnTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C";
+                if (this.CreateScenarioAdditionalHarvestCostsTable(strConnection, strAccdbConnection, strTable) == true)
+                {
+                    //@ToDo
+                    //lstTables.Add(strTable);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    }
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsSpeciesGroupRefTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteSpeciesGroupRefTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C";
+                frmMain.g_oTables.m_oProcessor.CreateSqliteTreeVolValSpeciesDiamGroupsTable(oDataMgr, con, strTable);
+                //@ToDo
+                //lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created target tables \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                }
+
+                using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
+                {
+                    oAccessConn.Open();
+                    var counter = 0;
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "About to populate context tables \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                    }
+                    foreach (string strTableName in lstTables)
+                    {
+                        if (oAdo.TableExist(oAccessConn, strTableName))
+                        {
+                            counter += 1;
+                            string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strContextDbPath);
+                            UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
+                            string strSql = "select * from " + strTableName;
+                            oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
+
+                            using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                            {
+                                using (System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da))
+                                {
+                                    da.InsertCommand = cb.GetInsertCommand();
+                                    int rows = da.Update(oAdo.m_DataTable);
+                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                    {
+                                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated context table " + strTableName + " \r\n");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Finished populating context tables! \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                }
+            }
+
+            if (oAdo != null)
+            {
+                if (oAdo.m_DataSet != null)
+                {
+                    oAdo.m_DataSet.Clear();
+                    oAdo.m_DataSet.Dispose();
+                }
+                oAdo = null;
+            }
+
+            if (oDataMgr != null)
+            {
+                if (oDataMgr.m_DataTable != null)
+                {
+                    oAdo.m_DataTable.Clear();
+                    oAdo.m_DataTable.Dispose();
+                }
+                if (oDataMgr.m_Connection != null)
+                {
+                    oDataMgr.m_Connection.Close();
+                    oDataMgr.m_Connection.Dispose();
+                }
+                oDataMgr = null;
+            }
+
+        }
+
+        public void CreateResultsSqliteDb()
+        {
+            SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+            ado_data_access oAdo = new ado_data_access();
+
+            oDataMgr.CreateDbFile(m_strResultsDbPath);    // create new, blank database
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the results tables \r\n");
+            }
+
+            string strConnection = "data source=" + m_strResultsDbPath;
+            string strAccdbConnection = oAdo.getMDBConnString(m_strResultsAccdbPath, "", "");
+            string strTablePrefix = "all_cycles";
+            string strTable = "";
+            System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
+
+            if (!m_oDao.TableExists(m_strResultsAccdbPath, strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix))
+            {
+                strTablePrefix = "cycle_1";
+            }
+
+            using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
+            {
+                con.Open();
+                strTable = strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteBestRxSummaryTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = strTable + "_before_tiebreaks";
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteBestRxSummaryTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsValidCombosTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteValidComboTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsValidCombosFVSPrePostTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteValidComboFVSPrePostTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTieBreakerTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteTieBreakerTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsOptimizationTableSuffix;
+                if (CreateScenarioOptimizationTable(strConnection,strTable))
+                {
+                    lstTables.Add(strTable);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    }
+                }
+
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created target tables \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                }
+
+                using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
+                {
+                    oAccessConn.Open();
+                    var counter = 0;
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "About to populate results tables \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                    }
+                    foreach (string strTableName in lstTables)
+                    {
+                        if (oAdo.TableExist(oAccessConn, strTableName))
+                        {
+                            counter += 1;
+                            string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strResultsDbPath);
+                            UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
+                            string strSql = "select * from " + strTableName;
+                            oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
+
+                            using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                            {
+                                using (System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da))
+                                {
+                                    da.InsertCommand = cb.GetInsertCommand();
+                                    int rows = da.Update(oAdo.m_DataTable);
+                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                    {
+                                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated results table " + strTableName + " \r\n");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Finished populating context tables! \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                }
+            }
+
+            if (oAdo != null)
+            {
+                if (oAdo.m_DataSet != null)
+                {
+                    oAdo.m_DataSet.Clear();
+                    oAdo.m_DataSet.Dispose();
+                }
+                oAdo = null;
+            }
+
+            if (oDataMgr != null)
+            {
+                if (oDataMgr.m_DataTable != null)
+                {
+                    oAdo.m_DataTable.Clear();
+                    oAdo.m_DataTable.Dispose();
+                }
+                if (oDataMgr.m_Connection != null)
+                {
+                    oDataMgr.m_Connection.Close();
+                    oDataMgr.m_Connection.Dispose();
+                }
+                oDataMgr = null;
+            }
+
         }
 
         private void CreateSqliteDatabases_Finish()
@@ -531,26 +748,41 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private bool CreateScenarioAdditionalHarvestCostsTable(string strSqliteConn, FIA_Biosum_Manager.ado_data_access p_oAdo, 
-            string strAccessConn, string strTableName)
+        private bool CreateScenarioAdditionalHarvestCostsTable(string strSqliteConn, string strAccessConn, string strTableName)
+        {
+            using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strSqliteConn))
+            {
+                SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+                //ado_data_access oAdo = new ado_data_access();
+                con.Open();
+                frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateSqliteScenarioAdditionalHarvestCostsTable(oDataMgr, con, strTableName);
+                string[] strSourceColumnsArray = new string[0];
+                m_oDao.getFieldNames(m_strContextAccdbPath, strTableName, ref strSourceColumnsArray);
+                foreach (string strColumn in strSourceColumnsArray)
+                {
+                    if (!oDataMgr.ColumnExists(con, strTableName, strColumn))
+                    {
+                        oDataMgr.AddColumn(con, strTableName, strColumn, "REAL", "");
+                    }
+                }
+            }
+            return true;
+        }
+
+        private bool CreateScenarioOptimizationTable(string strSqliteConn, string strTableName)
         {
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strSqliteConn))
             {
                 SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
                 con.Open();
-                frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateSqliteScenarioAdditionalHarvestCostsTable(oDataMgr, con, strTableName);
-                using (OleDbConnection oAccessConn = new OleDbConnection(strAccessConn))
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteOptimizationTable(oDataMgr, con, strTableName);
+                string[] strSourceColumnsArray = new string[0];
+                m_oDao.getFieldNames(m_strResultsAccdbPath, strTableName, ref strSourceColumnsArray);
+                foreach (string strColumn in strSourceColumnsArray)
                 {
-                    oAccessConn.Open();
-                    string strSourceColumnsList = p_oAdo.getFieldNames(oAccessConn, "SELECT * FROM " + strTableName);
-                    string[] strSourceColumnsArray = frmMain.g_oUtils.ConvertListToArray(strSourceColumnsList, ",");
-                    foreach (string strColumn in strSourceColumnsArray)
+                    if (!oDataMgr.ColumnExists(con, strTableName, strColumn))
                     {
-                        if (!oDataMgr.ColumnExists(con, strTableName, strColumn))
-                        {
-                            oDataMgr.AddColumn(con, strTableName, strColumn, "REAL", "");
-                        }
-
+                        oDataMgr.AddColumn(con, strTableName, strColumn, "REAL", "");
                     }
                 }
             }

@@ -245,6 +245,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"econ_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsFvsContextDbFile { get { return @"db\fvs_context.accdb"; } }
             static public string DefaultScenarioResultsSqliteContextDbFile { get { return @"db\context.db3"; } }
+            static public string DefaultScenarioResultsSqliteResultsDbFile { get { return @"db\optimizer_results.db3"; } }
 			
 			public OptimizerScenarioResults()
 			{
@@ -495,6 +496,26 @@ namespace FIA_Biosum_Manager
 					"variable1_change DOUBLE)";
 					
 			}
+            public void CreateSqliteTieBreakerTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteTieBreakerTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteTieBreakerTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "rxcycle TEXT," +
+                    "last_tiebreak_rank INTEGER," +
+                    "pre_variable1_name TEXT," +
+                    "post_variable1_name TEXT," +
+                    "pre_variable1_value REAL," +
+                    "post_variable1_value REAL," +
+                    "variable1_change REAL," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id, rxpackage, rx, rxcycle))";
+
+            }
 			//
 			//VALID COMBO TABLE
 			//
@@ -515,6 +536,19 @@ namespace FIA_Biosum_Manager
 					"rx text(3)," + 
                     "rxcycle text(1))";
 			}
+            public void CreateSqliteValidComboTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteValidComboTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteValidComboTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "rxcycle TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id, rxpackage, rx, rxcycle))"; ;
+            }
 			public void CreateValidComboFVSPostTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.SqlNonQuery(p_oConn,CreateValidComboFVSPostTableSQL(p_strTableName));
@@ -577,6 +611,20 @@ namespace FIA_Biosum_Manager
                     "rxcycle text(1)," +
                     "fvs_variant text(2))";
 			}
+            public void CreateSqliteValidComboFVSPrePostTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteValidComboFVSPrePostTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteValidComboFVSPrePostTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "rxcycle TEXT," +
+                    "fvs_variant TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id, rxpackage, rx, rxcycle))"; ; ;
+            }
 			//
 			//BEST TREATMENT TABLE
 			//
@@ -601,6 +649,23 @@ namespace FIA_Biosum_Manager
 					"tiebreaker_value DOUBLE," + 
 					"last_tiebreak_rank INTEGER)";
 			}
+            public void CreateSqliteBestRxSummaryTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteBestRxSummaryTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteBestRxSummaryTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "acres REAL," +
+                    "owngrpcd INTEGER," +
+                    "optimization_value REAL," +
+                    "tiebreaker_value REAL," +
+                    "last_tiebreak_rank INTEGER," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id, rx))"; ;
+            }
 			public void CreateBestRxSummaryCycle1WithIntensityTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)
 			{
 				p_oAdo.SqlNonQuery(p_oConn,CreateBestRxSummaryCycle1WithIntensityTableSQL(p_strTableName));
@@ -673,6 +738,27 @@ namespace FIA_Biosum_Manager
                     strSQL = strSQL + "," + p_strFilterColumnName + " DOUBLE ";
                 }
                 strSQL = strSQL + ")";
+                return strSQL;
+            }
+            public void CreateSqliteOptimizationTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn,
+                                    string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteOptimizationTableSQL(p_strTableName));
+            }
+            static public string CreateSqliteOptimizationTableSQL(string p_strTableName)
+            {
+                string strSQL = "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "rxcycle TEXT," +
+                    "pre_variable_name TEXT," +
+                    "post_variable_name TEXT," +
+                    "pre_variable_value REAL," +
+                    "post_variable_value REAL," +
+                    "change_value REAL," +
+                    "affordable_YN TEXT," +
+                    "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id, rxpackage, rx, rxcycle))";
                 return strSQL;
             }
 			//
