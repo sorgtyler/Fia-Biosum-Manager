@@ -506,7 +506,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
                 }
                 strTable = strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsOptimizationTableSuffix;
-                if (CreateScenarioOptimizationTable(strConnection,strTable))
+                if (CreateScenarioTableWithDynamicColumns(strConnection,strTable))
                 {
                     lstTables.Add(strTable);
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -514,7 +514,73 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
                     }
                 }
-
+                strTable = strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsEffectiveTableSuffix;
+                if (CreateScenarioTableWithDynamicColumns(strConnection, strTable))
+                {
+                    lstTables.Add(strTable);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    }
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteProductYieldsTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxUtilSumTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEconByRxUtilSumTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName;
+                if (CreateScenarioTableWithDynamicColumns(strConnection, strTable))
+                {
+                    lstTables.Add(strTable);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    }
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteHaulCostTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsCondPsiteTableName;
+                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteCondPsiteTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultConditionTableName;
+                frmMain.g_oTables.m_oFIAPlot.CreateSqliteConditionTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPlotTableName;
+                frmMain.g_oTables.m_oFIAPlot.CreateSqlitePlotTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = Tables.TravelTime.DefaultProcessingSiteTableName;
+                frmMain.g_oTables.m_oTravelTime.CreateSqliteProcessingSiteTable(oDataMgr, con, strTable);
+                lstTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
@@ -769,13 +835,26 @@ namespace FIA_Biosum_Manager
             return true;
         }
 
-        private bool CreateScenarioOptimizationTable(string strSqliteConn, string strTableName)
+        private bool CreateScenarioTableWithDynamicColumns(string strSqliteConn, string strTableName)
         {
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strSqliteConn))
             {
                 SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
                 con.Open();
-                frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteOptimizationTable(oDataMgr, con, strTableName);
+                if (strTableName.Contains("optimization"))
+                {
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteOptimizationTable(oDataMgr, con, strTableName);
+                }
+                else if (strTableName.Contains("weighted"))
+                {
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqlitePostEconomicWeightedTable(oDataMgr, con, strTableName);
+                }
+                else
+                {
+                    frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEffectiveTable(oDataMgr, con, strTableName);
+                }
+                
+                // This code adds any filter fields that change depending on the scenario configuration
                 string[] strSourceColumnsArray = new string[0];
                 m_oDao.getFieldNames(m_strResultsAccdbPath, strTableName, ref strSourceColumnsArray);
                 foreach (string strColumn in strSourceColumnsArray)
