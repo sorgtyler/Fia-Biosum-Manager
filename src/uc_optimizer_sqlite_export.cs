@@ -29,6 +29,7 @@ namespace FIA_Biosum_Manager
         private string m_strContextAccdbPath = "";
         private string m_strResultsDbPath = "";
         private string m_strResultsAccdbPath = "";
+        private string m_strPopAccdbPath = "";
 
 
         private int m_intDatabaseCount;
@@ -164,7 +165,8 @@ namespace FIA_Biosum_Manager
             m_strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
             m_strResultsDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteResultsDbFile;
             m_strResultsAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
-            
+            m_strPopAccdbPath = m_frmMain.getProjectDirectory() + @"\" + frmMain.g_oTables.m_oFIAPlot.DefaultPopEstnUnitTableDbFile;
+          
             m_intDatabaseCount = 2;
             m_strDebugFile = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\db\sqlite_log.txt";
 
@@ -289,6 +291,7 @@ namespace FIA_Biosum_Manager
             string strAccdbConnection = oAdo.getMDBConnString(m_strContextAccdbPath, "", "");
             string strTable = "";
             System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
+            System.Collections.Generic.IList<string> lstPopTables = new System.Collections.Generic.List<string>();
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
             {
                 con.Open();
@@ -344,7 +347,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
                 }
                 strTable = Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C";
-                if (this.CreateScenarioAdditionalHarvestCostsTable(strConnection, strAccdbConnection, strTable) == true)
+                if (this.CreateScenarioAdditionalHarvestCostsTable(strConnection, strTable) == true)
                 {
                     //@ToDo
                     //lstTables.Add(strTable);
@@ -368,6 +371,35 @@ namespace FIA_Biosum_Manager
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
                 }
+                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopEstnUnitTableName;
+                frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopEstnUnitTable(oDataMgr, con, strTable);
+                lstPopTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopEvalTableName;
+                frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopEvalTable(oDataMgr, con, strTable);
+                lstPopTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopPlotStratumAssgnTableName;
+                frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopPlotStratumAssgnTable(oDataMgr, con, strTable);
+                lstPopTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopStratumTableName;
+                frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopStratumTable(oDataMgr, con, strTable);
+                lstPopTables.Add(strTable);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                }
+
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
@@ -386,6 +418,35 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
                     }
                     foreach (string strTableName in lstTables)
+                    {
+                        if (oAdo.TableExist(oAccessConn, strTableName))
+                        {
+                            counter += 1;
+                            string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strContextDbPath);
+                            UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
+                            string strSql = "select * from " + strTableName;
+                            oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
+
+                            using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                            {
+                                using (System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da))
+                                {
+                                    da.InsertCommand = cb.GetInsertCommand();
+                                    int rows = da.Update(oAdo.m_DataTable);
+                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                    {
+                                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated context table " + strTableName + " \r\n");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Process POP tables
+                    oAccessConn.Close();
+                    oAccessConn.ConnectionString = oAdo.getMDBConnString(m_strPopAccdbPath, "", "");
+                    oAccessConn.Open();
+                    foreach (string strTableName in lstPopTables)
                     {
                         if (oAdo.TableExist(oAccessConn, strTableName))
                         {
@@ -814,7 +875,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private bool CreateScenarioAdditionalHarvestCostsTable(string strSqliteConn, string strAccessConn, string strTableName)
+        private bool CreateScenarioAdditionalHarvestCostsTable(string strSqliteConn, string strTableName)
         {
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strSqliteConn))
             {
