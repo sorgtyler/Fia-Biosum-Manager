@@ -29,10 +29,20 @@ namespace FIA_Biosum_Manager
         private string m_strContextAccdbPath = "";
         private string m_strResultsDbPath = "";
         private string m_strResultsAccdbPath = "";
+        private string m_strFvsContextDbPath = "";
+        private string m_strFvsContextAccdbPath = "";
         private string m_strPopAccdbPath = "";
+        private System.Collections.Generic.IDictionary<string, string> m_dictScenarios = null;
 
 
         private int m_intDatabaseCount;
+        public ListBox lstScenario;
+        public Label lblScenarioId;
+        public Label lblScenarioDescription;
+        public TextBox txtDescription;
+        private CheckBox chkFvsContext;
+        private CheckBox chkContext;
+        private CheckBox chkResults;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -46,6 +56,7 @@ namespace FIA_Biosum_Manager
             this.m_frmMain = p_frmMain;
 
             // TODO: Add any initialization after the InitializeComponent call
+            load_values();
         }
 
 		/// <summary> 
@@ -73,11 +84,25 @@ namespace FIA_Biosum_Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.BtnExport = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.lstScenario = new System.Windows.Forms.ListBox();
+            this.lblScenarioId = new System.Windows.Forms.Label();
+            this.lblScenarioDescription = new System.Windows.Forms.Label();
+            this.txtDescription = new System.Windows.Forms.TextBox();
+            this.chkResults = new System.Windows.Forms.CheckBox();
+            this.chkContext = new System.Windows.Forms.CheckBox();
+            this.chkFvsContext = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkFvsContext);
+            this.groupBox1.Controls.Add(this.chkContext);
+            this.groupBox1.Controls.Add(this.chkResults);
+            this.groupBox1.Controls.Add(this.lblScenarioDescription);
+            this.groupBox1.Controls.Add(this.txtDescription);
+            this.groupBox1.Controls.Add(this.lblScenarioId);
+            this.groupBox1.Controls.Add(this.lstScenario);
             this.groupBox1.Controls.Add(this.BtnExport);
             this.groupBox1.Controls.Add(this.lblTitle);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -90,7 +115,7 @@ namespace FIA_Biosum_Manager
             // BtnExport
             // 
             this.BtnExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnExport.Location = new System.Drawing.Point(185, 99);
+            this.BtnExport.Location = new System.Drawing.Point(315, 357);
             this.BtnExport.Name = "BtnExport";
             this.BtnExport.Size = new System.Drawing.Size(198, 33);
             this.BtnExport.TabIndex = 27;
@@ -109,6 +134,84 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 26;
             this.lblTitle.Text = "Export to SQLITE";
             // 
+            // lstScenario
+            // 
+            this.lstScenario.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstScenario.ItemHeight = 25;
+            this.lstScenario.Location = new System.Drawing.Point(9, 76);
+            this.lstScenario.Name = "lstScenario";
+            this.lstScenario.Size = new System.Drawing.Size(181, 154);
+            this.lstScenario.TabIndex = 28;
+            this.lstScenario.SelectedIndexChanged += new System.EventHandler(this.lstScenario_SelectedIndexChanged);
+            // 
+            // lblScenarioId
+            // 
+            this.lblScenarioId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblScenarioId.Location = new System.Drawing.Point(6, 50);
+            this.lblScenarioId.Name = "lblScenarioId";
+            this.lblScenarioId.Size = new System.Drawing.Size(120, 23);
+            this.lblScenarioId.TabIndex = 29;
+            this.lblScenarioId.Text = "Scenario List";
+            // 
+            // lblScenarioDescription
+            // 
+            this.lblScenarioDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblScenarioDescription.Location = new System.Drawing.Point(216, 50);
+            this.lblScenarioDescription.Name = "lblScenarioDescription";
+            this.lblScenarioDescription.Size = new System.Drawing.Size(165, 16);
+            this.lblScenarioDescription.TabIndex = 31;
+            this.lblScenarioDescription.Text = "Scenario Description";
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.Enabled = false;
+            this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDescription.Location = new System.Drawing.Point(216, 77);
+            this.txtDescription.Multiline = true;
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(425, 152);
+            this.txtDescription.TabIndex = 30;
+            // 
+            // chkResults
+            // 
+            this.chkResults.AutoSize = true;
+            this.chkResults.Checked = true;
+            this.chkResults.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkResults.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkResults.Location = new System.Drawing.Point(219, 258);
+            this.chkResults.Name = "chkResults";
+            this.chkResults.Size = new System.Drawing.Size(187, 22);
+            this.chkResults.TabIndex = 32;
+            this.chkResults.Text = "optimizer_results.accdb";
+            this.chkResults.UseVisualStyleBackColor = true;
+            this.chkResults.Visible = false;
+            // 
+            // chkContext
+            // 
+            this.chkContext.AutoSize = true;
+            this.chkContext.Checked = true;
+            this.chkContext.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkContext.Location = new System.Drawing.Point(219, 282);
+            this.chkContext.Name = "chkContext";
+            this.chkContext.Size = new System.Drawing.Size(122, 22);
+            this.chkContext.TabIndex = 33;
+            this.chkContext.Text = "context.accdb";
+            this.chkContext.UseVisualStyleBackColor = true;
+            this.chkContext.Visible = false;
+            // 
+            // chkFvsContext
+            // 
+            this.chkFvsContext.AutoSize = true;
+            this.chkFvsContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkFvsContext.Location = new System.Drawing.Point(219, 307);
+            this.chkFvsContext.Name = "chkFvsContext";
+            this.chkFvsContext.Size = new System.Drawing.Size(149, 22);
+            this.chkFvsContext.TabIndex = 34;
+            this.chkFvsContext.Text = "fvs_context.accdb";
+            this.chkFvsContext.UseVisualStyleBackColor = true;
+            this.chkFvsContext.Visible = false;
+            // 
             // uc_optimizer_sqlite_export
             // 
             this.Controls.Add(this.groupBox1);
@@ -116,6 +219,7 @@ namespace FIA_Biosum_Manager
             this.Size = new System.Drawing.Size(664, 424);
             this.Resize += new System.EventHandler(this.uc_scenario_tree_groupings_Resize);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -160,17 +264,36 @@ namespace FIA_Biosum_Manager
         
         private void BtnExport_Click(object sender, EventArgs e)
         {
-            m_strOptimizerScenario = "weighted_ptmod";
-            m_strContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteContextDbFile;
-            m_strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
-            m_strResultsDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteResultsDbFile;
-            m_strResultsAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
             m_strPopAccdbPath = m_frmMain.getProjectDirectory() + @"\" + frmMain.g_oTables.m_oFIAPlot.DefaultPopEstnUnitTableDbFile;
-          
-            m_intDatabaseCount = 2;
+            m_intDatabaseCount = 0;
             m_strDebugFile = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\db\sqlite_log.txt";
+            int intDbExistsCount = 0;
+            if (chkResults.Checked)
+            {
+                m_intDatabaseCount++;
+                if (System.IO.File.Exists(m_strResultsDbPath))
+                {
+                    intDbExistsCount++;
+                }
+            }
+            if (chkContext.Checked)
+            {
+                m_intDatabaseCount++;
+                if (System.IO.File.Exists(m_strContextDbPath))
+                {
+                    intDbExistsCount++;
+                }
+            }
+            if (chkFvsContext.Checked)
+            {
+                m_intDatabaseCount++;
+                if (System.IO.File.Exists(m_strFvsContextDbPath))
+                {
+                    intDbExistsCount++;
+                }
+            }
 
-            if (System.IO.File.Exists(m_strContextDbPath) || System.IO.File.Exists(m_strResultsDbPath))
+            if (intDbExistsCount > 0)
             {
                 DialogResult res = MessageBox.Show("One or more of the SQLITE context database already exists!! Do you want to replace them?", "FIA Biosum",
                     MessageBoxButtons.YesNo);
@@ -181,14 +304,32 @@ namespace FIA_Biosum_Manager
                 else
                 {
                     // Delete existing dbs
-                    if (System.IO.File.Exists(m_strContextDbPath))
-                        System.IO.File.Delete(m_strContextDbPath);
-                    if (System.IO.File.Exists(m_strResultsDbPath))
-                        System.IO.File.Delete(m_strResultsDbPath);
+                    if (chkContext.Checked)
+                    {
+                        if (System.IO.File.Exists(m_strContextDbPath))
+                            System.IO.File.Delete(m_strContextDbPath);
+                    }
+                    if (chkResults.Checked)
+                    {
+                        if (System.IO.File.Exists(m_strResultsDbPath))
+                            System.IO.File.Delete(m_strResultsDbPath);
+                    }
+                    if (chkFvsContext.Checked)
+                    {
+                        if (System.IO.File.Exists(m_strFvsContextDbPath))
+                            System.IO.File.Delete(m_strFvsContextDbPath);
+                    }
                 }
             }
 
-            CreateSqliteDatabases_Start();
+            if (m_intDatabaseCount > 0)
+            {
+                CreateSqliteDatabases_Start();
+            }
+            else
+            {
+                MessageBox.Show("At least 1 database must be selected to export!!", "FIA Biosum");
+            }
 
         }
 
@@ -238,11 +379,22 @@ namespace FIA_Biosum_Manager
                 SetLabelValue(m_frmTherm.lblMsg, "Text", "");
                 frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
 
-                CreateResultsSqliteDb();
+                bool bCreateResults = (bool) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox) chkResults, "Checked", false);
+                bool bCreateContext = (bool) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox) chkContext, "Checked", false);
+                bool bCreateFvsContext = (bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox)chkFvsContext, "Checked", false);
+
+
+                if (bCreateResults)
+                {
+                    CreateResultsSqliteDb();
+                }
 
                 System.Threading.Thread.Sleep(5000);
-                
-                CreateContextSqliteDb();               
+
+                if (bCreateContext)
+                {
+                    CreateContextSqliteDb();
+                }
                 
                 UpdateProgressBar1("All databases complete!!", 100);
 
@@ -503,6 +655,104 @@ namespace FIA_Biosum_Manager
                 oDataMgr = null;
             }
 
+        }
+
+        public void load_values()
+        {
+            string strScenarioId = "";
+            string strDescription = "";
+            m_dictScenarios = new System.Collections.Generic.Dictionary<string, string>();    //scenarioName and description
+
+            System.Data.OleDb.OleDbConnection oConn = new System.Data.OleDb.OleDbConnection();
+            string strProjDir = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim();
+
+            // load scenario list
+            ado_data_access p_ado = new ado_data_access();
+            string strConn = p_ado.getMDBConnString(strProjDir + "\\"  + Tables.OptimizerScenarioRuleDefinitions.DefaultScenarioDatasourceTableDbFile, "admin", "");
+            try 
+            { 
+                using (OleDbConnection oAccessConn = new OleDbConnection(strConn))
+                {
+                    oAccessConn.Open();
+                    p_ado.SqlQueryReader(oAccessConn, "select * from scenario");
+                    if (p_ado.m_intError == 0)
+                    {
+                        this.lstScenario.Items.Clear();
+                        while (p_ado.m_OleDbDataReader.Read())
+                        {
+                            strScenarioId = p_ado.m_OleDbDataReader["scenario_id"].ToString().Trim();
+                            strDescription = p_ado.m_OleDbDataReader["description"].ToString();
+                            this.lstScenario.Items.Add(strScenarioId);
+                            m_dictScenarios.Add(strScenarioId, strDescription);
+                        }
+                        this.lstScenario.SelectedIndex = this.lstScenario.Items.Count - 1;
+                    }
+                }
+            }
+            catch (Exception caught)
+            {
+                MessageBox.Show(caught.Message);
+            }
+            finally
+            {
+                if (p_ado.m_OleDbDataReader != null)
+                {
+                    p_ado.m_OleDbDataReader.Close();
+                    p_ado.m_OleDbDataReader = null;
+                    p_ado.m_OleDbCommand = null;
+                }
+                p_ado = null;
+            }
+
+        }
+
+        public void update_checkboxes()
+        {
+            // determine which databases are available to export
+            int posY = 258;
+            if (System.IO.File.Exists(m_strResultsAccdbPath))
+            {
+                chkResults.Visible = true;
+                chkResults.Checked = true;
+                posY = posY + 25;
+            }
+            else
+            {
+                chkResults.Visible = false;
+                chkResults.Checked = false;
+            }
+            if (System.IO.File.Exists(m_strContextAccdbPath))
+            {
+                chkContext.Visible = true;
+                chkContext.Checked = true;
+                chkContext.Location = new Point(chkContext.Location.X, posY);
+                posY = posY + 25;
+            }
+            else
+            {
+                chkContext.Visible = false;
+                chkContext.Checked = false;
+            }
+            if (System.IO.File.Exists(m_strFvsContextAccdbPath))
+            {
+                chkFvsContext.Visible = true;
+                chkFvsContext.Checked = true;
+                chkFvsContext.Location = new Point(chkFvsContext.Location.X, posY);
+            }
+            else
+            {
+                chkFvsContext.Visible = false;
+                chkFvsContext.Checked = false;
+            }
+            if (chkResults.Visible == false && chkContext.Visible == false 
+                && chkFvsContext.Visible == false)
+            {
+                BtnExport.Enabled = false;
+            }
+            else
+            {
+                BtnExport.Enabled = true;
+            }
         }
 
         public void CreateResultsSqliteDb()
@@ -927,6 +1177,39 @@ namespace FIA_Biosum_Manager
                 }
             }
             return true;
+        }
+
+        private void lstScenario_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string strKey = "";
+            if (this.lstScenario.SelectedIndex >= 0)
+            {
+                string strValue = "";
+                strKey = Convert.ToString(lstScenario.SelectedItem);
+                if (m_dictScenarios.TryGetValue(strKey, out strValue) == true)
+                {
+                    txtDescription.Text = strValue;
+                    m_strOptimizerScenario = strKey;
+                }
+                else
+                {
+                    txtDescription.Text = "";
+                    m_strOptimizerScenario = "";
+                }
+            }
+            else
+            {
+                txtDescription.Text = "";
+                m_strOptimizerScenario = "";
+            }
+            m_strContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteContextDbFile;
+            m_strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
+            m_strResultsDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteResultsDbFile;
+            m_strResultsAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
+            m_strFvsContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteFvsContextDbFile;
+            m_strFvsContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsContextDbFile;
+            BtnExport.Enabled = !String.IsNullOrEmpty(strKey);
+            update_checkboxes();
         }
 
      }

@@ -246,6 +246,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsFvsContextDbFile { get { return @"db\fvs_context.accdb"; } }
             static public string DefaultScenarioResultsSqliteContextDbFile { get { return @"db\context.db3"; } }
             static public string DefaultScenarioResultsSqliteResultsDbFile { get { return @"db\optimizer_results.db3"; } }
+            static public string DefaultScenarioResultsSqliteFvsContextDbFile { get { return @"db\fvs_context.db3"; } }
 			
 			public OptimizerScenarioResults()
 			{
