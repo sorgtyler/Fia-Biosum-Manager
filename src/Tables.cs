@@ -875,6 +875,25 @@ namespace FIA_Biosum_Manager
                     "max_nr_dpa DOUBLE)";
             }
 			//
+            // PRE AND POST FVS TABLES
+            //
+            static public void CreateSqliteFvsPrePostTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            {
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteFvsPrePostSQL(p_strTableName));
+            }
+            static public string CreateSqliteFvsPrePostSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "biosum_cond_id TEXT," +
+                    "rxpackage TEXT," +
+                    "rx TEXT," +
+                    "rxcycle TEXT," +
+                    "fvs_variant TEXT," +
+                    "CaseID TEXT," +
+                    "StandID TEXT," +
+                    "Year INTEGER)";
+            }
+            //
 			//OPTIMIZATION VARIABLE PSITE
 			//
 			public void CreateOptimizationPSiteTable(FIA_Biosum_Manager.ado_data_access p_oAdo,System.Data.OleDb.OleDbConnection p_oConn,string p_strTableName)

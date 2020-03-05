@@ -395,6 +395,11 @@ namespace FIA_Biosum_Manager
                 {
                     CreateContextSqliteDb();
                 }
+
+                if (bCreateFvsContext)
+                {
+                    CreateFvsContextSqliteDb();
+                }
                 
                 UpdateProgressBar1("All databases complete!!", 100);
 
@@ -653,6 +658,110 @@ namespace FIA_Biosum_Manager
                     oDataMgr.m_Connection.Dispose();
                 }
                 oDataMgr = null;
+            }
+
+        }
+
+        public void CreateFvsContextSqliteDb()
+        {
+            SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+            ado_data_access oAdo = new ado_data_access();
+
+            oDataMgr.CreateDbFile(m_strFvsContextDbPath);    // create new, blank database
+            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the fvs_context tables \r\n");
+            }
+
+            string[] strTableNames = new string[0];
+            System.Collections.Generic.IList<string> lstWeightedTableNames = new System.Collections.Generic.List<string>();
+            int tableCount = m_oDao.getTableNames(m_strFvsContextAccdbPath, ref strTableNames);
+            string strConnection = "data source=" + (m_strFvsContextDbPath);
+            string strAccdbConnection = oAdo.getMDBConnString(m_strFvsContextAccdbPath, "", "");
+            int counter = 1;
+
+            using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
+            {
+                con.Open();
+                using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
+                {
+                    oAccessConn.Open();
+                    foreach(string strTable in strTableNames)
+                    {
+                        if (! String.IsNullOrEmpty(strTable) && strTable.ToUpper().Contains("WEIGHTED"))
+                        {
+                            // We will copy this table later. It has a slightly different schema
+                            lstWeightedTableNames.Add(strTable);
+                        }
+                        else if (! String.IsNullOrEmpty(strTable))
+                        {
+                            // Create the scaffold table
+                            Tables.OptimizerScenarioResults.CreateSqliteFvsPrePostTable(oDataMgr, con, strTable);
+                            string strColumnNamesList = "";
+                            string strDataTypesList = "";
+                            oAdo.getFieldNamesAndDataTypes(oAccessConn, "SELECT * FROM " + strTable,
+                                ref strColumnNamesList, ref strDataTypesList);
+                            string[] strColumnNamesArray = new string[0];
+                            string[] strDataTypesArray = new string[0];
+                            if (!String.IsNullOrEmpty(strColumnNamesList))
+                            {
+                                strColumnNamesArray = strColumnNamesList.Split(",".ToCharArray());
+                                strDataTypesArray = strDataTypesList.Split(",".ToCharArray());
+                            }
+                            int i = 0;
+                            foreach (string strColumn in strColumnNamesArray)
+                            {
+                                if (! string.IsNullOrEmpty(strColumn))
+                                {
+                                    if (!oDataMgr.ColumnExist(con, strTable, strColumn))
+                                    {
+                                        string strDataType = strDataTypesArray[i];
+                                        switch (strDataType.ToUpper())
+                                        {
+                                            case "SYSTEM.STRING":
+                                                oDataMgr.AddColumn(con, strTable, strColumn, "TEXT", "");
+                                                break;
+                                            case "SYSTEM.INT32":
+                                                oDataMgr.AddColumn(con, strTable, strColumn, "INTEGER", "");
+                                                break;
+                                            case "SYSTEM.DOUBLE":
+                                                oDataMgr.AddColumn(con, strTable, strColumn, "REAL", "");
+                                                break;
+                                            default:
+                                                MessageBox.Show("Not found!");
+                                                break;
+                                        }
+                                    }
+                                }
+                                i++;
+                            }
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                            }
+                            string strMessage = "Writing rows to " + strTable + " in " + System.IO.Path.GetFileName(m_strFvsContextDbPath);
+                            UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
+                            counter++;
+
+                            string strSql = "select * from " + strTable;
+                            oAdo.CreateDataTable(oAccessConn, strSql, strTable, false);
+
+                            using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                            {
+                                using (System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da))
+                                {
+                                    da.InsertCommand = cb.GetInsertCommand();
+                                    int rows = da.Update(oAdo.m_DataTable);
+                                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                    {
+                                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated fvs context table " + strTable + " \r\n");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
         }
