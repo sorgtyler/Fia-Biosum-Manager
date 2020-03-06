@@ -3394,79 +3394,82 @@ namespace FIA_Biosum_Manager
             //
             //FIRST DELETE THE PSITE'S THAT NO LONGER EXIST
             //
-            p_oAdo.m_strSQL = "DELETE FROM scenario_psites WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' AND psite_id NOT IN (" + strList + ")";
-            p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
-            //
-            //LOAD UP THE PSITES THAT EXIST
-            //
-            for (x=0;x<=strArray.Length-1;x++)
+            if (!String.IsNullOrEmpty(strList))
             {
-            	OptimizerScenarioItem.ProcessingSiteItem oItem = new OptimizerScenarioItem.ProcessingSiteItem();
-            	oItem.ProcessingSiteId = strArray[x].Trim();
-            	p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Add(oItem);
-            	
+                p_oAdo.m_strSQL = "DELETE FROM scenario_psites WHERE TRIM(UCASE(scenario_id))='" + p_strScenarioId.Trim().ToUpper() + "' AND psite_id NOT IN (" + strList + ")";
+                p_oAdo.SqlNonQuery(p_oConn, p_oAdo.m_strSQL);
+                //
+                //LOAD UP THE PSITES THAT EXIST
+                //
+                for (x = 0; x <= strArray.Length - 1; x++)
+                {
+                    OptimizerScenarioItem.ProcessingSiteItem oItem = new OptimizerScenarioItem.ProcessingSiteItem();
+                    oItem.ProcessingSiteId = strArray[x].Trim();
+                    p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Add(oItem);
+
+                }
+                /*************************************************************************
+                 **get the processing sites mdb file,table, and connection strings
+                 *************************************************************************/
+                string strPSitesMDBFile = "", strPSitesTableName = "", strPSitesConn = "";
+                p_oAdo.getScenarioDataSourceConnStringAndTable(ref strPSitesMDBFile,
+                                                ref strPSitesTableName, ref strPSitesConn,
+                                                "PROCESSING SITES",
+                                                p_strScenarioId,
+                                                p_oConn);
+                //
+                //GET THE PSITE LIST
+                //
+                oConn = new System.Data.OleDb.OleDbConnection();
+                p_oAdo.OpenConnection(strPSitesConn, ref oConn);
+                p_oAdo.m_strSQL = "SELECT DISTINCT p.psite_id,p.name,p.trancd,p.trancd_def,p.biocd,p.biocd_def,p.exists_yn " +
+                                 "FROM " + strPSitesTableName + " p WHERE p.psite_id IN (" + strList + ")";
+                p_oAdo.SqlQueryReader(oConn, p_oAdo.m_strSQL);
+                if (p_oAdo.m_OleDbDataReader.HasRows == true)
+                {
+                    x = 0;
+                    while (p_oAdo.m_OleDbDataReader.Read())
+                    {
+                        if (p_oAdo.m_OleDbDataReader["psite_id"] != System.DBNull.Value)
+                        {
+                            for (x = 0; x <= p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Count - 1; x++)
+                            {
+                                if (p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).ProcessingSiteId.Trim() ==
+                                    Convert.ToString(p_oAdo.m_OleDbDataReader["psite_id"]).Trim())
+                                {
+                                    //processing site name
+                                    if (p_oAdo.m_OleDbDataReader["name"] != System.DBNull.Value)
+                                    {
+                                        p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).ProcessingSiteName =
+                                            Convert.ToString(p_oAdo.m_OleDbDataReader["name"]).Trim();
+                                    }
+                                    //transportation code
+                                    if (p_oAdo.m_OleDbDataReader["trancd"] != System.DBNull.Value)
+                                    {
+                                        p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).TransportationCode =
+                                            Convert.ToString(p_oAdo.m_OleDbDataReader["trancd"]).Trim();
+                                    }
+                                    //biomass code
+                                    if (p_oAdo.m_OleDbDataReader["biocd"] != System.DBNull.Value)
+                                    {
+                                        p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).BiomassCode =
+                                            Convert.ToString(p_oAdo.m_OleDbDataReader["biocd"]).Trim();
+                                    }
+                                    //exists YN
+                                    if (p_oAdo.m_OleDbDataReader["exists_yn"] != System.DBNull.Value)
+                                    {
+                                        p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).ProcessingSiteExistYN =
+                                            Convert.ToString(p_oAdo.m_OleDbDataReader["exists_yn"]).Trim();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                p_oAdo.m_OleDbDataReader.Close();
+                p_oAdo.CloseConnection(oConn);
             }
-            /*************************************************************************
-			 **get the processing sites mdb file,table, and connection strings
-			 *************************************************************************/
-            string strPSitesMDBFile = "", strPSitesTableName = "", strPSitesConn = "";
-            p_oAdo.getScenarioDataSourceConnStringAndTable(ref strPSitesMDBFile,
-                                            ref strPSitesTableName, ref strPSitesConn,
-                                            "PROCESSING SITES",
-                                            p_strScenarioId,
-                                            p_oConn);
-            //
-            //GET THE PSITE LIST
-            //
-            oConn = new System.Data.OleDb.OleDbConnection();
-            p_oAdo.OpenConnection(strPSitesConn,ref oConn);
-            p_oAdo.m_strSQL = "SELECT DISTINCT p.psite_id,p.name,p.trancd,p.trancd_def,p.biocd,p.biocd_def,p.exists_yn " + 
-				             "FROM " + strPSitesTableName + " p WHERE p.psite_id IN (" + strList + ")";
-            p_oAdo.SqlQueryReader(oConn,p_oAdo.m_strSQL);
-            if (p_oAdo.m_OleDbDataReader.HasRows==true)
-            {
-				x=0;
-				while (p_oAdo.m_OleDbDataReader.Read())
-				{
-					if (p_oAdo.m_OleDbDataReader["psite_id"] != System.DBNull.Value)
-					{
-						for (x=0;x<=p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Count-1;x++)
-						{
-							if (p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).ProcessingSiteId.Trim() ==
-								Convert.ToString(p_oAdo.m_OleDbDataReader["psite_id"]).Trim())
-							{
-                              //processing site name
-							  if (p_oAdo.m_OleDbDataReader["name"] != System.DBNull.Value)
-                              {
-                                p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).ProcessingSiteName=
-                                    Convert.ToString(p_oAdo.m_OleDbDataReader["name"]).Trim();
-                              }
-                              //transportation code
-                              if (p_oAdo.m_OleDbDataReader["trancd"] != System.DBNull.Value)
-                              {
-                                  p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).TransportationCode =
-                                      Convert.ToString(p_oAdo.m_OleDbDataReader["trancd"]).Trim();
-                              }
-                              //biomass code
-                              if (p_oAdo.m_OleDbDataReader["biocd"] != System.DBNull.Value)
-                              {
-                                  p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).BiomassCode =
-                                      Convert.ToString(p_oAdo.m_OleDbDataReader["biocd"]).Trim();
-                              }
-                              //exists YN
-                              if (p_oAdo.m_OleDbDataReader["exists_yn"] != System.DBNull.Value)
-                              {
-                                  p_oOptimizerScenarioItem.m_oProcessingSiteItem_Collection.Item(x).ProcessingSiteExistYN =
-                                      Convert.ToString(p_oAdo.m_OleDbDataReader["exists_yn"]).Trim();
-                              }
-                              break;
-							}
-						}
-					}
-				}
-            }
-            p_oAdo.m_OleDbDataReader.Close();
-            p_oAdo.CloseConnection(oConn);
             
             //
             //SET THE PREVIOUSLY SELECTED
@@ -3613,7 +3616,10 @@ namespace FIA_Biosum_Manager
             //
             //delete the old table links first in case any are obsolete
             //
-            oRxTools.DeleteTableLinksToFVSPrePostTables(strTargetMdb);
+            if (System.IO.File.Exists(strTargetMdb))
+            {
+                oRxTools.DeleteTableLinksToFVSPrePostTables(strTargetMdb);
+            }
             
             //
             //load list box with all the pre and post table columns

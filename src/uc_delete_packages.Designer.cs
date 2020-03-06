@@ -104,7 +104,6 @@
             this.btnFilterHelp.Size = new System.Drawing.Size(64, 24);
             this.btnFilterHelp.TabIndex = 2;
             this.btnFilterHelp.Text = "Help";
-            this.btnFilterHelp.Visible = false;
             this.btnFilterHelp.Click += new System.EventHandler(this.btnFilterHelp_Click);
             // 
             // btnFilterPrevious
@@ -158,6 +157,7 @@
             this.chkDeletesDisabled.TabIndex = 8;
             this.chkDeletesDisabled.Text = "Count Records Without Deleting";
             this.chkDeletesDisabled.UseVisualStyleBackColor = true;
+            this.chkDeletesDisabled.CheckedChanged += new System.EventHandler(this.chkDeletesDisabled_CheckedChanged);
             // 
             // chkCompactMDB
             // 
@@ -168,6 +168,7 @@
             this.chkCompactMDB.TabIndex = 1;
             this.chkCompactMDB.Text = "Compact Databases";
             this.chkCompactMDB.UseVisualStyleBackColor = true;
+            this.chkCompactMDB.CheckedChanged += new System.EventHandler(this.chkCompactMDB_CheckedChanged);
             // 
             // chkCreateLog
             // 
