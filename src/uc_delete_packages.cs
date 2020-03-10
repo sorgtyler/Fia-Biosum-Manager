@@ -222,12 +222,14 @@ namespace FIA_Biosum_Manager
                 //Look at every access database without PXXX in filename in project and perform delete queries
                 ConnectToDatabasesInPathAndExecuteDeletes(nonPackageDatabases);
 
-                UpdateProgressBar2(100); 
+                UpdateProgressBar2(100);
 
-                MessageBox.Show(
-                    String.Format("Successfully deleted data associated with {0} packages!",
-                        m_packageNumbers.Length), "Delete Packages Results");
-
+                if (!Checked(chkDeletesDisabled))
+                {
+                    MessageBox.Show(
+                        String.Format("Successfully deleted data associated with {0} packages!",
+                            m_packageNumbers.Length), "Delete Packages Results");
+                }
 
                 if (m_ado != null)
                 {
@@ -281,13 +283,19 @@ namespace FIA_Biosum_Manager
             }
             finally
             {
-                if (Checked(chkCreateLog))
-                {
-                    CreateLogFile(String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
+                string strLogFileName = String.Concat(frmMain.g_oFrmMain.getProjectDirectory(),
                         "\\db\\biosum_deleted_packages_",
-                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now), 
+                        String.Format("{0:yyyyMMddhhmm}", DateTime.Now),
                         Checked(chkDeletesDisabled) ? "_no_deletes" : "",
-                        ".txt"));
+                        ".txt");
+                if (Checked(chkCreateLog) || Checked(chkDeletesDisabled))
+                {
+                    CreateLogFile(strLogFileName);
+                    if (Checked(chkDeletesDisabled))
+                    {
+                        MessageBox.Show("Record count complete! The results were recorded in " + strLogFileName,
+                        "Delete Packages Results");
+                    }
                 }
 
                 m_dictDeletedDatabasesAndFileSizes = new Dictionary<string, string>();
@@ -719,8 +727,25 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            //@ToDo: Need help for Delete Packages screen. Disable for now
-            //m_oHelp.ShowHelp(new string[] { "DATABASE", "DELETE_PACKAGES" });
+            m_oHelp.ShowHelp(new string[] { "DATABASE", "DELETE_PACKAGES" });
+        }
+
+        private void chkCompactMDB_CheckedChanged(object sender, EventArgs e)
+        {
+            // Don't allow chkCompactMDB to be checked if chkDeletesDisabled is checked
+            if (Checked(chkCompactMDB))
+            {
+                chkDeletesDisabled.Checked = false;
+            }
+        }
+
+        private void chkDeletesDisabled_CheckedChanged(object sender, EventArgs e)
+        {
+            // Don't allow chkCompactMDB to be checked if chkDeletesDisabled is checked
+            if (Checked(chkDeletesDisabled))
+            {
+                chkCompactMDB.Checked = false;
+            }
         }
     }
 }
