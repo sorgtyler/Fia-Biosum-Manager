@@ -93,7 +93,7 @@ namespace FIA_Biosum_Manager
                 p_DaoDatabase = this.m_DaoDbEngine.Workspaces[0].OpenDatabase(strFullPath, false, false, string.Empty);
                 
             }
-            catch
+            catch (Exception ex)
             {
                 this.m_strError = "DAO Error Opening Database " + strFullPath.ToString();
                 this.m_intError = -1;

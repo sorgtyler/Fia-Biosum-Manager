@@ -25,11 +25,9 @@ namespace FIA_Biosum_Manager
         private dao_data_access m_oDao;
         private string m_strDebugFile = "";
         private string m_strOptimizerScenario = "";
-        private string m_strContextDbPath = "";
         private string m_strContextAccdbPath = "";
         private string m_strResultsDbPath = "";
         private string m_strResultsAccdbPath = "";
-        private string m_strFvsContextDbPath = "";
         private string m_strFvsContextAccdbPath = "";
         private string m_strPopAccdbPath = "";
         private System.Collections.Generic.IDictionary<string, string> m_dictScenarios = null;
@@ -43,6 +41,7 @@ namespace FIA_Biosum_Manager
         private CheckBox chkFvsContext;
         private CheckBox chkContext;
         private CheckBox chkResults;
+        private ComboBox cboResultsDb;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -82,20 +81,22 @@ namespace FIA_Biosum_Manager
 		private void InitializeComponent()
 		{
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.BtnExport = new System.Windows.Forms.Button();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.lstScenario = new System.Windows.Forms.ListBox();
-            this.lblScenarioId = new System.Windows.Forms.Label();
+            this.chkFvsContext = new System.Windows.Forms.CheckBox();
+            this.chkContext = new System.Windows.Forms.CheckBox();
+            this.chkResults = new System.Windows.Forms.CheckBox();
             this.lblScenarioDescription = new System.Windows.Forms.Label();
             this.txtDescription = new System.Windows.Forms.TextBox();
-            this.chkResults = new System.Windows.Forms.CheckBox();
-            this.chkContext = new System.Windows.Forms.CheckBox();
-            this.chkFvsContext = new System.Windows.Forms.CheckBox();
+            this.lblScenarioId = new System.Windows.Forms.Label();
+            this.lstScenario = new System.Windows.Forms.ListBox();
+            this.BtnExport = new System.Windows.Forms.Button();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.cboResultsDb = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cboResultsDb);
             this.groupBox1.Controls.Add(this.chkFvsContext);
             this.groupBox1.Controls.Add(this.chkContext);
             this.groupBox1.Controls.Add(this.chkResults);
@@ -111,6 +112,83 @@ namespace FIA_Biosum_Manager
             this.groupBox1.Size = new System.Drawing.Size(664, 424);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
+            // 
+            // chkFvsContext
+            // 
+            this.chkFvsContext.AutoSize = true;
+            this.chkFvsContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkFvsContext.Location = new System.Drawing.Point(219, 307);
+            this.chkFvsContext.Name = "chkFvsContext";
+            this.chkFvsContext.Size = new System.Drawing.Size(149, 22);
+            this.chkFvsContext.TabIndex = 34;
+            this.chkFvsContext.Text = "fvs_context.accdb";
+            this.chkFvsContext.UseVisualStyleBackColor = true;
+            this.chkFvsContext.Visible = false;
+            // 
+            // chkContext
+            // 
+            this.chkContext.AutoSize = true;
+            this.chkContext.Checked = true;
+            this.chkContext.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkContext.Location = new System.Drawing.Point(219, 282);
+            this.chkContext.Name = "chkContext";
+            this.chkContext.Size = new System.Drawing.Size(122, 22);
+            this.chkContext.TabIndex = 33;
+            this.chkContext.Text = "context.accdb";
+            this.chkContext.UseVisualStyleBackColor = true;
+            this.chkContext.Visible = false;
+            // 
+            // chkResults
+            // 
+            this.chkResults.AutoSize = true;
+            this.chkResults.Checked = true;
+            this.chkResults.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkResults.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkResults.Location = new System.Drawing.Point(219, 258);
+            this.chkResults.Name = "chkResults";
+            this.chkResults.Size = new System.Drawing.Size(18, 17);
+            this.chkResults.TabIndex = 32;
+            this.chkResults.UseVisualStyleBackColor = true;
+            this.chkResults.Visible = false;
+            // 
+            // lblScenarioDescription
+            // 
+            this.lblScenarioDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblScenarioDescription.Location = new System.Drawing.Point(216, 50);
+            this.lblScenarioDescription.Name = "lblScenarioDescription";
+            this.lblScenarioDescription.Size = new System.Drawing.Size(165, 16);
+            this.lblScenarioDescription.TabIndex = 31;
+            this.lblScenarioDescription.Text = "Scenario Description";
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.Enabled = false;
+            this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDescription.Location = new System.Drawing.Point(216, 77);
+            this.txtDescription.Multiline = true;
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(425, 152);
+            this.txtDescription.TabIndex = 30;
+            // 
+            // lblScenarioId
+            // 
+            this.lblScenarioId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblScenarioId.Location = new System.Drawing.Point(6, 50);
+            this.lblScenarioId.Name = "lblScenarioId";
+            this.lblScenarioId.Size = new System.Drawing.Size(120, 23);
+            this.lblScenarioId.TabIndex = 29;
+            this.lblScenarioId.Text = "Scenario List";
+            // 
+            // lstScenario
+            // 
+            this.lstScenario.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstScenario.ItemHeight = 25;
+            this.lstScenario.Location = new System.Drawing.Point(9, 76);
+            this.lstScenario.Name = "lstScenario";
+            this.lstScenario.Size = new System.Drawing.Size(181, 154);
+            this.lstScenario.TabIndex = 28;
+            this.lstScenario.SelectedIndexChanged += new System.EventHandler(this.lstScenario_SelectedIndexChanged);
             // 
             // BtnExport
             // 
@@ -134,83 +212,16 @@ namespace FIA_Biosum_Manager
             this.lblTitle.TabIndex = 26;
             this.lblTitle.Text = "Export to SQLITE";
             // 
-            // lstScenario
+            // cboResultsDb
             // 
-            this.lstScenario.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstScenario.ItemHeight = 25;
-            this.lstScenario.Location = new System.Drawing.Point(9, 76);
-            this.lstScenario.Name = "lstScenario";
-            this.lstScenario.Size = new System.Drawing.Size(181, 154);
-            this.lstScenario.TabIndex = 28;
-            this.lstScenario.SelectedIndexChanged += new System.EventHandler(this.lstScenario_SelectedIndexChanged);
-            // 
-            // lblScenarioId
-            // 
-            this.lblScenarioId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblScenarioId.Location = new System.Drawing.Point(6, 50);
-            this.lblScenarioId.Name = "lblScenarioId";
-            this.lblScenarioId.Size = new System.Drawing.Size(120, 23);
-            this.lblScenarioId.TabIndex = 29;
-            this.lblScenarioId.Text = "Scenario List";
-            // 
-            // lblScenarioDescription
-            // 
-            this.lblScenarioDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblScenarioDescription.Location = new System.Drawing.Point(216, 50);
-            this.lblScenarioDescription.Name = "lblScenarioDescription";
-            this.lblScenarioDescription.Size = new System.Drawing.Size(165, 16);
-            this.lblScenarioDescription.TabIndex = 31;
-            this.lblScenarioDescription.Text = "Scenario Description";
-            // 
-            // txtDescription
-            // 
-            this.txtDescription.Enabled = false;
-            this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDescription.Location = new System.Drawing.Point(216, 77);
-            this.txtDescription.Multiline = true;
-            this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(425, 152);
-            this.txtDescription.TabIndex = 30;
-            // 
-            // chkResults
-            // 
-            this.chkResults.AutoSize = true;
-            this.chkResults.Checked = true;
-            this.chkResults.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkResults.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkResults.Location = new System.Drawing.Point(219, 258);
-            this.chkResults.Name = "chkResults";
-            this.chkResults.Size = new System.Drawing.Size(187, 22);
-            this.chkResults.TabIndex = 32;
-            this.chkResults.Text = "optimizer_results.accdb";
-            this.chkResults.UseVisualStyleBackColor = true;
-            this.chkResults.Visible = false;
-            // 
-            // chkContext
-            // 
-            this.chkContext.AutoSize = true;
-            this.chkContext.Checked = true;
-            this.chkContext.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkContext.Location = new System.Drawing.Point(219, 282);
-            this.chkContext.Name = "chkContext";
-            this.chkContext.Size = new System.Drawing.Size(122, 22);
-            this.chkContext.TabIndex = 33;
-            this.chkContext.Text = "context.accdb";
-            this.chkContext.UseVisualStyleBackColor = true;
-            this.chkContext.Visible = false;
-            // 
-            // chkFvsContext
-            // 
-            this.chkFvsContext.AutoSize = true;
-            this.chkFvsContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkFvsContext.Location = new System.Drawing.Point(219, 307);
-            this.chkFvsContext.Name = "chkFvsContext";
-            this.chkFvsContext.Size = new System.Drawing.Size(149, 22);
-            this.chkFvsContext.TabIndex = 34;
-            this.chkFvsContext.Text = "fvs_context.accdb";
-            this.chkFvsContext.UseVisualStyleBackColor = true;
-            this.chkFvsContext.Visible = false;
+            this.cboResultsDb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboResultsDb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboResultsDb.FormattingEnabled = true;
+            this.cboResultsDb.Location = new System.Drawing.Point(235, 255);
+            this.cboResultsDb.Name = "cboResultsDb";
+            this.cboResultsDb.Size = new System.Drawing.Size(406, 26);
+            this.cboResultsDb.TabIndex = 35;
+            this.cboResultsDb.SelectedIndexChanged += new System.EventHandler(this.cboResultsDb_SelectedIndexChanged);
             // 
             // uc_optimizer_sqlite_export
             // 
@@ -267,35 +278,35 @@ namespace FIA_Biosum_Manager
             m_strPopAccdbPath = m_frmMain.getProjectDirectory() + @"\" + frmMain.g_oTables.m_oFIAPlot.DefaultPopEstnUnitTableDbFile;
             m_intDatabaseCount = 0;
             m_strDebugFile = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\db\sqlite_log.txt";
-            int intDbExistsCount = 0;
+            bool bDbExists = false;
             if (chkResults.Checked)
             {
                 m_intDatabaseCount++;
                 if (System.IO.File.Exists(m_strResultsDbPath))
                 {
-                    intDbExistsCount++;
+                    bDbExists = true;
                 }
             }
             if (chkContext.Checked)
             {
                 m_intDatabaseCount++;
-                if (System.IO.File.Exists(m_strContextDbPath))
+                if (System.IO.File.Exists(m_strResultsDbPath))
                 {
-                    intDbExistsCount++;
+                    bDbExists = true;
                 }
             }
             if (chkFvsContext.Checked)
             {
                 m_intDatabaseCount++;
-                if (System.IO.File.Exists(m_strFvsContextDbPath))
+                if (System.IO.File.Exists(m_strResultsDbPath))
                 {
-                    intDbExistsCount++;
+                    bDbExists = true;
                 }
             }
 
-            if (intDbExistsCount > 0)
+            if (bDbExists == true)
             {
-                DialogResult res = MessageBox.Show("One or more of the SQLITE context database already exists!! Do you want to replace them?", "FIA Biosum",
+                DialogResult res = MessageBox.Show("The output SQLITE database already exists!! Do you want to replace it?", "FIA Biosum",
                     MessageBoxButtons.YesNo);
                 if (res != DialogResult.Yes)
                 {
@@ -303,22 +314,9 @@ namespace FIA_Biosum_Manager
                 }
                 else
                 {
-                    // Delete existing dbs
-                    if (chkContext.Checked)
-                    {
-                        if (System.IO.File.Exists(m_strContextDbPath))
-                            System.IO.File.Delete(m_strContextDbPath);
-                    }
-                    if (chkResults.Checked)
-                    {
-                        if (System.IO.File.Exists(m_strResultsDbPath))
-                            System.IO.File.Delete(m_strResultsDbPath);
-                    }
-                    if (chkFvsContext.Checked)
-                    {
-                        if (System.IO.File.Exists(m_strFvsContextDbPath))
-                            System.IO.File.Delete(m_strFvsContextDbPath);
-                    }
+                    // Delete existing db
+                    if (System.IO.File.Exists(m_strResultsDbPath))
+                        System.IO.File.Delete(m_strResultsDbPath);
                 }
             }
 
@@ -342,7 +340,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.CurrentThreadProcessDone = false;
             frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
             //@ToDo: progress implementation
-            StartTherm("Create SQLITE Optimizer databases");
+            StartTherm("Create SQLITE Optimizer database");
             frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(CreateSqliteDatabases_Process));
             frmMain.g_oDelegate.m_oThread.IsBackground = true;
             frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
@@ -383,7 +381,14 @@ namespace FIA_Biosum_Manager
                 bool bCreateContext = (bool) frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox) chkContext, "Checked", false);
                 bool bCreateFvsContext = (bool)frmMain.g_oDelegate.GetControlPropertyValue((System.Windows.Forms.CheckBox)chkFvsContext, "Checked", false);
 
-
+                SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+                oDataMgr.CreateDbFile(m_strResultsDbPath);    // create new, blank database
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold all tables \r\n");
+                }
+                
                 if (bCreateResults)
                 {
                     CreateResultsSqliteDb();
@@ -436,15 +441,8 @@ namespace FIA_Biosum_Manager
         {
             SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
             ado_data_access oAdo = new ado_data_access();
-
-            oDataMgr.CreateDbFile(m_strContextDbPath);    // create new, blank database
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the context tables \r\n");
-            }
             
-            string strConnection = "data source=" + m_strContextDbPath;
+            string strConnection = "data source=" + m_strResultsDbPath;
             string strAccdbConnection = oAdo.getMDBConnString(m_strContextAccdbPath, "", "");
             string strTable = "";
             System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
@@ -579,7 +577,7 @@ namespace FIA_Biosum_Manager
                         if (oAdo.TableExist(oAccessConn, strTableName))
                         {
                             counter += 1;
-                            string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strContextDbPath);
+                            string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strResultsDbPath);
                             UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
                             string strSql = "select * from " + strTableName;
                             oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
@@ -608,7 +606,7 @@ namespace FIA_Biosum_Manager
                         if (oAdo.TableExist(oAccessConn, strTableName))
                         {
                             counter += 1;
-                            string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strContextDbPath);
+                            string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strResultsDbPath);
                             UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
                             string strSql = "select * from " + strTableName;
                             oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
@@ -667,17 +665,10 @@ namespace FIA_Biosum_Manager
             SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
             ado_data_access oAdo = new ado_data_access();
 
-            oDataMgr.CreateDbFile(m_strFvsContextDbPath);    // create new, blank database
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the fvs_context tables \r\n");
-            }
-
             string[] strTableNames = new string[0];
             System.Collections.Generic.IList<string> lstWeightedTableNames = new System.Collections.Generic.List<string>();
             int tableCount = m_oDao.getTableNames(m_strFvsContextAccdbPath, ref strTableNames);
-            string strConnection = "data source=" + (m_strFvsContextDbPath);
+            string strConnection = "data source=" + (m_strResultsDbPath);
             string strAccdbConnection = oAdo.getMDBConnString(m_strFvsContextAccdbPath, "", "");
             int counter = 1;
 
@@ -740,7 +731,7 @@ namespace FIA_Biosum_Manager
                             {
                                 frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
                             }
-                            string strMessage = "Writing rows to " + strTable + " in " + System.IO.Path.GetFileName(m_strFvsContextDbPath);
+                            string strMessage = "Writing rows to " + strTable + " in " + System.IO.Path.GetFileName(m_strResultsDbPath);
                             UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
                             counter++;
 
@@ -819,16 +810,18 @@ namespace FIA_Biosum_Manager
         {
             // determine which databases are available to export
             int posY = 258;
-            if (System.IO.File.Exists(m_strResultsAccdbPath))
+            if (cboResultsDb.Items.Count > 0)
             {
                 chkResults.Visible = true;
                 chkResults.Checked = true;
+                cboResultsDb.Visible = true;
                 posY = posY + 25;
             }
             else
             {
                 chkResults.Visible = false;
                 chkResults.Checked = false;
+                cboResultsDb.Visible = false;
             }
             if (System.IO.File.Exists(m_strContextAccdbPath))
             {
@@ -842,16 +835,15 @@ namespace FIA_Biosum_Manager
                 chkContext.Visible = false;
                 chkContext.Checked = false;
             }
+            chkFvsContext.Checked = false;  // Not checked by default; Export takes a long time
             if (System.IO.File.Exists(m_strFvsContextAccdbPath))
             {
-                chkFvsContext.Visible = true;
-                chkFvsContext.Checked = true;
+                chkFvsContext.Visible = true;                
                 chkFvsContext.Location = new Point(chkFvsContext.Location.X, posY);
             }
             else
             {
                 chkFvsContext.Visible = false;
-                chkFvsContext.Checked = false;
             }
             if (chkResults.Visible == false && chkContext.Visible == false 
                 && chkFvsContext.Visible == false)
@@ -868,13 +860,6 @@ namespace FIA_Biosum_Manager
         {
             SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
             ado_data_access oAdo = new ado_data_access();
-
-            oDataMgr.CreateDbFile(m_strResultsDbPath);    // create new, blank database
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-            {
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created the SQLITE database to hold the results tables \r\n");
-            }
 
             string strConnection = "data source=" + m_strResultsDbPath;
             string strAccdbConnection = oAdo.getMDBConnString(m_strResultsAccdbPath, "", "");
@@ -1311,14 +1296,40 @@ namespace FIA_Biosum_Manager
                 txtDescription.Text = "";
                 m_strOptimizerScenario = "";
             }
-            m_strContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteContextDbFile;
             m_strContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsContextDbFile;
             m_strResultsDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteResultsDbFile;
-            m_strResultsAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile;
-            m_strFvsContextDbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsSqliteFvsContextDbFile;
             m_strFvsContextAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\" + Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsContextDbFile;
             BtnExport.Enabled = !String.IsNullOrEmpty(strKey);
+            cboResultsDb.Items.Clear();
+            chkResults.Enabled = false;
+            if (! String.IsNullOrEmpty(m_strOptimizerScenario))
+            {
+                string strDirectory = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\db";
+                string[] arrFilePaths = System.IO.Directory.GetFiles(strDirectory, "*.accdb");
+                foreach (string strFilePath in arrFilePaths)
+                {
+                    string strFileName = System.IO.Path.GetFileName(strFilePath);
+                    if (strFileName.ToLower().Contains("optimizer_results"))
+                    {
+                        cboResultsDb.Items.Add(strFileName);
+                    }
+                }
+                cboResultsDb.SelectedIndex = cboResultsDb.FindStringExact(System.IO.Path.GetFileName(Tables.OptimizerScenarioResults.DefaultScenarioResultsDbFile));
+                if (cboResultsDb.Items.Count > 0)
+                {
+                    chkResults.Enabled = true;
+                }
+            }
             update_checkboxes();
+        }
+
+        private void cboResultsDb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboResultsDb.SelectedIndex > -1)
+            {
+                string selectedDb = cboResultsDb.GetItemText(cboResultsDb.SelectedItem);
+                m_strResultsAccdbPath = m_frmMain.getProjectDirectory() + @"\optimizer\" + m_strOptimizerScenario + @"\db\" + selectedDb;
+            }
         }
 
      }
