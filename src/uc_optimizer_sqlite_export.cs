@@ -339,7 +339,6 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.CurrentThreadProcessAborted = false;
             frmMain.g_oDelegate.CurrentThreadProcessDone = false;
             frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
-            //@ToDo: progress implementation
             StartTherm("Create SQLITE Optimizer database");
             frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(CreateSqliteDatabases_Process));
             frmMain.g_oDelegate.m_oThread.IsBackground = true;
@@ -482,7 +481,7 @@ namespace FIA_Biosum_Manager
                 strTable = Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C";
                 frmMain.g_oTables.m_oProcessor.CreateSqliteHarvestCostsTable(oDataMgr, con, strTable);
                 //@ToDo
-                //lstTables.Add(strTable);
+                lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
@@ -505,7 +504,7 @@ namespace FIA_Biosum_Manager
                 if (this.CreateScenarioAdditionalHarvestCostsTable(strConnection, strTable) == true)
                 {
                     //@ToDo
-                    //lstTables.Add(strTable);
+                    lstTables.Add(strTable);
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
@@ -521,7 +520,7 @@ namespace FIA_Biosum_Manager
                 strTable = Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C";
                 frmMain.g_oTables.m_oProcessor.CreateSqliteTreeVolValSpeciesDiamGroupsTable(oDataMgr, con, strTable);
                 //@ToDo
-                //lstTables.Add(strTable);
+                lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
@@ -688,7 +687,7 @@ namespace FIA_Biosum_Manager
                         else if (! String.IsNullOrEmpty(strTable))
                         {
                             // Create the scaffold table
-                            Tables.OptimizerScenarioResults.CreateSqliteFvsPrePostTable(oDataMgr, con, strTable);
+                            Tables.OptimizerScenarioResults.CreateSqliteFvsPrePostTable(oDataMgr, con, strTable, false);
                             string strColumnNamesList = "";
                             string strDataTypesList = "";
                             oAdo.getFieldNamesAndDataTypes(oAccessConn, "SELECT * FROM " + strTable,
@@ -748,6 +747,53 @@ namespace FIA_Biosum_Manager
                                     {
                                         frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated fvs context table " + strTable + " \r\n");
                                     }
+                                }
+                            }
+                        }
+                    }
+                    foreach (string strTable in lstWeightedTableNames)
+                    {
+                        // Create the scaffold table
+                        Tables.OptimizerScenarioResults.CreateSqliteFvsPrePostTable(oDataMgr, con, strTable, true);
+                        string strColumnNamesList = oAdo.getFieldNames(oAccessConn, "SELECT * FROM " + strTable);
+                        string[] strColumnNamesArray = new string[0];
+                        if (!String.IsNullOrEmpty(strColumnNamesList))
+                        {
+                            strColumnNamesArray = strColumnNamesList.Split(",".ToCharArray());
+                        }
+                        int i = 0;
+                        foreach (string strColumn in strColumnNamesArray)
+                        {
+                            if (!string.IsNullOrEmpty(strColumn))
+                            {
+                                if (!oDataMgr.ColumnExist(con, strTable, strColumn))
+                                {
+                                    // Fields for weighted variables are always double/REAL
+                                    oDataMgr.AddColumn(con, strTable, strColumn, "REAL", "");
+                                }
+                            }
+                            i++;
+                        }
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                        }
+                        string strMessage = "Writing rows to " + strTable + " in " + System.IO.Path.GetFileName(m_strResultsDbPath);
+                        UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
+                        counter++;
+
+                        string strSql = "select * from " + strTable;
+                        oAdo.CreateDataTable(oAccessConn, strSql, strTable, false);
+
+                        using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
+                        {
+                            using (System.Data.SQLite.SQLiteCommandBuilder cb = new System.Data.SQLite.SQLiteCommandBuilder(da))
+                            {
+                                da.InsertCommand = cb.GetInsertCommand();
+                                int rows = da.Update(oAdo.m_DataTable);
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                {
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Populated fvs context table " + strTable + " \r\n");
                                 }
                             }
                         }

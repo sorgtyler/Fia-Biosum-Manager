@@ -877,21 +877,30 @@ namespace FIA_Biosum_Manager
 			//
             // PRE AND POST FVS TABLES
             //
-            static public void CreateSqliteFvsPrePostTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn, string p_strTableName)
+            static public void CreateSqliteFvsPrePostTable(SQLite.ADO.DataMgr p_oDataMgr, System.Data.SQLite.SQLiteConnection p_oConn,
+                                string p_strTableName, bool p_bWeightedVariable)
             {
-                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteFvsPrePostSQL(p_strTableName));
+                p_oDataMgr.SqlNonQuery(p_oConn, CreateSqliteFvsPrePostSQL(p_strTableName, p_bWeightedVariable));
             }
-            static public string CreateSqliteFvsPrePostSQL(string p_strTableName)
+            static public string CreateSqliteFvsPrePostSQL(string p_strTableName, bool p_bWeightedVariable)
             {
-                return "CREATE TABLE " + p_strTableName + " (" +
+                string strSql = "CREATE TABLE " + p_strTableName + " (" +
                     "biosum_cond_id TEXT," +
                     "rxpackage TEXT," +
                     "rx TEXT," +
                     "rxcycle TEXT," +
-                    "fvs_variant TEXT," +
-                    "CaseID TEXT," +
+                    "fvs_variant TEXT";
+                if (p_bWeightedVariable == false)
+                {
+                    strSql = strSql + ", CaseID TEXT," +
                     "StandID TEXT," +
                     "Year INTEGER)";
+                }
+                else
+                {
+                    strSql = strSql + " )";
+                }
+                return strSql;
             }
             //
 			//OPTIMIZATION VARIABLE PSITE
