@@ -244,6 +244,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"fvs_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"econ_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsFvsContextDbFile { get { return @"db\fvs_context.accdb"; } }
+            static public string DefaultScenarioResultsVersionTableName { get { return @"version"; } }
 			
 			private string strSQL = "";
 			public OptimizerScenarioResults()
@@ -1390,6 +1391,19 @@ namespace FIA_Biosum_Manager
                     "MERCH_PSITE_NAME CHAR(255)," +
                     "CHIP_PSITE_NUM INTEGER," +
                     "CHIP_PSITE_NAME CHAR(255) )";
+            }
+
+            //
+            //VERSION TABLE
+            //
+            public void CreateVersionTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateVersionTableSQL(p_strTableName));
+            }
+            static public string CreateVersionTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "APPLICATION_VERSION CHAR(25))";
             }
 
             //
