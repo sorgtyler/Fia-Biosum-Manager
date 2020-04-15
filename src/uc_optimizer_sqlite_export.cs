@@ -622,6 +622,17 @@ namespace FIA_Biosum_Manager
                                     }
                                 }
                             }
+
+                            // Add extra fields to pop_eval table; They will be null
+                            if (strTableName.Equals(frmMain.g_oTables.m_oFIAPlot.DefaultPopEvalTableName))
+                            {
+                                string[] arrExtraFields = { "Growth_Acct", "LAND_ONLY" };
+                                foreach (string strFieldName in arrExtraFields)
+                                {
+                                    oDataMgr.AddColumn(con, strTableName, strFieldName, "TEXT", "");
+                                }
+                            }
+                            
                         }
                     }
                 }

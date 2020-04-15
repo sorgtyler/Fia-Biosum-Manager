@@ -244,6 +244,7 @@ namespace FIA_Biosum_Manager
             static public string DefaultScenarioResultsFvsWeightedVariablesRefTableName { get { return @"fvs_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsEconWeightedVariablesRefTableName { get { return @"econ_weighted_variables_ref_C"; } }
             static public string DefaultScenarioResultsFvsContextDbFile { get { return @"db\fvs_context.accdb"; } }
+            static public string DefaultScenarioResultsVersionTableName { get { return @"version"; } }
             static public string DefaultScenarioResultsSqliteContextDbFile { get { return @"db\context.db3"; } }
             static public string DefaultScenarioResultsSqliteResultsDbFile { get { return @"db\optimizer_results.db3"; } }
             static public string DefaultScenarioResultsSqliteFvsContextDbFile { get { return @"db\fvs_context.db3"; } }
@@ -671,7 +672,6 @@ namespace FIA_Biosum_Manager
                     "rxpackage TEXT," +
                     "rx TEXT," +
                     "rxcycle TEXT," +
-                    "fvs_variant TEXT," +
                     "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id, rxpackage, rx, rxcycle))"; ; ;
             }
 			//
@@ -1659,6 +1659,19 @@ namespace FIA_Biosum_Manager
                     "CHIP_PSITE_NUM INTEGER," +
                     "CHIP_PSITE_NAME TEXT," +
                     "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (BIOSUM_COND_ID))";
+            }
+
+            //
+            //VERSION TABLE
+            //
+            public void CreateVersionTable(FIA_Biosum_Manager.ado_data_access p_oAdo, System.Data.OleDb.OleDbConnection p_oConn, string p_strTableName)
+            {
+                p_oAdo.SqlNonQuery(p_oConn, CreateVersionTableSQL(p_strTableName));
+            }
+            static public string CreateVersionTableSQL(string p_strTableName)
+            {
+                return "CREATE TABLE " + p_strTableName + " (" +
+                    "APPLICATION_VERSION CHAR(25))";
             }
 
             //

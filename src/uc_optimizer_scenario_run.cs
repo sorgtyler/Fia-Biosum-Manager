@@ -1820,7 +1820,7 @@ namespace FIA_Biosum_Manager
 						{
                             CompactMDB(m_strSystemResultsDbPathAndFile, null);
 							System.DateTime oDate = System.DateTime.Now;
-							string strDateFormat = "yyyy-MM-dd_HH-mm-ss";
+							string strDateFormat = "yyyy-MM-dd_HH-mm";
 							string strFileDate = oDate.ToString(strDateFormat);
 							strFileDate = strFileDate.Replace("/","_"); strFileDate=strFileDate.Replace(":","_");
 							this.CreateHtml();
@@ -2190,6 +2190,7 @@ namespace FIA_Biosum_Manager
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreatePostEconomicWeightedTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateHaulCostTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName);
             frmMain.g_oTables.m_oOptimizerScenarioResults.CreateCondPsiteTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsCondPsiteTableName);
+            frmMain.g_oTables.m_oOptimizerScenarioResults.CreateVersionTable(oAdo, oAdo.m_OleDbConnection, Tables.OptimizerScenarioResults.DefaultScenarioResultsVersionTableName);
             
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
 		}
@@ -7166,6 +7167,21 @@ namespace FIA_Biosum_Manager
 			if (p_ado.m_intError==0)
 			{
 				/*********************************************
+                 * set the application version in the database
+                 * *******************************************/
+                string strConn = p_ado.getMDBConnString(this.m_strSystemResultsDbPathAndFile, "", "");
+                using (OleDbConnection versionConn = new OleDbConnection(strConn))
+                {
+                    versionConn.Open();
+                    this.m_strSQL = "INSERT INTO VERSION (APPLICATION_VERSION)" +
+                                    " VALUES ('" + frmMain.g_strAppVer + "') ";
+                    p_ado.SqlNonQuery(versionConn, this.m_strSQL);
+                }
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                              
+                /*********************************************
 				 **get the harvest_costs structure
 				 *********************************************/
 				this.m_strSQL = "SELECT biosum_cond_id,rxpackage,rx,rxcycle, complete_cpa FROM " + this.m_strHvstCostsTable.Trim() + ";";
