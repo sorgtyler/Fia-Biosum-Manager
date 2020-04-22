@@ -390,22 +390,29 @@ namespace FIA_Biosum_Manager
                 
                 if (bCreateResults)
                 {
-                    CreateResultsSqliteDb();
+                    m_intError = CreateResultsSqliteDb();
                 }
 
                 System.Threading.Thread.Sleep(5000);
 
-                if (bCreateContext)
+                if (m_intError == 0 && bCreateContext)
                 {
-                    CreateContextSqliteDb();
+                    m_intError = CreateContextSqliteDb();
                 }
 
-                if (bCreateFvsContext)
+                if (m_intError == 0 && bCreateFvsContext)
                 {
-                    CreateFvsContextSqliteDb();
+                    m_intError = CreateFvsContextSqliteDb();
                 }
-                
-                UpdateProgressBar1("All databases complete!!", 100);
+
+                if (m_intError == 0)
+                {
+                    UpdateProgressBar1("All databases complete!!", 100);
+                }
+                else
+                {
+                    UpdateProgressBar1("An error occurred. Export failed!!", 100);
+                }
 
                 if (m_oDao != null)
                 {
@@ -420,7 +427,15 @@ namespace FIA_Biosum_Manager
                     true);
                 CreateSqliteDatabases_Finish();
 
-                MessageBox.Show("done!!");
+                if (m_intError == 0)
+                {
+                    MessageBox.Show("SQLite database successfully exported!!", "FIA Biosum");
+                }
+                else
+                {
+                    MessageBox.Show("An error occurred while exporting the SQLite database. Check the " + m_strDebugFile + " file in the Optimizer scenario/db directory!!", "FIA Biosum");
+                }
+                
             }
             catch (System.Threading.ThreadInterruptedException err)
             {
@@ -436,7 +451,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        public void CreateContextSqliteDb()
+        public int CreateContextSqliteDb()
         {
             SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
             ado_data_access oAdo = new ado_data_access();
@@ -446,6 +461,8 @@ namespace FIA_Biosum_Manager
             string strTable = "";
             System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
             System.Collections.Generic.IList<string> lstPopTables = new System.Collections.Generic.List<string>();
+            try
+            {
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
             {
                 con.Open();
@@ -455,28 +472,28 @@ namespace FIA_Biosum_Manager
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsFvsWeightedVariablesRefTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteFvsWeightedVariableRefTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconWeightedVariablesRefTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEconWeightedVariableRefTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsHarvestMethodRefTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteHarvestMethodRefTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C";
                 frmMain.g_oTables.m_oProcessor.CreateSqliteHarvestCostsTable(oDataMgr, con, strTable);
@@ -484,21 +501,21 @@ namespace FIA_Biosum_Manager
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteRxPackageRefTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C";
                 frmMain.g_oTables.m_oFvs.CreateSqliteRxHarvestCostColumnTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName + "_C";
                 if (this.CreateScenarioAdditionalHarvestCostsTable(strConnection, strTable) == true)
@@ -507,15 +524,20 @@ namespace FIA_Biosum_Manager
                     lstTables.Add(strTable);
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                     }
+                }
+                else
+                {
+                    MessageBox.Show("An error occurred while creating the additional harvest costs table!!", "FIA Biosum");
+                    return -1;
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsSpeciesGroupRefTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteSpeciesGroupRefTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C";
                 frmMain.g_oTables.m_oProcessor.CreateSqliteTreeVolValSpeciesDiamGroupsTable(oDataMgr, con, strTable);
@@ -523,35 +545,35 @@ namespace FIA_Biosum_Manager
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopEstnUnitTableName;
                 frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopEstnUnitTable(oDataMgr, con, strTable);
                 lstPopTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopEvalTableName;
                 frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopEvalTable(oDataMgr, con, strTable);
                 lstPopTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopPlotStratumAssgnTableName;
                 frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopPlotStratumAssgnTable(oDataMgr, con, strTable);
                 lstPopTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPopStratumTableName;
                 frmMain.g_oTables.m_oFIAPlot.CreateSqlitePopStratumTable(oDataMgr, con, strTable);
                 lstPopTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
 
 
@@ -580,6 +602,10 @@ namespace FIA_Biosum_Manager
                             UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
                             string strSql = "select * from " + strTableName;
                             oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "About to populate context table " + strTableName + " \r\n");
+                            }
 
                             using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
                             {
@@ -609,6 +635,10 @@ namespace FIA_Biosum_Manager
                             UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
                             string strSql = "select * from " + strTableName;
                             oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTableName + " table \r\n");
+                            }
 
                             using (System.Data.SQLite.SQLiteDataAdapter da = new System.Data.SQLite.SQLiteDataAdapter(strSql, con))
                             {
@@ -631,6 +661,10 @@ namespace FIA_Biosum_Manager
                                 {
                                     oDataMgr.AddColumn(con, strTableName, strFieldName, "TEXT", "");
                                 }
+                                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                                {
+                                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Added extra fields to table " + strTableName + " \r\n");
+                                }
                             }
                             
                         }
@@ -642,35 +676,46 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
                 }
             }
-
-            if (oAdo != null)
-            {
-                if (oAdo.m_DataSet != null)
-                {
-                    oAdo.m_DataSet.Clear();
-                    oAdo.m_DataSet.Dispose();
-                }
-                oAdo = null;
+            return 0;
             }
-
-            if (oDataMgr != null)
+            catch (Exception e)
             {
-                if (oDataMgr.m_DataTable != null)
-                {
-                    oAdo.m_DataTable.Clear();
-                    oAdo.m_DataTable.Dispose();
-                }
-                if (oDataMgr.m_Connection != null)
-                {
-                    oDataMgr.m_Connection.Close();
-                    oDataMgr.m_Connection.Dispose();
-                }
-                oDataMgr = null;
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "CreateContextSqliteDb ERROR!! \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.Message + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.StackTrace + " \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                return -1;
             }
+            finally
+            {
+                if (oAdo != null)
+                {
+                    if (oAdo.m_DataSet != null)
+                    {
+                        oAdo.m_DataSet.Clear();
+                        oAdo.m_DataSet.Dispose();
+                    }
+                    oAdo = null;
+                }
 
+                if (oDataMgr != null)
+                {
+                    if (oDataMgr.m_DataTable != null)
+                    {
+                        oAdo.m_DataTable.Clear();
+                        oAdo.m_DataTable.Dispose();
+                    }
+                    if (oDataMgr.m_Connection != null)
+                    {
+                        oDataMgr.m_Connection.Close();
+                        oDataMgr.m_Connection.Dispose();
+                    }
+                    oDataMgr = null;
+                }
+            }
         }
 
-        public void CreateFvsContextSqliteDb()
+        public int CreateFvsContextSqliteDb()
         {
             SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
             ado_data_access oAdo = new ado_data_access();
@@ -682,6 +727,8 @@ namespace FIA_Biosum_Manager
             string strAccdbConnection = oAdo.getMDBConnString(m_strFvsContextAccdbPath, "", "");
             int counter = 1;
 
+            try
+            {
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strConnection))
             {
                 con.Open();
@@ -811,7 +858,43 @@ namespace FIA_Biosum_Manager
                     }
                 }
             }
+            return 0;
+            }
+            catch (Exception e)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "CreateFvsContextSqliteDb ERROR!! \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.Message + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.StackTrace + " \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                return -1;
+            }
+            finally
+            {
+                if (oAdo != null)
+                {
+                    if (oAdo.m_DataSet != null)
+                    {
+                        oAdo.m_DataSet.Clear();
+                        oAdo.m_DataSet.Dispose();
+                    }
+                    oAdo = null;
+                }
 
+                if (oDataMgr != null)
+                {
+                    if (oDataMgr.m_DataTable != null)
+                    {
+                        oAdo.m_DataTable.Clear();
+                        oAdo.m_DataTable.Dispose();
+                    }
+                    if (oDataMgr.m_Connection != null)
+                    {
+                        oDataMgr.m_Connection.Close();
+                        oDataMgr.m_Connection.Dispose();
+                    }
+                    oDataMgr = null;
+                }
+            }
         }
 
         public void load_values()
@@ -913,7 +996,7 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        public void CreateResultsSqliteDb()
+        public int CreateResultsSqliteDb()
         {
             SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
             ado_data_access oAdo = new ado_data_access();
@@ -924,6 +1007,8 @@ namespace FIA_Biosum_Manager
             string strTable = "";
             System.Collections.Generic.IList<string> lstTables = new System.Collections.Generic.List<string>();
 
+            try
+            {            
             if (!m_oDao.TableExists(m_strResultsAccdbPath, strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsBestRxSummaryTableSuffix))
             {
                 strTablePrefix = "cycle_1";
@@ -937,35 +1022,35 @@ namespace FIA_Biosum_Manager
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = strTable + "_before_tiebreaks";
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteBestRxSummaryTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsValidCombosTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteValidComboTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsValidCombosFVSPrePostTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteValidComboFVSPrePostTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsTieBreakerTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteTieBreakerTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsOptimizationTableSuffix;
                 if (CreateScenarioTableWithDynamicColumns(strConnection,strTable))
@@ -973,8 +1058,13 @@ namespace FIA_Biosum_Manager
                     lstTables.Add(strTable);
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                     }
+                }
+                else
+                {
+                    MessageBox.Show("An error ocurred while creating the " + strTable + " table", "FIA Biosum");
+                    return -1;
                 }
                 strTable = strTablePrefix + Tables.OptimizerScenarioResults.DefaultScenarioResultsEffectiveTableSuffix;
                 if (CreateScenarioTableWithDynamicColumns(strConnection, strTable))
@@ -982,22 +1072,27 @@ namespace FIA_Biosum_Manager
                     lstTables.Add(strTable);
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                     }
+                }
+                else
+                {
+                    MessageBox.Show("An error ocurred while creating the " + strTable + " table", "FIA Biosum");
+                    return -1;
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxCycleTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteProductYieldsTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsEconByRxUtilSumTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteEconByRxUtilSumTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsPostEconomicWeightedTableName;
                 if (CreateScenarioTableWithDynamicColumns(strConnection, strTable))
@@ -1005,43 +1100,48 @@ namespace FIA_Biosum_Manager
                     lstTables.Add(strTable);
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                     }
+                }
+                else
+                {
+                    MessageBox.Show("An error ocurred while creating the " + strTable + " table", "FIA Biosum");
+                    return -1;
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsHaulCostsTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteHaulCostTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsCondPsiteTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteCondPsiteTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = frmMain.g_oTables.m_oFIAPlot.DefaultConditionTableName;
                 frmMain.g_oTables.m_oFIAPlot.CreateSqliteConditionTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPlotTableName;
                 frmMain.g_oTables.m_oFIAPlot.CreateSqlitePlotTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
                 strTable = Tables.TravelTime.DefaultProcessingSiteTableName;
                 frmMain.g_oTables.m_oTravelTime.CreateSqliteProcessingSiteTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + "table \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
@@ -1067,6 +1167,10 @@ namespace FIA_Biosum_Manager
                             counter += 1;
                             string strMessage = "Writing rows to " + strTableName + " in " + System.IO.Path.GetFileName(m_strResultsDbPath);
                             UpdateProgressBar1(strMessage, counter + (100 / (m_intDatabaseCount * 10)));
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "About to populate results table " + strTableName + " \r\n");
+                            }
                             string strSql = "select * from " + strTableName;
                             oAdo.CreateDataTable(oAccessConn, strSql, strTableName, false);
 
@@ -1087,36 +1191,47 @@ namespace FIA_Biosum_Manager
                 }
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Finished populating context tables! \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Finished populating results tables! \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
                 }
             }
-
-            if (oAdo != null)
-            {
-                if (oAdo.m_DataSet != null)
-                {
-                    oAdo.m_DataSet.Clear();
-                    oAdo.m_DataSet.Dispose();
-                }
-                oAdo = null;
+            return 0;
             }
-
-            if (oDataMgr != null)
+            catch (Exception e)
             {
-                if (oDataMgr.m_DataTable != null)
-                {
-                    oAdo.m_DataTable.Clear();
-                    oAdo.m_DataTable.Dispose();
-                }
-                if (oDataMgr.m_Connection != null)
-                {
-                    oDataMgr.m_Connection.Close();
-                    oDataMgr.m_Connection.Dispose();
-                }
-                oDataMgr = null;
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "CreateResultsSqliteDb ERROR!! \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.Message + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.StackTrace + " \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                return -1;
             }
+            finally
+            {
+                if (oAdo != null)
+                {
+                    if (oAdo.m_DataSet != null)
+                    {
+                        oAdo.m_DataSet.Clear();
+                        oAdo.m_DataSet.Dispose();
+                    }
+                    oAdo = null;
+                }
 
+                if (oDataMgr != null)
+                {
+                    if (oDataMgr.m_DataTable != null)
+                    {
+                        oAdo.m_DataTable.Clear();
+                        oAdo.m_DataTable.Dispose();
+                    }
+                    if (oDataMgr.m_Connection != null)
+                    {
+                        oDataMgr.m_Connection.Close();
+                        oDataMgr.m_Connection.Dispose();
+                    }
+                    oDataMgr = null;
+                }
+            }
         }
 
         private void CreateSqliteDatabases_Finish()
@@ -1278,10 +1393,11 @@ namespace FIA_Biosum_Manager
 
         private bool CreateScenarioAdditionalHarvestCostsTable(string strSqliteConn, string strTableName)
         {
+            try
+            {
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strSqliteConn))
             {
                 SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
-                //ado_data_access oAdo = new ado_data_access();
                 con.Open();
                 frmMain.g_oTables.m_oProcessorScenarioRuleDefinitions.CreateSqliteScenarioAdditionalHarvestCostsTable(oDataMgr, con, strTableName);
                 string[] strSourceColumnsArray = new string[0];
@@ -1295,10 +1411,21 @@ namespace FIA_Biosum_Manager
                 }
             }
             return true;
+            }
+            catch (Exception e)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "CreateScenarioAdditionalHarvestCostsTable ERROR!! \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.Message + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.StackTrace + " \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                return false;
+            }
         }
 
         private bool CreateScenarioTableWithDynamicColumns(string strSqliteConn, string strTableName)
         {
+            try
+            {
             using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strSqliteConn))
             {
                 SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
@@ -1328,6 +1455,15 @@ namespace FIA_Biosum_Manager
                 }
             }
             return true;
+            }
+            catch (Exception e)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "CreateScenarioTableWithDynamicColumns ERROR!! \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.Message + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.StackTrace + " \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                return false;
+            }
         }
 
         private void lstScenario_SelectedIndexChanged(object sender, EventArgs e)
