@@ -5718,14 +5718,13 @@ namespace FIA_Biosum_Manager
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
 			//insert the valid combos into the optimization table
-
-            m_strSQL = "INSERT INTO " + strOptimizationTableName + " (biosum_cond_id,rxpackage,rx,rxcycle,affordable_YN";
+            this.m_strSQL = "INSERT INTO " + strOptimizationTableName + " (biosum_cond_id,rxpackage,rx,rxcycle,affordable_YN";
             if (this.m_oOptimizationVariable.bUseFilter == true)
-                m_strSQL = m_strSQL + "," + this.m_oOptimizationVariable.strRevenueAttribute;
-            m_strSQL = m_strSQL + ") SELECT biosum_cond_id,rxpackage,rx,rxcycle,'Y' ";
+                this.m_strSQL = this.m_strSQL + "," + this.m_oOptimizationVariable.strRevenueAttribute;
+            this.m_strSQL = this.m_strSQL + ") SELECT biosum_cond_id,rxpackage,rx,rxcycle,'Y' ";
             if (this.m_oOptimizationVariable.bUseFilter == true)
-                m_strSQL = m_strSQL + "," + this.m_oOptimizationVariable.strRevenueAttribute;
-            m_strSQL = m_strSQL + " FROM " + ReferenceOptimizerScenarioForm.OutputTablePrefix +
+                this.m_strSQL = this.m_strSQL + "," + this.m_oOptimizationVariable.strRevenueAttribute;
+            this.m_strSQL = this.m_strSQL + " FROM " + ReferenceOptimizerScenarioForm.OutputTablePrefix +
                 Tables.OptimizerScenarioResults.DefaultScenarioResultsEffectiveTableSuffix + 
                 " WHERE overall_effective_yn='Y'";
             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)

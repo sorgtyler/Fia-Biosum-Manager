@@ -1718,6 +1718,8 @@ namespace FIA_Biosum_Manager
                 p_oDest.DbhGroup = p_oSource.DbhGroup;
                 p_oDest.MerchDollarPerCubicFootValue = p_oSource.MerchDollarPerCubicFootValue;
                 p_oDest.SpeciesGroup = p_oSource.SpeciesGroup;
+                p_oDest.DiameterGroupId = p_oSource.DiameterGroupId;
+                p_oDest.SpeciesGroupId = p_oSource.SpeciesGroupId;
                 p_oDest.UseAsEnergyWood = p_oSource.UseAsEnergyWood;
    
             }

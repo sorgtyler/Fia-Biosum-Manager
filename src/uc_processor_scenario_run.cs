@@ -49,7 +49,7 @@ namespace FIA_Biosum_Manager
         IList<string> m_lstFVSVariantRxPackage = null;
         private ListViewColumnSorter lvwColumnSorter;
         /* Indicates that inactive stands will be included in the analysis:
-         * There is a POST_FVS_COMPUTE table with a column named activity_YN */
+         * There is a PRE_FVS_COMPUTE table with a column named ACTIVITY  */
         private bool m_bIncludeInactiveStands = true; 
 
         //reference variables
@@ -427,19 +427,20 @@ namespace FIA_Biosum_Manager
                 Tables.FVS.DefaultPreFVSSummaryTableName,
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSSummaryDbFile,
                 Tables.FVS.DefaultPreFVSSummaryTableName, true);
-            // link to POST_FVS_COMPUTE table
-            if (oDao.TableExists(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPostFVSComputeDbFile, Tables.FVS.DefaultPostFVSComputeTableName))
+            // link to PRE_FVS_COMPUTE table
+            string strComputeDbPath = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + Tables.FVS.DefaultPreFVSComputeDbFile;
+            if (System.IO.File.Exists(strComputeDbPath) &&
+                oDao.TableExists(strComputeDbPath, Tables.FVS.DefaultPreFVSComputeTableName))
             {
                 oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
-                    Tables.FVS.DefaultPostFVSComputeTableName,
-                    frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPostFVSComputeDbFile,
-                    Tables.FVS.DefaultPostFVSComputeTableName, true);
+                    Tables.FVS.DefaultPreFVSComputeTableName,
+                    strComputeDbPath, Tables.FVS.DefaultPreFVSComputeTableName, true);
             }
             else
             {
                 m_bIncludeInactiveStands = false;
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                    frmMain.g_oUtils.WriteText(strDebugFile, "loadvalues(): POST_FVS_COMPUTE table was not found. Stands with no " +
+                    frmMain.g_oUtils.WriteText(strDebugFile, "loadvalues(): PRE_FVS_COMPUTE table was not found. Stands with no " +
                         "activity will not be included in analysis! \r\n");
             }
 
@@ -529,10 +530,10 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                     frmMain.g_oUtils.WriteText(strDebugFile, "START: Populate List " + System.DateTime.Now.ToString() + "\r\n");
 
-                //Check for activity_YN column so we know if we should include inactive stands
+                //Check for ACTIVITY column so we know if we should include inactive stands
                 if (m_bIncludeInactiveStands == true)
                 {
-                    if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.FVS.DefaultPostFVSComputeTableName, "activity_YN"))
+                    if (!m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.FVS.DefaultPreFVSComputeTableName, "ACTIVITY"))
                     {
                         m_bIncludeInactiveStands = false;
                     }
@@ -579,8 +580,8 @@ namespace FIA_Biosum_Manager
                     else if (m_bIncludeInactiveStands == true)
                     {
                         string[] arrVariantRxPkg = frmMain.g_oUtils.ConvertListToArray(m_lstFVSVariantRxPackage[x],",");
-                        int count = m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM " + Tables.FVS.DefaultPostFVSComputeTableName + " WHERE fvs_variant = '" +
-                                        arrVariantRxPkg[0] + "' AND rxpackage = '" + arrVariantRxPkg[1] + "'", Tables.FVS.DefaultPostFVSComputeTableName);
+                        int count = m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, "SELECT COUNT(*) FROM " + Tables.FVS.DefaultPreFVSComputeTableName + " WHERE fvs_variant = '" +
+                                        arrVariantRxPkg[0] + "' AND rxpackage = '" + arrVariantRxPkg[1] + "'", Tables.FVS.DefaultPreFVSComputeTableName);
                         if (count > 0)
                         {
                             strVariant = arrVariantRxPkg[0];
@@ -4141,17 +4142,17 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
             }
 
-            if (m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.FVS.DefaultPostFVSComputeTableName, "activity_YN"))
+            if (m_oAdo.ColumnExist(m_oAdo.m_OleDbConnection, Tables.FVS.DefaultPreFVSComputeTableName, "ACTIVITY"))
             {
-                m_oAdo.m_strSQL = "select count (*) from " + Tables.FVS.DefaultPostFVSComputeTableName +
-                    " where activity_YN='Y'";
-                int intInactiveCount = m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, Tables.FVS.DefaultPostFVSComputeTableName);
+                m_oAdo.m_strSQL = "select count (*) from " + Tables.FVS.DefaultPreFVSComputeTableName +
+                    " where ACTIVITY = 1";
+                int intInactiveCount = m_oAdo.getRecordCount(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL, Tables.FVS.DefaultPreFVSComputeTableName);
                 if (intInactiveCount < 1)
                 {
                     if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                     {
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//No inactive stands marked in POST_FVS_COMPUTE table! " +
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, "//No inactive stands marked in PRE_FVS_COMPUTE table! " +
                             "Nothing to append \r\n");
                         frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                     }
@@ -4164,7 +4165,7 @@ namespace FIA_Biosum_Manager
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n//\r\n");
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//activity_YN column is missing from POST_FVS_COMPUTE table. " +
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "//ACTIVITY_1  column is missing from PRE_FVS_COMPUTE table. " +
                         "Stands with no activity will not be included in analysis! \r\n");
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "//\r\n");
                 }
@@ -4172,7 +4173,7 @@ namespace FIA_Biosum_Manager
                 return;
             }
 
-            string strFvsComputeTable = Tables.FVS.DefaultPostFVSComputeTableName;
+            string strFvsComputeTable = Tables.FVS.DefaultPreFVSComputeTableName;
             m_oAdo.m_strSQL = "SELECT " + strFvsComputeTable + ".biosum_cond_id, " + strFvsComputeTable + ".rxpackage, " +
                               strFvsComputeTable + ".rx," + strFvsComputeTable + ".rxcycle, " + strFvsComputeTable + 
                               ".fvs_variant, 0 as harvest_cpa, 0 as complete_cpa" +
@@ -4184,7 +4185,7 @@ namespace FIA_Biosum_Manager
                               p_strHarvestCostsTableName + ".rx=" + strFvsComputeTable + ".rx and " +
                               p_strHarvestCostsTableName + ".rxcycle=" + strFvsComputeTable + ".rxcycle" +
                               " where " + p_strHarvestCostsTableName + ".biosum_cond_id is null" +
-                              " and " + strFvsComputeTable + ".activity_YN = 'Y' AND " +
+                              " and " + strFvsComputeTable + ".ACTIVITY  = 1 AND " +
                               strFvsComputeTable + ".FVS_VARIANT = '" + p_strVariant + "' AND " +
                               strFvsComputeTable + ".RXPACKAGE = '" + p_strRxPackage + "'";
 

@@ -2944,7 +2944,7 @@ namespace FIA_Biosum_Manager
                         //revenue filter attribute
                         if (p_oAdo.m_OleDbDataReader["revenue_attribute"] != System.DBNull.Value)
                         {
-                            oItem.strRevenueAttribute = Convert.ToString(p_oAdo.m_OleDbDataReader["revenue_attribute"]);
+                            oItem.strRevenueAttribute = Convert.ToString(p_oAdo.m_OleDbDataReader["revenue_attribute"]).Trim();
                         }
                         //filter operator
                         if (p_oAdo.m_OleDbDataReader["checked_yn"] != System.DBNull.Value)
