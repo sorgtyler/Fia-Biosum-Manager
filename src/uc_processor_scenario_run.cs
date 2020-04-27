@@ -428,12 +428,13 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSSummaryDbFile,
                 Tables.FVS.DefaultPreFVSSummaryTableName, true);
             // link to PRE_FVS_COMPUTE table
-            if (oDao.TableExists(frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSComputeDbFile, Tables.FVS.DefaultPreFVSComputeTableName))
+            string strComputeDbPath = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + Tables.FVS.DefaultPreFVSComputeDbFile;
+            if (System.IO.File.Exists(strComputeDbPath) &&
+                oDao.TableExists(strComputeDbPath, Tables.FVS.DefaultPreFVSComputeTableName))
             {
                 oDao.CreateTableLink(m_oQueries.m_strTempDbFile,
                     Tables.FVS.DefaultPreFVSComputeTableName,
-                    frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() + "\\" + Tables.FVS.DefaultPreFVSComputeDbFile,
-                    Tables.FVS.DefaultPreFVSComputeTableName, true);
+                    strComputeDbPath, Tables.FVS.DefaultPreFVSComputeTableName, true);
             }
             else
             {
