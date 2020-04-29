@@ -672,6 +672,7 @@ namespace FIA_Biosum_Manager
                     "rxpackage TEXT," +
                     "rx TEXT," +
                     "rxcycle TEXT," +
+                    "fvs_variant TEXT," +
                     "CONSTRAINT " + p_strTableName + "_pk PRIMARY KEY (biosum_cond_id, rxpackage, rx, rxcycle))"; ; ;
             }
 			//

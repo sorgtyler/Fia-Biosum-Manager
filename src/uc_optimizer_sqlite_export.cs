@@ -228,7 +228,7 @@ namespace FIA_Biosum_Manager
             this.Controls.Add(this.groupBox1);
             this.Name = "uc_optimizer_sqlite_export";
             this.Size = new System.Drawing.Size(664, 424);
-            this.Resize += new System.EventHandler(this.uc_scenario_tree_groupings_Resize);
+            this.Resize += new System.EventHandler(this.uc_optimizer_sqlite_export_Resize);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -236,7 +236,7 @@ namespace FIA_Biosum_Manager
 		}
 		#endregion
 
-		private void uc_scenario_tree_groupings_Resize(object sender, System.EventArgs e)
+		private void uc_optimizer_sqlite_export_Resize(object sender, System.EventArgs e)
 		{
 			
 		}
