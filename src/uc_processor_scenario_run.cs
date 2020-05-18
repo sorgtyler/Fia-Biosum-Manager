@@ -5043,6 +5043,18 @@ namespace FIA_Biosum_Manager
                     strVariantInfo;
                 MessageBox.Show(strMessage, "FIA Biosum");
             }
+
+            if (frmMain.g_bDebug)
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "Write processor parameters to text file \r\n");
+		    string strDateFormat = "yyyy-MM-dd_HH-mm";
+			string strFileDate = System.DateTime.Now.ToString(strDateFormat);
+            string strParameterFileName = "params_" + this._strScenarioId + "_" + strFileDate + ".txt";
+            string strParameterFilePath = frmMain.g_oFrmMain.frmProject.uc_project1.txtRootDirectory.Text.Trim() +
+                "\\processor\\" + ScenarioId + "\\" + strParameterFileName;
+            ProcessorScenarioTools oProcessorScenarioTools = new ProcessorScenarioTools();
+            string strProperties = oProcessorScenarioTools.ScenarioProperties(_frmProcessorScenario.m_oProcessorScenarioItem);
+            System.IO.File.WriteAllText(strParameterFilePath, strProperties);
+
             if (frmMain.g_bDebug)
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "*****END*****" + System.DateTime.Now.ToString() + "\r\n");
 

@@ -2245,9 +2245,6 @@ namespace FIA_Biosum_Manager
                 }
             }
             frmMain.g_oTables.m_oFvs.CreateRxHarvestCostColumnTable(oAdo, oAdo.m_OleDbConnection, Tables.FVS.DefaultRxHarvestCostColumnsTableName + "_C");
-            frmMain.g_oTables.m_oProcessor.CreateHarvestCostsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C");
-            frmMain.g_oTables.m_oProcessor.CreateTreeVolValSpeciesDiamGroupsTable(oAdo, oAdo.m_OleDbConnection, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C");
-
             
             oAdo.CloseConnection(oAdo.m_OleDbConnection);
         }
@@ -2372,6 +2369,15 @@ namespace FIA_Biosum_Manager
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName, strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultAdditionalHarvestCostsTableName);
             p_dao.CreateTableLink(this.m_strTempMDBFile, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName, strProcessorDir, Tables.ProcessorScenarioRuleDefinitions.DefaultTreeSpeciesGroupsListTableName);
 
+            // We also need to create links to harvest_costs and tree vol val source tables in the context .accdb
+            // so that we can create them directly with select into statement            
+            p_dao.CreateTableLink(this.m_strContextDbPathAndFile, Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName,
+                                  this.m_oProcessorScenarioItem.DbPath + "\\" + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableDbFile, 
+                                  Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName);
+            p_dao.CreateTableLink(this.m_strContextDbPathAndFile, Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName,
+                      this.m_oProcessorScenarioItem.DbPath + "\\" + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableDbFile,
+                      Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName);
+           
             if (p_dao != null)
             {
                 p_dao.m_DaoWorkspace.Close();
@@ -9123,25 +9129,52 @@ namespace FIA_Biosum_Manager
 
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
-            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C" +
-                " SELECT * FROM " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName;
+            // harvest_costs table
+            string strContextConn = this.m_ado.getMDBConnString(this.m_strContextDbPathAndFile, "", "");
+            using (var contextConn = new OleDbConnection(strContextConn))
+            {
+                contextConn.Open();
+                this.m_strSQL = "SELECT " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + ".*" +
+                                " INTO " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C" +
+                                " FROM " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName;
 
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate harvest_costs_C table \r\n");
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nCreate and populate harvest_costs_C table \r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
 
-            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                this.m_ado.SqlNonQuery(strContextConn, this.m_strSQL);
 
-            this.m_strSQL = "INSERT INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C" +
-                            " SELECT * FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName;
 
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nPopulate tree_vol_val_by_species_diam_groups_C table \r\n");
-            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
-                frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+                this.m_strSQL = "SELECT " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + ".*" +
+                                " INTO " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C" +
+                                " FROM " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName;
 
-            this.m_ado.SqlNonQuery(this.m_TempMDBFileConn, this.m_strSQL);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nCreate and populate tree_vol_val_by_species_diam_groups_C table \r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(strContextConn, this.m_strSQL);
+
+                this.m_strSQL = "DROP TABLE " + Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName;
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nDrop harvest_costs table from context db \r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(strContextConn, this.m_strSQL);
+
+                this.m_strSQL = "DROP TABLE " + Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName;
+
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\nDrop tree_vol_val_by_species_diam_groups table from context db \r\n");
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Execute SQL: " + this.m_strSQL + "\r\n");
+
+                this.m_ado.SqlNonQuery(strContextConn, this.m_strSQL);
+            }
             
             FIA_Biosum_Manager.uc_optimizer_scenario_run.UpdateThermPercent();
 
