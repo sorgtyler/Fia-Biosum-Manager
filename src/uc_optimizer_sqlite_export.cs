@@ -495,14 +495,55 @@ namespace FIA_Biosum_Manager
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
-                strTable = Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C";
-                frmMain.g_oTables.m_oProcessor.CreateSqliteHarvestCostsTable(oDataMgr, con, strTable);
-                //@ToDo
-                lstTables.Add(strTable);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                System.Collections.Generic.IList<string> lstTableNames = 
+                    new System.Collections.Generic.List<string>();
+                lstTableNames.Add(Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C");
+                lstTableNames.Add(Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C");
+                System.Collections.Generic.IList<string[]> lstColumnNames =
+                    new System.Collections.Generic.List<string[]>();
+                System.Collections.Generic.IList<string[]> lstDataTypes =
+                    new System.Collections.Generic.List<string[]>();
+                // Store the column names and data types in lists so we don't have to close/reopen
+                // the ado connection
+                using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
+                    oAccessConn.Open();
+                    foreach (var strName in lstTableNames)
+                    {
+                        string[] strColumnNamesArray = new string[0];
+                        string[] strDataTypesArray = new string[0];
+
+                        string strColumnNamesList = "";
+                        string strDataTypesList = "";
+                        oAdo.getFieldNamesAndDataTypes(oAccessConn, "SELECT * FROM " + strName,
+                            ref strColumnNamesList, ref strDataTypesList);
+                        if (!String.IsNullOrEmpty(strColumnNamesList))
+                        {
+                            strColumnNamesArray = strColumnNamesList.Split(",".ToCharArray());
+                            strDataTypesArray = strDataTypesList.Split(",".ToCharArray());
+                            lstColumnNames.Add(strColumnNamesArray);
+                            lstDataTypes.Add(strDataTypesArray);
+                        }
+                    } 
                 }
+
+                for (int i = 0; i < lstTableNames.Count; i++)
+                {
+                    if (AddDynamicColumnsToTable(strConnection, lstTableNames[i], lstColumnNames[i], lstDataTypes[i]))
+                    {
+                        lstTables.Add(lstTableNames[i]);
+                        if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                        {
+                            frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("An error ocurred while creating the " + strTable + " table", "FIA Biosum");
+                        return -1;
+                    }
+                }
+               
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsRxPackageRefTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteRxPackageRefTable(oDataMgr, con, strTable);
                 lstTables.Add(strTable);
@@ -534,14 +575,6 @@ namespace FIA_Biosum_Manager
                 }
                 strTable = Tables.OptimizerScenarioResults.DefaultScenarioResultsSpeciesGroupRefTableName;
                 frmMain.g_oTables.m_oOptimizerScenarioResults.CreateSqliteSpeciesGroupRefTable(oDataMgr, con, strTable);
-                lstTables.Add(strTable);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
-                }
-                strTable = Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C";
-                frmMain.g_oTables.m_oProcessor.CreateSqliteTreeVolValSpeciesDiamGroupsTable(oDataMgr, con, strTable);
-                //@ToDo
                 lstTables.Add(strTable);
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
@@ -1122,27 +1155,56 @@ namespace FIA_Biosum_Manager
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
                 }
-                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultConditionTableName;
-                frmMain.g_oTables.m_oFIAPlot.CreateSqliteConditionTable(oDataMgr, con, strTable);
-                lstTables.Add(strTable);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
-                }
-                strTable = frmMain.g_oTables.m_oFIAPlot.DefaultPlotTableName;
-                frmMain.g_oTables.m_oFIAPlot.CreateSqlitePlotTable(oDataMgr, con, strTable);
-                lstTables.Add(strTable);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
-                }
-                strTable = Tables.TravelTime.DefaultProcessingSiteTableName;
-                frmMain.g_oTables.m_oTravelTime.CreateSqliteProcessingSiteTable(oDataMgr, con, strTable);
-                lstTables.Add(strTable);
-                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
-                {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
-                }
+
+                System.Collections.Generic.IList<string> lstTableNames =
+                    new System.Collections.Generic.List<string>();
+                lstTableNames.Add(frmMain.g_oTables.m_oFIAPlot.DefaultConditionTableName);
+                lstTableNames.Add(frmMain.g_oTables.m_oFIAPlot.DefaultPlotTableName);
+                lstTableNames.Add(Tables.TravelTime.DefaultProcessingSiteTableName);
+                System.Collections.Generic.IList<string[]> lstColumnNames =
+                    new System.Collections.Generic.List<string[]>();
+                System.Collections.Generic.IList<string[]> lstDataTypes =
+                    new System.Collections.Generic.List<string[]>();
+                // Store the column names and data types in lists so we don't have to close/reopen
+                // the ado connection
+                    using (OleDbConnection oAccessConn = new OleDbConnection(strAccdbConnection))
+                    {
+                        oAccessConn.Open();
+                        foreach (var strName in lstTableNames)
+                        {
+                            string[] strColumnNamesArray = new string[0];
+                            string[] strDataTypesArray = new string[0];
+
+                            string strColumnNamesList = "";
+                            string strDataTypesList = "";
+                            oAdo.getFieldNamesAndDataTypes(oAccessConn, "SELECT * FROM " + strName,
+                                ref strColumnNamesList, ref strDataTypesList);
+                            if (!String.IsNullOrEmpty(strColumnNamesList))
+                            {
+                                strColumnNamesArray = strColumnNamesList.Split(",".ToCharArray());
+                                strDataTypesArray = strDataTypesList.Split(",".ToCharArray());
+                                lstColumnNames.Add(strColumnNamesArray);
+                                lstDataTypes.Add(strDataTypesArray);
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < lstTableNames.Count; i++)
+                    {
+                        if (AddDynamicColumnsToTable(strConnection, lstTableNames[i], lstColumnNames[i], lstDataTypes[i]))
+                        {
+                            lstTables.Add(lstTableNames[i]);
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created " + strTable + " table \r\n");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("An error ocurred while creating the " + strTable + " table", "FIA Biosum");
+                            return -1;
+                        }
+                    }
 
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 1)
                 {
@@ -1459,6 +1521,80 @@ namespace FIA_Biosum_Manager
             catch (Exception e)
             {
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "CreateScenarioTableWithDynamicColumns ERROR!! \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.Message + "\r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, e.StackTrace + " \r\n");
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
+                return false;
+            }
+        }
+
+        private bool AddDynamicColumnsToTable(string strSqliteConn, string strTableName, string[] strColumnNamesArray,
+            string[] strDataTypesArray)
+        {
+            try
+            {
+                using (System.Data.SQLite.SQLiteConnection con = new System.Data.SQLite.SQLiteConnection(strSqliteConn))
+                {
+                    SQLite.ADO.DataMgr oDataMgr = new SQLite.ADO.DataMgr();
+                    con.Open();
+                    if (strTableName.Equals(Tables.ProcessorScenarioRun.DefaultHarvestCostsTableName + "_C"))
+                    {
+                        frmMain.g_oTables.m_oProcessor.CreateSqliteHarvestCostsTable(oDataMgr, con, strTableName);
+                    }
+                    else if (strTableName.Equals(Tables.ProcessorScenarioRun.DefaultTreeVolValSpeciesDiamGroupsTableName + "_C"))
+                    {
+                        frmMain.g_oTables.m_oProcessor.CreateSqliteTreeVolValSpeciesDiamGroupsTable(oDataMgr, con, strTableName);
+                    }
+                    else if (strTableName.Equals(frmMain.g_oTables.m_oFIAPlot.DefaultConditionTableName))
+                    {
+                        frmMain.g_oTables.m_oFIAPlot.CreateSqliteConditionTable(oDataMgr, con, strTableName);
+
+                    }
+                    else if (strTableName.Equals(frmMain.g_oTables.m_oFIAPlot.DefaultPlotTableName))
+                    {
+                        frmMain.g_oTables.m_oFIAPlot.CreateSqlitePlotTable(oDataMgr, con, strTableName);
+
+                    }
+                    else if (strTableName.Equals(Tables.TravelTime.DefaultProcessingSiteTableName))
+                    {
+                        frmMain.g_oTables.m_oTravelTime.CreateSqliteProcessingSiteTable(oDataMgr, con, strTableName);
+
+                    }
+
+                    // This code adds any custom fields the user may have added
+                    int i = 0;
+                    foreach (string strColumn in strColumnNamesArray)
+                    {
+                        if (!string.IsNullOrEmpty(strColumn))
+                        {
+                            if (!oDataMgr.ColumnExist(con, strTableName, strColumn))
+                            {
+                                string strDataType = strDataTypesArray[i];
+                                switch (strDataType.ToUpper())
+                                {
+                                    case "SYSTEM.STRING":
+                                        oDataMgr.AddColumn(con, strTableName, strColumn, "TEXT", "");
+                                        break;
+                                    case "SYSTEM.INT32":
+                                        oDataMgr.AddColumn(con, strTableName, strColumn, "INTEGER", "");
+                                        break;
+                                    case "SYSTEM.DOUBLE":
+                                        oDataMgr.AddColumn(con, strTableName, strColumn, "REAL", "");
+                                        break;
+                                    default:
+                                        MessageBox.Show("Not found!");
+                                        break;
+                                }
+                            }
+                        }
+                        i++;
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                frmMain.g_oUtils.WriteText(m_strDebugFile, "AddDynamicColumnsToTable ERROR!! \r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, e.Message + "\r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, e.StackTrace + " \r\n");
                 frmMain.g_oUtils.WriteText(m_strDebugFile, "\r\n");
