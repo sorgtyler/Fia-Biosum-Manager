@@ -1300,6 +1300,12 @@ namespace FIA_Biosum_Manager
                                 {
                                     oItem.strRevenueAttribute = Convert.ToString(oAdo.m_OleDbDataReader["revenue_attribute"]).Trim();
                                 }
+                                //rxcycle
+                                if (oAdo.m_OleDbDataReader["rxcycle"] != System.DBNull.Value)
+                                {
+                                    oItem.RxCycle = Convert.ToString(oAdo.m_OleDbDataReader["rxcycle"]).Trim();
+                                }
+
                                 this.ReferenceOptimizerScenarioForm.m_oOptimizerScenarioItem_Collection.Item(0).m_oOptimizationVariableItem_Collection.Add(oItem);
 							}
 						}
