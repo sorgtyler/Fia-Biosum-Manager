@@ -219,7 +219,7 @@ namespace FIA_Biosum_Manager
 					{
 						strColumnName = this.m_ado.m_DataSet.Tables["plot"].Columns[i].ColumnName;
 					
-						if (strColumnName.Trim().ToUpper() == "FVS_VARIANT" || strColumnName.Trim().ToUpper() == "FVSLOCCODE")
+						if (strColumnName.Trim().ToUpper() == "FVS_VARIANT")
 						{
 							/******************************************************************
 							**create a new instance of the DataGridColoredTextBoxColumn class
@@ -228,6 +228,15 @@ namespace FIA_Biosum_Manager
 							aColumnTextColumn.TextBox.MaxLength=2;
 							aColumnTextColumn.ReadOnly=false;
 						}
+                        else if (strColumnName.Trim().ToUpper() == "FVSLOCCODE")
+                        {
+                            /******************************************************************
+                            **create a new instance of the DataGridColoredTextBoxColumn class
+                            ******************************************************************/
+                            aColumnTextColumn = new FVSVariant_DataGridColoredTextBoxColumn(true, false, this);
+                            aColumnTextColumn.TextBox.MaxLength = 3;
+                            aColumnTextColumn.ReadOnly = false;
+                        }
 						else
 						{
 							/******************************************************************
