@@ -1754,7 +1754,6 @@ namespace FIA_Biosum_Manager
                     this.m_dgEcon.DataSource = this.m_econ_dv;
                     this.m_dgEcon.Expand(-1);
                     this.SumWeights(true);
-                    this.BtnEconImport.Enabled = true;
                 }
                 catch (Exception e2)
                 {
@@ -2060,6 +2059,7 @@ namespace FIA_Biosum_Manager
             txtFVSVariableDescr.Text = "";
             txtFvsVariableTotalWeight.Text = "";
             cboFvsVariableBaselinePkg.Items.Clear();
+            BtnFvsImport.Enabled = false;
 
             this.m_dgEcon.Expand(-1);
             this.grpboxSummary.Hide();
@@ -2096,6 +2096,7 @@ namespace FIA_Biosum_Manager
 
             lblEconVariableName.Text = "Not Defined";
             txtEconVariableDescr.Text = "";
+            BtnEconImport.Enabled = false;
             this.grpboxSummary.Hide();
             this.grpBoxEconomicVariable.Show();
         }
@@ -2463,6 +2464,7 @@ namespace FIA_Biosum_Manager
             }
             while (bFoundIt == false);
             lblEconVariableName.Text = strVariableName;
+            this.BtnEconImport.Enabled = true;
         }
 
         public static string getEconVariableType(string strName)
