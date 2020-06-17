@@ -67,6 +67,9 @@ namespace FIA_Biosum_Manager
                                                             "Net Revenue","Treatment And Haul Costs", "OnSite Treatment Costs"};
         private bool b_FVSTableEnabled = false;
         private string m_strFvsViewTableName = "view_weights";
+        string m_strCalculatedVariablesAccdb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+            "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
+
 
 
         private FIA_Biosum_Manager.uc_optimizer_scenario_fvs_prepost_variables_effective.Variables _oCurVar;
@@ -143,6 +146,7 @@ namespace FIA_Biosum_Manager
         private Button BtnHelpCalculatedMenu;
         public Button BtnFvsImport;
         public Button BtnEconImport;
+        private Button BtnRefresh;
         private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
 
         public uc_optimizer_scenario_calculated_variables(FIA_Biosum_Manager.frmMain p_frmMain)
@@ -238,6 +242,7 @@ namespace FIA_Biosum_Manager
             this.label4 = new System.Windows.Forms.Label();
             this.grpboxSummary = new System.Windows.Forms.GroupBox();
             this.pnlSummary = new System.Windows.Forms.Panel();
+            this.BtnRefresh = new System.Windows.Forms.Button();
             this.BtnHelpCalculatedMenu = new System.Windows.Forms.Button();
             this.btnNewEcon = new System.Windows.Forms.Button();
             this.btnCancelSummary = new System.Windows.Forms.Button();
@@ -337,9 +342,9 @@ namespace FIA_Biosum_Manager
             this.panel1.Controls.Add(this.lblSelectedEconType);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 18);
+            this.panel1.Location = new System.Drawing.Point(3, 22);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(850, 451);
+            this.panel1.Size = new System.Drawing.Size(850, 447);
             this.panel1.TabIndex = 70;
             // 
             // BtnEconImport
@@ -398,7 +403,7 @@ namespace FIA_Biosum_Manager
             this.txtEconVariableTotalWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtEconVariableTotalWeight.Location = new System.Drawing.Point(393, 301);
             this.txtEconVariableTotalWeight.Name = "txtEconVariableTotalWeight";
-            this.txtEconVariableTotalWeight.Size = new System.Drawing.Size(121, 22);
+            this.txtEconVariableTotalWeight.Size = new System.Drawing.Size(121, 26);
             this.txtEconVariableTotalWeight.TabIndex = 92;
             this.txtEconVariableTotalWeight.Text = "4.0";
             this.txtEconVariableTotalWeight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -478,10 +483,10 @@ namespace FIA_Biosum_Manager
             // lstEconVariablesList
             // 
             this.lstEconVariablesList.FormattingEnabled = true;
-            this.lstEconVariablesList.ItemHeight = 16;
+            this.lstEconVariablesList.ItemHeight = 20;
             this.lstEconVariablesList.Location = new System.Drawing.Point(6, 21);
             this.lstEconVariablesList.Name = "lstEconVariablesList";
-            this.lstEconVariablesList.Size = new System.Drawing.Size(181, 100);
+            this.lstEconVariablesList.Size = new System.Drawing.Size(181, 84);
             this.lstEconVariablesList.TabIndex = 70;
             // 
             // lblSelectedEconType
@@ -516,6 +521,7 @@ namespace FIA_Biosum_Manager
             // pnlSummary
             // 
             this.pnlSummary.AutoScroll = true;
+            this.pnlSummary.Controls.Add(this.BtnRefresh);
             this.pnlSummary.Controls.Add(this.BtnHelpCalculatedMenu);
             this.pnlSummary.Controls.Add(this.btnNewEcon);
             this.pnlSummary.Controls.Add(this.btnCancelSummary);
@@ -523,15 +529,25 @@ namespace FIA_Biosum_Manager
             this.pnlSummary.Controls.Add(this.btnNewFvs);
             this.pnlSummary.Controls.Add(this.lstVariables);
             this.pnlSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSummary.Location = new System.Drawing.Point(3, 18);
+            this.pnlSummary.Location = new System.Drawing.Point(3, 22);
             this.pnlSummary.Name = "pnlSummary";
-            this.pnlSummary.Size = new System.Drawing.Size(850, 451);
+            this.pnlSummary.Size = new System.Drawing.Size(850, 447);
             this.pnlSummary.TabIndex = 12;
+            // 
+            // BtnRefresh
+            // 
+            this.BtnRefresh.Enabled = false;
+            this.BtnRefresh.Location = new System.Drawing.Point(102, 360);
+            this.BtnRefresh.Name = "BtnRefresh";
+            this.BtnRefresh.Size = new System.Drawing.Size(80, 32);
+            this.BtnRefresh.TabIndex = 89;
+            this.BtnRefresh.Text = "Refresh";
+            this.BtnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
             // BtnHelpCalculatedMenu
             // 
             this.BtnHelpCalculatedMenu.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpCalculatedMenu.Location = new System.Drawing.Point(81, 360);
+            this.BtnHelpCalculatedMenu.Location = new System.Drawing.Point(21, 360);
             this.BtnHelpCalculatedMenu.Name = "BtnHelpCalculatedMenu";
             this.BtnHelpCalculatedMenu.Size = new System.Drawing.Size(64, 32);
             this.BtnHelpCalculatedMenu.TabIndex = 88;
@@ -540,7 +556,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnNewEcon
             // 
-            this.btnNewEcon.Location = new System.Drawing.Point(151, 360);
+            this.btnNewEcon.Location = new System.Drawing.Point(191, 360);
             this.btnNewEcon.Name = "btnNewEcon";
             this.btnNewEcon.Size = new System.Drawing.Size(148, 32);
             this.btnNewEcon.TabIndex = 14;
@@ -549,25 +565,25 @@ namespace FIA_Biosum_Manager
             // 
             // btnCancelSummary
             // 
-            this.btnCancelSummary.Location = new System.Drawing.Point(558, 360);
+            this.btnCancelSummary.Location = new System.Drawing.Point(580, 360);
             this.btnCancelSummary.Name = "btnCancelSummary";
-            this.btnCancelSummary.Size = new System.Drawing.Size(114, 32);
+            this.btnCancelSummary.Size = new System.Drawing.Size(90, 32);
             this.btnCancelSummary.TabIndex = 13;
             this.btnCancelSummary.Text = "Cancel";
             this.btnCancelSummary.Click += new System.EventHandler(this.btnCancelSummary_Click);
             // 
             // btnProperties
             // 
-            this.btnProperties.Location = new System.Drawing.Point(438, 360);
+            this.btnProperties.Location = new System.Drawing.Point(482, 360);
             this.btnProperties.Name = "btnProperties";
-            this.btnProperties.Size = new System.Drawing.Size(114, 32);
+            this.btnProperties.Size = new System.Drawing.Size(90, 32);
             this.btnProperties.TabIndex = 12;
             this.btnProperties.Text = "Properties";
             this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click);
             // 
             // btnNewFvs
             // 
-            this.btnNewFvs.Location = new System.Drawing.Point(306, 360);
+            this.btnNewFvs.Location = new System.Drawing.Point(347, 360);
             this.btnNewFvs.Name = "btnNewFvs";
             this.btnNewFvs.Size = new System.Drawing.Size(126, 32);
             this.btnNewFvs.TabIndex = 4;
@@ -664,9 +680,9 @@ namespace FIA_Biosum_Manager
             this.pnlDetails.Controls.Add(this.LblSelectedVariable);
             this.pnlDetails.Controls.Add(this.lblSelectedFVSVariable);
             this.pnlDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlDetails.Location = new System.Drawing.Point(3, 18);
+            this.pnlDetails.Location = new System.Drawing.Point(3, 22);
             this.pnlDetails.Name = "pnlDetails";
-            this.pnlDetails.Size = new System.Drawing.Size(850, 451);
+            this.pnlDetails.Size = new System.Drawing.Size(850, 447);
             this.pnlDetails.TabIndex = 70;
             // 
             // BtnFvsImport
@@ -726,7 +742,7 @@ namespace FIA_Biosum_Manager
             this.txtFvsVariableTotalWeight.Location = new System.Drawing.Point(463, 297);
             this.txtFvsVariableTotalWeight.Name = "txtFvsVariableTotalWeight";
             this.txtFvsVariableTotalWeight.ReadOnly = true;
-            this.txtFvsVariableTotalWeight.Size = new System.Drawing.Size(121, 22);
+            this.txtFvsVariableTotalWeight.Size = new System.Drawing.Size(121, 26);
             this.txtFvsVariableTotalWeight.TabIndex = 90;
             this.txtFvsVariableTotalWeight.Text = "0.0";
             this.txtFvsVariableTotalWeight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -808,7 +824,7 @@ namespace FIA_Biosum_Manager
             this.cboFvsVariableBaselinePkg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboFvsVariableBaselinePkg.Location = new System.Drawing.Point(8, 18);
             this.cboFvsVariableBaselinePkg.Name = "cboFvsVariableBaselinePkg";
-            this.cboFvsVariableBaselinePkg.Size = new System.Drawing.Size(72, 24);
+            this.cboFvsVariableBaselinePkg.Size = new System.Drawing.Size(72, 28);
             this.cboFvsVariableBaselinePkg.TabIndex = 77;
             // 
             // groupBox3
@@ -824,10 +840,10 @@ namespace FIA_Biosum_Manager
             // lstFVSFieldsList
             // 
             this.lstFVSFieldsList.FormattingEnabled = true;
-            this.lstFVSFieldsList.ItemHeight = 16;
+            this.lstFVSFieldsList.ItemHeight = 20;
             this.lstFVSFieldsList.Location = new System.Drawing.Point(6, 21);
             this.lstFVSFieldsList.Name = "lstFVSFieldsList";
-            this.lstFVSFieldsList.Size = new System.Drawing.Size(181, 100);
+            this.lstFVSFieldsList.Size = new System.Drawing.Size(181, 84);
             this.lstFVSFieldsList.Sorted = true;
             this.lstFVSFieldsList.TabIndex = 70;
             this.lstFVSFieldsList.SelectedIndexChanged += new System.EventHandler(this.lstFVSFieldsList_SelectedIndexChanged);
@@ -846,10 +862,10 @@ namespace FIA_Biosum_Manager
             // lstFVSTablesList
             // 
             this.lstFVSTablesList.FormattingEnabled = true;
-            this.lstFVSTablesList.ItemHeight = 16;
+            this.lstFVSTablesList.ItemHeight = 20;
             this.lstFVSTablesList.Location = new System.Drawing.Point(6, 21);
             this.lstFVSTablesList.Name = "lstFVSTablesList";
-            this.lstFVSTablesList.Size = new System.Drawing.Size(181, 100);
+            this.lstFVSTablesList.Size = new System.Drawing.Size(181, 84);
             this.lstFVSTablesList.TabIndex = 70;
             this.lstFVSTablesList.SelectedIndexChanged += new System.EventHandler(this.lstFVSTablesList_SelectedIndexChanged);
             this.lstFVSTablesList.GotFocus += new System.EventHandler(this.lstFVSTables_GotFocus);
@@ -876,7 +892,7 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.ForeColor = System.Drawing.Color.Green;
-            this.lblTitle.Location = new System.Drawing.Point(3, 16);
+            this.lblTitle.Location = new System.Drawing.Point(3, 18);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(866, 32);
             this.lblTitle.TabIndex = 27;
@@ -961,6 +977,17 @@ namespace FIA_Biosum_Manager
                 {
                     lstFVSTablesList.Items.Add(strKey);
                 }
+            }
+
+            // Enable the refresh button if we have calculated weighted variables
+            string strPrePostWeightedAccdb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            if (System.IO.File.Exists(strPrePostWeightedAccdb))
+            {
+                m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strPrePostWeightedAccdb, "", ""));
+                string[] arrTableNames = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
+                if (arrTableNames.Length > 0)
+                    BtnRefresh.Enabled = true;
             }
 
             if (m_oAdo != null)
@@ -1279,14 +1306,12 @@ namespace FIA_Biosum_Manager
         private void loadLstVariables()
         {
             //Loading the first (main) groupbox
-            string strCalculatedVariablesACCDB = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
-                "\\" + Tables.OptimizerDefinitions.DefaultDbFile;
             //Only instantiate the m_oAdo if it is null so we don't wipe everything out in subsequent refreshes
             if (m_oAdo == null)
             {
                 m_oAdo = new ado_data_access();
             }
-            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strCalculatedVariablesACCDB, "", ""));
+            m_oAdo.OpenConnection(m_oAdo.getMDBConnString(m_strCalculatedVariablesAccdb, "", ""));
             m_oAdo.m_strSQL = "SELECT * FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
                 " ORDER BY VARIABLE_NAME";
             m_oAdo.SqlQueryReader(m_oAdo.m_OleDbConnection, m_oAdo.m_strSQL);
@@ -3484,6 +3509,24 @@ namespace FIA_Biosum_Manager
                 System.Windows.MessageBox.Show("Weights successfully saved!!", "FIA Biosum");
             }
           }
+
+        private void BtnRefresh_Click(object sender, EventArgs e)
+        {
+            DialogResult res = MessageBox.Show("The Refresh button overwrites the existing FVS weighted variable tables. " +
+                                               "This process cannot be undone and may take several minutes. Do you wish " +
+                                               "to continue?", "FIA Biosum", MessageBoxButtons.YesNo);
+            if (res != DialogResult.Yes)
+            {
+                return;
+            }
+            // assemble the path for the backup database
+            string strDbName = System.IO.Path.GetFileNameWithoutExtension(Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile);
+            string strDbFolder = System.IO.Path.GetDirectoryName(Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile);
+            string strBackupAccdb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                "\\" + strDbFolder + "\\" + strDbName + "_backup.accdb";
+            System.IO.File.Copy(frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
+                strBackupAccdb, true);
+        }
 
     }
 
