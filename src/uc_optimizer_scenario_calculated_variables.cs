@@ -1,10 +1,11 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using System.Data.OleDb;
+using System.Threading;
 
 namespace FIA_Biosum_Manager
 {
@@ -148,6 +149,7 @@ namespace FIA_Biosum_Manager
         public Button BtnEconImport;
         private Button BtnRefresh;
         private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
+        private frmTherm m_frmTherm;
 
         public uc_optimizer_scenario_calculated_variables(FIA_Biosum_Manager.frmMain p_frmMain)
         {
@@ -3526,8 +3528,367 @@ namespace FIA_Biosum_Manager
                 "\\" + strDbFolder + "\\" + strDbName + "_backup.accdb";
             System.IO.File.Copy(frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
                 strBackupAccdb, true);
+            RefreshCalculatedVariables_Start();
+            MessageBox.Show("Variables Recalculated!!", "FIA Biosum");
         }
 
+        private void RefreshCalculatedVariables_Process()
+        {
+            frmMain.g_oDelegate.CurrentThreadProcessStarted = true;
+            m_intError = 0;
+            ado_data_access oAdo = new ado_data_access();
+            dao_data_access oDao = new dao_data_access();
+
+            try
+            {
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "RefreshCalculatedVariables_Process: BEGIN \r\n");
+                }
+                
+                //progress bar 1: single process
+                SetThermValue(m_frmTherm.progressBar1, "Maximum", 100);
+                SetThermValue(m_frmTherm.progressBar1, "Minimum", 0);
+                SetThermValue(m_frmTherm.progressBar1, "Value", 0);
+                SetLabelValue(m_frmTherm.lblMsg, "Text", "");
+                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
+                //progress bar 2: overall progress
+                SetThermValue(m_frmTherm.progressBar2, "Maximum", 100);
+                SetThermValue(m_frmTherm.progressBar2, "Minimum", 0);
+                SetThermValue(m_frmTherm.progressBar2, "Value", 0);
+                SetLabelValue(m_frmTherm.lblMsg2, "Text", "Overall Progress");
+                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Form)m_frmTherm, "Visible", true);
+                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)pnlSummary, "Enabled",
+                    false);                
+
+                UpdateProgressBar2(0);
+
+                string strPrePostWeightedAccdb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                    "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+                oAdo.OpenConnection(oAdo.getMDBConnString(strPrePostWeightedAccdb, "", ""));
+                string[] arrTableNames = oAdo.getTableNames(oAdo.m_OleDbConnection);
+                var counter1 = 5;
+                var counter2 = 10;
+                UpdateProgressBar2(counter2);
+                UpdateProgressBar1("Dropping weighted variable tables", counter1);
+
+                foreach (var strTableName in arrTableNames)
+                {
+                    oAdo.m_strSQL = "DROP TABLE " + strTableName;
+                    oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                    if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                    {
+                        frmMain.g_oUtils.WriteText(m_strDebugFile, oAdo.m_strSQL + "\r\n\r\n");
+                    }
+
+                }
+                counter1 = counter1 + 5;
+                counter2 = counter2 + 10;
+
+                // Get list of variables to recalculate
+                IDictionary<int, string> dictFvsWeightedVariables = new Dictionary<int,string>();
+                oAdo.OpenConnection(oAdo.getMDBConnString(m_strCalculatedVariablesAccdb, "", ""));
+                oAdo.m_strSQL = "SELECT ID, VARIABLE_SOURCE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
+                    " WHERE VARIABLE_TYPE = 'FVS' ORDER BY VARIABLE_SOURCE";
+                oAdo.SqlQueryReader(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, oAdo.m_strSQL + "\r\n\r\n");
+                }
+
+                if (oAdo.m_OleDbDataReader.HasRows)
+                {
+                    while (oAdo.m_OleDbDataReader.Read())
+                    {
+                        int key = Convert.ToInt32(oAdo.m_OleDbDataReader["ID"]);
+                        if (oAdo.m_OleDbDataReader["VARIABLE_SOURCE"] != System.DBNull.Value && ! dictFvsWeightedVariables.Keys.Contains(key))
+                        {
+                            dictFvsWeightedVariables.Add(key, Convert.ToString(oAdo.m_OleDbDataReader["VARIABLE_SOURCE"]));
+                        }
+                    }
+                }
+                if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                {
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "Stored FVS variable information in memory \r\n\r\n");
+                }
+
+                string strCurrentDatabase = "";
+                string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
+                string strWeightsByRxCyclePostTable = "WEIGHTS_BY_RX_CYCLE_POST";
+                string strWeightsByRxPkgPreTable = "WEIGHTS_BY_RXPACKAGE_PRE";
+                string strWeightsByRxPkgPostTable = "WEIGHTS_BY_RXPACKAGE_POST";
+
+                //used to get the temporary random file name
+                utils objUtils = new utils();
+                //create and set temporary mdb file
+                string strDestinationLinkDir = this.m_oEnv.strTempDir;
+                m_strTempMDB = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
+                oDao.CreateMDB(m_strTempMDB);
+                foreach (var keyId in dictFvsWeightedVariables.Keys)
+                {
+                    string[] strArray = frmMain.g_oUtils.ConvertListToArray(dictFvsWeightedVariables[keyId], ".");
+                    string strDatabase = "";
+                    string strColumn = "";
+                    if (strArray.Length == 2)
+                    {
+                        if (strArray[0].Trim().Length > 0)
+                        {
+                            strDatabase = strArray[0].Trim();
+                        }
+                        if (strArray[1].Trim().Length > 0)
+                        {
+                            strColumn = strArray[1].Trim();
+                        }
+
+                        if (!strDatabase.Equals(strCurrentDatabase))
+                        {
+                            // We need to create the tables
+                            string strSourceDatabaseName = "PREPOST_" + strDatabase + ".ACCDB";
+                            string strFvsPrePostDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
+                                "\\fvs\\db\\" + strSourceDatabaseName;
+                            string strSourcePreTable = "PRE_" + strDatabase;
+                            string strSourcePostTable = "POST_" + strDatabase;
+                            string strTargetPreTable = "PRE_" + strDatabase + "_WEIGHTED";
+                            string strTargetPostTable = "POST_" + strDatabase + "_WEIGHTED";
+
+                            UpdateProgressBar1("Creating tables for " + strDatabase, counter1);
+                            counter1 = counter1 + 3;
+
+                            //Link to source FVS tables in temp .mdb if they don't exist from a previous run
+                            if (!oDao.TableExists(strPrePostWeightedAccdb, strSourcePreTable))
+                            {
+                                oDao.CreateTableLink(strPrePostWeightedAccdb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
+                            }
+                            if (!oDao.TableExists(strPrePostWeightedAccdb, strSourcePostTable))
+                            {
+                                oDao.CreateTableLink(strPrePostWeightedAccdb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
+                            }
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Created table link to " + strFvsPrePostDb + "\r\n\r\n");
+                            }
+
+                            oAdo.OpenConnection(oAdo.getMDBConnString(strPrePostWeightedAccdb, "", ""));
+                            // FVS creates a record for
+                            // each condition for each cycle regardless of whether there is activity
+                            oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                      strColumn + " " +
+                                      "INTO " + strTargetPreTable +
+                                      " FROM " + strSourcePreTable;
+                            if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
+                            {
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "Creating final pre/post tables. They did not already exist \r\n");
+                                frmMain.g_oUtils.WriteText(m_strDebugFile, "sql: " + oAdo.m_strSQL + "\r\n\r\n");
+                            }
+
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+                            oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
+                                                  strColumn + " " +
+                                                  "INTO " + strTargetPostTable +
+                                                  " FROM " + strSourcePostTable;
+                            oAdo.SqlNonQuery(oAdo.m_OleDbConnection, oAdo.m_strSQL);
+
+                            oDao.DeleteTableFromMDB(strPrePostWeightedAccdb, strSourcePreTable);
+                            oDao.DeleteTableFromMDB(strPrePostWeightedAccdb, strSourcePostTable);
+
+                            strCurrentDatabase = strDatabase;
+                        }
+
+                        counter1 = counter1 + 5;
+
+                        //Drop strWeightsByRxCyclePreTable if it exists so we can recreate it
+                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePreTable))
+                        {
+                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePreTable);
+                        }
+                        //Drop strWeightsByRxCyclePostTable if it exists so we can recreate it
+                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePostTable))
+                        {
+                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePostTable);
+                        }
+                        //Drop strWeightsByRxPkgPreTable if it exists so we can recreate it
+                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxPkgPreTable))
+                        {
+                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxPkgPreTable);
+                        }
+                        //Drop strWeightsByRxPkgPostTable if it exists so we can recreate it
+                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxPkgPostTable))
+                        {
+                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxPkgPostTable);
+                        }
+                        //Drop strWeightsByRxCyclePostTable if it exists so we can recreate it
+                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePostTable))
+                        {
+                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePostTable);
+                        }
+
+                    }
+                }
+
+                UpdateProgressBar2(100);
+
+
+                if (oAdo != null)
+                {
+                    if (oAdo.m_DataSet != null)
+                    {
+                        oAdo.m_DataSet.Clear();
+                        oAdo.m_DataSet.Dispose();
+                    }
+                    oAdo = null;
+                }
+                if (oDao != null)
+                {
+                    oDao.m_DaoWorkspace.Close();
+                    oDao.m_DaoWorkspace = null;
+                    oDao = null;
+                }
+
+                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control) pnlSummary, "Enabled",
+                    true);
+
+                RefreshCalculatedVariables_Finish();
+            }
+            catch (System.Threading.ThreadInterruptedException err)
+            {
+                MessageBox.Show("Threading Interruption Error " + err.Message.ToString());
+            }
+            catch (System.Threading.ThreadAbortException err)
+            {
+                if (oAdo != null)
+                {
+                    if (oAdo.m_DataSet != null)
+                    {
+                        oAdo.m_DataSet.Clear();
+                        oAdo.m_DataSet.Dispose();
+                    }
+                    oAdo = null;
+                }
+                ThreadCleanUp();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("!!Error!! \n" +
+                                "Module - uc_optimizer_scenario_calculated_variables:RefreshCalculatedVariables_Process  \n" +
+                                "Err Msg - " + err.Message.ToString().Trim(),
+                    "FVS Biosum", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Exclamation);
+                m_intError = -1;
+            }
+
+            RefreshCalculatedVariables_Finish();
+
+            frmMain.g_oDelegate.m_oEventThreadStopped.Set();
+            Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
+        }
+
+        private void RefreshCalculatedVariables_Start()
+        {
+            frmMain.g_oDelegate.InitializeThreadEvents();
+            frmMain.g_oDelegate.m_oEventStopThread.Reset();
+            frmMain.g_oDelegate.m_oEventThreadStopped.Reset();
+            frmMain.g_oDelegate.CurrentThreadProcessAborted = false;
+            frmMain.g_oDelegate.CurrentThreadProcessDone = false;
+            frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
+            StartTherm("2", "Refresh Calculated Variable Tables");
+            frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(RefreshCalculatedVariables_Process));
+            frmMain.g_oDelegate.m_oThread.IsBackground = true;
+            frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
+            frmMain.g_oDelegate.m_oThread.Start();
+        }
+
+        private void RefreshCalculatedVariables_Finish()
+        {
+            if (m_frmTherm != null)
+            {
+                frmMain.g_oDelegate.ExecuteControlMethod(m_frmTherm, "Close");
+                frmMain.g_oDelegate.ExecuteControlMethod(m_frmTherm, "Dispose");
+                m_frmTherm = null;
+            }
+            frmMain.g_oDelegate.SetControlPropertyValue(this, "Enabled", true);
+            ((frmDialog)ParentForm).MinimizeMainForm = false;
+        }
+        
+        private void StartTherm(string p_strNumberOfTherms, string p_strTitle)
+        {
+            m_frmTherm = new frmTherm((frmDialog)ParentForm, p_strTitle);
+
+            m_frmTherm.Text = p_strTitle;
+            m_frmTherm.lblMsg.Text = "";
+            m_frmTherm.lblMsg2.Text = "";
+            m_frmTherm.Visible = false;
+            m_frmTherm.btnCancel.Visible = false;
+            m_frmTherm.btnCancel.Enabled = false;
+            m_frmTherm.lblMsg.Visible = true;
+            m_frmTherm.progressBar1.Minimum = 0;
+            m_frmTherm.progressBar1.Visible = true;
+            m_frmTherm.progressBar1.Maximum = 10;
+
+            if (p_strNumberOfTherms == "2")
+            {
+                m_frmTherm.progressBar2.Size = m_frmTherm.progressBar1.Size;
+                m_frmTherm.progressBar2.Left = m_frmTherm.progressBar1.Left;
+                m_frmTherm.progressBar2.Top =
+                    Convert.ToInt32(m_frmTherm.progressBar1.Top + (m_frmTherm.progressBar1.Height * 3));
+                m_frmTherm.lblMsg2.Top =
+                    m_frmTherm.progressBar2.Top + m_frmTherm.progressBar2.Height + 5;
+                m_frmTherm.Height = m_frmTherm.lblMsg2.Top + m_frmTherm.lblMsg2.Height +
+                                         m_frmTherm.btnCancel.Height + 50;
+                m_frmTherm.btnCancel.Top =
+                    m_frmTherm.ClientSize.Height - m_frmTherm.btnCancel.Height - 5;
+                m_frmTherm.lblMsg2.Show();
+                m_frmTherm.progressBar2.Visible = true;
+            }
+            m_frmTherm.AbortProcess = false;
+            m_frmTherm.Refresh();
+            m_frmTherm.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            ((frmDialog)ParentForm).Enabled = false;
+            m_frmTherm.Visible = true;
+        }
+
+        private void ThreadCleanUp()
+        {
+            try
+            {
+                frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control) pnlSummary, "Enabled",
+                    true);                
+                if (m_frmTherm != null)
+                {
+                    frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Close");
+                    frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Dispose");
+
+                    m_frmTherm = null;
+                }
+            }
+            catch
+            {
+            }
+        }
+        
+        private void UpdateProgressBar1(string label, int value)
+        {
+            SetLabelValue(m_frmTherm.lblMsg, "Text", label);
+            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar1,
+                "Value", value);
+        }
+        
+        private void UpdateProgressBar2(int value)
+        {
+            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)m_frmTherm.progressBar2,
+                "Value", value);
+        }
+        
+        private void SetThermValue(System.Windows.Forms.ProgressBar p_oPb, string p_strPropertyName, int p_intValue)
+        {
+            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Control)p_oPb, p_strPropertyName,
+                (int)p_intValue);
+        }
+
+        private void SetLabelValue(System.Windows.Forms.Label p_oLabel, string p_strPropertyName, string p_strValue)
+        {
+            frmMain.g_oDelegate.SetControlPropertyValue((System.Windows.Forms.Label)p_oLabel, p_strPropertyName,
+                p_strValue);
+        }
     }
 
 
