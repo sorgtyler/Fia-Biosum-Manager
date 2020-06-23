@@ -150,9 +150,10 @@ namespace FIA_Biosum_Manager
         private Button BtnRefresh;
         private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
         private frmTherm m_frmTherm;
-        int idxRxCycle = 0;
-        int idxWeight = 1;
-        int idxPreOrPost = 2;
+        private int idxRxCycle = 0;
+        private int idxWeight = 1;
+        private int idxPreOrPost = 2;
+        private int counter1Interval = 5;
 
         public uc_optimizer_scenario_calculated_variables(FIA_Biosum_Manager.frmMain p_frmMain)
         {
@@ -1839,86 +1840,6 @@ namespace FIA_Biosum_Manager
             p_oButton.Name = strButtonName;
         }
 
-
-
-
-        public void main_resize()
-        {
-
-        }
-
-        private void btnFVSVariablesPrePostVariableValue_Click(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private void btnFVSVariablesPrePostVariableClearAll_Click(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private void btnFVSVariablesPrePostVariableNext_Click(object sender, System.EventArgs e)
-        {
-
-        }
-        private void RollBack()
-        {
-            RollBack_variable1();
-            RollBack_variable2();
-            RollBack_variable3();
-            RollBack_SqlBetter();
-            RollBack_SqlWorse();
-            RollBack_Overall();
-        }
-        private void RollBack_variable1()
-        {
-        }
-        private void RollBack_variable2()
-        {
-        }
-        private void RollBack_variable3()
-        {
-        }
-        private void RollBack_SqlBetter()
-        {
-        }
-        private void RollBack_SqlWorse()
-        {
-        }
-        private void RollBack_Overall()
-        {
-        }
-
-        private void grpboxFVSVariablesPrePostVariable_Resize(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private void grpboxFVSVariablesPrePostExpression_Resize(object sender, System.EventArgs e)
-        {
-        }
-
-        private void grpboxFVSVariablesPrePostVariableValues_Resize(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private void btnFVSVariablesPrePostExpressionPrevious_Click(object sender, System.EventArgs e)
-        {
-
-
-
-        }
-
-
-
-
-        private void Go()
-        {
-
-        }
-
-
         private void ShowGroupBox(string p_strName)
         {
             int x;
@@ -1940,44 +1861,8 @@ namespace FIA_Biosum_Manager
             }
         }
 
-        private void btnFVSVariablesPrePostValuesButtonsEdit_Click(object sender, System.EventArgs e)
-        {
-
-        }
-
-
-        private void btnFVSVariablesPrePost2Overall_Click(object sender, System.EventArgs e)
-        {
-        }
-
-        private void btnFVSVariablesPrePostValuesButtonsClear_Click(object sender, System.EventArgs e)
-        {
-        }
-
-
-
-
         private void grpboxFVSVariablesPrePost_Resize(object sender, System.EventArgs e)
         {
-
-        }
-
-
-
-        private void lvFVSVariablesPrePostValues_DoubleClick(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private void pnlFVSVariablesPrePostExpression_Resize(object sender, System.EventArgs e)
-        {
-
-
-        }
-
-        private void pnlFVSVariablesPrePostVariable_Resize(object sender, System.EventArgs e)
-        {
-
 
         }
 
@@ -3433,10 +3318,12 @@ namespace FIA_Biosum_Manager
                         }
                     }
                 }
-                counter1 = counter1 + 5;
-                counter2 = counter2 + 10;
+                int counter2Interval = 5;
+                counter1 = counter1 + counter1Interval;
+                counter2 = counter2 + counter2Interval;
 
                 // Get list of variables to recalculate
+                UpdateProgressBar1("Querying database for calculated variables", counter1);
                 IDictionary<int, string> dictFvsWeightedVariables = new Dictionary<int,string>();
                 oAdo.OpenConnection(oAdo.getMDBConnString(m_strCalculatedVariablesAccdb, "", ""));
                 oAdo.m_strSQL = "SELECT ID, VARIABLE_SOURCE FROM " + Tables.OptimizerDefinitions.DefaultCalculatedOptimizerVariablesTableName +
@@ -3447,6 +3334,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oUtils.WriteText(m_strDebugFile, oAdo.m_strSQL + "\r\n\r\n");
                 }
 
+                IList<string> lstTables = new List<string>();
                 if (oAdo.m_OleDbDataReader.HasRows)
                 {
                     while (oAdo.m_OleDbDataReader.Read())
@@ -3455,15 +3343,30 @@ namespace FIA_Biosum_Manager
                         if (oAdo.m_OleDbDataReader["VARIABLE_SOURCE"] != System.DBNull.Value && ! dictFvsWeightedVariables.Keys.Contains(key))
                         {
                             dictFvsWeightedVariables.Add(key, Convert.ToString(oAdo.m_OleDbDataReader["VARIABLE_SOURCE"]));
+                            // Count the number of tables so we know how to set up the step progressor
+                            string[] strPieces = dictFvsWeightedVariables[key].Split('.');
+                            if (strPieces.Length == 2)
+                            {
+                                if (!lstTables.Contains(strPieces[0]))
+                                {
+                                    lstTables.Add(strPieces[0]);
+                                }
+                            }
                         }
                     }
+                }
+                if (lstTables.Count > 0)
+                {
+                    // Reset interval for counter 2 based on number of tables
+                    counter2Interval = 70 / (lstTables.Count);
                 }
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 {
                     frmMain.g_oUtils.WriteText(m_strDebugFile, "Stored FVS variable information in memory \r\n\r\n");
                 }
 
-                SetThermValue(m_frmTherm.progressBar1, "Maximum", 50 + (dictFvsWeightedVariables.Keys.Count * 3));
+                // Reset counter1 interval based on number of variables
+                counter1Interval = 40 / dictFvsWeightedVariables.Keys.Count;
 
                 string strCurrentDatabase = "";
                 string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
@@ -3475,8 +3378,8 @@ namespace FIA_Biosum_Manager
                 utils objUtils = new utils();
                 //create and set temporary mdb file
                 string strDestinationLinkDir = this.m_oEnv.strTempDir;
-                m_strTempMDB = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
-                oDao.CreateMDB(m_strTempMDB);
+                string strRefreshAccdb = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
+                oDao.CreateMDB(strRefreshAccdb);
                 foreach (var keyId in dictFvsWeightedVariables.Keys)
                 {
                     string[] strArray = frmMain.g_oUtils.ConvertListToArray(dictFvsWeightedVariables[keyId], ".");
@@ -3497,7 +3400,7 @@ namespace FIA_Biosum_Manager
                         string strSourcePostTable = "POST_" + strDatabase;
                         if (!strDatabase.Equals(strCurrentDatabase))
                         {
-                            counter2 = counter2 + 3;
+                            counter2 = counter2 + counter2Interval;
                             UpdateProgressBar2(counter2);
                             // We need to create the tables
                             string strSourceDatabaseName = "PREPOST_" + strDatabase + ".ACCDB";
@@ -3514,13 +3417,13 @@ namespace FIA_Biosum_Manager
                             counter1 = counter1 + 3;
 
                             //Link to source FVS tables in temp .mdb if they don't exist from a previous run
-                            if (!oDao.TableExists(m_strTempMDB, strSourcePreTable))
+                            if (!oDao.TableExists(strRefreshAccdb, strSourcePreTable))
                             {
-                                oDao.CreateTableLink(m_strTempMDB, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
+                                oDao.CreateTableLink(strRefreshAccdb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
                             }
-                            if (!oDao.TableExists(m_strTempMDB, strSourcePostTable))
+                            if (!oDao.TableExists(strRefreshAccdb, strSourcePostTable))
                             {
-                                oDao.CreateTableLink(m_strTempMDB, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
+                                oDao.CreateTableLink(strRefreshAccdb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
                             }
                             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                             {
@@ -3556,29 +3459,29 @@ namespace FIA_Biosum_Manager
                         }
 
                         //Drop strWeightsByRxCyclePreTable if it exists so we can recreate it
-                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePreTable))
+                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxCyclePreTable))
                         {
-                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePreTable);
+                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxCyclePreTable);
                         }
                         //Drop strWeightsByRxCyclePostTable if it exists so we can recreate it
-                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePostTable))
+                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxCyclePostTable))
                         {
-                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePostTable);
+                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxCyclePostTable);
                         }
                         //Drop strWeightsByRxPkgPreTable if it exists so we can recreate it
-                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxPkgPreTable))
+                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxPkgPreTable))
                         {
-                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxPkgPreTable);
+                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxPkgPreTable);
                         }
                         //Drop strWeightsByRxPkgPostTable if it exists so we can recreate it
-                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxPkgPostTable))
+                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxPkgPostTable))
                         {
-                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxPkgPostTable);
+                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxPkgPostTable);
                         }
                         //Drop strWeightsByRxCyclePostTable if it exists so we can recreate it
-                        if (oDao.TableExists(m_strTempMDB, strWeightsByRxCyclePostTable))
+                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxCyclePostTable))
                         {
-                            oDao.DeleteTableFromMDB(m_strTempMDB, strWeightsByRxCyclePostTable);
+                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxCyclePostTable);
                         }
 
                         // open connection to optimizer_definitions.accdb to query for weights
@@ -3603,25 +3506,25 @@ namespace FIA_Biosum_Manager
                         {
                             while (oAdo.m_OleDbDataReader.Read())
                             {
-                                string[] strRow = new string[3];
                                 strVariableName = Convert.ToString(oAdo.m_OleDbDataReader["VARIABLE_NAME"]).Trim();
                                 strBaselinePackage = Convert.ToString(oAdo.m_OleDbDataReader["BASELINE_RXPACKAGE"]).Trim();
                                 for (int rxCycle = 1; rxCycle < 5; rxCycle ++)
                                 {
                                     // PRE VALUES
+                                    string[] strPreRow = new string[3];
                                     string strFieldName = "weight_" + rxCycle + "_pre";
-                                    strRow[idxRxCycle] = Convert.ToString(rxCycle);
-                                    strRow[idxPreOrPost] = "PRE";
-                                    strRow[idxWeight] = Convert.ToString(oAdo.m_OleDbDataReader[strFieldName]);
-                                    lstWeights.Add(strRow);
+                                    strPreRow[idxRxCycle] = Convert.ToString(rxCycle);
+                                    strPreRow[idxPreOrPost] = "PRE";
+                                    strPreRow[idxWeight] = Convert.ToString(oAdo.m_OleDbDataReader[strFieldName]);
+                                    lstWeights.Add(strPreRow);
 
                                     // POST VALUES
-                                    strRow = new string[3];
+                                    string[] strPostRow = new string[3];
                                     strFieldName = "weight_" + rxCycle + "_post";
-                                    strRow[idxRxCycle] = Convert.ToString(rxCycle);
-                                    strRow[idxPreOrPost] = "POST";
-                                    strRow[idxWeight] = Convert.ToString(oAdo.m_OleDbDataReader[strFieldName]);
-                                    lstWeights.Add(strRow);
+                                    strPostRow[idxRxCycle] = Convert.ToString(rxCycle);
+                                    strPostRow[idxPreOrPost] = "POST";
+                                    strPostRow[idxWeight] = Convert.ToString(oAdo.m_OleDbDataReader[strFieldName]);
+                                    lstWeights.Add(strPostRow);
                                 }
                             }
                         }
@@ -3630,7 +3533,7 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Saved values loaded into data structure for calculation \r\n\r\n");
                         }
 
-                        string strCalculateConn = m_oAdo.getMDBConnString(m_strTempMDB, "", "");
+                        string strCalculateConn = m_oAdo.getMDBConnString(strRefreshAccdb, "", "");
                         CalculateVariable(oDao, strCalculateConn, strWeightsByRxPkgPreTable, strSourcePreTable,
                             strWeightsByRxPkgPostTable, strSourcePostTable, strVariableName, strColumn, strBaselinePackage,
                             lstWeights,false, ref counter1);
@@ -3638,8 +3541,8 @@ namespace FIA_Biosum_Manager
                     }
                 }
 
+                UpdateProgressBar1("Variables Recalculated!!", 100);
                 UpdateProgressBar2(100);
-
 
                 if (oAdo != null)
                 {
@@ -3684,6 +3587,7 @@ namespace FIA_Biosum_Manager
                                 "Err Msg - " + err.Message.ToString().Trim(),
                     "FVS Biosum", System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Exclamation);
+                frmMain.g_oDelegate.SetControlPropertyValue((frmDialog)ParentForm, "Enabled", true);
                 m_intError = -1;
             }
 
@@ -3702,10 +3606,10 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.CurrentThreadProcessDone = false;
             frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
             StartTherm("2", "Refresh Calculated Variable Tables");
-            //frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(RefreshCalculatedVariables_Process));
-            //frmMain.g_oDelegate.m_oThread.IsBackground = true;
-            //frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
-            //frmMain.g_oDelegate.m_oThread.Start();
+            frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(RefreshCalculatedVariables_Process));
+            frmMain.g_oDelegate.m_oThread.IsBackground = true;
+            frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
+            frmMain.g_oDelegate.m_oThread.Start();
         }
 
         private void RefreshCalculatedVariables_Finish()
@@ -3716,7 +3620,7 @@ namespace FIA_Biosum_Manager
                 frmMain.g_oDelegate.ExecuteControlMethod(m_frmTherm, "Dispose");
                 m_frmTherm = null;
             }
-            frmMain.g_oDelegate.SetControlPropertyValue(this, "Enabled", true);
+            frmMain.g_oDelegate.SetControlPropertyValue((frmDialog) ParentForm, "Enabled", true);
             ((frmDialog)ParentForm).MinimizeMainForm = false;
         }
 
@@ -3727,7 +3631,7 @@ namespace FIA_Biosum_Manager
         {
             if (counter1 > 0)
             {
-                counter1++;
+                counter1 = counter1 + counter1Interval;
                 UpdateProgressBar1("Calculating values for " + strVariableName, counter1);
             }
             string strWeightsByRxCyclePreTable = "WEIGHTS_BY_RX_CYCLE_PRE";
@@ -3736,9 +3640,11 @@ namespace FIA_Biosum_Manager
             string strTargetPostTable = strSourcePostTable + "_WEIGHTED";
             string strPrePostWeightedDb = frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory +
                 "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile;
+            string strRefreshAccdb = "";
             using (var calculateConn = new OleDbConnection(strCalculateConn))
             {
                 calculateConn.Open();
+                strRefreshAccdb = calculateConn.DataSource;
 
                 m_oAdo.m_strSQL = "SELECT biosum_cond_id, rxpackage, rx, rxcycle, fvs_variant, CDbl(0) as " +
                                   strVariableName + " " +
@@ -3865,18 +3771,23 @@ namespace FIA_Biosum_Manager
             }
 
             //Link receiving tables to temporary database
-            if (!oDao.TableExists(m_strTempMDB, strTargetPreTable))
+            if (!oDao.TableExists(strRefreshAccdb, strTargetPreTable))
             {
-                oDao.CreateTableLink(m_strTempMDB, strTargetPreTable, strPrePostWeightedDb, strTargetPreTable);
+                oDao.CreateTableLink(strRefreshAccdb, strTargetPreTable, strPrePostWeightedDb, strTargetPreTable);
             }
-            if (!oDao.TableExists(m_strTempMDB, strTargetPostTable))
+            if (!oDao.TableExists(strRefreshAccdb, strTargetPostTable))
             {
-                oDao.CreateTableLink(m_strTempMDB, strTargetPostTable, strPrePostWeightedDb, strTargetPostTable);
+                oDao.CreateTableLink(strRefreshAccdb, strTargetPostTable, strPrePostWeightedDb, strTargetPostTable);
             }
 
             //Switch connection to temporary database
             using (var calculateConn = new OleDbConnection(strCalculateConn))
             {
+                if (counter1 > 0)
+                {
+                    counter1 = counter1 + counter1Interval;
+                    UpdateProgressBar1("Calculating values for " + strVariableName, counter1);
+                }
                 calculateConn.Open();
                 m_oAdo.m_strSQL = "UPDATE (" + strWeightsByRxPkgPostTable + " pt " +
                                   "INNER JOIN " + strWeightsByRxPkgPreTable + " pe " +
@@ -3954,6 +3865,7 @@ namespace FIA_Biosum_Manager
                 {
                     frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Close");
                     frmMain.g_oDelegate.ExecuteControlMethod((System.Windows.Forms.Form)m_frmTherm, "Dispose");
+                    frmMain.g_oDelegate.SetControlPropertyValue((frmDialog)ParentForm, "Enabled", true);
 
                     m_frmTherm = null;
                 }
