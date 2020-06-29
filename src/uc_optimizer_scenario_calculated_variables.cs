@@ -147,7 +147,7 @@ namespace FIA_Biosum_Manager
         private Button BtnHelpCalculatedMenu;
         public Button BtnFvsImport;
         public Button BtnEconImport;
-        private Button BtnRefresh;
+        private Button BtnRecalculateAll;
         private FIA_Biosum_Manager.OptimizerScenarioTools m_oOptimizerScenarioTools = new OptimizerScenarioTools();
         private frmTherm m_frmTherm;
         private int idxRxCycle = 0;
@@ -248,7 +248,7 @@ namespace FIA_Biosum_Manager
             this.label4 = new System.Windows.Forms.Label();
             this.grpboxSummary = new System.Windows.Forms.GroupBox();
             this.pnlSummary = new System.Windows.Forms.Panel();
-            this.BtnRefresh = new System.Windows.Forms.Button();
+            this.BtnRecalculateAll = new System.Windows.Forms.Button();
             this.BtnHelpCalculatedMenu = new System.Windows.Forms.Button();
             this.btnNewEcon = new System.Windows.Forms.Button();
             this.btnCancelSummary = new System.Windows.Forms.Button();
@@ -527,7 +527,7 @@ namespace FIA_Biosum_Manager
             // pnlSummary
             // 
             this.pnlSummary.AutoScroll = true;
-            this.pnlSummary.Controls.Add(this.BtnRefresh);
+            this.pnlSummary.Controls.Add(this.BtnRecalculateAll);
             this.pnlSummary.Controls.Add(this.BtnHelpCalculatedMenu);
             this.pnlSummary.Controls.Add(this.btnNewEcon);
             this.pnlSummary.Controls.Add(this.btnCancelSummary);
@@ -540,20 +540,20 @@ namespace FIA_Biosum_Manager
             this.pnlSummary.Size = new System.Drawing.Size(850, 447);
             this.pnlSummary.TabIndex = 12;
             // 
-            // BtnRefresh
+            // BtnRecalculateAll
             // 
-            this.BtnRefresh.Enabled = false;
-            this.BtnRefresh.Location = new System.Drawing.Point(102, 360);
-            this.BtnRefresh.Name = "BtnRefresh";
-            this.BtnRefresh.Size = new System.Drawing.Size(80, 32);
-            this.BtnRefresh.TabIndex = 89;
-            this.BtnRefresh.Text = "Refresh";
-            this.BtnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
+            this.BtnRecalculateAll.Enabled = false;
+            this.BtnRecalculateAll.Location = new System.Drawing.Point(87, 360);
+            this.BtnRecalculateAll.Name = "BtnRecalculateAll";
+            this.BtnRecalculateAll.Size = new System.Drawing.Size(105, 32);
+            this.BtnRecalculateAll.TabIndex = 89;
+            this.BtnRecalculateAll.Text = "Recalculate All";
+            this.BtnRecalculateAll.Click += new System.EventHandler(this.BtnRecalculateAll_Click);
             // 
             // BtnHelpCalculatedMenu
             // 
             this.BtnHelpCalculatedMenu.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.BtnHelpCalculatedMenu.Location = new System.Drawing.Point(21, 360);
+            this.BtnHelpCalculatedMenu.Location = new System.Drawing.Point(17, 360);
             this.BtnHelpCalculatedMenu.Name = "BtnHelpCalculatedMenu";
             this.BtnHelpCalculatedMenu.Size = new System.Drawing.Size(64, 32);
             this.BtnHelpCalculatedMenu.TabIndex = 88;
@@ -562,7 +562,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnNewEcon
             // 
-            this.btnNewEcon.Location = new System.Drawing.Point(191, 360);
+            this.btnNewEcon.Location = new System.Drawing.Point(198, 360);
             this.btnNewEcon.Name = "btnNewEcon";
             this.btnNewEcon.Size = new System.Drawing.Size(148, 32);
             this.btnNewEcon.TabIndex = 14;
@@ -571,7 +571,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnCancelSummary
             // 
-            this.btnCancelSummary.Location = new System.Drawing.Point(580, 360);
+            this.btnCancelSummary.Location = new System.Drawing.Point(581, 360);
             this.btnCancelSummary.Name = "btnCancelSummary";
             this.btnCancelSummary.Size = new System.Drawing.Size(90, 32);
             this.btnCancelSummary.TabIndex = 13;
@@ -580,7 +580,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnProperties
             // 
-            this.btnProperties.Location = new System.Drawing.Point(482, 360);
+            this.btnProperties.Location = new System.Drawing.Point(485, 360);
             this.btnProperties.Name = "btnProperties";
             this.btnProperties.Size = new System.Drawing.Size(90, 32);
             this.btnProperties.TabIndex = 12;
@@ -589,7 +589,7 @@ namespace FIA_Biosum_Manager
             // 
             // btnNewFvs
             // 
-            this.btnNewFvs.Location = new System.Drawing.Point(347, 360);
+            this.btnNewFvs.Location = new System.Drawing.Point(352, 360);
             this.btnNewFvs.Name = "btnNewFvs";
             this.btnNewFvs.Size = new System.Drawing.Size(126, 32);
             this.btnNewFvs.TabIndex = 4;
@@ -993,7 +993,7 @@ namespace FIA_Biosum_Manager
                 m_oAdo.OpenConnection(m_oAdo.getMDBConnString(strPrePostWeightedAccdb, "", ""));
                 string[] arrTableNames = m_oAdo.getTableNames(m_oAdo.m_OleDbConnection);
                 if (arrTableNames.Length > 0)
-                    BtnRefresh.Enabled = true;
+                    BtnRecalculateAll.Enabled = true;
             }
 
             if (m_oAdo != null)
@@ -2534,7 +2534,7 @@ namespace FIA_Biosum_Manager
                     }
 
                     // Load the cycles and weights in a structure for CalculateVariable. This allows us to
-                    // share CalculateVariable with the refresh function
+                    // share CalculateVariable with the recalculate functions
                     IList<string[]> lstWeights = new List<string[]>();
                     foreach (DataRow row in this.m_dv.Table.Rows)
                     {
@@ -3249,9 +3249,9 @@ namespace FIA_Biosum_Manager
             }
           }
 
-        private void BtnRefresh_Click(object sender, EventArgs e)
+        private void BtnRecalculateAll_Click(object sender, EventArgs e)
         {
-            DialogResult res = MessageBox.Show("The Refresh button overwrites the existing FVS weighted variable tables. " +
+            DialogResult res = MessageBox.Show("The Recalculate All button overwrites the existing FVS weighted variable tables. " +
                                                "This process cannot be undone and may take several minutes. Do you wish " +
                                                "to continue?", "FIA Biosum", MessageBoxButtons.YesNo);
             if (res != DialogResult.Yes)
@@ -3265,10 +3265,10 @@ namespace FIA_Biosum_Manager
                 "\\" + strDbFolder + "\\" + strDbName + "_backup.accdb";
             System.IO.File.Copy(frmMain.g_oFrmMain.frmProject.uc_project1.m_strProjectDirectory + "\\" + Tables.OptimizerScenarioResults.DefaultCalculatedPrePostFVSVariableTableDbFile,
                 strBackupAccdb, true);
-            RefreshCalculatedVariables_Start();
+            RecalculateCalculatedVariables_Start();
         }
 
-        private void RefreshCalculatedVariables_Process()
+        private void RecalculateWeightedVariables_Process()
         {
             frmMain.g_oDelegate.CurrentThreadProcessStarted = true;
             m_intError = 0;
@@ -3279,7 +3279,7 @@ namespace FIA_Biosum_Manager
             {
                 if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                 {
-                    frmMain.g_oUtils.WriteText(m_strDebugFile, "RefreshCalculatedVariables_Process: BEGIN \r\n");
+                    frmMain.g_oUtils.WriteText(m_strDebugFile, "RecalculateCalculatedVariables_Process: BEGIN \r\n");
                 }
                 
                 //progress bar 1: single process
@@ -3378,8 +3378,8 @@ namespace FIA_Biosum_Manager
                 utils objUtils = new utils();
                 //create and set temporary mdb file
                 string strDestinationLinkDir = this.m_oEnv.strTempDir;
-                string strRefreshAccdb = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
-                oDao.CreateMDB(strRefreshAccdb);
+                string strRecalculateAccdb = objUtils.getRandomFile(strDestinationLinkDir, "accdb");
+                oDao.CreateMDB(strRecalculateAccdb);
                 foreach (var keyId in dictFvsWeightedVariables.Keys)
                 {
                     string[] strArray = frmMain.g_oUtils.ConvertListToArray(dictFvsWeightedVariables[keyId], ".");
@@ -3417,13 +3417,13 @@ namespace FIA_Biosum_Manager
                             counter1 = counter1 + 3;
 
                             //Link to source FVS tables in temp .mdb if they don't exist from a previous run
-                            if (!oDao.TableExists(strRefreshAccdb, strSourcePreTable))
+                            if (!oDao.TableExists(strRecalculateAccdb, strSourcePreTable))
                             {
-                                oDao.CreateTableLink(strRefreshAccdb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
+                                oDao.CreateTableLink(strRecalculateAccdb, strSourcePreTable, strFvsPrePostDb, strSourcePreTable);
                             }
-                            if (!oDao.TableExists(strRefreshAccdb, strSourcePostTable))
+                            if (!oDao.TableExists(strRecalculateAccdb, strSourcePostTable))
                             {
-                                oDao.CreateTableLink(strRefreshAccdb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
+                                oDao.CreateTableLink(strRecalculateAccdb, strSourcePostTable, strFvsPrePostDb, strSourcePostTable);
                             }
                             if (frmMain.g_bDebug && frmMain.g_intDebugLevel > 2)
                             {
@@ -3459,29 +3459,29 @@ namespace FIA_Biosum_Manager
                         }
 
                         //Drop strWeightsByRxCyclePreTable if it exists so we can recreate it
-                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxCyclePreTable))
+                        if (oDao.TableExists(strRecalculateAccdb, strWeightsByRxCyclePreTable))
                         {
-                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxCyclePreTable);
+                            oDao.DeleteTableFromMDB(strRecalculateAccdb, strWeightsByRxCyclePreTable);
                         }
                         //Drop strWeightsByRxCyclePostTable if it exists so we can recreate it
-                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxCyclePostTable))
+                        if (oDao.TableExists(strRecalculateAccdb, strWeightsByRxCyclePostTable))
                         {
-                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxCyclePostTable);
+                            oDao.DeleteTableFromMDB(strRecalculateAccdb, strWeightsByRxCyclePostTable);
                         }
                         //Drop strWeightsByRxPkgPreTable if it exists so we can recreate it
-                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxPkgPreTable))
+                        if (oDao.TableExists(strRecalculateAccdb, strWeightsByRxPkgPreTable))
                         {
-                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxPkgPreTable);
+                            oDao.DeleteTableFromMDB(strRecalculateAccdb, strWeightsByRxPkgPreTable);
                         }
                         //Drop strWeightsByRxPkgPostTable if it exists so we can recreate it
-                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxPkgPostTable))
+                        if (oDao.TableExists(strRecalculateAccdb, strWeightsByRxPkgPostTable))
                         {
-                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxPkgPostTable);
+                            oDao.DeleteTableFromMDB(strRecalculateAccdb, strWeightsByRxPkgPostTable);
                         }
                         //Drop strWeightsByRxCyclePostTable if it exists so we can recreate it
-                        if (oDao.TableExists(strRefreshAccdb, strWeightsByRxCyclePostTable))
+                        if (oDao.TableExists(strRecalculateAccdb, strWeightsByRxCyclePostTable))
                         {
-                            oDao.DeleteTableFromMDB(strRefreshAccdb, strWeightsByRxCyclePostTable);
+                            oDao.DeleteTableFromMDB(strRecalculateAccdb, strWeightsByRxCyclePostTable);
                         }
 
                         // open connection to optimizer_definitions.accdb to query for weights
@@ -3533,7 +3533,7 @@ namespace FIA_Biosum_Manager
                             frmMain.g_oUtils.WriteText(m_strDebugFile, "Saved values loaded into data structure for calculation \r\n\r\n");
                         }
 
-                        string strCalculateConn = m_oAdo.getMDBConnString(strRefreshAccdb, "", "");
+                        string strCalculateConn = m_oAdo.getMDBConnString(strRecalculateAccdb, "", "");
                         CalculateVariable(oDao, strCalculateConn, strWeightsByRxPkgPreTable, strSourcePreTable,
                             strWeightsByRxPkgPostTable, strSourcePostTable, strVariableName, strColumn, strBaselinePackage,
                             lstWeights,false, ref counter1);
@@ -3561,7 +3561,7 @@ namespace FIA_Biosum_Manager
                 }
 
                 MessageBox.Show("Variables Recalculated!!", "FIA Biosum");
-                RefreshCalculatedVariables_Finish();
+                RecalculateCalculatedVariables_Finish();
             }
             catch (System.Threading.ThreadInterruptedException err)
             {
@@ -3583,7 +3583,7 @@ namespace FIA_Biosum_Manager
             catch (Exception err)
             {
                 MessageBox.Show("!!Error!! \n" +
-                                "Module - uc_optimizer_scenario_calculated_variables:RefreshCalculatedVariables_Process  \n" +
+                                "Module - uc_optimizer_scenario_calculated_variables:RecalculateCalculatedVariables_Process  \n" +
                                 "Err Msg - " + err.Message.ToString().Trim(),
                     "FVS Biosum", System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Exclamation);
@@ -3591,13 +3591,13 @@ namespace FIA_Biosum_Manager
                 m_intError = -1;
             }
 
-            RefreshCalculatedVariables_Finish();
+            RecalculateCalculatedVariables_Finish();
 
             frmMain.g_oDelegate.m_oEventThreadStopped.Set();
             Invoke(frmMain.g_oDelegate.m_oDelegateThreadFinished);
         }
 
-        private void RefreshCalculatedVariables_Start()
+        private void RecalculateCalculatedVariables_Start()
         {
             frmMain.g_oDelegate.InitializeThreadEvents();
             frmMain.g_oDelegate.m_oEventStopThread.Reset();
@@ -3605,14 +3605,14 @@ namespace FIA_Biosum_Manager
             frmMain.g_oDelegate.CurrentThreadProcessAborted = false;
             frmMain.g_oDelegate.CurrentThreadProcessDone = false;
             frmMain.g_oDelegate.CurrentThreadProcessStarted = false;
-            StartTherm("2", "Refresh Calculated Variable Tables");
-            frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(RefreshCalculatedVariables_Process));
+            StartTherm("2", "Recalculate Calculated Variable Tables");
+            frmMain.g_oDelegate.m_oThread = new Thread(new ThreadStart(RecalculateWeightedVariables_Process));
             frmMain.g_oDelegate.m_oThread.IsBackground = true;
             frmMain.g_oDelegate.CurrentThreadProcessIdle = false;
             frmMain.g_oDelegate.m_oThread.Start();
         }
 
-        private void RefreshCalculatedVariables_Finish()
+        private void RecalculateCalculatedVariables_Finish()
         {
             if (m_frmTherm != null)
             {

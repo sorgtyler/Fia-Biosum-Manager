@@ -4039,8 +4039,9 @@ namespace FIA_Biosum_Manager
             {
                 intError = -1;
                 strErrorMessage = "PRE_" + strName + " table has a different number of records (" + intFvsPreTableCount +
-                    ") than " + strTableName + " (" + intWeightedPreTableCount + "). This weighted variable " +
-                    " cannot be used! \r\n";
+                    ") than " + strTableName + " (" + intWeightedPreTableCount + "). Weighted variables from this table" +
+                    " cannot be used! \r\nConsider running the 'Recalculate All' tool from the 'Calculated Variables'" +
+                    "screen to recalculate all weighted variable \r\n";
             }
 
             return strErrorMessage;
