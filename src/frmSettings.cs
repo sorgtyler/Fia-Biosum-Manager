@@ -777,6 +777,8 @@ namespace FIA_Biosum_Manager
                     string strExtension = System.IO.Path.GetExtension(strFullPath);
                     if (strExtension != null && strExtension.ToUpper().Equals(".R"))
                     {
+                        // We only deploy the most recent .R file in the appDir/opcost folder, thus
+                        // we always use the first one we find
                         strReturnPath = strDefaultOpcostDir + "\\" + System.IO.Path.GetFileName(strFullPath);
                         break;
                     }
