@@ -2017,7 +2017,16 @@ namespace FIA_Biosum_Manager
             {
                 m_oHelp = new Help(m_xpsFile, m_oEnv);
             }
-            m_oHelp.ShowHelp(new string[] { "FVS", "INPUT_DATA" });
+            string strHelpChapter = "";
+            if (tabControl1.SelectedIndex == 0)
+            {
+                strHelpChapter = "INPUT_DATA";
+            }
+            else
+            {
+                strHelpChapter = "INPUT_OPTIONS";
+            }
+            m_oHelp.ShowHelp(new string[] { "FVS", strHelpChapter });
 		}
 		private void txtDataDir_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{

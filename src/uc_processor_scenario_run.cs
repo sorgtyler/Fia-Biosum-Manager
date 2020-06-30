@@ -1762,7 +1762,7 @@ namespace FIA_Biosum_Manager
                         if (bOPCOST)
                         {
                             strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-                            strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(frmMain.g_strOPCOSTDirectory) + "_Input_" +
+                            strInputFile = System.IO.Path.GetFileNameWithoutExtension(frmMain.g_strOPCOSTDirectory) + "_Input_" +
                                            strVariant + "_P" + strRxPackage + "_" + strRx1 + "_" + strRx2 + "_" + strRx3 + "_" + strRx4 + "_" + m_strDateTimeCreated + ".accdb";
                             strInputFile = strInputFile.Replace(":", "_");
                             strInputFile = strInputFile.Replace(" ", "_");
@@ -4479,7 +4479,7 @@ namespace FIA_Biosum_Manager
             string p_strRx3, string p_strRx4, int p_intMinPercentOf2GB)
         {
             string strInputPath = frmMain.g_oFrmMain.getProjectDirectory() + "\\OPCOST\\Input";
-            string strInputFile = "OPCOST_" + System.IO.Path.GetFileNameWithoutExtension(frmMain.g_strOPCOSTDirectory) + "_Input_" +
+            string strInputFile = System.IO.Path.GetFileNameWithoutExtension(frmMain.g_strOPCOSTDirectory) + "_Input_" +
                            p_strVariant + "_P" + p_strRxPackage + "_" + p_strRx1 + "_" + p_strRx2 + "_" + p_strRx3 + "_" + p_strRx4 + "_" + m_strDateTimeCreated + ".accdb";
             strInputFile = strInputFile.Replace(":", "_");
             strInputFile = strInputFile.Replace(" ", "_");
