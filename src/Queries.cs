@@ -3514,13 +3514,13 @@ namespace FIA_Biosum_Manager
 		                    " (Stand_ID, Tree_ID, Tree_Count, History, Species, " +
 		                    "DBH, DG, Htcd, Ht, HtTopK, CrRatio, " +
 		                    "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
-		                    "Prescription, Slope, Aspect, PV_Code, TreeValue, cullbf, mist_cl_cd, " +
+		                    "Prescription, Slope, Aspect, PV_Code, TreeValue, Age, cullbf, mist_cl_cd, " +
 		                    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, TreeCN)  ";
 		                string strBioSumWorkTableSelectStmt =
 		                    "SELECT c.biosum_cond_id, VAL(t.fvs_tree_id) as Tree_ID, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
 		                    "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
 		                    "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
-		                    "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
+		                    "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.bhage as Age, t.cullbf, t.mist_cl_cd, " +
 		                    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
 		                string strFromTableExpr = "FROM " +
 		                                          strCondTableName + " c, " + strPlotTableName + " p, " +
@@ -3712,6 +3712,10 @@ namespace FIA_Biosum_Manager
 		                return strTreeValueUpdates;
 		            }
 
+                    public static string UpdateTreeAge(string destTable, string strTreeAgeOffset)
+                    {
+                        return "UPDATE " + strDestTable + " SET Age = Age + " + strTreeAgeOffset + " WHERE Age is not null;";
+                    }
 
 		            public static string PadSpeciesWithZero(string strDestTable)
 		            {

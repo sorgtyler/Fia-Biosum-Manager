@@ -113,6 +113,9 @@ namespace FIA_Biosum_Manager
         private LinkLabel linkLabelFuelModel;
         private GroupBox grpGRMOptions;
         private CheckBox chkGRM;
+        private GroupBox otherOptionsGroupBox;
+        private Label lblTreeAgeOffset;
+        private TextBox treeAgeTxtBox;
 
         delegate string[] GetListBoxItemsDlg(CheckedListBox checkedListBox);
 
@@ -213,6 +216,9 @@ namespace FIA_Biosum_Manager
             this.btnHelp = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.otherOptionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.lblTreeAgeOffset = new System.Windows.Forms.Label();
+            this.treeAgeTxtBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -220,6 +226,7 @@ namespace FIA_Biosum_Manager
             this.grpGRMOptions.SuspendLayout();
             this.grpDWMOptions.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.otherOptionsGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -269,10 +276,10 @@ namespace FIA_Biosum_Manager
             this.tabPage2.Controls.Add(this.btnRx);
             this.tabPage2.Controls.Add(this.lblTreeSpcVarCnt);
             this.tabPage2.Controls.Add(this.btnTreeSpcVariants);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(763, 457);
+            this.tabPage2.Size = new System.Drawing.Size(763, 454);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Main Menu";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -293,7 +300,7 @@ namespace FIA_Biosum_Manager
             this.txtDataDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDataDir.Location = new System.Drawing.Point(96, 60);
             this.txtDataDir.Name = "txtDataDir";
-            this.txtDataDir.Size = new System.Drawing.Size(661, 20);
+            this.txtDataDir.Size = new System.Drawing.Size(661, 23);
             this.txtDataDir.TabIndex = 99;
             // 
             // btnExecuteAction
@@ -334,7 +341,7 @@ namespace FIA_Biosum_Manager
             "View KCP Template Scripts"});
             this.cmbAction.Location = new System.Drawing.Point(301, 339);
             this.cmbAction.Name = "cmbAction";
-            this.cmbAction.Size = new System.Drawing.Size(362, 21);
+            this.cmbAction.Size = new System.Drawing.Size(362, 24);
             this.cmbAction.TabIndex = 4;
             this.cmbAction.Text = "<-------Action Items------->";
             this.cmbAction.SelectedIndexChanged += new System.EventHandler(this.cmbAction_SelectedIndexChanged);
@@ -448,12 +455,13 @@ namespace FIA_Biosum_Manager
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.otherOptionsGroupBox);
             this.tabPage1.Controls.Add(this.grpGRMOptions);
             this.tabPage1.Controls.Add(this.grpDWMOptions);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(763, 457);
+            this.tabPage1.Size = new System.Drawing.Size(763, 454);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Options";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -461,9 +469,9 @@ namespace FIA_Biosum_Manager
             // grpGRMOptions
             // 
             this.grpGRMOptions.Controls.Add(this.chkGRM);
-            this.grpGRMOptions.Location = new System.Drawing.Point(6, 390);
+            this.grpGRMOptions.Location = new System.Drawing.Point(451, 6);
             this.grpGRMOptions.Name = "grpGRMOptions";
-            this.grpGRMOptions.Size = new System.Drawing.Size(439, 56);
+            this.grpGRMOptions.Size = new System.Drawing.Size(316, 85);
             this.grpGRMOptions.TabIndex = 102;
             this.grpGRMOptions.TabStop = false;
             this.grpGRMOptions.Text = "Growth Removal Mortality";
@@ -473,7 +481,7 @@ namespace FIA_Biosum_Manager
             this.chkGRM.AutoSize = true;
             this.chkGRM.Location = new System.Drawing.Point(6, 20);
             this.chkGRM.Name = "chkGRM";
-            this.chkGRM.Size = new System.Drawing.Size(201, 17);
+            this.chkGRM.Size = new System.Drawing.Size(263, 21);
             this.chkGRM.TabIndex = 2;
             this.chkGRM.Text = "Use GRM calibration data if available";
             this.chkGRM.UseVisualStyleBackColor = true;
@@ -503,7 +511,7 @@ namespace FIA_Biosum_Manager
             this.linkLabelFuelModel.LinkArea = new System.Windows.Forms.LinkArea(8, 23);
             this.linkLabelFuelModel.Location = new System.Drawing.Point(23, 20);
             this.linkLabelFuelModel.Name = "linkLabelFuelModel";
-            this.linkLabelFuelModel.Size = new System.Drawing.Size(404, 17);
+            this.linkLabelFuelModel.Size = new System.Drawing.Size(477, 20);
             this.linkLabelFuelModel.TabIndex = 105;
             this.linkLabelFuelModel.TabStop = true;
             this.linkLabelFuelModel.Text = "Include Scott and Burgan (2005) surface fuel model (from DWM_fuelbed_typcd)";
@@ -528,7 +536,7 @@ namespace FIA_Biosum_Manager
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(123, 16);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(30, 13);
+            this.label6.Size = new System.Drawing.Size(40, 17);
             this.label6.TabIndex = 105;
             this.label6.Text = "Litter";
             // 
@@ -537,7 +545,7 @@ namespace FIA_Biosum_Manager
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(6, 16);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(27, 13);
+            this.label5.Size = new System.Drawing.Size(34, 17);
             this.label5.TabIndex = 104;
             this.label5.Text = "Duff";
             // 
@@ -546,7 +554,7 @@ namespace FIA_Biosum_Manager
             this.chkLstBoxDuffYears.FormattingEnabled = true;
             this.chkLstBoxDuffYears.Location = new System.Drawing.Point(9, 35);
             this.chkLstBoxDuffYears.Name = "chkLstBoxDuffYears";
-            this.chkLstBoxDuffYears.Size = new System.Drawing.Size(100, 184);
+            this.chkLstBoxDuffYears.Size = new System.Drawing.Size(100, 174);
             this.chkLstBoxDuffYears.TabIndex = 6;
             // 
             // chkLstBoxLitterYears
@@ -554,7 +562,7 @@ namespace FIA_Biosum_Manager
             this.chkLstBoxLitterYears.FormattingEnabled = true;
             this.chkLstBoxLitterYears.Location = new System.Drawing.Point(126, 35);
             this.chkLstBoxLitterYears.Name = "chkLstBoxLitterYears";
-            this.chkLstBoxLitterYears.Size = new System.Drawing.Size(100, 184);
+            this.chkLstBoxLitterYears.Size = new System.Drawing.Size(100, 174);
             this.chkLstBoxLitterYears.TabIndex = 7;
             // 
             // chkDwmFuelModel
@@ -562,7 +570,7 @@ namespace FIA_Biosum_Manager
             this.chkDwmFuelModel.AutoSize = true;
             this.chkDwmFuelModel.Location = new System.Drawing.Point(7, 19);
             this.chkDwmFuelModel.Name = "chkDwmFuelModel";
-            this.chkDwmFuelModel.Size = new System.Drawing.Size(15, 14);
+            this.chkDwmFuelModel.Size = new System.Drawing.Size(18, 17);
             this.chkDwmFuelModel.TabIndex = 1;
             this.chkDwmFuelModel.UseVisualStyleBackColor = true;
             // 
@@ -571,7 +579,7 @@ namespace FIA_Biosum_Manager
             this.chkDwmFuelBiomass.AutoSize = true;
             this.chkDwmFuelBiomass.Location = new System.Drawing.Point(7, 39);
             this.chkDwmFuelBiomass.Name = "chkDwmFuelBiomass";
-            this.chkDwmFuelBiomass.Size = new System.Drawing.Size(319, 17);
+            this.chkDwmFuelBiomass.Size = new System.Drawing.Size(417, 21);
             this.chkDwmFuelBiomass.TabIndex = 2;
             this.chkDwmFuelBiomass.Text = "Calculate fuel biomasses with available DWM data (tons/acre)";
             this.chkDwmFuelBiomass.UseVisualStyleBackColor = true;
@@ -582,7 +590,7 @@ namespace FIA_Biosum_Manager
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.label4.Location = new System.Drawing.Point(58, 119);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(173, 13);
+            this.label4.Size = new System.Drawing.Size(229, 17);
             this.label4.TabIndex = 99;
             this.label4.Tag = "txtMinCwdTL";
             this.label4.Text = "Minimum CWD Transect Length (ft)";
@@ -593,7 +601,7 @@ namespace FIA_Biosum_Manager
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.label2.Location = new System.Drawing.Point(58, 68);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(200, 13);
+            this.label2.Size = new System.Drawing.Size(266, 17);
             this.label2.TabIndex = 99;
             this.label2.Tag = "txtMinSmallFwdTL";
             this.label2.Text = "Minimum Small FWD Transect Length (ft)";
@@ -602,7 +610,7 @@ namespace FIA_Biosum_Manager
             // 
             this.txtMinLargeFwdTL.Location = new System.Drawing.Point(7, 90);
             this.txtMinLargeFwdTL.Name = "txtMinLargeFwdTL";
-            this.txtMinLargeFwdTL.Size = new System.Drawing.Size(45, 20);
+            this.txtMinLargeFwdTL.Size = new System.Drawing.Size(45, 22);
             this.txtMinLargeFwdTL.TabIndex = 4;
             this.txtMinLargeFwdTL.Text = "30";
             this.txtMinLargeFwdTL.Validating += new System.ComponentModel.CancelEventHandler(this.txtMinLargeFwdTL_Validating);
@@ -611,7 +619,7 @@ namespace FIA_Biosum_Manager
             // 
             this.txtMinCwdTL.Location = new System.Drawing.Point(7, 116);
             this.txtMinCwdTL.Name = "txtMinCwdTL";
-            this.txtMinCwdTL.Size = new System.Drawing.Size(45, 20);
+            this.txtMinCwdTL.Size = new System.Drawing.Size(45, 22);
             this.txtMinCwdTL.TabIndex = 5;
             this.txtMinCwdTL.Text = "48";
             this.txtMinCwdTL.Validating += new System.ComponentModel.CancelEventHandler(this.txtMinCwdTL_Validating);
@@ -622,7 +630,7 @@ namespace FIA_Biosum_Manager
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.label3.Location = new System.Drawing.Point(58, 93);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(202, 13);
+            this.label3.Size = new System.Drawing.Size(269, 17);
             this.label3.TabIndex = 99;
             this.label3.Tag = "txtMinLargeFwdTL";
             this.label3.Text = "Minimum Large FWD Transect Length (ft)";
@@ -631,7 +639,7 @@ namespace FIA_Biosum_Manager
             // 
             this.txtMinSmallFwdTL.Location = new System.Drawing.Point(7, 65);
             this.txtMinSmallFwdTL.Name = "txtMinSmallFwdTL";
-            this.txtMinSmallFwdTL.Size = new System.Drawing.Size(45, 20);
+            this.txtMinSmallFwdTL.Size = new System.Drawing.Size(45, 22);
             this.txtMinSmallFwdTL.TabIndex = 3;
             this.txtMinSmallFwdTL.Text = "10";
             this.txtMinSmallFwdTL.Validating += new System.ComponentModel.CancelEventHandler(this.txtMinSmallFwdTL_Validating);
@@ -687,11 +695,42 @@ namespace FIA_Biosum_Manager
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.ForeColor = System.Drawing.Color.Green;
-            this.lblTitle.Location = new System.Drawing.Point(3, 16);
+            this.lblTitle.Location = new System.Drawing.Point(3, 18);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(778, 32);
             this.lblTitle.TabIndex = 99;
             this.lblTitle.Text = "Create FVS Input";
+            // 
+            // otherOptionsGroupBox
+            // 
+            this.otherOptionsGroupBox.Controls.Add(this.lblTreeAgeOffset);
+            this.otherOptionsGroupBox.Controls.Add(this.treeAgeTxtBox);
+            this.otherOptionsGroupBox.Location = new System.Drawing.Point(451, 96);
+            this.otherOptionsGroupBox.Name = "otherOptionsGroupBox";
+            this.otherOptionsGroupBox.Size = new System.Drawing.Size(316, 85);
+            this.otherOptionsGroupBox.TabIndex = 103;
+            this.otherOptionsGroupBox.TabStop = false;
+            this.otherOptionsGroupBox.Text = "Other Options";
+            // 
+            // lblTreeAgeOffset
+            // 
+            this.lblTreeAgeOffset.AutoSize = true;
+            this.lblTreeAgeOffset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblTreeAgeOffset.Location = new System.Drawing.Point(56, 26);
+            this.lblTreeAgeOffset.Name = "lblTreeAgeOffset";
+            this.lblTreeAgeOffset.Size = new System.Drawing.Size(254, 17);
+            this.lblTreeAgeOffset.TabIndex = 101;
+            this.lblTreeAgeOffset.Tag = "";
+            this.lblTreeAgeOffset.Text = "Tree Age Offset, added to BHAge (yrs)";
+            // 
+            // treeAgeTxtBox
+            // 
+            this.treeAgeTxtBox.Location = new System.Drawing.Point(5, 23);
+            this.treeAgeTxtBox.Name = "treeAgeTxtBox";
+            this.treeAgeTxtBox.Size = new System.Drawing.Size(45, 22);
+            this.treeAgeTxtBox.TabIndex = 100;
+            this.treeAgeTxtBox.Text = "4";
+            this.treeAgeTxtBox.Validating += new System.ComponentModel.CancelEventHandler(this.treeAgeTxtBox_Validating);
             // 
             // uc_fvs_input
             // 
@@ -710,6 +749,8 @@ namespace FIA_Biosum_Manager
             this.grpDWMOptions.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.otherOptionsGroupBox.ResumeLayout(false);
+            this.otherOptionsGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -1604,6 +1645,7 @@ namespace FIA_Biosum_Manager
 	            frmMain.g_oDelegate.GetControlPropertyValue(txtMinLargeFwdTL, "Text", false).ToString();
 	        p_fvs.strMinCwdTransectLengthTotal =
 	            frmMain.g_oDelegate.GetControlPropertyValue(txtMinCwdTL, "Text", false).ToString();
+
 	        bool bFirst = true;
 	        foreach (var item in GetCheckedListBoxItems(chkLstBoxDuffYears))
 	        {
@@ -1633,6 +1675,9 @@ namespace FIA_Biosum_Manager
 
             //Growth Removal Mortality section
             p_fvs.bUseGrmCalibrationData = (bool) frmMain.g_oDelegate.GetControlPropertyValue(chkGRM, "Checked", false);
+
+            //Other Options section
+	        p_fvs.strTreeAgeOffset = frmMain.g_oDelegate.GetControlPropertyValue(treeAgeTxtBox, "Text", false).ToString();
 	    }
 
 		private void AppendRecords()
@@ -2669,6 +2714,14 @@ namespace FIA_Biosum_Manager
             }
         }
 
+        private void treeAgeTxtBox_Validating(object sender, CancelEventArgs e)
+        {
+            double temp;
+            if (!double.TryParse(treeAgeTxtBox.Text, out temp))
+            {
+                treeAgeTxtBox.Text = "4";
+            }
+        }
 
         private void tabControl1_Resize(object sender, EventArgs e)
         {

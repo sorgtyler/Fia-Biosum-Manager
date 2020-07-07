@@ -73,6 +73,9 @@ namespace FIA_Biosum_Manager
 	    private string m_strGrmTreeTable;
 	    private bool m_bUseGrmCalibrationData;
 
+        //Tree Age offset parameter: PNW should add 4-6 years to Breast Height Age, while Eastern states should use 8 years
+	    private string m_strTreeAgeOffset = "4";
+
         private string m_strDebugFile = frmMain.g_oEnv.strTempDir + "\\biosum_fvs_input_debug.txt";
 
 	    public fvs_input(string p_strProjDir,frmTherm p_frmTherm)
@@ -612,8 +615,8 @@ namespace FIA_Biosum_Manager
 	        stringBuilder.AppendLine("Minimum CWD Transect Length (ft): " + m_strMinCwdTransectLengthTotal);
 	        stringBuilder.AppendLine("Duff years excluded: " + m_strDuffExcludedYears);
 	        stringBuilder.AppendLine("Litter years excluded: " + m_strLitterExcludedYears);
-	        stringBuilder.AppendLine("Growth Removal Mortality Calibration data used: " +
-	            m_bUseGrmCalibrationData.ToString());
+	        stringBuilder.AppendLine("Growth Removal Mortality Calibration data used: " + m_bUseGrmCalibrationData);
+	        stringBuilder.AppendLine("Tree Age offset parameter: " + m_strTreeAgeOffset);
             frmMain.g_oUtils.WriteText(logFile, stringBuilder.ToString());
 	    }
 
@@ -663,6 +666,7 @@ namespace FIA_Biosum_Manager
 	        rows.Add(new string[] {"Duff years excluded", m_strDuffExcludedYears});
 	        rows.Add(new string[] {"Litter years excluded", m_strLitterExcludedYears});
 	        rows.Add(new string[] {"Growth Removal Mortality Calibration data used", m_bUseGrmCalibrationData.ToString()});
+	        rows.Add(new string[] {"Tree Age offset parameter", m_strTreeAgeOffset});
 	        return rows;
 	    }
 
@@ -921,7 +925,7 @@ namespace FIA_Biosum_Manager
                     frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.lblMsg, "Text",
                         "Writing FVS_TreeInit For Variant " + this.m_strVariant);
                     frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Minimum", 0);
-                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", 30);
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Maximum", 31);
 
                     string strTreeInitWorkTable = "FVS_TreeInit_WorkTable";
                     string strTreeInit = "FVS_TreeInit";
@@ -1008,6 +1012,11 @@ namespace FIA_Biosum_Manager
                         frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value",
                             intProgressBarCounter++);
                     }
+
+                    //Tree Age updates
+                    strSQL = Queries.FVS.FVSInput.TreeInit.UpdateTreeAge(strTreeInitWorkTable, m_strTreeAgeOffset);
+                    m_ado.SqlNonQuery(conn, strSQL); 
+                    frmMain.g_oDelegate.SetControlPropertyValue(m_frmTherm.progressBar1, "Value", intProgressBarCounter++);
 
                     //Calibration Data
                     if (bUseGrmCalibrationData)
@@ -1326,6 +1335,12 @@ namespace FIA_Biosum_Manager
 	    {
 	        set { m_bUseGrmCalibrationData = value; }
 	        get { return m_bUseGrmCalibrationData; }
+	    }
+
+	    public string strTreeAgeOffset
+	    {
+	        set { m_strTreeAgeOffset = value; }
+	        get { return m_strTreeAgeOffset; }
 	    }
 
 	    /// <summary>
