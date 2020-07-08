@@ -3513,291 +3513,295 @@ namespace FIA_Biosum_Manager
 		        }
 
 		        //All the queries necessary to create the FVSIn.accdb FVS_TreeInit table using intermediate tables
-		        public class TreeInit
-		        {
-		            TreeInit()
-		            {
-		            }
+                public class TreeInit
+                {
+                    TreeInit()
+                    {
+                    }
 
-		            public static string BulkImportTreeDataFromBioSumMaster(string strVariant, string strDestTable,
-		                string strCondTableName, string strPlotTableName, string strTreeTableName)
-		            {
-		                string strInsertIntoTreeInit =
-		                    "INSERT INTO " + strDestTable +
-		                    " (Stand_ID, Tree_ID, Tree_Count, History, Species, " +
-		                    "DBH, DG, Htcd, Ht, HtTopK, CrRatio, " +
-		                    "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
-		                    "Prescription, Slope, Aspect, PV_Code, TreeValue, cullbf, mist_cl_cd, " +
-		                    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, TreeCN)  ";
-		                string strBioSumWorkTableSelectStmt =
-		                    "SELECT c.biosum_cond_id, VAL(t.fvs_tree_id) as Tree_ID, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
-		                    "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
-		                    "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
-		                    "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.cullbf, t.mist_cl_cd, " +
-		                    "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
-		                string strFromTableExpr = "FROM " +
-		                                          strCondTableName + " c, " + strPlotTableName + " p, " +
-		                                          strTreeTableName + " t ";
-		                string strFilters =
-		                    "WHERE t.biosum_cond_id=c.biosum_cond_id AND p.biosum_plot_id=c.biosum_plot_id " +
-		                    "AND t.dia > 0 AND c.landclcd=1 " +
-		                    "AND ucase(trim(p.fvs_variant)) = \'" + strVariant.Trim().ToUpper() + "\'";
-		                string strSQL = strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
-		                                strFilters;
-		                return strSQL;
-		            }
+                    public static string BulkImportTreeDataFromBioSumMaster(string strVariant, string strDestTable,
+                        string strCondTableName, string strPlotTableName, string strTreeTableName)
+                    {
+                        string strInsertIntoTreeInit =
+                            "INSERT INTO " + strDestTable +
+                            " (Stand_ID, Tree_ID, Tree_Count, History, Species, " +
+                            "DBH, DG, Htcd, Ht, HtTopK, CrRatio, " +
+                            "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
+                            "Prescription, Slope, Aspect, PV_Code, TreeValue, Age, cullbf, mist_cl_cd, " +
+                            "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, TreeCN)  ";
+                        string strBioSumWorkTableSelectStmt =
+                            "SELECT c.biosum_cond_id, VAL(t.fvs_tree_id) as Tree_ID, t.tpacurr, iif(iif(t.statuscd is null, 0, t.statuscd)=1, 1, 9) as History, t.spcd, " +
+                            "t.dia, t.inc10yr, t.htcd, iif(t.ht is null,0,t.ht), iif(t.actualht is null,0,t.actualht), t.cr, " +
+                            "0 as Damage1, 0 as Severity1, 0 as Damage2, 0 as Severity2, 0 as Damage3, 0 as Severity3, " +
+                            "0 as Prescription, c.slope, c.aspect, c.habtypcd1, 3 as TreeValue, t.bhage as Age, t.cullbf, t.mist_cl_cd, " +
+                            "fvs_dmg_ag1, fvs_dmg_sv1, fvs_dmg_ag2, fvs_dmg_sv2, fvs_dmg_ag3, fvs_dmg_sv3, t.cn ";
+                        string strFromTableExpr = "FROM " +
+                                                  strCondTableName + " c, " + strPlotTableName + " p, " +
+                                                  strTreeTableName + " t ";
+                        string strFilters =
+                            "WHERE t.biosum_cond_id=c.biosum_cond_id AND p.biosum_plot_id=c.biosum_plot_id " +
+                            "AND t.dia > 0 AND c.landclcd=1 " +
+                            "AND ucase(trim(p.fvs_variant)) = \'" + strVariant.Trim().ToUpper() + "\'";
+                        string strSQL = strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr +
+                                        strFilters;
+                        return strSQL;
+                    }
 
-		            public static string CreateSpcdConversionTable(string strCondTableName, string strPlotTableName,
-		                string strTreeTableName, string strTreeSpeciesTableName)
-		            {
-		                //Updating FIA Species Codes to FVS Species Codes
-		                //Build the temporary species code conversion table
-		                string strSelectIntoTempConversionTable =
-		                    "SELECT DISTINCT p.FVS_VARIANT AS PLOT_FVS_VARIANT, ts.FVS_VARIANT AS TREE_SPECIES_FVS_VARIANT, t.SPCD AS FIA_SPCD, ts.FVS_INPUT_SPCD INTO SPCD_CHANGE_WORK_TABLE ";
-		                string strSpcdSources =
-		                    "FROM ((" + strCondTableName + " AS c INNER JOIN " + strPlotTableName +
-		                    " AS p ON c.biosum_plot_id = p.biosum_plot_id) INNER JOIN " + strTreeTableName +
-		                    " AS t ON c.BIOSUM_COND_ID = t.biosum_cond_id) LEFT JOIN " + strTreeSpeciesTableName +
-		                    " AS ts ON t.SPCD = ts.SPCD ";
-		                string strSpcdConversionFilters =
-		                    "WHERE ts.FVS_VARIANT = p.FVS_VARIANT AND ts.FVS_INPUT_SPCD Is Not Null And ts.FVS_INPUT_SPCD <> t.SPCD;";
-		                string strSQL = strSelectIntoTempConversionTable + strSpcdSources + strSpcdConversionFilters;
-		                return strSQL;
-		            }
-
-
-		            public static string UpdateFVSSpeciesCodeColumn(string strVariant, string strFVSTreeInitWorkTable)
-		            {
-		                string strSQL = "UPDATE " + strFVSTreeInitWorkTable +
-		                                " AS fvstree INNER JOIN SPCD_CHANGE_WORK_TABLE AS spcdchange ON VAL(fvstree.SPECIES) = spcdchange.FIA_SPCD " +
-		                                "SET fvstree.SPECIES = CSTR(spcdchange.FVS_INPUT_SPCD) " +
-		                                "WHERE TRIM(spcdchange.PLOT_FVS_VARIANT)=\'" + strVariant.Trim().ToUpper() +
-		                                "\'; ";
-		                return strSQL;
-		            }
-
-		            public static string DeleteCrRatiosForDeadTrees(string strDestTable)
-		            {
-		                return "UPDATE " + strDestTable + " SET CrRatio=null WHERE History=9;";
-		            }
-
-		            public static string RoundCrRatioToSingleDigitCodes(string strDestTable)
-		            {
-		                /*This is a test to compare predispose and fvsin CrRatio when you round up*/
-		                string strSQL = "UPDATE " + strDestTable + " SET " +
-		                                "CrRatio=iif(crratio is null, null, iif(len(trim(cstr(crratio)))=0, 0, " +
-		                                "iif(0 <= crratio AND crratio <= 10, 1, " +
-		                                "iif(crratio <= 20, 2, " +
-		                                "iif(crratio <= 30, 3, " +
-		                                "iif(crratio <= 40, 4, " +
-		                                "iif(crratio <= 50, 5, " +
-		                                "iif(crratio <= 60, 6, " +
-		                                "iif(crratio <= 70, 7, " +
-		                                "iif(crratio <= 80, 8, " +
-		                                "iif(crratio <= 100, 9, null)))))))))));";
-		                return strSQL;
-		            }
-
-		            public static string DeleteHtAndHtTopKForNonMeasuredHeights(string strDestTable)
-		            {
-		                return "UPDATE " + strDestTable + " SET Ht=0, HtTopK=0 WHERE Htcd NOT IN (1,2,3);";
-		            }
-
-		            public static string SetBrokenTopFlag(string strDestTable)
-		            {
-		                return "UPDATE " + strDestTable +
-		                       " SET hasBrokenTop = -1 " + 
-		                       "WHERE HtTopK < Ht AND 0 < HtTopK;";
-		            }
+                    public static string CreateSpcdConversionTable(string strCondTableName, string strPlotTableName,
+                        string strTreeTableName, string strTreeSpeciesTableName)
+                    {
+                        //Updating FIA Species Codes to FVS Species Codes
+                        //Build the temporary species code conversion table
+                        string strSelectIntoTempConversionTable =
+                            "SELECT DISTINCT p.FVS_VARIANT AS PLOT_FVS_VARIANT, ts.FVS_VARIANT AS TREE_SPECIES_FVS_VARIANT, t.SPCD AS FIA_SPCD, ts.FVS_INPUT_SPCD INTO SPCD_CHANGE_WORK_TABLE ";
+                        string strSpcdSources =
+                            "FROM ((" + strCondTableName + " AS c INNER JOIN " + strPlotTableName +
+                            " AS p ON c.biosum_plot_id = p.biosum_plot_id) INNER JOIN " + strTreeTableName +
+                            " AS t ON c.BIOSUM_COND_ID = t.biosum_cond_id) LEFT JOIN " + strTreeSpeciesTableName +
+                            " AS ts ON t.SPCD = ts.SPCD ";
+                        string strSpcdConversionFilters =
+                            "WHERE ts.FVS_VARIANT = p.FVS_VARIANT AND ts.FVS_INPUT_SPCD Is Not Null And ts.FVS_INPUT_SPCD <> t.SPCD;";
+                        string strSQL = strSelectIntoTempConversionTable + strSpcdSources + strSpcdConversionFilters;
+                        return strSQL;
+                    }
 
 
-		            public static string SetHtTopKToZeroIfGteHt(string strDestTable)
-		            {
-		                return "UPDATE " + strDestTable + " SET HtTopK=0 WHERE Ht <= HtTopK";
-		            }
+                    public static string UpdateFVSSpeciesCodeColumn(string strVariant, string strFVSTreeInitWorkTable)
+                    {
+                        string strSQL = "UPDATE " + strFVSTreeInitWorkTable +
+                                        " AS fvstree INNER JOIN SPCD_CHANGE_WORK_TABLE AS spcdchange ON VAL(fvstree.SPECIES) = spcdchange.FIA_SPCD " +
+                                        "SET fvstree.SPECIES = CSTR(spcdchange.FVS_INPUT_SPCD) " +
+                                        "WHERE TRIM(spcdchange.PLOT_FVS_VARIANT)=\'" + strVariant.Trim().ToUpper() +
+                                        "\'; ";
+                        return strSQL;
+                    }
+
+                    public static string DeleteCrRatiosForDeadTrees(string strDestTable)
+                    {
+                        return "UPDATE " + strDestTable + " SET CrRatio=null WHERE History=9;";
+                    }
+
+                    public static string RoundCrRatioToSingleDigitCodes(string strDestTable)
+                    {
+                        /*This is a test to compare predispose and fvsin CrRatio when you round up*/
+                        string strSQL = "UPDATE " + strDestTable + " SET " +
+                                        "CrRatio=iif(crratio is null, null, iif(len(trim(cstr(crratio)))=0, 0, " +
+                                        "iif(0 <= crratio AND crratio <= 10, 1, " +
+                                        "iif(crratio <= 20, 2, " +
+                                        "iif(crratio <= 30, 3, " +
+                                        "iif(crratio <= 40, 4, " +
+                                        "iif(crratio <= 50, 5, " +
+                                        "iif(crratio <= 60, 6, " +
+                                        "iif(crratio <= 70, 7, " +
+                                        "iif(crratio <= 80, 8, " +
+                                        "iif(crratio <= 100, 9, null)))))))))));";
+                        return strSQL;
+                    }
+
+                    public static string DeleteHtAndHtTopKForNonMeasuredHeights(string strDestTable)
+                    {
+                        return "UPDATE " + strDestTable + " SET Ht=0, HtTopK=0 WHERE Htcd NOT IN (1,2,3);";
+                    }
+
+                    public static string SetBrokenTopFlag(string strDestTable)
+                    {
+                        return "UPDATE " + strDestTable +
+                               " SET hasBrokenTop = -1 " +
+                               "WHERE HtTopK < Ht AND 0 < HtTopK;";
+                    }
 
 
-		            public static string SetInferredSeedlingDbh(string strDestTable)
-		            {
-		                return "UPDATE " + strDestTable +
-		                       " SET Dbh=0.1 WHERE Tree_Count > 25 AND Dbh <= 0 AND History=1;";
-		            }
+                    public static string SetHtTopKToZeroIfGteHt(string strDestTable)
+                    {
+                        return "UPDATE " + strDestTable + " SET HtTopK=0 WHERE Ht <= HtTopK";
+                    }
 
-		            public static string[] DamageCodes(string strDestTable)
-		            {
-		                string[] strDamageCodeUpdates = new string[15];
 
-		                //use precalculated damage codes if possible
-		                strDamageCodeUpdates[0] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=fvs_dmg_ag1, Damage2=fvs_dmg_ag2, Damage3=fvs_dmg_ag3, Severity1=fvs_dmg_sv1, Severity2=fvs_dmg_sv2, Severity3=fvs_dmg_sv3 WHERE History=1 AND fvs_dmg_ag1 is not null;";
+                    public static string SetInferredSeedlingDbh(string strDestTable)
+                    {
+                        return "UPDATE " + strDestTable +
+                               " SET Dbh=0.1 WHERE Tree_Count > 25 AND Dbh <= 0 AND History=1;";
+                    }
 
-		                //Cull board feet
-		                strDamageCodeUpdates[1] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=25, Severity1=IIF(cullbf>=100, 99, cullbf) WHERE History=1 AND cullbf>0;";
+                    public static string[] DamageCodes(string strDestTable)
+                    {
+                        string[] strDamageCodeUpdates = new string[15];
 
-		                //FVS Mistletoe damage codes
-		                string strDamage1_Filter =
-		                    "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
-		                string strDamage2_Filter =
-		                    "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 NOT IN (0, 30, 31, 32, 33, 34) AND fvs_dmg_ag1 is null;";
-		                strDamageCodeUpdates[2] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=31, Severity1=mist_cl_cd WHERE Species=\'108\' AND " +
-		                    strDamage1_Filter;
+                        //use precalculated damage codes if possible
+                        strDamageCodeUpdates[0] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=fvs_dmg_ag1, Damage2=fvs_dmg_ag2, Damage3=fvs_dmg_ag3, Severity1=fvs_dmg_sv1, Severity2=fvs_dmg_sv2, Severity3=fvs_dmg_sv3 WHERE History=1 AND fvs_dmg_ag1 is not null;";
 
-		                strDamageCodeUpdates[3] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage2=31, Severity2=mist_cl_cd WHERE Species=\'108\' AND " +
-		                    strDamage2_Filter;
+                        //Cull board feet
+                        strDamageCodeUpdates[1] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=25, Severity1=IIF(cullbf>=100, 99, cullbf) WHERE History=1 AND cullbf>0;";
 
-		                strDamageCodeUpdates[4] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=32, Severity1=mist_cl_cd WHERE Species=\'073\' AND " +
-		                    strDamage1_Filter;
+                        //FVS Mistletoe damage codes
+                        string strDamage1_Filter =
+                            "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
+                        string strDamage2_Filter =
+                            "History=1 AND iif(mist_cl_cd is null,0,mist_cl_cd) <> 0 AND Damage1 NOT IN (0, 30, 31, 32, 33, 34) AND fvs_dmg_ag1 is null;";
+                        strDamageCodeUpdates[2] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=31, Severity1=mist_cl_cd WHERE Species=\'108\' AND " +
+                            strDamage1_Filter;
 
-		                strDamageCodeUpdates[5] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage2=32, Severity2=mist_cl_cd WHERE Species=\'073\' AND " +
-		                    strDamage2_Filter;
+                        strDamageCodeUpdates[3] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage2=31, Severity2=mist_cl_cd WHERE Species=\'108\' AND " +
+                            strDamage2_Filter;
 
-		                strDamageCodeUpdates[6] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=33, Severity1=mist_cl_cd WHERE Species=\'202\' AND " +
-		                    strDamage1_Filter;
+                        strDamageCodeUpdates[4] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=32, Severity1=mist_cl_cd WHERE Species=\'073\' AND " +
+                            strDamage1_Filter;
 
-		                strDamageCodeUpdates[7] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage2=33, Severity2=mist_cl_cd WHERE Species=\'202\' AND " +
-		                    strDamage2_Filter;
+                        strDamageCodeUpdates[5] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage2=32, Severity2=mist_cl_cd WHERE Species=\'073\' AND " +
+                            strDamage2_Filter;
 
-		                strDamageCodeUpdates[8] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=34, Severity1=mist_cl_cd WHERE Species=\'122\' AND " +
-		                    strDamage1_Filter;
+                        strDamageCodeUpdates[6] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=33, Severity1=mist_cl_cd WHERE Species=\'202\' AND " +
+                            strDamage1_Filter;
 
-		                strDamageCodeUpdates[9] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage2=34, Severity2=mist_cl_cd WHERE Species=\'122\' AND " +
-		                    strDamage2_Filter;
+                        strDamageCodeUpdates[7] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage2=33, Severity2=mist_cl_cd WHERE Species=\'202\' AND " +
+                            strDamage2_Filter;
 
-		                //default mist_cl_cd damage code if fvs species don't match previous four cases
-		                strDamageCodeUpdates[10] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=30, Severity1=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
-		                    strDamage1_Filter;
+                        strDamageCodeUpdates[8] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=34, Severity1=mist_cl_cd WHERE Species=\'122\' AND " +
+                            strDamage1_Filter;
 
-		                strDamageCodeUpdates[11] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage2=30, Severity2=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
-		                    strDamage2_Filter;
+                        strDamageCodeUpdates[9] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage2=34, Severity2=mist_cl_cd WHERE Species=\'122\' AND " +
+                            strDamage2_Filter;
 
-		                //broken top 96 added to least priority(?) damage column so fill it last
-		                strDamageCodeUpdates[12] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage1=96 WHERE History=1 AND hasBrokenTop AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
+                        //default mist_cl_cd damage code if fvs species don't match previous four cases
+                        strDamageCodeUpdates[10] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=30, Severity1=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
+                            strDamage1_Filter;
 
-		                //0 means nothing was assigned. 96 means damage2 doesn't need to repeat damage1
-		                strDamageCodeUpdates[13] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage2=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 = 0 AND fvs_dmg_ag1 IS Null;";
+                        strDamageCodeUpdates[11] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage2=30, Severity2=mist_cl_cd WHERE Species NOT IN (\'202\',\'108\',\'122\',\'073\') AND " +
+                            strDamage2_Filter;
 
-		                strDamageCodeUpdates[14] =
-		                    "UPDATE " + strDestTable +
-		                    " SET Damage3=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 not in (0,96) and Damage3=0 AND fvs_dmg_ag1 IS Null;";
-		                /*END DAMAGE CODES*/
-		                return strDamageCodeUpdates;
-		            }
+                        //broken top 96 added to least priority(?) damage column so fill it last
+                        strDamageCodeUpdates[12] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage1=96 WHERE History=1 AND hasBrokenTop AND Damage1 = 0 AND fvs_dmg_ag1 is null;";
 
-		            public static string[] TreeValueClass(string strDestTable)
-		            {
-		                /*Value Classes: 
+                        //0 means nothing was assigned. 96 means damage2 doesn't need to repeat damage1
+                        strDamageCodeUpdates[13] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage2=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 = 0 AND fvs_dmg_ag1 IS Null;";
+
+                        strDamageCodeUpdates[14] =
+                            "UPDATE " + strDestTable +
+                            " SET Damage3=96 WHERE History=1 AND hasBrokenTop AND Damage1 NOT IN (0,96) AND Damage2 not in (0,96) and Damage3=0 AND fvs_dmg_ag1 IS Null;";
+                        /*END DAMAGE CODES*/
+                        return strDamageCodeUpdates;
+                    }
+
+                    public static string[] TreeValueClass(string strDestTable)
+                    {
+                        /*Value Classes: 
                           * All trees (live and dead) initialized to 3. 
                           * If Damage1=25, TreeValue=3 again (redundant). 
                           * Else if Severity > 0, TreeValue=2. 
                           * Else TreeValue=1*/
-		                string[] strTreeValueUpdates = new string[2];
-		                strTreeValueUpdates[0] = "UPDATE " + strDestTable +
-		                                         " SET TreeValue=2 WHERE History=1 AND Damage1<>25 AND Severity1>0;";
-		                strTreeValueUpdates[1] = "UPDATE " + strDestTable +
-		                                         " SET TreeValue=1 WHERE History=1 AND Damage1<>25 AND Severity1<=0;";
-		                return strTreeValueUpdates;
-		            }
+                        string[] strTreeValueUpdates = new string[2];
+                        strTreeValueUpdates[0] = "UPDATE " + strDestTable +
+                                                 " SET TreeValue=2 WHERE History=1 AND Damage1<>25 AND Severity1>0;";
+                        strTreeValueUpdates[1] = "UPDATE " + strDestTable +
+                                                 " SET TreeValue=1 WHERE History=1 AND Damage1<>25 AND Severity1<=0;";
+                        return strTreeValueUpdates;
+                    }
 
+                    public static string UpdateTreeAge(string strDestTable, string strTreeAgeOffset)
+                    {
+                        return "UPDATE " + strDestTable + " SET Age = Age + " + strTreeAgeOffset + " WHERE Age is not null;";
+                    }
 
-		            public static string PadSpeciesWithZero(string strDestTable)
-		            {
-		                //This addresses a problem with FVSOut having incorrect Species Codes being translated into "2TD"
-		                //Update the Species column to Trim and "PadLeft" with 0s by Creating a "000" and concatenating with Trim(Species) and taking the rightmost 3 digits
-		                //Example: Right("000" & "17      ", 3) => "017". Species=="17      "  because the Species column is width 8 in FVSIn.accdb
-		                return "UPDATE " + strDestTable + " SET Species = Right(String(3, \'0\') & Trim(Species), 3);";
-		            }
+                    public static string PadSpeciesWithZero(string strDestTable)
+                    {
+                        //This addresses a problem with FVSOut having incorrect Species Codes being translated into "2TD"
+                        //Update the Species column to Trim and "PadLeft" with 0s by Creating a "000" and concatenating with Trim(Species) and taking the rightmost 3 digits
+                        //Example: Right("000" & "17      ", 3) => "017". Species=="17      "  because the Species column is width 8 in FVSIn.accdb
+                        return "UPDATE " + strDestTable + " SET Species = Right(String(3, \'0\') & Trim(Species), 3);";
+                    }
 
-		            public static string TranslateWorkTableToTreeInitTable(string strSourceTable, string strDestTable)
-		            {
-		                string strInsertIntoTreeInit =
-		                    "INSERT INTO " + strDestTable;
-		                string strBioSumWorkTableSelectStmt =
-		                    " SELECT Stand_ID, StandPlot_ID, Tree_ID, Tree_Count, History, Species, " +
-		                    "DBH, DG, Ht, HTG, HtTopK, CrRatio,  " +
-		                    "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
-		                    "TreeValue, Prescription, Age, Slope, Aspect, PV_Code, TopoCode, SitePrep ";
-		                string strFromTableExpr = "FROM " + strSourceTable + ";";
-		                return strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr;
-		            }
+                    public static string TranslateWorkTableToTreeInitTable(string strSourceTable, string strDestTable)
+                    {
+                        string strInsertIntoTreeInit =
+                            "INSERT INTO " + strDestTable;
+                        string strBioSumWorkTableSelectStmt =
+                            " SELECT Stand_ID, StandPlot_ID, Tree_ID, Tree_Count, History, Species, " +
+                            "DBH, DG, Ht, HTG, HtTopK, CrRatio,  " +
+                            "Damage1, Severity1, Damage2, Severity2, Damage3, Severity3, " +
+                            "TreeValue, Prescription, Age, Slope, Aspect, PV_Code, TopoCode, SitePrep ";
+                        string strFromTableExpr = "FROM " + strSourceTable + ";";
+                        return strInsertIntoTreeInit + strBioSumWorkTableSelectStmt + strFromTableExpr;
+                    }
 
-		            public static string RoundSingleDigitPercentageCrRatiosUpTo10(string strDestTable)
-		            {
-		                return "UPDATE " + strDestTable + " SET CrRatio=10 WHERE CrRatio<10;";
-		            }
+                    public static string RoundSingleDigitPercentageCrRatiosUpTo10(string strDestTable)
+                    {
+                        return "UPDATE " + strDestTable + " SET CrRatio=10 WHERE CrRatio<10;";
+                    }
 
-		            public static string RoundSingleDigitPercentageCrRatiosDownTo1(string strDestTable)
-		            {
-		                return "UPDATE " + strDestTable + " SET CrRatio=1 WHERE CrRatio<10;";
-		            }
+                    public static string RoundSingleDigitPercentageCrRatiosDownTo1(string strDestTable)
+                    {
+                        return "UPDATE " + strDestTable + " SET CrRatio=1 WHERE CrRatio<10;";
+                    }
 
-		            public static string DeleteWorkTable()
-		            {
-		                return "DROP TABLE FVS_TreeInit_WorkTable;";
-		            }
+                    public static string DeleteWorkTable()
+                    {
+                        return "DROP TABLE FVS_TreeInit_WorkTable;";
+                    }
 
-		            public static string DeleteSpcdChangeWorkTable()
-		            {
-		                return "DROP TABLE SPCD_CHANGE_WORK_TABLE;";
-		            }
-		        }
+                    public static string DeleteSpcdChangeWorkTable()
+                    {
+                        return "DROP TABLE SPCD_CHANGE_WORK_TABLE;";
+                    }
+                }
 
-		        //This updates the FVSIn.GroupAddFilesAndKeywords table so that they FVS keywords have the correct DSNIn value
-		        public class GroupAddFilesAndKeywords
-		        {
-		            public static string UpdateAllPlots(string strFVSInFileName)
-		            {
-		                return
-		                    "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
-		                    "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
-		                    "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-		                    "\"FROM FVS_PlotInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-		                    "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Plots\");";
-		            }
+                //This updates the FVSIn.GroupAddFilesAndKeywords table so that they FVS keywords have the correct DSNIn value
+                public class GroupAddFilesAndKeywords
+                {
+                    public static string UpdateAllPlots(string strFVSInFileName)
+                    {
+                        return
+                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_PlotInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE StandPlot_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Plots\");";
+                    }
 
-		            public static string UpdateAllStands(string strFVSInFileName)
-		            {
-		                return
-		                    "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
-		                    "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
-		                    "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-		                    "\"FROM FVS_StandInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
-		                    "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
-		                    "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Stands\");";
-		            }
-		        }
-		    }
+                    public static string UpdateAllStands(string strFVSInFileName)
+                    {
+                        return
+                            "UPDATE FVS_GroupAddFilesAndKeywords SET FVS_GroupAddFilesAndKeywords.FVSKeywords = " +
+                            "\"Database\" + Chr(13) + Chr(10) + \"DSNIn\" + Chr(13) + Chr(10) + \"" + strFVSInFileName +
+                            "\" + Chr(13) + Chr(10) + \"StandSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_StandInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"TreeSQL\" + Chr(13) + Chr(10) + \"SELECT *\" + Chr(13) + Chr(10) + " +
+                            "\"FROM FVS_TreeInit\" + Chr(13) + Chr(10) + \"WHERE Stand_ID = '%StandID%'\" + Chr(13) + Chr(10) + " +
+                            "\"EndSQL\" + Chr(13) + Chr(10) + \"END\" WHERE (FVS_GroupAddFilesAndKeywords.Groups=\"All_Stands\");";
+                    }
+                }
+            }
 
-		}
+        }
 		public class TravelTime
 		{
             public string m_strTravelTimeTable;
